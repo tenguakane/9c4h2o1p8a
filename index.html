@@ -4568,7 +4568,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "04.10.2026 16:09";
+const WIKI_VERSION = "21.10.2026";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -6485,42 +6485,79 @@ window.addEventListener("resize", () => {
     }, 140);
 });
 
-// Первый рендер сетки персонажей может случиться, пока вкладка скрыта или пока
-// браузер ещё не применил CSS сетки (стили стоят ниже скрипта). Тогда число колонок
-// угадывается приблизительно и во втором ряду не хватает карточек. Поэтому после
-// каждого рендера, при загрузке стилей и при изменении ширины перепроверяем размер
+// Первый рендер сеток (персонажи, плоды, награды) может случиться, пока вкладка скрыта
+// или пока браузер ещё не применил CSS сетки (стили стоят ниже скрипта). Тогда число
+// колонок угадывается приблизительно и во втором ряду не хватает карточек. Поэтому
+// после каждого рендера, при загрузке и при изменении ширины перепроверяем размер
 // страницы по фактической сетке и перерисовываем, если он не совпал.
-let characterGridRecheckFrame = 0;
-function scheduleCharacterGridRecheck() {
-    if (characterGridRecheckFrame) return;
-    characterGridRecheckFrame = requestAnimationFrame(() => {
-        characterGridRecheckFrame = 0;
-        if (characterDisplayMode !== "grid") return;
-        const container = document.getElementById("characterList");
-        if (!container || container.getBoundingClientRect().width <= 0) return;
-        if (!container.classList.contains("character-display-grid")) return;
-        const nextPageSize = getCharacterDisplayPageSize();
-        if (characterGridLastPageSize !== null && nextPageSize !== characterGridLastPageSize) {
-            characterGridLastPageSize = nextPageSize;
-            applyCharacterSearch(false);
-        }
+const wikiGridPagers = [
+    {
+        listId: "characterList", gridClass: "character-display-grid",
+        active: () => characterDisplayMode === "grid",
+        size: () => getCharacterDisplayPageSize(),
+        last: () => characterGridLastPageSize,
+        setLast: v => { characterGridLastPageSize = v; },
+        rerender: () => applyCharacterSearch(false)
+    },
+    {
+        listId: "fruitsList", gridClass: "fruit-display-grid",
+        active: () => typeof fruitDisplayMode !== "undefined" && fruitDisplayMode === "grid",
+        size: () => getFruitDisplayPageSize(),
+        last: () => fruitGridLastPageSize,
+        setLast: v => { fruitGridLastPageSize = v; },
+        rerender: () => applyFruitFilter()
+    },
+    {
+        listId: "rewardsList", gridClass: null,
+        active: () => typeof rewardDisplayMode !== "undefined" && (rewardDisplayMode === "grid" || rewardDisplayMode === "posters"),
+        size: () => getRewardDisplayPageSize(),
+        last: () => rewardGridLastPageSize,
+        setLast: v => { rewardGridLastPageSize = v; },
+        rerender: () => applyRewardFilters()
+    }
+];
+let wikiGridRecheckFrame = 0;
+function scheduleWikiGridRecheck() {
+    if (wikiGridRecheckFrame) return;
+    wikiGridRecheckFrame = requestAnimationFrame(() => {
+        wikiGridRecheckFrame = 0;
+        if (window.innerWidth <= 760) return;
+        wikiGridPagers.forEach(pager => {
+            try {
+                if (!pager.active()) return;
+                const container = document.getElementById(pager.listId);
+                if (!container || container.getBoundingClientRect().width <= 0) return;
+                if (pager.gridClass && !container.classList.contains(pager.gridClass)) return;
+                const last = pager.last();
+                const next = pager.size();
+                if (last !== null && next !== last) {
+                    pager.setLast(next);
+                    pager.rerender();
+                }
+            } catch (error) {
+                // Сетка ещё не готова: следующая проверка случится при рендере или изменении ширины.
+            }
+        });
     });
 }
-(function watchCharacterGrid() {
+// Совместимость со старым именем.
+function scheduleCharacterGridRecheck() { scheduleWikiGridRecheck(); }
+(function watchWikiGrids() {
     const attach = () => {
-        const container = document.getElementById("characterList");
-        if (!container) return;
-        if (typeof ResizeObserver !== "undefined") {
-            new ResizeObserver(scheduleCharacterGridRecheck).observe(container);
-        }
+        if (typeof ResizeObserver === "undefined") return;
+        const observer = new ResizeObserver(scheduleWikiGridRecheck);
+        wikiGridPagers.forEach(pager => {
+            const container = document.getElementById(pager.listId);
+            if (container) observer.observe(container);
+        });
     };
     if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", () => { attach(); scheduleCharacterGridRecheck(); }, { once: true });
+        document.addEventListener("DOMContentLoaded", () => { attach(); scheduleWikiGridRecheck(); }, { once: true });
     } else {
         attach();
     }
-    window.addEventListener("load", scheduleCharacterGridRecheck, { once: true });
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleCharacterGridRecheck);
+    window.addEventListener("load", scheduleWikiGridRecheck, { once: true });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleWikiGridRecheck);
 })();
 
 function wikiFillerBadge(record) {
@@ -6565,7 +6602,7 @@ function renderCharacterList(list) {
     const pageSize = getCharacterDisplayPageSize();
     if (characterDisplayMode === "grid") {
         characterGridLastPageSize = pageSize;
-        scheduleCharacterGridRecheck();
+        scheduleWikiGridRecheck();
     }
     const totalPages = Math.ceil(sorted.length / pageSize);
 
@@ -7791,7 +7828,10 @@ function renderRewardList(list) {
     container.classList.toggle("reward-display-posters", rewardDisplayMode === "posters");
     updateRewardDisplayModeButtons();
     const pageSize = getRewardDisplayPageSize();
-    if (rewardDisplayMode === "grid") rewardGridLastPageSize = pageSize;
+    if (rewardDisplayMode === "grid" || rewardDisplayMode === "posters") {
+        rewardGridLastPageSize = pageSize;
+        if (typeof scheduleWikiGridRecheck === "function") scheduleWikiGridRecheck();
+    }
 
     if (!list.length) {
         container.innerHTML = `<div class="no-results">Награды не найдены.</div>`;
@@ -8326,7 +8366,10 @@ function renderFruitList(list) {
     }
 
     const pageSize = getFruitDisplayPageSize();
-    if (fruitDisplayMode === "grid") fruitGridLastPageSize = pageSize;
+    if (fruitDisplayMode === "grid") {
+        fruitGridLastPageSize = pageSize;
+        if (typeof scheduleWikiGridRecheck === "function") scheduleWikiGridRecheck();
+    }
     const totalPages = Math.max(1, Math.ceil(list.length / pageSize));
     if (fruitCurrentPage > totalPages) fruitCurrentPage = totalPages;
     const startIndex = (fruitCurrentPage - 1) * pageSize;
@@ -19718,4 +19761,178 @@ body #usefulArticle#usefulArticle#usefulArticle .article-nav-prev small,body #us
 })();
 </script>
 
+<style id="wiki-site-footer-style">
+/* Полоса прокрутки всегда резервирует место: ширина страницы не «прыгает», когда полоса
+   появляется или прячется, и сетки карточек не перестраиваются туда-обратно (тряска). */
+html{scrollbar-gutter:stable}
+body{display:flex;flex-direction:column}
+body>.container{flex:1 0 auto}
+@media (min-width:701px){body>.container{padding-bottom:14px}}
+@media (max-width:700px){body>.container{padding-bottom:10px}}
+.wiki-site-footer{flex:0 0 auto;width:100%;box-sizing:border-box;padding:9px clamp(12px,1vw,24px) 11px;border-top:1px solid color-mix(in srgb,var(--line,#334155) 55%,transparent);color:color-mix(in srgb,var(--text,#e5e7eb) 52%,transparent);font-size:12px;line-height:1.4}
+.wiki-site-footer .wsf-inner{width:min(98vw,1900px);max-width:1900px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 18px}
+.wiki-site-footer .wsf-item{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.wiki-site-footer .wsf-label{color:color-mix(in srgb,var(--text,#e5e7eb) 36%,transparent);text-transform:uppercase;letter-spacing:.06em;font-size:10px;font-weight:700}
+.wiki-site-footer .wsf-value{font-variant-numeric:tabular-nums;color:color-mix(in srgb,var(--text,#e5e7eb) 72%,transparent)}
+.wiki-site-footer a{color:var(--accent,#d4a84f);text-decoration:none}
+.wiki-site-footer a:hover{text-decoration:underline}
+.wiki-site-footer .wsf-dot{opacity:.35}
+.wiki-site-footer [hidden]{display:none!important}
+@media (max-width:700px){.wiki-site-footer{padding-bottom:calc(74px + env(safe-area-inset-bottom));font-size:11px}.wiki-site-footer .wsf-inner{gap:3px 12px}}
+@media print{.wiki-site-footer{display:none}}
+</style>
+<script id="wiki-site-footer-script">
+(function () {
+  'use strict';
+  // Репозиторий на GitHub в формате "владелец/репозиторий". Если оставить пустым,
+  // на GitHub Pages (имя.github.io/репозиторий) он определится автоматически.
+  var WIKI_GITHUB_REPO = 'tenguakane/9c4h2o1p8a';
+  var WIKI_GITHUB_FILE = 'index.html'; // путь к файлу в репозитории; пусто — определить по адресу страницы
+
+  function fmtDate(value, withTime) {
+    var d = value instanceof Date ? value : new Date(value);
+    if (isNaN(d)) return '';
+    var opts = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    if (withTime) { opts.hour = '2-digit'; opts.minute = '2-digit'; }
+    return d.toLocaleString('ru-RU', opts);
+  }
+  function ago(value) {
+    var s = (Date.now() - new Date(value).getTime()) / 1000;
+    if (!isFinite(s)) return '';
+    if (s < 90) return 'только что';
+    var m = Math.round(s / 60); if (m < 60) return m + ' мин назад';
+    var h = Math.round(m / 60); if (h < 36) return h + ' ч назад';
+    var d = Math.round(h / 24); if (d < 45) return d + ' дн назад';
+    return fmtDate(value, false);
+  }
+  function detectRepo() {
+    if (WIKI_GITHUB_REPO) return { repo: WIKI_GITHUB_REPO.replace(/^https?:\/\/github\.com\//, '').replace(/\/+$/, ''), file: WIKI_GITHUB_FILE };
+    var host = location.hostname || '';
+    var m = host.match(/^([a-z0-9-]+)\.github\.io$/i);
+    if (!m) return null;
+    var parts = location.pathname.split('/').filter(Boolean).map(decodeURIComponent);
+    var owner = m[1];
+    var repo, file;
+    if (parts.length && !/\.html?$/i.test(parts[0])) { repo = parts.shift(); } else { repo = owner + '.github.io'; }
+    file = parts.join('/');
+    if (!file || /\/$/.test(location.pathname)) file = (file ? file + '/' : '') + 'index.html';
+    return { repo: owner + '/' + repo, file: WIKI_GITHUB_FILE || file };
+  }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function item(label, value, title) {
+    var w = el('span', 'wsf-item'); if (title) w.title = title;
+    w.appendChild(el('span', 'wsf-label', label));
+    var v = el('span', 'wsf-value'); if (typeof value === 'string') v.textContent = value; else v.appendChild(value);
+    w.appendChild(v); return w;
+  }
+
+  function build() {
+    var footer = document.getElementById('wikiSiteFooter');
+    if (!footer) {
+      footer = document.createElement('footer');
+      footer.id = 'wikiSiteFooter';
+      footer.className = 'wiki-site-footer';
+      var container = document.querySelector('body > .container');
+      if (container) container.after(footer); else document.body.appendChild(footer);
+    }
+    footer.innerHTML = '';
+    var inner = el('div', 'wsf-inner');
+    inner.appendChild(el('span', 'wsf-item', '🏴‍☠️ One Piece Wiki'));
+    var version = typeof WIKI_VERSION !== 'undefined' ? String(WIKI_VERSION) : '';
+    if (version) inner.appendChild(item('Версия', version, 'Версия кода сайта'));
+    var dataStamp = document.documentElement.getAttribute('data-wiki-portable-id');
+    var dataText = dataStamp ? fmtDate(dataStamp, true) : '';
+    if (dataText) inner.appendChild(item('Данные', dataText, 'Когда был выгружен этот HTML со встроенными данными'));
+    var gitItem = item('GitHub', '…'); gitItem.hidden = true; inner.appendChild(gitItem);
+    footer.appendChild(inner);
+
+    var info = detectRepo();
+    if (!info || !info.repo || info.repo.indexOf('/') < 0) return;
+    var base = 'https://github.com/' + info.repo;
+    var val = gitItem.querySelector('.wsf-value');
+    function renderGit(data) {
+      val.innerHTML = '';
+      gitItem.hidden = false;
+      if (data && data.sha) {
+        var c = el('a', null, data.sha.slice(0, 7)); c.href = data.url; c.target = '_blank'; c.rel = 'noopener';
+        c.title = (data.message || '').split('\n')[0];
+        val.appendChild(c);
+        val.appendChild(document.createTextNode(' · ' + ago(data.date) + ' '));
+        val.appendChild(el('span', 'wsf-dot', '·'));
+        val.appendChild(document.createTextNode(' '));
+      }
+      var h = el('a', null, data && data.sha ? 'история версий ↗' : 'репозиторий ↗');
+      h.href = data && data.historyUrl ? data.historyUrl : base; h.target = '_blank'; h.rel = 'noopener';
+      val.appendChild(h);
+    }
+    renderGit(null);
+    var cacheKey = 'wikiGitFooter:' + info.repo + ':' + info.file;
+    try {
+      var cached = JSON.parse(sessionStorage.getItem(cacheKey) || 'null');
+      if (cached && Date.now() - cached.at < 10 * 60 * 1000) { renderGit(cached.data); return; }
+    } catch (e) {}
+    if (!window.fetch) return;
+    var api = 'https://api.github.com/repos/' + info.repo;
+    Promise.all([
+      fetch(api).then(function (r) { return r.ok ? r.json() : null; }),
+      fetch(api + '/commits?per_page=1' + (info.file ? '&path=' + encodeURIComponent(info.file) : '')).then(function (r) { return r.ok ? r.json() : null; })
+    ]).then(function (res) {
+      var repoInfo = res[0], commits = res[1];
+      var commit = Array.isArray(commits) && commits[0];
+      if (!commit) return;
+      var branch = (repoInfo && repoInfo.default_branch) || 'HEAD';
+      var data = {
+        sha: commit.sha,
+        url: commit.html_url,
+        date: commit.commit && (commit.commit.committer || commit.commit.author || {}).date,
+        message: commit.commit && commit.commit.message,
+        historyUrl: base + '/commits/' + encodeURIComponent(branch) + (info.file ? '/' + info.file.split('/').map(encodeURIComponent).join('/') : '')
+      };
+      renderGit(data);
+      try { sessionStorage.setItem(cacheKey, JSON.stringify({ at: Date.now(), data: data })); } catch (e) {}
+    }).catch(function () {});
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build, { once: true });
+  else build();
+})();
+</script>
+<style id="wiki-fruit-fit-style">
+/* Высота картинок в карточках плодов подстраивается под окно, чтобы два ряда,
+   пагинация и подвал помещались в один экран без прокрутки. Текст карточки не трогаем. */
+#fruitsSection#fruitsSection#fruitsSection #fruitsList.fruit-display-grid .fruit-grid-image-wrap{flex:0 0 var(--fruit-img-h,192px)!important;height:var(--fruit-img-h,192px)!important;min-height:0!important;aspect-ratio:auto!important}
+</style>
+<script id="wiki-fruit-fit-script">
+(function () {
+  'use strict';
+  var MAX = 192, MIN = 120, frame = 0;
+  function fit() {
+    frame = 0;
+    var list = document.getElementById('fruitsList');
+    if (!list) return;
+    var usable = window.innerWidth > 760 && list.classList.contains('fruit-display-grid') && list.getBoundingClientRect().width > 0;
+    if (!usable) { list.style.removeProperty('--fruit-img-h'); return; }
+    var cols = Math.max(1, getComputedStyle(list).gridTemplateColumns.split(' ').length);
+    var rows = Math.ceil(list.children.length / cols);
+    if (rows < 2) return; // неполная последняя страница: оставляем размер как на полных страницах
+    var current = parseFloat(list.style.getPropertyValue('--fruit-img-h')) || MAX;
+    var footer = document.getElementById('wikiSiteFooter');
+    var bottom = footer ? footer.getBoundingClientRect().bottom : document.body.getBoundingClientRect().bottom;
+    var overflow = bottom - window.innerHeight; // >0 — не помещается, <0 — есть запас
+    var next = Math.round(Math.max(MIN, Math.min(MAX, current - overflow / rows)));
+    if (Math.abs(next - current) >= 1) list.style.setProperty('--fruit-img-h', next + 'px');
+  }
+  function schedule() { if (!frame) frame = requestAnimationFrame(fit); }
+  window.__wikiFitFruitCards = schedule;
+  function start() {
+    var list = document.getElementById('fruitsList');
+    if (list && typeof ResizeObserver !== 'undefined') new ResizeObserver(schedule).observe(list);
+    if (list && typeof MutationObserver !== 'undefined') new MutationObserver(schedule).observe(list, { childList: true, attributes: true, attributeFilter: ['class'] });
+    window.addEventListener('resize', schedule, { passive: true });
+    window.addEventListener('load', schedule, { once: true });
+    schedule();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
+})();
+</script>
 </body></html>
