@@ -1506,7 +1506,7 @@ window.WIKI_CLOUD_CONFIG = window.WIKI_CLOUD_CONFIG || {
   accounts: [
     { login: "dima",   name: "Дима",   role: "admin",  color: "#60a5fa", gender: "m" },
     { login: "zhenya", name: "Женя",   role: "member", color: "#f472b6", gender: "f" },
-    { login: "valik",  name: "Валик",  role: "member", color: "#34d399", gender: "m" },
+    { login: "valik",  name: "Валик",  role: "editor", color: "#34d399", gender: "m" },
     { login: "serega", name: "Серёга", role: "member", color: "#fbbf24", gender: "m" }
   ],
   guest: { name: "Гость", progress: { chapter: 100, episode: 100 } }
@@ -4626,7 +4626,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "23.10.2026 · 3";
+const WIKI_VERSION = "23.10.2026 · 5";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -11755,14 +11755,14 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         useful: {label:'Полезное', plural:'Полезные статьи', array:usefulArticles, icon:'💡'}
     };
     const schemas = {
-        character: {id:'char_new',name:'',nickname:'',person_link:'',person_image_position:50,person_image_position_x:50,person_image_zoom:100,person2_link:'',person2_from_chapter:'',person2_from_episode:'',person2_image_position:50,person2_image_position_x:50,person2_image_zoom:100,chapter:'',episode:'',description:'',filler:false,fruit:'',fruit_link:'',fruit_article_id:'',fruit2:'',fruit2_link:'',fruit2_article_id:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],ship:'',ship_link:'',ship_description:'',ship2:'',ship2_link:'',ship2_description:'',flag:'',flag_link:'',flag_description:'',status:''},
+        character: {id:'char_new',name:'',nickname:'',person_link:'',person_image_position:50,person_image_position_x:50,person_image_zoom:100,person2_link:'',person2_from_chapter:'',person2_from_episode:'',person2_image_position:50,person2_image_position_x:50,person2_image_zoom:100,timeskip_description:'',chapter:'',episode:'',description:'',filler:false,fruit:'',fruit_link:'',fruit_article_id:'',fruit2:'',fruit2_link:'',fruit2_article_id:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],ship:'',ship_link:'',ship_description:'',ship2:'',ship2_link:'',ship2_description:'',flag:'',flag_link:'',flag_description:'',status:''},
         story: {id:'arc_new',name:'',image:'',image_position:50,image_position_x:50,image_zoom:100,chapters:'',episodes:'',ongoing:false,filler:false,movie:false,saga:'',description:'',key:'',characters:[],connect:[]},
         reward: {id:'reward_new',character_id:'',reward:0,ka:0,rank:'',rank_total:'',reward_image:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',appearance_chapter:'',appearance_episode:'',connect:[]},
         fruit: {id:'fruit_new',name:'',appearance:'',episode:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,owner:'',type:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[]},
         useful: {id:'article_new',name:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,type:'',appearance_chapter:'',appearance_episode:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[]}
     };
     const fieldLabels = {
-        id:'ID',name:'Название / имя',nickname:'Прозвище',person_link:'Ссылка на изображение',person_image_position:'Вертикальное положение фото в карточке',person_image_position_x:'Горизонтальное смещение фото в карточке',person_image_zoom:'Приближение фото в карточке',person2_link:'Второе фото (новый облик)',person2_from_chapter:'С какой главы показывать',person2_from_episode:'С какого эпизода показывать',person2_image_position:'Вертикаль второго фото, %',person2_image_position_x:'Горизонталь второго фото, %',person2_image_zoom:'Приближение второго фото, %',chapter:'Глава появления',episode:'Эпизод появления',description:'Описание',fruit:'Дьявольский плод (старое поле)',fruit_link:'Ссылка на плод (старое поле)',fruit_article_id:'Дьявольский плод — статья из раздела «Плоды»',fruit2:'Второй плод (старое поле)',fruit2_link:'Ссылка на второй плод (старое поле)',fruit2_article_id:'Второй дьявольский плод — статья из раздела «Плоды»',arc:'Арка (манга)',saga:'Сага (манга)',connect:'Связанные ID (через запятую)',ship:'Корабль',ship_link:'Ссылка на корабль',ship_description:'Описание корабля',ship2:'Второй корабль',ship2_link:'Ссылка на второй корабль',ship2_description:'Описание второго корабля',flag:'Флаг',flag_link:'Ссылка на флаг',flag_description:'Описание флага',status:'Статус',characters:'ID персонажей (через запятую)',chapters:'Главы',episodes:'Эпизоды',ongoing:'Арка продолжается',filler:'Филлер / аниме-оригинал',movie:'Полнометражный фильм',character_id:'ID персонажа',reward:'Награда',ka:'КА',rank:'Место в топе',rank_total:'Всего в топе',reward_image:'Ссылка на изображение для карточки награды',appearance:'Глава появления',appearance_chapter:'Глава появления',appearance_episode:'Эпизод появления',image:'Ссылка на изображение',image_position:'Вертикальное смещение фото',image_position_x:'Горизонтальное смещение фото',image_zoom:'Приближение фото',owner:'Владелец(ы)',type:'Тип',arc_anime:'Арка (аниме)',saga_anime:'Сага (аниме)'};
+        id:'ID',name:'Название / имя',nickname:'Прозвище',person_link:'Ссылка на изображение',person_image_position:'Вертикальное положение фото в карточке',person_image_position_x:'Горизонтальное смещение фото в карточке',person_image_zoom:'Приближение фото в карточке',person2_link:'Второе фото (новый облик)',person2_from_chapter:'С какой главы (фото и «Таймскип»)',person2_from_episode:'С какого эпизода (фото и «Таймскип»)',timeskip_description:'Таймскип — чем персонаж занят спустя два года',person2_image_position:'Кадрирование второго фото',person2_image_position_x:'Горизонталь второго фото, %',person2_image_zoom:'Приближение второго фото, %',chapter:'Глава появления',episode:'Эпизод появления',description:'Описание',fruit:'Дьявольский плод (старое поле)',fruit_link:'Ссылка на плод (старое поле)',fruit_article_id:'Дьявольский плод — статья из раздела «Плоды»',fruit2:'Второй плод (старое поле)',fruit2_link:'Ссылка на второй плод (старое поле)',fruit2_article_id:'Второй дьявольский плод — статья из раздела «Плоды»',arc:'Арка (манга)',saga:'Сага (манга)',connect:'Связанные ID (через запятую)',ship:'Корабль',ship_link:'Ссылка на корабль',ship_description:'Описание корабля',ship2:'Второй корабль',ship2_link:'Ссылка на второй корабль',ship2_description:'Описание второго корабля',flag:'Флаг',flag_link:'Ссылка на флаг',flag_description:'Описание флага',status:'Статус',characters:'ID персонажей (через запятую)',chapters:'Главы',episodes:'Эпизоды',ongoing:'Арка продолжается',filler:'Филлер / аниме-оригинал',movie:'Полнометражный фильм',character_id:'ID персонажа',reward:'Награда',ka:'КА',rank:'Место в топе',rank_total:'Всего в топе',reward_image:'Ссылка на изображение для карточки награды',appearance:'Глава появления',appearance_chapter:'Глава появления',appearance_episode:'Эпизод появления',image:'Ссылка на изображение',image_position:'Вертикальное смещение фото',image_position_x:'Горизонтальное смещение фото',image_zoom:'Приближение фото',owner:'Владелец(ы)',type:'Тип',arc_anime:'Арка (аниме)',saga_anime:'Сага (аниме)'};
     const types = Object.keys(collections);
     let activeType = 'character';
     let editingId = null;
@@ -11915,6 +11915,12 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         const t=altPhotoTargets(raw);
         return !!((t.chapter&&spoilerProgress.chapter>=t.chapter)||(t.episode&&spoilerProgress.episode>=t.episode));
     }
+    window.__wikiCharacterTimeskip=function(rec){
+        const raw=rec&&rec.__wikiRaw;const text=String(raw&&raw.timeskip_description||'').trim();if(!text)return '';
+        if(spoilerAuditMode)return text;
+        const t=altPhotoTargets(raw);
+        return ((t.chapter&&spoilerProgress.chapter>=t.chapter)||(t.episode&&spoilerProgress.episode>=t.episode))?text:'';
+    };
     window.__wikiCharacterAltPhoto=function(rec){
         const raw=rec&&rec.__wikiRaw;if(!raw||!String(raw.person2_link||'').trim())return null;
         const pick=(k,d)=>{const v=raw[k];return (v===''||v==null)?d:v;};
@@ -13499,7 +13505,8 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         const fields=keys.map(k=>{
             const cropKeys = activeType==='character' ? {y:'person_image_position',x:'person_image_position_x',zoom:'person_image_zoom',url:'person_link'} : (['fruit','useful','story'].includes(activeType) ? {y:'image_position',x:'image_position_x',zoom:'image_zoom',url:'image'} : null);
             if(cropKeys && [cropKeys.x,cropKeys.zoom].includes(k)) return '';
-            const val=rawValue(obj,k);const text=fieldText(val);const isLong=k==='description';
+            if(activeType==='character' && ['person2_image_position_x','person2_image_zoom'].includes(k)) return '';
+            const val=rawValue(obj,k);const text=fieldText(val);const isLong=k==='description'||k==='timeskip_description';
             const hidden=Array.isArray(obj.__wikiFieldSpoilers)&&obj.__wikiFieldSpoilers.includes(k);
             const inputType=['ka','rank','rank_total'].includes(k)?'number':'text';
             const label=(activeType==='story'&&k==='saga')?'Сага':(fieldLabels[k]||k); let control=''; let hint='';
@@ -13521,6 +13528,12 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
                 control=`<label class="wiki-story-ongoing-toggle"><input id="wikiField_${k}" data-field="${k}" type="checkbox" ${checked?'checked':''}><span>${labelText}</span></label>`;
                 hint=k==='filler'?'Филлерные арки не учитываются в прогрессе манги. Если название содержит «(филлер)», отметка распознаётся автоматически; в аниме арка учитывается по диапазону эпизодов.':'Фильм учитывается отдельно во вкладке «Фильмы» и не входит в подсчёт глав манги или эпизодов сериала. Для саги «Полнометражные фильмы» эта отметка включается автоматически.';
             } else if(k==='id') control=`<input id="wikiField_id" data-field="id" type="text" value="${escapeHTMLLocal(text)}" autocomplete="off">`;
+            else if(activeType==='character' && k==='person2_image_position'){
+                const num=(key,def,min,max)=>{const r=rawValue(obj,key);const n=Number(r);return r===null||r===undefined||r===''||!Number.isFinite(n)?def:Math.max(min,Math.min(max,n));};
+                const py=num('person2_image_position',50,0,100),px=num('person2_image_position_x',50,0,100),pz=num('person2_image_zoom',100,100,250);
+                control=`<div class="wiki-character-crop-editor wk-alt-crop" data-alt-crop><div class="wiki-character-crop-control"><div class="wiki-character-crop-value-row"><span>Вертикальное смещение</span><output data-alt-out="y">${py}%</output></div><input id="wikiField_person2_image_position" data-field="person2_image_position" type="range" min="0" max="100" step="1" value="${py}" aria-label="Вертикальное положение второго фото"><small>0% — верх · 50% — центр · 100% — низ.</small><div class="wiki-character-crop-value-row"><span>Горизонтальное смещение</span><output data-alt-out="x">${px}%</output></div><input id="wikiField_person2_image_position_x" data-field="person2_image_position_x" type="range" min="0" max="100" step="1" value="${px}" aria-label="Горизонтальное положение второго фото"><small>0% — левый край · 50% — центр · 100% — правый край.</small><div class="wiki-character-crop-value-row"><span>Приближение фото</span><output data-alt-out="zoom">${pz}%</output></div><input id="wikiField_person2_image_zoom" data-field="person2_image_zoom" type="range" min="100" max="250" step="5" value="${pz}" aria-label="Приближение второго фото"><small>100% — исходный масштаб · максимум 250%.</small></div><div class="wiki-character-crop-preview" data-alt-crop-preview><img data-alt-crop-img alt="Предпросмотр второго фото" loading="lazy"><div class="wiki-character-crop-preview-empty" data-alt-crop-empty>Укажи ссылку на второе фото выше</div></div></div>`;
+                hint='Перетащи фото мышкой или пальцем, чтобы подвинуть; колесо мыши — приблизить. Так второе фото будет выглядеть в карточке.';
+            }
             else if(cropKeys && k===cropKeys.y){
                 const n=Number(val); const position=val===null||val===undefined||val===''||!Number.isFinite(n)?50:Math.max(0,Math.min(100,n));
                 const rawX=rawValue(obj,cropKeys.x); const nX=Number(rawX); const positionX=rawX===null||rawX===undefined||rawX===''||!Number.isFinite(nX)?50:Math.max(0,Math.min(100,nX));
@@ -13590,7 +13603,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         const sectionLayouts = {
             character: [
                 {title:'Основная информация',icon:'🧭',desc:'Идентификатор, имя и главное изображение.',keys:['id','name','nickname','person_link','person_image_position']},
-                {title:'Новый облик',icon:'🔄',desc:'Второе фото — например, после таймскипа. Пока человек не дошёл до указанной главы ИЛИ эпизода, видно только первое фото. Когда дойдёт, второе станет основным везде на сайте, а первое уйдёт в статью вниз, в блок «Прежний облик». Если глава и эпизод пустые — берётся таймскип: глава 598 / эпизод 517.',keys:['person2_link','person2_from_chapter','person2_from_episode','person2_image_position','person2_image_position_x','person2_image_zoom']},
+                {title:'Таймскип и новый облик',icon:'🔄',desc:'Пока человек не дошёл до указанной главы ИЛИ эпизода, ничего из этого раздела не видно. Когда дойдёт: второе фото станет основным везде на сайте (первое уйдёт вниз статьи, в «Прежний облик»), а текст «Таймскип» встанет над описанием, которое переименуется в «Ранее». Если глава и эпизод пустые — берётся таймскип: глава 598 / эпизод 517.',keys:['person2_from_chapter','person2_from_episode','timeskip_description','person2_link','person2_image_position','person2_image_position_x','person2_image_zoom']},
                 {title:'Описание и плоды',icon:'📖',desc:'Биография и ссылки на статьи плодов. Имя, изображение и описание подтягиваются автоматически.',keys:['description','fruit_article_id','fruit2_article_id']},
                 {title:'Корабли и символика',icon:'⛵',desc:'Изображения и описания кораблей персонажа и его флага.',keys:['ship','ship_link','ship_description','ship2','ship2_link','ship2_description','flag','flag_link','flag_description']},
                 {title:'Связанные статьи',icon:'🔗',desc:'Отметь материалы, которые должны быть связаны с этой статьёй.',keys:['connect']}
@@ -20672,6 +20685,16 @@ img.wk-fade.wk-loaded{opacity:1}
       }
       // 3) Шкала появления — в правую колонку.
       var details = content.querySelector('.article-hero-details') || content;
+      // 2б) «Таймскип» над описанием, прежнее описание — «Ранее».
+      if (type === 'character') {
+        var ts = ''; try { ts = window.__wikiCharacterTimeskip ? window.__wikiCharacterTimeskip(rec) : ''; } catch (e) {}
+        if (ts) {
+          var desc = content.querySelector('.description-section:not(.wk-timeskip)');
+          var tsHTML = '<div class="description-section wk-timeskip" data-wk-plus="ts"><h2>Таймскип <span class="wk-ts-tag">спустя 2 года</span></h2><div class="article-text">' + esc(ts) + '</div></div>';
+          if (desc) { var h = desc.querySelector('h2'); if (h) h.textContent = 'Ранее'; desc.classList.add('wk-earlier'); desc.insertAdjacentHTML('beforebegin', tsHTML); }
+          else details.insertAdjacentHTML('beforeend', tsHTML);
+        }
+      }
       var ap = appearanceHTML(rec, type);
       if (ap) details.insertAdjacentHTML('beforeend', ap);
       // 4) Ленты карточек и 5) карта связей — после шапки.
@@ -21730,8 +21753,9 @@ img.wk-fade.wk-loaded{opacity:1}
     zone.appendChild(t);
     setTimeout(function () { t.remove(); }, ms || (action ? 12000 : 3800));
   }
-  window.__wikiCanEdit = function () { var s = session(); return !!(s && s.role === 'admin'); };
-  window.__wikiNoEditNotice = function () { toast('Редактор статей доступен только администратору.'); };
+  function canEditRole(r) { return r === 'admin' || r === 'editor'; }
+  window.__wikiCanEdit = function () { var s = session(); return !!(s && canEditRole(s.role)); };
+  window.__wikiNoEditNotice = function () { toast('Редактор статей доступен только администратору и редактору.'); };
 
   /* ---------- роль на странице ---------- */
   function applyRoleAttrs() {
@@ -21764,9 +21788,9 @@ img.wk-fade.wk-loaded{opacity:1}
   function renderMenu() {
     var menu = document.getElementById('wkMeMenu'); if (!menu) return;
     var s = session(); if (!s) return;
-    var roleText = s.role === 'admin' ? 'Администратор: редактор статей и статистика' : s.role === 'guest' ? 'Гость: только просмотр, прогресс до ' + GUEST.progress.chapter + ' главы и ' + GUEST.progress.episode + ' серии' : 'Участник: свой прогресс, избранное и топ';
+    var roleText = s.role === 'editor' ? 'Редактор: правит статьи, свой прогресс, топ и избранное' : s.role === 'admin' ? 'Администратор: редактор статей и статистика' : s.role === 'guest' ? 'Гость: только просмотр, прогресс до ' + GUEST.progress.chapter + ' главы и ' + GUEST.progress.episode + ' серии' : 'Участник: свой прогресс, избранное и топ';
     menu.innerHTML = '<div><b>' + esc(s.name) + '</b><br><small>' + esc(roleText) + '</small></div>' +
-      (s.role === 'admin' ? '<button type="button" data-me="editor">✏️ Открыть редактор статей</button>' : '') +
+      (canEditRole(s.role) ? '<button type="button" data-me="editor">✏️ Открыть редактор статей</button>' : '') +
       '<button type="button" data-me="switch">🔁 Сменить учётку</button><button type="button" data-me="logout">🚪 Выйти</button>';
     menu.querySelectorAll('[data-me]').forEach(function (b) {
       b.addEventListener('click', function () {
@@ -21786,7 +21810,7 @@ img.wk-fade.wk-loaded{opacity:1}
       box = document.createElement('div'); box.id = 'wkLogin'; box.className = 'wk-login'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true');
       box.innerHTML = '<div class="wk-login-card"><h2>⚓ One Piece Wiki</h2><p>Кто сегодня на палубе? Выберите свою учётку.</p>' +
         '<div class="wk-login-grid">' + ACCOUNTS.map(function (a) {
-          return '<button type="button" class="wk-acc" data-login="' + esc(a.login) + '" style="--c:' + esc(a.color) + '"><span class="wk-ava">' + esc(a.name[0]) + '</span><span><b>' + esc(a.name) + '</b><small>' + (a.role === 'admin' ? 'администратор' : 'участник') + '</small></span></button>';
+          return '<button type="button" class="wk-acc" data-login="' + esc(a.login) + '" style="--c:' + esc(a.color) + '"><span class="wk-ava">' + esc(a.name[0]) + '</span><span><b>' + esc(a.name) + '</b><small>' + (a.role === 'admin' ? 'администратор' : a.role === 'editor' ? 'редактор' : 'участник') + '</small></span></button>';
         }).join('') + '</div>' +
         '<form class="wk-login-pass" hidden><input type="password" autocomplete="current-password" placeholder="Пароль" aria-label="Пароль"><button class="wk-btn" type="submit">Войти</button></form>' +
         '<div class="wk-login-err" aria-live="polite"></div><div class="wk-login-busy">Подключаюсь…</div>' +
@@ -21856,7 +21880,7 @@ img.wk-fade.wk-loaded{opacity:1}
     if (user.isAnonymous) return { uid: user.uid, login: 'guest', name: GUEST.name, role: 'guest' };
     var email = String(user.email || '').toLowerCase();
     var acc = ACCOUNTS.find(function (a) { return emailOf(a.login).toLowerCase() === email; });
-    return acc ? { uid: user.uid, login: acc.login, name: acc.name, role: acc.role === 'admin' ? 'admin' : 'member' } : null;
+    return acc ? { uid: user.uid, login: acc.login, name: acc.name, role: acc.role === 'admin' || acc.role === 'editor' ? acc.role : 'member' } : null;
   }
 
   /* ---------- общий цикл запуска ---------- */
@@ -21955,7 +21979,34 @@ img.wk-fade.wk-loaded{opacity:1}
     toast('Первый вход администратора: переношу статьи в облако…');
     return pushContent(contentOf(snap), null, true);
   }
+  /* Перед записью сверяемся с облаком: если кто-то (Дима или Валик) успел сохранить свои правки,
+     не затираем их порядок/настройки и просим обновить страницу. */
   function pushContent(content, prevContent, all) {
+    var cache = readJSON(CONTENT_KEY, null), cachedVer = cache && cache.version;
+    var check = prevContent ? fb.fs.getDoc(fb.fs.doc(db, 'content', 'meta')).then(function (snap) { return snap.exists() ? snap.data() : null; }, function () { return null; }) : Promise.resolve(null);
+    return check.then(function (cloudMeta) {
+      var stale = cloudMeta && cachedVer != null && cloudMeta.version !== cachedVer ? cloudMeta : null;
+      return pushContentNow(content, prevContent, all, stale);
+    });
+  }
+  function changedFields(a, b) {
+    var x = {}, y = {}; try { x = a ? JSON.parse(a) : {}; } catch (e) {} try { y = b ? JSON.parse(b) : {}; } catch (e) {}
+    var keys = {}; Object.keys(x).concat(Object.keys(y)).forEach(function (k) { keys[k] = 1; });
+    // Поле, которого не было, и пустое/значение по умолчанию — не правка (так выглядят новые поля схемы).
+    function blank(v) { return v === undefined || v === null || v === '' || v === false || v === 0 || v === 50 || v === 100 || v === '50' || v === '100' || (Array.isArray(v) && !v.length); }
+    return Object.keys(keys).filter(function (k) {
+      if (k === 'updatedAt' || JSON.stringify(x[k]) === JSON.stringify(y[k])) return false;
+      if ((!(k in x) || !(k in y)) && blank(x[k]) && blank(y[k])) return false;
+      return true;
+    });
+  }
+  var editSeq = 0;
+  function editOp(type, rid, title, action, before, after) {
+    var ts = Date.now(), id = ts + '_' + me.login + '_' + (editSeq++) + Math.random().toString(36).slice(2, 6);
+    return { ref: fb.fs.doc(db, 'edits', id), data: { uid: me.uid, login: me.login, name: me.name, ts: ts, type: type, id: String(rid), title: String(title || rid), action: action, fields: changedFields(before, after), before: before || null, after: after || null } };
+  }
+  function recTitle(r) { return r && (r.name || r.character_id || r.id) || ''; }
+  function pushContentNow(content, prevContent, all, stale) {
     var now = new Date().toISOString(), ops = [], order = {};
     var prev = {};
     if (prevContent && prevContent.collections) TYPES.forEach(function (t) { (prevContent.collections[t] || []).forEach(function (r) { prev[recId(t, r.id)] = JSON.stringify(r); }); });
@@ -21966,12 +22017,27 @@ img.wk-fade.wk-loaded{opacity:1}
         if (!r || r.id == null) return;
         var id = recId(t, r.id), json = JSON.stringify(r);
         order[t].push(r.id); seen[id] = 1;
-        if (all || prev[id] !== json) ops.push({ ref: fb.fs.doc(db, 'records', id), data: { type: t, id: String(r.id), json: json, updatedAt: now } });
+        var real = !prev[id] || (prev[id] !== json && changedFields(prev[id], json).length > 0);
+        if (all || real) ops.push({ ref: fb.fs.doc(db, 'records', id), data: { type: t, id: String(r.id), json: json, updatedAt: now } });
+        if (prevContent && real) ops.push(editOp(t, r.id, recTitle(r), prev[id] ? 'update' : 'create', prev[id] || null, json));
       });
     });
-    Object.keys(prev).forEach(function (id) { if (!seen[id]) ops.push({ ref: fb.fs.doc(db, 'records', id), del: true }); });
+    Object.keys(prev).forEach(function (id) {
+      if (seen[id]) return;
+      ops.push({ ref: fb.fs.doc(db, 'records', id), del: true });
+      var old = null; try { old = JSON.parse(prev[id]); } catch (e) {}
+      ops.push(editOp(id.split('~')[0], old ? old.id : id.split('~').slice(1).join('~'), recTitle(old), 'delete', prev[id], null));
+    });
+    if (stale) {
+      // Чужие новые статьи остаются в порядке; чужие настройки не затираем, если сам их не менял.
+      try {
+        var cloudOrder = JSON.parse(stale.order || '{}');
+        TYPES.forEach(function (t) { (cloudOrder[t] || []).forEach(function (rid) { var k = recId(t, rid); if (!seen[k] && !prev[k]) order[t].push(rid); }); });
+      } catch (e) {}
+    }
     var extra = { accentSettings: content.accentSettings, rewardRankColors: content.rewardRankColors, customAchievements: content.customAchievements, hiddenFruitIds: content.hiddenFruitIds, medalArt: content.medalArt || {} };
     var prevExtra = prevContent ? JSON.stringify({ accentSettings: prevContent.accentSettings, rewardRankColors: prevContent.rewardRankColors, customAchievements: prevContent.customAchievements, hiddenFruitIds: prevContent.hiddenFruitIds, medalArt: prevContent.medalArt || {} }) : '';
+    if (stale && JSON.stringify(extra) === prevExtra) { try { extra = JSON.parse(stale.extra || '{}'); } catch (e) {} }
     var orderJson = JSON.stringify(order);
     var prevOrder = prevContent ? JSON.stringify((function () { var o = {}; TYPES.forEach(function (t) { o[t] = (prevContent.collections[t] || []).map(function (r) { return r.id; }); }); return o; })()) : '';
     if (!ops.length && JSON.stringify(extra) === prevExtra && orderJson === prevOrder) return Promise.resolve(false);
@@ -21979,21 +22045,22 @@ img.wk-fade.wk-loaded{opacity:1}
     ops.push({ ref: fb.fs.doc(db, 'content', 'meta'), data: { version: version, updatedAt: now, updatedBy: me.login, order: orderJson, extra: JSON.stringify(extra), records: Object.keys(seen).length } });
     return writeBatches(ops, all ? function (d, n) { if (n > 50 && d < n) toast('Загружено в облако: ' + d + ' из ' + n, null, 1500); } : null).then(function () {
       var data = { version: 1, updatedAt: now, collections: content.collections, accentSettings: content.accentSettings, rewardRankColors: content.rewardRankColors, customAchievements: content.customAchievements, hiddenFruitIds: content.hiddenFruitIds, medalArt: content.medalArt || {} };
-      quietSet(CONTENT_KEY, JSON.stringify({ version: version, data: data }));
+      quietSet(CONTENT_KEY, JSON.stringify({ version: stale ? 0 : version, data: data }));
       if (all) toast('Статьи загружены в облако ✓');
+      if (stale) toast('Твои правки сохранены. Пока ты работал, ' + nameOf(stale.updatedBy) + ' тоже вносил изменения — обнови страницу, чтобы их увидеть.', { label: 'Обновить', run: function () { syncContent().then(function () { location.reload(); }, function () { location.reload(); }); } });
       return true;
     });
   }
   var contentTimer = 0, contentBusy = null;
   function scheduleContentPush() {
-    if (!me || me.role !== 'admin') return;
+    if (!me || !canEditRole(me.role)) return;
     clearTimeout(contentTimer);
     setSync('saving');
     contentTimer = setTimeout(flushContent, 1400);
   }
   function flushContent() {
     clearTimeout(contentTimer); contentTimer = 0;
-    if (!me || me.role !== 'admin' || !db) return Promise.resolve();
+    if (!me || !canEditRole(me.role) || !db) return Promise.resolve();
     var snap = readJSON(STORAGE_KEY, null); if (!snap || !snap.collections) return Promise.resolve();
     var cache = readJSON(CONTENT_KEY, null);
     var run = function () { return pushContent(contentOf(snap), cache && cache.data, !cache).then(function () { setSync('ok'); }, function (e) { console.warn('Не сохранилось в облако:', e); setSync('error'); toast('Не удалось сохранить статьи в облако. Повторю при следующем изменении.'); }); };
@@ -22063,7 +22130,7 @@ img.wk-fade.wk-loaded{opacity:1}
         return;
       }
       schedulePersonalPush(key);
-    } else if (key === STORAGE_KEY && me.role === 'admin') scheduleContentPush();
+    } else if (key === STORAGE_KEY && canEditRole(me.role)) scheduleContentPush();
   });
 
   /* =========================================================
@@ -22168,6 +22235,79 @@ img.wk-fade.wk-loaded{opacity:1}
   function day(ms) { var d = new Date(ms); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
   var TYPE_ICON = { character: '👤', story: '📖', fruit: '🍎', useful: '💡', reward: '💰' };
   var TAB_NAMES = { favorites: 'Каюта', characters: 'Персонажи', story: 'Сюжет', rewards: 'Награды', fruits: 'Плоды', useful: 'Полезное' };
+  /* ---------- история правок ---------- */
+  var FIELD_NAMES = { name: 'название', nickname: 'прозвище', person_link: 'фото', person2_link: 'второе фото', timeskip_description: 'таймскип', description: 'описание', status: 'статус', chapter: 'глава', episode: 'эпизод', image: 'картинка', type: 'тип', owner: 'владелец', connect: 'связи', characters: 'персонажи', chapters: 'главы', episodes: 'эпизоды', saga: 'сага', arc: 'арка', saga_anime: 'сага (аниме)', arc_anime: 'арка (аниме)', reward: 'сумма', reward_image: 'фото награды', key: 'ключевые события', appearance: 'глава появления', appearance_chapter: 'глава появления', appearance_episode: 'эпизод появления', fruit_article_id: 'плод', fruit2_article_id: 'второй плод', flag: 'флаг', ship: 'корабль', id: 'ID' };
+  function fieldName(k) { if (/image_position|image_zoom/.test(k)) return 'кадрирование'; if (/^__wiki/.test(k)) return ''; return FIELD_NAMES[k] || k; }
+  function uniq(a) { var o = []; a.forEach(function (x) { if (x && o.indexOf(x) < 0) o.push(x); }); return o; }
+  function editVerb(e, g) {
+    var v = { create: ['создал', 'создала', 'создал(а)'], update: ['изменил', 'изменила', 'изменил(а)'], delete: ['удалил', 'удалила', 'удалил(а)'], revert: ['откатил', 'откатила', 'откатил(а)'] }[e.action] || ['изменил', 'изменила', 'изменил(а)'];
+    return v[g];
+  }
+  function shortVal(v) { if (v == null || v === '') return '—'; if (typeof v !== 'string') v = JSON.stringify(v); return v.length > 220 ? v.slice(0, 219) + '…' : v; }
+  function diffHTML(e) {
+    var a = {}, b = {}; try { a = e.before ? JSON.parse(e.before) : {}; } catch (er) {} try { b = e.after ? JSON.parse(e.after) : {}; } catch (er) {}
+    var keys = (e.fields || []).filter(function (k) { return fieldName(k); });
+    if (e.action === 'create' || e.action === 'delete') keys = keys.filter(function (k) { return (e.action === 'create' ? b : a)[k] !== '' && (e.action === 'create' ? b : a)[k] != null && !(Array.isArray((e.action === 'create' ? b : a)[k]) && !(e.action === 'create' ? b : a)[k].length); }).slice(0, 12);
+    if (!keys.length) return '<div class="wk-ed-diff"><i>Изменились только служебные поля.</i></div>';
+    return '<div class="wk-ed-diff">' + keys.map(function (k) {
+      return '<div><b>' + esc(fieldName(k)) + '</b>' + (e.action !== 'create' ? '<del>' + esc(shortVal(a[k])) + '</del>' : '') + (e.action !== 'delete' ? '<ins>' + esc(shortVal(b[k])) + '</ins>' : '') + '</div>';
+    }).join('') + '</div>';
+  }
+  function editsBoxHTML(edits, prefs) {
+    var who = prefs.editsWho || 'all';
+    var editors = uniq(edits.map(function (e) { return e.login; }));
+    var list = edits.filter(function (e) { return who === 'all' || e.login === who; });
+    var since7 = Date.now() - 7 * 86400000, week = edits.filter(function (e) { return e.ts > since7; });
+    var byPerson = {}; week.forEach(function (e) { byPerson[e.login] = (byPerson[e.login] || 0) + 1; });
+    var head = '<div class="wk-ed-hist-head"><h3>История правок<small>' + edits.length + ' последних</small></h3><div class="wk-seg" role="group" aria-label="Кто правил">' +
+      ['all'].concat(editors).map(function (l) { return '<button type="button" data-edits-who="' + esc(l) + '" class="' + (who === l ? 'active' : '') + '">' + (l === 'all' ? 'Все' : esc(nameOf(l))) + '</button>'; }).join('') + '</div></div>' +
+      (week.length ? '<div class="wk-ed-week">За неделю: ' + Object.keys(byPerson).map(function (l) { return '<b>' + esc(nameOf(l)) + '</b> — ' + byPerson[l]; }).join(' · ') + '</div>' : '');
+    if (!list.length) return '<div class="wk-st-box wk-ed-hist">' + head + '<div class="wk-st-empty">Правок пока нет. Здесь появится всё, что меняют Дима и Валик: кто, когда, какую статью и какие поля.</div></div>';
+    return '<div class="wk-st-box wk-ed-hist">' + head + '<div class="wk-ed-list">' + list.slice(0, 120).map(function (e, i) {
+      var acc = account(e.login) || {}, g = acc.gender === 'f' ? 1 : acc.gender === 'm' ? 0 : 2;
+      var fields = uniq((e.fields || []).map(fieldName)).slice(0, 5);
+      var when = new Date(e.ts);
+      return '<div class="wk-ed-item" data-edit-i="' + i + '"><span class="wk-ava" style="background:' + esc(acc.color || '#94a3b8') + '">' + esc((e.name || nameOf(e.login) || '?')[0]) + '</span>' +
+        '<div class="wk-ed-main"><div><b>' + esc(e.name || nameOf(e.login)) + '</b> ' + editVerb(e, g) + ' ' + (TYPE_ICON[e.type] || '') + ' <button type="button" class="wk-ed-open" data-edit-open>«' + esc(e.title) + '»</button>' +
+        (e.action === 'update' && fields.length ? '<span class="wk-ed-fields"> · ' + esc(fields.join(', ')) + ((e.fields || []).length > 5 ? '…' : '') + '</span>' : '') + '</div>' +
+        '<div class="wk-ed-meta"><em title="' + esc(when.toLocaleString('ru-RU')) + '">' + ago(e.ts) + ' · ' + when.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) + '</em>' +
+        '<button type="button" data-edit-diff>Что изменилось</button>' + (e.action !== 'revert' ? '<button type="button" data-edit-revert>↩ Вернуть как было</button>' : '') + '</div><div class="wk-ed-diff-host" hidden></div></div></div>';
+    }).join('') + '</div></div>';
+  }
+  function bindEdits(pane, prefs) {
+    var edits = pane.__wkEdits || [];
+    var who = prefs.editsWho || 'all';
+    var list = edits.filter(function (e) { return who === 'all' || e.login === who; });
+    pane.querySelectorAll('[data-edits-who]').forEach(function (b) { b.addEventListener('click', function () { prefs.editsWho = b.getAttribute('data-edits-who'); quietSet(ST_KEY, JSON.stringify(prefs)); var box = pane.querySelector('.wk-ed-hist'); if (box) { box.outerHTML = editsBoxHTML(edits, prefs); bindEdits(pane, prefs); } }); });
+    pane.querySelectorAll('.wk-ed-item').forEach(function (row) {
+      var e = list[Number(row.getAttribute('data-edit-i'))]; if (!e) return;
+      row.querySelector('[data-edit-diff]').addEventListener('click', function () { var h = row.querySelector('.wk-ed-diff-host'); if (h.hidden && !h.innerHTML) h.innerHTML = diffHTML(e); h.hidden = !h.hidden; });
+      row.querySelector('[data-edit-open]').addEventListener('click', function () { try { if (e.action !== 'delete' && window.__wikiEditRecord) window.__wikiEditRecord(e.type, e.id); } catch (er) {} });
+      var rv = row.querySelector('[data-edit-revert]');
+      if (rv) rv.addEventListener('click', function () { revertEdit(e); });
+    });
+  }
+  function revertEdit(e) {
+    var what = e.action === 'create' ? 'удалить статью «' + e.title + '», созданную этой правкой' : e.action === 'delete' ? 'восстановить удалённую статью «' + e.title + '»' : 'вернуть статью «' + e.title + '» к состоянию до этой правки';
+    if (!confirm('Точно ' + what + '?\n\nЕсли после этой правки статью меняли ещё, те изменения тоже откатятся.')) return;
+    var rid = recId(e.type, e.id), ref = fb.fs.doc(db, 'records', rid), now = new Date().toISOString();
+    var curRef = fb.fs.getDoc(ref).then(function (snap) { return snap.exists() ? snap.data().json : null; });
+    var metaRef = fb.fs.doc(db, 'content', 'meta');
+    Promise.all([curRef, fb.fs.getDoc(metaRef)]).then(function (r) {
+      var current = r[0], meta = r[1].exists() ? r[1].data() : {};
+      var ops = [];
+      if (e.before) ops.push({ ref: ref, data: { type: e.type, id: String(e.id), json: e.before, updatedAt: now } }); else ops.push({ ref: ref, del: true });
+      var log = editOp(e.type, e.id, e.title, 'revert', current, e.before); log.data.revertOf = e._id || ''; ops.push(log);
+      var order = {}; try { order = JSON.parse(meta.order || '{}'); } catch (er) {}
+      order[e.type] = (order[e.type] || []).filter(function (x) { return String(x) !== String(e.id); });
+      if (e.before) order[e.type].push(e.id);
+      return writeBatches(ops).then(function () { return fb.fs.setDoc(metaRef, { version: Date.now(), updatedAt: now, updatedBy: me.login, order: JSON.stringify(order) }, { merge: true }); });
+    }).then(function () {
+      var c = readJSON(CONTENT_KEY, null); if (c) { c.version = 0; quietSet(CONTENT_KEY, JSON.stringify(c)); }
+      toast('Готово: «' + e.title + '» возвращена. Обновляю страницу…');
+      syncContent().then(function () { location.reload(); }, function () { location.reload(); });
+    }, function (er) { toast('Не получилось откатить: ' + (er && (er.code || er.message))); });
+  }
   function renderStats(pane) {
     if (!db || !me || me.role !== 'admin') { pane.innerHTML = '<div class="wk-st-empty">Статистика доступна администратору после входа.</div>'; return; }
     var prefs = readJSON(ST_KEY, { days: 30, hideAdmin: false });
@@ -22175,8 +22315,12 @@ img.wk-fade.wk-loaded{opacity:1}
     var since = Date.now() - prefs.days * 86400000;
     var q1 = fb.fs.query(fb.fs.collection(db, 'sessions'), fb.fs.where('start', '>=', since), fb.fs.orderBy('start', 'desc'), fb.fs.limit(5000));
     var q2 = fb.fs.query(fb.fs.collection(db, 'events'), fb.fs.where('ts', '>=', since), fb.fs.orderBy('ts', 'desc'), fb.fs.limit(10000));
-    Promise.all([fb.fs.getDocs(q1), fb.fs.getDocs(q2), fb.fs.getDocs(fb.fs.collection(db, 'users')), fb.fs.getDocs(fb.fs.collection(db, 'tops'))]).then(function (r) {
-      var sessions = [], events = [], users = {}, tops = {};
+    var q3 = fb.fs.query(fb.fs.collection(db, 'edits'), fb.fs.orderBy('ts', 'desc'), fb.fs.limit(300));
+    Promise.all([fb.fs.getDocs(q1), fb.fs.getDocs(q2), fb.fs.getDocs(fb.fs.collection(db, 'users')), fb.fs.getDocs(fb.fs.collection(db, 'tops')), fb.fs.getDocs(q3).catch(function () { return null; })]).then(function (r) {
+      var sessions = [], events = [], users = {}, tops = {}, edits = [];
+      if (r[4]) r[4].forEach(function (d) { var x = d.data(); x._id = d.id; edits.push(x); });
+      edits.sort(function (a, b) { return b.ts - a.ts; });
+      pane.__wkEdits = edits;
       r[0].forEach(function (d) { sessions.push(d.data()); });
       r[1].forEach(function (d) { events.push(d.data()); });
       r[2].forEach(function (d) { var x = d.data(); users[x.login] = x; });
@@ -22219,6 +22363,7 @@ img.wk-fade.wk-loaded{opacity:1}
       html += '<tr><td><span class="wk-st-who"><span class="wk-ava" style="background:' + p.color + '">' + esc(p.role === 'guest' ? '👀' : p.name[0]) + '</span>' + esc(p.name) + '</span></td><td class="wk-num">' + x.visits + '</td><td class="wk-num">' + Object.keys(x.days).length + '</td><td class="wk-num">' + x.views + '</td><td class="wk-num">' + fmtDur(x.sec) + '</td><td>' + (x.last ? ago(x.last) : (p.gender === 'f' ? 'не заходила' : p.gender === 'm' ? 'не заходил' : 'не заходил(а)')) + '</td><td>' + prog + '</td><td class="wk-num">' + topFilled + '</td><td class="wk-num">' + fav + '</td></tr>';
     });
     html += '</tbody></table></div></div>';
+    html += editsBoxHTML(pane.__wkEdits || [], prefs);
 
     // График визитов по дням (столбики с разбивкой по участникам).
     var daysN = prefs.days, dayKeys = [];
@@ -22275,6 +22420,7 @@ img.wk-fade.wk-loaded{opacity:1}
 
     html += '<div class="wk-st-admin"><span>Облако статей:</span><button type="button" data-reupload>⬆ Перезалить все статьи из этого браузера в облако</button><span>— если облачная копия разошлась с нужной.</span></div>';
     pane.innerHTML = html;
+    bindEdits(pane, prefs);
     pane.querySelectorAll('[data-days]').forEach(function (b) { b.addEventListener('click', function () { prefs.days = Number(b.getAttribute('data-days')); quietSet(ST_KEY, JSON.stringify(prefs)); renderStats(pane); }); });
     pane.querySelector('[data-hide-admin]').addEventListener('change', function (e) { prefs.hideAdmin = e.target.checked; quietSet(ST_KEY, JSON.stringify(prefs)); renderStats(pane); });
     pane.querySelector('[data-refresh]').addEventListener('click', function () { renderStats(pane); });
@@ -22555,7 +22701,7 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
   'use strict';
   function canEdit() {
     if (!window.WIKI_CLOUD_ENABLED) return true; // локальный режим без учёток
-    try { var s = window.__wikiCloud && window.__wikiCloud.session(); return !!(s && s.role === 'admin'); } catch (e) { return false; }
+    try { var s = window.__wikiCloud && window.__wikiCloud.session(); return !!(s && (s.role === 'admin' || s.role === 'editor')); } catch (e) { return false; }
   }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function validUrl(u) { u = String(u || '').trim(); return u && u !== 'Нет' && /^(https?:\/\/|data:image\/)/i.test(u) ? u : ''; }
@@ -22799,6 +22945,32 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
 </script>
 
 <style id="wiki-alt-look-style">
+
+.wk-ed-hist{margin-top:12px}
+.wk-ed-hist-head{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:6px}
+.wk-ed-hist-head h3{margin:0!important}
+.wk-ed-week{font-size:12px;color:#94a3b8;margin:0 0 8px}
+.wk-ed-week b{color:#e2e8f0}
+.wk-ed-list{display:flex;flex-direction:column;gap:6px;max-height:560px;overflow:auto;padding-right:4px}
+.wk-ed-item{display:flex;gap:10px;align-items:flex-start;padding:9px 10px;border:1px solid rgba(148,163,184,.16);border-radius:12px;background:rgba(15,23,42,.45)}
+.wk-ed-item .wk-ava{flex:0 0 auto}
+.wk-ed-main{min-width:0;flex:1;font-size:13px;line-height:1.45;color:#cbd5e1}
+.wk-ed-main b{color:#f1f5f9}
+.wk-ed-open{all:unset;cursor:pointer;color:#fde68a;font-weight:600}
+.wk-ed-open:hover{text-decoration:underline}
+.wk-ed-fields{color:#94a3b8}
+.wk-ed-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:4px}
+.wk-ed-meta em{font-style:normal;font-size:11.5px;color:#64748b}
+.wk-ed-meta button{all:unset;cursor:pointer;font-size:11.5px;padding:2px 8px;border-radius:999px;border:1px solid rgba(148,163,184,.28);color:#cbd5e1}
+.wk-ed-meta button:hover{border-color:#fde68a;color:#fde68a}
+.wk-ed-diff{margin-top:6px;display:flex;flex-direction:column;gap:6px;font-size:12.5px}
+.wk-ed-diff>div{display:grid;gap:3px;padding:6px 8px;border-radius:8px;background:rgba(2,6,23,.55)}
+.wk-ed-diff b{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8}
+.wk-ed-diff del{color:#fca5a5;text-decoration:line-through;text-decoration-color:rgba(252,165,165,.5);overflow-wrap:anywhere}
+.wk-ed-diff ins{color:#86efac;text-decoration:none;overflow-wrap:anywhere}
+#wikiEditorForm [data-editor-field="person2_image_position"]{grid-column:1 / -1!important}
+.wk-timeskip h2 .wk-ts-tag{margin-left:8px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.02em;vertical-align:middle;color:#fde68a;background:color-mix(in srgb,#f59e0b 22%,transparent);border:1px solid color-mix(in srgb,#f59e0b 45%,transparent)}
+.description-section.wk-earlier{opacity:.86}
 .wk-alt-look .wk-alt-row{display:flex;gap:16px;align-items:center}
 .wk-alt-card{flex:0 0 132px;height:176px;border-radius:14px;overflow:hidden;padding:0;border:1px solid color-mix(in srgb,var(--glow-color,#a78bfa) 45%,#334155);background:#0b1220;cursor:zoom-in;filter:saturate(.85);transition:filter .2s,transform .2s}
 .wk-alt-card:hover{filter:none;transform:translateY(-2px)}
@@ -22806,35 +22978,81 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
 .wk-alt-text{display:flex;flex-direction:column;gap:6px;font-size:14px;line-height:1.5;color:#cbd5e1}
 .wk-alt-text b{color:#f1f5f9}.wk-alt-text span{color:#94a3b8;font-size:13px}
 @media (max-width:520px){.wk-alt-card{flex-basis:104px;height:140px}.wk-alt-look .wk-alt-row{gap:12px}}
-.wk-alt-preview{display:flex;gap:12px;align-items:center;margin:4px 0 10px;padding:10px;border:1px dashed #475569;border-radius:12px;background:#0b122080}
-.wk-alt-preview .wk-alt-pv{width:96px;height:128px;border-radius:10px;overflow:hidden;background:#111827;flex:0 0 auto;border:1px solid #334155}
-.wk-alt-preview .wk-alt-pv img{width:100%;height:100%;object-fit:cover;display:block}
-.wk-alt-preview small{color:#94a3b8;font-size:12px;line-height:1.45}
+#wikiEditorForm .wiki-character-crop-preview{cursor:grab;touch-action:none;user-select:none}
+#wikiEditorForm .wiki-character-crop-preview.wk-dragging{cursor:grabbing}
+#wikiEditorForm .wiki-character-crop-preview img{pointer-events:none;-webkit-user-drag:none}
 </style>
 <script id="wiki-alt-look-editor">
 (function () {
-  // Живое превью второго фото в редакторе (как оно ляжет в карточку).
-  function update(host) {
-    var url = host.querySelector('[data-field="person2_link"]'); if (!url) return;
-    [['person2_from_chapter', '598 (таймскип)'], ['person2_from_episode', '517 (таймскип)'], ['person2_link', 'https://… — фото нового облика']].forEach(function (p) { var el = host.querySelector('[data-field="' + p[0] + '"]'); if (el && !el.placeholder) el.placeholder = p[1]; });
-    var box = host.querySelector('.wk-alt-preview');
-    if (!box) {
-      box = document.createElement('div'); box.className = 'wk-alt-preview';
-      box.innerHTML = '<div class="wk-alt-pv"><img alt=""></div><small></small>';
-      var field = url.closest('.wiki-editor-field'); if (!field) return;
-      field.parentNode.insertBefore(box, field.nextSibling);
-    }
-    var v = function (k, d) { var el = host.querySelector('[data-field="' + k + '"]'); var n = Number(el && String(el.value).trim() !== '' ? el.value : d); return isFinite(n) ? n : d; };
-    var x = v('person2_image_position_x', 50), y = v('person2_image_position', 50), z = v('person2_image_zoom', 100);
-    var img = box.querySelector('img'), u = String(url.value || '').trim();
-    box.hidden = !u;
-    if (u && img.getAttribute('src') !== u) img.src = u;
-    img.style.objectPosition = x + '% ' + y + '%'; img.style.transform = 'scale(' + z / 100 + ')'; img.style.transformOrigin = x + '% ' + y + '%';
-    var ch = (host.querySelector('[data-field="person2_from_chapter"]') || {}).value || '', ep = (host.querySelector('[data-field="person2_from_episode"]') || {}).value || '';
-    box.querySelector('small').textContent = 'Так второе фото будет выглядеть в карточке. Станет основным с ' + ((ch || ep) ? [ch ? 'главы ' + ch : '', ep ? 'эпизода ' + ep : ''].filter(Boolean).join(' или ') : 'таймскипа (глава 598 или эпизод 517)') + '. Положение и приближение — в процентах, как у основного фото.';
+  // Второе фото: ползунки + превью; плюс «перетащи и приблизь» для всех превью кадрирования.
+  function q(host, k) { return host.querySelector('[data-field="' + k + '"]'); }
+  function syncAlt(host) {
+    var ed = host.querySelector('[data-alt-crop]'); if (!ed) return;
+    var url = q(host, 'person2_link');
+    [['person2_from_chapter', '598 (таймскип)'], ['person2_from_episode', '517 (таймскип)'], ['person2_link', 'https://… — фото нового облика']].forEach(function (p) { var el = q(host, p[0]); if (el && !el.placeholder) el.placeholder = p[1]; });
+    var y = q(host, 'person2_image_position'), x = q(host, 'person2_image_position_x'), z = q(host, 'person2_image_zoom');
+    var vy = Number(y.value) || 0, vx = Number(x.value) || 0, vz = Number(z.value) || 100;
+    ed.querySelector('[data-alt-out="y"]').textContent = vy + '%';
+    ed.querySelector('[data-alt-out="x"]').textContent = vx + '%';
+    ed.querySelector('[data-alt-out="zoom"]').textContent = vz + '%';
+    var pv = ed.querySelector('[data-alt-crop-preview]'), img = ed.querySelector('[data-alt-crop-img]'), empty = ed.querySelector('[data-alt-crop-empty]');
+    var main = host.querySelector('[data-character-crop-preview]');
+    if (main && main.style.width) { pv.style.width = main.style.width; pv.style.height = main.style.height; pv.style.maxWidth = '100%'; pv.style.marginInline = 'auto'; }
+    var mainEd = main && main.closest('.wiki-character-crop-editor');
+    if (mainEd && mainEd.style.gridTemplateColumns) ed.style.gridTemplateColumns = mainEd.style.gridTemplateColumns;
+    img.style.setProperty('object-fit', 'cover', 'important');
+    img.style.setProperty('object-position', vx + '% ' + vy + '%', 'important');
+    img.style.setProperty('transform', 'scale(' + vz / 100 + ')', 'important');
+    img.style.setProperty('transform-origin', vx + '% ' + vy + '%', 'important');
+    var u = String(url && url.value || '').trim(), ok = /^(https?:\/\/|data:image\/)/i.test(u);
+    if (!ok) { img.hidden = true; img.removeAttribute('src'); empty.hidden = false; empty.textContent = u ? 'Нужна прямая ссылка (http/https)' : 'Укажи ссылку на второе фото выше'; return; }
+    img.onload = function () { img.hidden = false; empty.hidden = true; };
+    img.onerror = function () { img.hidden = true; empty.hidden = false; empty.textContent = 'Не удалось загрузить изображение'; };
+    if (img.getAttribute('src') !== u) img.src = u; else if (img.complete && img.naturalWidth) { img.hidden = false; empty.hidden = true; }
   }
-  document.addEventListener('input', function (e) { var f = e.target && e.target.closest && e.target.closest('#wikiEditorForm'); if (f && /^person2_/.test(e.target.getAttribute('data-field') || '')) update(f); }, true);
-  new MutationObserver(function () { var f = document.getElementById('wikiEditorForm'); if (f && f.querySelector('[data-field="person2_link"]') && !f.querySelector('.wk-alt-preview')) update(f); }).observe(document.documentElement, { childList: true, subtree: true });
+  document.addEventListener('input', function (e) {
+    var f = e.target && e.target.closest && e.target.closest('#wikiEditorForm');
+    if (f && /^person2_/.test(e.target.getAttribute('data-field') || '')) syncAlt(f);
+  }, true);
+  var pending = 0;
+  new MutationObserver(function () {
+    if (pending) return; pending = requestAnimationFrame(function () {
+      pending = 0;
+      var f = document.getElementById('wikiEditorForm'); var ed = f && f.querySelector('[data-alt-crop]');
+      if (ed && !ed.__wkSynced) { ed.__wkSynced = true; syncAlt(f); setTimeout(function () { syncAlt(f); }, 120); }
+    });
+  }).observe(document.documentElement, { childList: true, subtree: true });
+
+  // Перетаскивание и колесо на любом превью кадрирования.
+  function rangesFor(pv) {
+    var ed = pv.closest('.wiki-character-crop-editor'); if (!ed) return null;
+    var r = ed.querySelectorAll('input[type="range"]'); return r.length >= 2 ? { y: r[0], x: r[1], z: r[2] || null } : null;
+  }
+  function setVal(inp, v) { var min = Number(inp.min) || 0, max = Number(inp.max) || 100; v = Math.round(Math.max(min, Math.min(max, v))); if (String(v) === inp.value) return; inp.value = v; inp.dispatchEvent(new Event('input', { bubbles: true })); inp.dispatchEvent(new Event('change', { bubbles: true })); }
+  var drag = null;
+  document.addEventListener('pointerdown', function (e) {
+    var pv = e.target.closest && e.target.closest('#wikiEditorForm .wiki-character-crop-preview'); if (!pv) return;
+    var r = rangesFor(pv); if (!r) return;
+    e.preventDefault();
+    drag = { pv: pv, r: r, sx: e.clientX, sy: e.clientY, x0: Number(r.x.value) || 50, y0: Number(r.y.value) || 50, w: pv.clientWidth || 200, h: pv.clientHeight || 220 };
+    try { pv.setPointerCapture(e.pointerId); } catch (er) {}
+    pv.classList.add('wk-dragging');
+  }, true);
+  document.addEventListener('pointermove', function (e) {
+    if (!drag) return;
+    var z = drag.r.z ? (Number(drag.r.z.value) || 100) / 100 : 1;
+    var k = 1.6 / z;
+    setVal(drag.r.x, drag.x0 - (e.clientX - drag.sx) / drag.w * 100 * k);
+    setVal(drag.r.y, drag.y0 - (e.clientY - drag.sy) / drag.h * 100 * k);
+  }, true);
+  function end() { if (drag) { drag.pv.classList.remove('wk-dragging'); drag = null; } }
+  document.addEventListener('pointerup', end, true); document.addEventListener('pointercancel', end, true);
+  document.addEventListener('wheel', function (e) {
+    var pv = e.target.closest && e.target.closest('#wikiEditorForm .wiki-character-crop-preview'); if (!pv) return;
+    var r = rangesFor(pv); if (!r || !r.z) return;
+    e.preventDefault();
+    setVal(r.z, (Number(r.z.value) || 100) + (e.deltaY < 0 ? 10 : -10));
+  }, { capture: true, passive: false });
 })();
 </script>
 </body></html>
