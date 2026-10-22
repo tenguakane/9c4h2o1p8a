@@ -4626,7 +4626,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "23.10.2026 · 8";
+const WIKI_VERSION = "23.10.2026 · 9";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -11995,6 +11995,13 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         oldIds.filter(id=>!newIds.includes(id)).forEach(id=>{const f=findAnyRecord(id);if(!f)return;const was=connectList(rawValue(f.record,'connect'));const c=was.filter(x=>x!==self&&x!==oldSelf);if(c.length!==was.length){f.record.connect=c;changed++;}});
         return changed;
     }
+    // «Не нужно» для подсказок «Возможно забыли» — хранится в самой статье.
+    window.__wikiSetNotNeeded=function(type,id,keys){
+        if(!collections[type])return false;const r=allRecords(type).find(x=>String(rawValue(x,'id'))===String(id));if(!r)return false;
+        const v=(keys||[]).filter(Boolean).join(',');
+        if(r.__wikiRaw&&Object.prototype.hasOwnProperty.call(r.__wikiRaw,'not_needed'))r.not_needed=v;else{try{Object.defineProperty(r,'not_needed',{value:v,writable:true,enumerable:true,configurable:true});}catch(e){r.not_needed=v;}}
+        return persist(false);
+    };
     window.__wikiMakeLinksMutual=function(){
         let changed=0;
         Object.keys(collections).forEach(t=>allRecords(t).forEach(r=>{const self=String(rawValue(r,'id'));connectList(rawValue(r,'connect')).forEach(id=>{if(id===self)return;const f=findAnyRecord(id);if(!f)return;const c=connectList(rawValue(f.record,'connect'));if(!c.includes(self)){c.push(self);f.record.connect=c;changed++;}});}));
@@ -22278,7 +22285,7 @@ img.wk-fade.wk-loaded{opacity:1}
   var TYPE_ICON = { character: '👤', story: '📖', fruit: '🍎', useful: '💡', reward: '💰' };
   var TAB_NAMES = { favorites: 'Каюта', characters: 'Персонажи', story: 'Сюжет', rewards: 'Награды', fruits: 'Плоды', useful: 'Полезное' };
   /* ---------- история правок ---------- */
-  var FIELD_NAMES = { name: 'название', nickname: 'прозвище', person_link: 'фото', person2_link: 'второе фото', timeskip_description: 'таймскип', description: 'описание', status: 'статус', chapter: 'глава', episode: 'эпизод', image: 'картинка', type: 'тип', owner: 'владелец', connect: 'связи', characters: 'персонажи', chapters: 'главы', episodes: 'эпизоды', saga: 'сага', arc: 'арка', saga_anime: 'сага (аниме)', arc_anime: 'арка (аниме)', reward: 'сумма', reward_image: 'фото награды', key: 'ключевые события', appearance: 'глава появления', appearance_chapter: 'глава появления', appearance_episode: 'эпизод появления', fruit_article_id: 'плод', fruit2_article_id: 'второй плод', flag: 'флаг', ship: 'корабль', id: 'ID' };
+  var FIELD_NAMES = { name: 'название', nickname: 'прозвище', person_link: 'фото', person2_link: 'второе фото', timeskip_description: 'таймскип', description: 'описание', status: 'статус', chapter: 'глава', episode: 'эпизод', image: 'картинка', type: 'тип', owner: 'владелец', connect: 'связи', characters: 'персонажи', chapters: 'главы', episodes: 'эпизоды', saga: 'сага', arc: 'арка', saga_anime: 'сага (аниме)', arc_anime: 'арка (аниме)', reward: 'сумма', reward_image: 'фото награды', key: 'ключевые события', appearance: 'глава появления', appearance_chapter: 'глава появления', appearance_episode: 'эпизод появления', fruit_article_id: 'плод', fruit2_article_id: 'второй плод', not_needed: 'отметки «не нужно»', flag: 'флаг', ship: 'корабль', id: 'ID' };
   function fieldName(k) { if (/image_position|image_zoom/.test(k)) return 'кадрирование'; if (/^__wiki/.test(k)) return ''; return FIELD_NAMES[k] || k; }
   function uniq(a) { var o = []; a.forEach(function (x) { if (x && o.indexOf(x) < 0) o.push(x); }); return o; }
   function editVerb(e, g) {
@@ -23290,6 +23297,19 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     rules.forEach(function (r) { var ok = r[2] ? r[2](get, id) : r[1].some(function (k) { return filled(get(k)); }); if (!ok) miss.push({ label: r[0], key: r[1][0] }); });
     return { total: rules.length, done: rules.length - miss.length, miss: miss };
   }
+  // Необязательные поля, которые часто забывают.
+  var SOFT = {
+    // 4-й элемент — когда подсказка «сильная» (видна и в списке): по статусу персонажа.
+    character: [['Прозвище', 'nickname', ['nickname', 'nickname2']], ['Плод', 'fruit_article_id', ['fruit_article_id', 'fruit2_article_id', 'ts_fruit_article_id', 'fruit'], /фруктовик/i], ['Корабль', 'ship', ['ship', 'ship2', 'ts_ship'], /капитан/i], ['Флаг', 'flag', ['flag', 'ts_flag'], /пират|капитан/i]],
+    story: [['Связи', 'connect', ['connect']]],
+    fruit: [['Связи', 'connect', ['connect']]]
+  };
+  function soft(type, get, notNeeded) {
+    var skip = list(notNeeded);
+    var st = String(get('status') || '') + ',' + String(get('status2') || '');
+    return (SOFT[type] || []).filter(function (r) { return skip.indexOf(r[1]) < 0 && !r[2].some(function (k) { return filled(get(k)); }); }).map(function (r) { return { label: r[0], key: r[1], strong: !!(r[3] && r[3].test(st)) }; });
+  }
+  window.__wikiMaybeForgot = function (type, rec) { var raw = rec && (rec.__wikiRaw || rec); return soft(type, function (k) { return raw ? raw[k] : ''; }, rec && rec.not_needed); };
   window.__wikiCompleteness = function (type, rec) { var raw = rec && (rec.__wikiRaw || rec); return check(type, function (k) { return raw ? raw[k] : ''; }, rec && rec.id); };
   function level(c) { return c.done === c.total ? 'ok' : c.done >= c.total - 1 ? 'mid' : 'low'; }
   function activeType() { var t = document.querySelector('#wikiEditorTabs .wiki-editor-tab.active[data-type]'); return t ? t.getAttribute('data-type') : ''; }
@@ -23310,6 +23330,11 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
         b.textContent = c.done === c.total ? '' : c.done + '/' + c.total; b.hidden = c.done === c.total;
         b.title = c.done === c.total ? 'Статья заполнена' : 'Не хватает: ' + c.miss.map(function (m) { return m.label; }).join(', ');
       }
+      var mf = window.__wikiMaybeForgot(type, rec).filter(function (m) { return m.strong; }), q = row.querySelector('.wk-maybe');
+      if (mf.length) {
+        if (!q) { q = document.createElement('span'); q.className = 'wk-maybe'; q.textContent = '?'; row.insertBefore(q, b); }
+        q.title = 'Возможно, забыли: ' + mf.map(function (m) { return m.label.toLowerCase(); }).join(', ');
+      } else if (q) q.remove();
       var full = c.done === c.total;
       row.classList.toggle('wk-fill-hide', onlyIncomplete && full);
       if (onlyIncomplete && full) hidden++; else shown++;
@@ -23335,15 +23360,28 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     var host = f.querySelector('.wiki-editor-form-title > div') || f.querySelector('.wiki-editor-form-title');
     if (!host) return;
     if (!chip) { chip = document.createElement('div'); chip.className = 'wk-fill-chip'; host.appendChild(chip); }
-    var sig = c.done + '/' + c.total + c.miss.map(function (m) { return m.key; }).join();
+    var idv = (f.querySelector('[data-field="id"]') || {}).value;
+    var rec = (arr(type) || []).find(function (x) { return String(x.id) === String(idv); });
+    var mf = soft(type, get, rec && rec.not_needed);
+    var sig = c.done + '/' + c.total + c.miss.map(function (m) { return m.key; }).join() + '|' + mf.map(function (m) { return m.key; }).join();
     if (chip.getAttribute('data-sig') === sig) return;
     chip.setAttribute('data-sig', sig); chip.className = 'wk-fill-chip ' + level(c);
     chip.innerHTML = '<span class="wk-fill ' + level(c) + '" style="--p:' + Math.round(c.done / c.total * 100) + '">' + (c.done === c.total ? '✓' : c.done + '/' + c.total) + '</span>' +
-      (c.miss.length ? '<span>Не хватает:</span>' + c.miss.map(function (m) { return '<button type="button" data-go="' + m.key + '">' + m.label + '</button>'; }).join('') : '<span>Всё основное заполнено</span>');
+      (c.miss.length ? '<span>Не хватает:</span>' + c.miss.map(function (m) { return '<button type="button" data-go="' + m.key + '">' + m.label + '</button>'; }).join('') : '<span>Всё основное заполнено</span>') +
+      (mf.length ? '<span class="wk-mf"><span>🤔 Возможно, забыли:</span>' + mf.map(function (m) { return '<span class="wk-mf-item' + (m.strong ? ' strong' : '') + '" title="' + (m.strong ? 'Скорее всего забыли — судя по статусу' : 'Может и не нужно') + '"><button type="button" data-go="' + m.key + '">' + m.label + '</button><button type="button" class="wk-mf-x" data-skip="' + m.key + '" title="Этой статье не нужно — больше не напоминать">не нужно</button></span>'; }).join('') + '</span>' : '');
+    chip.querySelectorAll('[data-skip]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        if (!rec || !window.__wikiSetNotNeeded) return;
+        var cur = list(rec.not_needed); cur.push(b.getAttribute('data-skip'));
+        window.__wikiSetNotNeeded(type, rec.id, cur.filter(function (x, i, a) { return a.indexOf(x) === i; }));
+        chip.removeAttribute('data-sig'); formChip(); rows();
+      });
+    });
     chip.querySelectorAll('[data-go]').forEach(function (b) {
       b.addEventListener('click', function () {
         var key = b.getAttribute('data-go'), field = f.querySelector('[data-editor-field="' + key + '"]') || (f.querySelector('[data-field="' + key + '"]') || {}).closest && f.querySelector('[data-field="' + key + '"]').closest('[data-editor-field], .wiki-editor-field');
         if (!field) return;
+        if (field.hidden) field.hidden = false;
         var sec = field.closest('.wiki-editor-section'); if (sec && sec.classList.contains('collapsed')) { var h = sec.querySelector('[data-toggle-section]'); if (h) h.click(); }
         if (f.getAttribute('data-wk-tab') === 'ts') { var t = f.querySelector('.wk-ed-tabs [data-tab="main"]'); if (t) t.click(); }
         field.scrollIntoView({ block: 'center', behavior: 'smooth' });
@@ -23392,6 +23430,15 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
 .wk-fill-chip button{all:unset;cursor:pointer;padding:1px 8px;border-radius:99px;border:1px dashed rgba(239,68,68,.5);color:#fca5a5;font-size:11.5px}
 .wk-fill-chip.mid button{border-color:rgba(245,158,11,.55);color:#fde68a}
 .wk-fill-chip button:hover{background:rgba(255,255,255,.06)}
+.wk-mf{display:inline-flex;flex-wrap:wrap;align-items:center;gap:5px;margin-left:8px;padding-left:10px;border-left:1px solid rgba(148,163,184,.25)}
+.wk-mf-item{display:inline-flex;align-items:center;border:1px dashed rgba(148,163,184,.45);border-radius:99px;overflow:hidden}
+.wk-fill-chip .wk-mf-item button{border:0!important;border-radius:0!important;color:#cbd5e1!important;padding:1px 8px}
+.wk-fill-chip .wk-mf-item .wk-mf-x{font-size:10.5px;color:#64748b!important;border-left:1px solid rgba(148,163,184,.25)!important;padding:1px 7px}
+.wk-fill-chip .wk-mf-item .wk-mf-x:hover{color:#fca5a5!important}
+.wk-fill-chip .wk-mf-item.strong{border-color:rgba(245,158,11,.6)}
+.wk-fill-chip .wk-mf-item.strong button:first-child{color:#fde68a!important}
+.wk-maybe{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:99px;border:1px dashed rgba(148,163,184,.55);color:#94a3b8;font-size:10.5px;font-weight:800}
+#wikiEditorOverlay#wikiEditorOverlay #wikiEditorList .wiki-editor-record.wk-rich{grid-template-columns:32px minmax(0,1fr) auto auto auto!important}
 .wk-flash{animation:wkFlash 1.4s ease}
 @keyframes wkFlash{0%,60%{box-shadow:0 0 0 2px #f59e0b;border-radius:10px}100%{box-shadow:0 0 0 0 transparent}}
 
