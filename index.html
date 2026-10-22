@@ -1504,14 +1504,34 @@ window.WIKI_CLOUD_CONFIG = window.WIKI_CLOUD_CONFIG || {
   // Логин превращается в адрес почты для Firebase: dima → dima@op-wiki.app
   emailDomain: "op-wiki.app",
   accounts: [
-    { login: "dima",   name: "Дима",   role: "admin",  color: "#60a5fa" },
-    { login: "zhenya", name: "Женя",   role: "member", color: "#f472b6" },
-    { login: "valik",  name: "Валик",  role: "member", color: "#34d399" },
-    { login: "serega", name: "Серёга", role: "member", color: "#fbbf24" }
+    { login: "dima",   name: "Дима",   role: "admin",  color: "#60a5fa", gender: "m" },
+    { login: "zhenya", name: "Женя",   role: "member", color: "#f472b6", gender: "f" },
+    { login: "valik",  name: "Валик",  role: "member", color: "#34d399", gender: "m" },
+    { login: "serega", name: "Серёга", role: "member", color: "#fbbf24", gender: "m" }
   ],
   guest: { name: "Гость", progress: { chapter: 100, episode: 100 } }
 };
 window.WIKI_CLOUD_ENABLED = !!(window.WIKI_CLOUD_CONFIG.firebase && window.WIKI_CLOUD_CONFIG.firebase.apiKey && window.WIKI_CLOUD_CONFIG.firebase.projectId);
+// Арки, отмеченные как непросмотренные / непрочитанные (личное у каждого участника).
+window.WIKI_SKIPPED_ARCS_KEY = 'onePieceWikiSkippedArcsV1';
+window.__wikiSkippedArcs = function () {
+  try { var v = JSON.parse(localStorage.getItem(window.WIKI_SKIPPED_ARCS_KEY) || '{}') || {}; return { anime: Array.isArray(v.anime) ? v.anime.map(String) : [], manga: Array.isArray(v.manga) ? v.manga.map(String) : [] }; }
+  catch (e) { return { anime: [], manga: [] }; }
+};
+window.__wikiIsArcSkipped = function (id, track) {
+  if (id == null) return false;
+  var s = window.__wikiSkippedArcs();
+  return (track === 'manga' || track === 'chapter' ? s.manga : s.anime).indexOf(String(id)) >= 0;
+};
+window.__wikiSetArcSkipped = function (ids, track, skipped) {
+  var s = window.__wikiSkippedArcs(), key = (track === 'manga' || track === 'chapter') ? 'manga' : 'anime';
+  var set = {}; s[key].forEach(function (x) { set[x] = 1; });
+  [].concat(ids).forEach(function (id) { if (skipped) set[String(id)] = 1; else delete set[String(id)]; });
+  s[key] = Object.keys(set);
+  try { localStorage.setItem(window.WIKI_SKIPPED_ARCS_KEY, JSON.stringify(s)); } catch (e) {}
+  try { if (typeof window.__wikiRefresh === 'function') window.__wikiRefresh(); } catch (e) {}
+  try { window.dispatchEvent(new CustomEvent('wiki:skipped-arcs-changed')); window.dispatchEvent(new CustomEvent('wiki:spoiler-progress-restored', { detail: window.__wikiSpoilerProgress || {} })); } catch (e) {}
+};
 // В облачном режиме у каждого свой прогресс: личные поля встроенной копии (прогресс того, кто
 // экспортировал файл) убираем до того, как их прочитает любой модуль страницы.
 (function () {
@@ -4606,7 +4626,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "22.10.2026";
+const WIKI_VERSION = "22.10.2026 · 3";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -9819,7 +9839,8 @@ function storyArcProgressMarkup(arc) {
         if (!total) return;
 
         const currentPoint = Math.max(0, Number(storyOngoingProgressValue(track.kind)) || 0);
-        const completed = Math.min(total, ranges.reduce((sum, range) => {
+        const skippedArc = !!(window.__wikiIsArcSkipped && window.__wikiIsArcSkipped(arc.id, track.kind));
+        const completed = skippedArc ? 0 : Math.min(total, ranges.reduce((sum, range) => {
             return sum + Math.max(0, Math.min(range.end, currentPoint) - range.start + 1);
         }, 0));
         const percent = Math.max(0, Math.min(100, Math.round(completed / total * 100)));
@@ -9828,7 +9849,7 @@ function storyArcProgressMarkup(arc) {
             <div class="arc-reading-track ${track.className}" style="--arc-reading-color:${track.color}">
                 <div class="arc-reading-track-head">
                     <span>${track.icon} ${track.label}</span>
-                    <strong>${percent}%</strong>
+                    <strong>${skippedArc ? (track.kind === "chapter" ? "⊘ не читал(а)" : "⊘ не смотрел(а)") : percent + "%"}</strong>
                 </div>
                 <div class="arc-reading-track-bar" role="progressbar" aria-label="${track.label}: ${percent}%" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}">
                     <span style="width:${percent}%"></span>
@@ -11935,6 +11956,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         types.forEach(t=>data.collections[t]=allRecords(t).map(serializeRecord));
         data.hiddenFruitIds=Array.from(hiddenFruitIds||[]);
         try { const custom = Array.isArray(window.__wikiCustomAchievements) ? window.__wikiCustomAchievements : JSON.parse(localStorage.getItem('onePieceWikiCustomAchievementsV1') || '[]'); data.customAchievements = Array.isArray(custom) ? custom : []; } catch(e) { data.customAchievements = Array.isArray(window.__wikiCustomAchievements) ? window.__wikiCustomAchievements : []; }
+        try { const medalArt = JSON.parse(localStorage.getItem('onePieceWikiMedalArtV1') || 'null'); if (medalArt && typeof medalArt === 'object') data.medalArt = medalArt; } catch(e) {}
         try { const tops = JSON.parse(localStorage.getItem('onePieceWikiTopListsV1') || 'null') || window.__wikiTopLists; if (tops && typeof tops === 'object') data.topLists = tops; } catch(e) { if (window.__wikiTopLists) data.topLists = window.__wikiTopLists; }
         return data;
     }
@@ -12097,6 +12119,9 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
             if (Array.isArray(saved.customAchievements)) {
                 window.__wikiCustomAchievements = saved.customAchievements;
                 try { localStorage.setItem('onePieceWikiCustomAchievementsV1', JSON.stringify(saved.customAchievements)); } catch(e) {}
+            }
+            if (saved.medalArt && typeof saved.medalArt === 'object') {
+                try { localStorage.setItem('onePieceWikiMedalArtV1', JSON.stringify(saved.medalArt)); } catch(e) {}
             }
             // Топы Димы и Жени: побеждает более свежая версия (встроенная в файл или сохранённая в браузере).
             if (saved.topLists && typeof saved.topLists === 'object') {
@@ -15013,7 +15038,8 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     }
     if(!seg.length) return {known:false,covered:0,total:0,fraction:0,percent:0,status:'unknown',segments:[],ongoing};
     const total=seg.reduce((n,r)=>n+(r.end-r.start+1),0);
-    const covered=seg.reduce((n,r)=>n+Math.max(0,Math.min(current,r.end)-r.start+1),0);
+    const skipped=!!(window.__wikiIsArcSkipped&&record&&window.__wikiIsArcSkipped(record.id,track));
+    const covered=skipped?0:seg.reduce((n,r)=>n+Math.max(0,Math.min(current,r.end)-r.start+1),0);
     const fraction=total?Math.max(0,Math.min(1,covered/total)):0;
     let status='upcoming';
     if(ongoing&&current>=seg[0].start) status='current';
@@ -15400,7 +15426,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
 "saga_dressrosa":"https://i.ibb.co/d0D9Vc98/image.png",
 "saga_whole_cake":"https://i.ibb.co/jPtdL2ft/image.png",
 "saga_wano":"https://i.ibb.co/fGxLcRcJ/image.png",
-"saga_final":"https://i.ibb.co/4wCWQNsm/image.png","manga_first":"https://i.ibb.co/hbGXKNM/image.png","manga_100":"https://i.ibb.co/7t9x1RS0/image.png","manga_250":"https://i.ibb.co/F4m66LqT/image.png","manga_500":"https://i.ibb.co/B5S7QkcL/image.png","manga_750":"https://i.ibb.co/SDrzKzf8/image.png","manga_1000":"https://i.ibb.co/wrRHSfK6/image.png","manga_1180":"https://i.ibb.co/XxSXRfsQ/image.png","anime_first":"https://i.ibb.co/XxmN5SZz/image.png","anime_100":"https://i.ibb.co/1GrRwNB4/image.png","anime_250":"https://i.ibb.co/BFDrxx8/image.png","anime_500":"https://i.ibb.co/gZ7Bt2NP/image.png","anime_750":"https://i.ibb.co/DHYGsgWy/image.png","anime_1000":"https://i.ibb.co/qFsxBywT/image.png","anime_1180":"https://i.ibb.co/QvwF47r1/image.png"};</script>
+"saga_final":"https://i.ibb.co/4wCWQNsm/image.png","manga_first":"https://i.ibb.co/hbGXKNM/image.png","manga_100":"https://i.ibb.co/7t9x1RS0/image.png","manga_250":"https://i.ibb.co/F4m66LqT/image.png","manga_500":"https://i.ibb.co/B5S7QkcL/image.png","manga_750":"https://i.ibb.co/SDrzKzf8/image.png","manga_1000":"https://i.ibb.co/wrRHSfK6/image.png","manga_1180":"https://i.ibb.co/XxSXRfsQ/image.png","anime_first":"https://i.ibb.co/XxmN5SZz/image.png","anime_100":"https://i.ibb.co/1GrRwNB4/image.png","anime_250":"https://i.ibb.co/BFDrxx8/image.png","anime_500":"https://i.ibb.co/gZ7Bt2NP/image.png","anime_750":"https://i.ibb.co/DHYGsgWy/image.png","anime_1000":"https://i.ibb.co/qFsxBywT/image.png","anime_1180":"https://i.ibb.co/QvwF47r1/image.png"};;try{window.__wikiMedalArtDefaults=Object.assign({},window.__wikiAchievementMedalArt);var __mo=JSON.parse(localStorage.getItem("onePieceWikiMedalArtV1")||"{}");if(__mo&&typeof __mo==="object")Object.keys(__mo).forEach(function(k){if(__mo[k])window.__wikiAchievementMedalArt[k]=__mo[k];});}catch(e){}</script>
 <style>#favoritesSection .achievement-card:not(.is-earned) .achievement-medal-image{filter:grayscale(1) brightness(.28) saturate(.25) drop-shadow(0 2px 3px rgba(0,0,0,.55))!important;opacity:.9}#favoritesSection .achievement-card.is-earned .achievement-medal-image{filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))!important;opacity:1}#favoritesSection .achievement-medal.is-milestone .achievement-medal-image{filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}#favoritesSection .achievement-medal.is-favorite-medal .achievement-medal-image{filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}#favoritesSection .achievement-card:not(.is-earned) .achievement-medal.is-milestone .achievement-medal-image,#favoritesSection .achievement-card:not(.is-earned) .achievement-medal.is-favorite-medal .achievement-medal-image{filter:grayscale(1) brightness(.28) saturate(.25) drop-shadow(0 2px 3px rgba(0,0,0,.55))!important}</style>
 <script id="wiki-collection-arc-statistics">
 (function initWikiAchievements(){
@@ -15704,6 +15730,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     return{p,groups,collections,sagas,wanted,milestones,favs,custom,previewMode};
   }
   function artKey(item){
+    if(String(item.id||'').indexOf('custom:')===0){const cid=String(item.id).slice(7);const src=readCustomAchievements().find(a=>String(a.id)===cid);if(src&&src.image){const k='customimg:'+cid;MEDAL_ART[k]=src.image;return k;}}
     if(item.material&&['wood','iron','gold'].includes(item.material))return `custom_${item.material}`;
     if(item.medalArt&&MEDAL_ART[item.medalArt])return item.medalArt;
     if(item.isWantedLevel&&item.medalArt)return item.medalArt;
@@ -15823,6 +15850,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         <label class="wiki-editor-achievement-field"><span>Номер главы / эпизода</span><input id="wikiAchievementTarget" type="number" min="1" step="1" inputmode="numeric" placeholder="100"></label>
         <label class="wiki-editor-achievement-field"><span>Материал основы</span><select id="wikiAchievementMaterial"><option value="wood">Деревянная — мореходная</option><option value="iron">Железная — стальная</option><option value="gold">Золотая — легендарная</option></select></label>
         <label class="wiki-editor-achievement-field"><span>Цвет акцента</span><input id="wikiAchievementColor" type="color" value="#d4a84f"></label>
+        <label class="wiki-editor-achievement-field wide"><span>Своя картинка медали (необязательно)</span><span class="wk-medal-input"><input id="wikiAchievementImage" placeholder="Ссылка на изображение или вставьте картинку (Ctrl+V)"><img id="wikiAchievementImagePreview" alt="" hidden></span><small class="wk-medal-hint">Пусто — будет медаль по материалу основы. Можно вставить изображение из буфера или перетащить файл.</small></label>
       </div>
       <div class="wiki-editor-achievement-actions"><span id="wikiAchievementFormStatus" role="status"></span><button type="button" class="wiki-editor-achievement-cancel" id="wikiAchievementCancel">Отмена</button><button type="button" class="wiki-editor-achievement-save" id="wikiAchievementSave">Сохранить медаль</button></div>
     </div>`;
@@ -15830,25 +15858,30 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     const byId=id=>section.querySelector('#'+id);let editingAchievementId=null;
     function renderList(){
       const list=byId('wikiAchievementEditorList'),items=readCustomAchievements();
-      list.innerHTML=items.length?items.map(a=>{const meta=categoryMeta[a.category]||categoryMeta.special,cond=a.conditionType==='episode'?'эпизод':'глава',material=['wood','iron','gold'].includes(a.material)?a.material:'wood';return `<div class="wiki-editor-achievement-row"><span class="wiki-editor-achievement-medal" data-medal-art-key="custom_${material}"><img alt=""></span><div class="wiki-editor-achievement-row-copy"><strong>${escape(a.title||'Без названия')}</strong><small>${escape(meta.label)} · ${escape(cond)} ${escape(a.target||'—')} · ${material==='wood'?'дерево':material==='iron'?'железо':'золото'}</small></div><button type="button" data-achievement-edit="${escape(a.id)}">Изменить</button><button type="button" class="remove" data-achievement-delete="${escape(a.id)}" aria-label="Удалить достижение">Удалить</button></div>`;}).join(''):'<div class="wiki-editor-achievement-empty">Пользовательских достижений пока нет. Нажми «Новое достижение», чтобы создать первое.</div>';
+      list.innerHTML=items.length?items.map(a=>{const meta=categoryMeta[a.category]||categoryMeta.special,cond=a.conditionType==='episode'?'эпизод':'глава',material=['wood','iron','gold'].includes(a.material)?a.material:'wood';const artK=a.image?(MEDAL_ART["customimg:"+a.id]=a.image,"customimg:"+a.id):"custom_"+material;return `<div class="wiki-editor-achievement-row"><span class="wiki-editor-achievement-medal" data-medal-art-key="${artK}"><img alt=""></span><div class="wiki-editor-achievement-row-copy"><strong>${escape(a.title||'Без названия')}</strong><small>${escape(meta.label)} · ${escape(cond)} ${escape(a.target||'—')} · ${material==='wood'?'дерево':material==='iron'?'железо':'золото'}</small></div><button type="button" data-achievement-edit="${escape(a.id)}">Изменить</button><button type="button" class="remove" data-achievement-delete="${escape(a.id)}" aria-label="Удалить достижение">Удалить</button></div>`;}).join(''):'<div class="wiki-editor-achievement-empty">Пользовательских достижений пока нет. Нажми «Новое достижение», чтобы создать первое.</div>';
       attachArtImages(list);
     }
     function renderWantedPresets(){
       const list=byId('wikiWantedPresetList');if(!list)return;
-      list.innerHTML=WANTED_LEVELS.map((level,index)=>`<div class="wiki-editor-wanted-item" data-medal-art-key="wanted${level.tier}"><img class="wiki-editor-wanted-image" alt=""><div class="wiki-editor-wanted-copy"><strong>${escape(level.title)}</strong><small>цель: ${level.target.toLocaleString('ru-RU')}</small></div></div>`).join('');
+      list.innerHTML=WANTED_LEVELS.map((level,index)=>`<div class="wiki-editor-wanted-item" data-medal-art-key="wanted${level.tier}"><img class="wiki-editor-wanted-image" alt=""><div class="wiki-editor-wanted-copy"><strong>${escape(level.title)}</strong><small>цель: ${level.target.toLocaleString('ru-RU')}</small></div><button type="button" class="wk-medal-change" data-medal-change="wanted${level.tier}" title="Сменить картинку">🖼</button></div>`).join('');
       list.querySelectorAll('[data-medal-art-key]').forEach(node=>{const key=node.getAttribute('data-medal-art-key'),img=node.querySelector('img');if(img&&MEDAL_ART[key])img.src=MEDAL_ART[key];});
     }
     function renderFixedAchievementPresets(){
       const characterList=byId('wikiCharacterPresetList'),fruitList=byId('wikiFruitPresetList'),sagaList=byId('wikiSagaPresetList');
-      const fill=(list,items)=>{if(!list)return;list.innerHTML=items.map(item=>`<div class="wiki-editor-wanted-item" data-medal-art-key="${escape(item.art)}"><img class="wiki-editor-wanted-image" alt=""><div class="wiki-editor-wanted-copy"><strong>${escape(item.title)}</strong><small>${escape(item.detail||'встроенное достижение')}</small></div></div>`).join('');list.querySelectorAll('[data-medal-art-key]').forEach(node=>{const key=node.getAttribute('data-medal-art-key'),img=node.querySelector('img');if(img&&MEDAL_ART[key])img.src=MEDAL_ART[key];});};
+      const fill=(list,items)=>{if(!list)return;list.innerHTML=items.map(item=>`<div class="wiki-editor-wanted-item" data-medal-art-key="${escape(item.art)}"><img class="wiki-editor-wanted-image" alt=""><div class="wiki-editor-wanted-copy"><strong>${escape(item.title)}</strong><small>${escape(item.detail||'встроенное достижение')}</small></div><button type="button" class="wk-medal-change" data-medal-change="${escape(item.art)}" title="Сменить картинку">🖼</button></div>`).join('');list.querySelectorAll('[data-medal-art-key]').forEach(node=>{const key=node.getAttribute('data-medal-art-key'),img=node.querySelector('img');if(img&&MEDAL_ART[key])img.src=MEDAL_ART[key];});};
       fill(characterList,COLLECTION_LEVELS.character.map(level=>({art:level.art,title:`Открыто ${ruCount(level.target,'персонаж','персонажа','персонажей')}`,detail:level.name})));
       fill(fruitList,COLLECTION_LEVELS.fruit.map(level=>({art:level.art,title:`Открыто ${ruCount(level.target,'плод','плода','плодов')}`,detail:level.name})));
       const presets=SAGA_MEDALS.map(saga=>({art:saga.art,title:`Завершить сагу «${saga.name}»`,detail:'конец по манге или аниме'}));presets.push({art:'saga_final',title:'Начать сагу «Финальная»',detail:'старт по манге или аниме'});fill(sagaList,presets);
     }
-    function resetForm(){editingAchievementId=null;byId('wikiAchievementFormTitle').textContent='Новое достижение';byId('wikiAchievementTitle').value='';byId('wikiAchievementDescription').value='';byId('wikiAchievementCategory').value='special';byId('wikiAchievementCondition').value='chapter';byId('wikiAchievementTarget').value='';byId('wikiAchievementMaterial').value='wood';byId('wikiAchievementColor').value='#d4a84f';byId('wikiAchievementFormStatus').textContent='';byId('wikiAchievementEditForm').hidden=true;}
+    function resetForm(){editingAchievementId=null;byId('wikiAchievementFormTitle').textContent='Новое достижение';byId('wikiAchievementTitle').value='';byId('wikiAchievementDescription').value='';byId('wikiAchievementCategory').value='special';byId('wikiAchievementCondition').value='chapter';byId('wikiAchievementTarget').value='';byId('wikiAchievementMaterial').value='wood';byId('wikiAchievementColor').value='#d4a84f';byId('wikiAchievementImage').value='';wkPreview();byId('wikiAchievementFormStatus').textContent='';byId('wikiAchievementEditForm').hidden=true;}
     function startEdit(item){editingAchievementId=item?.id||null;byId('wikiAchievementFormTitle').textContent=item?'Редактирование достижения':'Новое достижение';byId('wikiAchievementTitle').value=item?.title||'';byId('wikiAchievementDescription').value=item?.description||'';byId('wikiAchievementCategory').value=categoryMeta[item?.category]?item.category:'special';byId('wikiAchievementCondition').value=item?.conditionType==='episode'?'episode':'chapter';byId('wikiAchievementTarget').value=item?.target||'';byId('wikiAchievementMaterial').value=['wood','iron','gold'].includes(item?.material)?item.material:'wood';byId('wikiAchievementColor').value=/^#[0-9a-f]{6}$/i.test(String(item?.color||''))?item.color:'#d4a84f';byId('wikiAchievementEditForm').hidden=false;byId('wikiAchievementTitle').focus();}
+    function wkPreview(){const v=byId('wikiAchievementImage').value.trim(),im=byId('wikiAchievementImagePreview');if(v&&/^(https?:\/\/|data:image\/)/i.test(v)){im.src=v;im.hidden=false;}else{im.hidden=true;im.removeAttribute('src');}}
+    const __startEdit=startEdit;startEdit=function(item){__startEdit(item);byId('wikiAchievementImage').value=item&&item.image||'';wkPreview();};
+    byId('wikiAchievementImage').addEventListener('input',wkPreview);
+    if(window.__wikiMedalImageInput)window.__wikiMedalImageInput(byId('wikiAchievementImage'),wkPreview);
     byId('wikiAchievementCreate').addEventListener('click',()=>startEdit(null));byId('wikiAchievementCancel').addEventListener('click',resetForm);
     section.addEventListener('click',event=>{
+      const chg=event.target.closest('[data-medal-change]');if(chg&&window.__wikiOpenMedalArtEditor){window.__wikiOpenMedalArtEditor(chg.closest('.wiki-editor-wanted-item'),chg.getAttribute('data-medal-change'),MEDAL_ART);return;}
       const edit=event.target.closest('[data-achievement-edit]');if(edit){const item=readCustomAchievements().find(a=>String(a.id)===edit.dataset.achievementEdit);if(item)startEdit(item);return;}
       const del=event.target.closest('[data-achievement-delete]');if(del){const item=readCustomAchievements().find(a=>String(a.id)===del.dataset.achievementDelete);if(!item||!confirm(`Удалить достижение «${item.title}»?`))return;writeCustomAchievements(readCustomAchievements().filter(a=>String(a.id)!==String(item.id)));renderList();if(editingAchievementId===item.id)resetForm();return;}
       });
@@ -15858,7 +15891,8 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
       if(!Number.isFinite(target)||target<1){byId('wikiAchievementFormStatus').textContent='Номер главы или эпизода должен быть не меньше 1.';byId('wikiAchievementTarget').focus();return;}
       if(!categoryMeta[category]){byId('wikiAchievementFormStatus').textContent='Выбери вкладку достижений.';return;}
       const items=readCustomAchievements(),existing=items.find(a=>String(a.id)===String(editingAchievementId));
-      const next={id:editingAchievementId||`achievement-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,title:name,description,category,conditionType:conditionType==='episode'?'episode':'chapter',target,material,color,createdAt:existing?.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString()};
+      const image=byId('wikiAchievementImage').value.trim();if(image&&!/^(https?:\/\/|data:image\/)/i.test(image)){byId('wikiAchievementFormStatus').textContent='Картинка должна быть ссылкой (https://…) или вставленным изображением.';return;}
+      const next={id:editingAchievementId||`achievement-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,title:name,description,category,conditionType:conditionType==='episode'?'episode':'chapter',target,material,color,image,createdAt:existing?.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString()};
       const result=editingAchievementId?items.map(a=>String(a.id)===String(editingAchievementId)?next:a):[...items,next];writeCustomAchievements(result);renderList();resetForm();
     });
     renderList();renderWantedPresets();renderFixedAchievementPresets();
@@ -16163,7 +16197,7 @@ function cnt(g){return g.reduce(function(s,r){return s+r.end-r.start+1;},0);}
 function cov(g,p){return g.reduce(function(s,r){return s+Math.max(0,Math.min(r.end,p)-r.start+1);},0);}
 function fmt(g){if(!g.length)return '—';var a=g[0].start,b=g[g.length-1].end;return (a===b?a:a+'–'+b)+(g.length>1?' (с пропусками)':'');}
 var S={},order=[],maxSize=1,F={k:'all',unf:false},panel='',mode='c';
-function info(a){var cs=segs(a.chapters),es=segs(a.episodes),mt=cnt(cs),at=cnt(es),mc=cov(cs,prog('chapter')),ac=cov(es,prog('episode')),t=[];
+function info(a){var cs=segs(a.chapters),es=segs(a.episodes),mt=cnt(cs),at=cnt(es),mc=(window.__wikiIsArcSkipped&&window.__wikiIsArcSkipped(a.id,'manga'))?0:cov(cs,prog('chapter')),ac=(window.__wikiIsArcSkipped&&window.__wikiIsArcSkipped(a.id,'anime'))?0:cov(es,prog('episode')),t=[];
   if(!a.movie){if(mt)t.push([mc,mt]);if(at)t.push([ac,at]);}
   var st='none';if(t.length){st=t.every(function(x){return x[0]>=x[1];})?'done':(t.some(function(x){return x[0]>0;})?'current':'upcoming');}
   return {a:a,cs:cs,es:es,mt:mt,at:at,mc:mc,ac:ac,st:st,mp:mt?mc/mt:null,ap:at?ac/at:null,size:mt||Math.round(at*0.7)};}
@@ -16602,6 +16636,7 @@ setInterval(function(){if(overlayOpen())exportInfo();},60000);
     return new Set();
   }
   function trackState(record,track,now){
+    if(window.__wikiIsArcSkipped&&record&&window.__wikiIsArcSkipped(record.id,track)){const sp=trackRange(record,track);return {known:!!sp.length,parts:sp,total:totalUnits(sp),passed:0,percent:0,complete:false,inside:false,skipped:true};}
     const parts=trackRange(record,track);if(!parts.length)return {known:false,parts,total:0,passed:0,percent:0,complete:false,inside:false};
     const total=totalUnits(parts);let passed=0;for(const p of parts)passed+=Math.max(0,Math.min(now,p.end)-p.start+1);
     passed=Math.min(total,passed);const pct=total?Math.max(0,Math.min(100,passed/total*100)):0;
@@ -16649,6 +16684,7 @@ setInterval(function(){if(overlayOpen())exportInfo();},60000);
       const note=isManga&&isFiller(record)?'В манге отсутствует':isManga&&isCover(record)?'Побочная история':'Диапазон не указан';
       return '<div class="cabin-timeline-meta cabin-timeline-meta-'+track+' is-unavailable"><div class="cabin-meta-top"><b>'+label+'</b><strong>—</strong></div><span>'+note+'</span></div>';
     }
+    if(state.skipped){return '<div class="cabin-timeline-meta cabin-timeline-meta-'+track+' is-skipped" title="Отмечено как '+(isManga?'непрочитанное':'непросмотренное')+'"><div class="cabin-meta-top"><b>'+label+'</b><strong>⊘</strong></div><i class="cabin-meta-bar" aria-hidden="true"><i></i></i><span>'+(isManga?'не читал(а)':'не смотрел(а)')+'</span></div>';}
     const pct=Math.round(state.percent);
     return '<div class="cabin-timeline-meta cabin-timeline-meta-'+track+(state.complete?' is-complete':'')+(pct>0&&!state.complete?' is-active':'')+'" style="--meta-progress:'+state.percent.toFixed(2)+'%" title="'+(isManga?'Главы ':'Эпизоды ')+esc(displayRange(state.parts))+'"><div class="cabin-meta-top"><b>'+label+'</b><strong>'+(state.complete?'✓ ':'')+pct+'%</strong></div><i class="cabin-meta-bar" aria-hidden="true"><i></i></i><span>'+countLabel(n,unit)+'</span></div>';
   }
@@ -20786,6 +20822,11 @@ img.wk-fade.wk-loaded{opacity:1}
 .wk-wg-cells i.is-on{opacity:1;box-shadow:0 0 6px -1px var(--c)}
 .wk-wg-cells i.is-filler{background-image:repeating-linear-gradient(135deg,rgba(0,0,0,.38) 0 2px,transparent 2px 5px)}
 .wk-wg-cells i.is-none{--c:#4b5563}
+.wk-wg-cells i.is-skipped{opacity:.16;box-shadow:inset 0 0 0 1px rgba(255,255,255,.35);background-image:none}
+.wk-wg-legend button.is-skipped{opacity:.6;border-style:dashed}
+.wk-wg-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.wk-wg-fill{padding:8px 12px;border-radius:10px;border:1px dashed color-mix(in srgb,var(--line,#334155) 100%,transparent);background:transparent;color:color-mix(in srgb,var(--text,#e5e7eb) 80%,transparent);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.wk-wg-fill:hover{color:#fff;border-color:var(--accent,#d4a84f)}
 .wk-wg-cells i.is-now{outline:2px solid #fff;outline-offset:1px;opacity:1}
 .wk-wg-cells i:hover{transform:scale(1.35);position:relative;z-index:1;opacity:1}
 .wk-wg.is-hl .wk-wg-cells i:not(.is-hl){opacity:.07;box-shadow:none}
@@ -20988,6 +21029,12 @@ img.wk-fade.wk-loaded{opacity:1}
     var kind = lsGet(WG_KEY, 'episode') === 'chapter' ? 'chapter' : 'episode';
     var U = buildUnits(kind);
     var read = Math.min(progress(kind), U.max);
+    var skipList = (window.__wikiSkippedArcs ? window.__wikiSkippedArcs() : { anime: [], manga: [] })[kind === 'chapter' ? 'manga' : 'anime'];
+    var skipped = {}; skipList.forEach(function (id) { skipped[id] = 1; });
+    function seenUnit(n) { var o = U.owner[n]; return n <= read && !(o && skipped[o.id]); }
+    var role = (function () { try { var ss = window.__wikiCloud && window.__wikiCloud.enabled && window.__wikiCloud.session(); return ss ? ss.role : ''; } catch (e) { return ''; } })();
+    var fillerArcs = U.arcs.filter(function (a) { return isFiller(a) && segs(a[kind === 'chapter' ? 'chapters' : 'episodes']).length; });
+    var allFillersSkipped = fillerArcs.length && fillerArcs.every(function (a) { return skipped[a.id]; });
     var unitWord = kind === 'chapter' ? ['глава', 'главы', 'глав'] : ['серия', 'серии', 'серий'];
     var unitOne = kind === 'chapter' ? 'Глава' : 'Серия';
     // Блоки по сагам в порядке номеров.
@@ -21004,39 +21051,46 @@ img.wk-fade.wk-loaded{opacity:1}
     var arcIndex = {}; U.arcs.forEach(function (a, i) { arcIndex[a.id] = i; });
     // Статистика.
     var arcStats = {};
-    for (var m = 1; m <= U.max; m++) { var o = U.owner[m]; if (!o) continue; var s = arcStats[o.id] || (arcStats[o.id] = { total: 0, seen: 0 }); s.total++; if (m <= read) s.seen++; }
+    for (var m = 1; m <= U.max; m++) { var o = U.owner[m]; if (!o) continue; var s = arcStats[o.id] || (arcStats[o.id] = { total: 0, seen: 0 }); s.total++; if (seenUnit(m)) s.seen++; }
     var withUnits = U.arcs.filter(function (a) { return arcStats[a.id]; });
     var doneArcs = withUnits.filter(function (a) { return arcStats[a.id].seen === arcStats[a.id].total; }).length;
     var nextArc = U.owner[read + 1] || null;
     var left = nextArc ? arcStats[nextArc.id].total - arcStats[nextArc.id].seen : 0;
-    var pct = U.max ? Math.round(read / U.max * 100) : 0;
+    var watched = 0; for (var w = 1; w <= U.max; w++) if (seenUnit(w)) watched++;
+    var skippedUnits = 0; for (var w2 = 1; w2 <= read; w2++) if (!seenUnit(w2)) skippedUnits++;
+    var pct = U.max ? Math.round(watched / U.max * 100) : 0;
 
     var html = '<div class="wk-pane-head"><div><h2>Сетка просмотра</h2><p>Каждый квадрат — ' + (kind === 'chapter' ? 'глава манги' : 'серия аниме') + '. Цвет — арка, яркие квадраты уже ' + (kind === 'chapter' ? 'прочитаны' : 'просмотрены') + '. Штриховка — филлер.</p></div>' +
-      '<div class="wk-seg" role="group" aria-label="Что показывать"><button type="button" data-wg-kind="episode" class="' + (kind === 'episode' ? 'active' : '') + '">📺 Аниме</button><button type="button" data-wg-kind="chapter" class="' + (kind === 'chapter' ? 'active' : '') + '">📖 Манга</button></div></div>' +
+      '<div class="wk-wg-actions">' + (role !== 'guest' && fillerArcs.length ? '<button type="button" class="wk-wg-fill" data-wg-fillers="' + (allFillersSkipped ? 'restore' : 'skip') + '">' + (allFillersSkipped ? '↩ Вернуть филлеры (' + fillerArcs.length + ')' : '⊘ Филлеры не ' + (kind === 'chapter' ? 'читал(а)' : 'смотрел(а)') + ' (' + fillerArcs.length + ')') + '</button>' : '') + '<div class="wk-seg" role="group" aria-label="Что показывать"><button type="button" data-wg-kind="episode" class="' + (kind === 'episode' ? 'active' : '') + '">📺 Аниме</button><button type="button" data-wg-kind="chapter" class="' + (kind === 'chapter' ? 'active' : '') + '">📖 Манга</button></div></div></div>' +
       '<div class="wk-wg-stats">' +
-      '<div class="wk-wg-stat"><small>' + (kind === 'chapter' ? 'Прочитано' : 'Просмотрено') + '</small><b>' + read + ' / ' + U.max + '</b><span>' + plural(U.max, unitWord[0], unitWord[1], unitWord[2]) + '</span></div>' +
-      '<div class="wk-wg-stat"><small>Пройдено пути</small><b>' + pct + '%</b><span>' + (U.max - read) + ' ' + plural(U.max - read, unitWord[0], unitWord[1], unitWord[2]) + ' впереди</span></div>' +
+      '<div class="wk-wg-stat"><small>' + (kind === 'chapter' ? 'Прочитано' : 'Просмотрено') + '</small><b>' + watched + ' / ' + U.max + '</b><span>' + plural(U.max, unitWord[0], unitWord[1], unitWord[2]) + (skippedUnits ? ' · ' + skippedUnits + ' пропущено' : '') + '</span></div>' +
+      '<div class="wk-wg-stat"><small>Пройдено пути</small><b>' + pct + '%</b><span>' + (U.max - watched) + ' ' + plural(U.max - watched, unitWord[0], unitWord[1], unitWord[2]) + ' не ' + (kind === 'chapter' ? 'прочитано' : 'просмотрено') + '</span></div>' +
       '<div class="wk-wg-stat"><small>Арок завершено</small><b>' + doneArcs + ' / ' + withUnits.length + '</b><span>с ' + (kind === 'chapter' ? 'главами' : 'сериями') + ' в данных</span></div>' +
       '<div class="wk-wg-stat"><small>Сейчас</small><b title="' + esc(nextArc ? nextArc.name : '') + '">' + esc(nextArc ? nextArc.name : (read >= U.max ? 'Всё пройдено' : '—')) + '</b><span>' + (nextArc ? 'до конца арки ' + left + ' ' + plural(left, unitWord[0], unitWord[1], unitWord[2]) : '') + '</span></div>' +
       '</div><div class="wk-wg">';
     blocks.forEach(function (b) {
-      var seen = b.cells.filter(function (x) { return x <= read; }).length;
+      var seen = b.cells.filter(seenUnit).length;
       html += '<section class="wk-wg-block"><div class="wk-wg-head"><b>' + esc(b.saga) + '</b><span>' + seen + ' / ' + b.cells.length + ' · ' + unitOne.toLowerCase() + ' ' + b.cells[0] + '–' + b.cells[b.cells.length - 1] + '</span></div><div class="wk-wg-cells">';
       b.cells.forEach(function (x) {
         var a = U.owner[x];
-        var cls = (x <= read ? 'is-on' : '') + (x === read ? ' is-now' : '') + (!a ? ' is-none' : '') + (a && isFiller(a) ? ' is-filler' : '');
+        var cls = (seenUnit(x) ? 'is-on' : '') + (a && skipped[a.id] ? ' is-skipped' : '') + (x === read ? ' is-now' : '') + (!a ? ' is-none' : '') + (a && isFiller(a) ? ' is-filler' : '');
         html += '<i class="' + cls + '" data-n="' + x + '"' + (a ? ' data-a="' + arcIndex[a.id] + '" style="--c:' + U.colorOf[a.id] + '"' : '') + '></i>';
       });
       html += '</div><div class="wk-wg-legend">';
       b.arcs.forEach(function (a) {
         var st = arcStats[a.id];
-        html += '<button type="button" data-a="' + arcIndex[a.id] + '" class="' + (st && st.seen === st.total ? 'is-done' : '') + '" style="--c:' + U.colorOf[a.id] + '"><i></i>' + esc(a.name) + (isFiller(a) ? ' · филлер' : '') + ' <em>' + (st ? st.seen + '/' + st.total : '') + '</em></button>';
+        html += '<button type="button" data-a="' + arcIndex[a.id] + '" class="' + (skipped[a.id] ? 'is-skipped' : (st && st.seen === st.total ? 'is-done' : '')) + '" style="--c:' + U.colorOf[a.id] + '"' + (skipped[a.id] ? ' title="Отмечено как не' + (kind === 'chapter' ? 'прочитанное' : 'просмотренное') + '"' : '') + '><i></i>' + (skipped[a.id] ? '⊘ ' : '') + esc(a.name) + (isFiller(a) ? ' · филлер' : '') + ' <em>' + (st ? st.seen + '/' + st.total : '') + '</em></button>';
       });
       html += '</div></section>';
     });
     html += '</div>';
     pane.innerHTML = html;
 
+    var fillBtn = pane.querySelector('[data-wg-fillers]');
+    if (fillBtn) fillBtn.addEventListener('click', function () {
+      if (window.__wikiSetArcSkipped) window.__wikiSetArcSkipped(fillerArcs.map(function (a) { return a.id; }), kind === 'chapter' ? 'manga' : 'anime', fillBtn.getAttribute('data-wg-fillers') === 'skip');
+      renderWatchGrid(pane);
+    });
     pane.querySelectorAll('[data-wg-kind]').forEach(function (b) {
       b.addEventListener('click', function () { lsSet(WG_KEY, b.getAttribute('data-wg-kind')); renderWatchGrid(pane); });
     });
@@ -21055,7 +21109,7 @@ img.wk-fade.wk-loaded{opacity:1}
       if (!cell) return;
       var n = Number(cell.getAttribute('data-n')), a = U.owner[n];
       tip.innerHTML = '<b>' + unitOne + ' ' + n + '</b><br>' + (a ? esc(a.name) + (isFiller(a) ? ' · филлер' : '') + '<br><span style="opacity:.65">Сага: ' + esc(a.saga || '—') + '</span>' : 'Нет в данных об арках') +
-        '<br>' + (n <= read ? '✓ ' + (kind === 'chapter' ? 'прочитана' : 'просмотрена') : (kind === 'chapter' ? 'ещё не прочитана' : 'ещё не просмотрена'));
+        '<br>' + (a && skipped[a.id] ? '⊘ арка отмечена как не' + (kind === 'chapter' ? 'прочитанная' : 'просмотренная') : seenUnit(n) ? '✓ ' + (kind === 'chapter' ? 'прочитана' : 'просмотрена') : (kind === 'chapter' ? 'ещё не прочитана' : 'ещё не просмотрена'));
       tip.hidden = false;
     });
     wg.addEventListener('mousemove', function (e) {
@@ -21456,7 +21510,7 @@ img.wk-fade.wk-loaded{opacity:1}
   var SESSION_KEY = 'wkCloudSessionV1', CONTENT_KEY = 'wkCloudContentV1', TOPS_CACHE_KEY = 'wkCloudTopsV1', STORAGE_KEY = 'onePieceWikiLocalContentV1';
   var PROGRESS_KEY = 'onePieceWikiSpoilerProgressV1';
   // Личные данные участника, которые ездят вместе с учёткой.
-  var PERSONAL_KEYS = [PROGRESS_KEY, 'onePieceWikiFilmProgressV1', 'onePieceWikiFavorites', 'onePieceWikiRecentVisits'];
+  var PERSONAL_KEYS = [PROGRESS_KEY, 'onePieceWikiFilmProgressV1', 'onePieceWikiFavorites', 'onePieceWikiRecentVisits', 'onePieceWikiSkippedArcsV1'];
   var SDK = 'https://www.gstatic.com/firebasejs/10.12.2/';
   var TYPES = ['character', 'story', 'reward', 'fruit', 'useful'];
 
@@ -21681,7 +21735,8 @@ img.wk-fade.wk-loaded{opacity:1}
       accentSettings: snap.accentSettings || {},
       rewardRankColors: snap.rewardRankColors || {},
       customAchievements: Array.isArray(snap.customAchievements) ? snap.customAchievements : [],
-      hiddenFruitIds: Array.isArray(snap.hiddenFruitIds) ? snap.hiddenFruitIds : []
+      hiddenFruitIds: Array.isArray(snap.hiddenFruitIds) ? snap.hiddenFruitIds : [],
+      medalArt: snap.medalArt && typeof snap.medalArt === 'object' ? snap.medalArt : {}
     };
   }
   function recId(type, id) { return type + '~' + String(id).replace(/\//g, '_'); }
@@ -21703,7 +21758,7 @@ img.wk-fade.wk-loaded{opacity:1}
           var pos = {}; (order[t] || []).forEach(function (id, i) { pos[id] = i; });
           byType[t].sort(function (a, b) { var pa = pos[a.id], pb = pos[b.id]; return (pa == null ? 1e9 : pa) - (pb == null ? 1e9 : pb); });
         });
-        var data = { version: 1, updatedAt: meta.updatedAt, collections: byType, accentSettings: extra.accentSettings || {}, rewardRankColors: extra.rewardRankColors || {}, customAchievements: extra.customAchievements || [], hiddenFruitIds: extra.hiddenFruitIds || [] };
+        var data = { version: 1, updatedAt: meta.updatedAt, collections: byType, accentSettings: extra.accentSettings || {}, rewardRankColors: extra.rewardRankColors || {}, customAchievements: extra.customAchievements || [], hiddenFruitIds: extra.hiddenFruitIds || [], medalArt: extra.medalArt || {} };
         quietSet(CONTENT_KEY, JSON.stringify({ version: meta.version, data: data }));
         return true; // нужна перезагрузка, чтобы ядро подхватило новые статьи
       });
@@ -21740,15 +21795,15 @@ img.wk-fade.wk-loaded{opacity:1}
       });
     });
     Object.keys(prev).forEach(function (id) { if (!seen[id]) ops.push({ ref: fb.fs.doc(db, 'records', id), del: true }); });
-    var extra = { accentSettings: content.accentSettings, rewardRankColors: content.rewardRankColors, customAchievements: content.customAchievements, hiddenFruitIds: content.hiddenFruitIds };
-    var prevExtra = prevContent ? JSON.stringify({ accentSettings: prevContent.accentSettings, rewardRankColors: prevContent.rewardRankColors, customAchievements: prevContent.customAchievements, hiddenFruitIds: prevContent.hiddenFruitIds }) : '';
+    var extra = { accentSettings: content.accentSettings, rewardRankColors: content.rewardRankColors, customAchievements: content.customAchievements, hiddenFruitIds: content.hiddenFruitIds, medalArt: content.medalArt || {} };
+    var prevExtra = prevContent ? JSON.stringify({ accentSettings: prevContent.accentSettings, rewardRankColors: prevContent.rewardRankColors, customAchievements: prevContent.customAchievements, hiddenFruitIds: prevContent.hiddenFruitIds, medalArt: prevContent.medalArt || {} }) : '';
     var orderJson = JSON.stringify(order);
     var prevOrder = prevContent ? JSON.stringify((function () { var o = {}; TYPES.forEach(function (t) { o[t] = (prevContent.collections[t] || []).map(function (r) { return r.id; }); }); return o; })()) : '';
     if (!ops.length && JSON.stringify(extra) === prevExtra && orderJson === prevOrder) return Promise.resolve(false);
     var version = Date.now();
     ops.push({ ref: fb.fs.doc(db, 'content', 'meta'), data: { version: version, updatedAt: now, updatedBy: me.login, order: orderJson, extra: JSON.stringify(extra), records: Object.keys(seen).length } });
     return writeBatches(ops, all ? function (d, n) { if (n > 50 && d < n) toast('Загружено в облако: ' + d + ' из ' + n, null, 1500); } : null).then(function () {
-      var data = { version: 1, updatedAt: now, collections: content.collections, accentSettings: content.accentSettings, rewardRankColors: content.rewardRankColors, customAchievements: content.customAchievements, hiddenFruitIds: content.hiddenFruitIds };
+      var data = { version: 1, updatedAt: now, collections: content.collections, accentSettings: content.accentSettings, rewardRankColors: content.rewardRankColors, customAchievements: content.customAchievements, hiddenFruitIds: content.hiddenFruitIds, medalArt: content.medalArt || {} };
       quietSet(CONTENT_KEY, JSON.stringify({ version: version, data: data }));
       if (all) toast('Статьи загружены в облако ✓');
       return true;
@@ -21781,7 +21836,7 @@ img.wk-fade.wk-loaded{opacity:1}
       var want = JSON.stringify({ chapter: GUEST.progress.chapter, episode: GUEST.progress.episode });
       var cur = lsGet(PROGRESS_KEY), changed = false;
       if (cur !== want) { quietSet(PROGRESS_KEY, want); changed = true; }
-      if (switched) ['onePieceWikiFilmProgressV1', 'onePieceWikiFavorites', 'onePieceWikiRecentVisits'].forEach(function (k) { if (lsGet(k) != null) { quietSet(k, null); changed = true; } });
+      if (switched) ['onePieceWikiFilmProgressV1', 'onePieceWikiFavorites', 'onePieceWikiRecentVisits', 'onePieceWikiSkippedArcsV1'].forEach(function (k) { if (lsGet(k) != null) { quietSet(k, null); changed = true; } });
       return Promise.resolve(changed);
     }
     var ref = fb.fs.doc(db, 'users', me.uid);
@@ -21958,7 +22013,7 @@ img.wk-fade.wk-loaded{opacity:1}
     });
   }
   function drawStats(pane, prefs, sessions, events, users, tops) {
-    var people = ACCOUNTS.map(function (a) { return { login: a.login, name: a.name, color: a.color, role: a.role }; }).concat([{ login: 'guest', name: GUEST.name, color: '#94a3b8', role: 'guest' }]);
+    var people = ACCOUNTS.map(function (a) { return { login: a.login, name: a.name, color: a.color, role: a.role, gender: a.gender }; }).concat([{ login: 'guest', name: GUEST.name, color: '#94a3b8', role: 'guest' }]);
     if (prefs.hideAdmin) people = people.filter(function (p) { return p.role !== 'admin'; });
     var views = events.filter(function (e) { return e.kind === 'view'; }), tabs = events.filter(function (e) { return e.kind === 'tab'; });
     var per = {};
@@ -21986,7 +22041,7 @@ img.wk-fade.wk-loaded{opacity:1}
         try { var fv = JSON.parse(u.keys.onePieceWikiFavorites || '[]'); fav = Array.isArray(fv) ? fv.length : Object.keys(fv || {}).length; } catch (e) {}
       }
       if (tops[p.login]) { var t = tops[p.login], n = 0; Object.keys(t).forEach(function (k) { n += (t[k] || []).filter(Boolean).length; }); topFilled = n; }
-      html += '<tr><td><span class="wk-st-who"><span class="wk-ava" style="background:' + p.color + '">' + esc(p.role === 'guest' ? '👀' : p.name[0]) + '</span>' + esc(p.name) + '</span></td><td class="wk-num">' + x.visits + '</td><td class="wk-num">' + Object.keys(x.days).length + '</td><td class="wk-num">' + x.views + '</td><td class="wk-num">' + fmtDur(x.sec) + '</td><td>' + (x.last ? ago(x.last) : 'не заходил(а)') + '</td><td>' + prog + '</td><td class="wk-num">' + topFilled + '</td><td class="wk-num">' + fav + '</td></tr>';
+      html += '<tr><td><span class="wk-st-who"><span class="wk-ava" style="background:' + p.color + '">' + esc(p.role === 'guest' ? '👀' : p.name[0]) + '</span>' + esc(p.name) + '</span></td><td class="wk-num">' + x.visits + '</td><td class="wk-num">' + Object.keys(x.days).length + '</td><td class="wk-num">' + x.views + '</td><td class="wk-num">' + fmtDur(x.sec) + '</td><td>' + (x.last ? ago(x.last) : (p.gender === 'f' ? 'не заходила' : p.gender === 'm' ? 'не заходил' : 'не заходил(а)')) + '</td><td>' + prog + '</td><td class="wk-num">' + topFilled + '</td><td class="wk-num">' + fav + '</td></tr>';
     });
     html += '</tbody></table></div></div>';
 
@@ -22038,7 +22093,8 @@ img.wk-fade.wk-loaded{opacity:1}
     var feed = events.slice(0, 40);
     html += '<div class="wk-st-box"><h3>Последние действия</h3>' + (feed.length ? '<div class="wk-st-feed">' + feed.map(function (e) {
       var p = people.find(function (x) { return x.login === e.login; }) || { name: nameOf(e.login), color: '#94a3b8', role: '' };
-      var what = e.kind === 'view' ? 'открыл(а) ' + (TYPE_ICON[e.targetType] || '') + ' «' + esc(e.targetName) + '»' : 'перешёл(ла) в раздел «' + esc(TAB_NAMES[e.targetId] || e.targetId) + '»';
+      var g = p.gender === 'f' ? 1 : p.gender === 'm' ? 0 : 2;
+      var what = e.kind === 'view' ? ['открыл', 'открыла', 'открыл(а)'][g] + ' ' + (TYPE_ICON[e.targetType] || '') + ' «' + esc(e.targetName) + '»' : ['перешёл', 'перешла', 'перешёл(ла)'][g] + ' в раздел «' + esc(TAB_NAMES[e.targetId] || e.targetId) + '»';
       return '<div><span class="wk-ava" style="background:' + p.color + '">' + esc(p.role === 'guest' ? '👀' : (p.name || '?')[0]) + '</span><span><b>' + esc(p.name) + '</b> ' + what + '</span><em>' + ago(e.ts) + '</em></div>';
     }).join('') + '</div>' : '<div class="wk-st-empty">Пока пусто.</div>') + '</div>';
 
@@ -22068,6 +22124,174 @@ img.wk-fade.wk-loaded{opacity:1}
     boot();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
+})();
+</script>
+<style id="wiki-arc-skip-style">
+.wk-skip{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0 16px;padding:10px 12px;border:1px dashed color-mix(in srgb,var(--line,#334155) 100%,transparent);border-radius:12px;font-size:13px;color:color-mix(in srgb,var(--text,#e5e7eb) 70%,transparent)}
+.wk-skip>span{margin-right:4px;font-weight:700}
+.wk-skip button{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:9px;border:1px solid color-mix(in srgb,var(--line,#334155) 100%,transparent);background:rgba(255,255,255,.03);color:color-mix(in srgb,var(--text,#e5e7eb) 85%,transparent);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.wk-skip button:hover{border-color:var(--accent,#d4a84f);color:#fff}
+.wk-skip button.is-skipped{border-style:dashed;border-color:#f87171;background:rgba(248,113,113,.1);color:#fecaca}
+.wk-skip small{flex-basis:100%;font-size:11.5px;color:color-mix(in srgb,var(--text,#e5e7eb) 50%,transparent)}
+</style>
+<script id="wiki-arc-skip-toggle">
+(function () {
+  'use strict';
+  var currentId = '';
+  function arcs() { try { return Array.isArray(storyArcs) ? storyArcs : []; } catch (e) { return []; } }
+  function segs(v) { try { return parseStoryRangeSegments(v) || []; } catch (e) { return []; } }
+  function truthy(v) { return v === true || v === 1 || v === 'true'; }
+  function isGuest() { try { var s = window.__wikiCloud && window.__wikiCloud.enabled && window.__wikiCloud.session(); return !!(s && s.role === 'guest'); } catch (e) { return false; } }
+  function current() {
+    var h1 = document.querySelector('#storyArticleContent h1');
+    var title = h1 ? h1.textContent.replace(/^\s*Арка\s*:\s*/i, '').replace(/\s+/g, ' ').trim() : '';
+    var byId = currentId && arcs().find(function (a) { return String(a.id) === currentId; });
+    if (byId && (!title || String(byId.name).replace(/\s+/g, ' ').trim() === title)) return byId;
+    return arcs().find(function (a) { return String(a.name).replace(/\s+/g, ' ').trim() === title; }) || null;
+  }
+  var busy = false;
+  function decorate() {
+    var content = document.getElementById('storyArticleContent');
+    if (!content) return;
+    var old = content.querySelector('.wk-skip');
+    var arc = current();
+    if (!arc || isGuest() || truthy(arc.movie) || typeof window.__wikiIsArcSkipped !== 'function') { if (old) old.remove(); return; }
+    var hasAnime = segs(arc.episodes).length > 0, hasManga = segs(arc.chapters).length > 0 && !truthy(arc.filler);
+    if (!hasAnime && !hasManga) { if (old) old.remove(); return; }
+    var sa = window.__wikiIsArcSkipped(arc.id, 'anime'), sm = window.__wikiIsArcSkipped(arc.id, 'manga');
+    var sig = arc.id + '|' + sa + '|' + sm;
+    if (old && old.getAttribute('data-sig') === sig) return;
+    busy = true;
+    var box = old || document.createElement('div');
+    box.className = 'wk-skip'; box.setAttribute('data-sig', sig);
+    box.innerHTML = '<span>Мой просмотр:</span>' +
+      (hasAnime ? '<button type="button" data-skip="anime" class="' + (sa ? 'is-skipped' : '') + '">' + (sa ? '⊘ Аниме не смотрел(а) · вернуть' : '📺 Отметить: не смотрел(а)') + '</button>' : '') +
+      (hasManga ? '<button type="button" data-skip="manga" class="' + (sm ? 'is-skipped' : '') + '">' + (sm ? '⊘ Мангу не читал(а) · вернуть' : '📖 Отметить: не читал(а)') + '</button>' : '') +
+      '<small>' + (sa || sm ? 'Эта арка не засчитывается в прогресс, шкалу и сетку просмотра, даже если она раньше вашей текущей серии или главы.' : 'Пригодится, если вы пропустили арку — например, филлер. Защита от спойлеров по-прежнему работает по вашей главе и серии.') + '</small>';
+    if (!old) {
+      var anchor = content.querySelector('.story-article-hero') || content.querySelector('h1');
+      if (anchor) anchor.after(box); else content.prepend(box);
+    }
+    box.querySelectorAll('[data-skip]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var track = b.getAttribute('data-skip');
+        window.__wikiSetArcSkipped(arc.id, track, !window.__wikiIsArcSkipped(arc.id, track));
+        try {
+          var sec = content.querySelector('.arc-reading-progress');
+          if (sec && typeof storyArcProgressMarkup === 'function') { var tmp = document.createElement('div'); tmp.innerHTML = storyArcProgressMarkup(arc); if (tmp.firstElementChild) sec.replaceWith(tmp.firstElementChild); }
+        } catch (e) {}
+        decorate();
+      });
+    });
+    busy = false;
+  }
+  var frame = 0;
+  function schedule() { if (!frame) frame = requestAnimationFrame(function () { frame = 0; decorate(); }); }
+  function start() {
+    if (typeof window.openStoryArticle === 'function' && !window.openStoryArticle.__wkSkip) {
+      var orig = window.openStoryArticle;
+      var w = function (id) { currentId = String(id || ''); var r = orig.apply(this, arguments); schedule(); return r; };
+      w.__wkSkip = true; window.openStoryArticle = w;
+    }
+    var content = document.getElementById('storyArticleContent');
+    if (content) new MutationObserver(function () { if (!busy) schedule(); }).observe(content, { childList: true });
+    window.addEventListener('wiki:cloud-ready', schedule);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
+})();
+</script>
+<style id="wiki-medal-art-editor-style">
+.wk-medal-change{position:absolute;top:6px;right:6px;z-index:2;width:26px;height:26px;padding:0;border-radius:8px;border:1px solid #475569;background:rgba(11,17,32,.85);color:#e5e7eb;font-size:12px;line-height:1;cursor:pointer;opacity:.75}
+.wiki-editor-wanted-item:hover .wk-medal-change{opacity:1}
+.wk-medal-change:hover{border-color:#d4a84f;background:rgba(212,168,79,.14)}
+#wikiEditorAchievements .wiki-editor-wanted-item{position:relative}
+#wikiEditorAchievements .wiki-editor-wanted-item.is-custom-art::after{content:"своя";position:absolute;top:4px;left:4px;padding:1px 6px;border-radius:99px;background:#d4a84f;color:#1b1406;font-size:9.5px;font-weight:800}
+.wk-medal-pop{position:absolute;z-index:40;left:0;right:0;top:calc(100% + 6px);display:grid;gap:8px;padding:10px;border-radius:12px;border:1px solid rgba(212,168,79,.5);background:#0b1120;box-shadow:0 14px 34px rgba(0,0,0,.55)}
+.wk-medal-pop input{width:100%;box-sizing:border-box;padding:8px 10px;border-radius:9px;border:1px solid #475569;background:rgba(255,255,255,.04);color:#fff;font:inherit;font-size:13px}
+.wk-medal-pop .row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.wk-medal-pop button{padding:7px 11px;border-radius:9px;border:1px solid #475569;background:rgba(255,255,255,.05);color:#e5e7eb;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.wk-medal-pop button.primary{border-color:#d4a84f;background:rgba(212,168,79,.18);color:#f4d99e}
+.wk-medal-pop small{color:#94a3b8;font-size:11.5px}
+.wk-medal-pop img{width:52px;height:64px;object-fit:contain;border-radius:8px;background:rgba(255,255,255,.04)}
+.wk-medal-input{display:flex;align-items:center;gap:8px}
+.wk-medal-input input{flex:1 1 auto;min-width:0}
+.wk-medal-input img{width:40px;height:48px;object-fit:contain;border-radius:7px;background:rgba(255,255,255,.05)}
+.wk-medal-hint{display:block;margin-top:4px;color:#94a3b8;font-size:11.5px}
+</style>
+<script id="wiki-medal-art-editor">
+(function () {
+  'use strict';
+  var KEY = 'onePieceWikiMedalArtV1', STORAGE_KEY = 'onePieceWikiLocalContentV1';
+  function readMap() { try { var v = JSON.parse(localStorage.getItem(KEY) || '{}'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
+  function writeMap(map) {
+    try { localStorage.setItem(KEY, JSON.stringify(map)); } catch (e) {}
+    // Держим копию в общем снимке редактора: экспорт HTML и облако подхватят её сразу.
+    try { var raw = localStorage.getItem(STORAGE_KEY); if (raw) { var d = JSON.parse(raw); d.medalArt = map; d.updatedAt = new Date().toISOString(); localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } } catch (e) {}
+  }
+  // Картинка из файла/буфера → уменьшенный PNG (до 320 px), чтобы не раздувать данные.
+  function fileToDataUrl(file, cb) {
+    var r = new FileReader();
+    r.onload = function () {
+      var im = new Image();
+      im.onload = function () {
+        var sc = Math.min(1, 320 / Math.max(im.width, im.height)), c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(im.width * sc)); c.height = Math.max(1, Math.round(im.height * sc));
+        c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+        cb(c.toDataURL('image/png'));
+      };
+      im.src = r.result;
+    };
+    r.readAsDataURL(file);
+  }
+  window.__wikiMedalImageInput = function (input, onChange) {
+    if (!input || input.__wkMedalInput) return; input.__wkMedalInput = true;
+    function take(file) { if (!file || !/^image\//.test(file.type)) return false; fileToDataUrl(file, function (u) { input.value = u; input.dispatchEvent(new Event('input', { bubbles: true })); if (onChange) onChange(u); }); return true; }
+    input.addEventListener('paste', function (e) { var f = null; [].forEach.call((e.clipboardData && e.clipboardData.files) || [], function (x) { if (!f && /^image\//.test(x.type)) f = x; }); if (f && take(f)) e.preventDefault(); });
+    input.addEventListener('dragover', function (e) { e.preventDefault(); });
+    input.addEventListener('drop', function (e) { var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (f && take(f)) e.preventDefault(); });
+  };
+  function refreshImages(key, url) {
+    document.querySelectorAll('[data-medal-art-key="' + key + '"]').forEach(function (node) {
+      var img = node.tagName === 'IMG' ? node : node.querySelector('img');
+      if (img && url) { img.src = url; img.dataset.artLoaded = key; }
+    });
+    try { document.dispatchEvent(new CustomEvent('wiki:custom-achievements-updated')); } catch (e) {}
+  }
+  function markCustom(root) {
+    var map = readMap();
+    (root || document).querySelectorAll('#wikiEditorAchievements .wiki-editor-wanted-item[data-medal-art-key]').forEach(function (n) { n.classList.toggle('is-custom-art', !!map[n.getAttribute('data-medal-art-key')]); });
+  }
+  window.__wikiOpenMedalArtEditor = function (node, key, MEDAL_ART) {
+    if (!node || !key) return;
+    var old = document.querySelector('.wk-medal-pop'); if (old) { var same = old.parentNode === node; old.remove(); if (same) return; }
+    var map = readMap(), defaults = window.__wikiMedalArtDefaults || {};
+    var pop = document.createElement('div'); pop.className = 'wk-medal-pop';
+    pop.innerHTML = '<div class="row"><img alt=""><small>Ссылка на картинку, вставка из буфера (Ctrl+V) или перетаскивание файла в поле.</small></div>' +
+      '<input type="text" placeholder="https://… или вставьте изображение">' +
+      '<div class="row"><button type="button" class="primary" data-a="save">Сохранить</button>' + (map[key] ? '<button type="button" data-a="reset">↩ Вернуть исходную</button>' : '') + '<button type="button" data-a="close">Отмена</button></div>';
+    node.appendChild(pop);
+    var input = pop.querySelector('input'), prev = pop.querySelector('img');
+    input.value = map[key] || '';
+    function preview() { var v = input.value.trim(); prev.src = v && /^(https?:\/\/|data:image\/)/i.test(v) ? v : (MEDAL_ART[key] || defaults[key] || ''); }
+    preview();
+    input.addEventListener('input', preview);
+    window.__wikiMedalImageInput(input, preview);
+    input.focus();
+    pop.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-a]'); if (!b) return;
+      var a = b.getAttribute('data-a'), m = readMap();
+      if (a === 'close') { pop.remove(); return; }
+      if (a === 'reset') { delete m[key]; writeMap(m); MEDAL_ART[key] = defaults[key] || MEDAL_ART[key]; refreshImages(key, MEDAL_ART[key]); pop.remove(); markCustom(); return; }
+      if (a === 'save') {
+        var v = input.value.trim();
+        if (!v) { delete m[key]; writeMap(m); MEDAL_ART[key] = defaults[key] || MEDAL_ART[key]; refreshImages(key, MEDAL_ART[key]); pop.remove(); markCustom(); return; }
+        if (!/^(https?:\/\/|data:image\/)/i.test(v)) { input.focus(); input.style.borderColor = '#f87171'; return; }
+        m[key] = v; writeMap(m); MEDAL_ART[key] = v; refreshImages(key, v); pop.remove(); markCustom();
+      }
+    });
+  };
+  // Отмечаем «своя» на встроенных медалях при каждом открытии вкладки достижений в редакторе.
+  if (typeof MutationObserver !== 'undefined') new MutationObserver(function () { if (document.getElementById('wikiEditorAchievements')) markCustom(); }).observe(document.documentElement, { childList: true, subtree: true });
 })();
 </script>
 </body></html>
