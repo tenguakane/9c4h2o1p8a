@@ -4626,7 +4626,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "22.10.2026 · 3";
+const WIKI_VERSION = "22.10.2026 · 4";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -14313,7 +14313,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     const baseBoot=window.bootWiki20;
     /* Existing boot already ran; repaint from restored/edited data. */
     try{refreshWiki();}catch(e){console.warn('Wiki editor initial refresh:',e);}
-    window.openWikiEditor=openManager;window.__wikiSetSpoilerProgress=function(p){spoilerProgress=normalizeSpoilerProgress(p||{});try{window.__wikiSpoilerProgress={chapter:spoilerProgress.chapter,episode:spoilerProgress.episode};}catch(e){}try{localStorage.setItem(SPOILER_PROGRESS_KEY,JSON.stringify(spoilerProgress));hasLocalSpoilerProgress=true;}catch(e){}try{refreshWiki();}catch(e){}try{window.dispatchEvent(new CustomEvent("wiki:spoiler-progress-restored",{detail:{chapter:spoilerProgress.chapter,episode:spoilerProgress.episode}}));}catch(e){}return {chapter:spoilerProgress.chapter,episode:spoilerProgress.episode};};window.__wikiRefresh=function(){try{refreshWiki();}catch(e){}};
+    window.openWikiEditor=openManager;window.__wikiEditRecord=function(type,id){if(!collections[type])return openManager();openManager(type);if(typeof window.__wikiCanEdit==="function"&&!window.__wikiCanEdit())return;editingId=String(id);managerQuery="";try{const se=document.getElementById("wikiEditorSearch");if(se)se.value="";}catch(e){}renderManager();setTimeout(()=>{const row=document.querySelector("#wikiEditorList .wiki-editor-record.active");if(row)row.scrollIntoView({block:"center"});},60);};window.__wikiSetSpoilerProgress=function(p){spoilerProgress=normalizeSpoilerProgress(p||{});try{window.__wikiSpoilerProgress={chapter:spoilerProgress.chapter,episode:spoilerProgress.episode};}catch(e){}try{localStorage.setItem(SPOILER_PROGRESS_KEY,JSON.stringify(spoilerProgress));hasLocalSpoilerProgress=true;}catch(e){}try{refreshWiki();}catch(e){}try{window.dispatchEvent(new CustomEvent("wiki:spoiler-progress-restored",{detail:{chapter:spoilerProgress.chapter,episode:spoilerProgress.episode}}));}catch(e){}return {chapter:spoilerProgress.chapter,episode:spoilerProgress.episode};};window.__wikiRefresh=function(){try{refreshWiki();}catch(e){}};
     window.closeWikiEditor=closeManager;
 })();
 
@@ -22292,6 +22292,255 @@ img.wk-fade.wk-loaded{opacity:1}
   };
   // Отмечаем «своя» на встроенных медалях при каждом открытии вкладки достижений в редакторе.
   if (typeof MutationObserver !== 'undefined') new MutationObserver(function () { if (document.getElementById('wikiEditorAchievements')) markCustom(); }).observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
+<style id="wiki-editor-plus-style">
+#wikiEditorOverlay#wikiEditorOverlay .wiki-editor-footer-copy{visibility:hidden}
+
+/* ===== Редактор статей: на весь экран, компактная левая колонка ===== */
+#wikiEditorOverlay#wikiEditorOverlay.wiki-editor-overlay.open{padding:0!important;overflow:hidden!important}
+#wikiEditorOverlay#wikiEditorOverlay .wiki-editor-panel{width:100vw!important;max-width:none!important;height:100vh!important;height:100dvh!important;max-height:none!important;margin:0!important;border-radius:0!important;border:0!important;display:flex!important;flex-direction:column!important;box-sizing:border-box}
+#wikiEditorOverlay#wikiEditorOverlay .wiki-editor-head{flex:0 0 auto;min-height:0!important;padding:10px 20px!important;gap:10px!important;align-items:center!important}
+#wikiEditorOverlay#wikiEditorOverlay .wiki-editor-head h2{font-size:18px!important;margin:0!important;white-space:nowrap}
+#wikiEditorOverlay#wikiEditorOverlay .wiki-editor-actions{position:relative;flex-wrap:wrap;gap:6px!important}
+#wikiEditorOverlay#wikiEditorOverlay .wiki-editor-actions .wiki-editor-btn{min-height:34px!important;padding:6px 12px!important;font-size:13px!important}
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-searchrow{display:flex;gap:6px;align-items:stretch}
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-searchrow .wiki-editor-search{flex:1 1 auto;min-width:0;margin:0!important}
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-searchrow #wikiEditorNew{flex:0 0 auto;width:auto!important;margin:0!important;padding:0 14px!important;white-space:nowrap}
+
+/* Строки списка: миниатюра + подробности */
+#wikiEditorOverlay#wikiEditorOverlay .wiki-editor-footer{background:#0b1220!important;opacity:1!important;margin-bottom:0!important;box-shadow:0 -10px 24px rgba(0,0,0,.45)}
+#wikiEditorOverlay#wikiEditorOverlay .wiki-editor-list>*{flex:0 0 auto!important}
+#wikiEditorOverlay#wikiEditorOverlay .wiki-editor-record.wk-rich{flex:0 0 auto!important;display:grid!important;grid-template-columns:40px minmax(0,1fr) auto!important;align-items:center!important;gap:10px!important;min-height:0!important;padding:7px 10px 7px 7px!important;margin-bottom:5px!important;text-align:left}
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-thumb{width:40px;height:40px;border-radius:9px;overflow:hidden;background:rgba(255,255,255,.06);display:grid;place-items:center;font-size:17px}
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-thumb img{width:100%;height:100%;object-fit:cover}
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-text{min-width:0;display:block;text-align:left!important}
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-text b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-text small{display:block;margin-top:2px;font-size:11.5px;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-flag{display:inline-block;margin-left:5px;padding:0 6px;border-radius:99px;font-size:10px;font-weight:800;vertical-align:1px}
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-flag.sp{background:rgba(248,113,113,.14);color:#fca5a5}
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-flag.dr{background:rgba(251,191,36,.14);color:#fcd34d}
+
+/* Меню «Данные» */
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-menu{position:absolute;top:calc(100% + 6px);right:44px;z-index:20;display:grid;gap:6px;min-width:250px;padding:10px;border-radius:12px;border:1px solid #475569;background:#0b1120;box-shadow:0 18px 40px rgba(0,0,0,.55)}
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-menu[hidden]{display:none}
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-menu .wiki-editor-btn{width:100%;justify-content:flex-start;text-align:left}
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-menu .wk-export{justify-self:start}
+
+/* Навигация по статьям над формой */
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-nav{position:sticky;top:-18px;z-index:6;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:-18px -28px 14px;padding:8px 28px;background:rgba(10,15,25,.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(148,163,184,.15)}
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-nav button{min-width:34px;height:30px;padding:0 10px;border-radius:8px;border:1px solid #475569;background:rgba(255,255,255,.04);color:#e5e7eb;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-nav button:hover:not(:disabled){border-color:#d4a84f;color:#fff}
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-nav button:disabled{opacity:.35;cursor:default}
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-nav .pos{font-size:12.5px;color:#cbd5e1;font-variant-numeric:tabular-nums}
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-nav .keys{margin-left:auto;font-size:11.5px;color:#64748b}
+#wikiEditorOverlay#wikiEditorOverlay .wk-ed-nav kbd{padding:1px 5px;border-radius:5px;border:1px solid #475569;background:rgba(255,255,255,.05);font:inherit;font-size:10.5px;color:#cbd5e1}
+@media (min-width:901px){
+  #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-body{flex:1 1 auto!important;min-height:0!important;height:auto!important;display:grid!important;grid-template-columns:360px minmax(0,1fr)!important}
+  #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-sidebar{display:grid!important;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto auto auto minmax(0,1fr) auto;align-content:stretch;min-height:0!important;overflow:hidden!important;padding:12px 12px 0!important;gap:8px}
+  #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-sidebar>*{grid-column:1/-1}
+  #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-sidebar>#wikiEditorSearch{grid-column:1;grid-row:2;margin:0!important}
+  #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-sidebar>#wikiEditorNew{grid-column:2;grid-row:2;width:auto!important;margin:0!important;padding:0 14px!important;white-space:nowrap}
+  #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-sidebar>#wikiEditorListTools{grid-row:3}
+  #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-sidebar>#wikiEditorListMeta{grid-row:4}
+  #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-sidebar>#wikiEditorList{grid-row:5}
+  #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-sidebar>*{margin-top:0!important;margin-bottom:0!important}
+  #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-tabs{display:flex!important;flex-wrap:wrap!important;gap:4px!important;padding:4px!important}
+  #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-tab{flex:0 0 auto!important;width:auto!important;min-height:30px!important;padding:5px 10px!important;font-size:12.5px!important}
+  #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-tab.wiki-spoiler-show-all-global{flex:1 1 100%!important;min-height:28px!important;padding:4px 10px!important;font-size:12px!important}
+  #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-list{flex:1 1 auto!important;min-height:0!important;max-height:none!important;overflow:auto!important;padding:2px 2px 14px!important}
+  #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-main{min-height:0!important;overflow:auto!important;padding:18px 28px 0!important}
+}
+@media (max-width:900px){
+  #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-actions{flex-wrap:wrap!important;overflow:visible!important;position:static!important;transform:none!important}
+  #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-head{position:relative!important}
+  #wikiEditorOverlay#wikiEditorOverlay #wikiEditorClose{top:12px!important;right:12px!important;margin:0!important}
+    #wikiEditorOverlay#wikiEditorOverlay .wk-ed-nav{margin:-14px -14px 12px;padding:8px 14px;top:-14px}
+  #wikiEditorOverlay#wikiEditorOverlay .wk-ed-nav .keys{display:none}
+  #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-head h2{font-size:15px!important}
+  #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-head{position:relative;padding-right:58px!important}
+  #wikiEditorOverlay#wikiEditorOverlay #wikiEditorClose{position:absolute!important;top:10px!important;right:12px!important;margin:0!important}
+  #wikiEditorOverlay#wikiEditorOverlay .wk-ed-menu{right:0}
+}
+
+/* Кнопки входа в редактор на сайте (только у администратора) */
+.wk-edit-site{position:absolute;top:10px;z-index:30;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;border:1px solid rgba(212,168,79,.55);background:rgba(212,168,79,.14);color:#f4d99e;font:inherit;font-size:13px;font-weight:800;cursor:pointer;backdrop-filter:blur(6px)}
+.wk-edit-site:hover{background:rgba(212,168,79,.26);color:#fff}
+.wk-edit-site[hidden]{display:none}
+.wk-article-edit{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;border:1px solid rgba(212,168,79,.55);background:rgba(212,168,79,.12);color:#f4d99e;font:inherit;font-size:13px;font-weight:800;cursor:pointer}
+.wk-article-edit:hover{background:rgba(212,168,79,.24);color:#fff}
+.wk-article-edit-wrap{display:inline-flex;gap:8px;align-items:center;margin-left:auto}
+@media (max-width:700px){.wk-edit-site span{display:none}.wk-edit-site{padding:6px 9px}}
+</style>
+<script id="wiki-editor-plus">
+(function () {
+  'use strict';
+  function canEdit() {
+    if (!window.WIKI_CLOUD_ENABLED) return true; // локальный режим без учёток
+    try { var s = window.__wikiCloud && window.__wikiCloud.session(); return !!(s && s.role === 'admin'); } catch (e) { return false; }
+  }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function validUrl(u) { u = String(u || '').trim(); return u && u !== 'Нет' && /^(https?:\/\/|data:image\/)/i.test(u) ? u : ''; }
+  function arr(type) {
+    try {
+      if (type === 'character') return characters; if (type === 'story') return storyArcs; if (type === 'reward') return rewards;
+      if (type === 'fruit') return fruits; if (type === 'useful') return usefulArticles;
+    } catch (e) {}
+    return [];
+  }
+  function byId(type, id) { return arr(type).find(function (x) { return String(x.id) === String(id); }) || null; }
+  function segs(v) { try { return parseStoryRangeSegments(v) || []; } catch (e) { return []; } }
+  function rangeText(v, unit) { var g = segs(v); if (!g.length) return ''; var a = g[0].start, b = g[g.length - 1].end; return unit + ' ' + (a === b ? a : a + '–' + b); }
+  function num(v) { var n = parseInt(String(v || '').replace(/\D+/g, ''), 10); return n > 0 ? n : 0; }
+
+  /* ---------- строки списка ---------- */
+  function rowInfo(type, r) {
+    var thumb = '', icon = '📄', meta = [];
+    if (type === 'character') { thumb = validUrl(r.person_link); icon = '👤'; var st = String(r.status || '').split(',')[0].trim(); if (st) meta.push(st); if (num(r.chapter)) meta.push('гл. ' + num(r.chapter)); else if (num(r.episode)) meta.push('эп. ' + num(r.episode)); }
+    else if (type === 'story') { thumb = validUrl(r.image); icon = '📖'; if (r.saga) meta.push(r.saga); var t = rangeText(r.chapters, 'гл.') || rangeText(r.episodes, 'эп.'); if (t) meta.push(t); }
+    else if (type === 'fruit') { thumb = validUrl(r.image); icon = '🍎'; if (r.type) meta.push(r.type); var o = byId('character', r.owner); if (o) meta.push(o.name); }
+    else if (type === 'useful') { thumb = validUrl(r.image); icon = '💡'; if (r.type) meta.push(r.type); }
+    else if (type === 'reward') { var c = byId('character', r.character_id); thumb = validUrl(r.reward_image) || (c && validUrl(c.person_link)); icon = '💰'; meta.push((Number(r.reward) || 0).toLocaleString('ru-RU') + ' ฿'); if (r.arc) meta.push(r.arc); }
+    return { thumb: thumb, icon: icon, meta: meta.join(' · ') };
+  }
+  function activeType() { var t = document.querySelector('#wikiEditorTabs .wiki-editor-tab.active[data-type]'); return t ? t.getAttribute('data-type') : ''; }
+  function enhanceRows() {
+    var type = activeType(); if (!type) return;
+    document.querySelectorAll('#wikiEditorList .wiki-editor-record[data-id]:not(.wk-rich)').forEach(function (row) {
+      var r = byId(type, row.getAttribute('data-id')); if (!r) return;
+      var oldTitle = row.querySelector('span') ? row.querySelector('span').childNodes[0] : null;
+      var name = oldTitle ? String(oldTitle.textContent || '').replace(/^🔒\s*/, '').trim() : (r.name || r.id);
+      var small = row.querySelector('small'); var smallText = small ? small.textContent : '';
+      var spoiler = /СПОЙЛЕР/i.test(smallText), draft = /ЧЕРНОВИК/i.test(smallText) || r.__wikiDraft === true;
+      var info = rowInfo(type, r);
+      row.title = smallText;
+      row.classList.add('wk-rich');
+      row.innerHTML = '<span class="wk-ed-thumb">' + (info.thumb ? '<img alt="" loading="lazy" src="' + esc(info.thumb) + '" onerror="this.replaceWith(document.createTextNode(\'' + info.icon + '\'))">' : info.icon) + '</span>' +
+        '<span class="wk-ed-text"><b>' + esc(name) + (spoiler ? '<span class="wk-ed-flag sp">🔒 спойлер</span>' : '') + (draft ? '<span class="wk-ed-flag dr">черновик</span>' : '') + '</b><small>' + esc(info.meta || r.id) + '</small></span><span aria-hidden="true">›</span>';
+    });
+  }
+
+  /* ---------- шапка редактора: меню «Данные», поиск + «Новая статья» ---------- */
+  function enhanceChrome(overlay) {
+    var actions = overlay.querySelector('.wiki-editor-actions');
+    if (actions && !actions.querySelector('#wkEdDataBtn')) {
+      var btn = document.createElement('button'); btn.type = 'button'; btn.id = 'wkEdDataBtn'; btn.className = 'wiki-editor-btn'; btn.textContent = '💾 Данные ▾';
+      var menu = document.createElement('div'); menu.className = 'wk-ed-menu'; menu.hidden = true;
+      ['wkExportInfo', 'wikiEditorExportHTML', 'wikiEditorExport', 'wikiEditorImportBtn'].forEach(function (id) { var el = overlay.querySelector('#' + id); if (el) menu.appendChild(el); });
+      var close = overlay.querySelector('#wikiEditorClose');
+      actions.insertBefore(btn, close || null); actions.appendChild(menu);
+      btn.addEventListener('click', function (e) { e.stopPropagation(); menu.hidden = !menu.hidden; });
+      overlay.addEventListener('click', function (e) { if (!menu.hidden && !menu.contains(e.target) && e.target !== btn) menu.hidden = true; });
+      menu.addEventListener('click', function (e) { if (e.target.closest('.wiki-editor-btn')) setTimeout(function () { menu.hidden = true; }, 0); });
+    }
+    // Поле поиска не переносим в DOM (редактор на это полагается) — раскладку задаёт CSS-сетка колонки.
+    var search = overlay.querySelector('#wikiEditorSearch'), add = overlay.querySelector('#wikiEditorNew');
+    if (add && !add.__wkLabel) { add.__wkLabel = true; add.textContent = '＋ Новая'; add.title = 'Новая статья'; }
+    if (search && !search.__wkPh) { search.__wkPh = true; search.placeholder = 'Найти статью…  (Ctrl+K)'; }
+  }
+
+  /* ---------- навигация по статьям над формой ---------- */
+  function rows() { return [].slice.call(document.querySelectorAll('#wikiEditorList .wiki-editor-record[data-id]')); }
+  function step(d) {
+    var list = rows(), i = list.findIndex(function (r) { return r.classList.contains('active'); });
+    var next = list[i + d]; if (!next) return;
+    next.click();
+    setTimeout(function () { var a = document.querySelector('#wikiEditorList .wiki-editor-record.active'); if (a) a.scrollIntoView({ block: 'nearest' }); }, 50);
+  }
+  function enhanceForm() {
+    var form = document.getElementById('wikiEditorForm');
+    if (!form || !form.querySelector('[data-field="id"]')) return;
+    var list = rows(), i = list.findIndex(function (r) { return r.classList.contains('active'); });
+    var nav = form.querySelector(':scope > .wk-ed-nav');
+    var sig = i + '/' + list.length;
+    if (nav && nav.getAttribute('data-sig') === sig) return;
+    if (!nav) { nav = document.createElement('div'); nav.className = 'wk-ed-nav'; form.insertBefore(nav, form.firstChild); }
+    nav.setAttribute('data-sig', sig);
+    nav.innerHTML = '<button type="button" data-step="-1" title="Предыдущая статья (Alt+↑)"' + (i <= 0 ? ' disabled' : '') + '>‹ Пред.</button>' +
+      '<span class="pos">' + (i >= 0 ? (i + 1) + ' из ' + list.length : 'новая статья') + '</span>' +
+      '<button type="button" data-step="1" title="Следующая статья (Alt+↓)"' + (i < 0 || i >= list.length - 1 ? ' disabled' : '') + '>След. ›</button>' +
+      '<span class="keys"><kbd>Ctrl</kbd>+<kbd>S</kbd> сохранить · <kbd>Alt</kbd>+<kbd>↑</kbd><kbd>↓</kbd> соседняя · <kbd>Ctrl</kbd>+<kbd>K</kbd> поиск · <kbd>Esc</kbd> закрыть</span>';
+    nav.querySelectorAll('[data-step]').forEach(function (b) { b.addEventListener('click', function () { step(Number(b.getAttribute('data-step'))); }); });
+  }
+
+  var frame = 0, busy = false;
+  function enhance() {
+    frame = 0;
+    var overlay = document.getElementById('wikiEditorOverlay');
+    if (!overlay || !overlay.classList.contains('open')) return;
+    busy = true;
+    try { enhanceChrome(overlay); enhanceRows(); enhanceForm(); } finally { busy = false; }
+  }
+  function schedule() { if (!frame) frame = requestAnimationFrame(enhance); }
+
+  window.addEventListener('keydown', function (e) {
+    var overlay = document.getElementById('wikiEditorOverlay');
+    if (!overlay || !overlay.classList.contains('open')) return;
+    var k = (e.key || '').toLowerCase();
+    function own() { e.preventDefault(); e.stopImmediatePropagation(); }
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'ы')) { var save = overlay.querySelector('#wikiEditorSave'); if (save) { own(); save.click(); } return; }
+    if ((e.ctrlKey || e.metaKey) && (k === 'k' || k === 'л')) { var se = overlay.querySelector('#wikiEditorSearch'); if (se) { own(); se.focus(); se.select(); } return; }
+    if (e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) { own(); step(e.key === 'ArrowDown' ? 1 : -1); return; }
+    var typing = /^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName || '') || (document.activeElement && document.activeElement.isContentEditable);
+    if (e.key === '/' && !typing) { var s2 = overlay.querySelector('#wikiEditorSearch'); if (s2) { own(); s2.focus(); } return; }
+    if (e.key === 'Escape' && !typing && !overlay.querySelector('.wk-ed-menu:not([hidden]), .wk-medal-pop')) { var c = overlay.querySelector('#wikiEditorClose'); if (c) { own(); c.click(); } }
+  }, true);
+
+  /* ---------- вход в редактор с сайта ---------- */
+  var lastOpened = {};
+  function siteButton() {
+    var header = document.querySelector('body > header') || document.querySelector('header');
+    if (!header) return;
+    var btn = document.getElementById('wkEditSite');
+    if (!btn) {
+      btn = document.createElement('button'); btn.type = 'button'; btn.id = 'wkEditSite'; btn.className = 'wk-edit-site';
+      btn.innerHTML = '✏️<span> Редактор</span>'; btn.title = 'Редактор статей';
+      btn.addEventListener('click', function () {
+        var tab = document.body.dataset.activeTab || '';
+        var map = { characters: 'character', story: 'story', rewards: 'reward', fruits: 'fruit', useful: 'useful' };
+        if (typeof window.openWikiEditor === 'function') window.openWikiEditor(map[tab]);
+      });
+      header.appendChild(btn);
+    }
+    var show = canEdit() && !!(window.WIKI_CLOUD_ENABLED ? document.getElementById('wkMe') : true);
+    btn.hidden = !show;
+    if (!show) return;
+    var me = document.getElementById('wkMe'), mobile = window.innerWidth <= 700;
+    btn.style.left = btn.style.right = '';
+    if (me && mobile) btn.style.left = (me.offsetLeft + me.offsetWidth + 8) + 'px';
+    else if (me) btn.style.right = (header.clientWidth - me.offsetLeft + 8) + 'px';
+    else btn.style.right = '14px';
+  }
+  var ARTICLES = { characterArticle: 'character', storyArticle: 'story', fruitArticle: 'fruit', usefulArticle: 'useful' };
+  function articleButtons() {
+    Object.keys(ARTICLES).forEach(function (cid) {
+      var box = document.getElementById(cid); if (!box) return;
+      var type = ARTICLES[cid], bar = box.querySelector('.article-topbar');
+      var btn = box.querySelector('.wk-article-edit');
+      if (!canEdit() || !bar) { if (btn) btn.remove(); return; }
+      if (!btn) {
+        btn = document.createElement('button'); btn.type = 'button'; btn.className = 'wk-article-edit'; btn.textContent = '✏️ Редактировать';
+        btn.addEventListener('click', function () { var id = lastOpened[type]; if (id && typeof window.__wikiEditRecord === 'function') window.__wikiEditRecord(type, id); else if (typeof window.openWikiEditor === 'function') window.openWikiEditor(type); });
+        var fav = bar.lastElementChild;
+        if (fav && fav !== bar.firstElementChild) bar.insertBefore(btn, fav); else bar.appendChild(btn);
+      }
+    });
+  }
+
+  function start() {
+    // Запоминаем, какая статья открыта, чтобы кнопка «Редактировать» открывала именно её.
+    var orig = window.recordRecentVisit;
+    if (typeof orig === 'function' && !orig.__wkEdit) {
+      var w = function (type, id) { lastOpened[type] = String(id); return orig.apply(this, arguments); };
+      w.__wkEdit = true; window.recordRecentVisit = w;
+    }
+    new MutationObserver(function () { if (!busy) schedule(); }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+    siteButton(); articleButtons();
+    window.addEventListener('wiki:cloud-ready', function () { siteButton(); articleButtons(); });
+    window.addEventListener('resize', siteButton);
+    setInterval(function () { siteButton(); articleButtons(); }, 1500);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
 })();
 </script>
 </body></html>
