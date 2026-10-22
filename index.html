@@ -1488,6 +1488,44 @@
 <script id="wiki-portable-accent-fallback">window.__wikiPortableAccentSettings={"status::Пират":"#d67171","status::Гражданский":"#7b90f9","status::Бандит":"#cb86a7","status::Барок Воркс":"#b07de3","status::Дозорный":"#6093d2","status::Король":"#ffe49e","status::Охотник за головами":"#b68768","status::Пандамен":"#a8a8a8","status::Повар":"#67e06b","status::Революционер":"#568664","status::Рыбочеловек":"#4d92c7","status::Существо":"#86c1b7","status::Фруктовик":"#e999ff","status::Шичибукай":"#ea9c48","saga::Алабаста":"#ffce6b","saga::Великая Война":"#f56161","saga::Ист-Блю":"#51bff6","saga::Небесный Остров":"#6fddeb","saga::Триллер Барк":"#d59af9","saga::Обложки":"#aafde8","saga::Water 7":"#6f92fb","type::Зоан":"#65f6b7","type::Логия":"#f967ae","type::Парамеция":"#bb9eff","saga::Полнометражные фильмы":"#afff85","saga::Финальная":"#ac90d5","saga::Страна Вано":"#ec7979","saga::Пирожный Остров":"#b98cd9","saga::Остров Рыболюдей":"#5ca8eb","saga::Дресс Роза":"#ff8fcb","status::Экс-Капитан":"#ced3ee","status::Капитан":"#ff66b8","status::Животные":"#6bf769","status::Доктор":"#85e0ff","status::Экс-Дозорный":"#b5b5b5","status::Экс-Пират":"#eac2c2","useful::Способности":"#ffd57a","useful::Материалы":"#8abeff","useful::Организации":"#877dd4","useful::География":"#6cc17a","useful::Инструменты":"#d6d6d6","useful::Расы":"#8fd4ff","useful::Оружие":"#f95d5d","useful::Артефакты":"#e77ecb"};window.__wikiPortableRewardRankColors={"first":"#ffda75","second":"#d9d9d9","third":"#ffd285","other":"#4f4860"};</script>
 </head>
 <body data-theme="mugiwara" data-active-tab="characters" class="wiki-editor-open" style="">
+<script id="wiki-cloud-config">
+/* ============================================================
+   ОБЛАКО И УЧЁТКИ — НАСТРОЙКИ
+   Впишите сюда ключ проекта Firebase (Project settings → Your apps → Web app → firebaseConfig).
+   Пока apiKey и projectId пустые, сайт работает как раньше: без входа, всё хранится в браузере.
+   ============================================================ */
+window.WIKI_CLOUD_CONFIG = window.WIKI_CLOUD_CONFIG || {
+  firebase: {
+    apiKey: "AIzaSyBPoYuCdXebTYk61xBT6aHxadxq102BitE",
+    authDomain: "chopa-ae383.firebaseapp.com",
+    projectId: "chopa-ae383",
+    appId: "1:938923993293:web:7a324682dea006e52a6184"
+  },
+  // Логин превращается в адрес почты для Firebase: dima → dima@op-wiki.app
+  emailDomain: "op-wiki.app",
+  accounts: [
+    { login: "dima",   name: "Дима",   role: "admin",  color: "#60a5fa" },
+    { login: "zhenya", name: "Женя",   role: "member", color: "#f472b6" },
+    { login: "valik",  name: "Валик",  role: "member", color: "#34d399" },
+    { login: "serega", name: "Серёга", role: "member", color: "#fbbf24" }
+  ],
+  guest: { name: "Гость", progress: { chapter: 100, episode: 100 } }
+};
+window.WIKI_CLOUD_ENABLED = !!(window.WIKI_CLOUD_CONFIG.firebase && window.WIKI_CLOUD_CONFIG.firebase.apiKey && window.WIKI_CLOUD_CONFIG.firebase.projectId);
+// В облачном режиме у каждого свой прогресс: личные поля встроенной копии (прогресс того, кто
+// экспортировал файл) убираем до того, как их прочитает любой модуль страницы.
+(function () {
+  if (!window.WIKI_CLOUD_ENABLED) return;
+  try {
+    var node = document.getElementById('wikiEmbeddedBackup');
+    if (!node) return;
+    var data = JSON.parse(node.textContent || '{}');
+    delete data.spoilerProgress; delete data.filmProgress; delete data.topLists;
+    node.textContent = JSON.stringify(data).replace(/</g, '\\u003c');
+  } catch (e) {}
+})();
+</script>
+
 <header>
     <div class="wiki-header-top">
         <div class="wiki-brand">
@@ -11930,6 +11968,17 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
             embeddedRaw = '';
             embeddedData = null;
         }
+        // Облачный режим: статьи из облака (кэш последней загрузки) заменяют встроенную копию.
+        // Личные данные (прогресс, фильмы, топы) в облачной копии отсутствуют и здесь не трогаются.
+        try {
+            if (window.WIKI_CLOUD_ENABLED) {
+                const cloudCache = JSON.parse(localStorage.getItem('wkCloudContentV1') || 'null');
+                if (cloudCache && cloudCache.data && cloudCache.data.collections) {
+                    embeddedData = cloudCache.data;
+                    embeddedRaw = JSON.stringify(cloudCache.data);
+                }
+            }
+        } catch (e) {}
 
         const embeddedStamp = embeddedData && embeddedData.updatedAt ? String(embeddedData.updatedAt) : '';
         // Each exported HTML gets its own localStorage marker. Telegram/Android content://
@@ -12135,6 +12184,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         return String(value);
     }
     function openManager(type){
+        if (typeof window.__wikiCanEdit === "function" && !window.__wikiCanEdit()) { if (typeof window.__wikiNoEditNotice === "function") window.__wikiNoEditNotice(); return; }
         // Если редактор вызван во время чтения статьи, сразу открываем именно её.
         // Проверяем, что статья действительно сейчас видима, чтобы не использовать
         // устаревший appArticleState после возврата к списку.
@@ -14238,7 +14288,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     const baseBoot=window.bootWiki20;
     /* Existing boot already ran; repaint from restored/edited data. */
     try{refreshWiki();}catch(e){console.warn('Wiki editor initial refresh:',e);}
-    window.openWikiEditor=openManager;
+    window.openWikiEditor=openManager;window.__wikiSetSpoilerProgress=function(p){spoilerProgress=normalizeSpoilerProgress(p||{});try{window.__wikiSpoilerProgress={chapter:spoilerProgress.chapter,episode:spoilerProgress.episode};}catch(e){}try{localStorage.setItem(SPOILER_PROGRESS_KEY,JSON.stringify(spoilerProgress));hasLocalSpoilerProgress=true;}catch(e){}try{refreshWiki();}catch(e){}try{window.dispatchEvent(new CustomEvent("wiki:spoiler-progress-restored",{detail:{chapter:spoilerProgress.chapter,episode:spoilerProgress.episode}}));}catch(e){}return {chapter:spoilerProgress.chapter,episode:spoilerProgress.episode};};window.__wikiRefresh=function(){try{refreshWiki();}catch(e){}};
     window.closeWikiEditor=closeManager;
 })();
 
@@ -20708,7 +20758,8 @@ img.wk-fade.wk-loaded{opacity:1}
 </script>
 <style id="wiki-cabin-extra-tabs-style">
 /* ===== Каюта: две новые вкладки ===== */
-@media (min-width:901px){#favoritesSection .cabin-subnav.wk-has-extra{grid-template-columns:repeat(6,minmax(0,1fr))!important}}
+@media (min-width:901px){#favoritesSection .cabin-subnav.wk-has-extra{grid-template-columns:repeat(var(--wk-tab-count,6),minmax(0,1fr))!important}}
+#favoritesSection .cabin-subnav [hidden]{display:none!important}
 #favoritesSection .cabin-subtab.wk-extra-tab.active{color:#f4d99e}
 #favoritesSection .wk-pane{min-width:0}
 #favoritesSection .wk-pane[hidden]{display:none!important}
@@ -20776,6 +20827,12 @@ img.wk-fade.wk-loaded{opacity:1}
 .wk-top-name{min-width:0}
 .wk-top-name b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wk-top-name small{display:block;font-size:11px;color:color-mix(in srgb,var(--text,#e5e7eb) 55%,transparent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wk-top-you{margin-left:4px;padding:1px 7px;border-radius:99px;font-size:10px;font-weight:800;background:color-mix(in srgb,var(--who) 22%,transparent);color:var(--who)}
+.wk-top-row.is-locked .wk-top-thumb{background:rgba(148,163,184,.12)}
+.wk-top-row.is-locked .wk-top-name b{color:color-mix(in srgb,var(--text,#e5e7eb) 60%,transparent)}
+.wk-tops-col:not(.is-mine) .wk-top-pick{cursor:default}
+.wk-tops-col:not(.is-mine) .wk-top-pick:hover{border-color:transparent}
+.wk-tops-col:not(.is-mine) .wk-top-pick.is-empty{border-color:color-mix(in srgb,var(--line,#334155) 50%,transparent)}
 .wk-top-match{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:99px;font-size:10px;font-weight:800;vertical-align:1px;background:color-mix(in srgb,var(--other) 20%,transparent);color:var(--other);border:1px solid color-mix(in srgb,var(--other) 50%,transparent)}
 .wk-top-tools{display:flex;gap:2px;opacity:0;transition:opacity .15s}
 .wk-top-row:hover .wk-top-tools,.wk-top-row:focus-within .wk-top-tools{opacity:1}
@@ -20820,42 +20877,62 @@ img.wk-fade.wk-loaded{opacity:1}
   /* ---------- регистрация вкладок ---------- */
   var TABS = [
     { key: 'watchgrid', icon: '🟩', label: 'Сетка просмотра', pane: 'wkCabinPaneWatchGrid', render: renderWatchGrid },
-    { key: 'tops', icon: '🏆', label: 'Топы', pane: 'wkCabinPaneTops', render: renderTops }
+    { key: 'tops', icon: '🏆', label: 'Топы', pane: 'wkCabinPaneTops', render: function (pane) { renderTops(pane); var st = store(); if (st !== localStore && st.refresh) st.refresh().then(function () { if (!pane.hidden && !openPicker) renderTops(pane); }); } }
   ];
   var ACTIVE_KEY = 'onePieceWikiCabinExtraTabV1';
+  var started = false, navEl = null, anchorEl = null;
+  function isVisible(t) { try { return !t.visible || !!t.visible(); } catch (e) { return false; } }
+  function addTab(t) {
+    var btn = navEl.querySelector('[data-wk-cabin-tab="' + t.key + '"]');
+    if (!btn) {
+      btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'cabin-subtab wk-extra-tab';
+      btn.setAttribute('data-wk-cabin-tab', t.key); btn.setAttribute('role', 'tab'); btn.setAttribute('aria-selected', 'false'); btn.tabIndex = -1;
+      btn.innerHTML = '<span class="cabin-subtab-icon" aria-hidden="true">' + t.icon + '</span><span>' + t.label + '</span>';
+      navEl.appendChild(btn);
+    }
+    var pane = document.getElementById(t.pane);
+    if (!pane) {
+      pane = document.createElement('section');
+      pane.id = t.pane; pane.className = 'wk-pane'; pane.setAttribute('role', 'tabpanel');
+      anchorEl.after(pane); anchorEl = pane;
+    } else { pane.innerHTML = ''; }
+    pane.hidden = true;
+    if (!btn.__wkBound) { btn.__wkBound = true; btn.addEventListener('click', function (e) { e.preventDefault(); activate(t.key); }); }
+  }
+  function refreshTabs() {
+    if (!navEl) return;
+    var count = [].filter.call(navEl.querySelectorAll('[data-cabin-tab]'), function (b) { return !b.hidden && getComputedStyle(b).display !== 'none'; }).length;
+    TABS.forEach(function (t) {
+      var btn = navEl.querySelector('[data-wk-cabin-tab="' + t.key + '"]');
+      var vis = isVisible(t);
+      if (btn) { btn.hidden = !vis; btn.style.display = vis ? '' : 'none'; }
+      if (vis) count++;
+      if (!vis) { var pane = document.getElementById(t.pane); if (pane && !pane.hidden) { deactivate(); var fav = document.getElementById('cabinTabFavorites'); if (fav) fav.click(); } }
+    });
+    navEl.style.setProperty('--wk-tab-count', count);
+  }
   function setup() {
     var section = document.getElementById('favoritesSection');
-    var nav = section && section.querySelector('.cabin-subnav');
-    if (!nav) return false;
-    var lastPane = section.querySelector('.cabin-tab-panel:last-of-type') || nav;
-    var anchor = section.querySelectorAll('.cabin-tab-panel');
-    anchor = anchor.length ? anchor[anchor.length - 1] : nav;
-    TABS.forEach(function (t) {
-      var btn = nav.querySelector('[data-wk-cabin-tab="' + t.key + '"]');
-      if (!btn) {
-        btn = document.createElement('button');
-        btn.type = 'button'; btn.className = 'cabin-subtab wk-extra-tab';
-        btn.setAttribute('data-wk-cabin-tab', t.key); btn.setAttribute('role', 'tab'); btn.setAttribute('aria-selected', 'false'); btn.tabIndex = -1;
-        btn.innerHTML = '<span class="cabin-subtab-icon" aria-hidden="true">' + t.icon + '</span><span>' + t.label + '</span>';
-        nav.appendChild(btn);
-      }
-      var pane = document.getElementById(t.pane);
-      if (!pane) {
-        pane = document.createElement('section');
-        pane.id = t.pane; pane.className = 'wk-pane'; pane.hidden = true; pane.setAttribute('role', 'tabpanel');
-        anchor.after(pane); anchor = pane;
-      } else { pane.innerHTML = ''; pane.hidden = true; }
-      btn.addEventListener('click', function (e) { e.preventDefault(); activate(t.key); });
-    });
-    nav.classList.add('wk-has-extra');
+    navEl = section && section.querySelector('.cabin-subnav');
+    if (!navEl) return false;
+    var panes = section.querySelectorAll('.cabin-tab-panel');
+    anchorEl = panes.length ? panes[panes.length - 1] : navEl;
+    TABS.forEach(addTab);
+    navEl.classList.add('wk-has-extra');
+    started = true;
+    refreshTabs();
     // Переход на любую старую вкладку — прячем новые.
     document.addEventListener('click', function (e) {
       if (e.target && e.target.closest && e.target.closest('#favoritesSection [data-cabin-tab]')) deactivate();
     }, true);
     var saved = lsGet(ACTIVE_KEY, '');
-    if (saved && TABS.some(function (t) { return t.key === saved; })) activate(saved);
+    var savedTab = TABS.find(function (t) { return t.key === saved; });
+    if (savedTab && isVisible(savedTab)) activate(saved);
     return true;
   }
+  window.__wikiRegisterCabinTab = function (t) { TABS.push(t); if (started) { addTab(t); refreshTabs(); } };
+  window.__wikiRefreshCabinTabs = function (rerender) { refreshTabs(); if (rerender) rerenderActive(); };
   function activate(key) {
     var section = document.getElementById('favoritesSection');
     if (!section) return;
@@ -21004,7 +21081,6 @@ img.wk-fade.wk-loaded{opacity:1}
      2. ТОПЫ ДИМЫ И ЖЕНИ
      ========================================================= */
   var TOPS_KEY = 'onePieceWikiTopListsV1', TOPS_CAT_KEY = 'onePieceWikiTopCategoryV1';
-  var PEOPLE = [{ key: 'dima', name: 'Дима', color: '#60a5fa' }, { key: 'zhenya', name: 'Женя', color: '#f472b6' }];
   var CREW_IDS = ['char_luffy', 'char_zoro', 'char_nami', 'char_usopp', 'char_sanji', 'char_chopper', 'char_robin', 'char_franky', 'char_brook', 'char_jinbe', 'char_jinbei'];
   var CREW_NAMES = ['Луффи', 'Зоро', 'Нами', 'Усопп', 'Санджи', 'Чоппер', 'Робин', 'Фрэнки', 'Брук', 'Джимбей', 'Дзимбэй'];
   function crewMembers() {
@@ -21028,7 +21104,12 @@ img.wk-fade.wk-loaded{opacity:1}
       pool: function () { return list('characters').filter(function (c) { return !hidden(c, 'character'); }); } }
   ];
   function villainScore(c) { var s = String(c.status || '').toLowerCase(); return /антагонист|злод/.test(s) ? 2 : /барок воркс|cp9|шичибукай|бандит|работорговец/.test(s) ? 1 : 0; }
-  function loadTops() {
+  function defaultPeople() {
+    var acc = (window.WIKI_CLOUD_CONFIG && window.WIKI_CLOUD_CONFIG.accounts) || [];
+    if (acc.length) return acc.map(function (a) { return { key: a.login, name: a.name, color: a.color || '#94a3b8' }; });
+    return [{ key: 'dima', name: 'Дима', color: '#60a5fa' }, { key: 'zhenya', name: 'Женя', color: '#f472b6' }];
+  }
+  function loadLocalTops() {
     var t = null;
     try { t = JSON.parse(localStorage.getItem(TOPS_KEY) || 'null'); } catch (e) {}
     var embedded = null;
@@ -21037,62 +21118,90 @@ img.wk-fade.wk-loaded{opacity:1}
     if (!t && window.__wikiTopLists) t = window.__wikiTopLists;
     if (!t || typeof t !== 'object') t = { updatedAt: '', lists: {} };
     t.lists = t.lists || {};
-    PEOPLE.forEach(function (p) { t.lists[p.key] = t.lists[p.key] || {}; CATS.forEach(function (c) { if (!Array.isArray(t.lists[p.key][c.key])) t.lists[p.key][c.key] = []; }); });
     return t;
   }
-  function saveTops(t) {
+  function saveLocalTops(t) {
     t.updatedAt = new Date().toISOString();
     window.__wikiTopLists = t;
     lsSet(TOPS_KEY, JSON.stringify(t));
-    // Держим копию и в общем снимке редактора, чтобы экспорт HTML сразу включал топы.
     try { var raw = localStorage.getItem('onePieceWikiLocalContentV1'); if (raw) { var d = JSON.parse(raw); d.topLists = t; localStorage.setItem('onePieceWikiLocalContentV1', JSON.stringify(d)); } } catch (e) {}
+  }
+  // Локальный режим (без облака): все колонки редактируются в этом браузере.
+  var localStore = {
+    people: defaultPeople,
+    me: function () { return ''; },
+    editable: function () { return true; },
+    get: function (key) { return loadLocalTops().lists[key] || {}; },
+    set: function (key, lists) { var t = loadLocalTops(); t.lists[key] = lists; saveLocalTops(t); },
+    refresh: function () { return Promise.resolve(); },
+    note: function () { return ''; }
+  };
+  function store() { return (window.WIKI_CLOUD_ENABLED && window.__wikiTopsStore) || localStore; }
+
+  function unlockText(cat, rec) {
+    if (!rec) return '';
+    var ch = 0, ep = 0;
+    if (cat.type === 'arc') { var a = segs(rec.chapters)[0], b = segs(rec.episodes)[0]; ch = a ? a.start : 0; ep = b ? b.start : 0; }
+    else { ch = parseInt(String(rec.chapter || '').replace(/\D+/g, ''), 10) || 0; ep = parseInt(String(rec.episode || '').replace(/\D+/g, ''), 10) || 0; }
+    var parts = []; if (ch) parts.push('главе ' + ch); if (ep) parts.push('серии ' + ep);
+    return parts.length ? 'откроется на ' + parts.join(' или ') : 'скрыт спойлер-защитой';
   }
   function recordInfo(cat, id) {
     if (!id) return null;
     if (cat.type === 'arc') {
       var a = list('storyArcs').find(function (x) { return x.id === id; });
-      return a ? { id: a.id, name: a.name, sub: a.saga || '', img: validUrl(a.image), icon: '📖', pos: (a.image_position_x || 50) + '% ' + (a.image_position || 50) + '%' } : { id: id, name: 'Удалённая арка', sub: id, icon: '❔' };
+      if (!a) return { id: id, name: 'Удалённая арка', sub: id, icon: '❔' };
+      if (hidden(a, 'story')) return { id: id, locked: true, sub: unlockText(cat, a), icon: '🔒' };
+      return { id: a.id, name: a.name, sub: a.saga || '', img: validUrl(a.image), icon: '📖', pos: (a.image_position_x || 50) + '% ' + (a.image_position || 50) + '%' };
     }
     var c = list('characters').find(function (x) { return x.id === id; });
-    return c ? { id: c.id, name: c.name, sub: String(c.status || '').split(',').slice(0, 2).join(', '), img: validUrl(c.person_link), icon: '👤', pos: (c.person_image_position_x || 50) + '% ' + (c.person_image_position || 30) + '%' } : { id: id, name: 'Удалённый персонаж', sub: id, icon: '❔' };
+    if (!c) return { id: id, name: 'Удалённый персонаж', sub: id, icon: '❔' };
+    if (hidden(c, 'character')) return { id: id, locked: true, sub: unlockText(cat, c), icon: '🔒' };
+    return { id: c.id, name: c.name, sub: String(c.status || '').split(',').slice(0, 2).join(', '), img: validUrl(c.person_link), icon: '👤', pos: (c.person_image_position_x || 50) + '% ' + (c.person_image_position || 30) + '%' };
   }
   function thumb(info) {
     return '<span class="wk-top-thumb">' + (info && info.img ? '<img alt="" loading="lazy" src="' + esc(info.img) + '" style="object-position:' + esc(info.pos || '50% 30%') + '" onerror="this.replaceWith(document.createTextNode(\'' + (info.icon || '👤') + '\'))">' : (info ? info.icon : '＋')) + '</span>';
   }
   var openPicker = null;
   function renderTops(pane) {
-    var tops = loadTops();
+    var st = store();
     var catKey = lsGet(TOPS_CAT_KEY, 'villains');
     var cat = CATS.find(function (c) { return c.key === catKey; }) || CATS[0];
     var size = cat.size();
+    var people = st.people().slice();
+    var meKey = st.me();
+    people.sort(function (a, b) { return (b.key === meKey) - (a.key === meKey); });
     var lists = {};
-    PEOPLE.forEach(function (p) { var l = tops.lists[p.key][cat.key].slice(0, size); while (l.length < size) l.push(''); lists[p.key] = l; });
-    // Сводка совпадений.
-    var a = lists.dima.filter(Boolean), b = lists.zhenya.filter(Boolean);
-    var common = a.filter(function (id) { return b.indexOf(id) >= 0; });
-    var same = lists.dima.filter(function (id, i) { return id && lists.zhenya[i] === id; }).length;
-    var html = '<div class="wk-pane-head"><div><h2>Топы</h2><p>Личные рейтинги Димы и Жени. Нажмите на место, чтобы выбрать ' + (cat.type === 'arc' ? 'арку' : 'персонажа') + ' поиском; стрелки меняют порядок.</p></div></div>' +
+    people.forEach(function (p) { var all = st.get(p.key) || {}; var l = (all[cat.key] || []).slice(0, size); while (l.length < size) l.push(''); lists[p.key] = l; });
+    // Сводка: что выбирают несколько человек сразу.
+    var counts = {};
+    people.forEach(function (p) { lists[p.key].forEach(function (id) { if (id) counts[id] = (counts[id] || 0) + 1; }); });
+    var shared = Object.keys(counts).filter(function (id) { return counts[id] > 1; }).sort(function (a, b) { return counts[b] - counts[a]; });
+    var html = '<div class="wk-pane-head"><div><h2>Топы</h2><p>' + (st.note() || ('Личные рейтинги участников. ' + (meKey || st === localStore ? 'Нажмите на место, чтобы выбрать ' + (cat.type === 'arc' ? 'арку' : 'персонажа') + ' поиском; стрелки меняют порядок.' : ''))) + '</p></div></div>' +
       '<div class="wk-tops-cats" role="tablist">' + CATS.map(function (c) {
         return '<button type="button" role="tab" data-top-cat="' + c.key + '" class="' + (c.key === cat.key ? 'active' : '') + '">' + c.icon + ' ' + c.title + '<small>топ-' + c.size() + '</small></button>';
       }).join('') + '</div>' +
-      '<div class="wk-tops-summary"><span>Заполнено: Дима <b>' + a.length + '/' + size + '</b> · Женя <b>' + b.length + '/' + size + '</b></span>' +
-      '<span>Общих выборов: <b>' + common.length + '</b></span><span>На одном и том же месте: <b>' + same + '</b></span>' +
+      '<div class="wk-tops-summary"><span>Заполнено: ' + people.map(function (p) { return esc(p.name) + ' <b>' + lists[p.key].filter(Boolean).length + '/' + size + '</b>'; }).join(' · ') + '</span>' +
+      (shared.length ? '<span>Общие выборы: ' + shared.slice(0, 5).map(function (id) { var info = recordInfo(cat, id); return '<b>' + esc(info && !info.locked ? info.name : '🔒 скрыто') + '</b> ×' + counts[id]; }).join(', ') + '</span>' : '<span>Общих выборов пока нет</span>') +
       (cat.key === 'crew' ? '<span>В команде сейчас ' + size + ' ' + plural(size, 'участник', 'участника', 'участников') + ' в данных</span>' : '') + '</div>' +
-      '<div class="wk-tops-cols">';
-    PEOPLE.forEach(function (p) {
-      var other = PEOPLE.find(function (x) { return x.key !== p.key; });
+      '<div class="wk-tops-cols" style="grid-template-columns:repeat(auto-fit,minmax(' + (people.length > 2 ? 290 : 340) + 'px,1fr))">';
+    people.forEach(function (p) {
+      var editable = st.editable(p.key);
       var filled = lists[p.key].filter(Boolean).length;
-      html += '<div class="wk-tops-col" data-who="' + p.key + '" style="--who:' + p.color + ';--other:' + other.color + '"><h3><i>' + p.name[0] + '</i>' + p.name + '<small>' + filled + ' из ' + size + '</small></h3>';
+      html += '<div class="wk-tops-col' + (editable ? ' is-mine' : '') + '" data-who="' + esc(p.key) + '" style="--who:' + p.color + '"><h3><i>' + esc(p.name[0]) + '</i>' + esc(p.name) + (p.key === meKey ? ' <span class="wk-top-you">это вы</span>' : '') + '<small>' + filled + ' из ' + size + '</small></h3>';
       lists[p.key].forEach(function (id, i) {
         var info = recordInfo(cat, id);
-        var otherPos = id ? lists[other.key].indexOf(id) : -1;
-        html += '<div class="wk-top-row" data-rank="' + (i + 1) + '" data-i="' + i + '"><span class="wk-top-rank">' + (i + 1) + '</span>' +
-          '<button type="button" class="wk-top-pick' + (info ? '' : ' is-empty') + '" data-act="pick">' + thumb(info) +
-          '<span class="wk-top-name">' + (info ? '<b>' + esc(info.name) + (otherPos >= 0 ? '<span class="wk-top-match" title="Есть в топе у ' + other.name + '">' + other.name + ' #' + (otherPos + 1) + '</span>' : '') + '</b><small>' + esc(info.sub) + '</small>' : '<b>Выбрать…</b><small>место свободно</small>') + '</span></button>' +
+        var others = id && !(info && info.locked) ? people.filter(function (o) { return o.key !== p.key && lists[o.key].indexOf(id) >= 0; }) : [];
+        var nameHTML;
+        if (!info) nameHTML = editable ? '<b>Выбрать…</b><small>место свободно</small>' : '<b>—</b><small>место свободно</small>';
+        else if (info.locked) nameHTML = '<b>Пока скрыто</b><small>' + esc(info.sub) + '</small>';
+        else nameHTML = '<b>' + esc(info.name) + others.map(function (o) { return '<span class="wk-top-match" style="--other:' + o.color + '" title="Есть в топе у ' + esc(o.name) + '">' + esc(o.name) + ' #' + (lists[o.key].indexOf(id) + 1) + '</span>'; }).join('') + '</b><small>' + esc(info.sub) + '</small>';
+        html += '<div class="wk-top-row' + (info && info.locked ? ' is-locked' : '') + '" data-rank="' + (i + 1) + '" data-i="' + i + '">' + '<span class="wk-top-rank">' + (i + 1) + '</span>' +
+          '<button type="button" class="wk-top-pick' + (info ? '' : ' is-empty') + '" data-act="pick"' + (editable ? '' : ' tabindex="-1" aria-disabled="true"') + '>' + thumb(info) + '<span class="wk-top-name">' + nameHTML + '</span></button>' +
           '<span class="wk-top-tools">' +
-          '<button type="button" data-act="up" title="Выше"' + (i === 0 ? ' disabled' : '') + '>↑</button>' +
-          '<button type="button" data-act="down" title="Ниже"' + (i === size - 1 ? ' disabled' : '') + '>↓</button>' +
-          (id ? '<button type="button" data-act="open" title="Открыть статью">↗</button><button type="button" data-act="clear" title="Убрать">✕</button>' : '') +
+          (editable ? '<button type="button" data-act="up" title="Выше"' + (i === 0 ? ' disabled' : '') + '>↑</button><button type="button" data-act="down" title="Ниже"' + (i === size - 1 ? ' disabled' : '') + '>↓</button>' : '') +
+          (id && !(info && info.locked) ? '<button type="button" data-act="open" title="Открыть статью">↗</button>' : '') +
+          (id && editable ? '<button type="button" data-act="clear" title="Убрать">✕</button>' : '') +
           '</span></div>';
       });
       html += '</div>';
@@ -21103,22 +21212,25 @@ img.wk-fade.wk-loaded{opacity:1}
     pane.querySelectorAll('[data-top-cat]').forEach(function (btn) {
       btn.addEventListener('click', function () { lsSet(TOPS_CAT_KEY, btn.getAttribute('data-top-cat')); renderTops(pane); });
     });
-    function commit(who, arr) { tops.lists[who][cat.key] = arr; saveTops(tops); renderTops(pane); }
+    function commit(who, arr) { var all = Object.assign({}, st.get(who) || {}); all[cat.key] = arr; st.set(who, all); renderTops(pane); }
     pane.querySelectorAll('.wk-top-row').forEach(function (row) {
       var who = row.closest('.wk-tops-col').getAttribute('data-who');
+      var editable = st.editable(who);
       var i = Number(row.getAttribute('data-i'));
       row.addEventListener('click', function (e) {
         var btn = e.target.closest('[data-act]');
         if (!btn || !row.contains(btn) || btn.closest('.wk-top-popover')) return;
         var arr = lists[who].slice(), act = btn.getAttribute('data-act');
+        if (act === 'open') {
+          if (cat.type === 'arc' && typeof openStoryArticle === 'function') openStoryArticle(arr[i]);
+          else if (typeof openCharacterArticle === 'function') openCharacterArticle(arr[i], 'favorites');
+          return;
+        }
+        if (!editable) return;
         if (act === 'pick') { showPicker(row, who, i); return; }
         if (act === 'up' && i > 0) { var t = arr[i - 1]; arr[i - 1] = arr[i]; arr[i] = t; commit(who, arr); }
         if (act === 'down' && i < arr.length - 1) { var t2 = arr[i + 1]; arr[i + 1] = arr[i]; arr[i] = t2; commit(who, arr); }
         if (act === 'clear') { arr[i] = ''; commit(who, arr); }
-        if (act === 'open') {
-          if (cat.type === 'arc' && typeof openStoryArticle === 'function') openStoryArticle(arr[i]);
-          else if (typeof openCharacterArticle === 'function') openCharacterArticle(arr[i], 'favorites');
-        }
       });
     });
 
@@ -21173,6 +21285,787 @@ img.wk-fade.wk-loaded{opacity:1}
     if (!setup()) return;
     ['wiki:spoiler-progress-restored', 'wiki:top-lists-restored', 'wiki:content-updated'].forEach(function (ev) { window.addEventListener(ev, rerenderActive); });
     window.addEventListener('storage', function (e) { if (e.key === TOPS_KEY || e.key === 'onePieceWikiSpoilerProgressV1') rerenderActive(); });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
+})();
+</script>
+<style id="wiki-cabin-progress-card-style">
+.wk-prog{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding:12px 14px;border:1px solid color-mix(in srgb,var(--accent,#d4a84f) 35%,transparent);border-radius:14px;background:linear-gradient(90deg,color-mix(in srgb,var(--accent,#d4a84f) 9%,transparent),transparent 60%),color-mix(in srgb,var(--panel,#0f1623) 80%,transparent)}
+.wk-prog-title{display:flex;flex-direction:column;min-width:150px}
+.wk-prog-title small{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--accent,#d4a84f);font-weight:800}
+.wk-prog-title b{font-size:15px}
+.wk-prog-field{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:color-mix(in srgb,var(--text,#e5e7eb) 75%,transparent)}
+.wk-prog-step{display:inline-flex;align-items:center;border:1px solid color-mix(in srgb,var(--line,#334155) 90%,transparent);border-radius:10px;overflow:hidden;background:rgba(255,255,255,.03)}
+.wk-prog-step button{width:30px;height:34px;border:0;background:transparent;color:inherit;font:inherit;font-size:16px;cursor:pointer}
+.wk-prog-step button:hover{background:rgba(255,255,255,.07);color:#fff}
+.wk-prog-step input{width:62px;height:34px;border:0;border-left:1px solid color-mix(in srgb,var(--line,#334155) 70%,transparent);border-right:1px solid color-mix(in srgb,var(--line,#334155) 70%,transparent);background:transparent;color:#fff;font:inherit;font-size:15px;font-weight:700;text-align:center;font-variant-numeric:tabular-nums;-moz-appearance:textfield}
+.wk-prog-step input::-webkit-outer-spin-button,.wk-prog-step input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.wk-prog-save{padding:8px 14px;border-radius:10px;border:1px solid color-mix(in srgb,var(--accent,#d4a84f) 70%,transparent);background:color-mix(in srgb,var(--accent,#d4a84f) 18%,transparent);color:#f4d99e;font:inherit;font-weight:800;cursor:pointer}
+.wk-prog-save:disabled{opacity:.45;cursor:default}
+.wk-prog-note{flex:1 1 220px;font-size:12px;color:color-mix(in srgb,var(--text,#e5e7eb) 58%,transparent)}
+.wk-prog.is-readonly .wk-prog-step button,.wk-prog.is-readonly .wk-prog-save{display:none}
+.wk-prog.is-readonly .wk-prog-step input{border:0}
+@media (max-width:700px){.wk-prog{gap:10px}.wk-prog-title{min-width:0;flex:1 1 100%}.wk-prog-note{flex-basis:100%}}
+</style>
+<script id="wiki-cabin-progress-card">
+(function () {
+  'use strict';
+  function current() {
+    try { var p = window.__wikiSpoilerProgress; if (p) return { chapter: Number(p.chapter) || 0, episode: Number(p.episode) || 0 }; } catch (e) {}
+    try { var s = JSON.parse(localStorage.getItem('onePieceWikiSpoilerProgressV1') || '{}'); return { chapter: Number(s.chapter) || 0, episode: Number(s.episode) || 0 }; } catch (e) { return { chapter: 0, episode: 0 }; }
+  }
+  function role() { try { var s = window.__wikiCloud && window.__wikiCloud.enabled && window.__wikiCloud.session(); return s ? s : null; } catch (e) { return null; } }
+  function render() {
+    var shell = document.querySelector('#favoritesSection .cabin-new-shell');
+    if (!shell) return;
+    var card = document.getElementById('wkProgressCard');
+    if (!card) {
+      card = document.createElement('section'); card.id = 'wkProgressCard'; card.className = 'wk-prog'; card.setAttribute('aria-label', 'Мой прогресс');
+      var anchor = shell.querySelector('.wiki-continue') || shell.querySelector('.cabin-search-block');
+      if (anchor) anchor.after(card); else shell.prepend(card);
+    }
+    var s = role(), p = current();
+    var guest = s && s.role === 'guest';
+    var who = s ? (guest ? 'Гостевой режим' : 'Прогресс · ' + s.name) : 'Мой прогресс';
+    card.classList.toggle('is-readonly', !!guest);
+    card.innerHTML = '<div class="wk-prog-title"><small>' + (guest ? 'Только просмотр' : 'Где я сейчас') + '</small><b>' + who + '</b></div>' +
+      field('chapter', '📖 Глава', p.chapter, guest) + field('episode', '📺 Серия', p.episode, guest) +
+      (guest ? '' : '<button type="button" class="wk-prog-save" disabled>Сохранить</button>') +
+      '<span class="wk-prog-note">' + (guest ? 'Гостю открыто всё до ' + p.chapter + ' главы и ' + p.episode + ' серии. Чтобы отмечать свой прогресс, войдите в свою учётку.' : (p.chapter || p.episode ? 'Всё, что дальше, скрыто от спойлеров. ' + (s ? 'Сохраняется в облаке.' : 'Сохраняется в этом браузере.') : 'Укажите, докуда вы дочитали и досмотрели, — дальше статьи будут скрыты от спойлеров.')) + '</span>';
+    if (guest) return;
+    var save = card.querySelector('.wk-prog-save');
+    var inputs = card.querySelectorAll('input');
+    function dirty() { var c = current(); save.disabled = Number(inputs[0].value || 0) === c.chapter && Number(inputs[1].value || 0) === c.episode; }
+    card.querySelectorAll('[data-step]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var inp = card.querySelector('input[data-kind="' + b.getAttribute('data-kind') + '"]');
+        inp.value = Math.max(0, (Number(inp.value) || 0) + Number(b.getAttribute('data-step'))); dirty();
+      });
+    });
+    inputs.forEach(function (i) { i.addEventListener('input', dirty); i.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !save.disabled) save.click(); }); });
+    save.addEventListener('click', function () {
+      var ch = Math.max(0, parseInt(inputs[0].value, 10) || 0), ep = Math.max(0, parseInt(inputs[1].value, 10) || 0);
+      if (typeof window.__wikiSetSpoilerProgress === 'function') window.__wikiSetSpoilerProgress({ chapter: ch, episode: ep });
+      else { try { localStorage.setItem('onePieceWikiSpoilerProgressV1', JSON.stringify({ chapter: ch, episode: ep })); } catch (e) {} location.reload(); return; }
+      render();
+    });
+  }
+  function field(kind, label, value, ro) {
+    return '<label class="wk-prog-field">' + label + '<span class="wk-prog-step">' + (ro ? '' : '<button type="button" data-step="-1" data-kind="' + kind + '" aria-label="Меньше">−</button>') +
+      '<input type="number" inputmode="numeric" min="0" step="1" data-kind="' + kind + '" value="' + (value || '') + '" placeholder="0"' + (ro ? ' readonly' : '') + ' aria-label="' + label + '">' +
+      (ro ? '' : '<button type="button" data-step="1" data-kind="' + kind + '" aria-label="Больше">+</button>') + '</span></label>';
+  }
+  function start() {
+    render();
+    window.addEventListener('wiki:spoiler-progress-restored', function () { var a = document.activeElement; if (!(a && a.closest && a.closest('#wkProgressCard'))) render(); });
+    window.addEventListener('wiki:cloud-ready', render);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
+})();
+</script>
+<style id="wiki-cloud-style">
+/* ===== Облако: вход, бейдж учётки, уведомления ===== */
+.wk-login{position:fixed;inset:0;z-index:20000;display:grid;place-items:center;padding:16px;background:rgba(3,6,12,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.wk-login[hidden]{display:none}
+.wk-login-card{width:min(520px,100%);max-height:calc(100vh - 32px);overflow:auto;box-sizing:border-box;padding:24px 22px 20px;border-radius:20px;border:1px solid rgba(212,168,79,.35);background:radial-gradient(circle at 50% -20%,rgba(212,168,79,.16),transparent 55%),linear-gradient(180deg,#101827,#0a0f19);box-shadow:0 30px 80px rgba(0,0,0,.6);color:#e5e7eb}
+.wk-login-card h2{margin:0;font-size:24px;text-align:center}
+.wk-login-card>p{margin:6px 0 18px;text-align:center;font-size:13.5px;color:#94a3b8}
+.wk-login-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.wk-acc{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:14px;border:1px solid rgba(148,163,184,.22);background:rgba(255,255,255,.03);color:inherit;font:inherit;text-align:left;cursor:pointer;transition:border-color .15s,background .15s,transform .15s}
+.wk-acc:hover,.wk-acc.is-picked{border-color:var(--c);background:color-mix(in srgb,var(--c) 10%,transparent)}
+.wk-acc.is-picked{transform:translateY(-1px)}
+.wk-ava{flex:0 0 auto;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--c);color:#0b1120;font-weight:900;font-size:17px}
+.wk-acc b{display:block;font-size:15px}
+.wk-acc small{display:block;font-size:11.5px;color:#94a3b8}
+.wk-login-pass{margin-top:14px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.wk-login-pass[hidden]{display:none}
+.wk-login-pass input{min-width:0;padding:11px 12px;border-radius:11px;border:1px solid rgba(148,163,184,.3);background:rgba(255,255,255,.04);color:#fff;font:inherit;font-size:15px;outline:none}
+.wk-login-pass input:focus{border-color:#d4a84f}
+.wk-btn{padding:11px 16px;border-radius:11px;border:1px solid rgba(212,168,79,.6);background:rgba(212,168,79,.18);color:#f4d99e;font:inherit;font-weight:800;cursor:pointer}
+.wk-btn:disabled{opacity:.55;cursor:default}
+.wk-login-guest{display:block;width:100%;margin-top:16px;padding:11px;border-radius:12px;border:1px dashed rgba(148,163,184,.35);background:transparent;color:#cbd5e1;font:inherit;font-size:14px;cursor:pointer}
+.wk-login-guest:hover{border-color:#cbd5e1;color:#fff}
+.wk-login-guest small{display:block;margin-top:2px;font-size:11.5px;color:#94a3b8}
+.wk-login-err{min-height:18px;margin-top:10px;text-align:center;font-size:13px;color:#fca5a5}
+.wk-login-busy{display:none;text-align:center;font-size:13px;color:#94a3b8;margin-top:10px}
+.wk-login.is-busy .wk-login-busy{display:block}
+.wk-me{position:absolute;top:10px;right:14px;z-index:30;display:inline-flex;align-items:center;gap:8px;padding:5px 10px 5px 5px;border-radius:99px;border:1px solid rgba(148,163,184,.25);background:rgba(10,15,25,.75);color:#e5e7eb;font:inherit;font-size:13px;cursor:pointer;backdrop-filter:blur(6px)}
+.wk-me .wk-ava{width:26px;height:26px;font-size:12.5px}
+.wk-me .wk-sync{font-size:12px;opacity:.8}
+.wk-me-menu{text-align:left;position:absolute;top:46px;right:14px;z-index:31;min-width:220px;padding:8px;border-radius:14px;border:1px solid rgba(148,163,184,.25);background:#0b1120;box-shadow:0 18px 40px rgba(0,0,0,.5);font-size:13px;color:#cbd5e1}
+.wk-me-menu[hidden]{display:none}
+.wk-me-menu div{padding:6px 8px}
+.wk-me-menu button{display:block;width:100%;margin-top:4px;padding:8px;border-radius:9px;border:0;background:rgba(255,255,255,.05);color:#fff;font:inherit;text-align:left;cursor:pointer}
+.wk-me-menu button:hover{background:rgba(255,255,255,.1)}
+@media (max-width:700px){.wk-me{top:9px;left:10px;right:auto;padding:3px}.wk-me .wk-me-name,.wk-me .wk-sync{display:none}.wk-me-menu{left:10px;right:auto}}
+.wk-toast-zone{position:fixed;left:50%;bottom:22px;z-index:21000;transform:translateX(-50%);display:grid;gap:8px;pointer-events:none}
+.wk-toast{pointer-events:auto;display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;background:rgba(10,15,25,.96);border:1px solid rgba(148,163,184,.3);box-shadow:0 12px 30px rgba(0,0,0,.45);color:#e5e7eb;font-size:13.5px;animation:wkToastIn .2s ease-out}
+.wk-toast button{padding:6px 10px;border-radius:8px;border:1px solid rgba(212,168,79,.6);background:rgba(212,168,79,.16);color:#f4d99e;font:inherit;font-weight:700;cursor:pointer}
+@keyframes wkToastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (max-width:700px){.wk-toast-zone{bottom:86px;width:calc(100% - 24px)}}
+
+/* ===== Статистика (админ) ===== */
+.wk-st-controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 14px}
+.wk-st-controls label{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:color-mix(in srgb,var(--text,#e5e7eb) 75%,transparent);cursor:pointer}
+.wk-st-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 14px}
+.wk-st-card{padding:12px 14px;border:1px solid color-mix(in srgb,var(--line,#334155) 70%,transparent);border-radius:14px;background:color-mix(in srgb,var(--panel,#0f1623) 80%,transparent);min-width:0}
+.wk-st-card small{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:color-mix(in srgb,var(--text,#e5e7eb) 55%,transparent)}
+.wk-st-card b{display:block;margin-top:3px;font-size:24px;font-variant-numeric:tabular-nums}
+.wk-st-card span{font-size:12px;color:color-mix(in srgb,var(--text,#e5e7eb) 60%,transparent)}
+.wk-st-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:12px;margin:0 0 12px}
+.wk-st-box{padding:14px;border:1px solid color-mix(in srgb,var(--line,#334155) 65%,transparent);border-radius:14px;background:color-mix(in srgb,var(--panel,#0f1623) 70%,transparent);min-width:0}
+.wk-st-box h3{margin:0 0 10px!important;font-size:14px!important}
+.wk-st-box h3 small{font-weight:500;color:color-mix(in srgb,var(--text,#e5e7eb) 50%,transparent);margin-left:6px}
+.wk-st-table{width:100%;border-collapse:collapse;font-size:13px}
+.wk-st-table th{padding:6px 8px;text-align:left;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:color-mix(in srgb,var(--text,#e5e7eb) 55%,transparent);border-bottom:1px solid color-mix(in srgb,var(--line,#334155) 70%,transparent);white-space:nowrap}
+.wk-st-table td{padding:8px;border-bottom:1px solid color-mix(in srgb,var(--line,#334155) 35%,transparent);font-variant-numeric:tabular-nums;white-space:nowrap}
+.wk-st-table td.wk-num,.wk-st-table th.wk-num{text-align:right}
+.wk-st-who{display:inline-flex;align-items:center;gap:8px;font-weight:700}
+.wk-st-who .wk-ava{width:24px;height:24px;font-size:11.5px}
+.wk-st-scroll{overflow-x:auto}
+.wk-st-legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:12px;color:color-mix(in srgb,var(--text,#e5e7eb) 70%,transparent)}
+.wk-st-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px;background:var(--c)}
+.wk-st-svg{display:block;width:100%;height:auto;overflow:visible}
+.wk-st-svg text{fill:color-mix(in srgb,var(--text,#e5e7eb) 60%,transparent);font-size:10px}
+.wk-st-bars{display:grid;gap:7px}
+.wk-st-bar{display:grid;grid-template-columns:minmax(0,1fr) 46px;gap:10px;align-items:center;font-size:12.5px}
+.wk-st-bar-name{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wk-st-bar-track{grid-column:1;display:flex;height:7px;border-radius:99px;overflow:hidden;background:rgba(255,255,255,.06);margin-top:3px}
+.wk-st-bar-track i{display:block;height:100%;background:var(--c)}
+.wk-st-bar b{grid-column:2;grid-row:1 / span 2;text-align:right;font-variant-numeric:tabular-nums}
+.wk-st-feed{display:grid;gap:2px;max-height:360px;overflow:auto;font-size:12.5px}
+.wk-st-feed div{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:5px 4px;border-radius:8px}
+.wk-st-feed div:hover{background:rgba(255,255,255,.035)}
+.wk-st-feed .wk-ava{width:20px;height:20px;font-size:10px}
+.wk-st-feed span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wk-st-feed em{font-style:normal;color:color-mix(in srgb,var(--text,#e5e7eb) 50%,transparent);font-size:11.5px}
+.wk-st-empty{padding:16px;text-align:center;font-size:13px;color:color-mix(in srgb,var(--text,#e5e7eb) 50%,transparent)}
+.wk-st-admin{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px;font-size:12.5px;color:color-mix(in srgb,var(--text,#e5e7eb) 60%,transparent)}
+.wk-st-admin button{padding:8px 12px;border-radius:9px;border:1px solid color-mix(in srgb,var(--line,#334155) 90%,transparent);background:transparent;color:inherit;font:inherit;cursor:pointer}
+.wk-st-admin button:hover{color:#fff;border-color:var(--accent,#d4a84f)}
+@media (max-width:1000px){.wk-st-grid{grid-template-columns:1fr}}
+@media (max-width:760px){.wk-st-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<script id="wiki-cloud-module">
+(function () {
+  'use strict';
+  var CFG = window.WIKI_CLOUD_CONFIG || {};
+  var ENABLED = !!window.WIKI_CLOUD_ENABLED;
+  var ACCOUNTS = (CFG.accounts || []).slice();
+  var GUEST = CFG.guest || { name: 'Гость', progress: { chapter: 100, episode: 100 } };
+  var SESSION_KEY = 'wkCloudSessionV1', CONTENT_KEY = 'wkCloudContentV1', TOPS_CACHE_KEY = 'wkCloudTopsV1', STORAGE_KEY = 'onePieceWikiLocalContentV1';
+  var PROGRESS_KEY = 'onePieceWikiSpoilerProgressV1';
+  // Личные данные участника, которые ездят вместе с учёткой.
+  var PERSONAL_KEYS = [PROGRESS_KEY, 'onePieceWikiFilmProgressV1', 'onePieceWikiFavorites', 'onePieceWikiRecentVisits'];
+  var SDK = 'https://www.gstatic.com/firebasejs/10.12.2/';
+  var TYPES = ['character', 'story', 'reward', 'fruit', 'useful'];
+
+  window.__wikiAccounts = ACCOUNTS;
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function readJSON(k, d) { try { var v = JSON.parse(lsGet(k) || 'null'); return v == null ? d : v; } catch (e) { return d; } }
+  function session() { return readJSON(SESSION_KEY, null); }
+  function account(login) { return ACCOUNTS.find(function (a) { return a.login === login; }) || null; }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function colorOf(login) { var a = account(login); return a ? a.color : '#94a3b8'; }
+  function nameOf(login) { var a = account(login); return a ? a.name : (login === 'guest' ? GUEST.name : login || '—'); }
+
+  window.__wikiCloud = { enabled: ENABLED, session: session, account: account, accounts: ACCOUNTS, colorOf: colorOf, nameOf: nameOf };
+  if (!ENABLED) return; // локальный режим: всё как раньше
+
+  /* ---------- перехват записи в localStorage ---------- */
+  var muted = 0, listeners = [];
+  function onStorageWrite(fn) { listeners.push(fn); }
+  function emit(key, value) { if (muted) return; listeners.forEach(function (fn) { try { fn(key, value); } catch (e) {} }); }
+  (function hookStorage() {
+    var ls; try { ls = window.localStorage; } catch (e) { return; }
+    if (!ls) return;
+    var isNative = typeof Storage !== 'undefined' && ls instanceof Storage;
+    if (isNative) {
+      var set = Storage.prototype.setItem, rem = Storage.prototype.removeItem;
+      Storage.prototype.setItem = function (k, v) { set.call(this, k, v); if (this === window.localStorage) emit(String(k), String(v)); };
+      Storage.prototype.removeItem = function (k) { rem.call(this, k); if (this === window.localStorage) emit(String(k), null); };
+    } else {
+      var s2 = ls.setItem.bind(ls), r2 = ls.removeItem.bind(ls);
+      ls.setItem = function (k, v) { s2(k, v); emit(String(k), String(v)); };
+      ls.removeItem = function (k) { r2(k); emit(String(k), null); };
+    }
+  })();
+  function quietSet(k, v) { muted++; try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} finally { muted--; } }
+
+  /* ---------- уведомления ---------- */
+  function toast(text, action, ms) {
+    var zone = document.querySelector('.wk-toast-zone');
+    if (!zone) { zone = document.createElement('div'); zone.className = 'wk-toast-zone'; document.body.appendChild(zone); }
+    var t = document.createElement('div'); t.className = 'wk-toast'; t.textContent = text;
+    if (action) { var b = document.createElement('button'); b.type = 'button'; b.textContent = action.label; b.addEventListener('click', function () { t.remove(); action.run(); }); t.appendChild(b); }
+    zone.appendChild(t);
+    setTimeout(function () { t.remove(); }, ms || (action ? 12000 : 3800));
+  }
+  window.__wikiCanEdit = function () { var s = session(); return !!(s && s.role === 'admin'); };
+  window.__wikiNoEditNotice = function () { toast('Редактор статей доступен только администратору.'); };
+
+  /* ---------- роль на странице ---------- */
+  function applyRoleAttrs() {
+    var s = session();
+    document.documentElement.setAttribute('data-wk-role', s ? s.role : 'none');
+    if (typeof window.__wikiRefreshCabinTabs === 'function') window.__wikiRefreshCabinTabs();
+    renderMe();
+  }
+
+  /* ---------- бейдж учётки ---------- */
+  var syncState = 'idle';
+  function renderMe() {
+    var header = document.querySelector('body > header') || document.querySelector('header');
+    if (!header) return;
+    if (getComputedStyle(header).position === 'static') header.style.position = 'relative';
+    var s = session();
+    var btn = document.getElementById('wkMe');
+    if (!s) { if (btn) btn.remove(); return; }
+    if (!btn) {
+      btn = document.createElement('button'); btn.type = 'button'; btn.id = 'wkMe'; btn.className = 'wk-me';
+      header.appendChild(btn);
+      var menu = document.createElement('div'); menu.className = 'wk-me-menu'; menu.id = 'wkMeMenu'; menu.hidden = true; header.appendChild(menu);
+      btn.addEventListener('click', function (e) { e.stopPropagation(); renderMenu(); menu.hidden = !menu.hidden; });
+      document.addEventListener('click', function (e) { if (!menu.contains(e.target)) menu.hidden = true; });
+    }
+    var sync = s.role === 'guest' ? '' : (syncState === 'saving' ? '☁ …' : syncState === 'error' ? '⚠' : '☁ ✓');
+    btn.style.setProperty('--c', s.role === 'guest' ? '#94a3b8' : colorOf(s.login));
+    btn.innerHTML = '<span class="wk-ava">' + esc((s.role === 'guest' ? '👀' : s.name[0])) + '</span><span class="wk-me-name">' + esc(s.name) + '</span><span class="wk-sync" title="' + (syncState === 'error' ? 'Не удалось сохранить в облако — повторю попытку' : 'Данные сохранены в облаке') + '">' + sync + '</span>';
+  }
+  function renderMenu() {
+    var menu = document.getElementById('wkMeMenu'); if (!menu) return;
+    var s = session(); if (!s) return;
+    var roleText = s.role === 'admin' ? 'Администратор: редактор статей и статистика' : s.role === 'guest' ? 'Гость: только просмотр, прогресс до ' + GUEST.progress.chapter + ' главы и ' + GUEST.progress.episode + ' серии' : 'Участник: свой прогресс, избранное и топ';
+    menu.innerHTML = '<div><b>' + esc(s.name) + '</b><br><small>' + esc(roleText) + '</small></div>' +
+      (s.role === 'admin' ? '<button type="button" data-me="editor">✏️ Открыть редактор статей</button>' : '') +
+      '<button type="button" data-me="switch">🔁 Сменить учётку</button><button type="button" data-me="logout">🚪 Выйти</button>';
+    menu.querySelectorAll('[data-me]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        menu.hidden = true;
+        var act = b.getAttribute('data-me');
+        if (act === 'editor' && typeof window.openWikiEditor === 'function') window.openWikiEditor();
+        if (act === 'logout' || act === 'switch') logout();
+      });
+    });
+  }
+
+  /* ---------- окно входа ---------- */
+  var pickedLogin = '';
+  function showLogin(message) {
+    var box = document.getElementById('wkLogin');
+    if (!box) {
+      box = document.createElement('div'); box.id = 'wkLogin'; box.className = 'wk-login'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true');
+      box.innerHTML = '<div class="wk-login-card"><h2>⚓ One Piece Wiki</h2><p>Кто сегодня на палубе? Выберите свою учётку.</p>' +
+        '<div class="wk-login-grid">' + ACCOUNTS.map(function (a) {
+          return '<button type="button" class="wk-acc" data-login="' + esc(a.login) + '" style="--c:' + esc(a.color) + '"><span class="wk-ava">' + esc(a.name[0]) + '</span><span><b>' + esc(a.name) + '</b><small>' + (a.role === 'admin' ? 'администратор' : 'участник') + '</small></span></button>';
+        }).join('') + '</div>' +
+        '<form class="wk-login-pass" hidden><input type="password" autocomplete="current-password" placeholder="Пароль" aria-label="Пароль"><button class="wk-btn" type="submit">Войти</button></form>' +
+        '<div class="wk-login-err" aria-live="polite"></div><div class="wk-login-busy">Подключаюсь…</div>' +
+        '<button type="button" class="wk-login-guest">👀 Войти как гость<small>только просмотр · прогресс открыт до ' + GUEST.progress.chapter + ' главы и ' + GUEST.progress.episode + ' серии</small></button></div>';
+      document.body.appendChild(box);
+      var form = box.querySelector('form'), input = form.querySelector('input');
+      box.querySelectorAll('.wk-acc').forEach(function (b) {
+        b.addEventListener('click', function () {
+          pickedLogin = b.getAttribute('data-login');
+          box.querySelectorAll('.wk-acc').forEach(function (x) { x.classList.toggle('is-picked', x === b); });
+          form.hidden = false; input.value = ''; setErr(''); input.focus();
+        });
+      });
+      form.addEventListener('submit', function (e) { e.preventDefault(); if (pickedLogin && input.value) loginWithPassword(pickedLogin, input.value); });
+      box.querySelector('.wk-login-guest').addEventListener('click', loginGuest);
+    }
+    box.hidden = false; setBusy(false); setErr(message || '');
+  }
+  function hideLogin() { var b = document.getElementById('wkLogin'); if (b) b.hidden = true; }
+  function setErr(t) { var e = document.querySelector('#wkLogin .wk-login-err'); if (e) e.textContent = t; }
+  function setBusy(on) { var b = document.getElementById('wkLogin'); if (b) b.classList.toggle('is-busy', !!on); document.querySelectorAll('#wkLogin button, #wkLogin input').forEach(function (x) { x.disabled = !!on; }); }
+  function authError(e) {
+    var c = (e && e.code) || '';
+    if (/invalid-credential|wrong-password|user-not-found|invalid-email|invalid-login/.test(c)) return 'Неверный пароль.';
+    if (/too-many-requests/.test(c)) return 'Слишком много попыток. Подождите немного.';
+    if (/network/.test(c)) return 'Нет соединения с интернетом.';
+    if (/operation-not-allowed|admin-restricted/.test(c)) return 'Этот способ входа не включён в настройках Firebase.';
+    return 'Не получилось войти: ' + (c || (e && e.message) || 'неизвестная ошибка');
+  }
+
+  /* ---------- Firebase ---------- */
+  var fb = null, app = null, auth = null, db = null, me = null; // me = {uid, login, name, role}
+  function loadSDK() {
+    if (fb) return Promise.resolve(fb);
+    return Promise.all([import(SDK + 'firebase-app.js'), import(SDK + 'firebase-auth.js'), import(SDK + 'firebase-firestore.js')]).then(function (m) {
+      fb = { app: m[0], auth: m[1], fs: m[2] };
+      app = fb.app.initializeApp(CFG.firebase);
+      auth = fb.auth.getAuth(app);
+      db = fb.fs.getFirestore(app);
+      var emu = window.__WK_FIREBASE_EMULATOR;
+      if (emu) { try { fb.auth.connectAuthEmulator(auth, 'http://' + emu.host + ':' + emu.authPort); fb.fs.connectFirestoreEmulator(db, emu.host, emu.firestorePort); } catch (e) {} }
+      return fb;
+    });
+  }
+  function emailOf(login) { return login + '@' + (CFG.emailDomain || 'op-wiki.app'); }
+  function loginWithPassword(login, pass) {
+    setBusy(true); setErr('');
+    loadSDK().then(function () { return fb.auth.signInWithEmailAndPassword(auth, emailOf(login), pass); })
+      .catch(function (e) { setBusy(false); setErr(authError(e)); });
+  }
+  function loginGuest() {
+    setBusy(true); setErr('');
+    loadSDK().then(function () { return fb.auth.signInAnonymously(auth); })
+      .catch(function (e) { setBusy(false); setErr(authError(e)); });
+  }
+  function logout() {
+    var finish = function () {
+      quietSet(SESSION_KEY, null);
+      PERSONAL_KEYS.forEach(function (k) { quietSet(k, null); });
+      try { sessionStorage.clear(); } catch (e) {}
+      location.reload();
+    };
+    flushAll().then(function () { return auth ? fb.auth.signOut(auth) : null; }).then(finish, finish);
+  }
+  function resolveUser(user) {
+    if (!user) return null;
+    if (user.isAnonymous) return { uid: user.uid, login: 'guest', name: GUEST.name, role: 'guest' };
+    var email = String(user.email || '').toLowerCase();
+    var acc = ACCOUNTS.find(function (a) { return emailOf(a.login).toLowerCase() === email; });
+    return acc ? { uid: user.uid, login: acc.login, name: acc.name, role: acc.role === 'admin' ? 'admin' : 'member' } : null;
+  }
+
+  /* ---------- общий цикл запуска ---------- */
+  function boot() {
+    applyRoleAttrs();
+    if (!session()) showLogin();
+    loadSDK().then(function () {
+      fb.auth.onAuthStateChanged(auth, function (user) {
+        var u = resolveUser(user);
+        if (user && !u) { fb.auth.signOut(auth); showLogin('Эта учётка не входит в список участников вики.'); return; }
+        if (!u) { quietSet(SESSION_KEY, null); applyRoleAttrs(); showLogin(); return; }
+        var prev = session();
+        me = u;
+        quietSet(SESSION_KEY, JSON.stringify(u));
+        hideLogin(); applyRoleAttrs();
+        var switched = !prev || prev.uid !== u.uid;
+        Promise.all([syncContent(), syncPersonal(switched), loadAllTops()]).then(function (r) {
+          var reload = r[0] || r[1];
+          if (reload) { reloadOnce('boot:' + u.uid + ':' + (r[0] ? 'c' : '') + (r[1] ? 'p' : '')); return; }
+          startStats();
+          if (typeof window.__wikiRefreshCabinTabs === 'function') window.__wikiRefreshCabinTabs(true);
+          window.dispatchEvent(new CustomEvent('wiki:cloud-ready', { detail: u }));
+        }).catch(function (e) { console.warn('Облако:', e); startStats(); });
+      });
+    }).catch(function (e) {
+      console.warn('Не удалось загрузить Firebase:', e);
+      if (!session()) showLogin('Не удалось подключиться к облаку. Проверьте интернет и обновите страницу.');
+      else toast('Облако недоступно — работаю с сохранённой копией.');
+    });
+  }
+  function reloadOnce(tag) {
+    var key = 'wkReloadedFor';
+    try { if (sessionStorage.getItem(key) === tag) return; sessionStorage.setItem(key, tag); } catch (e) {}
+    location.reload();
+  }
+
+  /* =========================================================
+     СТАТЬИ В ОБЛАКЕ
+     records/{type~id} = { type, id, json, updatedAt }
+     content/meta = { version, updatedAt, updatedBy, order(json), extra(json) }
+     ========================================================= */
+  function localSnapshot() {
+    var s = readJSON(STORAGE_KEY, null);
+    if (s && s.collections) return s;
+    try { var node = document.getElementById('wikiEmbeddedBackup'); var d = node ? JSON.parse(node.textContent || '{}') : null; if (d && d.collections) return d; } catch (e) {}
+    return null;
+  }
+  function contentOf(snap) {
+    return {
+      collections: snap.collections || {},
+      accentSettings: snap.accentSettings || {},
+      rewardRankColors: snap.rewardRankColors || {},
+      customAchievements: Array.isArray(snap.customAchievements) ? snap.customAchievements : [],
+      hiddenFruitIds: Array.isArray(snap.hiddenFruitIds) ? snap.hiddenFruitIds : []
+    };
+  }
+  function recId(type, id) { return type + '~' + String(id).replace(/\//g, '_'); }
+  function syncContent() {
+    var ref = fb.fs.doc(db, 'content', 'meta');
+    return fb.fs.getDoc(ref).then(function (snap) {
+      if (!snap.exists()) {
+        if (me.role === 'admin') return seedContent().then(function () { return false; });
+        return false;
+      }
+      var meta = snap.data();
+      var cache = readJSON(CONTENT_KEY, null);
+      if (cache && cache.version === meta.version) return false;
+      return fb.fs.getDocs(fb.fs.collection(db, 'records')).then(function (qs) {
+        var order = JSON.parse(meta.order || '{}'), extra = JSON.parse(meta.extra || '{}');
+        var byType = {}; TYPES.forEach(function (t) { byType[t] = []; });
+        qs.forEach(function (d) { var x = d.data(); if (!byType[x.type]) byType[x.type] = []; try { byType[x.type].push(JSON.parse(x.json)); } catch (e) {} });
+        TYPES.forEach(function (t) {
+          var pos = {}; (order[t] || []).forEach(function (id, i) { pos[id] = i; });
+          byType[t].sort(function (a, b) { var pa = pos[a.id], pb = pos[b.id]; return (pa == null ? 1e9 : pa) - (pb == null ? 1e9 : pb); });
+        });
+        var data = { version: 1, updatedAt: meta.updatedAt, collections: byType, accentSettings: extra.accentSettings || {}, rewardRankColors: extra.rewardRankColors || {}, customAchievements: extra.customAchievements || [], hiddenFruitIds: extra.hiddenFruitIds || [] };
+        quietSet(CONTENT_KEY, JSON.stringify({ version: meta.version, data: data }));
+        return true; // нужна перезагрузка, чтобы ядро подхватило новые статьи
+      });
+    });
+  }
+  function writeBatches(ops, onProgress) {
+    var chunks = []; for (var i = 0; i < ops.length; i += 400) chunks.push(ops.slice(i, i + 400));
+    var done = 0;
+    return chunks.reduce(function (p, chunk) {
+      return p.then(function () {
+        var b = fb.fs.writeBatch(db);
+        chunk.forEach(function (op) { if (op.del) b.delete(op.ref); else b.set(op.ref, op.data); });
+        return b.commit().then(function () { done += chunk.length; if (onProgress) onProgress(done, ops.length); });
+      });
+    }, Promise.resolve());
+  }
+  function seedContent() {
+    var snap = localSnapshot(); if (!snap) return Promise.resolve();
+    toast('Первый вход администратора: переношу статьи в облако…');
+    return pushContent(contentOf(snap), null, true);
+  }
+  function pushContent(content, prevContent, all) {
+    var now = new Date().toISOString(), ops = [], order = {};
+    var prev = {};
+    if (prevContent && prevContent.collections) TYPES.forEach(function (t) { (prevContent.collections[t] || []).forEach(function (r) { prev[recId(t, r.id)] = JSON.stringify(r); }); });
+    var seen = {};
+    TYPES.forEach(function (t) {
+      order[t] = [];
+      (content.collections[t] || []).forEach(function (r) {
+        if (!r || r.id == null) return;
+        var id = recId(t, r.id), json = JSON.stringify(r);
+        order[t].push(r.id); seen[id] = 1;
+        if (all || prev[id] !== json) ops.push({ ref: fb.fs.doc(db, 'records', id), data: { type: t, id: String(r.id), json: json, updatedAt: now } });
+      });
+    });
+    Object.keys(prev).forEach(function (id) { if (!seen[id]) ops.push({ ref: fb.fs.doc(db, 'records', id), del: true }); });
+    var extra = { accentSettings: content.accentSettings, rewardRankColors: content.rewardRankColors, customAchievements: content.customAchievements, hiddenFruitIds: content.hiddenFruitIds };
+    var prevExtra = prevContent ? JSON.stringify({ accentSettings: prevContent.accentSettings, rewardRankColors: prevContent.rewardRankColors, customAchievements: prevContent.customAchievements, hiddenFruitIds: prevContent.hiddenFruitIds }) : '';
+    var orderJson = JSON.stringify(order);
+    var prevOrder = prevContent ? JSON.stringify((function () { var o = {}; TYPES.forEach(function (t) { o[t] = (prevContent.collections[t] || []).map(function (r) { return r.id; }); }); return o; })()) : '';
+    if (!ops.length && JSON.stringify(extra) === prevExtra && orderJson === prevOrder) return Promise.resolve(false);
+    var version = Date.now();
+    ops.push({ ref: fb.fs.doc(db, 'content', 'meta'), data: { version: version, updatedAt: now, updatedBy: me.login, order: orderJson, extra: JSON.stringify(extra), records: Object.keys(seen).length } });
+    return writeBatches(ops, all ? function (d, n) { if (n > 50 && d < n) toast('Загружено в облако: ' + d + ' из ' + n, null, 1500); } : null).then(function () {
+      var data = { version: 1, updatedAt: now, collections: content.collections, accentSettings: content.accentSettings, rewardRankColors: content.rewardRankColors, customAchievements: content.customAchievements, hiddenFruitIds: content.hiddenFruitIds };
+      quietSet(CONTENT_KEY, JSON.stringify({ version: version, data: data }));
+      if (all) toast('Статьи загружены в облако ✓');
+      return true;
+    });
+  }
+  var contentTimer = 0, contentBusy = null;
+  function scheduleContentPush() {
+    if (!me || me.role !== 'admin') return;
+    clearTimeout(contentTimer);
+    setSync('saving');
+    contentTimer = setTimeout(flushContent, 1400);
+  }
+  function flushContent() {
+    clearTimeout(contentTimer); contentTimer = 0;
+    if (!me || me.role !== 'admin' || !db) return Promise.resolve();
+    var snap = readJSON(STORAGE_KEY, null); if (!snap || !snap.collections) return Promise.resolve();
+    var cache = readJSON(CONTENT_KEY, null);
+    var run = function () { return pushContent(contentOf(snap), cache && cache.data, !cache).then(function () { setSync('ok'); }, function (e) { console.warn('Не сохранилось в облако:', e); setSync('error'); toast('Не удалось сохранить статьи в облако. Повторю при следующем изменении.'); }); };
+    contentBusy = (contentBusy || Promise.resolve()).then(run, run);
+    return contentBusy;
+  }
+  function setSync(s) { syncState = s; renderMe(); }
+
+  /* =========================================================
+     ЛИЧНЫЕ ДАННЫЕ: users/{uid} = { login, name, keys: {localStorageKey: value|null}, updatedAt }
+     ========================================================= */
+  var dirty = {}, personalTimer = 0;
+  function syncPersonal(switched) {
+    if (me.role === 'guest') {
+      var want = JSON.stringify({ chapter: GUEST.progress.chapter, episode: GUEST.progress.episode });
+      var cur = lsGet(PROGRESS_KEY), changed = false;
+      if (cur !== want) { quietSet(PROGRESS_KEY, want); changed = true; }
+      if (switched) ['onePieceWikiFilmProgressV1', 'onePieceWikiFavorites', 'onePieceWikiRecentVisits'].forEach(function (k) { if (lsGet(k) != null) { quietSet(k, null); changed = true; } });
+      return Promise.resolve(changed);
+    }
+    var ref = fb.fs.doc(db, 'users', me.uid);
+    return fb.fs.getDoc(ref).then(function (snap) {
+      var keys;
+      if (!snap.exists()) {
+        // Первый вход: админ переносит то, что уже есть в этом браузере; участники начинают с чистого листа.
+        keys = {};
+        PERSONAL_KEYS.forEach(function (k) { keys[k] = me.role === 'admin' ? lsGet(k) : null; });
+        return fb.fs.setDoc(ref, { login: me.login, name: me.name, role: me.role, keys: keys, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }).then(function () { return applyKeys(keys); });
+      }
+      keys = snap.data().keys || {};
+      return applyKeys(keys);
+    });
+  }
+  function applyKeys(keys) {
+    var changed = false;
+    PERSONAL_KEYS.forEach(function (k) {
+      if (dirty[k]) return;
+      var v = Object.prototype.hasOwnProperty.call(keys, k) ? keys[k] : null;
+      if (lsGet(k) !== v) { quietSet(k, v); changed = true; }
+    });
+    return changed;
+  }
+  function schedulePersonalPush(key) {
+    if (!me || me.role === 'guest') return;
+    dirty[key] = true; setSync('saving');
+    clearTimeout(personalTimer); personalTimer = setTimeout(flushPersonal, 1000);
+  }
+  function flushPersonal() {
+    clearTimeout(personalTimer); personalTimer = 0;
+    if (!me || me.role === 'guest' || !db) return Promise.resolve();
+    var keys = {}, any = false;
+    Object.keys(dirty).forEach(function (k) { keys[k] = lsGet(k); any = true; });
+    if (!any) return Promise.resolve();
+    var sent = dirty; dirty = {};
+    return fb.fs.setDoc(fb.fs.doc(db, 'users', me.uid), { login: me.login, name: me.name, role: me.role, keys: keys, updatedAt: new Date().toISOString() }, { merge: true })
+      .then(function () { setSync('ok'); }, function (e) { Object.keys(sent).forEach(function (k) { dirty[k] = true; }); setSync('error'); console.warn(e); });
+  }
+  function flushAll() { return Promise.all([flushPersonal(), contentTimer ? flushContent() : Promise.resolve(), flushTops()]).catch(function () {}); }
+  window.addEventListener('pagehide', function () { flushAll(); });
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') flushAll(); });
+
+  onStorageWrite(function (key) {
+    if (!me) return;
+    if (PERSONAL_KEYS.indexOf(key) >= 0) {
+      if (me.role === 'guest') {
+        if (key === PROGRESS_KEY) setTimeout(function () { quietSet(PROGRESS_KEY, JSON.stringify(GUEST.progress)); }, 0);
+        return;
+      }
+      schedulePersonalPush(key);
+    } else if (key === STORAGE_KEY && me.role === 'admin') scheduleContentPush();
+  });
+
+  /* =========================================================
+     ТОПЫ: tops/{uid} = { login, name, lists, updatedAt }
+     ========================================================= */
+  var topsCache = readJSON(TOPS_CACHE_KEY, { byLogin: {} });
+  var topsDirty = null, topsTimer = 0;
+  function loadAllTops() {
+    return fb.fs.getDocs(fb.fs.collection(db, 'tops')).then(function (qs) {
+      var by = {};
+      qs.forEach(function (d) { var x = d.data(); if (x && x.login) by[x.login] = { lists: JSON.parse(x.lists || '{}'), updatedAt: x.updatedAt, uid: d.id }; });
+      // Перенос старых локальных топов (Дима/Женя) в облако при первом входе.
+      if (me.role !== 'guest' && !by[me.login]) {
+        var old = readJSON('onePieceWikiTopListsV1', null);
+        var mine = old && old.lists && old.lists[me.login];
+        if (mine && Object.keys(mine).some(function (k) { return (mine[k] || []).some(Boolean); })) { by[me.login] = { lists: mine, updatedAt: new Date().toISOString() }; topsDirty = mine; flushTops(); }
+      }
+      topsCache = { byLogin: by, loadedAt: Date.now() };
+      quietSet(TOPS_CACHE_KEY, JSON.stringify(topsCache));
+      return false;
+    }).catch(function (e) { console.warn('Топы:', e); return false; });
+  }
+  function flushTops() {
+    clearTimeout(topsTimer); topsTimer = 0;
+    if (!topsDirty || !me || me.role === 'guest' || !db) return Promise.resolve();
+    var lists = topsDirty; topsDirty = null;
+    return fb.fs.setDoc(fb.fs.doc(db, 'tops', me.uid), { login: me.login, name: me.name, lists: JSON.stringify(lists), updatedAt: new Date().toISOString() })
+      .then(function () { setSync('ok'); }, function (e) { topsDirty = topsDirty || lists; setSync('error'); console.warn(e); });
+  }
+  window.__wikiTopsStore = {
+    people: function () { return ACCOUNTS.map(function (a) { return { key: a.login, name: a.name, color: a.color }; }); },
+    me: function () { var s = session(); return s && s.role !== 'guest' ? s.login : ''; },
+    editable: function (key) { var s = session(); return !!(s && s.role !== 'guest' && s.login === key); },
+    get: function (key) { var e = topsCache.byLogin[key]; return e ? e.lists : {}; },
+    set: function (key, lists) {
+      if (!this.editable(key)) return;
+      topsCache.byLogin[key] = { lists: lists, updatedAt: new Date().toISOString() };
+      quietSet(TOPS_CACHE_KEY, JSON.stringify(topsCache));
+      topsDirty = lists; setSync('saving'); clearTimeout(topsTimer); topsTimer = setTimeout(flushTops, 900);
+    },
+    refresh: function () { return db && me ? loadAllTops() : Promise.resolve(); },
+    note: function () { var s = session(); return s && s.role === 'guest' ? 'Гость может смотреть топы участников, но не составлять свой.' : ''; }
+  };
+
+  /* =========================================================
+     СТАТИСТИКА
+     sessions/{id} = { uid, login, name, role, start, last, durationSec, device }
+     events/{id}   = { uid, login, kind: 'view'|'tab', targetType, targetId, targetName, ts }
+     ========================================================= */
+  var sessionId = '', visibleMs = 0, visibleSince = 0, statsStarted = false;
+  function rid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 10); }
+  function device() {
+    var ua = navigator.userAgent || '';
+    var os = /Android/i.test(ua) ? 'Android' : /iPhone|iPad|iOS/i.test(ua) ? 'iOS' : /Windows/i.test(ua) ? 'Windows' : /Mac OS/i.test(ua) ? 'macOS' : /Linux/i.test(ua) ? 'Linux' : 'другое';
+    var br = /Edg\//.test(ua) ? 'Edge' : /OPR\//.test(ua) ? 'Opera' : /YaBrowser/.test(ua) ? 'Яндекс' : /Firefox\//.test(ua) ? 'Firefox' : /Chrome\//.test(ua) ? 'Chrome' : /Safari\//.test(ua) ? 'Safari' : 'браузер';
+    return br + ' · ' + os + (window.innerWidth <= 760 ? ' · телефон' : '');
+  }
+  function startStats() {
+    if (statsStarted || !me || !db) return; statsStarted = true;
+    sessionId = rid(); visibleSince = document.visibilityState === 'visible' ? Date.now() : 0;
+    var now = Date.now();
+    fb.fs.setDoc(fb.fs.doc(db, 'sessions', sessionId), { uid: me.uid, login: me.login, name: me.name, role: me.role, start: now, last: now, durationSec: 0, device: device() }).catch(function () {});
+    setInterval(heartbeat, 60000);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible') visibleSince = Date.now();
+      else { if (visibleSince) visibleMs += Date.now() - visibleSince; visibleSince = 0; heartbeat(); }
+    });
+  }
+  function heartbeat() {
+    if (!sessionId || !db) return;
+    var ms = visibleMs + (visibleSince ? Date.now() - visibleSince : 0);
+    fb.fs.setDoc(fb.fs.doc(db, 'sessions', sessionId), { last: Date.now(), durationSec: Math.round(ms / 1000) }, { merge: true }).catch(function () {});
+  }
+  function recordName(type, id) {
+    try {
+      var src = type === 'character' ? characters : type === 'story' ? storyArcs : type === 'fruit' ? fruits : type === 'useful' ? usefulArticles : type === 'reward' ? rewards : [];
+      var r = src.find(function (x) { return String(x.id) === String(id); });
+      if (!r) return String(id);
+      if (type === 'reward') { var c = characters.find(function (x) { return x.id === r.character_id; }); return 'Награда: ' + (c ? c.name : id); }
+      return r.name || String(id);
+    } catch (e) { return String(id); }
+  }
+  var lastView = '';
+  function logEvent(kind, targetType, targetId) {
+    if (!me || !db || !statsStarted) return;
+    var key = kind + ':' + targetType + ':' + targetId;
+    if (key === lastView) return; lastView = key; setTimeout(function () { if (lastView === key) lastView = ''; }, 4000);
+    fb.fs.setDoc(fb.fs.doc(db, 'events', rid()), { uid: me.uid, login: me.login, kind: kind, targetType: targetType, targetId: String(targetId), targetName: kind === 'view' ? recordName(targetType, targetId) : String(targetId), ts: Date.now(), session: sessionId }).catch(function () {});
+  }
+  function wrapGlobal(name, after) {
+    var orig = window[name]; if (typeof orig !== 'function' || orig.__wkStats) return;
+    var w = function () { var r = orig.apply(this, arguments); try { after.apply(null, arguments); } catch (e) {} return r; };
+    w.__wkStats = true; window[name] = w;
+  }
+
+  /* =========================================================
+     ПАНЕЛЬ СТАТИСТИКИ ДЛЯ АДМИНА (вкладка «Каюты»)
+     ========================================================= */
+  var ST_KEY = 'wkStatsPrefsV1';
+  function fmtDur(sec) { sec = Math.round(sec || 0); if (sec < 60) return sec + ' с'; var m = Math.round(sec / 60); if (m < 60) return m + ' мин'; var h = Math.floor(m / 60); return h + ' ч ' + (m % 60) + ' мин'; }
+  function ago(ms) { var s = (Date.now() - ms) / 1000; if (s < 60) return 'только что'; var m = Math.round(s / 60); if (m < 60) return m + ' мин назад'; var h = Math.round(m / 60); if (h < 24) return h + ' ч назад'; var d = Math.round(h / 24); return d + ' дн назад'; }
+  function day(ms) { var d = new Date(ms); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  var TYPE_ICON = { character: '👤', story: '📖', fruit: '🍎', useful: '💡', reward: '💰' };
+  var TAB_NAMES = { favorites: 'Каюта', characters: 'Персонажи', story: 'Сюжет', rewards: 'Награды', fruits: 'Плоды', useful: 'Полезное' };
+  function renderStats(pane) {
+    if (!db || !me || me.role !== 'admin') { pane.innerHTML = '<div class="wk-st-empty">Статистика доступна администратору после входа.</div>'; return; }
+    var prefs = readJSON(ST_KEY, { days: 30, hideAdmin: false });
+    pane.innerHTML = '<div class="wk-pane-head"><div><h2>Статистика участников</h2><p>Визиты, время на сайте и самые читаемые статьи. Видно только администратору.</p></div></div><div class="wk-st-empty">Загружаю данные…</div>';
+    var since = Date.now() - prefs.days * 86400000;
+    var q1 = fb.fs.query(fb.fs.collection(db, 'sessions'), fb.fs.where('start', '>=', since), fb.fs.orderBy('start', 'desc'), fb.fs.limit(5000));
+    var q2 = fb.fs.query(fb.fs.collection(db, 'events'), fb.fs.where('ts', '>=', since), fb.fs.orderBy('ts', 'desc'), fb.fs.limit(10000));
+    Promise.all([fb.fs.getDocs(q1), fb.fs.getDocs(q2), fb.fs.getDocs(fb.fs.collection(db, 'users')), fb.fs.getDocs(fb.fs.collection(db, 'tops'))]).then(function (r) {
+      var sessions = [], events = [], users = {}, tops = {};
+      r[0].forEach(function (d) { sessions.push(d.data()); });
+      r[1].forEach(function (d) { events.push(d.data()); });
+      r[2].forEach(function (d) { var x = d.data(); users[x.login] = x; });
+      r[3].forEach(function (d) { var x = d.data(); try { tops[x.login] = JSON.parse(x.lists || '{}'); } catch (e) {} });
+      if (prefs.hideAdmin) { sessions = sessions.filter(function (s) { return s.role !== 'admin'; }); events = events.filter(function (e) { return e.login !== me.login; }); }
+      drawStats(pane, prefs, sessions, events, users, tops);
+    }).catch(function (e) {
+      pane.querySelector('.wk-st-empty').textContent = 'Не удалось загрузить статистику: ' + (e && (e.code || e.message));
+    });
+  }
+  function drawStats(pane, prefs, sessions, events, users, tops) {
+    var people = ACCOUNTS.map(function (a) { return { login: a.login, name: a.name, color: a.color, role: a.role }; }).concat([{ login: 'guest', name: GUEST.name, color: '#94a3b8', role: 'guest' }]);
+    if (prefs.hideAdmin) people = people.filter(function (p) { return p.role !== 'admin'; });
+    var views = events.filter(function (e) { return e.kind === 'view'; }), tabs = events.filter(function (e) { return e.kind === 'tab'; });
+    var per = {};
+    people.forEach(function (p) { per[p.login] = { visits: 0, views: 0, sec: 0, last: 0, days: {} }; });
+    sessions.forEach(function (s) { var x = per[s.login]; if (!x) return; x.visits++; x.sec += s.durationSec || 0; x.last = Math.max(x.last, s.last || s.start); x.days[day(s.start)] = 1; });
+    views.forEach(function (e) { var x = per[e.login]; if (x) { x.views++; x.last = Math.max(x.last, e.ts); } });
+    var totalSec = sessions.reduce(function (a, s) { return a + (s.durationSec || 0); }, 0);
+    var active7 = people.filter(function (p) { return per[p.login].last > Date.now() - 7 * 86400000; }).length;
+    var html = '<div class="wk-pane-head"><div><h2>Статистика участников</h2><p>Визиты, время на сайте и самые читаемые статьи. Видно только администратору.</p></div></div>' +
+      '<div class="wk-st-controls"><div class="wk-seg" role="group" aria-label="Период">' + [7, 30, 90].map(function (d) { return '<button type="button" data-days="' + d + '" class="' + (prefs.days === d ? 'active' : '') + '">' + d + ' дн</button>'; }).join('') + '</div>' +
+      '<label><input type="checkbox" data-hide-admin ' + (prefs.hideAdmin ? 'checked' : '') + '> не учитывать мои визиты</label><button type="button" class="wk-btn" data-refresh style="padding:7px 12px">⟳ Обновить</button></div>' +
+      '<div class="wk-st-kpis">' +
+      '<div class="wk-st-card"><small>Визитов</small><b>' + sessions.length + '</b><span>за ' + prefs.days + ' дн</span></div>' +
+      '<div class="wk-st-card"><small>Открыто статей</small><b>' + views.length + '</b><span>' + (sessions.length ? (views.length / sessions.length).toFixed(1) : 0) + ' за визит</span></div>' +
+      '<div class="wk-st-card"><small>Время на сайте</small><b>' + fmtDur(totalSec) + '</b><span>в среднем ' + fmtDur(sessions.length ? totalSec / sessions.length : 0) + ' за визит</span></div>' +
+      '<div class="wk-st-card"><small>Активны за 7 дней</small><b>' + active7 + ' / ' + people.length + '</b><span>учёток</span></div></div>';
+
+    // Таблица участников.
+    html += '<div class="wk-st-box" style="margin-bottom:12px"><h3>Участники</h3><div class="wk-st-scroll"><table class="wk-st-table"><thead><tr><th>Учётка</th><th class="wk-num">Визиты</th><th class="wk-num">Дней с визитами</th><th class="wk-num">Статей открыто</th><th class="wk-num">Время</th><th>Последний визит</th><th>Прогресс</th><th class="wk-num">Топ</th><th class="wk-num">Избранное</th></tr></thead><tbody>';
+    people.forEach(function (p) {
+      var x = per[p.login], u = users[p.login], prog = '—', fav = '—', topFilled = '—';
+      if (p.role === 'guest') prog = 'гл. ' + GUEST.progress.chapter + ' · сер. ' + GUEST.progress.episode;
+      else if (u && u.keys) {
+        try { var pr = JSON.parse(u.keys[PROGRESS_KEY] || '{}'); prog = (pr.chapter || pr.episode) ? 'гл. ' + (pr.chapter || 0) + ' · сер. ' + (pr.episode || 0) : 'не указан'; } catch (e) {}
+        try { var fv = JSON.parse(u.keys.onePieceWikiFavorites || '[]'); fav = Array.isArray(fv) ? fv.length : Object.keys(fv || {}).length; } catch (e) {}
+      }
+      if (tops[p.login]) { var t = tops[p.login], n = 0; Object.keys(t).forEach(function (k) { n += (t[k] || []).filter(Boolean).length; }); topFilled = n; }
+      html += '<tr><td><span class="wk-st-who"><span class="wk-ava" style="background:' + p.color + '">' + esc(p.role === 'guest' ? '👀' : p.name[0]) + '</span>' + esc(p.name) + '</span></td><td class="wk-num">' + x.visits + '</td><td class="wk-num">' + Object.keys(x.days).length + '</td><td class="wk-num">' + x.views + '</td><td class="wk-num">' + fmtDur(x.sec) + '</td><td>' + (x.last ? ago(x.last) : 'не заходил(а)') + '</td><td>' + prog + '</td><td class="wk-num">' + topFilled + '</td><td class="wk-num">' + fav + '</td></tr>';
+    });
+    html += '</tbody></table></div></div>';
+
+    // График визитов по дням (столбики с разбивкой по участникам).
+    var daysN = prefs.days, dayKeys = [];
+    for (var i = daysN - 1; i >= 0; i--) dayKeys.push(day(Date.now() - i * 86400000));
+    var byDay = {}; dayKeys.forEach(function (d) { byDay[d] = {}; });
+    sessions.forEach(function (s) { var d = day(s.start); if (byDay[d]) byDay[d][s.login] = (byDay[d][s.login] || 0) + 1; });
+    var maxDay = Math.max(1, Math.max.apply(null, dayKeys.map(function (d) { return Object.keys(byDay[d]).reduce(function (a, k) { return a + byDay[d][k]; }, 0); })));
+    var W = 640, H = 170, pad = 22, bw = (W - pad) / dayKeys.length;
+    var svg = '<svg class="wk-st-svg" viewBox="0 0 ' + W + ' ' + (H + 18) + '" role="img" aria-label="Визиты по дням">';
+    [0, 0.5, 1].forEach(function (f) { var y = H - f * (H - 6); svg += '<line x1="' + pad + '" x2="' + W + '" y1="' + y + '" y2="' + y + '" stroke="rgba(148,163,184,.15)"/><text x="0" y="' + (y + 3) + '">' + Math.round(maxDay * f) + '</text>'; });
+    dayKeys.forEach(function (d, k) {
+      var y = H, x = pad + k * bw + bw * 0.15, w = Math.max(1.5, bw * 0.7);
+      people.forEach(function (p) { var v = byDay[d][p.login] || 0; if (!v) return; var h = v / maxDay * (H - 6); y -= h; svg += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + h.toFixed(1) + '" rx="1.5" fill="' + p.color + '"><title>' + esc(p.name) + ': ' + v + ' · ' + d.split('-').reverse().slice(0, 2).join('.') + '</title></rect>'; });
+      if (k === 0 || k === dayKeys.length - 1 || (daysN > 7 && k % Math.ceil(daysN / 6) === 0) || daysN <= 7) svg += '<text x="' + (x + w / 2).toFixed(1) + '" y="' + (H + 13) + '" text-anchor="middle">' + d.split('-').reverse().slice(0, 2).join('.') + '</text>';
+    });
+    svg += '</svg>';
+    html += '<div class="wk-st-grid"><div class="wk-st-box"><h3>Визиты по дням</h3>' + svg + '<div class="wk-st-legend">' + people.map(function (p) { return '<span><i style="--c:' + p.color + '"></i>' + esc(p.name) + '</span>'; }).join('') + '</div></div>';
+
+    // Время суток.
+    var hours = new Array(24).fill(0); sessions.forEach(function (s) { hours[new Date(s.start).getHours()]++; });
+    var maxH = Math.max(1, Math.max.apply(null, hours)), HW = 360, HH = 120, hb = HW / 24;
+    var hsvg = '<svg class="wk-st-svg" viewBox="0 0 ' + HW + ' ' + (HH + 16) + '" role="img" aria-label="Визиты по времени суток">';
+    hours.forEach(function (v, h) { var bh = v / maxH * (HH - 4); hsvg += '<rect x="' + (h * hb + 1).toFixed(1) + '" y="' + (HH - bh).toFixed(1) + '" width="' + (hb - 2).toFixed(1) + '" height="' + bh.toFixed(1) + '" rx="2" fill="var(--accent,#d4a84f)" opacity="' + (v ? 0.9 : 0.15) + '"><title>' + h + ':00 — ' + v + '</title></rect>'; if (h % 3 === 0) hsvg += '<text x="' + (h * hb + hb / 2).toFixed(1) + '" y="' + (HH + 12) + '" text-anchor="middle">' + h + '</text>'; });
+    hsvg += '</svg>';
+    var weekday = [0, 0, 0, 0, 0, 0, 0]; sessions.forEach(function (s) { weekday[(new Date(s.start).getDay() + 6) % 7]++; });
+    var wn = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'], maxW = Math.max(1, Math.max.apply(null, weekday));
+    html += '<div class="wk-st-box"><h3>Когда заходят<small>по часам</small></h3>' + hsvg + '<div class="wk-st-bars" style="margin-top:10px">' + weekday.map(function (v, k) { return '<div class="wk-st-bar"><span class="wk-st-bar-name">' + wn[k] + '</span><span class="wk-st-bar-track"><i style="width:' + (v / maxW * 100) + '%;--c:var(--accent,#d4a84f)"></i></span><b>' + v + '</b></div>'; }).join('') + '</div></div></div>';
+
+    // Самые читаемые статьи.
+    var art = {};
+    views.forEach(function (e) { var k = e.targetType + ':' + e.targetId; var a = art[k] || (art[k] = { type: e.targetType, id: e.targetId, name: e.targetName, total: 0, by: {} }); a.total++; a.by[e.login] = (a.by[e.login] || 0) + 1; a.name = e.targetName || a.name; });
+    var topArt = Object.keys(art).map(function (k) { return art[k]; }).sort(function (a, b) { return b.total - a.total; }).slice(0, 15);
+    var maxA = topArt.length ? topArt[0].total : 1;
+    html += '<div class="wk-st-grid"><div class="wk-st-box"><h3>Самые читаемые статьи<small>топ-15</small></h3>' + (topArt.length ? '<div class="wk-st-bars">' + topArt.map(function (a) {
+      return '<div class="wk-st-bar" title="' + esc(people.filter(function (p) { return a.by[p.login]; }).map(function (p) { return p.name + ': ' + a.by[p.login]; }).join(' · ')) + '"><span class="wk-st-bar-name">' + (TYPE_ICON[a.type] || '•') + ' ' + esc(a.name) + '</span><span class="wk-st-bar-track" style="width:' + (a.total / maxA * 100) + '%">' +
+        people.map(function (p) { var v = a.by[p.login] || 0; return v ? '<i style="width:' + (v / a.total * 100) + '%;--c:' + p.color + '"></i>' : ''; }).join('') + '</span><b>' + a.total + '</b></div>';
+    }).join('') + '</div>' : '<div class="wk-st-empty">Пока никто не открывал статьи за этот период.</div>') + '</div>';
+
+    // Разделы и лента.
+    var tabCount = {}; tabs.forEach(function (e) { tabCount[e.targetId] = (tabCount[e.targetId] || 0) + 1; });
+    var tabRows = Object.keys(tabCount).sort(function (a, b) { return tabCount[b] - tabCount[a]; });
+    var maxT = tabRows.length ? tabCount[tabRows[0]] : 1;
+    var typeCount = {}; views.forEach(function (e) { typeCount[e.targetType] = (typeCount[e.targetType] || 0) + 1; });
+    html += '<div class="wk-st-box"><h3>Разделы</h3>' + (tabRows.length ? '<div class="wk-st-bars">' + tabRows.map(function (t) { return '<div class="wk-st-bar"><span class="wk-st-bar-name">' + esc(TAB_NAMES[t] || t) + '</span><span class="wk-st-bar-track"><i style="width:' + (tabCount[t] / maxT * 100) + '%;--c:var(--accent,#d4a84f)"></i></span><b>' + tabCount[t] + '</b></div>'; }).join('') + '</div>' : '<div class="wk-st-empty">Нет данных.</div>') +
+      '<h3 style="margin-top:14px!important">Какие статьи читают</h3><div class="wk-st-bars">' + ['character', 'story', 'fruit', 'useful', 'reward'].filter(function (t) { return typeCount[t]; }).map(function (t) { return '<div class="wk-st-bar"><span class="wk-st-bar-name">' + TYPE_ICON[t] + ' ' + ({ character: 'Персонажи', story: 'Арки', fruit: 'Плоды', useful: 'Полезное', reward: 'Награды' })[t] + '</span><span class="wk-st-bar-track"><i style="width:' + (typeCount[t] / Math.max(1, views.length) * 100) + '%;--c:var(--accent,#d4a84f)"></i></span><b>' + typeCount[t] + '</b></div>'; }).join('') + '</div></div></div>';
+
+    var feed = events.slice(0, 40);
+    html += '<div class="wk-st-box"><h3>Последние действия</h3>' + (feed.length ? '<div class="wk-st-feed">' + feed.map(function (e) {
+      var p = people.find(function (x) { return x.login === e.login; }) || { name: nameOf(e.login), color: '#94a3b8', role: '' };
+      var what = e.kind === 'view' ? 'открыл(а) ' + (TYPE_ICON[e.targetType] || '') + ' «' + esc(e.targetName) + '»' : 'перешёл(ла) в раздел «' + esc(TAB_NAMES[e.targetId] || e.targetId) + '»';
+      return '<div><span class="wk-ava" style="background:' + p.color + '">' + esc(p.role === 'guest' ? '👀' : (p.name || '?')[0]) + '</span><span><b>' + esc(p.name) + '</b> ' + what + '</span><em>' + ago(e.ts) + '</em></div>';
+    }).join('') + '</div>' : '<div class="wk-st-empty">Пока пусто.</div>') + '</div>';
+
+    html += '<div class="wk-st-admin"><span>Облако статей:</span><button type="button" data-reupload>⬆ Перезалить все статьи из этого браузера в облако</button><span>— если облачная копия разошлась с нужной.</span></div>';
+    pane.innerHTML = html;
+    pane.querySelectorAll('[data-days]').forEach(function (b) { b.addEventListener('click', function () { prefs.days = Number(b.getAttribute('data-days')); quietSet(ST_KEY, JSON.stringify(prefs)); renderStats(pane); }); });
+    pane.querySelector('[data-hide-admin]').addEventListener('change', function (e) { prefs.hideAdmin = e.target.checked; quietSet(ST_KEY, JSON.stringify(prefs)); renderStats(pane); });
+    pane.querySelector('[data-refresh]').addEventListener('click', function () { renderStats(pane); });
+    pane.querySelector('[data-reupload]').addEventListener('click', function () {
+      if (!confirm('Перезаписать облачную копию статей данными из этого браузера?')) return;
+      var snap = localSnapshot(); if (!snap) return;
+      var cache = readJSON(CONTENT_KEY, null);
+      pushContent(contentOf(snap), cache && cache.data, true).then(function () { toast('Готово: облако совпадает с этим браузером.'); }, function (e) { toast('Ошибка: ' + (e && (e.code || e.message))); });
+    });
+  }
+  if (typeof window.__wikiRegisterCabinTab === 'function') {
+    window.__wikiRegisterCabinTab({ key: 'stats', icon: '📊', label: 'Статистика', pane: 'wkCabinPaneStats', render: renderStats, visible: function () { var s = session(); return !!(s && s.role === 'admin'); } });
+  }
+
+  /* ---------- запуск ---------- */
+  function start() {
+    // Элементы, попавшие в экспортированный HTML вместе с DOM, пересоздаём с нуля.
+    ['wkLogin', 'wkMe', 'wkMeMenu', 'wkWgTip'].forEach(function (id) { var el = document.getElementById(id); if (el) el.remove(); });
+    document.querySelectorAll('.wk-toast-zone').forEach(function (el) { el.remove(); });
+    wrapGlobal('recordRecentVisit', function (type, id) { logEvent('view', type, id); });
+    wrapGlobal('switchTab', function (tab) { logEvent('tab', 'tab', tab); });
+    boot();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
 })();
