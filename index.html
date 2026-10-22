@@ -4626,7 +4626,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "23.10.2026 · 9";
+const WIKI_VERSION = "23.10.2026 · 10";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -12154,7 +12154,9 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
             Number.isFinite(storedUpdatedAt) && Number.isFinite(embeddedUpdatedAt) &&
             storedUpdatedAt > embeddedUpdatedAt
         );
-        const useEmbedded = !!(embeddedData && embeddedData.collections &&
+        let cloudPending = false;
+        try { cloudPending = !!(window.WIKI_CLOUD_ENABLED && localStorage.getItem('wkCloudPendingV1') && storedData && storedData.collections); } catch (e) {}
+        const useEmbedded = !cloudPending && !!(embeddedData && embeddedData.collections &&
             (!storageAvailable || !embeddedStamp || !storedRaw || !storedData || marker !== portableSnapshotId ||
              ((isBakedPortable || contentMismatch) && !newerLocalEditsForThisSnapshot)));
         const raw = embeddedData && embeddedData.collections
@@ -21946,7 +21948,10 @@ img.wk-fade.wk-loaded{opacity:1}
         quietSet(SESSION_KEY, JSON.stringify(u));
         hideLogin(); applyRoleAttrs();
         var switched = !prev || prev.uid !== u.uid;
-        Promise.all([syncContent(), syncPersonal(switched), loadAllTops()]).then(function (r) {
+        var hasPending = !!lsGet(PENDING_KEY);
+        if (hasPending && (!canEditRole(u.role) || switched)) { quietSet(PENDING_KEY, null); hasPending = false; }
+        var first = hasPending ? flushContent().then(function () { if (lsGet(PENDING_KEY)) toast('Есть правки, которые ещё не дошли до облака. Они сохранены в этом браузере.'); else toast('Неотправленные правки дошли до облака ✓'); }) : Promise.resolve();
+        first.then(function () { return Promise.all([syncContent(), syncPersonal(switched), loadAllTops()]); }).then(function (r) {
           var reload = r[0] || r[1];
           if (reload) { reloadOnce('boot:' + u.uid + ':' + (r[0] ? 'c' : '') + (r[1] ? 'p' : '')); return; }
           startStats();
@@ -22056,7 +22061,7 @@ img.wk-fade.wk-loaded{opacity:1}
   }
   function recTitle(r) { return r && (r.name || r.character_id || r.id) || ''; }
   function pushContentNow(content, prevContent, all, stale) {
-    var now = new Date().toISOString(), ops = [], order = {};
+    var now = new Date().toISOString(), ops = [], logOps = [], order = {};
     var prev = {};
     if (prevContent && prevContent.collections) TYPES.forEach(function (t) { (prevContent.collections[t] || []).forEach(function (r) { prev[recId(t, r.id)] = JSON.stringify(r); }); });
     var seen = {};
@@ -22068,14 +22073,14 @@ img.wk-fade.wk-loaded{opacity:1}
         order[t].push(r.id); seen[id] = 1;
         var real = !prev[id] || (prev[id] !== json && changedFields(prev[id], json).length > 0);
         if (all || real) ops.push({ ref: fb.fs.doc(db, 'records', id), data: { type: t, id: String(r.id), json: json, updatedAt: now } });
-        if (prevContent && real) ops.push(editOp(t, r.id, recTitle(r), prev[id] ? 'update' : 'create', prev[id] || null, json));
+        if (prevContent && real) logOps.push(editOp(t, r.id, recTitle(r), prev[id] ? 'update' : 'create', prev[id] || null, json));
       });
     });
     Object.keys(prev).forEach(function (id) {
       if (seen[id]) return;
       ops.push({ ref: fb.fs.doc(db, 'records', id), del: true });
       var old = null; try { old = JSON.parse(prev[id]); } catch (e) {}
-      ops.push(editOp(id.split('~')[0], old ? old.id : id.split('~').slice(1).join('~'), recTitle(old), 'delete', prev[id], null));
+      logOps.push(editOp(id.split('~')[0], old ? old.id : id.split('~').slice(1).join('~'), recTitle(old), 'delete', prev[id], null));
     });
     if (stale) {
       // Чужие новые статьи остаются в порядке; чужие настройки не затираем, если сам их не менял.
@@ -22095,12 +22100,15 @@ img.wk-fade.wk-loaded{opacity:1}
     return writeBatches(ops, all ? function (d, n) { if (n > 50 && d < n) toast('Загружено в облако: ' + d + ' из ' + n, null, 1500); } : null).then(function () {
       var data = { version: 1, updatedAt: now, collections: content.collections, accentSettings: content.accentSettings, rewardRankColors: content.rewardRankColors, customAchievements: content.customAchievements, hiddenFruitIds: content.hiddenFruitIds, medalArt: content.medalArt || {} };
       quietSet(CONTENT_KEY, JSON.stringify({ version: stale ? 0 : version, data: data }));
+      if (logOps.length) writeBatches(logOps).catch(function (e) { console.warn('История правок не записалась (проверь правила Firestore для edits):', e); });
       if (all) toast('Статьи загружены в облако ✓');
       if (stale) toast('Твои правки сохранены. Пока ты работал, ' + nameOf(stale.updatedBy) + ' тоже вносил изменения — обнови страницу, чтобы их увидеть.', { label: 'Обновить', run: function () { syncContent().then(function () { location.reload(); }, function () { location.reload(); }); } });
       return true;
     });
   }
-  var contentTimer = 0, contentBusy = null;
+  var contentTimer = 0, contentBusy = null, pendingSeq = 0;
+  // Пока правки не дошли до облака, эта отметка не даёт затереть их облачной копией при перезагрузке.
+  var PENDING_KEY = 'wkCloudPendingV1';
   function scheduleContentPush() {
     if (!me || !canEditRole(me.role)) return;
     clearTimeout(contentTimer);
@@ -22112,7 +22120,17 @@ img.wk-fade.wk-loaded{opacity:1}
     if (!me || !canEditRole(me.role) || !db) return Promise.resolve();
     var snap = readJSON(STORAGE_KEY, null); if (!snap || !snap.collections) return Promise.resolve();
     var cache = readJSON(CONTENT_KEY, null);
-    var run = function () { return pushContent(contentOf(snap), cache && cache.data, !cache).then(function () { setSync('ok'); }, function (e) { console.warn('Не сохранилось в облако:', e); setSync('error'); toast('Не удалось сохранить статьи в облако. Повторю при следующем изменении.'); }); };
+    var seqAtStart = pendingSeq;
+    var run = function () {
+      snap = readJSON(STORAGE_KEY, null) || snap; cache = readJSON(CONTENT_KEY, null);
+      return pushContent(contentOf(snap), cache && cache.data, !cache).then(function () {
+        setSync('ok');
+        if (pendingSeq === seqAtStart) quietSet(PENDING_KEY, null);
+      }, function (e) {
+        console.warn('Не сохранилось в облако:', e); setSync('error');
+        toast('Не удалось сохранить статьи в облако (' + (e && (e.code || e.message) || 'ошибка') + '). Правки сохранены в этом браузере и не потеряются — попробую ещё раз.', { label: 'Повторить', run: function () { flushContent(); } });
+      });
+    };
     contentBusy = (contentBusy || Promise.resolve()).then(run, run);
     return contentBusy;
   }
@@ -22172,6 +22190,7 @@ img.wk-fade.wk-loaded{opacity:1}
   document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') flushAll(); });
 
   onStorageWrite(function (key) {
+    if (key === STORAGE_KEY) { var ss = me || session(); if (ss && canEditRole(ss.role)) { pendingSeq++; quietSet(PENDING_KEY, String(Date.now())); } }
     if (!me) return;
     if (PERSONAL_KEYS.indexOf(key) >= 0) {
       if (me.role === 'guest') {
