@@ -1697,7 +1697,7 @@ window.__wikiSetArcSkipped = function (ids, track, skipped) {
       <button type="button" class="achievement-filter" data-achievement-filter="reward" aria-pressed="false">💰 Награды</button>
       <button type="button" class="achievement-filter" data-achievement-filter="manga" aria-pressed="false">📘 Манга</button>
       <button type="button" class="achievement-filter" data-achievement-filter="anime" aria-pressed="false">📺 Аниме</button>
-      <button type="button" class="achievement-filter" data-achievement-filter="favorites" aria-pressed="false">⭐ Избранное</button>
+      <button type="button" class="achievement-filter" data-achievement-filter="favorites" aria-pressed="false">⭐ Избранное</button><button type="button" class="achievement-filter" data-achievement-filter="reading" aria-pressed="false">📖 Чтение</button>
       <button type="button" class="achievement-filter" data-achievement-filter="special" aria-pressed="false">⚓ Особые</button>
     </div>
     <div class="achievement-tools-row"><div class="achievement-search-wrap"><input class="achievement-search" id="achievementSearch" type="search" placeholder="Найти достижение или сагу…" autocomplete="off" aria-label="Поиск достижений"></div><label class="achievement-hide-earned"><input id="achievementHideEarned" type="checkbox"><span>Скрыть полученные</span></label></div>
@@ -4626,7 +4626,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "23.10.2026 · 12";
+const WIKI_VERSION = "23.10.2026 · 15";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -13625,7 +13625,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
                 const films=allRecords('story').filter(a=>{const m=rawValue(a,'movie');return m===true||m==='true'||String(rawValue(a,'saga')||'').trim()==='Полнометражные фильмы';});
                 const current=String(val||FILM_ID_BY_CHARACTER_ID[String(rawValue(obj,'id')||'')]||'');
                 control=selectHTML(k,current,films.map(f=>({value:String(rawValue(f,'id')),label:String(rawValue(f,'name')||rawValue(f,'id'))})),'— нет, персонаж из сериала —');
-                hint='Выбери фильм, если персонаж есть только в нём. Тогда глава и эпизод не нужны: статья откроется, когда человек отметит фильм просмотренным.';
+                hint='Выбери фильм, если персонаж есть только в нём. Тогда глава, эпизод, связи и арки не нужны: статья откроется, когда человек отметит фильм просмотренным.';
             } else if(k==='character_id' && activeType==='reward'){
                 control=searchableSelectHTML(k,val,linkedOptions('character'),'Поиск персонажа по имени или ID…'); hint='Начни вводить имя или ID. В данных сохраняется ID персонажа.';
             } else if((k==='fruit_article_id'||k==='fruit2_article_id'||k==='ts_fruit_article_id') && activeType==='character'){
@@ -15591,7 +15591,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
       <button type="button" class="achievement-filter" data-achievement-filter="reward" aria-pressed="false">💰 Награды</button>
       <button type="button" class="achievement-filter" data-achievement-filter="manga" aria-pressed="false">📘 Манга</button>
       <button type="button" class="achievement-filter" data-achievement-filter="anime" aria-pressed="false">📺 Аниме</button>
-      <button type="button" class="achievement-filter" data-achievement-filter="favorites" aria-pressed="false">⭐ Избранное</button>
+      <button type="button" class="achievement-filter" data-achievement-filter="favorites" aria-pressed="false">⭐ Избранное</button><button type="button" class="achievement-filter" data-achievement-filter="reading" aria-pressed="false">📖 Чтение</button>
       <button type="button" class="achievement-filter" data-achievement-filter="special" aria-pressed="false">⚓ Особые</button>
     </div>
     <div class="achievement-tools-row"><div class="achievement-search-wrap"><input class="achievement-search" id="achievementSearch" type="search" placeholder="Найти достижение или сагу…" autocomplete="off" aria-label="Поиск достижений"></div><label class="achievement-hide-earned"><input id="achievementHideEarned" type="checkbox"><span>Скрыть полученные</span></label></div>
@@ -15648,6 +15648,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     manga:{label:'Манга',icon:'📘',color:'#72b9e4',section:'Особые главы'},
     anime:{label:'Аниме',icon:'📺',color:'#6bbfa8',section:'Особые серии'},
     favorites:{label:'Избранное',icon:'⭐',color:'#e3bc65',section:'Избранное'},
+    reading:{label:'Чтение',icon:'📖',color:'#7cc4e8',section:'Чтение'},
     special:{label:'Особые',icon:'⚓',color:'#d4a84f',section:'Особые достижения'}
   };
   let activeFilter='all';let allAchievements=[];
@@ -15803,6 +15804,27 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     return items;
   }
 
+  // Просмотренные статьи: уникальные «тип:id», которые человек открывал.
+  const VIEW_LEVELS=[
+    {target:10,name:'Юнга-книгочей',art:'views_1',material:'ДЕРЕВО'},
+    {target:50,name:'Штурман знаний',art:'views_2',material:'МЕДЬ'},
+    {target:100,name:'Корабельный летописец',art:'views_3',material:'ЖЕЛЕЗО'},
+    {target:250,name:'Учёный Охары',art:'views_4',material:'ЗОЛОТО'},
+    {target:500,name:'Хранитель Понеглифов',art:'views_5',material:'САМОЦВЕТЫ'}
+  ];
+  const FAVORITE_LEVELS=[
+    {target:5,name:'Кладовая Усоппа',art:'flag_wood',material:'ДЕРЕВО'},
+    {target:25,name:'Библиотека Охары',art:'flag_iron',material:'ЖЕЛЕЗО'},
+    {target:100,name:'Сокровище Рафтеля',art:'flag_gold',material:'ЗОЛОТО'}
+  ];
+  (function(){const fb={views_1:'ship_wood',views_2:'ship_copper',views_3:'ship_iron',views_4:'ship_gold',views_5:'ship_gemstones'};const d=window.__wikiMedalArtDefaults||(window.__wikiMedalArtDefaults={});Object.keys(fb).forEach(k=>{if(!d[k])d[k]=MEDAL_ART[fb[k]]||'';if(!MEDAL_ART[k])MEDAL_ART[k]=d[k];});})();
+  const viewedCount=()=>{try{const a=JSON.parse(localStorage.getItem('onePieceWikiViewedV1')||'[]');return Array.isArray(a)?new Set(a.map(String)).size:0;}catch(_){return 0;}};
+  function viewAchievements(){
+    const current=viewedCount(),levels=VIEW_LEVELS;
+    const nextIndex=levels.findIndex(l=>l.target>current),count=isAchievementPreviewMode()?levels.length:(nextIndex<0?levels.length:nextIndex+1);
+    const word=n=>(window.ruPlural?window.ruPlural(n,'статью','статьи','статей'):'статей');
+    return levels.slice(0,count).map((l,index)=>({id:`views:${l.target}`,category:'reading',filter:'reading',section:'Чтение',sortName:String(l.target).padStart(7,'0'),title:l.name,subtitle:`Открой ${l.target} разных статей`,typeLabel:`ЧИТАТЕЛЬ ВИКИ · ${l.material}`,icon:'',color:'#7cc4e8',done:current>=l.target,progress:Math.min(current,l.target),total:l.target,progressLabel:`${Math.min(current,l.target)} / ${l.target}`,description:current>=l.target?'Цель выполнена.':`Прочитано ${current} ${word(current)} из ${l.target}.`,search:`чтение статьи просмотр ${l.target} ${l.name}`,medalTier:index+1,medalArt:l.art}));
+  }
   function favoriteAchievements(){
     const current=favoriteCount(),levels=[5,25,100],names=['Кладовая Усоппа','Библиотека Охары','Сокровище Рафтеля'],arts=['flag_wood','flag_iron','flag_gold'],materials=['ДЕРЕВО','ЖЕЛЕЗО','ЗОЛОТО'];
     const nextIndex=levels.findIndex(n=>n>current),count=isAchievementPreviewMode()?levels.length:(nextIndex<0?levels.length:nextIndex+1);
@@ -15827,7 +15849,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     const sagas=storySagaAchievements(p);
     const wanted=wantedMilestoneAchievements();
     const milestones=[...milestoneAchievements('manga',p.chapter),...milestoneAchievements('anime',p.episode)];
-    const favs=favoriteAchievements(),custom=customAchievementItems(p);
+    const favs=[...favoriteAchievements(),...viewAchievements()],custom=customAchievementItems(p);
     allAchievements=[...collections,...sagas,...groups,...wanted,...milestones,...favs,...custom];
     const previewMode=isAchievementPreviewMode();
     if(previewMode){
@@ -15895,7 +15917,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
   // relying on event.target.closest(), which can be unreliable in embedded Android WebViews.
   function setAchievementFilter(value){
     value=String(value||'all');
-    if(!['all','character','fruit','reward','manga','anime','favorites','special'].includes(value))value='all';
+    if(!['all','character','fruit','reward','manga','anime','favorites','reading','special'].includes(value))value='all';
     activeFilter=value;
     const root=$('#achievementFilters');
     if(root)root.querySelectorAll('button[data-achievement-filter]').forEach(button=>{
@@ -15951,7 +15973,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     const host=document.getElementById('wikiEditorForm');if(!host)return;
     const mount=host.querySelector('#wikiEditorAchievementManagerMount');if(!mount||mount.querySelector('.wiki-editor-achievements'))return;
     const section=document.createElement('section');section.className='wiki-editor-achievements';section.id='wikiEditorAchievements';
-    section.innerHTML=`<div class="wiki-editor-achievements-head"><div><div class="wiki-editor-achievements-kicker">НАГРАДЫ И МЕДАЛИ</div><h3>Достижения энциклопедии</h3><p>Создавай особые достижения и задавай условие открытия по главе манги или эпизоду аниме. Они сохраняются вместе с данными Wiki.</p></div><button type="button" class="wiki-editor-achievement-new" id="wikiAchievementCreate">＋ Новое достижение</button></div><div class="wiki-editor-achievement-list" id="wikiAchievementEditorList"></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Коллекция WANTED · 5 уровней</strong><small>Незавершённые уровни скрыты в публичной доске, пока не наступит их очередь. Все заготовки остаются видны здесь. Ориентир 1 567 — ориентировочное число персонажей в списке голосования WT100.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiWantedPresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Коллекция персонажей · 5 уровней</strong><small>Общий счётчик всех доступных персонажей — без группировки по сагам и аркам.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiCharacterPresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Коллекция плодов · 5 уровней</strong><small>Общий счётчик доступных дьявольских плодов — без группировки по сагам и аркам.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiFruitPresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Сюжетные саги · 11 достижений</strong><small>Эти медали скрыты на доске, пока прогресс истории не начат, но все варианты доступны здесь.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiSagaPresetList"></div></div><div class="wiki-editor-achievement-form" id="wikiAchievementEditForm" hidden>
+    section.innerHTML=`<div class="wiki-editor-achievements-head"><div><div class="wiki-editor-achievements-kicker">НАГРАДЫ И МЕДАЛИ</div><h3>Достижения энциклопедии</h3><p>Создавай особые достижения и задавай условие открытия по главе манги или эпизоду аниме. Они сохраняются вместе с данными Wiki.</p></div><button type="button" class="wiki-editor-achievement-new" id="wikiAchievementCreate">＋ Новое достижение</button></div><div class="wiki-editor-achievement-list" id="wikiAchievementEditorList"></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Коллекция WANTED · 5 уровней</strong><small>Незавершённые уровни скрыты в публичной доске, пока не наступит их очередь. Все заготовки остаются видны здесь. Ориентир 1 567 — ориентировочное число персонажей в списке голосования WT100.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiWantedPresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Коллекция персонажей · 5 уровней</strong><small>Общий счётчик всех доступных персонажей — без группировки по сагам и аркам.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiCharacterPresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Коллекция плодов · 5 уровней</strong><small>Общий счётчик доступных дьявольских плодов — без группировки по сагам и аркам.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiFruitPresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Сюжетные саги · 11 достижений</strong><small>Эти медали скрыты на доске, пока прогресс истории не начат, но все варианты доступны здесь.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiSagaPresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Избранное · 3 достижения</strong><small>За статьи, сохранённые в избранное.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiFavoritePresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Чтение · 5 достижений</strong><small>За разные открытые статьи (каждая считается один раз).</small></div></div><div class="wiki-editor-wanted-grid" id="wikiViewsPresetList"></div></div><div class="wiki-editor-achievement-form" id="wikiAchievementEditForm" hidden>
       <div class="wiki-editor-achievement-form-title" id="wikiAchievementFormTitle">Новое достижение</div>
       <div class="wiki-editor-achievement-fields">
         <label class="wiki-editor-achievement-field wide"><span>Название достижения</span><input id="wikiAchievementTitle" maxlength="100" placeholder="Например, Воля наследника"></label>
@@ -15983,6 +16005,8 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
       fill(characterList,COLLECTION_LEVELS.character.map(level=>({art:level.art,title:`Открыто ${ruCount(level.target,'персонаж','персонажа','персонажей')}`,detail:level.name})));
       fill(fruitList,COLLECTION_LEVELS.fruit.map(level=>({art:level.art,title:`Открыто ${ruCount(level.target,'плод','плода','плодов')}`,detail:level.name})));
       const presets=SAGA_MEDALS.map(saga=>({art:saga.art,title:`Завершить сагу «${saga.name}»`,detail:'конец по манге или аниме'}));presets.push({art:'saga_final',title:'Начать сагу «Финальная»',detail:'старт по манге или аниме'});fill(sagaList,presets);
+      fill(byId('wikiFavoritePresetList'),FAVORITE_LEVELS.map(l=>({art:l.art,title:l.name,detail:`${l.target} статей в избранном`})));
+      fill(byId('wikiViewsPresetList'),VIEW_LEVELS.map(l=>({art:l.art,title:l.name,detail:`открыть ${l.target} разных статей`})));
     }
     function resetForm(){editingAchievementId=null;byId('wikiAchievementFormTitle').textContent='Новое достижение';byId('wikiAchievementTitle').value='';byId('wikiAchievementDescription').value='';byId('wikiAchievementCategory').value='special';byId('wikiAchievementCondition').value='chapter';byId('wikiAchievementTarget').value='';byId('wikiAchievementMaterial').value='wood';byId('wikiAchievementColor').value='#d4a84f';byId('wikiAchievementImage').value='';wkPreview();byId('wikiAchievementFormStatus').textContent='';byId('wikiAchievementEditForm').hidden=true;}
     function startEdit(item){editingAchievementId=item?.id||null;byId('wikiAchievementFormTitle').textContent=item?'Редактирование достижения':'Новое достижение';byId('wikiAchievementTitle').value=item?.title||'';byId('wikiAchievementDescription').value=item?.description||'';byId('wikiAchievementCategory').value=categoryMeta[item?.category]?item.category:'special';byId('wikiAchievementCondition').value=item?.conditionType==='episode'?'episode':'chapter';byId('wikiAchievementTarget').value=item?.target||'';byId('wikiAchievementMaterial').value=['wood','iron','gold'].includes(item?.material)?item.material:'wood';byId('wikiAchievementColor').value=/^#[0-9a-f]{6}$/i.test(String(item?.color||''))?item.color:'#d4a84f';byId('wikiAchievementEditForm').hidden=false;byId('wikiAchievementTitle').focus();}
@@ -21047,14 +21071,72 @@ img.wk-fade.wk-loaded{opacity:1}
           }
           var toggle = function () {
             var s = load(); var now = !g.div.classList.contains('wk-saga-collapsed');
-            s[title] = now ? 1 : 0; save(s); setState(g, now);
+            s[title] = now ? 1 : 0; save(s); setState(g, now); try { paintLinks(tl, groups); } catch (e) {}
           };
           g.div.addEventListener('click', toggle);
           g.div.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
         }
         setState(g, collapsed);
       });
+      paintLinks(tl, groups);
     } finally { busy = false; }
+  }
+  /* Линии между ромбами саг. Свёрнутая сага рисуется сплошной линией от своего ромба до следующего,
+     с заливкой по доле пройденного (манга и аниме отдельно). Развёрнутая — как раньше. */
+  function laneProgress(entries, lane) {
+    var tw = 0, done = 0;
+    entries.forEach(function (e) {
+      var l = e.querySelector('.cabin-timeline-rail > .cabin-timeline-lane.' + lane);
+      if (!l || l.classList.contains('is-passthrough')) return;
+      var w = parseFloat(e.style.getPropertyValue('--entry-height')) || 100;
+      var pr = parseFloat(l.style.getPropertyValue('--lane-progress')) || 0;
+      tw += w; done += w * Math.max(0, Math.min(100, pr)) / 100;
+    });
+    return tw ? done / tw : null;
+  }
+  function spans(div, half) {
+    var rail = div.querySelector('.cabin-saga-rail'); if (!rail) return [];
+    var out = [];
+    ['lane-anime', 'lane-manga'].forEach(function (lane) {
+      var sp = rail.querySelector('.cabin-saga-lane.' + lane + '.' + half);
+      if (!sp) { sp = document.createElement('span'); sp.className = 'cabin-saga-lane ' + lane + ' ' + half; sp.setAttribute('data-wk-made', '1'); rail.insertBefore(sp, rail.querySelector('.cabin-saga-diamond')); }
+      if (!sp.hasAttribute('data-wk-orig')) sp.setAttribute('data-wk-orig', sp.className);
+      out.push(sp);
+    });
+    return out;
+  }
+  function restore(sp) { sp.className = sp.getAttribute('data-wk-orig'); sp.style.removeProperty('background'); sp.style.removeProperty('background-image'); sp.style.removeProperty('box-shadow'); sp.classList.remove('wk-link'); }
+  function paint(sp, frac, color, base) {
+    sp.className = sp.getAttribute('data-wk-orig').replace(/\s*is-(dashed|filled)\b/g, '') + ' wk-link';
+    var x = Math.round(Math.max(0, Math.min(1, frac)) * 1000) / 10;
+    sp.style.setProperty('background', 'linear-gradient(to bottom,' + color + ' 0 ' + x + '%,' + base + ' ' + x + '% 100%)', 'important');
+    sp.style.setProperty('background-image', 'linear-gradient(to bottom,' + color + ' 0 ' + x + '%,' + base + ' ' + x + '% 100%)', 'important');
+    sp.style.setProperty('box-shadow', 'none', 'important');
+  }
+  function paintLinks(tl, groups) {
+    var cs = getComputedStyle(tl);
+    var col = { 'lane-anime': cs.getPropertyValue('--sl-anime').trim() || '#60d9ff', 'lane-manga': cs.getPropertyValue('--sl-manga').trim() || '#efc66b' };
+    var base = cs.getPropertyValue('--sl-base-solid').trim() || '#2a3344';
+    groups.forEach(function (g, i) {
+      var collapsed = g.div.classList.contains('wk-saga-collapsed');
+      var prev = groups[i - 1], prevCollapsed = prev && prev.div.classList.contains('wk-saga-collapsed');
+      // Верхняя половина — продолжение предыдущей саги.
+      if (prev) spans(g.div, 'is-top').forEach(function (sp) {
+        var lane = sp.classList.contains('lane-anime') ? 'lane-anime' : 'lane-manga';
+        if (prevCollapsed) { var p = laneProgress(prev.entries, lane); paint(sp, p === null ? 0 : p * 2 - 1, col[lane], base); } else restore(sp);
+      });
+      // Нижняя половина — начало своей саги.
+      spans(g.div, 'is-bottom').forEach(function (sp) {
+        var lane = sp.classList.contains('lane-anime') ? 'lane-anime' : 'lane-manga';
+        var p = laneProgress(g.entries, lane);
+        if (collapsed) { paint(sp, p === null ? 0 : p * 2, col[lane], base); return; }
+        // Развёрнута: стиль как у первой арки саги (пунктир только если она филлер).
+        restore(sp);
+        var first = g.entries[0], fl = first && first.querySelector('.cabin-timeline-rail > .cabin-timeline-lane.' + lane);
+        sp.classList.toggle('is-dashed', !!(first && first.classList.contains('is-filler') && lane === 'lane-anime'));
+        if (fl) sp.classList.toggle('is-filled', (parseFloat(fl.style.getPropertyValue('--lane-progress')) || 0) > 0 || sp.classList.contains('is-filled'));
+      });
+    });
   }
   function setState(g, collapsed) {
     g.div.classList.toggle('wk-saga-collapsed', collapsed);
@@ -21792,7 +21874,7 @@ img.wk-fade.wk-loaded{opacity:1}
   var SESSION_KEY = 'wkCloudSessionV1', CONTENT_KEY = 'wkCloudContentV1', TOPS_CACHE_KEY = 'wkCloudTopsV1', STORAGE_KEY = 'onePieceWikiLocalContentV1';
   var PROGRESS_KEY = 'onePieceWikiSpoilerProgressV1';
   // Личные данные участника, которые ездят вместе с учёткой.
-  var PERSONAL_KEYS = [PROGRESS_KEY, 'onePieceWikiFilmProgressV1', 'onePieceWikiFavorites', 'onePieceWikiRecentVisits', 'onePieceWikiSkippedArcsV1'];
+  var PERSONAL_KEYS = ['onePieceWikiViewedV1', PROGRESS_KEY, 'onePieceWikiFilmProgressV1', 'onePieceWikiFavorites', 'onePieceWikiRecentVisits', 'onePieceWikiSkippedArcsV1'];
   var SDK = 'https://www.gstatic.com/firebasejs/10.12.2/';
   var TYPES = ['character', 'story', 'reward', 'fruit', 'useful'];
 
@@ -23270,7 +23352,7 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     if (isStory(f)) {
       var ch = q(f, 'chapters'), box = ch && ch.closest('[data-editor-field], .wiki-editor-field');
       var note = f.querySelector('.wk-film-note');
-      if (film && box) { if (!note) { note = document.createElement('div'); note.className = 'wk-ctx-note wk-film-note'; box.parentNode.insertBefore(note, box); } note.innerHTML = '<span>🎬</span><span>Это фильм — главы и эпизоды можно не указывать. Статья откроется, когда человек отметит фильм просмотренным.</span>'; }
+      if (film && box) { if (!note) { note = document.createElement('div'); note.className = 'wk-ctx-note wk-film-note'; box.parentNode.insertBefore(note, box); } note.innerHTML = '<span>🎬</span><span>Это фильм — главы, эпизоды и персонажей можно не указывать. Статья откроется, когда человек отметит фильм просмотренным.</span>'; }
       else if (note) note.remove();
     }
     return film;
@@ -23289,7 +23371,7 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     var txt = m && a && m === a ? m : [m ? 'манга: ' + m : '', a ? 'аниме: ' + a : ''].filter(Boolean).join(' · ');
     var tp = typeOf(f);
     note.innerHTML = film
-      ? '<span>🎬</span><span>' + (tp === 'character' ? 'Персонаж' : tp === 'reward' ? 'Награда' : 'Статья') + ' из фильма «' + String(film.name).replace(/[<>&]/g, '') + '» — главу и эпизод указывать не нужно. Статья откроется, когда человек отметит фильм просмотренным.</span>'
+      ? '<span>🎬</span><span>' + (tp === 'character' ? 'Персонаж' : tp === 'reward' ? 'Награда' : 'Статья') + ' из фильма «' + String(film.name).replace(/[<>&]/g, '') + '» — глава, эпизод, связи и арки не нужны. Статья откроется, когда человек отметит фильм просмотренным.</span>'
       : '<span>🧭</span><span>' + (txt ? 'Сюжет определится сам: ' + txt.replace(/[<>&]/g, '') : 'Сага и арка определятся сами, когда будут указаны глава или эпизод появления.' + (tp === 'character' ? ' Если персонаж из фильма — выбери фильм в поле «🎬 Из фильма».' : '')) + '</span>';
     note.classList.toggle('wk-film-note', !!film);
   }
@@ -23369,10 +23451,11 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     reward: [['Персонаж', ['character_id']], ['Сумма', ['reward'], function (g) { return Number(String(g('reward') || '').replace(/\D+/g, '')) > 0; }], ['Фото плаката', ['reward_image']], ['Глава или эпизод', ['appearance_chapter', 'appearance_episode']]]
   };
   var TIME_KEYS = ['chapter', 'appearance', 'appearance_chapter', 'chapters'];
+  var FILM_SKIP = ['connect', 'characters'];
   function check(type, get, id, film) {
     var rules = RULES[type] || [], miss = [];
     rules.forEach(function (r) {
-      if (film && TIME_KEYS.indexOf(r[1][0]) >= 0) return; // фильм: глава/эпизод не нужны
+      if (film && (TIME_KEYS.indexOf(r[1][0]) >= 0 || FILM_SKIP.indexOf(r[1][0]) >= 0)) return; // фильм — чистый филлер: глава/эпизод, связи и арки не нужны
       var ok = r[2] ? r[2](get, id) : r[1].some(function (k) { return filled(get(k)); }); if (!ok) miss.push({ label: r[0], key: r[1][0] });
     });
     return { total: rules.length, done: rules.length - miss.length, miss: miss, film: film || null };
@@ -23385,12 +23468,12 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     story: [['Связи', 'connect', ['connect']]],
     fruit: [['Связи', 'connect', ['connect']]]
   };
-  function soft(type, get, notNeeded) {
-    var skip = list(notNeeded);
+  function soft(type, get, notNeeded, film) {
+    var skip = list(notNeeded); if (film) skip = skip.concat(['connect']);
     var st = String(get('status') || '') + ',' + String(get('status2') || '');
     return (SOFT[type] || []).filter(function (r) { return skip.indexOf(r[1]) < 0 && !r[2].some(function (k) { return filled(get(k)); }); }).map(function (r) { return { label: r[0], key: r[1], strong: !!(r[3] && r[3].test(st)) }; });
   }
-  window.__wikiMaybeForgot = function (type, rec) { var raw = rec && (rec.__wikiRaw || rec); return soft(type, function (k) { return raw ? raw[k] : ''; }, rec && rec.not_needed); };
+  window.__wikiMaybeForgot = function (type, rec) { var raw = rec && (rec.__wikiRaw || rec); return soft(type, function (k) { return raw ? raw[k] : ''; }, rec && rec.not_needed, filmOf(type, rec)); };
   window.__wikiCompleteness = function (type, rec) { var raw = rec && (rec.__wikiRaw || rec); return check(type, function (k) { return raw ? raw[k] : ''; }, rec && rec.id, filmOf(type, rec)); };
   function level(c) { return c.done === c.total ? 'ok' : c.done >= c.total - 1 ? 'mid' : 'low'; }
   function activeType() { var t = document.querySelector('#wikiEditorTabs .wiki-editor-tab.active[data-type]'); return t ? t.getAttribute('data-type') : ''; }
@@ -23444,12 +23527,12 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     if (!chip) { chip = document.createElement('div'); chip.className = 'wk-fill-chip'; host.appendChild(chip); }
     var idv = (f.querySelector('[data-field="id"]') || {}).value;
     var rec = (arr(type) || []).find(function (x) { return String(x.id) === String(idv); });
-    var mf = soft(type, get, rec && rec.not_needed);
+    var mf = soft(type, get, rec && rec.not_needed, film);
     var sig = c.done + '/' + c.total + c.miss.map(function (m) { return m.key; }).join() + '|' + mf.map(function (m) { return m.key; }).join() + '|' + (c.film ? c.film.name : '');
     if (chip.getAttribute('data-sig') === sig) return;
     chip.setAttribute('data-sig', sig); chip.className = 'wk-fill-chip ' + level(c);
     chip.innerHTML = '<span class="wk-fill ' + level(c) + '" style="--p:' + Math.round(c.done / c.total * 100) + '">' + (c.done === c.total ? '✓' : c.done + '/' + c.total) + '</span>' +
-      (c.film ? '<span class="wk-film-tag" title="Глава и эпизод не нужны: статья откроется, когда человек отметит фильм просмотренным">🎬 ' + String(c.film.name).replace(/[<>&]/g, '') + '</span>' : '') +
+      (c.film ? '<span class="wk-film-tag" title="Глава, эпизод, связи и арки не нужны: статья откроется, когда человек отметит фильм просмотренным">🎬 ' + String(c.film.name).replace(/[<>&]/g, '') + '</span>' : '') +
       (c.miss.length ? '<span>Не хватает:</span>' + c.miss.map(function (m) { return '<button type="button" data-go="' + m.key + '">' + m.label + '</button>'; }).join('') : '<span>Всё основное заполнено</span>') +
       (mf.length ? '<span class="wk-mf"><span>🤔 Возможно, забыли:</span>' + mf.map(function (m) { return '<span class="wk-mf-item' + (m.strong ? ' strong' : '') + '" title="' + (m.strong ? 'Скорее всего забыли — судя по статусу' : 'Может и не нужно') + '"><button type="button" data-go="' + m.key + '">' + m.label + '</button><button type="button" class="wk-mf-x" data-skip="' + m.key + '" title="Этой статье не нужно — больше не напоминать">не нужно</button></span>'; }).join('') + '</span>' : '');
     chip.querySelectorAll('[data-skip]').forEach(function (b) {
@@ -23579,4 +23662,37 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
   #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-fields{grid-template-columns:repeat(4,minmax(0,1fr))!important}
 }
 </style>
+<script id="wiki-viewed-articles">
+(function () {
+  // Считаем уникальные открытые статьи для достижений «Чтение». Ключ личный — синхронизируется в облаке.
+  var KEY = 'onePieceWikiViewedV1';
+  function read() { try { var a = JSON.parse(localStorage.getItem(KEY) || 'null'); return Array.isArray(a) ? a : null; } catch (e) { return null; } }
+  function write(a) { try { localStorage.setItem(KEY, JSON.stringify(a)); } catch (e) {} }
+  function seed() {
+    if (read()) return;
+    var out = [];
+    try { var r = JSON.parse(localStorage.getItem('onePieceWikiRecentVisits') || '[]'); (Array.isArray(r) ? r : []).forEach(function (v) { var t = v && (v.type || v.t), id = v && (v.id || v.i); if (t && id) { var k = t + ':' + id; if (out.indexOf(k) < 0) out.push(k); } }); } catch (e) {}
+    write(out);
+  }
+  function add(type, id) {
+    if (!type || id == null) return;
+    var a = read() || [], k = type + ':' + id;
+    if (a.indexOf(k) >= 0) return;
+    a.push(k); write(a);
+    try { document.dispatchEvent(new CustomEvent('wiki:custom-achievements-updated')); } catch (e) {}
+  }
+  function hook() {
+    var fn = window.recordRecentVisit;
+    if (typeof fn !== 'function' || fn.__wkViewed) return false;
+    var wrapped = function (type, id) { var r = fn.apply(this, arguments); try { add(type, id); } catch (e) {} return r; };
+    wrapped.__wkViewed = true; Object.keys(fn).forEach(function (k) { try { wrapped[k] = fn[k]; } catch (e) {} });
+    window.recordRecentVisit = wrapped;
+    try { recordRecentVisit = wrapped; } catch (e) {}
+    return true;
+  }
+  seed();
+  if (!hook()) document.addEventListener('DOMContentLoaded', hook, { once: true });
+  window.addEventListener('load', hook, { once: true });
+})();
+</script>
 </body></html>
