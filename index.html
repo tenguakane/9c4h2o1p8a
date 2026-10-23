@@ -4626,7 +4626,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "23.10.2026 · 27";
+const WIKI_VERSION = "23.10.2026 · 28";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -24441,6 +24441,129 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
   var pend2 = 0;
   new MutationObserver(function () { if (!pend2) pend2 = requestAnimationFrame(function () { pend2 = 0; var r = document.getElementById('wikiEditorAchievements'); if (r && r.querySelector('.wiki-editor-wanted-item:not(:has(.wk-mfx-btn))')) markEditor(); }); }).observe(document.documentElement, { childList: true, subtree: true });
   document.addEventListener('click', function (e) { var p = document.querySelector('.wk-mfx-pop'); if (p && !p.contains(e.target) && !e.target.closest('.wk-mfx-btn, .wk-mfx-default button')) p.remove(); });
+})();
+</script>
+<style id="wiki-gyro-style">
+/* ===== Гироскоп: карточки и фото статьи наклоняются вслед за телефоном ===== */
+html.wk-gyro-on .character-item:not(.story-saga-folder[aria-expanded="true"]):not(#wikiEditorOverlay *):not(.wiki-editor-panel *){transform:perspective(900px) rotateX(calc(var(--gny,0) * -1 * var(--gmax,6deg))) rotateY(calc(var(--gnx,0) * var(--gmax,6deg)))!important;transition:transform .12s linear!important}
+html.wk-gyro-on .article-inline-image-wrap:not(.is-moving){transform:perspective(800px) rotateX(calc(var(--gny,0) * -8deg)) rotateY(calc(var(--gnx,0) * 8deg))!important;transition:transform .12s linear!important}
+html.wk-gyro-on .character-item:is([data-fx],[data-amb]):not(.story-saga-folder[aria-expanded="true"]),
+html.wk-gyro-on .article-inline-image-wrap:is([data-fx],[data-amb]):not(.is-moving){--mx:calc(50% + var(--gnx,0) * 50%);--my:calc(50% + var(--gny,0) * 50%);--pos:calc(50% + var(--gnx,0) * 35% + var(--gny,0) * 15%);--o:.75}
+/* Переключатель в Каюте */
+.wk-gyro-set{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;border:1px solid rgba(148,163,184,.22);background:rgba(15,23,42,.6);font-size:13.5px;color:#e2e8f0}
+.wk-gyro-set .ico{font-size:20px;line-height:1}
+.wk-gyro-set .txt{flex:1;min-width:0;line-height:1.3}
+.wk-gyro-set .txt small{display:block;color:#94a3b8;font-size:11.5px;margin-top:2px}
+.wk-gyro-sw{position:relative;width:46px;height:26px;flex:0 0 auto;border-radius:99px;border:1px solid #475569;background:#1f2937;cursor:pointer;padding:0;transition:background .2s,border-color .2s}
+.wk-gyro-sw::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#cbd5e1;transition:transform .2s}
+.wk-gyro-sw[aria-checked="true"]{background:#d8b45a;border-color:#d8b45a}
+.wk-gyro-sw[aria-checked="true"]::after{transform:translateX(20px);background:#111}
+@media (prefers-reduced-motion:reduce){html.wk-gyro-on .character-item,html.wk-gyro-on .article-inline-image-wrap{transform:none!important}}
+</style>
+<script id="wiki-gyro">
+(function () {
+  'use strict';
+  var KEY = 'onePieceWikiGyroV1';
+  var touchDevice = !!(window.matchMedia && matchMedia('(hover: none), (pointer: coarse)').matches);
+  var reduced = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var supported = 'DeviceOrientationEvent' in window;
+  var needsPerm = supported && typeof DeviceOrientationEvent.requestPermission === 'function';
+  var root = document.documentElement;
+  function wanted() { try { return localStorage.getItem(KEY) !== 'off'; } catch (e) { return true; } }
+  function setWanted(on) { try { localStorage.setItem(KEY, on ? 'on' : 'off'); } catch (e) {} }
+  var listening = false, gotData = false, permState = needsPerm ? 'unknown' : 'granted';
+  var b0 = null, g0 = null, tx = 0, ty = 0, cx = 0, cy = 0, raf = 0, lastPaint = 0;
+  function clamp(v) { return Math.max(-1, Math.min(1, v)); }
+  function onOrient(e) {
+    if (e.beta == null || e.gamma == null) return;
+    gotData = true;
+    var beta = e.beta, gamma = e.gamma;
+    var ang = (screen.orientation && screen.orientation.angle) || window.orientation || 0;
+    if (ang === 90) { var t = beta; beta = -gamma; gamma = t; } else if (ang === -90 || ang === 270) { var t2 = beta; beta = gamma; gamma = -t2; }
+    if (b0 === null) { b0 = beta; g0 = gamma; }
+    // Нейтраль медленно подстраивается под то, как держишь телефон.
+    b0 += (beta - b0) * 0.006; g0 += (gamma - g0) * 0.006;
+    tx = clamp((gamma - g0) / 18); ty = clamp((beta - b0) / 18);
+    if (!raf) raf = requestAnimationFrame(paint);
+    updateUI();
+  }
+  function paint(t) {
+    raf = 0;
+    if (!root.classList.contains('wk-gyro-on')) return;
+    cx += (tx - cx) * 0.25; cy += (ty - cy) * 0.25;
+    if (t - lastPaint > 30) {
+      lastPaint = t;
+      root.style.setProperty('--gnx', cx.toFixed(3)); root.style.setProperty('--gny', cy.toFixed(3));
+    }
+    if (Math.abs(tx - cx) > 0.003 || Math.abs(ty - cy) > 0.003) raf = requestAnimationFrame(paint);
+  }
+  function start() {
+    if (!supported || reduced || !touchDevice || !wanted() || permState !== 'granted') { stop(); return; }
+    if (!listening) { window.addEventListener('deviceorientation', onOrient); listening = true; b0 = g0 = null; }
+    root.classList.add('wk-gyro-on'); markWide();
+  }
+  function stop() {
+    if (listening) { window.removeEventListener('deviceorientation', onOrient); listening = false; }
+    root.classList.remove('wk-gyro-on'); root.style.removeProperty('--gnx'); root.style.removeProperty('--gny');
+  }
+  function askPermission() {
+    if (!needsPerm || permState === 'granted') { start(); return Promise.resolve(); }
+    return DeviceOrientationEvent.requestPermission().then(function (r) { permState = r === 'granted' ? 'granted' : 'denied'; start(); updateUI(); }, function () { permState = 'denied'; updateUI(); });
+  }
+  // iOS разрешает датчик только после касания — просим при первом тапе.
+  if (needsPerm) document.addEventListener('click', function once() { if (wanted() && permState === 'unknown') { askPermission(); } if (permState !== 'unknown') document.removeEventListener('click', once, true); }, true);
+  // Широкие строки списка наклоняются едва заметно, карточки — сильнее.
+  var wideT = 0;
+  function markWide() {
+    clearTimeout(wideT);
+    wideT = setTimeout(function () {
+      if (!root.classList.contains('wk-gyro-on')) return;
+      document.querySelectorAll('.character-item').forEach(function (el) {
+        var w = el.offsetWidth, h = el.offsetHeight; if (!w || !h) return;
+        var m = w > h * 2.2 ? '1.5deg' : w > h * 1.3 ? '3.5deg' : '7deg';
+        if (el.style.getPropertyValue('--gmax') !== m) el.style.setProperty('--gmax', m);
+      });
+    }, 250);
+  }
+  new MutationObserver(function (muts) { for (var i = 0; i < muts.length; i++) { if (muts[i].addedNodes.length) { markWide(); return; } } }).observe(document.body, { childList: true, subtree: true });
+  window.addEventListener('resize', markWide);
+  document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else start(); });
+
+  /* ---------- Переключатель в Каюте ---------- */
+  function statusText() {
+    if (!supported) return 'Этот браузер не даёт доступ к датчику наклона.';
+    if (!wanted()) return 'Выключено. Карточки наклоняются только пальцем.';
+    if (permState === 'denied') return 'Доступ к датчику запрещён — разреши «Движение и ориентация» в настройках браузера.';
+    if (permState === 'unknown') return 'Нажми переключатель, чтобы разрешить доступ к датчику.';
+    if (listening && !gotData) return 'Включено. Ждём данные датчика…';
+    return 'Карточки и фото статьи наклоняются вслед за телефоном.';
+  }
+  function updateUI() {
+    document.querySelectorAll('.wk-gyro-set').forEach(function (box) {
+      var sw = box.querySelector('.wk-gyro-sw'); var on = wanted() && supported && permState !== 'denied';
+      sw.setAttribute('aria-checked', on ? 'true' : 'false');
+      var s = box.querySelector('small'); var txt = statusText(); if (s.textContent !== txt) s.textContent = txt;
+    });
+  }
+  function mountUI() {
+    if (!touchDevice) return;
+    var shell = document.querySelector('#favoritesSection .cabin-new-shell'); if (!shell || shell.querySelector(':scope > .wk-gyro-set')) return;
+    var box = document.createElement('div'); box.className = 'wk-gyro-set';
+    box.innerHTML = '<span class="ico" aria-hidden="true">📱</span><span class="txt"><b>Наклон от гироскопа</b><small></small></span><button type="button" class="wk-gyro-sw" role="switch" aria-label="Наклон от гироскопа"></button>';
+    shell.appendChild(box);
+    box.querySelector('.wk-gyro-sw').addEventListener('click', function () {
+      var on = !(wanted() && permState !== 'denied');
+      if (on && permState === 'denied') { updateUI(); return; }
+      setWanted(on);
+      if (on) askPermission(); else stop();
+      updateUI(); setTimeout(updateUI, 1500);
+    });
+    updateUI();
+  }
+  var mt = 0;
+  new MutationObserver(function () { if (!mt) mt = requestAnimationFrame(function () { mt = 0; mountUI(); }); }).observe(document.body, { childList: true, subtree: true });
+  mountUI(); start();
+  window.__wikiGyro = { start: start, stop: stop, state: function () { return { on: root.classList.contains('wk-gyro-on'), perm: permState, data: gotData }; } };
 })();
 </script>
 </body></html>
