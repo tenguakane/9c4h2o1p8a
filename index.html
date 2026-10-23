@@ -4626,7 +4626,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "23.10.2026 · 17";
+const WIKI_VERSION = "23.10.2026 · 18";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -23838,12 +23838,31 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     wrap.classList.add('is-moving'); setTilt(wrap, nx, ny, MAX);
   });
 
-  /* ---------- Наведение: фото в статьях и полученные медали ---------- */
+  /* ---------- Наведение: фото в статьях, полученные медали и карточки каталога ---------- */
   var SEL = '.article-inline-image-wrap, #achievementSections .achievement-card.is-earned .achievement-medal';
-  var cur = null;
+  var CARD_SEL = '.character-item';
+  var CARD_EXCLUDE = '#wikiEditorOverlay, .wiki-editor-panel, #wkLogin';
+  var cur = null, curCard = null;
+  function cardTilt(el, nx, ny) {
+    var r = el.getBoundingClientRect();
+    var max = r.width > r.height * 2.2 ? 2.5 : r.width > r.height * 1.3 ? 5 : 9; // широкие строки списка — едва заметно
+    el.style.setProperty('transition', 'transform .08s linear, box-shadow .25s', 'important');
+    el.style.setProperty('transform', 'perspective(900px) rotateX(' + (-ny * max).toFixed(2) + 'deg) rotateY(' + (nx * max).toFixed(2) + 'deg) translateY(-3px) scale(1.015)', 'important');
+    el.style.setProperty('box-shadow', (-nx * 10).toFixed(1) + 'px ' + (14 - ny * 6).toFixed(1) + 'px 28px rgba(0,0,0,.45)', 'important');
+  }
+  function cardReset(el) {
+    el.style.setProperty('transition', 'transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s', 'important');
+    el.style.removeProperty('transform'); el.style.removeProperty('box-shadow');
+    setTimeout(function () { if (el !== curCard) el.style.removeProperty('transition'); }, 450);
+  }
   document.addEventListener('pointermove', function (e) {
     if (e.pointerType !== 'mouse') return;
-    var el = e.target && e.target.closest ? e.target.closest(SEL) : null;
+    var t = e.target && e.target.closest ? e.target : null;
+    var card = t ? t.closest(CARD_SEL) : null;
+    if (card && card.closest(CARD_EXCLUDE)) card = null;
+    if (curCard && curCard !== card) { cardReset(curCard); curCard = null; }
+    if (card) { var cn = norm(card, e.clientX, e.clientY); if (cn) { curCard = card; cardTilt(card, cn[0], cn[1]); } }
+    var el = t ? t.closest(SEL) : null;
     if (cur && cur !== el) { reset(cur); cur = null; }
     if (!el) return;
     if (!el.classList.contains('wk-hover-tilt')) el.classList.add('wk-hover-tilt');
@@ -23852,7 +23871,11 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     el.classList.add('is-moving');
     setTilt(el, n[0], n[1], el.classList.contains('achievement-medal') ? MEDAL_MAX : HOVER_MAX);
   }, { passive: true });
-  document.addEventListener('pointerout', function (e) { if (cur && !cur.contains(e.relatedTarget)) { reset(cur); cur = null; } });
+  document.addEventListener('pointerout', function (e) {
+    if (cur && !cur.contains(e.relatedTarget)) { reset(cur); cur = null; }
+    if (curCard && !curCard.contains(e.relatedTarget)) { cardReset(curCard); curCard = null; }
+  });
+  window.addEventListener('scroll', function () { if (curCard) { cardReset(curCard); curCard = null; } }, { passive: true });
 })();
 </script>
 </body></html>
