@@ -4626,7 +4626,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "23.10.2026 · 18";
+const WIKI_VERSION = "23.10.2026 · 19";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -11755,14 +11755,14 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         useful: {label:'Полезное', plural:'Полезные статьи', array:usefulArticles, icon:'💡'}
     };
     const schemas = {
-        character: {id:'char_new',name:'',nickname:'',movie_id:'',person_link:'',person_image_position:50,person_image_position_x:50,person_image_zoom:100,person2_link:'',person2_from_chapter:'',person2_from_episode:'',person2_image_position:50,person2_image_position_x:50,person2_image_zoom:100,timeskip_description:'',nickname2:'',status2:'',ts_fruit_article_id:'',ts_ship:'',ts_ship_link:'',ts_ship_description:'',ts_flag:'',ts_flag_link:'',ts_flag_description:'',chapter:'',episode:'',description:'',filler:false,fruit:'',fruit_link:'',fruit_article_id:'',fruit2:'',fruit2_link:'',fruit2_article_id:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],ship:'',ship_link:'',ship_description:'',ship2:'',ship2_link:'',ship2_description:'',flag:'',flag_link:'',flag_description:'',status:''},
-        story: {id:'arc_new',name:'',image:'',image_position:50,image_position_x:50,image_zoom:100,chapters:'',episodes:'',ongoing:false,filler:false,movie:false,saga:'',description:'',key:'',characters:[],connect:[]},
-        reward: {id:'reward_new',character_id:'',reward:0,ka:0,rank:'',rank_total:'',reward_image:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',appearance_chapter:'',appearance_episode:'',connect:[]},
-        fruit: {id:'fruit_new',name:'',appearance:'',episode:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,owner:'',type:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[]},
-        useful: {id:'article_new',name:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,type:'',appearance_chapter:'',appearance_episode:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[]}
+        character: {id:'char_new',name:'',nickname:'',movie_id:'',card_fx:'',person_link:'',person_image_position:50,person_image_position_x:50,person_image_zoom:100,person2_link:'',person2_from_chapter:'',person2_from_episode:'',person2_image_position:50,person2_image_position_x:50,person2_image_zoom:100,timeskip_description:'',nickname2:'',status2:'',ts_fruit_article_id:'',ts_ship:'',ts_ship_link:'',ts_ship_description:'',ts_flag:'',ts_flag_link:'',ts_flag_description:'',chapter:'',episode:'',description:'',filler:false,fruit:'',fruit_link:'',fruit_article_id:'',fruit2:'',fruit2_link:'',fruit2_article_id:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],ship:'',ship_link:'',ship_description:'',ship2:'',ship2_link:'',ship2_description:'',flag:'',flag_link:'',flag_description:'',status:''},
+        story: {id:'arc_new',name:'',card_fx:'',image:'',image_position:50,image_position_x:50,image_zoom:100,chapters:'',episodes:'',ongoing:false,filler:false,movie:false,saga:'',description:'',key:'',characters:[],connect:[]},
+        reward: {id:'reward_new',card_fx:'',character_id:'',reward:0,ka:0,rank:'',rank_total:'',reward_image:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',appearance_chapter:'',appearance_episode:'',connect:[]},
+        fruit: {id:'fruit_new',card_fx:'',name:'',appearance:'',episode:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,owner:'',type:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[]},
+        useful: {id:'article_new',card_fx:'',name:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,type:'',appearance_chapter:'',appearance_episode:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[]}
     };
     const fieldLabels = {
-        id:'ID',name:'Название / имя',nickname:'Прозвище',person_link:'Ссылка на изображение',person_image_position:'Кадрирование фото в карточке',person_image_position_x:'Горизонтальное смещение фото в карточке',person_image_zoom:'Приближение фото в карточке',movie_id:'🎬 Из фильма',person2_link:'Второе фото (новый облик)',person2_from_chapter:'С какой главы (фото и «Таймскип»)',person2_from_episode:'С какого эпизода (фото и «Таймскип»)',timeskip_description:'Чем персонаж занят спустя два года',nickname2:'Новое прозвище',status2:'Статусы после таймскипа',ts_fruit_article_id:'Новый дьявольский плод',ts_ship:'Новый корабль',ts_ship_link:'Ссылка на новый корабль',ts_ship_description:'Описание нового корабля',ts_flag:'Новый флаг / команда',ts_flag_link:'Ссылка на новый флаг',ts_flag_description:'Описание нового флага',person2_image_position:'Кадрирование второго фото',person2_image_position_x:'Горизонталь второго фото, %',person2_image_zoom:'Приближение второго фото, %',chapter:'Глава появления',episode:'Эпизод появления',description:'Описание',fruit:'Дьявольский плод (старое поле)',fruit_link:'Ссылка на плод (старое поле)',fruit_article_id:'Дьявольский плод — статья из раздела «Плоды»',fruit2:'Второй плод (старое поле)',fruit2_link:'Ссылка на второй плод (старое поле)',fruit2_article_id:'Второй дьявольский плод — статья из раздела «Плоды»',arc:'Арка (манга)',saga:'Сага (манга)',connect:'Связанные ID (через запятую)',ship:'Корабль',ship_link:'Ссылка на корабль',ship_description:'Описание корабля',ship2:'Второй корабль',ship2_link:'Ссылка на второй корабль',ship2_description:'Описание второго корабля',flag:'Флаг',flag_link:'Ссылка на флаг',flag_description:'Описание флага',status:'Статус',characters:'ID персонажей (через запятую)',chapters:'Главы',episodes:'Эпизоды',ongoing:'Арка продолжается',filler:'Филлер / аниме-оригинал',movie:'Полнометражный фильм',character_id:'ID персонажа',reward:'Награда',ka:'КА',rank:'Место в топе',rank_total:'Всего в топе',reward_image:'Ссылка на изображение для карточки награды',appearance:'Глава появления',appearance_chapter:'Глава появления',appearance_episode:'Эпизод появления',image:'Ссылка на изображение',image_position:'Кадрирование фото в карточке',image_position_x:'Горизонтальное смещение фото',image_zoom:'Приближение фото',owner:'Владелец(ы)',type:'Тип',arc_anime:'Арка (аниме)',saga_anime:'Сага (аниме)'};
+        id:'ID',name:'Название / имя',nickname:'Прозвище',person_link:'Ссылка на изображение',person_image_position:'Кадрирование фото в карточке',person_image_position_x:'Горизонтальное смещение фото в карточке',person_image_zoom:'Приближение фото в карточке',movie_id:'🎬 Из фильма',card_fx:'✨ Эффект карточки',person2_link:'Второе фото (новый облик)',person2_from_chapter:'С какой главы (фото и «Таймскип»)',person2_from_episode:'С какого эпизода (фото и «Таймскип»)',timeskip_description:'Чем персонаж занят спустя два года',nickname2:'Новое прозвище',status2:'Статусы после таймскипа',ts_fruit_article_id:'Новый дьявольский плод',ts_ship:'Новый корабль',ts_ship_link:'Ссылка на новый корабль',ts_ship_description:'Описание нового корабля',ts_flag:'Новый флаг / команда',ts_flag_link:'Ссылка на новый флаг',ts_flag_description:'Описание нового флага',person2_image_position:'Кадрирование второго фото',person2_image_position_x:'Горизонталь второго фото, %',person2_image_zoom:'Приближение второго фото, %',chapter:'Глава появления',episode:'Эпизод появления',description:'Описание',fruit:'Дьявольский плод (старое поле)',fruit_link:'Ссылка на плод (старое поле)',fruit_article_id:'Дьявольский плод — статья из раздела «Плоды»',fruit2:'Второй плод (старое поле)',fruit2_link:'Ссылка на второй плод (старое поле)',fruit2_article_id:'Второй дьявольский плод — статья из раздела «Плоды»',arc:'Арка (манга)',saga:'Сага (манга)',connect:'Связанные ID (через запятую)',ship:'Корабль',ship_link:'Ссылка на корабль',ship_description:'Описание корабля',ship2:'Второй корабль',ship2_link:'Ссылка на второй корабль',ship2_description:'Описание второго корабля',flag:'Флаг',flag_link:'Ссылка на флаг',flag_description:'Описание флага',status:'Статус',characters:'ID персонажей (через запятую)',chapters:'Главы',episodes:'Эпизоды',ongoing:'Арка продолжается',filler:'Филлер / аниме-оригинал',movie:'Полнометражный фильм',character_id:'ID персонажа',reward:'Награда',ka:'КА',rank:'Место в топе',rank_total:'Всего в топе',reward_image:'Ссылка на изображение для карточки награды',appearance:'Глава появления',appearance_chapter:'Глава появления',appearance_episode:'Эпизод появления',image:'Ссылка на изображение',image_position:'Кадрирование фото в карточке',image_position_x:'Горизонтальное смещение фото',image_zoom:'Приближение фото',owner:'Владелец(ы)',type:'Тип',arc_anime:'Арка (аниме)',saga_anime:'Сага (аниме)'};
     const types = Object.keys(collections);
     let activeType = 'character';
     let editingId = null;
@@ -13645,6 +13645,11 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
                 control=selectHTML(k,val,vals.map(v=>({value:v,label:v})),'— выбери тип —');
             } else if(k==='owner' && activeType==='fruit'){
                 control=searchableSelectHTML(k,val,linkedOptions('character'),'Поиск владельца по имени или ID…').replace('class="wiki-search-select"','class="wiki-search-select wiki-owner-select"'); hint='Можно выбрать и спойлерного персонажа заранее (он отмечен 🔒). До раскрытия персонажа владелец не показывается публично; после достижения его главы или эпизода имя появится автоматически.';
+            } else if(k==='card_fx'){
+                const list=window.__wikiCardFxList||[];const def=window.__wikiCardFxDefault?window.__wikiCardFxDefault(activeType,obj):'';
+                const nameOf=v=>(list.find(f=>f.v===v)||{}).n||v;
+                control=selectHTML(k,val,list.map(f=>({value:f.v,label:f.n})),'Авто'+(def?' — '+nameOf(def)+(window.__wikiCardFxDefaultWhy?' ('+window.__wikiCardFxDefaultWhy(activeType,obj)+')':''):' — без эффекта'));
+                hint='Эффект на карточке в каталоге, в Каюте и на главном фото статьи. «Авто» — по правилам: команда Мугивар — голограмма, плакаты наград — старый плакат.';
             } else if(k==='movie_id' && activeType==='character'){
                 const films=allRecords('story').filter(a=>{const m=rawValue(a,'movie');return m===true||m==='true'||String(rawValue(a,'saga')||'').trim()==='Полнометражные фильмы';});
                 const current=String(val||FILM_ID_BY_CHARACTER_ID[String(rawValue(obj,'id')||'')]||'');
@@ -13691,7 +13696,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         }).join('');
         const sectionLayouts = {
             character: [
-                {title:'Основная информация',icon:'🧭',desc:'Идентификатор, имя и главное изображение.',keys:['id','name','nickname','movie_id','person_link','person_image_position']},
+                {title:'Основная информация',icon:'🧭',desc:'Идентификатор, имя и главное изображение.',keys:['id','name','nickname','movie_id','person_link','person_image_position','card_fx']},
                 {title:'Когда наступает таймскип',icon:'⏳',group:'ts',keys:['person2_from_chapter','person2_from_episode']},
                 {title:'Новый облик',icon:'🖼️',group:'ts',keys:['person2_link','person2_image_position','person2_image_position_x','person2_image_zoom']},
                 {title:'Новое описание и статусы',icon:'📝',group:'ts',keys:['timeskip_description','nickname2','status2']},
@@ -13701,24 +13706,24 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
                 {title:'Связанные статьи',icon:'🔗',desc:'Отметь материалы, которые должны быть связаны с этой статьёй.',keys:['connect']}
             ],
             story: [
-                {title:'Основная информация',icon:'🧭',desc:'Название арки, изображение карточки с настройкой кадрирования, сага и диапазоны глав/эпизодов.',keys:['id','name','image','image_position','saga','chapters','episodes','ongoing','filler','movie']},
+                {title:'Основная информация',icon:'🧭',desc:'Название арки, изображение карточки с настройкой кадрирования, сага и диапазоны глав/эпизодов.',keys:['id','name','image','image_position','saga','chapters','episodes','ongoing','filler','movie','card_fx']},
                 {title:'Содержание арки',icon:'📖',desc:'Описание и ключевые события.',keys:['description','key']},
                 {title:'Связанные статьи',icon:'🔗',desc:'Выбери персонажей и другие материалы для связи с аркой.',keys:['characters','connect']}
             ],
             reward: [
                 {title:'Награда',icon:'💰',desc:'Укажи размер награды. Место в общем рейтинге и количество позиций рассчитываются автоматически по всем видимым наградам. КА рассчитывается автоматически.',keys:['id','character_id','reward','ka']},
-                {title:'Изображение карточки',icon:'🖼️',desc:'Укажи отдельную картинку для карточки этой награды. Она не зависит от главного изображения персонажа. Вставь прямую ссылку на изображение.',keys:['reward_image']},
+                {title:'Изображение карточки',icon:'🖼️',desc:'Укажи отдельную картинку для карточки этой награды. Она не зависит от главного изображения персонажа. Вставь прямую ссылку на изображение.',keys:['reward_image','card_fx']},
                 {title:'Сюжетная принадлежность и появление',icon:'🗺️',desc:'Арка и сага вычисляются автоматически по главе манги и эпизоду аниме.',keys:['saga','arc','saga_anime','arc_anime','appearance_chapter','appearance_episode']},
                 {title:'Связанные статьи',icon:'🔗',desc:'Дополнительные связи с другими материалами вики.',keys:['connect']}
             ],
             fruit: [
-                {title:'Основная информация',icon:'🍎',desc:'Главные поля статьи: ID, название, фотография с настройкой кадрирования и описание.',keys:['id','name','image','image_position','description']},
+                {title:'Основная информация',icon:'🍎',desc:'Главные поля статьи: ID, название, фотография с настройкой кадрирования и описание.',keys:['id','name','image','image_position','description','card_fx']},
                 {title:'Тип и владелец',icon:'👤',desc:'Выбери тип плода и владельца. Владельца можно найти по имени или ID.',keys:['type','owner']},
                 {title:'Появление и сюжетная принадлежность',icon:'🗺️',desc:'Глава и эпизод появления; арки и саги манги и аниме вычисляются автоматически.',keys:['appearance','episode','saga','arc','saga_anime','arc_anime']},
                 {title:'Связанные статьи',icon:'🔗',desc:'Персонажи, арки и другие материалы, связанные с плодом.',keys:['connect']}
             ],
             useful: [
-                {title:'Основная информация',icon:'💡',desc:'Главные поля статьи: ID, название, фотография с настройкой кадрирования и описание.',keys:['id','name','image','image_position','description']},
+                {title:'Основная информация',icon:'💡',desc:'Главные поля статьи: ID, название, фотография с настройкой кадрирования и описание.',keys:['id','name','image','image_position','description','card_fx']},
                 {title:'Категория',icon:'🏷️',desc:'Выбери тип полезной статьи.',keys:['type']},
                 {title:'Появление и сюжетная принадлежность',icon:'🗺️',desc:'Глава и эпизод появления; арки и саги манги и аниме вычисляются автоматически.',keys:['appearance_chapter','appearance_episode','saga','arc','saga_anime','arc_anime']},
                 {title:'Связанные статьи',icon:'🔗',desc:'Связи с персонажами, арками, плодами и другими публикациями.',keys:['connect']}
@@ -23794,7 +23799,7 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     el.style.setProperty('--ry-n', nx.toFixed(3)); el.style.setProperty('--rx-n', (-ny).toFixed(3));
     el.style.setProperty('--gx', ((nx + 1) * 50).toFixed(1) + '%'); el.style.setProperty('--gy', ((ny + 1) * 50).toFixed(1) + '%');
   }
-  function reset(el) { el.classList.remove('is-moving'); ['--rx', '--ry', '--rx-n', '--ry-n'].forEach(function (k) { el.style.removeProperty(k); }); }
+  function reset(el) { el.classList.remove('is-moving', 'wk-fx-on'); ['--rx', '--ry', '--rx-n', '--ry-n', '--mx', '--my', '--pos', '--o'].forEach(function (k) { el.style.removeProperty(k); }); }
   function norm(el, x, y) { var r = el.getBoundingClientRect(); if (!r.width || !r.height) return null; return [clamp((x - r.left - r.width / 2) / (r.width / 2), 1), clamp((y - r.top - r.height / 2) / (r.height / 2), 1)]; }
 
   /* ---------- Просмотрщик фото ---------- */
@@ -23849,10 +23854,18 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     el.style.setProperty('transition', 'transform .08s linear, box-shadow .25s', 'important');
     el.style.setProperty('transform', 'perspective(900px) rotateX(' + (-ny * max).toFixed(2) + 'deg) rotateY(' + (nx * max).toFixed(2) + 'deg) translateY(-3px) scale(1.015)', 'important');
     el.style.setProperty('box-shadow', (-nx * 10).toFixed(1) + 'px ' + (14 - ny * 6).toFixed(1) + 'px 28px rgba(0,0,0,.45)', 'important');
+    fxVars(el, nx, ny, 1);
   }
+  function fxVars(el, nx, ny, o) {
+    el.style.setProperty('--mx', ((nx + 1) * 50).toFixed(1) + '%'); el.style.setProperty('--my', ((ny + 1) * 50).toFixed(1) + '%');
+    el.style.setProperty('--pos', (50 + nx * 35 + ny * 15).toFixed(1) + '%'); el.style.setProperty('--o', String(o));
+    el.classList.toggle('wk-fx-on', o > 0);
+  }
+  window.__wikiFxVars = fxVars;
   function cardReset(el) {
     el.style.setProperty('transition', 'transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s', 'important');
     el.style.removeProperty('transform'); el.style.removeProperty('box-shadow');
+    ['--mx', '--my', '--pos', '--o'].forEach(function (k) { el.style.removeProperty(k); }); el.classList.remove('wk-fx-on');
     setTimeout(function () { if (el !== curCard) el.style.removeProperty('transition'); }, 450);
   }
   document.addEventListener('pointermove', function (e) {
@@ -23870,12 +23883,175 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     var n = norm(el, e.clientX, e.clientY); if (!n) return;
     el.classList.add('is-moving');
     setTilt(el, n[0], n[1], el.classList.contains('achievement-medal') ? MEDAL_MAX : HOVER_MAX);
+    if (el.hasAttribute('data-fx')) fxVars(el, n[0], n[1], 1);
   }, { passive: true });
   document.addEventListener('pointerout', function (e) {
     if (cur && !cur.contains(e.relatedTarget)) { reset(cur); cur = null; }
     if (curCard && !curCard.contains(e.relatedTarget)) { cardReset(curCard); curCard = null; }
   });
   window.addEventListener('scroll', function () { if (curCard) { cardReset(curCard); curCard = null; } }, { passive: true });
+})();
+</script>
+<style id="wiki-card-fx-style">
+/* ===== Эффекты карточек (голограмма и др.) ===== */
+@property --wk-ang{syntax:"<angle>";inherits:false;initial-value:0deg}
+[data-fx]{--mx:50%;--my:50%;--pos:50%;--o:0;position:relative;isolation:isolate}
+[data-fx]>.wk-fx-a,[data-fx]>.wk-fx-b{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:3;display:block}
+:not([data-fx])>.wk-fx-a,:not([data-fx])>.wk-fx-b{display:none}
+[data-fx="none"]>.wk-fx-a,[data-fx="none"]>.wk-fx-b{display:none}
+/* Голограмма */
+[data-fx="holo"]>.wk-fx-a{background:linear-gradient(115deg,transparent 20%,#ff0080 30%,#ffd000 38%,#00ffa6 46%,#00b7ff 54%,#9d00ff 62%,transparent 72%);background-size:300% 300%;background-position:var(--pos) var(--pos);mix-blend-mode:color-dodge;opacity:calc(.18 + var(--o)*.5);filter:saturate(1.3)}
+[data-fx="holo"]>.wk-fx-b{background:repeating-linear-gradient(0deg,rgba(255,255,255,.07) 0 2px,transparent 2px 5px);mix-blend-mode:overlay;opacity:calc(.25 + var(--o)*.5)}
+/* Обратная голограмма: сияет вокруг, центр (персонаж) матовый */
+[data-fx="reverse"]>.wk-fx-a{background:linear-gradient(125deg,#ff4fa3,#ffd84f,#4fffc1,#4fb8ff,#b24fff,#ff4fa3);background-size:300% 300%;background-position:var(--pos) var(--pos);mix-blend-mode:color-dodge;opacity:calc(.28 + var(--o)*.35);-webkit-mask:radial-gradient(ellipse 45% 40% at 50% 42%,transparent 55%,#000 100%);mask:radial-gradient(ellipse 45% 40% at 50% 42%,transparent 55%,#000 100%)}
+[data-fx="reverse"]>.wk-fx-b{background:repeating-radial-gradient(circle at var(--mx) var(--my),rgba(255,255,255,.1) 0 2px,transparent 2px 7px);mix-blend-mode:overlay;opacity:var(--o)}
+/* Космос */
+[data-fx="cosmos"]>.wk-fx-a{background:radial-gradient(1.5px 1.5px at 12% 18%,#fff,transparent),radial-gradient(1px 1px at 72% 28%,#fff,transparent),radial-gradient(1.5px 1.5px at 40% 66%,#fff,transparent),radial-gradient(1px 1px at 85% 80%,#fff,transparent),radial-gradient(1px 1px at 22% 88%,#fff,transparent),radial-gradient(2px 2px at 58% 12%,#fff,transparent),radial-gradient(circle at var(--mx) var(--my),rgba(170,90,255,.5),rgba(40,120,255,.22) 35%,transparent 65%);mix-blend-mode:screen;opacity:calc(.4 + var(--o)*.6)}
+[data-fx="cosmos"]>.wk-fx-b{background:radial-gradient(circle at calc(100% - var(--mx)) calc(100% - var(--my)),rgba(255,80,180,.3),transparent 50%);mix-blend-mode:screen}
+/* Золото и серебро */
+[data-fx="gold"]>.wk-fx-a,[data-fx="silver"]>.wk-fx-a{background:linear-gradient(105deg,transparent 35%,var(--foil1) 48%,var(--foil2) 52%,transparent 65%);background-size:250% 250%;background-position:var(--pos) 50%;mix-blend-mode:overlay;opacity:calc(.3 + var(--o)*.7)}
+[data-fx="gold"]>.wk-fx-b,[data-fx="silver"]>.wk-fx-b{border:2px solid transparent;background:var(--foil-frame) border-box;-webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+[data-fx="gold"]{--foil1:rgba(255,240,190,.9);--foil2:rgba(255,200,90,.55);--foil-frame:linear-gradient(135deg,#7a5418,#f6dc8a,#9b6b20,#ffe9a8,#7a5418)}
+[data-fx="silver"]{--foil1:rgba(255,255,255,.9);--foil2:rgba(190,215,240,.55);--foil-frame:linear-gradient(135deg,#5d6676,#f2f6fb,#8892a3,#ffffff,#5d6676)}
+/* Блёстки */
+[data-fx="glitter"]>.wk-fx-a{background:radial-gradient(circle at 20% 30%,#fff 0 1px,transparent 2px),radial-gradient(circle at 70% 20%,#ffe6a0 0 1px,transparent 2px),radial-gradient(circle at 50% 60%,#fff 0 1px,transparent 2px),radial-gradient(circle at 85% 75%,#a8e8ff 0 1px,transparent 2px);background-size:23px 23px,31px 31px,17px 17px,27px 27px;background-position:var(--mx) var(--my),calc(var(--mx)*-1) var(--my),var(--my) var(--mx),0 0;mix-blend-mode:screen;opacity:calc(.3 + var(--o)*.7)}
+[data-fx="glitter"]>.wk-fx-b{background:radial-gradient(circle at var(--mx) var(--my),rgba(255,255,255,.3),transparent 45%);mix-blend-mode:soft-light;opacity:var(--o)}
+/* Призма: радужная рамка (крутится при наведении) */
+[data-fx="prism"]>.wk-fx-a{padding:2px;background:conic-gradient(from var(--wk-ang),#ff3d7f,#ffb13d,#f9ff3d,#3dffb0,#3db8ff,#a63dff,#ff3d7f);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;filter:drop-shadow(0 0 5px rgba(160,120,255,.55))}
+[data-fx="prism"].wk-fx-on>.wk-fx-a,.wk-fx-preview[data-fx="prism"]>.wk-fx-a{animation:wkFxSpin 4s linear infinite}
+[data-fx="prism"]>.wk-fx-b{background:radial-gradient(circle at var(--mx) var(--my),rgba(255,255,255,.25),transparent 55%);mix-blend-mode:soft-light;opacity:var(--o)}
+/* Глянец */
+[data-fx="gloss"]>.wk-fx-a{background:radial-gradient(circle at var(--mx) var(--my),rgba(255,255,255,.5),rgba(255,255,255,.1) 30%,transparent 60%);mix-blend-mode:soft-light;opacity:calc(.25 + var(--o)*.75)}
+/* Неон: светящаяся рамка цвета карточки */
+[data-fx="neon"]{--neon:var(--catalog-accent,var(--user-accent,#4ff0ff))}
+[data-fx="neon"]>.wk-fx-a{box-shadow:inset 0 0 0 2px var(--neon),inset 0 0 16px color-mix(in srgb,var(--neon) 55%,transparent),0 0 14px color-mix(in srgb,var(--neon) 60%,transparent);animation:wkFxPulse 2.4s ease-in-out infinite}
+[data-fx="neon"]>.wk-fx-b{background:radial-gradient(circle at var(--mx) var(--my),color-mix(in srgb,var(--neon) 35%,transparent),transparent 55%);mix-blend-mode:screen;opacity:var(--o)}
+/* Королевская воля (хаки): тёмная аура и красные разряды */
+[data-fx="haki"]>.wk-fx-a{background:radial-gradient(ellipse at 50% 45%,transparent 35%,rgba(70,0,20,.55) 85%,rgba(20,0,8,.8));mix-blend-mode:multiply}
+[data-fx="haki"]>.wk-fx-b{background:repeating-conic-gradient(from var(--wk-ang) at var(--mx) var(--my),transparent 0 11deg,rgba(255,40,70,.5) 11.5deg 12.2deg,transparent 12.8deg 23deg);mix-blend-mode:screen;opacity:calc(.25 + var(--o)*.6);-webkit-mask:radial-gradient(circle at var(--mx) var(--my),transparent 18%,#000 60%);mask:radial-gradient(circle at var(--mx) var(--my),transparent 18%,#000 60%)}
+[data-fx="haki"].wk-fx-on>.wk-fx-b,.wk-fx-preview[data-fx="haki"]>.wk-fx-b{animation:wkFxSpin 9s linear infinite}
+/* Пламя */
+[data-fx="fire"]>.wk-fx-a{background:linear-gradient(0deg,rgba(255,90,0,.55),rgba(255,160,0,.25) 30%,transparent 60%);mix-blend-mode:screen;opacity:calc(.5 + var(--o)*.5);animation:wkFxFlicker 1.6s ease-in-out infinite}
+[data-fx="fire"]>.wk-fx-b{background:radial-gradient(ellipse 60% 30% at var(--mx) 100%,rgba(255,220,120,.45),transparent 70%);mix-blend-mode:screen}
+/* Лёд */
+[data-fx="ice"]>.wk-fx-a{background:radial-gradient(ellipse at 50% 50%,transparent 45%,rgba(190,235,255,.45) 90%),linear-gradient(135deg,rgba(255,255,255,.25),transparent 30%,transparent 70%,rgba(170,220,255,.3));mix-blend-mode:screen}
+[data-fx="ice"]>.wk-fx-b{background:repeating-linear-gradient(60deg,rgba(255,255,255,.08) 0 1px,transparent 1px 9px),repeating-linear-gradient(-60deg,rgba(255,255,255,.08) 0 1px,transparent 1px 9px),radial-gradient(circle at var(--mx) var(--my),rgba(220,245,255,.45),transparent 40%);mix-blend-mode:screen;opacity:calc(.4 + var(--o)*.6)}
+/* Старый плакат */
+[data-fx="wanted"]>.wk-fx-a{background:radial-gradient(ellipse at 50% 50%,transparent 55%,rgba(60,30,5,.5) 100%),repeating-linear-gradient(17deg,rgba(120,80,30,.12) 0 3px,transparent 3px 9px),linear-gradient(rgba(190,140,70,.18),rgba(190,140,70,.18));mix-blend-mode:multiply}
+[data-fx="wanted"]>.wk-fx-b{background:linear-gradient(120deg,transparent 40%,rgba(255,235,190,.35) 50%,transparent 60%);background-size:250% 250%;background-position:var(--pos) 50%;mix-blend-mode:overlay;opacity:calc(.3 + var(--o)*.7)}
+@keyframes wkFxSpin{to{--wk-ang:360deg}}
+@keyframes wkFxPulse{50%{opacity:.6}}
+@keyframes wkFxFlicker{0%,100%{opacity:.55}40%{opacity:.8}70%{opacity:.6}}
+@media (prefers-reduced-motion:reduce){[data-fx]>.wk-fx-a,[data-fx]>.wk-fx-b{animation:none!important}}
+/* Превью в редакторе */
+.wk-fx-preview{width:96px;height:128px;border-radius:12px;overflow:hidden;background:#111827 center/cover no-repeat;flex:0 0 auto;box-shadow:0 8px 18px rgba(0,0,0,.4);transform:perspective(600px) rotateX(var(--prx,0deg)) rotateY(var(--pry,0deg))}
+.wk-fx-row{display:flex;gap:10px;align-items:center;margin-top:6px}
+.wk-fx-row small{font-size:11.5px;color:#94a3b8;line-height:1.4}
+</style>
+<script id="wiki-card-fx">
+(function () {
+  'use strict';
+  var FX = [
+    { v: 'none', n: 'Без эффекта' },
+    { v: 'gloss', n: 'Глянец' },
+    { v: 'holo', n: 'Голограмма' },
+    { v: 'reverse', n: 'Обратная голограмма' },
+    { v: 'cosmos', n: 'Космос' },
+    { v: 'gold', n: 'Золотая фольга' },
+    { v: 'silver', n: 'Серебряная фольга' },
+    { v: 'glitter', n: 'Блёстки' },
+    { v: 'prism', n: 'Призма' },
+    { v: 'neon', n: 'Неон' },
+    { v: 'haki', n: 'Королевская воля' },
+    { v: 'fire', n: 'Пламя' },
+    { v: 'ice', n: 'Лёд' },
+    { v: 'wanted', n: 'Старый плакат' }
+  ];
+  var MUGIWARA = ['char_luffy', 'char_zoro', 'char_nami', 'char_usopp', 'char_sanji', 'char_chopper', 'char_robin', 'char_franky', 'char_brook', 'char_jinbe'];
+  window.__wikiCardFxList = FX;
+  function defaultFx(type, rec) {
+    if (type === 'character' && rec && MUGIWARA.indexOf(String(rec.id)) >= 0) return 'holo';
+    if (type === 'reward') return 'wanted';
+    return '';
+  }
+  window.__wikiCardFxDefault = defaultFx;
+  window.__wikiCardFxDefaultWhy = function (type, rec) { var d = defaultFx(type, rec); return d === 'holo' ? 'команда Мугивар' : d === 'wanted' ? 'плакат награды' : ''; };
+  function raw(rec) { return rec && (rec.__wikiRaw || rec); }
+  function fxOf(type, rec) { var r = raw(rec); var v = r ? String(r.card_fx || '').trim() : ''; return v || defaultFx(type, rec) || ''; }
+  window.__wikiCardFx = fxOf;
+  function arr(type) { try { return { character: characters, story: storyArcs, reward: rewards, fruit: fruits, useful: usefulArticles }[type] || []; } catch (e) { return []; } }
+  function byId(type, id) { return arr(type).find(function (x) { return String(x.id) === String(id); }) || null; }
+  function topReward(cid) { var list = arr('reward').filter(function (r) { return String(r.character_id) === String(cid); }); list.sort(function (a, b) { return (Number(b.reward) || 0) - (Number(a.reward) || 0); }); return list[0] || null; }
+  // Какая статья за карточкой.
+  function identify(el) {
+    var oc = el.getAttribute('onclick') || '', m;
+    if (el.classList.contains('reward-item-link') || el.classList.contains('reward-grid-card')) { var cid = el.getAttribute('data-character-id'); return cid ? { type: 'reward', rec: topReward(cid) } : null; }
+    if ((m = oc.match(/open(?:Recent|Favorite)Article\('(\w+)',\s*'([^']+)'/))) return { type: m[1], rec: byId(m[1], m[2]) };
+    if ((m = oc.match(/openCharacterArticle\('([^']+)'/))) return { type: 'character', rec: byId('character', m[1]) };
+    if (el.hasAttribute('data-story-arc-id')) return { type: 'story', rec: byId('story', el.getAttribute('data-story-arc-id')) };
+    if (el.hasAttribute('data-fruit-id')) { var fid = el.getAttribute('data-fruit-id'); try { fid = decodeURIComponent(fid); } catch (e) {} return { type: 'fruit', rec: byId('fruit', fid) }; }
+    if (el.hasAttribute('data-useful-id')) { var uid = el.getAttribute('data-useful-id'); try { uid = decodeURIComponent(uid); } catch (e) {} return { type: 'useful', rec: byId('useful', uid) }; }
+    return null;
+  }
+  function apply(el, fx) {
+    if (!fx || fx === 'none') { if (el.hasAttribute('data-fx')) el.removeAttribute('data-fx'); return; }
+    if (el.getAttribute('data-fx') !== fx) el.setAttribute('data-fx', fx);
+    if (!el.querySelector(':scope > .wk-fx-a')) { var a = document.createElement('span'); a.className = 'wk-fx-a'; a.setAttribute('aria-hidden', 'true'); var b = document.createElement('span'); b.className = 'wk-fx-b'; b.setAttribute('aria-hidden', 'true'); el.appendChild(a); el.appendChild(b); }
+  }
+  var ARTICLES = { characterArticleContent: 'character', storyArticleContent: 'story', fruitArticleContent: 'fruit', usefulArticleContent: 'useful' };
+  function run() {
+    pend = 0;
+    document.querySelectorAll('.character-item').forEach(function (el) {
+      if (el.closest('#wikiEditorOverlay')) return;
+      var id = identify(el); if (!id || !id.rec) return;
+      apply(el, fxOf(id.type, id.rec));
+    });
+    // Главное фото открытой статьи.
+    Object.keys(ARTICLES).forEach(function (cid) {
+      var c = document.getElementById(cid); if (!c) return;
+      var w = c.querySelector('.article-inline-image-wrap'); if (!w) return;
+      var rid = c.getAttribute('data-wk-plus-for'); var rec = rid ? byId(ARTICLES[cid], rid) : null;
+      if (rec) apply(w, fxOf(ARTICLES[cid], rec));
+    });
+  }
+  var pend = 0;
+  new MutationObserver(function (muts) {
+    for (var i = 0; i < muts.length; i++) { var t = muts[i].target; if (t.classList && (t.classList.contains('wk-fx-a') || t.classList.contains('wk-fx-b'))) continue; if (!pend) pend = requestAnimationFrame(run); return; }
+  }).observe(document.body, { childList: true, subtree: true });
+  setTimeout(run, 500);
+
+  // Превью эффекта рядом с выбором в редакторе.
+  function preview() {
+    var f = document.getElementById('wikiEditorForm'); if (!f) return;
+    var sel = f.querySelector('[data-field="card_fx"]'); if (!sel) return;
+    var box = sel.closest('[data-editor-field], .wiki-editor-field'); if (!box) return;
+    var row = box.querySelector('.wk-fx-row');
+    if (!row) { row = document.createElement('div'); row.className = 'wk-fx-row'; row.innerHTML = '<span class="wk-fx-preview"><span class="wk-fx-a"></span><span class="wk-fx-b"></span></span><small></small>'; box.appendChild(row); startSway(row.firstChild); }
+    var img = ['person_link', 'image', 'reward_image'].map(function (k) { var el = f.querySelector('[data-field="' + k + '"]'); return el && String(el.value || '').trim(); }).filter(Boolean)[0] || '';
+    var pv = row.firstChild;
+    pv.style.backgroundImage = /^(https?:|data:image)/.test(img) ? 'url("' + img.replace(/"/g, '%22') + '")' : '';
+    var type = (document.querySelector('#wikiEditorTabs .wiki-editor-tab.active[data-type]') || {}).getAttribute ? document.querySelector('#wikiEditorTabs .wiki-editor-tab.active[data-type]').getAttribute('data-type') : '';
+    var idv = (f.querySelector('[data-field="id"]') || {}).value;
+    var fx = sel.value || defaultFx(type, { id: idv });
+    if (fx && fx !== 'none') pv.setAttribute('data-fx', fx); else pv.removeAttribute('data-fx');
+    var name = (FX.find(function (x) { return x.v === fx; }) || {}).n || 'без эффекта';
+    row.lastChild.textContent = 'Так будет выглядеть карточка: ' + name.toLowerCase() + '. Свет и наклон в превью двигаются сами.';
+  }
+  function startSway(pv) {
+    var t0 = performance.now();
+    (function tick(t) {
+      if (!pv.isConnected) return;
+      var s = (t - t0) / 1000, nx = Math.sin(s * .9) * .7, ny = Math.cos(s * .6) * .5;
+      pv.style.setProperty('--pry', (nx * 12).toFixed(1) + 'deg'); pv.style.setProperty('--prx', (-ny * 12).toFixed(1) + 'deg');
+      pv.style.setProperty('--mx', ((nx + 1) * 50).toFixed(1) + '%'); pv.style.setProperty('--my', ((ny + 1) * 50).toFixed(1) + '%');
+      pv.style.setProperty('--pos', (50 + nx * 35 + ny * 15).toFixed(1) + '%'); pv.style.setProperty('--o', '.8');
+      requestAnimationFrame(tick);
+    })(t0);
+  }
+  var pend2 = 0;
+  new MutationObserver(function () { if (!pend2) pend2 = requestAnimationFrame(function () { pend2 = 0; var f = document.getElementById('wikiEditorForm'); if (f && f.querySelector('[data-field="card_fx"]') && !f.querySelector('.wk-fx-row')) preview(); }); }).observe(document.documentElement, { childList: true, subtree: true });
+  document.addEventListener('change', function (e) { if (e.target && e.target.getAttribute && /^(card_fx|person_link|image|reward_image)$/.test(e.target.getAttribute('data-field') || '')) preview(); });
+  document.addEventListener('input', function (e) { if (e.target && e.target.getAttribute && /^(person_link|image|reward_image)$/.test(e.target.getAttribute('data-field') || '')) preview(); });
 })();
 </script>
 </body></html>
