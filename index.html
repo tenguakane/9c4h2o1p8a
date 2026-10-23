@@ -4626,7 +4626,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "23.10.2026 · 28";
+const WIKI_VERSION = "23.10.2026 · 29";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -24446,9 +24446,13 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
 <style id="wiki-gyro-style">
 /* ===== Гироскоп: карточки и фото статьи наклоняются вслед за телефоном ===== */
 html.wk-gyro-on .character-item:not(.story-saga-folder[aria-expanded="true"]):not(#wikiEditorOverlay *):not(.wiki-editor-panel *){transform:perspective(900px) rotateX(calc(var(--gny,0) * -1 * var(--gmax,6deg))) rotateY(calc(var(--gnx,0) * var(--gmax,6deg)))!important;transition:transform .12s linear!important}
-html.wk-gyro-on .article-inline-image-wrap:not(.is-moving){transform:perspective(800px) rotateX(calc(var(--gny,0) * -8deg)) rotateY(calc(var(--gnx,0) * 8deg))!important;transition:transform .12s linear!important}
+html.wk-gyro-on .article-inline-image-wrap:not(.is-moving){transform:perspective(800px) rotateX(calc(var(--gny,0) * -14deg)) rotateY(calc(var(--gnx,0) * 14deg))!important;transition:transform .12s linear!important}
 html.wk-gyro-on .character-item:is([data-fx],[data-amb]):not(.story-saga-folder[aria-expanded="true"]),
 html.wk-gyro-on .article-inline-image-wrap:is([data-fx],[data-amb]):not(.is-moving){--mx:calc(50% + var(--gnx,0) * 50%);--my:calc(50% + var(--gny,0) * 50%);--pos:calc(50% + var(--gnx,0) * 35% + var(--gny,0) * 15%);--o:.75}
+/* Блик для карточек без эффекта: свет скользит по карточке при наклоне */
+.wk-gyro-glare{display:none}
+html.wk-gyro-on .character-item:not([data-fx]):not(.story-saga-folder[aria-expanded="true"]){position:relative}
+html.wk-gyro-on .character-item:not([data-fx]):not(.story-saga-folder[aria-expanded="true"])>.wk-gyro-glare{display:block;position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:3;overflow:hidden;background:radial-gradient(circle at calc(50% + var(--gnx,0) * 70%) calc(45% + var(--gny,0) * 70%),rgba(255,255,255,.34),rgba(255,255,255,.08) 32%,transparent 60%),linear-gradient(115deg,transparent calc(38% + var(--gnx,0) * 30%),rgba(255,255,255,.12) calc(48% + var(--gnx,0) * 30%),transparent calc(58% + var(--gnx,0) * 30%));mix-blend-mode:soft-light}
 /* Переключатель в Каюте */
 .wk-gyro-set{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;border:1px solid rgba(148,163,184,.22);background:rgba(15,23,42,.6);font-size:13.5px;color:#e2e8f0}
 .wk-gyro-set .ico{font-size:20px;line-height:1}
@@ -24483,7 +24487,7 @@ html.wk-gyro-on .article-inline-image-wrap:is([data-fx],[data-amb]):not(.is-movi
     if (b0 === null) { b0 = beta; g0 = gamma; }
     // Нейтраль медленно подстраивается под то, как держишь телефон.
     b0 += (beta - b0) * 0.006; g0 += (gamma - g0) * 0.006;
-    tx = clamp((gamma - g0) / 18); ty = clamp((beta - b0) / 18);
+    tx = clamp((gamma - g0) / 12); ty = clamp((beta - b0) / 12);
     if (!raf) raf = requestAnimationFrame(paint);
     updateUI();
   }
@@ -24520,8 +24524,9 @@ html.wk-gyro-on .article-inline-image-wrap:is([data-fx],[data-amb]):not(.is-movi
       if (!root.classList.contains('wk-gyro-on')) return;
       document.querySelectorAll('.character-item').forEach(function (el) {
         var w = el.offsetWidth, h = el.offsetHeight; if (!w || !h) return;
-        var m = w > h * 2.2 ? '1.5deg' : w > h * 1.3 ? '3.5deg' : '7deg';
+        var m = w > h * 2.2 ? '3deg' : w > h * 1.3 ? '6deg' : '12deg';
         if (el.style.getPropertyValue('--gmax') !== m) el.style.setProperty('--gmax', m);
+        if (!el.querySelector(':scope > .wk-gyro-glare')) { var g = document.createElement('span'); g.className = 'wk-gyro-glare'; g.setAttribute('aria-hidden', 'true'); el.appendChild(g); }
       });
     }, 250);
   }
