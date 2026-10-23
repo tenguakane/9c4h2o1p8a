@@ -4626,7 +4626,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "23.10.2026 · 15";
+const WIKI_VERSION = "23.10.2026 · 17";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -11938,6 +11938,29 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         flag_link:raw=>tsFilled(raw.ts_flag)?raw.ts_flag_link:undefined,
         flag_description:raw=>tsFilled(raw.ts_flag)?raw.ts_flag_description:undefined
     };
+    // «Фруктовик» ставится сам, если к персонажу привязана статья плода (и этот плод уже открыт по прогрессу).
+    const FRUIT_STATUS='Фруктовик';
+    const splitStatus=v=>String(v??'').split(',').map(x=>x.trim()).filter(Boolean);
+    const isFruitToken=x=>x.toLocaleLowerCase('ru')===FRUIT_STATUS.toLocaleLowerCase('ru');
+    function linkedFruitIds(obj){return [obj.fruit_article_id,obj.fruit2_article_id].map(x=>String(x??'').trim()).filter(Boolean);}
+    function rawFruitLinked(raw){return ['fruit_article_id','fruit2_article_id','ts_fruit_article_id'].some(k=>String(raw&&raw[k]||'').trim());}
+    function applyFruitStatus(obj,value){
+        const ids=linkedFruitIds(obj);
+        if(!ids.length)return value; // плод не привязан — оставляем как вписано
+        const list=splitStatus(value).filter(x=>!isFruitToken(x));
+        let visible=false;
+        try{const arr=typeof fruits!=='undefined'?fruits:[];visible=ids.some(id=>{const f=arr.find(x=>String(rawValue(x,'id'))===id);return f&&(spoilerAuditMode||!isRecordSpoilerActive(f,'fruit'));});}catch(e){}
+        if(visible)list.push(FRUIT_STATUS);
+        return list.join(', ');
+    }
+    window.__wikiFruitStatusInfo=function(rec){const raw=rec&&rec.__wikiRaw;if(!raw)return null;return {linked:rawFruitLinked(raw),manual:splitStatus(raw.status).some(isFruitToken)};};
+    // Убрать вручную вписанный «Фруктовик» там, где плод привязан (статус теперь ставится сам).
+    window.__wikiStripManualFruitStatus=function(){
+        let n=0;
+        allRecords('character').forEach(r=>{const raw=r.__wikiRaw||r;if(!rawFruitLinked(raw))return;['status','status2'].forEach(k=>{const was=splitStatus(raw[k]);if(!was.some(isFruitToken))return;raw[k]=was.filter(x=>!isFruitToken(x)).join(', ');n++;});});
+        if(n){persist(false);refreshWiki();}
+        return n;
+    };
     window.__wikiCharacterTimeskip=function(rec){
         const raw=rec&&rec.__wikiRaw;const text=String(raw&&raw.timeskip_description||'').trim();if(!text)return '';
         return tsReached(raw)?text:'';
@@ -11961,7 +11984,8 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         Object.keys(raw).forEach(k=>{
             if(k==='__wikiSpoiler'||k==='__wikiFieldSpoilers') return;
             const swap=type==='character'?TS_SWAP[k]:null;
-            try { Object.defineProperty(obj,k,{enumerable:true,configurable:true,get(){if(swap&&tsReached(raw)){const v=swap(raw);if(v!==undefined)return v;}return raw[k];},set(v){raw[k]=v;}}); } catch(e){}
+            const isStatus=type==='character'&&k==='status';
+            try { Object.defineProperty(obj,k,{enumerable:true,configurable:true,get(){let v;if(swap&&tsReached(raw)){v=swap(raw);}if(v===undefined)v=raw[k];return isStatus?applyFruitStatus(obj,v):v;},set(v){raw[k]=v;}}); } catch(e){}
         });
         return obj;
     }
@@ -14154,6 +14178,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
             if(nextValues.movie) nextValues.filler=true;
         }
         setContextValuesOnSave(activeType,nextValues);
+        if(activeType==='character'&&['fruit_article_id','fruit2_article_id','ts_fruit_article_id'].some(k=>String(nextValues[k]??'').trim())){['status','status2'].forEach(k=>{if(typeof nextValues[k]==='string')nextValues[k]=splitStatus(nextValues[k]).filter(x=>!isFruitToken(x)).join(', ');});}
         const candidate=normalizeRecord(activeType,{...cleanRecord(obj),...nextValues,id:newId,__wikiFieldSpoilers:fieldSpoilers,__wikiSpoiler:!!host.querySelector('#wikiArticleSpoiler')?.checked});
         const candidateIssues=dataIssuesForRecord(activeType,candidate,obj).filter(issue=>issue.code!=='duplicate-id'&&issue.code!=='duplicate-id-global');
         if(candidateIssues.length){
@@ -23693,6 +23718,141 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
   seed();
   if (!hook()) document.addEventListener('DOMContentLoaded', hook, { once: true });
   window.addEventListener('load', hook, { once: true });
+})();
+</script>
+<script id="wiki-fruit-status">
+(function () {
+  function fruitName(id) { try { var f = (fruits || []).find(function (x) { return String(x.id) === String(id); }); return f ? f.name : id; } catch (e) { return id; } }
+  function note(f) {
+    var st = f.querySelector('[data-field="status"]'); if (!st) return;
+    var box = st.closest('[data-editor-field], .wiki-editor-field') || st.parentNode;
+    var ids = ['fruit_article_id', 'fruit2_article_id'].map(function (k) { var el = f.querySelector('[data-field="' + k + '"]'); return el ? String(el.value || '').trim() : ''; }).filter(Boolean);
+    var ts = f.querySelector('[data-field="ts_fruit_article_id"]'), tsId = ts ? String(ts.value || '').trim() : '';
+    var manual = /(^|,)\s*фруктовик\s*(,|$)/i.test(st.value || '');
+    var n = box.querySelector('.wk-fruit-status'); if (!n) { n = document.createElement('small'); n.className = 'wk-fruit-status'; box.appendChild(n); }
+    var names = ids.map(fruitName);
+    var html;
+    if (ids.length || tsId) {
+      html = '🍎 «Фруктовик» добавляется автоматически — привязан плод ' + (names.length ? '«' + names.join('», «') + '»' : '«' + fruitName(tsId) + '» (после таймскипа)') + '. Вписывать вручную не нужно.' + (manual ? ' <b>Вписанный вручную уберётся при сохранении.</b>' : '');
+      n.className = 'wk-fruit-status is-auto';
+    } else if (manual) {
+      html = '🍎 «Фруктовик» вписан вручную, но статья плода не привязана. Привяжи её в блоке «Описание и плоды» — статус станет автоматическим.';
+      n.className = 'wk-fruit-status is-warn';
+    } else {
+      html = '🍎 Статус «Фруктовик» появится сам, когда привяжешь статью плода.';
+      n.className = 'wk-fruit-status';
+    }
+    n.innerHTML = html.replace(/<(?!\/?b>)/g, '&lt;');
+  }
+  function run() { var f = document.getElementById('wikiEditorForm'); if (f) note(f); }
+  var pend = 0;
+  new MutationObserver(function () { if (!pend) pend = requestAnimationFrame(function () { pend = 0; run(); }); }).observe(document.documentElement, { childList: true, subtree: true });
+  document.addEventListener('input', function (e) { if (e.target.closest && e.target.closest('#wikiEditorForm')) setTimeout(run, 0); });
+  document.addEventListener('change', function (e) { if (e.target.closest && e.target.closest('#wikiEditorForm')) setTimeout(run, 0); });
+  // Разовая чистка данных: у тех, кто может править, убираем ручной «Фруктовик» при привязанном плоде.
+  function migrate() {
+    try { if (typeof window.__wikiCanEdit === 'function' && !window.__wikiCanEdit()) return; } catch (e) { return; }
+    try { var n = window.__wikiStripManualFruitStatus && window.__wikiStripManualFruitStatus(); if (n) console.info('Убран ручной «Фруктовик» у ' + n + ' персонажей'); } catch (e) {}
+  }
+  if (window.WIKI_CLOUD_ENABLED) window.addEventListener('wiki:cloud-ready', function () { setTimeout(migrate, 1500); });
+  else window.addEventListener('load', function () { setTimeout(migrate, 1500); });
+})();
+</script>
+<style id="wiki-fruit-status-style">
+.wk-fruit-status{display:block;margin-top:4px;font-size:11.5px;line-height:1.4;color:#94a3b8}
+.wk-fruit-status.is-auto{color:#f9a8d4}
+.wk-fruit-status.is-warn{color:#fde68a}
+</style>
+<style id="wiki-tilt-style">
+/* ===== 3D Tilt: открытые фото и медали, фото в статьях, полученные медали ===== */
+.wk-tilt{position:relative;display:inline-flex;line-height:0;border-radius:8px;transform:perspective(1000px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(var(--ts,1));transition:transform .35s cubic-bezier(.2,.8,.2,1),filter .35s;will-change:transform;transform-style:preserve-3d}
+.wk-tilt.is-moving{transition:transform .08s linear,filter .2s}
+.wk-tilt .wk-tilt-glare{position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .3s;mix-blend-mode:soft-light;background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.75),rgba(255,255,255,.18) 35%,rgba(0,0,0,.25) 75%)}
+.wk-tilt.is-moving .wk-tilt-glare{opacity:1}
+.wk-tilt.is-medal .wk-tilt-glare{display:none}
+#imageViewer .wk-tilt.is-moving{filter:drop-shadow(calc(var(--ry-n,0) * -14px) calc(var(--rx-n,0) * 14px + 18px) 26px rgba(0,0,0,.55))}
+/* Лёгкий наклон при наведении (только мышь) */
+@media (hover:hover) and (pointer:fine){
+  .wk-hover-tilt{transform:perspective(800px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .35s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d;will-change:transform}
+  .wk-hover-tilt.is-moving{transition:transform .08s linear}
+  .article-inline-image-wrap.wk-hover-tilt{overflow:hidden}
+  .article-inline-image-wrap.wk-hover-tilt::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;opacity:0;transition:opacity .3s;mix-blend-mode:soft-light;background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.6),transparent 60%)}
+  .article-inline-image-wrap.wk-hover-tilt.is-moving::after{opacity:1}
+}
+@media (prefers-reduced-motion:reduce){.wk-tilt,.wk-hover-tilt{transform:none!important}}
+</style>
+<script id="wiki-tilt">
+(function () {
+  'use strict';
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var MAX = 14, HOVER_MAX = 8, MEDAL_MAX = 16;
+  function clamp(v, a) { return Math.max(-a, Math.min(a, v)); }
+  function setTilt(el, nx, ny, max) {
+    // nx, ny ∈ [-1..1] — положение курсора относительно центра.
+    el.style.setProperty('--ry', (nx * max).toFixed(2) + 'deg');
+    el.style.setProperty('--rx', (-ny * max).toFixed(2) + 'deg');
+    el.style.setProperty('--ry-n', nx.toFixed(3)); el.style.setProperty('--rx-n', (-ny).toFixed(3));
+    el.style.setProperty('--gx', ((nx + 1) * 50).toFixed(1) + '%'); el.style.setProperty('--gy', ((ny + 1) * 50).toFixed(1) + '%');
+  }
+  function reset(el) { el.classList.remove('is-moving'); ['--rx', '--ry', '--rx-n', '--ry-n'].forEach(function (k) { el.style.removeProperty(k); }); }
+  function norm(el, x, y) { var r = el.getBoundingClientRect(); if (!r.width || !r.height) return null; return [clamp((x - r.left - r.width / 2) / (r.width / 2), 1), clamp((y - r.top - r.height / 2) / (r.height / 2), 1)]; }
+
+  /* ---------- Просмотрщик фото ---------- */
+  var wrap = null;
+  function viewerWrap() {
+    var img = document.getElementById('imageViewerImage'); if (!img) return null;
+    if (img.parentNode && img.parentNode.classList && img.parentNode.classList.contains('wk-tilt')) return img.parentNode;
+    var w = document.createElement('span'); w.className = 'wk-tilt';
+    img.parentNode.insertBefore(w, img); w.appendChild(img);
+    var g = document.createElement('span'); g.className = 'wk-tilt-glare'; w.appendChild(g);
+    return w;
+  }
+  function zoomed() { try { return typeof imageZoom !== 'undefined' && imageZoom !== 1; } catch (e) { return false; } }
+  function isMedalSrc(src) { try { var m = window.__wikiAchievementMedalArt || {}; return Object.keys(m).some(function (k) { return m[k] === src; }); } catch (e) { return false; } }
+  function viewerOpen() { var v = document.getElementById('imageViewer'); return !!(v && v.classList.contains('active')); }
+  document.addEventListener('pointermove', function (e) {
+    if (e.pointerType === 'touch' || !viewerOpen()) return;
+    wrap = wrap || viewerWrap(); if (!wrap) return;
+    if (zoomed()) { reset(wrap); return; }
+    var n = norm(wrap, e.clientX, e.clientY); if (!n) return;
+    wrap.classList.add('is-moving'); setTilt(wrap, n[0], n[1], wrap.classList.contains('is-medal') ? MEDAL_MAX : MAX);
+  }, { passive: true });
+  // При каждом открытии: отметить медаль (у неё прозрачный фон — без блика), сбросить наклон.
+  var origOpen = window.openImageViewer;
+  if (typeof origOpen === 'function') {
+    window.openImageViewer = function (url) {
+      var r = origOpen.apply(this, arguments);
+      wrap = viewerWrap(); if (wrap) { reset(wrap); wrap.classList.toggle('is-medal', isMedalSrc(url)); }
+      return r;
+    };
+    try { openImageViewer = window.openImageViewer; } catch (e) {}
+  }
+  document.addEventListener('pointerleave', function () { if (wrap) reset(wrap); });
+  // Телефон: наклон от гироскопа (где браузер отдаёт его без запроса разрешения).
+  var base = null;
+  window.addEventListener('deviceorientation', function (e) {
+    if (!viewerOpen() || e.beta == null || e.gamma == null) { base = null; return; }
+    wrap = wrap || viewerWrap(); if (!wrap || zoomed()) return;
+    if (!base) base = { b: e.beta, g: e.gamma };
+    var nx = clamp((e.gamma - base.g) / 25, 1), ny = clamp((e.beta - base.b) / 25, 1);
+    wrap.classList.add('is-moving'); setTilt(wrap, nx, ny, MAX);
+  });
+
+  /* ---------- Наведение: фото в статьях и полученные медали ---------- */
+  var SEL = '.article-inline-image-wrap, #achievementSections .achievement-card.is-earned .achievement-medal';
+  var cur = null;
+  document.addEventListener('pointermove', function (e) {
+    if (e.pointerType !== 'mouse') return;
+    var el = e.target && e.target.closest ? e.target.closest(SEL) : null;
+    if (cur && cur !== el) { reset(cur); cur = null; }
+    if (!el) return;
+    if (!el.classList.contains('wk-hover-tilt')) el.classList.add('wk-hover-tilt');
+    cur = el;
+    var n = norm(el, e.clientX, e.clientY); if (!n) return;
+    el.classList.add('is-moving');
+    setTilt(el, n[0], n[1], el.classList.contains('achievement-medal') ? MEDAL_MAX : HOVER_MAX);
+  }, { passive: true });
+  document.addEventListener('pointerout', function (e) { if (cur && !cur.contains(e.relatedTarget)) { reset(cur); cur = null; } });
 })();
 </script>
 </body></html>
