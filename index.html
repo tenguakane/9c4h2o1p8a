@@ -4626,7 +4626,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "23.10.2026 · 19";
+const WIKI_VERSION = "23.10.2026 · 22";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -13649,7 +13649,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
                 const list=window.__wikiCardFxList||[];const def=window.__wikiCardFxDefault?window.__wikiCardFxDefault(activeType,obj):'';
                 const nameOf=v=>(list.find(f=>f.v===v)||{}).n||v;
                 control=selectHTML(k,val,list.map(f=>({value:f.v,label:f.n})),'Авто'+(def?' — '+nameOf(def)+(window.__wikiCardFxDefaultWhy?' ('+window.__wikiCardFxDefaultWhy(activeType,obj)+')':''):' — без эффекта'));
-                hint='Эффект на карточке в каталоге, в Каюте и на главном фото статьи. «Авто» — по правилам: команда Мугивар — голограмма, плакаты наград — старый плакат.';
+                hint='Эффект на карточке в каталоге, в Каюте и на главном фото статьи. «Авто» — по правилам: команда Мугивар — голограмма, плакаты наград — золотая фольга.';
             } else if(k==='movie_id' && activeType==='character'){
                 const films=allRecords('story').filter(a=>{const m=rawValue(a,'movie');return m===true||m==='true'||String(rawValue(a,'saga')||'').trim()==='Полнометражные фильмы';});
                 const current=String(val||FILM_ID_BY_CHARACTER_ID[String(rawValue(obj,'id')||'')]||'');
@@ -23784,6 +23784,9 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
   .article-inline-image-wrap.wk-hover-tilt::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;opacity:0;transition:opacity .3s;mix-blend-mode:soft-light;background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.6),transparent 60%)}
   .article-inline-image-wrap.wk-hover-tilt.is-moving::after{opacity:1}
 }
+@media (hover:none),(pointer:coarse){.character-item,.article-inline-image-wrap,#achievementSections .achievement-card.is-earned .achievement-medal{touch-action:pan-y}
+  .wk-hover-tilt{transform:perspective(800px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .35s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d}
+  .wk-hover-tilt.is-moving{transition:transform .06s linear}}
 @media (prefers-reduced-motion:reduce){.wk-tilt,.wk-hover-tilt{transform:none!important}}
 </style>
 <script id="wiki-tilt">
@@ -23821,27 +23824,47 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     if (zoomed()) { reset(wrap); return; }
     var n = norm(wrap, e.clientX, e.clientY); if (!n) return;
     wrap.classList.add('is-moving'); setTilt(wrap, n[0], n[1], wrap.classList.contains('is-medal') ? MEDAL_MAX : MAX);
+    if (wrap.hasAttribute('data-fx')) fxVars(wrap, n[0], n[1], 1);
   }, { passive: true });
   // При каждом открытии: отметить медаль (у неё прозрачный фон — без блика), сбросить наклон.
+  // Эффект карточки (голограмма и т.п.) переносится на фото, открытое из статьи или карточки.
+  var lastFx = { fx: '', t: 0 };
+  document.addEventListener('click', function (e) { var h = e.target && e.target.closest && e.target.closest('[data-fx]'); if (h && !h.closest('#imageViewer')) lastFx = { fx: h.getAttribute('data-fx'), t: Date.now() }; else lastFx = { fx: '', t: 0 }; }, true);
+  function viewerFx(on) {
+    if (!wrap) return;
+    if (on) {
+      wrap.setAttribute('data-fx', on);
+      if (!wrap.querySelector(':scope > .wk-fx-a')) { var a = document.createElement('span'); a.className = 'wk-fx-a'; var b = document.createElement('span'); b.className = 'wk-fx-b'; wrap.appendChild(a); wrap.appendChild(b); }
+    } else wrap.removeAttribute('data-fx');
+  }
   var origOpen = window.openImageViewer;
   if (typeof origOpen === 'function') {
     window.openImageViewer = function (url) {
       var r = origOpen.apply(this, arguments);
-      wrap = viewerWrap(); if (wrap) { reset(wrap); wrap.classList.toggle('is-medal', isMedalSrc(url)); }
+      wrap = viewerWrap(); if (wrap) { reset(wrap); var medal = isMedalSrc(url); wrap.classList.toggle('is-medal', medal); viewerFx(!medal && lastFx.fx && Date.now() - lastFx.t < 1500 ? lastFx.fx : ''); }
       return r;
     };
     try { openImageViewer = window.openImageViewer; } catch (e) {}
   }
   document.addEventListener('pointerleave', function () { if (wrap) reset(wrap); });
-  // Телефон: наклон от гироскопа (где браузер отдаёт его без запроса разрешения).
-  var base = null;
-  window.addEventListener('deviceorientation', function (e) {
-    if (!viewerOpen() || e.beta == null || e.gamma == null) { base = null; return; }
-    wrap = wrap || viewerWrap(); if (!wrap || zoomed()) return;
-    if (!base) base = { b: e.beta, g: e.gamma };
-    var nx = clamp((e.gamma - base.g) / 25, 1), ny = clamp((e.beta - base.b) / 25, 1);
-    wrap.classList.add('is-moving'); setTilt(wrap, nx, ny, MAX);
-  });
+  // Телефон: наклон пальцем. Одним пальцем ведёшь по фото — оно наклоняется; отпустил — возвращается.
+  var touchView = null;
+  document.addEventListener('pointerdown', function (e) {
+    if (e.pointerType !== 'touch' || !viewerOpen()) return;
+    var img = document.getElementById('imageViewerImage');
+    if (!img || (e.target !== img && !(wrap && wrap.contains(e.target)))) return;
+    if (touchView !== null) { touchView = -1; if (wrap) reset(wrap); return; } // второй палец — это щипок, наклон выключаем
+    touchView = e.pointerId;
+  }, true);
+  document.addEventListener('pointermove', function (e) {
+    if (e.pointerType !== 'touch' || touchView !== e.pointerId || !viewerOpen()) return;
+    wrap = wrap || viewerWrap(); if (!wrap || zoomed()) { if (wrap) reset(wrap); return; }
+    var n = norm(wrap, e.clientX, e.clientY); if (!n) return;
+    wrap.classList.add('is-moving'); setTilt(wrap, n[0], n[1], wrap.classList.contains('is-medal') ? MEDAL_MAX : MAX);
+    if (wrap.hasAttribute('data-fx')) fxVars(wrap, n[0], n[1], 1);
+  }, true);
+  function endView(e) { if (e.pointerType !== 'touch') return; if (touchView === e.pointerId || touchView === -1) { touchView = null; if (wrap) reset(wrap); } }
+  document.addEventListener('pointerup', endView, true); document.addEventListener('pointercancel', endView, true);
 
   /* ---------- Наведение: фото в статьях, полученные медали и карточки каталога ---------- */
   var SEL = '.article-inline-image-wrap, #achievementSections .achievement-card.is-earned .achievement-medal';
@@ -23889,7 +23912,40 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     if (cur && !cur.contains(e.relatedTarget)) { reset(cur); cur = null; }
     if (curCard && !curCard.contains(e.relatedTarget)) { cardReset(curCard); curCard = null; }
   });
-  window.addEventListener('scroll', function () { if (curCard) { cardReset(curCard); curCard = null; } }, { passive: true });
+  window.addEventListener('scroll', function () { if (curCard) { cardReset(curCard); curCard = null; } if (touchEl) { endTouch(); } }, { passive: true });
+
+  /* ---------- Телефон: наклон карточек пальцем ----------
+     Веди пальцем по карточке в сторону — она наклоняется. Вертикальный свайп по-прежнему листает страницу. */
+  var touchEl = null, touchKind = '', tStart = null, moved = false, suppressClick = false;
+  function touchTarget(t) {
+    if (!t || !t.closest) return null;
+    var c = t.closest(CARD_SEL); if (c && !c.closest(CARD_EXCLUDE)) return { el: c, kind: 'card' };
+    var o = t.closest(SEL); if (o) return { el: o, kind: 'other' };
+    return null;
+  }
+  function endTouch() {
+    if (!touchEl) return;
+    if (touchKind === 'card') cardReset(touchEl); else reset(touchEl);
+    touchEl = null; tStart = null;
+  }
+  document.addEventListener('pointerdown', function (e) {
+    if (e.pointerType !== 'touch' || viewerOpen()) return;
+    var hit = touchTarget(e.target); if (!hit) return;
+    if (touchEl && touchEl !== hit.el) endTouch();
+    touchEl = hit.el; touchKind = hit.kind; tStart = { x: e.clientX, y: e.clientY, id: e.pointerId }; moved = false;
+    if (touchKind === 'other' && !touchEl.classList.contains('wk-hover-tilt')) touchEl.classList.add('wk-hover-tilt');
+  }, { passive: true });
+  document.addEventListener('pointermove', function (e) {
+    if (e.pointerType !== 'touch' || !touchEl || !tStart || e.pointerId !== tStart.id) return;
+    if (Math.abs(e.clientX - tStart.x) + Math.abs(e.clientY - tStart.y) > 8) moved = true;
+    var n = norm(touchEl, e.clientX, e.clientY); if (!n) return;
+    if (touchKind === 'card') { curCard = null; cardTilt(touchEl, n[0], n[1]); }
+    else { touchEl.classList.add('is-moving'); setTilt(touchEl, n[0], n[1], touchEl.classList.contains('achievement-medal') ? MEDAL_MAX : HOVER_MAX); if (touchEl.hasAttribute('data-fx')) fxVars(touchEl, n[0], n[1], 1); }
+  }, { passive: true });
+  function touchUp(e) { if (e.pointerType !== 'touch' || !tStart || e.pointerId !== tStart.id) return; if (moved) suppressClick = true; endTouch(); setTimeout(function () { suppressClick = false; }, 350); }
+  document.addEventListener('pointerup', touchUp, true); document.addEventListener('pointercancel', function (e) { if (e.pointerType === 'touch' && tStart && e.pointerId === tStart.id) endTouch(); }, true);
+  // После наклона пальцем карточка не должна открываться — открывает только короткий тап.
+  document.addEventListener('click', function (e) { if (suppressClick) { var hit = touchTarget(e.target); if (hit) { e.preventDefault(); e.stopImmediatePropagation(); } suppressClick = false; } }, true);
 })();
 </script>
 <style id="wiki-card-fx-style">
@@ -23971,11 +24027,11 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
   window.__wikiCardFxList = FX;
   function defaultFx(type, rec) {
     if (type === 'character' && rec && MUGIWARA.indexOf(String(rec.id)) >= 0) return 'holo';
-    if (type === 'reward') return 'wanted';
+    if (type === 'reward') return 'gold';
     return '';
   }
   window.__wikiCardFxDefault = defaultFx;
-  window.__wikiCardFxDefaultWhy = function (type, rec) { var d = defaultFx(type, rec); return d === 'holo' ? 'команда Мугивар' : d === 'wanted' ? 'плакат награды' : ''; };
+  window.__wikiCardFxDefaultWhy = function (type, rec) { var d = defaultFx(type, rec); return d === 'holo' ? 'команда Мугивар' : d === 'gold' && type === 'reward' ? 'плакат награды' : ''; };
   function raw(rec) { return rec && (rec.__wikiRaw || rec); }
   function fxOf(type, rec) { var r = raw(rec); var v = r ? String(r.card_fx || '').trim() : ''; return v || defaultFx(type, rec) || ''; }
   window.__wikiCardFx = fxOf;
@@ -24052,6 +24108,175 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
   new MutationObserver(function () { if (!pend2) pend2 = requestAnimationFrame(function () { pend2 = 0; var f = document.getElementById('wikiEditorForm'); if (f && f.querySelector('[data-field="card_fx"]') && !f.querySelector('.wk-fx-row')) preview(); }); }).observe(document.documentElement, { childList: true, subtree: true });
   document.addEventListener('change', function (e) { if (e.target && e.target.getAttribute && /^(card_fx|person_link|image|reward_image)$/.test(e.target.getAttribute('data-field') || '')) preview(); });
   document.addEventListener('input', function (e) { if (e.target && e.target.getAttribute && /^(person_link|image|reward_image)$/.test(e.target.getAttribute('data-field') || '')) preview(); });
+})();
+</script>
+<style id="wiki-medal-fx-style">
+/* ===== Эффекты медалей (по форме картинки, свечение, лучи, искры) ===== */
+[data-mfx]{position:relative;isolation:isolate}
+[data-mfx] .wk-mfx-mask{position:absolute;pointer-events:none;z-index:2;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;display:none}
+[data-mfx~="shine"] .wk-mfx-mask.shine{display:block;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.85) 45%,rgba(255,255,255,.15) 52%,transparent 62%);background-size:260% 260%;background-position:var(--pos,50%) 50%;mix-blend-mode:overlay;animation:wkMfxSweep 3.2s ease-in-out infinite}
+[data-mfx~="shine"].is-moving .wk-mfx-mask.shine,[data-mfx~="shine"].wk-tilt.is-moving .wk-mfx-mask.shine{animation:none}
+[data-mfx~="holo"] .wk-mfx-mask.holo{display:block;background:linear-gradient(115deg,#ff0080 0%,#ffd000 20%,#00ffa6 40%,#00b7ff 60%,#9d00ff 80%,#ff0080 100%);background-size:300% 300%;background-position:var(--pos,50%) var(--pos,50%);mix-blend-mode:color-dodge;opacity:.55;animation:wkMfxHolo 6s linear infinite}
+[data-mfx~="holo"].is-moving .wk-mfx-mask.holo{animation:none}
+[data-mfx] .wk-mfx-rays,[data-mfx] .wk-mfx-spark{position:absolute;pointer-events:none;display:none}
+[data-mfx~="rays"] .wk-mfx-rays{display:block;inset:-30%;z-index:-1;border-radius:50%;background:repeating-conic-gradient(from 0deg,var(--mfx-c,#ffd77a) 0 6deg,transparent 6deg 18deg);-webkit-mask:radial-gradient(circle,#000 18%,transparent 68%);mask:radial-gradient(circle,#000 18%,transparent 68%);opacity:.45;animation:wkMfxSpin 18s linear infinite}
+[data-mfx~="spark"] .wk-mfx-spark{display:block;inset:-8%;z-index:3;background:
+  radial-gradient(circle at 18% 22%,#fff 0 1.5px,transparent 3px),radial-gradient(circle at 82% 30%,#fff7c2 0 1.5px,transparent 3px),
+  radial-gradient(circle at 70% 85%,#fff 0 1px,transparent 2.5px),radial-gradient(circle at 25% 78%,#c8f1ff 0 1.5px,transparent 3px),
+  radial-gradient(circle at 50% 8%,#fff 0 1px,transparent 2.5px);animation:wkMfxTwinkle 2.4s ease-in-out infinite}
+[data-mfx~="spark"] .wk-mfx-spark.b{animation-delay:1.2s;transform:rotate(47deg) scale(.9)}
+@keyframes wkMfxSweep{0%,100%{background-position:100% 50%}50%{background-position:0% 50%}}
+@keyframes wkMfxHolo{to{background-position:300% 300%}}
+@keyframes wkMfxSpin{to{transform:rotate(360deg)}}
+@keyframes wkMfxTwinkle{0%,100%{opacity:.15}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){[data-mfx] .wk-mfx-mask,[data-mfx] .wk-mfx-rays,[data-mfx] .wk-mfx-spark{animation:none!important}}
+/* Редактор: выбор эффектов */
+.wk-mfx-pop{position:absolute;z-index:30;top:calc(100% + 4px);left:0;min-width:270px;padding:10px;border-radius:12px;border:1px solid #475569;background:#0b1220;box-shadow:0 14px 30px rgba(0,0,0,.5);display:grid;gap:6px;font-size:12.5px;color:#e2e8f0}
+.wk-mfx-pop label{display:flex;gap:7px;align-items:flex-start;cursor:pointer;line-height:1.3}
+.wk-mfx-pop label small{display:block;color:#94a3b8;font-size:11px}
+.wk-mfx-pop .row{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.wk-mfx-pop .row button{white-space:nowrap}
+.wk-mfx-pop button{padding:5px 10px;border-radius:8px;border:1px solid #475569;background:#111827;color:#e2e8f0;cursor:pointer;font-size:12px}
+.wk-mfx-pop button.primary{background:#d8b45a;color:#111;border-color:#d8b45a}
+.wk-mfx-btn{position:absolute;right:30px;top:4px;width:22px;height:22px;border-radius:6px;border:1px solid #475569;background:#111827;color:#fde68a;font-size:12px;cursor:pointer;display:grid;place-items:center;padding:0}
+.wiki-editor-wanted-item.has-mfx .wk-mfx-btn{border-color:#d8b45a;background:rgba(216,180,90,.18)}
+.wk-mfx-default{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px;padding:9px 11px;border:1px dashed #475569;border-radius:10px;font-size:12.5px;color:#cbd5e1;position:relative}
+.wk-mfx-default b{color:#fde68a}
+</style>
+<script id="wiki-medal-fx">
+(function () {
+  'use strict';
+  var KEY = 'onePieceWikiMedalArtV1', STORAGE_KEY = 'onePieceWikiLocalContentV1';
+  var LIST = [
+    { v: 'shine', n: 'Блик по металлу', d: 'светлая полоса бежит по медали (по её форме)' },
+    { v: 'holo', n: 'Голографическая', d: 'радужная фольга только на металле' },
+    { v: 'coin', n: 'Толщина монеты', d: 'при наклоне видно ребро' },
+    { v: 'aura', n: 'Ореол', d: 'мягкое свечение вокруг контура' },
+    { v: 'pearl', n: 'Перламутр', d: 'оттенок переливается при наклоне' },
+    { v: 'rays', n: 'Лучи', d: 'вращающиеся лучи позади' },
+    { v: 'spark', n: 'Искры', d: 'мерцающие звёздочки по краям' }
+  ];
+  function readMap() { try { var v = JSON.parse(localStorage.getItem(KEY) || '{}'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
+  function writeMap(map) {
+    try { localStorage.setItem(KEY, JSON.stringify(map)); } catch (e) {}
+    try { var raw = localStorage.getItem(STORAGE_KEY); if (raw) { var d = JSON.parse(raw); d.medalArt = map; d.updatedAt = new Date().toISOString(); localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } } catch (e) {}
+  }
+  function fxFor(key) { var m = readMap(); var own = m['fx:' + key]; if (own != null) return String(own); return String(m['fx:*'] || ''); }
+  function hasOwn(key) { return readMap()['fx:' + key] != null; }
+  function setFx(key, list) { var m = readMap(); if (list === null) delete m['fx:' + key]; else m['fx:' + key] = list.join(' '); writeMap(m); }
+
+  /* ---------- Наложение на медаль ---------- */
+  function filterFor(set, base) {
+    var f = [];
+    if (base && base !== 'none') f.push(base);
+    if (set.indexOf('pearl') >= 0) f.push('hue-rotate(calc(var(--ry-n, 0) * 40deg + var(--rx-n, 0) * 25deg)) saturate(1.25)');
+    if (set.indexOf('coin') >= 0) f.push('drop-shadow(calc(var(--ry-n, 0) * -2px) calc(var(--rx-n, 0) * 2px) 0 rgba(70,50,15,.95))', 'drop-shadow(calc(var(--ry-n, 0) * -2px) calc(var(--rx-n, 0) * 2px) 0 rgba(40,28,8,.95))');
+    if (set.indexOf('aura') >= 0) f.push('drop-shadow(0 0 6px rgba(255,226,150,.85))', 'drop-shadow(0 0 14px rgba(255,200,90,.45))');
+    return f.join(' ');
+  }
+  function placeMask(holder, img, span) {
+    var hr = holder.getBoundingClientRect(), ir = img.getBoundingClientRect();
+    if (!ir.width) return;
+    span.style.left = (ir.left - hr.left) + 'px'; span.style.top = (ir.top - hr.top) + 'px';
+    span.style.width = ir.width + 'px'; span.style.height = ir.height + 'px';
+  }
+  function decorate(holder, img, key) {
+    var fx = fxFor(key).split(/\s+/).filter(Boolean);
+    var sig = fx.join(' ') + '|' + (img.currentSrc || img.src);
+    if (holder.__wkMfx === sig) { holder.querySelectorAll(':scope > .wk-mfx-mask').forEach(function (m) { placeMask(holder, img, m); }); return; }
+    holder.__wkMfx = sig;
+    if (img.__wkBaseFilter === undefined) { img.style.removeProperty('filter'); img.__wkBaseFilter = getComputedStyle(img).filter; }
+    if (!fx.length) {
+      holder.removeAttribute('data-mfx'); img.style.removeProperty('filter');
+      holder.querySelectorAll(':scope > .wk-mfx-mask, :scope > .wk-mfx-rays, :scope > .wk-mfx-spark').forEach(function (n) { n.remove(); });
+      return;
+    }
+    holder.setAttribute('data-mfx', fx.join(' '));
+    var f = filterFor(fx, img.__wkBaseFilter);
+    if (f) img.style.setProperty('filter', f, 'important'); else img.style.removeProperty('filter');
+    function ensure(cls) { var n = holder.querySelector(':scope > .' + cls.split(' ').join('.')); if (!n) { n = document.createElement('span'); n.className = cls; n.setAttribute('aria-hidden', 'true'); holder.appendChild(n); } return n; }
+    var src = img.currentSrc || img.src || '';
+    ['shine', 'holo'].forEach(function (k) {
+      var m = ensure('wk-mfx-mask ' + k);
+      var u = 'url("' + src.replace(/"/g, '%22') + '")';
+      m.style.webkitMaskImage = u; m.style.maskImage = u;
+      placeMask(holder, img, m);
+    });
+    ensure('wk-mfx-rays'); ensure('wk-mfx-spark a'); ensure('wk-mfx-spark b');
+    try { var c = getComputedStyle(holder).getPropertyValue('--achievement-color').trim(); if (c) holder.style.setProperty('--mfx-c', c); } catch (e) {}
+  }
+  var lastMedal = { key: '', src: '', t: 0 };
+  document.addEventListener('click', function (e) { var m = e.target && e.target.closest && e.target.closest('.achievement-medal[data-medal-art-key]'); if (m) { var im = m.querySelector('img'); lastMedal = { key: m.getAttribute('data-medal-art-key'), src: im ? (im.currentSrc || im.src) : '', t: Date.now() }; } }, true);
+  function keyBySrc(src) {
+    if (lastMedal.key && lastMedal.src === src) return lastMedal.key; try { var m = window.__wikiAchievementMedalArt || {}; return Object.keys(m).find(function (k) { return k.indexOf('fx:') !== 0 && m[k] === src; }) || ''; } catch (e) { return ''; } }
+  function run() {
+    pend = 0;
+    document.querySelectorAll('#achievementSections .achievement-card.is-earned .achievement-medal[data-medal-art-key]').forEach(function (holder) {
+      var img = holder.querySelector('img'); if (!img) return;
+      decorate(holder, img, holder.getAttribute('data-medal-art-key'));
+    });
+    // Неполученные — без эффектов.
+    document.querySelectorAll('#achievementSections .achievement-card:not(.is-earned) .achievement-medal[data-mfx]').forEach(function (holder) { var img = holder.querySelector('img'); holder.__wkMfx = ''; if (img) { img.style.removeProperty('filter'); } holder.removeAttribute('data-mfx'); });
+    // Открытая в просмотрщике медаль.
+    var w = document.querySelector('#imageViewer .wk-tilt.is-medal'), vi = document.getElementById('imageViewerImage');
+    if (w && vi && document.getElementById('imageViewer').classList.contains('active')) { var k = keyBySrc(vi.getAttribute('src')); if (k) decorate(w, vi, k); }
+    else if (w && w.hasAttribute('data-mfx') && vi) { w.__wkMfx = ''; decorate(w, vi, '__none__'); }
+  }
+  var pend = 0;
+  function schedule() { if (!pend) pend = requestAnimationFrame(run); }
+  new MutationObserver(function (muts) {
+    for (var i = 0; i < muts.length; i++) { var t = muts[i].target; if (t && t.classList && /wk-mfx/.test(t.className)) continue; schedule(); return; }
+  }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['src'] });
+  document.addEventListener('wiki:custom-achievements-updated', function () { document.querySelectorAll('[data-mfx]').forEach(function (h) { h.__wkMfx = ''; }); schedule(); });
+  var iv = document.getElementById('imageViewer'); if (iv) new MutationObserver(schedule).observe(iv, { attributes: true, attributeFilter: ['class'] });
+  window.addEventListener('resize', function () { document.querySelectorAll('[data-mfx]').forEach(function (h) { h.__wkMfx = ''; }); schedule(); });
+  setTimeout(schedule, 800);
+
+  /* ---------- Редактор: вкладка «Достижения» ---------- */
+  function popover(anchor, key, title) {
+    var old = document.querySelector('.wk-mfx-pop'); if (old) { var same = old.parentNode === anchor; old.remove(); if (same) return; }
+    var cur = (key === '*' ? String(readMap()['fx:*'] || '') : fxFor(key)).split(/\s+/).filter(Boolean);
+    var pop = document.createElement('div'); pop.className = 'wk-mfx-pop';
+    pop.innerHTML = '<b>' + (title || 'Эффекты медали') + '</b>' + LIST.map(function (x) { return '<label><input type="checkbox" value="' + x.v + '"' + (cur.indexOf(x.v) >= 0 ? ' checked' : '') + '><span>' + x.n + '<small>' + x.d + '</small></span></label>'; }).join('') +
+      '<div class="row"><button type="button" class="primary" data-a="save">Сохранить</button>' + (key !== '*' && hasOwn(key) ? '<button type="button" data-a="reset" title="Взять эффекты «для всех медалей»">↩ Как у всех</button>' : '') + '<button type="button" data-a="close">Отмена</button></div>';
+    anchor.appendChild(pop);
+    pop.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var b = e.target.closest('[data-a]'); if (!b) return;
+      var a = b.getAttribute('data-a');
+      if (a === 'save') { var list = [].slice.call(pop.querySelectorAll('input:checked')).map(function (i) { return i.value; }); if (key === '*') { var m = readMap(); m['fx:*'] = list.join(' '); writeMap(m); } else setFx(key, list); }
+      if (a === 'reset') setFx(key, null);
+      pop.remove(); markEditor(true); document.querySelectorAll('[data-mfx], .achievement-medal').forEach(function (h) { h.__wkMfx = ''; }); schedule();
+    });
+  }
+  function names(list) { return list.split(/\s+/).filter(Boolean).map(function (v) { return (LIST.find(function (x) { return x.v === v; }) || {}).n || v; }).join(', ') || 'без эффектов'; }
+  function markEditor(force) {
+    var root = document.getElementById('wikiEditorAchievements'); if (!root) return;
+    root.querySelectorAll('.wiki-editor-wanted-item[data-medal-art-key]').forEach(function (it) {
+      var key = it.getAttribute('data-medal-art-key');
+      if (!it.querySelector('.wk-mfx-btn')) {
+        var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'wk-mfx-btn'; btn.textContent = '✨'; btn.title = 'Эффекты медали';
+        btn.addEventListener('click', function (e) { e.stopPropagation(); popover(it, key, 'Эффекты: ' + ((it.querySelector('strong') || {}).textContent || 'медаль')); });
+        it.appendChild(btn);
+      }
+      it.classList.toggle('has-mfx', hasOwn(key));
+      var b = it.querySelector('.wk-mfx-btn'); if (b) b.title = 'Эффекты медали: ' + names(fxFor(key)) + (hasOwn(key) ? '' : ' (как у всех)');
+    });
+    // Общая настройка — над первым списком медалей.
+    var first = root.querySelector('.wiki-editor-wanted-presets');
+    if (first && !root.querySelector('.wk-mfx-default')) {
+      var box = document.createElement('div'); box.className = 'wk-mfx-default';
+      first.parentNode.insertBefore(box, first);
+    }
+    var d = root.querySelector('.wk-mfx-default');
+    if (d) {
+      d.innerHTML = '<span>✨ Эффекты для всех полученных медалей: <b>' + names(String(readMap()['fx:*'] || '')) + '</b>. У отдельной медали можно поставить свои — кнопка ✨ на ней.</span><button type="button" class="wiki-editor-btn">Выбрать</button>';
+      d.querySelector('button').addEventListener('click', function (e) { e.stopPropagation(); popover(d, '*', 'Эффекты для всех медалей'); });
+    }
+  }
+  var pend2 = 0;
+  new MutationObserver(function () { if (!pend2) pend2 = requestAnimationFrame(function () { pend2 = 0; var r = document.getElementById('wikiEditorAchievements'); if (r && r.querySelector('.wiki-editor-wanted-item:not(:has(.wk-mfx-btn))')) markEditor(); }); }).observe(document.documentElement, { childList: true, subtree: true });
+  document.addEventListener('click', function (e) { var p = document.querySelector('.wk-mfx-pop'); if (p && !p.contains(e.target) && !e.target.closest('.wk-mfx-btn, .wk-mfx-default button')) p.remove(); });
 })();
 </script>
 </body></html>
