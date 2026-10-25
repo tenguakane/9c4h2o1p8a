@@ -1325,7 +1325,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "25.10.2026 · 45";
+const WIKI_VERSION = "25.10.2026 · 46";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -22859,6 +22859,15 @@ html.ios-app body .container :is(button,.back-button):active{opacity:.6}
 <style id="wiki-title-font-style">
 /* ===== Шрифт заголовков: один на все статьи — имя на обложке и заголовок внутри статьи ===== */
 html[data-wk-title-font] :is(.character-item .card-title,[id$="ArticleContent"] h1){font-family:var(--wk-title-font),"Samsung Sans","SamsungOne",Arial,sans-serif!important;font-weight:var(--wk-title-fw,700)!important;font-size-adjust:var(--wk-title-adj,.53);letter-spacing:var(--wk-title-ls,normal)}
+:root{--wk-tz-card:1;--wk-tz-art:1}
+.character-item .card-title{zoom:var(--wk-tz-card)}
+[id$="ArticleContent"] h1{zoom:var(--wk-tz-art)}
+.wk-tf-size{display:grid;gap:8px;margin:0 0 10px;padding:10px 12px;border-radius:10px;border:1px solid #334155;background:rgba(255,255,255,.03)}
+.wk-tf-size label{display:grid;grid-template-columns:110px 1fr 44px;align-items:center;gap:10px;color:#cbd5e1;font:600 12px Arial,sans-serif}
+.wk-tf-size input[type=range]{width:100%;accent-color:#d4a84f}
+.wk-tf-size output{text-align:right;color:#f4d99e;font:700 12px Arial,sans-serif}
+.wk-tf-size .row{display:flex;justify-content:flex-end}
+.wk-tf-size button{padding:4px 10px;border-radius:8px;border:1px solid #475569;background:transparent;color:#94a3b8;font:600 11.5px Arial,sans-serif;cursor:pointer}
 .wk-tf-pop{position:absolute;z-index:60;right:0;top:calc(100% + 8px);width:min(440px,92vw);max-height:min(70vh,560px);overflow:auto;padding:12px;border-radius:14px;border:1px solid rgba(212,168,79,.5);background:#0b1120;box-shadow:0 18px 40px rgba(0,0,0,.6);text-align:left}
 .wk-tf-pop h3{margin:0 0 4px;font-size:14px;color:#f4d99e}
 .wk-tf-pop p{margin:0 0 10px;color:#94a3b8;font-size:12px;line-height:1.45}
@@ -22965,11 +22974,20 @@ html[data-wk-title-font] :is(.character-item .card-title,[id$="ArticleContent"] 
     root.style.setProperty('--wk-title-fw', String(F.w || 700));
     if (F.ls) root.style.setProperty('--wk-title-ls', F.ls); else root.style.removeProperty('--wk-title-ls');
   }
-  window.__wikiApplyTitleFont = function () { applied = null; apply(); };
-  apply();
+  var SIZE_KEYS = { card: 'font:titles:size:card', art: 'font:titles:size:article' };
+  function sizeOf(which) { var v = Number(readMap()[SIZE_KEYS[which]]); return v >= 70 && v <= 160 ? v : 100; }
+  var appliedSize = '';
+  function applySize(force) {
+    var c = sizeOf('card'), a = sizeOf('art'), key = c + '/' + a; if (!force && key === appliedSize) return; appliedSize = key;
+    var root = document.documentElement;
+    if (c === 100) root.style.removeProperty('--wk-tz-card'); else root.style.setProperty('--wk-tz-card', String(c / 100));
+    if (a === 100) root.style.removeProperty('--wk-tz-art'); else root.style.setProperty('--wk-tz-art', String(a / 100));
+  }
+  window.__wikiApplyTitleFont = function () { applied = null; apply(); applySize(true); };
+  apply(); applySize();
   // Данные могут прийти из облака позже — сверяемся время от времени и при изменении в другой вкладке.
-  setInterval(apply, 2500);
-  window.addEventListener('storage', function (e) { if (!e.key || e.key === KEY) apply(); });
+  setInterval(function () { apply(); applySize(); }, 2500);
+  window.addEventListener('storage', function (e) { if (!e.key || e.key === KEY) { apply(); applySize(); } });
 
   /* ---------- Кнопка в редакторе ---------- */
   function popover(anchor) {
@@ -22977,12 +22995,30 @@ html[data-wk-title-font] :is(.character-item .card-title,[id$="ArticleContent"] 
     loadFonts(FONTS);
     var pop = document.createElement('div'); pop.className = 'wk-tf-pop';
     var cur = current();
-    pop.innerHTML = '<h3>Шрифт заголовков</h3><p>Один шрифт для всех статей: имя на обложке в каталоге и заголовок внутри статьи. Сохраняется вместе с данными вики.</p>'
+    pop.innerHTML = '<h3>Шрифт и размер заголовков</h3><p>Для всех статей сразу: имя на обложке в каталоге и заголовок внутри статьи. Сохраняется вместе с данными вики.</p>'
+      + '<div class="wk-tf-size"><label>На обложке<input type="range" min="70" max="160" step="5" data-size="card"><output></output></label><label>В статье<input type="range" min="70" max="160" step="5" data-size="art"><output></output></label><div class="row"><button type="button" data-size-reset>Обычный размер</button></div></div>'
       + '<div class="wk-tf-search"><input type="text" list="wkTfNames" placeholder="Найти шрифт в Google Fonts, например Bebas Neue…" autocomplete="off"><button type="button">Найти</button></div>'
       + '<datalist id="wkTfNames">' + SUGGEST.map(function (n) { return '<option value="' + n + '">'; }).join('') + '</datalist>'
       + '<div class="wk-tf-found"></div><span class="wk-tf-status"></span><div class="wk-tf-list"></div>';
     var list = pop.querySelector('.wk-tf-list');
     var statusEl = pop.querySelector('.wk-tf-status');
+    // Размер заголовков: двигаешь — сразу видно на странице, отпускаешь — сохраняется.
+    var ranges = pop.querySelectorAll('.wk-tf-size input[type=range]');
+    function showVal(r) { r.nextElementSibling.textContent = r.value + '%'; }
+    ranges.forEach(function (r) {
+      r.value = sizeOf(r.dataset.size); showVal(r);
+      r.addEventListener('click', function (e) { e.stopPropagation(); });
+      r.addEventListener('input', function () { showVal(r); document.documentElement.style.setProperty(r.dataset.size === 'card' ? '--wk-tz-card' : '--wk-tz-art', String(r.value / 100)); });
+      r.addEventListener('change', function () {
+        var m = readMap(), k = SIZE_KEYS[r.dataset.size], v = Number(r.value);
+        if (v === 100) delete m[k]; else m[k] = v; writeMap(m); applySize(true);
+        statusEl.textContent = '✓ Размер ' + (r.dataset.size === 'card' ? 'на обложках' : 'в статьях') + ': ' + v + '%';
+      });
+    });
+    pop.querySelector('[data-size-reset]').addEventListener('click', function (e) {
+      e.stopPropagation(); var m = readMap(); delete m[SIZE_KEYS.card]; delete m[SIZE_KEYS.art]; writeMap(m); applySize(true);
+      ranges.forEach(function (r) { r.value = 100; showVal(r); }); statusEl.textContent = '✓ Обычный размер заголовков';
+    });
     function choose(F, btn) {
       var m = readMap(); if (F.v) m[FKEY] = F.v; else delete m[FKEY]; writeMap(m);
       window.__wikiApplyTitleFont();
@@ -23031,7 +23067,7 @@ html[data-wk-title-font] :is(.character-item .card-title,[id$="ArticleContent"] 
     if (!acts || acts.querySelector('.wk-tf-btn-wrap')) return;
     var wrap = document.createElement('span'); wrap.className = 'wk-tf-btn-wrap';
     var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'wiki-editor-btn'; btn.id = 'wikiEditorTitleFont'; btn.textContent = 'Аа Шрифт заголовков';
-    btn.title = 'Выбрать шрифт для заголовков всех статей';
+    btn.title = 'Шрифт и размер заголовков всех статей';
     btn.addEventListener('click', function (e) { e.stopPropagation(); popover(wrap); });
     wrap.appendChild(btn);
     var close = acts.querySelector('#wikiEditorClose');
