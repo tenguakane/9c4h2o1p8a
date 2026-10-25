@@ -21696,6 +21696,8 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
       applyTfx(sm, v); setAcc(sm, acc);
       if (window.__wikiApplyTitleStyle) window.__wikiApplyTitleStyle(sm, st, v);
     });
+    var pvn = f.querySelector('.wk-fx-preview .wk-pv-name');
+    if (pvn) { if (pvn.textContent !== title) pvn.textContent = title; applyTfx(pvn, v); setAcc(pvn, acc); if (window.__wikiApplyTitleStyle) window.__wikiApplyTitleStyle(pvn, st, v); }
     var img = ['person_link', 'image', 'reward_image'].map(function (k) { return fieldVal(f, k); }).filter(Boolean)[0] || '';
     var bg = wrap.querySelector('.wk-tfx-pv-bg');
     bg.style.backgroundImage = /^(https?:|data:image)/.test(img) ? 'url("' + img.replace(/"/g, '%22') + '")' : '';
@@ -23660,7 +23662,8 @@ html body #characterArticleContent#characterArticleContent#characterArticleConte
 .wk-cs>span{position:absolute;inset:0;border-radius:inherit;display:block;pointer-events:none}
 .wk-cs-pulse{box-shadow:inset 0 0 0 2px var(--cs-pc),inset 0 0 22px color-mix(in srgb,var(--cs-pc) 70%,transparent),inset 0 0 60px color-mix(in srgb,var(--cs-pc) 28%,transparent);animation:wkCsPulse var(--cs-pt,2s) ease-in-out infinite}
 @keyframes wkCsPulse{0%,100%{opacity:.25}50%{opacity:1}}
-.wk-cs-shine{background:linear-gradient(115deg,transparent 36%,color-mix(in srgb,var(--cs-sc) 55%,transparent) 46%,rgba(255,255,255,.85) 50%,color-mix(in srgb,var(--cs-sc) 55%,transparent) 54%,transparent 64%);background-size:300% 100%;background-repeat:no-repeat;mix-blend-mode:screen;animation:wkCsShine var(--cs-st,3s) ease-in-out infinite}
+.wk-cs-shine{--w:var(--cs-sw,7%);background:linear-gradient(115deg,transparent calc(50% - var(--w) * 2),color-mix(in srgb,var(--cs-sc) 35%,transparent) calc(50% - var(--w)),var(--cs-sc) 50%,color-mix(in srgb,var(--cs-sc) 35%,transparent) calc(50% + var(--w)),transparent calc(50% + var(--w) * 2));background-size:300% 100%;background-repeat:no-repeat;mix-blend-mode:var(--cs-sb,screen);opacity:var(--cs-so,.55);animation:wkCsShine var(--cs-st,3s) ease-in-out infinite}
+.wk-cs-shine.is-core{background:linear-gradient(115deg,transparent calc(50% - var(--w) * 2),color-mix(in srgb,var(--cs-sc) 35%,transparent) calc(50% - var(--w)),color-mix(in srgb,var(--cs-sc) 40%,#fff) 50%,color-mix(in srgb,var(--cs-sc) 35%,transparent) calc(50% + var(--w)),transparent calc(50% + var(--w) * 2))}
 @keyframes wkCsShine{0%{background-position:130% 0}55%,100%{background-position:-30% 0}}
 .wk-cs-frame{padding:var(--cs-fw,2px);background:conic-gradient(from var(--wk-ang),var(--cs-f1),var(--cs-f2),var(--cs-f3),var(--cs-f1));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;filter:drop-shadow(0 0 5px color-mix(in srgb,var(--cs-f1) 60%,transparent));animation:wkFxSpin var(--cs-ft,4s) linear infinite}
 .wk-cs-parts i{position:absolute;inset:0;display:block;will-change:transform,opacity}
@@ -23695,9 +23698,29 @@ html body #characterArticleContent#characterArticleContent#characterArticleConte
 @media (prefers-reduced-motion:reduce){.wk-cs *{animation:none!important}}
 html.wk-fx-off .wk-cs{display:none}
 
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-cs-panel input[type=range],#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel input[type=range],#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-tf-size input[type=range]{-webkit-appearance:none!important;appearance:none!important;height:20px!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;background:transparent!important;box-shadow:none!important;cursor:pointer}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-cs-panel input[type=range]::-webkit-slider-runnable-track,#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel input[type=range]::-webkit-slider-runnable-track,#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-tf-size input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:4px;background:linear-gradient(to right,#d4a84f var(--fill,50%),#334155 var(--fill,50%))}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-cs-panel input[type=range]::-webkit-slider-thumb,#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel input[type=range]::-webkit-slider-thumb,#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-tf-size input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;margin-top:-6px;border-radius:50%;background:#f4d99e;border:2px solid #b8862e;box-shadow:0 1px 4px rgba(0,0,0,.5)}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-cs-panel input[type=range]::-moz-range-track,#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel input[type=range]::-moz-range-track,#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-tf-size input[type=range]::-moz-range-track{height:4px;border-radius:4px;background:#334155;border:0}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-cs-panel input[type=range]::-moz-range-progress,#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel input[type=range]::-moz-range-progress,#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-tf-size input[type=range]::-moz-range-progress{height:4px;border-radius:4px;background:#d4a84f}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-cs-panel input[type=range]::-moz-range-thumb,#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel input[type=range]::-moz-range-thumb,#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-tf-size input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#f4d99e;border:2px solid #b8862e;box-shadow:0 1px 4px rgba(0,0,0,.5)}
+
 /* Панель конструктора */
 #wikiEditorForm .wiki-editor-field[data-editor-field="card_fx"]{grid-column:1 / -1!important}
 #wikiEditorForm .wiki-editor-field[data-editor-field="card_shine"].wk-cs-moved{display:none!important}
+.wk-cs-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,300px);gap:16px;align-items:start;margin-top:10px}
+.wk-cs-wrap>.wk-cs-panel{margin-top:0}
+.wk-cs-side{position:sticky;top:var(--wk-cs-top,64px);align-self:start;padding:12px;border-radius:12px;border:1px solid #334155;background:rgba(255,255,255,.025)}
+.wk-cs-side .wk-fx-row{flex-direction:column;align-items:center;margin:0;gap:10px}
+.wk-cs-side .wk-fx-stage{display:flex;justify-content:center;width:100%;box-sizing:border-box}
+.wk-cs-side .wk-fx-preview{width:250px;max-width:100%;flex:0 0 auto}
+.wk-cs-side .wk-fx-info{flex:0 0 auto;width:100%;text-align:center}
+.wk-cs-side .wk-fx-info small{display:none}
+.wk-pv-shade{position:absolute;inset:0;z-index:1;pointer-events:none;border-radius:inherit;background:linear-gradient(180deg,transparent 52%,rgba(6,10,18,.85) 100%)}
+.wk-fx-preview .wk-pv-name{position:absolute;left:14px;right:14px;bottom:14px;z-index:2;display:block;margin:0;padding:0;border:0;background:none;font-family:"Samsung Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:16px;font-weight:760;line-height:1.22;letter-spacing:-.01em;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.85),0 0 1px rgba(0,0,0,.55);zoom:var(--wk-tz-card,1);pointer-events:none}
+html[data-wk-title-font] .wk-fx-preview .wk-pv-name.wk-pv-name{font-family:var(--wk-title-font),"Samsung Sans","SamsungOne",Arial,sans-serif!important;font-weight:var(--wk-title-fw,700)!important;font-size-adjust:var(--wk-title-adj,.53)}
+html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 1px 2px rgba(0,0,0,.75))!important}
+@media (max-width:900px){.wk-cs-wrap{grid-template-columns:1fr}.wk-cs-side{position:relative;top:auto;order:-1}.wk-cs-side .wk-fx-preview{width:190px}}
 .wk-cs-panel{margin-top:10px;padding:12px;border-radius:12px;border:1px solid #334155;background:rgba(255,255,255,.025);display:grid;gap:10px}
 .wk-cs-panel .wk-cs-group{display:grid;gap:8px;padding:10px 12px;border-radius:10px;border:1px solid #1e293b;background:rgba(0,0,0,.12)}
 .wk-cs-panel .wk-cs-group.is-on{border-color:rgba(212,168,79,.4);background:rgba(212,168,79,.04)}
@@ -23812,7 +23835,8 @@ html.wk-fx-off .wk-cs{display:none}
     var h = '';
     if (st.frame && st.frame.on) h += '<span class="wk-cs-frame" style="--cs-f1:' + esc(st.frame.c1 || '#ff3d7f') + ';--cs-f2:' + esc(st.frame.c2 || '#ffd36b') + ';--cs-f3:' + esc(st.frame.c3 || '#4fb8ff') + ';--cs-ft:' + DUR.frame[st.frame.sp || ''] + ';--cs-fw:' + (Number(st.frame.w) || 2) + 'px"></span>';
     if (st.pulse && st.pulse.on) h += '<span class="wk-cs-pulse" style="--cs-pc:' + esc(st.pulse.c || '#ff5a5a') + ';--cs-pt:' + DUR.pulse[st.pulse.sp || ''] + '"></span>';
-    if (st.shine && st.shine.on) h += '<span class="wk-cs-shine" style="--cs-sc:' + esc(st.shine.c || '#ffffff') + ';--cs-st:' + DUR.shine[st.shine.sp || ''] + '"></span>';
+    if (st.shine && st.shine.on) { var shc = st.shine.c || '#ffffff'; var dark = /^#/.test(shc) && (function (hx) { hx = hx.replace('#', ''); if (hx.length === 3) hx = hx.replace(/./g, '$&$&'); var n = parseInt(hx, 16); return ((n >> 16) * .299 + ((n >> 8) & 255) * .587 + (n & 255) * .114) < 70; })(shc);
+      h += '<span class="wk-cs-shine' + (st.shine.core ? ' is-core' : '') + '" style="--cs-sc:' + esc(shc) + ';--cs-st:' + DUR.shine[st.shine.sp || ''] + ';--cs-so:' + ((st.shine.o == null ? 55 : Number(st.shine.o)) / 100) + ';--cs-sw:' + ({ thin: '3.5%', '': '7%', wide: '13%' }[st.shine.w || ''] || '7%') + ';--cs-sb:' + (dark ? 'multiply' : 'screen') + '"></span>'; }
     if (st.parts && st.parts.on) h += '<span class="wk-cs-parts' + (st.parts.glow ? ' is-glow' : '') + '" style="--cs-ps:' + Math.round(10 * (Number(st.parts.size) || 100) / 100) + 'px">' + partsHTML(st.parts, seed) + '</span>';
     host.innerHTML = h;
   }
@@ -23825,6 +23849,13 @@ html.wk-fx-off .wk-cs{display:none}
     buildLayers(el, st, seed || '');
   }
   window.__wikiApplyCardStyle = applyCardStyle;
+  // Заливка дорожки ползунка (для Chrome/Safari; Firefox рисует её сам)
+  function fill(r) { var min = Number(r.min) || 0, max = Number(r.max) || 100, v = Number(r.value); r.style.setProperty('--fill', ((v - min) / (max - min || 1) * 100).toFixed(1) + '%'); }
+  var RSEL = '.wk-cs-panel input[type=range],.wk-ts-panel input[type=range],.wk-tf-size input[type=range]';
+  document.addEventListener('input', function (e) { if (e.target && e.target.matches && e.target.matches(RSEL)) fill(e.target); }, true);
+  var pf = 0;
+  new MutationObserver(function () { if (!pf) pf = requestAnimationFrame(function () { pf = 0; document.querySelectorAll(RSEL).forEach(fill); }); }).observe(document.documentElement, { childList: true, subtree: true });
+
 
   /* ---------- Мои наборы эффектов ---------- */
   function readPresets() { var v = readMap()[PRESETS_KEY]; return Array.isArray(v) ? v.filter(function (x) { return x && x.name; }) : []; }
@@ -23858,7 +23889,10 @@ html.wk-fx-off .wk-cs{display:none}
     var shSel = form.querySelector('select[data-field="card_shine"]');
     var st = parse(hidden.value);
     var saving = false, flash = '';
+    var wrapEl = document.createElement('div'); wrapEl.className = 'wk-cs-wrap';
     var panel = document.createElement('div'); panel.className = 'wk-cs-panel';
+    var side = document.createElement('div'); side.className = 'wk-cs-side';
+    wrapEl.appendChild(panel); wrapEl.appendChild(side);
     var libFx = document.createElement('div'), libSh = document.createElement('div');
     // Переносим стандартные списки внутрь конструктора, чтобы всё было в одном месте.
     if (fxSel) { (fxSel.closest('.wiki-editor-control-shell') || fxSel).style.width = '100%'; libFx.appendChild(fxSel.closest('.wiki-editor-control-shell') || fxSel); }
@@ -23893,7 +23927,10 @@ html.wk-fx-off .wk-cs{display:none}
         + '<div class="wk-cs-libnote">Оттенок, насыщенность, сила и скорость меняют выбранные эффекты из библиотеки. Скорость 0% — эффект замирает.</div>'
         + '<div class="wk-cs-cap">Свои слои</div>'
         + group('pulse', '💓 Пульсация по краю', '<div class="wk-ts-row"><span>Цвет</span><div class="wk-cs-colors"><input type="color" data-p="pulse.c" value="' + esc(get('pulse.c') || '#ff5a5a') + '">' + sw('pulse.c') + '</div></div><div class="wk-ts-row"><span>Скорость</span>' + seg('data-seg="pulse.sp"', SP, get('pulse.sp')) + '</div>')
-        + group('shine', '✨ Свой блик', '<div class="wk-ts-row"><span>Цвет</span><div class="wk-cs-colors"><input type="color" data-p="shine.c" value="' + esc(get('shine.c') || '#ffffff') + '">' + sw('shine.c') + '</div></div><div class="wk-ts-row"><span>Скорость</span>' + seg('data-seg="shine.sp"', SP, get('shine.sp')) + '</div>')
+        + group('shine', '✨ Свой блик', '<div class="wk-ts-row"><span>Цвет</span><div class="wk-cs-colors"><input type="color" data-p="shine.c" value="' + esc(get('shine.c') || '#ffffff') + '">' + sw('shine.c') + '</div></div><div class="wk-ts-row"><span>Яркость</span>' + range('shine.o', 10, 100, 5, get('shine.o') == null ? 55 : Number(get('shine.o')), '%', 55) + '</div>'
+          + '<div class="wk-ts-row"><span>Ширина</span>' + seg('data-seg="shine.w"', [['thin', 'Узкий'], ['', 'Обычный'], ['wide', 'Широкий']], get('shine.w')) + '</div>'
+          + '<div class="wk-ts-row"><span></span><label><input type="checkbox" data-p="shine.core"' + (get('shine.core') ? ' checked' : '') + '> светлая сердцевина</label></div>'
+          + '<div class="wk-ts-row"><span>Скорость</span>' + seg('data-seg="shine.sp"', SP, get('shine.sp')) + '</div>')
         + group('frame', '🌈 Рамка-призма своих цветов', '<div class="wk-ts-row"><span>Цвета</span><div class="wk-cs-colors"><input type="color" data-p="frame.c1" value="' + esc(get('frame.c1') || '#ff3d7f') + '"><input type="color" data-p="frame.c2" value="' + esc(get('frame.c2') || '#ffd36b') + '"><input type="color" data-p="frame.c3" value="' + esc(get('frame.c3') || '#4fb8ff') + '"></div></div><div class="wk-ts-row"><span>Толщина</span>' + seg('data-seg="frame.w"', [['', '2px'], ['3', '3px'], ['4', '4px']], get('frame.w')) + '</div><div class="wk-ts-row"><span>Скорость</span>' + seg('data-seg="frame.sp"', SP, get('frame.sp')) + '</div>')
         + group('parts', '🎇 Частицы', '<div class="wk-ts-row"><span>Форма</span><div class="wk-cs-shapes">' + SHAPE_LIST.map(function (s) { return '<button type="button" class="wk-cs-shape' + ((p.shape || 'sparkle') === s[0] ? ' is-on' : '') + '" data-shape="' + s[0] + '"><i class="sh-' + s[0] + '"></i>' + s[1] + '</button>'; }).join('') + '</div></div>'
           + '<div class="wk-ts-row"><span>Цвет</span><div class="wk-cs-colors">' + seg('data-seg="parts.cmode"', [['', 'Свой'], ['rainbow', 'Радужные'], ['accent', 'Цвет статьи']], p.c === 'rainbow' || p.c === 'accent' ? p.c : '') + (p.c === 'rainbow' || p.c === 'accent' ? '' : '<input type="color" data-p="parts.c" value="' + esc(p.c || '#ffd36b') + '">') + '<label><input type="checkbox" data-p="parts.glow"' + (p.glow ? ' checked' : '') + '> свечение</label></div></div>'
@@ -23963,8 +24000,15 @@ html.wk-fx-off .wk-cs{display:none}
       else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); saving = false; render(); }
     });
     render();
+    // Превью карточки — справа от настроек и «прилипает» при прокрутке.
     var row = field.querySelector('.wk-fx-row');
-    if (row && row.nextSibling) field.insertBefore(panel, row.nextSibling); else field.appendChild(panel);
+    field.appendChild(wrapEl);
+    if (row) {
+      side.appendChild(row);
+      var pv = row.querySelector('.wk-fx-preview');
+      if (pv && !pv.querySelector('.wk-pv-name')) { var sh = document.createElement('span'); sh.className = 'wk-pv-shade'; var nm = document.createElement('span'); nm.className = 'wk-pv-name'; pv.appendChild(sh); pv.appendChild(nm); }
+      if (window.__wikiTfxSample) window.__wikiTfxSample();
+    }
     var lastP = JSON.stringify(readPresets());
     var timer = setInterval(function () { if (!panel.isConnected) { clearInterval(timer); return; } var now = JSON.stringify(readPresets()); if (now !== lastP && !saving) { lastP = now; var tp = panel.querySelector('.wk-tp'); if (tp) tp.outerHTML = presetsHTML(); } }, 2000);
   }
