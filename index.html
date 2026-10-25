@@ -1325,7 +1325,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "25.10.2026 · 46";
+const WIKI_VERSION = "25.10.2026 · 47";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -21955,6 +21955,14 @@ html:not(.wk-tfx-off) [data-tfx="gear5"]{color:#ffffff!important;-webkit-text-fi
 html:not(.wk-tfx-off) [data-tfx="glitch"]{-webkit-text-stroke:0!important;filter:none}
 html:not(.wk-tfx-off) [data-tfx="mist"]{-webkit-text-stroke:0!important;filter:none}
 @media (prefers-reduced-motion:reduce){[data-tfx]::before,[data-tfx]::after{animation:none!important;opacity:0}}
+/* На обложках — без света: только цвет шрифта и тёмная тень для читаемости */
+html:not(.wk-tfx-off) .character-item .card-title[data-tfx]{filter:drop-shadow(0 1px 2px rgba(0,0,0,.75))!important}
+html:not(.wk-tfx-off) .character-item .card-title[data-tfx]:is([data-tfx="shimmer"],[data-tfx="accent"],[data-tfx="gold"],[data-tfx="chrome"],[data-tfx="bronze"],[data-tfx="rainbow"],[data-tfx="fire"],[data-tfx="phoenix"],[data-tfx="magma"],[data-tfx="ice"],[data-tfx="sea"],[data-tfx="poneglyph"],[data-tfx="blood"],[data-tfx="toxic"],[data-tfx="galaxy"],[data-tfx="sakura"],[data-tfx="devilfruit"],[data-tfx="wanted"],[data-tfx="comic"],[data-tfx="sunset"],[data-tfx="aurora"],[data-tfx="mint"],[data-tfx="peach"],[data-tfx="lilac"],[data-tfx="emerald"],[data-tfx="ruby"],[data-tfx="sapphire"],[data-tfx="amber"],[data-tfx="cotton"],[data-tfx="twilight"]){text-shadow:none!important}
+html:not(.wk-tfx-off) .character-item .card-title[data-tfx]:is([data-tfx="neon"],[data-tfx="thunder"],[data-tfx="haki"],[data-tfx="yami"],[data-tfx="gear5"],[data-tfx="glitch"],[data-tfx="mist"]){text-shadow:0 1px 3px rgba(0,0,0,.75)!important}
+
+html:not(.wk-tfx-off) :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title[data-tfx]:is([data-tfx="shimmer"],[data-tfx="accent"],[data-tfx="gold"],[data-tfx="chrome"],[data-tfx="bronze"],[data-tfx="rainbow"],[data-tfx="fire"],[data-tfx="phoenix"],[data-tfx="magma"],[data-tfx="ice"],[data-tfx="sea"],[data-tfx="poneglyph"],[data-tfx="blood"],[data-tfx="toxic"],[data-tfx="galaxy"],[data-tfx="sakura"],[data-tfx="devilfruit"],[data-tfx="wanted"],[data-tfx="comic"],[data-tfx="sunset"],[data-tfx="aurora"],[data-tfx="mint"],[data-tfx="peach"],[data-tfx="lilac"],[data-tfx="emerald"],[data-tfx="ruby"],[data-tfx="sapphire"],[data-tfx="amber"],[data-tfx="cotton"],[data-tfx="twilight"]){text-shadow:none!important}
+html:not(.wk-tfx-off) :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title[data-tfx]:is([data-tfx="neon"],[data-tfx="thunder"],[data-tfx="haki"],[data-tfx="yami"],[data-tfx="gear5"],[data-tfx="glitch"],[data-tfx="mist"]){text-shadow:0 1px 3px rgba(0,0,0,.75)!important}
+html:not(.wk-tfx-off) :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title[data-tfx]{filter:drop-shadow(0 1px 2px rgba(0,0,0,.75))!important}
 </style>
 <script id="wiki-text-fx-text">
 /* Текст надписи в атрибуте: по нему рисуются слои-копии (глитч, дымка) */
