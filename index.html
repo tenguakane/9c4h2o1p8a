@@ -21578,6 +21578,7 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
       var h1v = hrec ? tfxOf(ARTICLES[cid], hrec, null) : '';
       applyTfx(h1, h1v);
       if (h1 && window.__wikiApplyTitleStyle) window.__wikiApplyTitleStyle(h1, hrec ? (raw(hrec) || {}).title_style : '', h1v);
+      if (window.__wikiApplyBodyFont) window.__wikiApplyBodyFont(c, hrec ? (raw(hrec) || {}).title_style : '');
       var acc = hrec ? accentFor(ARTICLES[cid], hrec) : '';
       setAcc(h1, acc);
       var w = c.querySelector('.article-inline-image-wrap'); if (!w) return;
@@ -23297,8 +23298,17 @@ html[data-wk-title-font] .wk-tfx-samples .wk-tfx-sample.wk-tfx-sample{font-famil
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-ts-head b{font:700 13px Arial,sans-serif!important;color:#e2e8f0!important}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-ts-row>span:first-child{color:#94a3b8!important}
 @media (max-width:640px){.wk-ts-row{grid-template-columns:1fr;gap:6px}}
+/* Шрифт текста внутри статьи (не заголовка) */
+html body #characterArticleContent#characterArticleContent#characterArticleContent#characterArticleContent[data-wk-body-font],html body #storyArticleContent#storyArticleContent#storyArticleContent#storyArticleContent[data-wk-body-font],html body #fruitArticleContent#fruitArticleContent#fruitArticleContent#fruitArticleContent[data-wk-body-font],html body #usefulArticleContent#usefulArticleContent#usefulArticleContent#usefulArticleContent[data-wk-body-font]{font-family:var(--wk-body-font)!important}
+html body #characterArticleContent#characterArticleContent#characterArticleContent#characterArticleContent[data-wk-body-font] :not(h1):not([data-tfx]):not(.wk-tfx-sample),html body #storyArticleContent#storyArticleContent#storyArticleContent#storyArticleContent[data-wk-body-font] :not(h1):not([data-tfx]):not(.wk-tfx-sample),html body #fruitArticleContent#fruitArticleContent#fruitArticleContent#fruitArticleContent[data-wk-body-font] :not(h1):not([data-tfx]):not(.wk-tfx-sample),html body #usefulArticleContent#usefulArticleContent#usefulArticleContent#usefulArticleContent[data-wk-body-font] :not(h1):not([data-tfx]):not(.wk-tfx-sample){font-family:var(--wk-body-font)!important;font-size-adjust:var(--wk-body-adj,none)}
+.wk-ts-sep{height:1px;background:#1e293b;margin:2px 0}
+.wk-bf-sample{display:block;margin-top:2px;padding:8px 10px;border-radius:8px;border:1px solid #1e293b;background:#0b1220;color:#cbd5e1;font-size:14px;line-height:1.55}
 .wk-tp{display:grid;gap:8px;padding:10px 12px;border-radius:10px;border:1px solid rgba(212,168,79,.35);background:rgba(212,168,79,.05)}
 .wk-tp-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-width:0}
+.wk-tf-own{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-width:0}
+.wk-ts-note.is-ok{color:#86efac}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-tf-own select{flex:1 1 200px!important;min-width:160px!important;max-width:340px!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-tf-own-find{width:auto!important;min-height:0!important;padding:6px 12px!important;border-radius:8px!important;border:1px solid #475569!important;background:transparent!important;color:#cbd5e1!important;font:600 12px Arial,sans-serif!important;cursor:pointer}
 .wk-tp-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .wk-tp-head>span{color:#f4d99e;font:700 12.5px Arial,sans-serif}
 .wk-tp-list{display:flex;flex-wrap:wrap;gap:6px}
@@ -23356,7 +23366,18 @@ html[data-wk-title-font] .wk-tfx-samples .wk-tfx-sample.wk-tfx-sample{font-famil
     var p = fam.replace(/\s+/g, '+');
     [300, 400, 500, 600, 700, 800, 900].forEach(function (w) { loadFont(p + ':wght@' + w); });
   }
-  var PROPS = ['text-transform', 'font-weight', 'font-style', 'letter-spacing', 'animation-duration', 'animation-play-state'];
+  // Свой шрифт статьи: тот же формат, что у общего шрифта заголовков ('montserrat' или 'g:Имя|вес').
+  function fontList() { return window.__wikiTitleFonts || []; }
+  function fontOf(v) {
+    if (!v) return null;
+    var F = fontList().find(function (x) { return x.v === v; }); if (F) return F;
+    var m = /^g:([^|]+)\|?(\d*)$/.exec(v); if (!m) return null;
+    var w = Number(m[2]) || 0;
+    return { v: v, n: m[1], f: "'" + m[1].replace(/'/g, '') + "'", g: m[1].trim().replace(/\s+/g, '+') + (w ? ':wght@' + w : ''), w: w || 400, custom: true };
+  }
+  function familyWeights(F) { if (!F || !F.g) return; var fam = F.g.split(':')[0]; [300, 400, 500, 600, 700, 800, 900].forEach(function (w) { loadFont(fam + ':wght@' + w); }); }
+  function globalFontName() { var v = String(readMap()['font:titles'] || ''); var F = fontOf(v); return F && F.v ? F.n : 'как на сайте'; }
+  var PROPS = ['text-transform', 'font-weight', 'font-style', 'letter-spacing', 'animation-duration', 'animation-play-state', 'font-family', 'font-size-adjust'];
   function apply(el, styleValue, tfx) {
     if (!el) return;
     var st = parse(styleValue);
@@ -23370,9 +23391,17 @@ html[data-wk-title-font] .wk-tfx-samples .wk-tfx-sample.wk-tfx-sample{font-famil
     PROPS.forEach(function (p) { s.removeProperty(p); });
     if (st.caps === 'up') s.setProperty('text-transform', 'uppercase', 'important');
     else if (st.caps === 'none') s.setProperty('text-transform', 'none', 'important');
-    var w = Number(st.w); if (w >= 100 && w <= 900) { s.setProperty('font-weight', String(w), 'important'); ensureTitleWeights(); }
+    var F = st.font ? fontOf(st.font) : null;
+    if (F && F.v) {
+      loadFont(F.g);
+      s.setProperty('font-family', F.f + ',"Samsung Sans","SamsungOne",Arial,sans-serif', 'important');
+      s.setProperty('font-size-adjust', '0.53', 'important');
+      if (!(Number(st.w) >= 100)) s.setProperty('font-weight', String(F.w || 700), 'important');
+      if (F.ls && !(st.ls != null && st.ls !== '')) s.setProperty('letter-spacing', F.ls, 'important');
+    }
+    var w = Number(st.w); if (w >= 100 && w <= 900) { s.setProperty('font-weight', String(w), 'important'); if (F && F.v) familyWeights(F); else ensureTitleWeights(); }
     if (st.it) s.setProperty('font-style', 'italic', 'important');
-    if (ls != null) s.setProperty('letter-spacing', (ls / 100) + 'em', 'important');
+    if (ls != null && !(F && F.v && F.ls && !(st.ls != null && st.ls !== ''))) s.setProperty('letter-spacing', (ls / 100) + 'em', 'important');
     if (tfx === 'custom' && st.c1) s.setProperty('--wk-ts-c1', st.c1); else s.removeProperty('--wk-ts-c1');
     if (tfx === 'custom' && st.c1 && st.c2) s.setProperty('--wk-ts-c2', st.c2); else s.removeProperty('--wk-ts-c2');
     if (tfx === 'custom' && st.glow) el.setAttribute('data-wk-glow', ''); else el.removeAttribute('data-wk-glow');
@@ -23384,6 +23413,21 @@ html[data-wk-title-font] .wk-tfx-samples .wk-tfx-sample.wk-tfx-sample{font-famil
     }
   }
   window.__wikiApplyTitleStyle = apply;
+  // Шрифт основного текста статьи. Хранится там же, в настройках статьи (поле bf), отдельно от шрифта заголовка.
+  function bodyFont(F) { return F.f + ',"Samsung Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif'; }
+  function applyBody(container, styleValue) {
+    if (!container) return;
+    var st = parse(styleValue), F = st.bf ? fontOf(st.bf) : null;
+    var sig = F && F.v ? F.v : '';
+    if (container.__wkBf === sig) return; container.__wkBf = sig;
+    if (!sig) { container.removeAttribute('data-wk-body-font'); container.style.removeProperty('--wk-body-font'); container.style.removeProperty('--wk-body-adj'); return; }
+    // Для текста грузим обычное и жирное начертания.
+    var fam = (F.g || '').split(':')[0]; if (fam) { loadFont(fam + ':wght@400'); loadFont(fam + ':wght@700'); loadFont(F.g); }
+    container.style.setProperty('--wk-body-font', bodyFont(F));
+    container.style.setProperty('--wk-body-adj', '0.53');
+    container.setAttribute('data-wk-body-font', F.v);
+  }
+  window.__wikiApplyBodyFont = applyBody;
   function reapplyAll() {
     document.querySelectorAll('.character-item .card-title, [id$="ArticleContent"] h1, .wk-tfx-samples .wk-tfx-sample').forEach(function (el) {
       el.__wkTsSig = null; apply(el, el.__wkTsRaw || '', el.__wkTsTfx);
@@ -23445,7 +23489,35 @@ html[data-wk-title-font] .wk-tfx-samples .wk-tfx-sample.wk-tfx-sample{font-famil
     var sel = field.querySelector('[data-field="title_fx"]');
     var st = parse(hidden.value);
     var panel = document.createElement('div'); panel.className = 'wk-ts-panel';
-    var saving = false, flash = '';
+    var saving = false, flash = '', findOpen = false, fontMsg = '';
+    function fontOptions() {
+      var cur = String(st.font || ''), list = fontList().filter(function (x) { return x.v; });
+      var html = '<option value=""' + (cur ? '' : ' selected') + '>Как в редакторе — ' + esc(globalFontName()) + '</option>';
+      var custom = cur && !list.some(function (x) { return x.v === cur; }) ? fontOf(cur) : null;
+      if (custom) html += '<option value="' + esc(cur) + '" selected>' + esc(custom.n) + ' · из Google Fonts</option>';
+      html += '<optgroup label="Шрифты">' + list.map(function (x) { return '<option value="' + esc(x.v) + '"' + (x.v === cur ? ' selected' : '') + '>' + esc(x.n) + '</option>'; }).join('') + '</optgroup>';
+      return html;
+    }
+    function bodyOptions() {
+      var cur = String(st.bf || ''), list = fontList().filter(function (x) { return x.v; });
+      var html = '<option value=""' + (cur ? '' : ' selected') + '>Как на сайте</option>';
+      var custom = cur && !list.some(function (x) { return x.v === cur; }) ? fontOf(cur) : null;
+      if (custom) html += '<option value="' + esc(cur) + '" selected>' + esc(custom.n) + ' · из Google Fonts</option>';
+      if (st.font && !list.some(function (x) { return x.v === st.font; }) && st.font !== cur) { var cf = fontOf(st.font); if (cf) html += '<option value="' + esc(st.font) + '">' + esc(cf.n) + ' · как у заголовка</option>'; }
+      html += '<optgroup label="Шрифты">' + list.map(function (x) { return '<option value="' + esc(x.v) + '"' + (x.v === cur ? ' selected' : '') + '>' + esc(x.n) + '</option>'; }).join('') + '</optgroup>';
+      return html;
+    }
+    async function findFont() {
+      var inp = panel.querySelector('[data-font-q]'); var name = (inp ? inp.value : '').replace(/\s+/g, ' ').trim(); if (!name) { if (inp) inp.focus(); return; }
+      fontMsg = 'Ищу «' + name + '»…'; var keep = name; render(); var i2 = panel.querySelector('[data-font-q]'); if (i2) i2.value = keep;
+      var fam = name.replace(/ /g, '+'), ok = null, css = '';
+      for (var w of [900, 800, 700, 0]) { try { var r = await fetch('https://fonts.googleapis.com/css2?family=' + fam + (w ? ':wght@' + w : '') + '&display=swap'); if (r.ok) { css = await r.text(); ok = w; break; } } catch (e) {} }
+      if (ok === null) { fontMsg = 'Шрифт «' + name + '» не найден в Google Fonts (или нет интернета). Название пишется латиницей, как на fonts.google.com'; render(); var i3 = panel.querySelector('[data-font-q]'); if (i3) i3.value = keep; return; }
+      var real = (/font-family:\s*'([^']+)'/.exec(css) || [])[1] || name;
+      st.font = 'g:' + real + '|' + (ok || ''); findOpen = false;
+      fontMsg = /\/\*\s*cyrillic\s*\*\//.test(css) ? '✓ «' + real + '» — только для этой статьи' : '⚠ У «' + real + '» нет кириллицы — русские буквы будут обычным шрифтом.';
+      commit(true);
+    }
     function presetsHTML() {
       var list = readPresets(), fx = sel ? sel.value : '';
       var cur = -1; list.forEach(function (p, i) { if (cur < 0 && sameSet(p, fx, st)) cur = i; });
@@ -23475,21 +23547,30 @@ html[data-wk-title-font] .wk-tfx-samples .wk-tfx-sample.wk-tfx-sample{font-famil
       var isCustom = sel && sel.value === 'custom';
       var lsAuto = !(st.ls != null && st.ls !== '');
       var g = globalLs();
-      panel.innerHTML = '<div class="wk-ts-head"><b>Настройка шрифта заголовка</b><button type="button" class="wk-ts-reset">Сбросить</button></div>' + presetsHTML()
+      panel.innerHTML = '<div class="wk-ts-head"><b>Шрифт заголовка и текста статьи</b><button type="button" class="wk-ts-reset">Сбросить</button></div>' + presetsHTML()
         + (isCustom ? '<div class="wk-ts-row"><span>Цвета перелива</span><div class="wk-ts-colors">'
           + '<label class="wk-ts-color">1<input type="color" data-k="c1" value="' + (st.c1 || '#ffd36b') + '"></label>'
           + '<label class="wk-ts-color' + (st.c2 ? '' : ' is-off') + '"><input type="checkbox" data-k="c2on"' + (st.c2 ? ' checked' : '') + '> 2<input type="color" data-k="c2" value="' + (st.c2 || '#6bb6ff') + '"></label>'
           + '<label class="wk-ts-check"><input type="checkbox" data-k="glow"' + (st.glow ? ' checked' : '') + '> свечение</label></div></div>'
           + '<div class="wk-ts-row"><span></span><div class="wk-ts-swatches">' + SWATCHES.map(function (c) { return '<button type="button" data-sw="' + c + '" style="background:' + c + '" title="' + c + '"></button>'; }).join('') + '</div></div>'
           + (st.c1 ? '' : '<div class="wk-ts-row"><span></span><span class="wk-ts-note">Пока цвет не выбран, перелив идёт в цвете статьи.</span></div>') : '')
+        + '<div class="wk-ts-row"><span>Шрифт</span><div class="wk-tf-own"><select data-k="font">' + fontOptions() + '</select>'
+        + '<button type="button" class="wk-tf-own-find" data-font-find>🔍 Google Fonts</button></div></div>'
+        + (findOpen ? '<div class="wk-ts-row"><span></span><div class="wk-tp-form"><input type="text" list="wkTfNames2" placeholder="Название латиницей, например Bebas Neue" data-font-q><button type="button" class="wk-tp-ok" data-font-go>Найти</button><button type="button" class="wk-tp-cancel" data-font-cancel>Отмена</button></div></div>' : '')
+        + (fontMsg ? '<div class="wk-ts-row"><span></span><div class="wk-ts-note' + (/^✓/.test(fontMsg) ? ' is-ok' : '') + '">' + esc(fontMsg) + '</div></div>' : '')
         + '<div class="wk-ts-row"><span>Буквы</span>' + seg('caps', [['', 'Как в эффекте'], ['up', 'ЗАГЛАВНЫЕ'], ['none', 'Обычные']], st.caps) + '</div>'
         + '<div class="wk-ts-row"><span>Жирность</span><div class="wk-ts-colors"><select data-k="w">' + WEIGHTS.map(function (w) { return '<option value="' + w[0] + '"' + (String(st.w || '') === w[0] ? ' selected' : '') + '>' + w[1] + '</option>'; }).join('') + '</select>'
         + '<label class="wk-ts-check"><input type="checkbox" data-k="it"' + (st.it ? ' checked' : '') + '> курсив</label></div></div>'
         + '<div class="wk-ts-row"><span>Интервал</span><div class="wk-ts-range' + (lsAuto ? ' is-auto' : '') + '"><input type="range" min="-5" max="30" step="1" data-k="ls" value="' + (lsAuto ? (g == null ? 0 : g) : st.ls) + '"><output>' + (lsAuto ? 'общий' : (st.ls > 0 ? '+' : '') + st.ls) + '</output>' + (lsAuto ? '' : '<button type="button" data-ls-auto>общий</button>') + '</div></div>'
         + '<div class="wk-ts-row"><span>Скорость перелива</span>' + seg('sp', [['', 'Обычная'], ['slow', 'Медленно'], ['fast', 'Быстро'], ['stop', 'Стоп']], st.sp) + '</div>'
+        + '<div class="wk-ts-sep"></div>'
+        + '<div class="wk-ts-row"><span>Шрифт текста статьи</span><div class="wk-tf-own"><select data-k="bf">' + bodyOptions() + '</select></div></div>'
+        + (st.bf ? '<div class="wk-ts-row"><span></span><span class="wk-bf-sample" data-bf-sample>Монки Д. Луффи мечтает стать Королём пиратов и найти легендарное сокровище — Ван Пис.</span></div>' : '')
         + '<div class="wk-ts-note">Работает с любым эффектом: например, «Радуга» + ЗАГЛАВНЫЕ. «Общий» интервал задаётся для всех статей в «Аа Шрифт заголовков».</div>';
       decoratePresets();
+      var bfs = panel.querySelector('[data-bf-sample]'); if (bfs && st.bf) { var BF = fontOf(st.bf); if (BF) { loadFont(BF.g); bfs.style.setProperty('font-family', bodyFont(BF), 'important'); bfs.style.setProperty('font-size-adjust', '0.53'); } }
       var ni = panel.querySelector('[data-tp-name]'); if (ni) { ni.focus(); ni.select(); }
+      if (!panel.querySelector('datalist#wkTfNames2')) { var dlst = document.getElementById('wkTfNames2'); if (!dlst) { dlst = document.createElement('datalist'); dlst.id = 'wkTfNames2'; ['Bebas Neue','Alice','Arsenal','Bad Script','Forum','Lora','Merriweather','Neucha','Old Standard TT','Oranienbaum','Pattaya','Poiret One','Prosto One','PT Serif','Rubik Glitch','Rubik Wet Paint','Rubik Burned','Rubik Beastly','Kelly Slab','Kurale'].forEach(function (n) { var o = document.createElement('option'); o.value = n; dlst.appendChild(o); }); document.body.appendChild(dlst); } }
     }
     function commit(rerender) {
       var clean = {}; Object.keys(st).forEach(function (k) { var v = st[k]; if (v !== '' && v != null && v !== false) clean[k] = v; });
@@ -23501,6 +23582,9 @@ html[data-wk-title-font] .wk-tfx-samples .wk-tfx-sample.wk-tfx-sample{font-famil
     panel.addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return;
       if (b.classList.contains('wk-ts-reset')) { st = {}; flash = ''; commit(true); return; }
+      if (b.hasAttribute('data-font-find')) { findOpen = !findOpen; fontMsg = ''; render(); var q = panel.querySelector('[data-font-q]'); if (q) q.focus(); return; }
+      if (b.hasAttribute('data-font-cancel')) { findOpen = false; fontMsg = ''; render(); return; }
+      if (b.hasAttribute('data-font-go')) { findFont(); return; }
       if (b.hasAttribute('data-tp-save')) { saving = true; flash = ''; render(); return; }
       if (b.hasAttribute('data-tp-cancel')) { saving = false; render(); return; }
       if (b.hasAttribute('data-tp-ok')) { savePreset(); return; }
@@ -23520,6 +23604,7 @@ html[data-wk-title-font] .wk-tfx-samples .wk-tfx-sample.wk-tfx-sample{font-famil
       var sg = b.closest('[data-seg]'); if (sg) { st[sg.getAttribute('data-seg')] = b.getAttribute('data-v'); commit(true); }
     });
     panel.addEventListener('keydown', function (e) {
+      if (e.target.hasAttribute && e.target.hasAttribute('data-font-q')) { if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); findFont(); } else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); findOpen = false; render(); } return; }
       if (!e.target.hasAttribute || !e.target.hasAttribute('data-tp-name')) return;
       if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); savePreset(); }
       else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); saving = false; render(); }
@@ -23541,12 +23626,14 @@ html[data-wk-title-font] .wk-tfx-samples .wk-tfx-sample.wk-tfx-sample{font-famil
       if (k === 'c2on') { if (t.checked) st.c2 = panel.querySelector('[data-k="c2"]').value; else delete st.c2; commit(true); }
       else if (k === 'glow' || k === 'it') { st[k] = t.checked; commit(false); }
       else if (k === 'w') { st.w = t.value; commit(false); }
+      else if (k === 'bf') { st.bf = t.value; commit(true); }
+      else if (k === 'font') { st.font = t.value; fontMsg = t.value ? '✓ Шрифт только для этой статьи' : ''; commit(true); }
       else if (k === 'ls' || k === 'c1' || k === 'c2') commit(k === 'ls');
     });
     if (sel) sel.addEventListener('change', function () { render(); });
     // Наборы могли поменяться в другой статье или прийти из облака
-    var lastP = JSON.stringify(readPresets());
-    var tpTimer = setInterval(function () { if (!panel.isConnected) { clearInterval(tpTimer); return; } var now = JSON.stringify(readPresets()); if (now !== lastP && !saving) { lastP = now; render(); } }, 2000);
+    var lastP = JSON.stringify(readPresets()) + '|' + globalFontName();
+    var tpTimer = setInterval(function () { if (!panel.isConnected) { clearInterval(tpTimer); return; } var now = JSON.stringify(readPresets()) + '|' + globalFontName(); if (now !== lastP && !saving && !findOpen) { lastP = now; render(); } }, 2000);
     render();
     var samples = field.querySelector('.wk-tfx-samples');
     if (samples && samples.nextSibling) field.insertBefore(panel, samples.nextSibling); else field.appendChild(panel);
