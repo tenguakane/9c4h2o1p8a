@@ -1325,7 +1325,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "23.10.2026 · 32";
+const WIKI_VERSION = "25.10.2026 · 33";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -12396,7 +12396,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
   const getRecords=name=>{
     try{let list=[];if(name==='character'&&typeof characters!=='undefined')list=characters;else if(name==='fruit'&&typeof fruits!=='undefined')list=fruits;else if(name==='reward'&&typeof rewards!=='undefined')list=rewards;else if(name==='useful'&&typeof usefulArticles!=='undefined')list=usefulArticles;else if(name==='story'&&typeof storyArcs!=='undefined')list=storyArcs;return Array.isArray(list)?list.filter(x=>!isDraft(x)):[];}catch(_){return[];}
   };
-  const progressValue=()=>{try{const p=window.__wikiSpoilerProgress||JSON.parse(localStorage.getItem('onePieceWikiSpoilerProgressV1')||'{}');return{chapter:Math.max(0,Number(p.chapter)||0),episode:Math.max(0,Number(p.episode)||0)};}catch(_){return{chapter:0,episode:0};}};
+  const progressValue=()=>{const out={chapter:0,episode:0};const take=p=>{if(!p)return;out.chapter=Math.max(out.chapter,Number(p.chapter)||0);out.episode=Math.max(out.episode,Number(p.episode)||0);};try{take(window.__wikiSpoilerProgress);}catch(_){}try{take(JSON.parse(localStorage.getItem('onePieceWikiSpoilerProgressV1')||'{}'));}catch(_){}return out;};
   // Editor spoiler-audit mode is also a visual preview mode for the achievements board.
   // Everything is temporarily presented as earned without writing any achievement state.
   const isAchievementPreviewMode=()=>{try{return window.__wikiAchievementPreviewMode===true||(typeof window.__wikiSpoilerAuditMode==='function'&&window.__wikiSpoilerAuditMode()===true);}catch(_){return window.__wikiAchievementPreviewMode===true;}};
@@ -12443,7 +12443,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
   let activeFilter='all';let allAchievements=[];
   const roman=n=>{const nums=[1000,900,500,400,100,90,50,40,10,9,5,4,1],chars=['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'];let out='';for(let i=0;i<nums.length;i++)while(n>=nums[i]){out+=chars[i];n-=nums[i];}return out||String(n);};
   function normalizedSaga(record){return title(record.saga||record.saga_anime||'');}
-  function sagaKey(value){return title(value).toLocaleLowerCase('ru').replace(/ё/g,'е').replace(/\s+/g,' ');}
+  function sagaKey(value){return title(value).toLocaleLowerCase('ru').replace(/ё/g,'е').replace(/[^a-zа-я0-9]+/g,' ').replace(/^сага\s+|\s+сага$/g,'').trim();}
   function sagaAchievements(type){
     // Награды больше не группируются по сагам: остаются только общие пороги количества открытых наград.
     return [];
@@ -12495,13 +12495,25 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
       .filter(record=>!isFlagged(record.filler)&&!isFlagged(record.movie));
     const values=field=>records.flatMap(record=>numberList(record[field]));
     const chapterNumbers=values('chapters'),episodeNumbers=values('episodes');
+    // Канонические границы саг — запасной вариант, если в данных у саги другое название
+    // или её арки ещё не загружены. Без этого медали саги просто пропадали с доски.
+    const fallback=SAGA_FALLBACK_BOUNDS[sagaKey(sagaName)]||{};
     return {
-      startChapter:chapterNumbers.length?Math.min(...chapterNumbers):0,
-      endChapter:chapterNumbers.length?Math.max(...chapterNumbers):0,
-      startEpisode:episodeNumbers.length?Math.min(...episodeNumbers):0,
-      endEpisode:episodeNumbers.length?Math.max(...episodeNumbers):0
+      startChapter:chapterNumbers.length?Math.min(...chapterNumbers):(fallback.startChapter||0),
+      endChapter:chapterNumbers.length?Math.max(...chapterNumbers):(fallback.endChapter||0),
+      startEpisode:episodeNumbers.length?Math.min(...episodeNumbers):(fallback.startEpisode||0),
+      endEpisode:episodeNumbers.length?Math.max(...episodeNumbers):(fallback.endEpisode||0)
     };
   }
+  const SAGA_FALLBACK_BOUNDS=(()=>{
+    const raw={
+      'Ист-Блю':[1,100,1,53],'Алабаста':[101,217,62,130],'Небесный Остров':[218,302,144,195],'Water 7':[303,441,207,325],
+      'Триллер Барк':[442,489,337,381],'Великая Война':[490,597,385,516],'Остров Рыболюдей':[598,653,517,574],'Дресс Роза':[654,801,579,746],
+      'Пирожный Остров':[802,908,751,889],'Страна Вано':[909,1057,890,1085],'Финальная':[1058,0,1086,0]
+    };
+    const out={};Object.keys(raw).forEach(name=>{const v=raw[name];out[sagaKey(name)]={startChapter:v[0],endChapter:v[1],startEpisode:v[2],endEpisode:v[3]};});
+    return out;
+  })();
   function sagaTrackProgress(current,start,end){
     if(!start||!end||current<start)return 0;
     const total=end-start+1;
