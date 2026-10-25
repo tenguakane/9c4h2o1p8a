@@ -23087,4 +23087,62 @@ html[data-wk-title-font] :is(.character-item .card-title,[id$="ArticleContent"] 
   document.addEventListener('click', function (e) { var p = document.querySelector('.wk-tf-pop'); if (p && !p.contains(e.target) && !e.target.closest('#wikiEditorTitleFont')) p.remove(); });
 })();
 </script>
+<style id="rewardGridTwoLineTitles">
+/* Награды → «Карточки»: имя до двух строк, высота плаката подстраивается под окно,
+   чтобы два ряда карточек и пагинация помещались без вертикальной прокрутки. */
+#rewardsSection#rewardsSection #rewardsList.reward-display-grid{--rw-img:clamp(130px,calc((100dvh - 574px) / 2),198px);margin-bottom:10px!important}
+#rewardsSection#rewardsSection #rewardsList.reward-display-grid>.reward-grid-card{height:auto!important;min-height:0!important;max-height:none!important;padding:8px 8px 9px!important}
+#rewardsSection#rewardsSection #rewardsList.reward-display-grid>.reward-grid-card .reward-grid-image-wrap{height:var(--rw-img)!important;min-height:var(--rw-img)!important;max-height:var(--rw-img)!important;flex:0 0 var(--rw-img)!important;margin:0 auto 6px!important}
+#rewardsSection#rewardsSection #rewardsList.reward-display-grid>.reward-grid-card .reward-grid-content{flex:1 1 auto!important;justify-content:flex-end!important;gap:2px!important;min-height:72px!important;padding:0 2px!important;margin:0!important}
+#rewardsSection#rewardsSection #rewardsList.reward-display-grid>.reward-grid-card .reward-grid-title{display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;line-clamp:2;white-space:normal!important;overflow:hidden!important;text-overflow:clip!important;overflow-wrap:break-word!important;font-size:14px!important;line-height:1.18!important;max-height:calc(2 * 1.18em)!important;padding:0!important}
+#rewardsSection#rewardsSection #rewardsList.reward-display-grid>.reward-grid-card .reward-grid-arc{line-height:1.2!important}
+#rewardsSection#rewardsSection #rewardsList.reward-display-grid>.reward-grid-card .reward-grid-value{margin:3px 0 0!important;line-height:1.15!important}
+@media (max-width:760px){
+  /* На телефоне прокрутка естественна: плакат прежнего размера, имя тоже в две строки. */
+  #rewardsSection#rewardsSection #rewardsList.reward-display-grid{--rw-img:198px}
+}
+</style>
+<script>
+/* Точная подгонка высоты плаката в «Карточках» наград под реальную высоту окна. */
+(function () {
+  var MIN = 130, MAX = 198, pending = 0;
+  function fit() {
+    pending = 0;
+    var list = document.getElementById('rewardsList');
+    if (!list) return;
+    var active = list.classList.contains('reward-display-grid') && window.innerWidth > 760 && list.offsetParent !== null;
+    var card = active && list.querySelector('.reward-grid-card');
+    var img = card && card.querySelector('.reward-grid-image-wrap');
+    if (!img) { list.style.removeProperty('--rw-img'); return; }
+    var lr = list.getBoundingClientRect();
+    var top = lr.top + window.scrollY;
+    var foot = document.getElementById('wikiSiteFooter');
+    var pag = document.getElementById('rewardPagination');
+    // Считаем «естественную» высоту под сеткой: футер может быть прижат к низу окна, поэтому
+    // берём его собственную высоту, а не позицию.
+    var cont = list.closest('.container');
+    var pagEnd = pag && pag.offsetParent !== null ? pag.getBoundingClientRect().bottom + (parseFloat(getComputedStyle(pag).marginBottom) || 0) : lr.bottom + (parseFloat(getComputedStyle(list).marginBottom) || 0);
+    var below = (pagEnd - lr.bottom) + (cont ? parseFloat(getComputedStyle(cont).paddingBottom) || 0 : 0) + (foot && foot.offsetParent !== null ? foot.getBoundingClientRect().height : 0);
+    var gap = parseFloat(getComputedStyle(list).rowGap) || 0;
+    var extra = card.getBoundingClientRect().height - img.getBoundingClientRect().height;
+    var h = Math.floor((window.innerHeight - top - below - gap - 2 * extra) / 2) - 1;
+    h = Math.max(MIN, Math.min(MAX, h));
+    if (list.style.getPropertyValue('--rw-img') !== h + 'px') list.style.setProperty('--rw-img', h + 'px');
+  }
+  function schedule() { if (!pending) pending = requestAnimationFrame(fit); }
+  function init() {
+    var list = document.getElementById('rewardsList');
+    if (!list) return;
+    new MutationObserver(schedule).observe(list, { childList: true, attributes: true, attributeFilter: ['class'] });
+    var sec = document.getElementById('rewardsSection');
+    if (sec) new MutationObserver(schedule).observe(sec, { attributes: true, attributeFilter: ['class', 'style'] });
+    var panel = document.getElementById('rewardsFiltersPanel');
+    if (panel) new MutationObserver(schedule).observe(panel, { attributes: true, attributeFilter: ['hidden'] });
+    window.addEventListener('resize', schedule);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+    schedule();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>
 </body></html>
