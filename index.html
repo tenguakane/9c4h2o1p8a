@@ -1325,7 +1325,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "25.10.2026 · 43";
+const WIKI_VERSION = "25.10.2026 · 44";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -22854,6 +22854,128 @@ html.ios-app body .container :is(button,.back-button):active{opacity:.6}
     setInterval(tick, 2000);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
+})();
+</script>
+<style id="wiki-title-font-style">
+/* ===== Шрифт заголовков: один на все статьи — имя на обложке и заголовок внутри статьи ===== */
+html[data-wk-title-font] :is(.character-item .card-title,[id$="ArticleContent"] h1){font-family:var(--wk-title-font),"Samsung Sans","SamsungOne",Arial,sans-serif!important;font-weight:var(--wk-title-fw,700)!important;font-size-adjust:var(--wk-title-adj,.53);letter-spacing:var(--wk-title-ls,normal)}
+.wk-tf-pop{position:absolute;z-index:60;right:0;top:calc(100% + 8px);width:min(440px,92vw);max-height:min(70vh,560px);overflow:auto;padding:12px;border-radius:14px;border:1px solid rgba(212,168,79,.5);background:#0b1120;box-shadow:0 18px 40px rgba(0,0,0,.6);text-align:left}
+.wk-tf-pop h3{margin:0 0 4px;font-size:14px;color:#f4d99e}
+.wk-tf-pop p{margin:0 0 10px;color:#94a3b8;font-size:12px;line-height:1.45}
+.wk-tf-list{display:grid;gap:6px}
+.wk-tf-item{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:9px 12px;border-radius:10px;border:1px solid #334155;background:rgba(255,255,255,.03);color:#e5e7eb;cursor:pointer;text-align:left}
+.wk-tf-item:hover{border-color:#64748b;background:rgba(255,255,255,.06)}
+.wk-tf-item.is-on{border-color:#d4a84f;background:rgba(212,168,79,.14)}
+.wk-tf-item .s{font-size:20px;line-height:1.15;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size-adjust:.53}
+.wk-tf-item .n{flex:0 0 auto;font:600 11px Arial,sans-serif;color:#94a3b8}
+.wk-tf-item.is-on .n{color:#f4d99e}
+.wk-tf-status{display:block;min-height:16px;margin-top:8px;color:#86efac;font-size:12px}
+.wk-tf-btn-wrap{position:relative;display:inline-flex}
+</style>
+<script id="wiki-title-font">
+(function () {
+  'use strict';
+  // Хранится в общем наборе настроек редактора (тот же, что у эффектов медалей): попадает в облако и экспорт HTML.
+  var KEY = 'onePieceWikiMedalArtV1', STORAGE_KEY = 'onePieceWikiLocalContentV1', FKEY = 'font:titles';
+  var FONTS = [
+    { v: '', n: 'Как на сайте' },
+    { v: 'montserrat', n: 'Montserrat', f: "'Montserrat'", g: 'Montserrat:wght@800', w: 800 },
+    { v: 'rubik', n: 'Rubik', f: "'Rubik'", g: 'Rubik:wght@700', w: 700 },
+    { v: 'unbounded', n: 'Unbounded', f: "'Unbounded'", g: 'Unbounded:wght@700', w: 700 },
+    { v: 'russo', n: 'Russo One', f: "'Russo One'", g: 'Russo+One', w: 400 },
+    { v: 'oswald', n: 'Oswald', f: "'Oswald'", g: 'Oswald:wght@600', w: 600, ls: '.02em' },
+    { v: 'exo2', n: 'Exo 2', f: "'Exo 2'", g: 'Exo+2:wght@700', w: 700 },
+    { v: 'comfortaa', n: 'Comfortaa', f: "'Comfortaa'", g: 'Comfortaa:wght@700', w: 700 },
+    { v: 'philosopher', n: 'Philosopher', f: "'Philosopher'", g: 'Philosopher:wght@700', w: 700 },
+    { v: 'jura', n: 'Jura', f: "'Jura'", g: 'Jura:wght@700', w: 700 },
+    { v: 'playfair', n: 'Playfair Display', f: "'Playfair Display'", g: 'Playfair+Display:wght@800', w: 800 },
+    { v: 'cormorant', n: 'Cormorant Garamond', f: "'Cormorant Garamond'", g: 'Cormorant+Garamond:wght@700', w: 700 },
+    { v: 'yeseva', n: 'Yeseva One', f: "'Yeseva One'", g: 'Yeseva+One', w: 400 },
+    { v: 'ruslan', n: 'Ruslan Display', f: "'Ruslan Display'", g: 'Ruslan+Display', w: 400 },
+    { v: 'lobster', n: 'Lobster', f: "'Lobster'", g: 'Lobster', w: 400 },
+    { v: 'pacifico', n: 'Pacifico', f: "'Pacifico'", g: 'Pacifico', w: 400 },
+    { v: 'caveat', n: 'Caveat', f: "'Caveat'", g: 'Caveat:wght@700', w: 700 },
+    { v: 'marck', n: 'Marck Script', f: "'Marck Script'", g: 'Marck+Script', w: 400 },
+    { v: 'amatic', n: 'Amatic SC', f: "'Amatic SC'", g: 'Amatic+SC:wght@700', w: 700, ls: '.03em' },
+    { v: 'pressstart', n: 'Press Start 2P', f: "'Press Start 2P'", g: 'Press+Start+2P', w: 400 },
+    { v: 'underdog', n: 'Underdog', f: "'Underdog'", g: 'Underdog', w: 400 }
+  ];
+  window.__wikiTitleFonts = FONTS;
+  function readMap() { try { var v = JSON.parse(localStorage.getItem(KEY) || '{}'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
+  function writeMap(map) {
+    try { localStorage.setItem(KEY, JSON.stringify(map)); } catch (e) {}
+    try { var raw = localStorage.getItem(STORAGE_KEY); if (raw) { var d = JSON.parse(raw); d.medalArt = map; d.updatedAt = new Date().toISOString(); localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } } catch (e) {}
+  }
+  function current() { var v = String(readMap()[FKEY] || ''); return FONTS.some(function (x) { return x.v === v; }) ? v : ''; }
+  var loaded = {};
+  function loadFonts(list) {
+    var need = list.filter(function (x) { return x.g && !loaded[x.v]; });
+    if (!need.length) return;
+    need.forEach(function (x) { loaded[x.v] = true; });
+    var l = document.createElement('link'); l.rel = 'stylesheet';
+    l.href = 'https://fonts.googleapis.com/css2?' + need.map(function (x) { return 'family=' + x.g; }).join('&') + '&display=swap';
+    document.head.appendChild(l);
+  }
+  var applied = null;
+  function apply() {
+    var v = current(); if (v === applied) return; applied = v;
+    var root = document.documentElement, F = FONTS.find(function (x) { return x.v === v; });
+    if (!F || !F.v) { root.removeAttribute('data-wk-title-font'); ['--wk-title-font', '--wk-title-fw', '--wk-title-ls'].forEach(function (k) { root.style.removeProperty(k); }); return; }
+    loadFonts([F]);
+    root.setAttribute('data-wk-title-font', F.v);
+    root.style.setProperty('--wk-title-font', F.f);
+    root.style.setProperty('--wk-title-fw', String(F.w || 700));
+    if (F.ls) root.style.setProperty('--wk-title-ls', F.ls); else root.style.removeProperty('--wk-title-ls');
+  }
+  window.__wikiApplyTitleFont = function () { applied = null; apply(); };
+  apply();
+  // Данные могут прийти из облака позже — сверяемся время от времени и при изменении в другой вкладке.
+  setInterval(apply, 2500);
+  window.addEventListener('storage', function (e) { if (!e.key || e.key === KEY) apply(); });
+
+  /* ---------- Кнопка в редакторе ---------- */
+  function popover(anchor) {
+    var old = document.querySelector('.wk-tf-pop'); if (old) { old.remove(); return; }
+    loadFonts(FONTS);
+    var pop = document.createElement('div'); pop.className = 'wk-tf-pop';
+    var cur = current();
+    pop.innerHTML = '<h3>Шрифт заголовков</h3><p>Один шрифт для всех статей: имя на обложке в каталоге и заголовок внутри статьи. Сохраняется вместе с данными вики.</p><div class="wk-tf-list"></div><span class="wk-tf-status"></span>';
+    var list = pop.querySelector('.wk-tf-list');
+    FONTS.forEach(function (F) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'wk-tf-item' + (F.v === cur ? ' is-on' : ''); b.dataset.v = F.v;
+      var smp = document.createElement('span'); smp.className = 's'; smp.textContent = 'Арка: Эниес Лобби';
+      // Стили редактора задают свой шрифт всем элементам — пример рисуем с приоритетом.
+      if (F.f) smp.style.setProperty('font-family', F.f + ',"Samsung Sans",Arial,sans-serif', 'important');
+      smp.style.setProperty('font-weight', String(F.w || 800), 'important');
+      if (F.ls) smp.style.setProperty('letter-spacing', F.ls, 'important');
+      var nm = document.createElement('span'); nm.className = 'n'; nm.textContent = F.n;
+      b.appendChild(smp); b.appendChild(nm);
+      b.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var m = readMap(); if (F.v) m[FKEY] = F.v; else delete m[FKEY]; writeMap(m);
+        window.__wikiApplyTitleFont();
+        list.querySelectorAll('.wk-tf-item').forEach(function (x) { x.classList.toggle('is-on', x === b); });
+        pop.querySelector('.wk-tf-status').textContent = F.v ? '✓ «' + F.n + '» — на всех заголовках' : '✓ Обычный шрифт сайта';
+      });
+      list.appendChild(b);
+    });
+    anchor.appendChild(pop);
+  }
+  function mount() {
+    var acts = document.querySelector('#wikiEditorOverlay .wiki-editor-actions, .wiki-editor-panel .wiki-editor-actions');
+    if (!acts || acts.querySelector('.wk-tf-btn-wrap')) return;
+    var wrap = document.createElement('span'); wrap.className = 'wk-tf-btn-wrap';
+    var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'wiki-editor-btn'; btn.id = 'wikiEditorTitleFont'; btn.textContent = 'Аа Шрифт заголовков';
+    btn.title = 'Выбрать шрифт для заголовков всех статей';
+    btn.addEventListener('click', function (e) { e.stopPropagation(); popover(wrap); });
+    wrap.appendChild(btn);
+    var close = acts.querySelector('#wikiEditorClose');
+    acts.insertBefore(wrap, close || null);
+  }
+  var pend = 0;
+  new MutationObserver(function () { if (!pend) pend = requestAnimationFrame(function () { pend = 0; mount(); }); }).observe(document.body, { childList: true, subtree: true });
+  mount();
+  document.addEventListener('click', function (e) { var p = document.querySelector('.wk-tf-pop'); if (p && !p.contains(e.target) && !e.target.closest('#wikiEditorTitleFont')) p.remove(); });
 })();
 </script>
 </body></html>
