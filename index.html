@@ -10119,7 +10119,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
                     <label>Текущий эпизод аниме<input id="wikiSpoilerProgressEpisode" type="number" min="0" step="1" inputmode="numeric" value="${spoilerProgress.episode||''}" placeholder="Например, 1080"></label>
                     <button type="button" class="wiki-editor-btn primary" id="wikiSpoilerProgressSave">Сохранить прогресс</button>
                 </div>
-                <div class="wiki-spoiler-progress-note">Каждая статья скрыта, пока человек не дошёл до неё: глава ≥ порога главы ИЛИ эпизод ≥ порога эпизода. Порог — это глава/эпизод появления (у персонажа и плода), начало диапазона (у сюжетной арки) или поля «появление» (у наград и полезного). Персонажи фильмов открываются отметкой фильма. Статьи без порога видны всем — заполни порог, если статья может проспойлерить.</div>
+                <div class="wiki-spoiler-progress-note">Каждая статья скрыта, пока человек не дошёл до неё: глава ≥ порога главы ИЛИ эпизод ≥ порога эпизода. Порог — это глава/эпизод появления (у персонажа и плода), начало диапазона (у сюжетной арки в списке; сама статья арки открывается после её последней главы или серии) или поля «появление» (у наград и полезного). Персонажи фильмов открываются отметкой фильма. Статьи без порога видны всем — заполни порог, если статья может проспойлерить.</div>
                 <label class="wiki-spoiler-audit-toggle"><input type="checkbox" id="wikiSpoilerAuditMode" ${spoilerAuditMode?'checked':''}><span><strong>Режим проверки:</strong> показывать все статьи на сайте</span></label>
                 <button type="button" class="wiki-editor-btn primary" id="wikiSpoilerShowAllBtn" style="width:100%;margin-top:8px">${spoilerAuditMode?'✓ Все статьи отображаются':'👁️ Отобразить все статьи'}</button>
                 <div class="wiki-spoiler-audit-note">${spoilerAuditMode?'Режим включён. Закрой редактор, чтобы проверить сайт целиком. Чтобы вернуть обычное отображение, снова открой редактор и выключи режим.':'Включи режим и закрой редактор, чтобы осмотреть сайт так, будто всё уже просмотрено.'}</div>
@@ -12536,7 +12536,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
       const useManga=chapterRatio>=episodeRatio&&bounds.endChapter>0;
       const route=useManga?'Манга':'Аниме';
       const trackLabel=useManga?sagaTrackLabel(progress.chapter,bounds.startChapter,bounds.endChapter,route):sagaTrackLabel(progress.episode,bounds.startEpisode,bounds.endEpisode,route);
-      items.push({id:`saga-complete:${saga.key}`,category:'special',filter:'special',section:'Завершение саг',sortName:String(SAGA_MEDALS.indexOf(saga)).padStart(2,'0'),title:`Завершить сагу «${saga.name}»`,subtitle:`Пройди сагу «${saga.name}» до конца в манге или аниме`,typeLabel:'ПУТЬ К РАФТЕЛЮ · САГА',icon:'',color:'#d4a84f',done,progress:Math.round(ratio*100),total:100,progressLabel:trackLabel,description:done?`Сага «${saga.name}» завершена по ${useManga?'манге':'аниме'}.`:`Конец саги: глава ${bounds.endChapter||'—'} или эпизод ${bounds.endEpisode||'—'}.`,search:`завершить сагу ${saga.name} ${bounds.endChapter} ${bounds.endEpisode}`,family:'saga-complete',medalArt:saga.art});
+      items.push({id:`saga-complete:${saga.key}`,alwaysVisible:true,category:'special',filter:'special',section:'Завершение саг',sortName:String(SAGA_MEDALS.indexOf(saga)).padStart(2,'0'),title:`Завершить сагу «${saga.name}»`,subtitle:`Пройди сагу «${saga.name}» до конца в манге или аниме`,typeLabel:'ПУТЬ К РАФТЕЛЮ · САГА',icon:'',color:'#d4a84f',done,progress:Math.round(ratio*100),total:100,progressLabel:trackLabel,description:done?`Сага «${saga.name}» завершена по ${useManga?'манге':'аниме'}.`:`Конец саги: глава ${bounds.endChapter||'—'} или эпизод ${bounds.endEpisode||'—'}.`,search:`завершить сагу ${saga.name} ${bounds.endChapter} ${bounds.endEpisode}`,family:'saga-complete',medalArt:saga.art});
     });
     const finalBounds=sagaBounds('Финальная');
     if(finalBounds.startChapter||finalBounds.startEpisode||isAchievementPreviewMode()){
@@ -12546,8 +12546,8 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
       const done=(finalBounds.startChapter>0&&progress.chapter>=finalBounds.startChapter)||(finalBounds.startEpisode>0&&progress.episode>=finalBounds.startEpisode);
       const useManga=chapterRatio>=episodeRatio&&finalBounds.startChapter>0;
       const current=useManga?progress.chapter:progress.episode,target=useManga?finalBounds.startChapter:finalBounds.startEpisode;
-      // Скрываем это достижение полностью, пока пользователь не достиг начала Финальной саги.
-      if(done||isAchievementPreviewMode())items.push({id:'saga-start:final',category:'special',filter:'special',section:'Завершение саг',sortName:'99',title:'Начать сагу «Финальная»',subtitle:`Достигни главы ${finalBounds.startChapter||'—'} или эпизода ${finalBounds.startEpisode||'—'}`,typeLabel:'ПУТЬ К РАФТЕЛЮ · НОВЫЙ ЭТАП',icon:'',color:'#d4a84f',done,progress:done?100:Math.round(ratio*100),total:100,progressLabel:`${useManga?'Манга':'Аниме'}: ${Math.min(current,target).toLocaleString('ru-RU')} / ${target.toLocaleString('ru-RU')}`,description:done?'Финальная сага начата.':`Начало саги: глава ${finalBounds.startChapter||'—'} или эпизод ${finalBounds.startEpisode||'—'}.`,search:`начать сагу финальная egghead ${finalBounds.startChapter} ${finalBounds.startEpisode}`,family:'saga-start',medalArt:'saga_final'});
+      // Медаль видна всегда: до начала Финальной саги показывается прогресс к ней.
+      items.push({id:'saga-start:final',alwaysVisible:true,category:'special',filter:'special',section:'Завершение саг',sortName:'99',title:'Начать сагу «Финальная»',subtitle:`Достигни главы ${finalBounds.startChapter||'—'} или эпизода ${finalBounds.startEpisode||'—'}`,typeLabel:'ПУТЬ К РАФТЕЛЮ · НОВЫЙ ЭТАП',icon:'',color:'#d4a84f',done,progress:done?100:Math.round(ratio*100),total:100,progressLabel:`${useManga?'Манга':'Аниме'}: ${Math.min(current,target).toLocaleString('ru-RU')} / ${target.toLocaleString('ru-RU')}`,description:done?'Финальная сага начата.':`Начало саги: глава ${finalBounds.startChapter||'—'} или эпизод ${finalBounds.startEpisode||'—'}.`,search:`начать сагу финальная egghead ${finalBounds.startChapter} ${finalBounds.startEpisode}`,family:'saga-start',medalArt:'saga_final'});
     }
     return items;
   }
@@ -12687,7 +12687,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
   function render(){
     const data=allBuild(),p=data.p,fcount=favoriteCount(),previewMode=!!data.previewMode;
     const previewNotice=$('#achievementPreviewNotice');if(previewNotice)previewNotice.hidden=!previewMode;
-    const visibleAchievements=allAchievements.filter(item=>previewMode||(item.publicVisible!==false&&(Number(item.progress)>0||item.done)));
+    const visibleAchievements=allAchievements.filter(item=>previewMode||(item.publicVisible!==false&&(item.alwaysVisible||Number(item.progress)>0||item.done)));
     const earned=visibleAchievements.filter(a=>a.done).length,total=visibleAchievements.length;
     $('#achievementOverview').innerHTML=`<article class="achievement-stat"><div class="achievement-stat-label"><span>Получено медалей</span></div><strong class="achievement-stat-value">${earned} / ${total}</strong></article><article class="achievement-stat"><div class="achievement-stat-label"><span>Прогресс истории</span></div><strong class="achievement-stat-value">${p.chapter.toLocaleString('ru-RU')} / ${p.episode.toLocaleString('ru-RU')}</strong><div class="achievement-stat-label">главы / серии</div></article><article class="achievement-stat"><div class="achievement-stat-label"><span>В избранном</span></div><strong class="achievement-stat-value">${fcount.toLocaleString('ru-RU')}</strong><div class="achievement-stat-label">сохранённых статей</div></article>`;
     const query=String($('#achievementSearch')?.value||'').trim().toLocaleLowerCase('ru'),hideEarned=!!$('#achievementHideEarned')?.checked;
@@ -12762,7 +12762,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     const host=document.getElementById('wikiEditorForm');if(!host)return;
     const mount=host.querySelector('#wikiEditorAchievementManagerMount');if(!mount||mount.querySelector('.wiki-editor-achievements'))return;
     const section=document.createElement('section');section.className='wiki-editor-achievements';section.id='wikiEditorAchievements';
-    section.innerHTML=`<div class="wiki-editor-achievements-head"><div><div class="wiki-editor-achievements-kicker">НАГРАДЫ И МЕДАЛИ</div><h3>Достижения энциклопедии</h3><p>Создавай особые достижения и задавай условие открытия по главе манги или эпизоду аниме. Они сохраняются вместе с данными Wiki.</p></div><button type="button" class="wiki-editor-achievement-new" id="wikiAchievementCreate">＋ Новое достижение</button></div><div class="wiki-editor-achievement-list" id="wikiAchievementEditorList"></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Коллекция WANTED · 5 уровней</strong><small>Незавершённые уровни скрыты в публичной доске, пока не наступит их очередь. Все заготовки остаются видны здесь. Ориентир 1 567 — ориентировочное число персонажей в списке голосования WT100.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiWantedPresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Коллекция персонажей · 5 уровней</strong><small>Общий счётчик всех доступных персонажей — без группировки по сагам и аркам.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiCharacterPresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Коллекция плодов · 5 уровней</strong><small>Общий счётчик доступных дьявольских плодов — без группировки по сагам и аркам.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiFruitPresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Сюжетные саги · 11 достижений</strong><small>Эти медали скрыты на доске, пока прогресс истории не начат, но все варианты доступны здесь.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiSagaPresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Избранное · 3 достижения</strong><small>За статьи, сохранённые в избранное.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiFavoritePresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Чтение · 5 достижений</strong><small>За разные открытые статьи (каждая считается один раз).</small></div></div><div class="wiki-editor-wanted-grid" id="wikiViewsPresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Юбилейные главы · 7 достижений</strong><small>Путь читателя: за прочитанные главы манги.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiMangaPresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Юбилейные серии · 7 достижений</strong><small>Путь зрителя: за просмотренные серии аниме.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiAnimePresetList"></div></div><div class="wiki-editor-achievement-form" id="wikiAchievementEditForm" hidden>
+    section.innerHTML=`<div class="wiki-editor-achievements-head"><div><div class="wiki-editor-achievements-kicker">НАГРАДЫ И МЕДАЛИ</div><h3>Достижения энциклопедии</h3><p>Создавай особые достижения и задавай условие открытия по главе манги или эпизоду аниме. Они сохраняются вместе с данными Wiki.</p></div><button type="button" class="wiki-editor-achievement-new" id="wikiAchievementCreate">＋ Новое достижение</button></div><div class="wiki-editor-achievement-list" id="wikiAchievementEditorList"></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Коллекция WANTED · 5 уровней</strong><small>Незавершённые уровни скрыты в публичной доске, пока не наступит их очередь. Все заготовки остаются видны здесь. Ориентир 1 567 — ориентировочное число персонажей в списке голосования WT100.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiWantedPresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Коллекция персонажей · 5 уровней</strong><small>Общий счётчик всех доступных персонажей — без группировки по сагам и аркам.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiCharacterPresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Коллекция плодов · 5 уровней</strong><small>Общий счётчик доступных дьявольских плодов — без группировки по сагам и аркам.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiFruitPresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Сюжетные саги · 11 достижений</strong><small>Все 11 медалей всегда видны на доске; незавершённые саги показаны с прогрессом.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiSagaPresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Избранное · 3 достижения</strong><small>За статьи, сохранённые в избранное.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiFavoritePresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Чтение · 5 достижений</strong><small>За разные открытые статьи (каждая считается один раз).</small></div></div><div class="wiki-editor-wanted-grid" id="wikiViewsPresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Юбилейные главы · 7 достижений</strong><small>Путь читателя: за прочитанные главы манги.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiMangaPresetList"></div></div><div class="wiki-editor-wanted-presets"><div class="wiki-editor-wanted-presets-head"><div><strong>Юбилейные серии · 7 достижений</strong><small>Путь зрителя: за просмотренные серии аниме.</small></div></div><div class="wiki-editor-wanted-grid" id="wikiAnimePresetList"></div></div><div class="wiki-editor-achievement-form" id="wikiAchievementEditForm" hidden>
       <div class="wiki-editor-achievement-form-title" id="wikiAchievementFormTitle">Новое достижение</div>
       <div class="wiki-editor-achievement-fields">
         <label class="wiki-editor-achievement-field wide"><span>Название достижения</span><input id="wikiAchievementTitle" maxlength="100" placeholder="Например, Воля наследника"></label>
@@ -19823,9 +19823,20 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
       if (!canEdit() || !bar) { if (btn) btn.remove(); return; }
       if (!btn) {
         btn = document.createElement('button'); btn.type = 'button'; btn.className = 'wk-article-edit'; btn.textContent = '✏️ Редактировать';
-        btn.addEventListener('click', function () { var id = lastOpened[type]; if (id && typeof window.__wikiEditRecord === 'function') window.__wikiEditRecord(type, id); else if (typeof window.openWikiEditor === 'function') window.openWikiEditor(type); });
         var fav = bar.lastElementChild;
         if (fav && fav !== bar.firstElementChild) bar.insertBefore(btn, fav); else bar.appendChild(btn);
+      }
+      // Кнопка могла сохраниться в HTML без обработчика (после экспорта страницы) — подключаем клик и к ней.
+      if (!btn.__wkBound) {
+        btn.__wkBound = true;
+        btn.addEventListener('click', function (e) {
+          e.preventDefault(); e.stopPropagation();
+          var content = document.getElementById(cid + 'Content');
+          var id = lastOpened[type] || (content && content.getAttribute('data-wk-plus-for')) || '';
+          if (type === 'useful' && !id && window.__wkUsefulOpenId) id = String(window.__wkUsefulOpenId);
+          if (id && typeof window.__wikiEditRecord === 'function') window.__wikiEditRecord(type, id);
+          else if (typeof window.openWikiEditor === 'function') window.openWikiEditor(type);
+        });
       }
     });
   }
@@ -22413,6 +22424,85 @@ html.ios-app body .container :is(button,.back-button):active{opacity:.6}
     r.classList.remove('wk-boot');
   }); }); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', show); else show();
+})();
+</script>
+<style id="wk-amb-behind-text">
+/* Постоянный эффект карточки идёт фоном: над обложкой, но под заголовком, типом и стрелкой. */
+.character-item[data-amb]>.wk-amb-a,.character-item[data-amb]>.wk-amb-b,.character-item[data-amb]>.wk-amb-p{z-index:1!important}
+.character-item[data-amb]>:not(.wk-amb-a):not(.wk-amb-b):not(.wk-amb-p):not(.wk-fx-a):not(.wk-fx-b):not(.wk-fl):not(.wk-dk):not(.wk-cl):not(.wk-pv-glare):not([class*="cover"]):not([class*="image"]):not([class*="avatar"]):not([class*="photo"]){z-index:2}
+/* Арка не пройдена до конца — статья под спойлером. */
+.story-saga-item[data-wk-arc-lock]{cursor:help}
+.story-saga-item[data-wk-arc-lock] .card-title::after{content:" 🔒";font-size:.85em;opacity:.85}
+.wk-arc-lock-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:100000;max-width:min(92vw,520px);padding:12px 16px;border-radius:12px;background:rgba(15,23,42,.96);border:1px solid rgba(212,168,79,.55);color:#f4d99e;font:14px/1.45 system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.45);text-align:center}
+</style>
+<script id="wk-story-arc-lock">
+(function () {
+  // Статья сюжетной арки открывается только после того, как арка пройдена целиком —
+  // по последней главе манги или по последней серии аниме (достаточно одного из двух).
+  function nums(v) { return (String(v == null ? '' : v).split('(')[0].match(/\d+/g) || []).map(Number).filter(function (n) { return n > 0; }); }
+  function raw(rec, k) { return rec && rec.__wikiRaw && Object.prototype.hasOwnProperty.call(rec.__wikiRaw, k) ? rec.__wikiRaw[k] : (rec ? rec[k] : ''); }
+  function progress() {
+    var p = window.__wikiSpoilerProgress;
+    if (!p) { try { p = JSON.parse(localStorage.getItem('onePieceWikiSpoilerProgressV1') || '{}'); } catch (e) { p = {}; } }
+    return { chapter: Number(p.chapter) || 0, episode: Number(p.episode) || 0 };
+  }
+  function audit() { try { return typeof window.__wikiSpoilerAuditMode === 'function' && window.__wikiSpoilerAuditMode() === true; } catch (e) { return false; } }
+  function arcById(id) { try { return (storyArcs || []).find(function (a) { return String(raw(a, 'id')) === String(id); }) || null; } catch (e) { return null; } }
+  function ends(arc) { var c = nums(raw(arc, 'chapters')), e = nums(raw(arc, 'episodes')); return { chapter: c.length ? Math.max.apply(null, c) : 0, episode: e.length ? Math.max.apply(null, e) : 0 }; }
+  function lockedArc(arc) {
+    if (!arc || audit()) return false;
+    var t = ends(arc); if (!t.chapter && !t.episode) return false;
+    var p = progress();
+    return !((t.chapter && p.chapter >= t.chapter) || (t.episode && p.episode >= t.episode));
+  }
+  function hint(arc) {
+    var t = ends(arc), parts = [];
+    if (t.chapter) parts.push('главы ' + t.chapter); if (t.episode) parts.push('серии ' + t.episode);
+    return 'Статья об арке «' + (raw(arc, 'name') || 'арка') + '» под спойлером: она откроется, когда пройдёшь арку до конца — до ' + parts.join(' или ') + '.';
+  }
+  window.__wikiIsArcArticleLocked = function (arcOrId) { return lockedArc(typeof arcOrId === 'object' ? arcOrId : arcById(arcOrId)); };
+  var toastTimer = 0;
+  function toast(text) {
+    var t = document.querySelector('.wk-arc-lock-toast');
+    if (!t) { t = document.createElement('div'); t.className = 'wk-arc-lock-toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+    t.textContent = text; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.hidden = true; }, 4200);
+  }
+  function wrap() {
+    var f = window.openStoryArticle;
+    if (typeof f !== 'function' || f.__wkArcLock) return;
+    var w = function (id) { var arc = arcById(id); if (arc && lockedArc(arc)) { toast(hint(arc)); return; } return f.apply(this, arguments); };
+    w.__wkArcLock = true;
+    Object.keys(f).forEach(function (k) { try { w[k] = f[k]; } catch (e) {} });
+    window.openStoryArticle = w;
+  }
+  function rowId(r) { var id = r.getAttribute('data-story-arc-id'); if (id) return id; var m = (r.getAttribute('onclick') || '').match(/openStoryArticle\('([^']+)'/); return m ? m[1] : ''; }
+  function mark() {
+    document.querySelectorAll('#storyList .story-saga-item:not(.story-saga-folder)').forEach(function (r) {
+      var id = rowId(r); if (!id) return;
+      var arc = arcById(id), on = lockedArc(arc);
+      if (on) { var tip = hint(arc); if (r.getAttribute('data-wk-arc-lock') !== '1') r.setAttribute('data-wk-arc-lock', '1'); if (r.getAttribute('title') !== tip) r.setAttribute('title', tip); }
+      else if (r.hasAttribute('data-wk-arc-lock')) { r.removeAttribute('data-wk-arc-lock'); r.removeAttribute('title'); }
+    });
+  }
+  // Если статья заблокированной арки уже открыта (например, по ссылке), закрываем её.
+  function guardOpenArticle() {
+    var box = document.getElementById('storyArticle'), c = document.getElementById('storyArticleContent');
+    if (!box || !c || box.hidden || getComputedStyle(box).display === 'none') return;
+    var id = c.getAttribute('data-wk-plus-for'); if (!id) return;
+    var arc = arcById(id); if (!lockedArc(arc)) return;
+    try { if (typeof window.closeStoryArticle === 'function') window.closeStoryArticle(); else if (typeof window.backToStoryList === 'function') window.backToStoryList(); } catch (e) {}
+  }
+  var pend = 0;
+  function tick() { pend = 0; wrap(); mark(); guardOpenArticle(); }
+  function schedule() { if (!pend) pend = requestAnimationFrame(tick); }
+  function start() {
+    tick();
+    var list = document.getElementById('storyList') || document.body;
+    new MutationObserver(schedule).observe(list, { childList: true, subtree: true });
+    ['wiki:spoiler-progress-changed', 'wiki:spoiler-progress-restored', 'spoiler-audit-mode-changed', 'wiki:cloud-ready'].forEach(function (ev) { window.addEventListener(ev, schedule); document.addEventListener(ev, schedule); });
+    setInterval(tick, 2000);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
 })();
 </script>
 </body></html>
