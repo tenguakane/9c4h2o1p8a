@@ -23297,6 +23297,31 @@ html[data-wk-title-font] .wk-tfx-samples .wk-tfx-sample.wk-tfx-sample{font-famil
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-ts-head b{font:700 13px Arial,sans-serif!important;color:#e2e8f0!important}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-ts-row>span:first-child{color:#94a3b8!important}
 @media (max-width:640px){.wk-ts-row{grid-template-columns:1fr;gap:6px}}
+.wk-tp{display:grid;gap:8px;padding:10px 12px;border-radius:10px;border:1px solid rgba(212,168,79,.35);background:rgba(212,168,79,.05)}
+.wk-tp-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-width:0}
+.wk-tp-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.wk-tp-head>span{color:#f4d99e;font:700 12.5px Arial,sans-serif}
+.wk-tp-list{display:flex;flex-wrap:wrap;gap:6px}
+.wk-tp-chip{display:inline-flex;align-items:stretch;border-radius:10px;border:1px solid #334155;background:#0b1220;overflow:hidden}
+.wk-tp-chip:hover{border-color:#64748b}
+.wk-tp-chip.is-on{border-color:#d4a84f;box-shadow:0 0 0 1px rgba(212,168,79,.35)}
+.wk-tp-use{padding:7px 10px;border:0;background:none;cursor:pointer;max-width:240px}
+.wk-tp-sample{display:block;font:800 14px/1.2 "Samsung Sans",system-ui,Arial,sans-serif;color:#f3f6fb;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wk-tp-del{padding:0 9px;border:0;border-left:1px solid #1e293b;background:none;color:#64748b;font:700 14px Arial,sans-serif;cursor:pointer}
+.wk-tp-del:hover{color:#fca5a5;background:rgba(239,68,68,.08)}
+.wk-tp-del.is-confirm{color:#fecaca;background:rgba(239,68,68,.18);font-size:11.5px}
+.wk-tp-form{display:flex;gap:6px;flex-wrap:wrap}
+.wk-tp-flash{color:#86efac;font:600 12px Arial,sans-serif}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-tp-save,#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-tp-ok{width:auto!important;min-height:0!important;padding:6px 12px!important;border-radius:8px!important;border:1px solid #d4a84f!important;background:rgba(212,168,79,.16)!important;color:#f4d99e!important;font:700 12px Arial,sans-serif!important;cursor:pointer}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-tp-cancel{width:auto!important;min-height:0!important;padding:6px 12px!important;border-radius:8px!important;border:1px solid #475569!important;background:transparent!important;color:#94a3b8!important;font:600 12px Arial,sans-serif!important;cursor:pointer}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-tp-form input{flex:1 1 200px!important;width:auto!important;min-width:0!important;min-height:0!important;height:auto!important;padding:7px 10px!important;border-radius:8px!important;border:1px solid #475569!important;background:#0b1220!important;color:#fff!important;font:13px Arial,sans-serif!important;text-transform:none!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-tp-use{width:auto!important;min-height:0!important;padding:7px 10px!important;border:0!important;background:none!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-tp-del{width:auto!important;min-height:0!important;padding:6px 12px!important;border-radius:8px!important;border:1px solid #7f1d1d!important;background:rgba(239,68,68,.08)!important;color:#fca5a5!important;font:600 12px Arial,sans-serif!important;cursor:pointer}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-tp-del.is-confirm{background:rgba(239,68,68,.25)!important;color:#fecaca!important;border-color:#ef4444!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-tp select{flex:1 1 180px!important;min-width:150px!important;max-width:320px!important;border-color:rgba(212,168,79,.55)!important;color:#f4d99e!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-tp .wk-ts-row>span:first-child{color:#f4d99e!important;font-weight:700!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-tp-head>span{color:#f4d99e!important;font:700 12.5px Arial,sans-serif!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-tp-sample{font:800 14px/1.2 "Samsung Sans",system-ui,Arial,sans-serif!important}
 </style>
 <script id="wiki-title-style-v1-js">
 (function () {
@@ -23402,6 +23427,15 @@ html[data-wk-title-font] .wk-tfx-samples .wk-tfx-sample.wk-tfx-sample{font-famil
   var lastFont = '';
   setInterval(function () { var f = document.documentElement.getAttribute('data-wk-title-font') || ''; if (f !== lastFont) { lastFont = f; if (document.querySelector('[style*="font-weight"][data-tfx-text], .wk-tfx-sample')) ensureTitleWeights(); } }, 1000);
 
+  /* ---------- Мои наборы: эффект + все настройки под своим названием ---------- */
+  var PRESETS_KEY = 'font:titles:presets';
+  function esc(t) { return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function readPresets() { var v = readMap()[PRESETS_KEY]; return Array.isArray(v) ? v.filter(function (x) { return x && x.name; }) : []; }
+  function writePresets(list) { var m = readMap(); if (list.length) m[PRESETS_KEY] = list; else delete m[PRESETS_KEY]; writeMap(m); }
+  function cleanSt(o) { var c = {}; Object.keys(o || {}).sort().forEach(function (k) { var v = o[k]; if (v !== '' && v != null && v !== false) c[k] = v; }); return c; }
+  function sameSet(p, fx, st) { var a = cleanSt(st); if (fx !== 'custom') { delete a.c1; delete a.c2; delete a.glow; } return String(p.fx || '') === String(fx || '') && JSON.stringify(cleanSt(p.st)) === JSON.stringify(a); }
+  window.__wikiTitlePresets = readPresets;
+
   /* ---------- Панель настроек в редакторе статьи ---------- */
   var SWATCHES = ['#ffd36b', '#ff6b6b', '#ff8ac6', '#b18cff', '#6bb6ff', '#4fe3c1', '#7cf06a', '#ffffff', '#c0c8d4', '#ff9d3d'];
   var WEIGHTS = [['', 'Авто'], ['300', '300 · тонкий'], ['400', '400 · обычный'], ['500', '500 · средний'], ['600', '600 · полужирный'], ['700', '700 · жирный'], ['800', '800 · очень жирный'], ['900', '900 · чёрный']];
@@ -23411,11 +23445,37 @@ html[data-wk-title-font] .wk-tfx-samples .wk-tfx-sample.wk-tfx-sample{font-famil
     var sel = field.querySelector('[data-field="title_fx"]');
     var st = parse(hidden.value);
     var panel = document.createElement('div'); panel.className = 'wk-ts-panel';
+    var saving = false, flash = '';
+    function presetsHTML() {
+      var list = readPresets(), fx = sel ? sel.value : '';
+      var cur = -1; list.forEach(function (p, i) { if (cur < 0 && sameSet(p, fx, st)) cur = i; });
+      var opts = '<option value=""' + (cur < 0 ? ' selected' : '') + '>' + (list.length ? (cur < 0 ? '— выбери набор —' : '— выбери набор —') : '— пока нет наборов —') + '</option>'
+        + list.map(function (p, i) { return '<option value="' + i + '"' + (i === cur ? ' selected' : '') + '>' + esc(p.name) + '</option>'; }).join('');
+      return '<div class="wk-tp"><div class="wk-ts-row"><span>Мои наборы</span><div class="wk-tp-bar">'
+        + '<select data-tp-select' + (list.length ? '' : ' disabled') + '>' + opts + '</select>'
+        + (saving ? '' : '<button type="button" class="wk-tp-save" data-tp-save title="Сохранить текущий эффект и настройки под своим названием">💾 Сохранить как набор</button>')
+        + (cur >= 0 && !saving ? '<button type="button" class="wk-tp-del" data-tp-del="' + cur + '" title="Удалить набор «' + esc(list[cur].name) + '»">🗑 Удалить</button>' : '')
+        + '</div></div>'
+        + (saving ? '<div class="wk-ts-row"><span></span><div class="wk-tp-form"><input type="text" maxlength="40" placeholder="Название, например «Пламя Эйса»" data-tp-name value="' + esc(cur >= 0 ? list[cur].name : '') + '"><button type="button" class="wk-tp-ok" data-tp-ok>Сохранить</button><button type="button" class="wk-tp-cancel" data-tp-cancel>Отмена</button></div></div>' : '')
+        + (flash ? '<div class="wk-ts-row"><span></span><div class="wk-tp-flash">' + esc(flash) + '</div></div>' : (!list.length && !saving ? '<div class="wk-ts-row"><span></span><div class="wk-ts-note">Сохрани эффект вместе с цветами, капсом, жирностью и интервалом — потом его можно выбрать в этом списке в любой статье. Стандартные эффекты — в списке «Эффект шрифта» выше.</div></div>' : ''))
+        + '</div>';
+    }
+    function decoratePresets() {}
+    function savePreset() {
+      var inp = panel.querySelector('[data-tp-name]'); var name = (inp ? inp.value : '').replace(/\s+/g, ' ').trim();
+      if (!name) { if (inp) inp.focus(); return; }
+      var list = readPresets(), fx = sel ? sel.value : '';
+      var keep = cleanSt(st); if (fx !== 'custom') { delete keep.c1; delete keep.c2; delete keep.glow; }
+      var item = { name: name, fx: fx, st: keep };
+      var i = list.findIndex(function (p) { return p.name.toLowerCase() === name.toLowerCase(); });
+      if (i >= 0) { list[i] = item; flash = '✓ Набор «' + name + '» обновлён'; } else { list.push(item); flash = '✓ Набор «' + name + '» сохранён — он доступен во всех статьях'; }
+      writePresets(list); saving = false; render();
+    }
     function render() {
       var isCustom = sel && sel.value === 'custom';
       var lsAuto = !(st.ls != null && st.ls !== '');
       var g = globalLs();
-      panel.innerHTML = '<div class="wk-ts-head"><b>Настройка шрифта заголовка</b><button type="button" class="wk-ts-reset">Сбросить</button></div>'
+      panel.innerHTML = '<div class="wk-ts-head"><b>Настройка шрифта заголовка</b><button type="button" class="wk-ts-reset">Сбросить</button></div>' + presetsHTML()
         + (isCustom ? '<div class="wk-ts-row"><span>Цвета перелива</span><div class="wk-ts-colors">'
           + '<label class="wk-ts-color">1<input type="color" data-k="c1" value="' + (st.c1 || '#ffd36b') + '"></label>'
           + '<label class="wk-ts-color' + (st.c2 ? '' : ' is-off') + '"><input type="checkbox" data-k="c2on"' + (st.c2 ? ' checked' : '') + '> 2<input type="color" data-k="c2" value="' + (st.c2 || '#6bb6ff') + '"></label>'
@@ -23428,34 +23488,65 @@ html[data-wk-title-font] .wk-tfx-samples .wk-tfx-sample.wk-tfx-sample{font-famil
         + '<div class="wk-ts-row"><span>Интервал</span><div class="wk-ts-range' + (lsAuto ? ' is-auto' : '') + '"><input type="range" min="-5" max="30" step="1" data-k="ls" value="' + (lsAuto ? (g == null ? 0 : g) : st.ls) + '"><output>' + (lsAuto ? 'общий' : (st.ls > 0 ? '+' : '') + st.ls) + '</output>' + (lsAuto ? '' : '<button type="button" data-ls-auto>общий</button>') + '</div></div>'
         + '<div class="wk-ts-row"><span>Скорость перелива</span>' + seg('sp', [['', 'Обычная'], ['slow', 'Медленно'], ['fast', 'Быстро'], ['stop', 'Стоп']], st.sp) + '</div>'
         + '<div class="wk-ts-note">Работает с любым эффектом: например, «Радуга» + ЗАГЛАВНЫЕ. «Общий» интервал задаётся для всех статей в «Аа Шрифт заголовков».</div>';
+      decoratePresets();
+      var ni = panel.querySelector('[data-tp-name]'); if (ni) { ni.focus(); ni.select(); }
     }
     function commit(rerender) {
       var clean = {}; Object.keys(st).forEach(function (k) { var v = st[k]; if (v !== '' && v != null && v !== false) clean[k] = v; });
       var val = Object.keys(clean).length ? JSON.stringify(clean) : '';
       if (hidden.value !== val) { hidden.value = val; hidden.dispatchEvent(new Event('input', { bubbles: true })); hidden.dispatchEvent(new Event('change', { bubbles: true })); }
-      if (rerender) render();
+      if (rerender) render(); else { var tp = panel.querySelector('.wk-tp'); if (tp && !saving) { var hold = document.activeElement; tp.outerHTML = presetsHTML(); decoratePresets(); } }
       if (window.__wikiTfxSample) window.__wikiTfxSample();
     }
     panel.addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return;
-      if (b.classList.contains('wk-ts-reset')) { st = {}; commit(true); return; }
+      if (b.classList.contains('wk-ts-reset')) { st = {}; flash = ''; commit(true); return; }
+      if (b.hasAttribute('data-tp-save')) { saving = true; flash = ''; render(); return; }
+      if (b.hasAttribute('data-tp-cancel')) { saving = false; render(); return; }
+      if (b.hasAttribute('data-tp-ok')) { savePreset(); return; }
+      if (b.hasAttribute('data-tp-del')) {
+        var dl = readPresets(), di = Number(b.getAttribute('data-tp-del')), dp = dl[di]; if (!dp) return;
+        if (b.getAttribute('data-confirm') !== '1') { b.setAttribute('data-confirm', '1'); b.textContent = 'Точно удалить?'; b.classList.add('is-confirm'); setTimeout(function () { if (b.isConnected) { b.removeAttribute('data-confirm'); b.textContent = '🗑 Удалить'; b.classList.remove('is-confirm'); } }, 3000); return; }
+        dl.splice(di, 1); writePresets(dl); flash = '✓ Набор «' + dp.name + '» удалён'; render(); return;
+      }
+      if (b.hasAttribute('data-tp')) {
+        var p = readPresets()[Number(b.getAttribute('data-tp'))]; if (!p) return;
+        st = JSON.parse(JSON.stringify(p.st || {})); flash = '✓ Применён набор «' + p.name + '»';
+        if (sel && sel.value !== (p.fx || '')) { sel.value = p.fx || ''; sel.dispatchEvent(new Event('input', { bubbles: true })); sel.dispatchEvent(new Event('change', { bubbles: true })); }
+        commit(true); return;
+      }
       if (b.hasAttribute('data-sw')) { st.c1 = b.getAttribute('data-sw'); commit(true); return; }
       if (b.hasAttribute('data-ls-auto')) { delete st.ls; commit(true); return; }
       var sg = b.closest('[data-seg]'); if (sg) { st[sg.getAttribute('data-seg')] = b.getAttribute('data-v'); commit(true); }
+    });
+    panel.addEventListener('keydown', function (e) {
+      if (!e.target.hasAttribute || !e.target.hasAttribute('data-tp-name')) return;
+      if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); savePreset(); }
+      else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); saving = false; render(); }
     });
     panel.addEventListener('input', function (e) {
       var t = e.target, k = t.getAttribute('data-k'); if (!k) return;
       if (k === 'c1' || k === 'c2') { st[k] = t.value; if (k === 'c2') { var cb = panel.querySelector('[data-k="c2on"]'); if (cb) { cb.checked = true; cb.closest('.wk-ts-color').classList.remove('is-off'); } } commit(false); }
       else if (k === 'ls') { st.ls = Number(t.value); var o = t.parentNode.querySelector('output'); o.textContent = (st.ls > 0 ? '+' : '') + st.ls; t.parentNode.classList.remove('is-auto'); commit(false); }
     });
+    function usePreset(p) {
+      st = JSON.parse(JSON.stringify(p.st || {})); flash = '✓ Применён набор «' + p.name + '»';
+      if (sel && sel.value !== (p.fx || '')) { sel.value = p.fx || ''; sel.dispatchEvent(new Event('input', { bubbles: true })); sel.dispatchEvent(new Event('change', { bubbles: true })); }
+      commit(true);
+    }
     panel.addEventListener('change', function (e) {
-      var t = e.target, k = t.getAttribute('data-k'); if (!k) return;
+      var t = e.target;
+      if (t.hasAttribute && t.hasAttribute('data-tp-select')) { var pp = readPresets()[Number(t.value)]; if (t.value !== '' && pp) usePreset(pp); return; }
+      var k = t.getAttribute('data-k'); if (!k) return;
       if (k === 'c2on') { if (t.checked) st.c2 = panel.querySelector('[data-k="c2"]').value; else delete st.c2; commit(true); }
       else if (k === 'glow' || k === 'it') { st[k] = t.checked; commit(false); }
       else if (k === 'w') { st.w = t.value; commit(false); }
       else if (k === 'ls' || k === 'c1' || k === 'c2') commit(k === 'ls');
     });
     if (sel) sel.addEventListener('change', function () { render(); });
+    // Наборы могли поменяться в другой статье или прийти из облака
+    var lastP = JSON.stringify(readPresets());
+    var tpTimer = setInterval(function () { if (!panel.isConnected) { clearInterval(tpTimer); return; } var now = JSON.stringify(readPresets()); if (now !== lastP && !saving) { lastP = now; render(); } }, 2000);
     render();
     var samples = field.querySelector('.wk-tfx-samples');
     if (samples && samples.nextSibling) field.insertBefore(panel, samples.nextSibling); else field.appendChild(panel);
