@@ -8482,14 +8482,14 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         useful: {label:'Полезное', plural:'Полезные статьи', array:usefulArticles, icon:'💡'}
     };
     const schemas = {
-        character: {id:'char_new',name:'',nickname:'',movie_id:'',card_fx:'',card_shine:'',title_fx:'',person_link:'',person_image_position:50,person_image_position_x:50,person_image_zoom:100,person2_link:'',person2_from_chapter:'',person2_from_episode:'',person2_image_position:50,person2_image_position_x:50,person2_image_zoom:100,timeskip_description:'',nickname2:'',status2:'',ts_fruit_article_id:'',ts_ship:'',ts_ship_link:'',ts_ship_description:'',ts_flag:'',ts_flag_link:'',ts_flag_description:'',chapter:'',episode:'',description:'',filler:false,fruit:'',fruit_link:'',fruit_article_id:'',fruit2:'',fruit2_link:'',fruit2_article_id:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],ship:'',ship_link:'',ship_description:'',ship2:'',ship2_link:'',ship2_description:'',flag:'',flag_link:'',flag_description:'',status:''},
-        story: {id:'arc_new',name:'',card_fx:'',card_shine:'',title_fx:'',image:'',image_position:50,image_position_x:50,image_zoom:100,chapters:'',episodes:'',ongoing:false,filler:false,movie:false,saga:'',description:'',key:'',characters:[],connect:[]},
-        reward: {id:'reward_new',card_fx:'',card_shine:'',title_fx:'',character_id:'',reward:0,ka:0,rank:'',rank_total:'',reward_image:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',appearance_chapter:'',appearance_episode:'',connect:[]},
-        fruit: {id:'fruit_new',card_fx:'',card_shine:'',title_fx:'',name:'',appearance:'',episode:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,owner:'',type:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[]},
-        useful: {id:'article_new',card_fx:'',card_shine:'',title_fx:'',name:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,type:'',appearance_chapter:'',appearance_episode:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[]}
+        character: {id:'char_new',name:'',nickname:'',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',person_link:'',person_image_position:50,person_image_position_x:50,person_image_zoom:100,person2_link:'',person2_from_chapter:'',person2_from_episode:'',person2_image_position:50,person2_image_position_x:50,person2_image_zoom:100,timeskip_description:'',nickname2:'',status2:'',ts_fruit_article_id:'',ts_ship:'',ts_ship_link:'',ts_ship_description:'',ts_flag:'',ts_flag_link:'',ts_flag_description:'',chapter:'',episode:'',description:'',filler:false,fruit:'',fruit_link:'',fruit_article_id:'',fruit2:'',fruit2_link:'',fruit2_article_id:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],ship:'',ship_link:'',ship_description:'',ship2:'',ship2_link:'',ship2_description:'',flag:'',flag_link:'',flag_description:'',status:''},
+        story: {id:'arc_new',name:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',image:'',image_position:50,image_position_x:50,image_zoom:100,chapters:'',episodes:'',ongoing:false,filler:false,movie:false,saga:'',description:'',key:'',characters:[],connect:[]},
+        reward: {id:'reward_new',card_fx:'',card_shine:'',title_fx:'',title_style:'',character_id:'',reward:0,ka:0,rank:'',rank_total:'',reward_image:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',appearance_chapter:'',appearance_episode:'',connect:[]},
+        fruit: {id:'fruit_new',card_fx:'',card_shine:'',title_fx:'',title_style:'',name:'',appearance:'',episode:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,owner:'',type:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[]},
+        useful: {id:'article_new',card_fx:'',card_shine:'',title_fx:'',title_style:'',name:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,type:'',appearance_chapter:'',appearance_episode:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[]}
     };
     const fieldLabels = {
-        id:'ID',name:'Название / имя',nickname:'Прозвище',person_link:'Ссылка на изображение',person_image_position:'Кадрирование фото в карточке',person_image_position_x:'Горизонтальное смещение фото в карточке',person_image_zoom:'Приближение фото в карточке',movie_id:'🎬 Из фильма',card_fx:'✨ Эффект при наклоне',card_shine:'💫 Постоянный эффект',title_fx:'🔤 Эффект шрифта',person2_link:'Второе фото (новый облик)',person2_from_chapter:'С какой главы (фото и «Таймскип»)',person2_from_episode:'С какого эпизода (фото и «Таймскип»)',timeskip_description:'Чем персонаж занят спустя два года',nickname2:'Новое прозвище',status2:'Статусы после таймскипа',ts_fruit_article_id:'Новый дьявольский плод',ts_ship:'Новый корабль',ts_ship_link:'Ссылка на новый корабль',ts_ship_description:'Описание нового корабля',ts_flag:'Новый флаг / команда',ts_flag_link:'Ссылка на новый флаг',ts_flag_description:'Описание нового флага',person2_image_position:'Кадрирование второго фото',person2_image_position_x:'Горизонталь второго фото, %',person2_image_zoom:'Приближение второго фото, %',chapter:'Глава появления',episode:'Эпизод появления',description:'Описание',fruit:'Дьявольский плод (старое поле)',fruit_link:'Ссылка на плод (старое поле)',fruit_article_id:'Дьявольский плод — статья из раздела «Плоды»',fruit2:'Второй плод (старое поле)',fruit2_link:'Ссылка на второй плод (старое поле)',fruit2_article_id:'Второй дьявольский плод — статья из раздела «Плоды»',arc:'Арка (манга)',saga:'Сага (манга)',connect:'Связанные ID (через запятую)',ship:'Корабль',ship_link:'Ссылка на корабль',ship_description:'Описание корабля',ship2:'Второй корабль',ship2_link:'Ссылка на второй корабль',ship2_description:'Описание второго корабля',flag:'Флаг',flag_link:'Ссылка на флаг',flag_description:'Описание флага',status:'Статус',characters:'ID персонажей (через запятую)',chapters:'Главы',episodes:'Эпизоды',ongoing:'Арка продолжается',filler:'Филлер / аниме-оригинал',movie:'Полнометражный фильм',character_id:'ID персонажа',reward:'Награда',ka:'КА',rank:'Место в топе',rank_total:'Всего в топе',reward_image:'Ссылка на изображение для карточки награды',appearance:'Глава появления',appearance_chapter:'Глава появления',appearance_episode:'Эпизод появления',image:'Ссылка на изображение',image_position:'Кадрирование фото в карточке',image_position_x:'Горизонтальное смещение фото',image_zoom:'Приближение фото',owner:'Владелец(ы)',type:'Тип',arc_anime:'Арка (аниме)',saga_anime:'Сага (аниме)'};
+        id:'ID',name:'Название / имя',nickname:'Прозвище',person_link:'Ссылка на изображение',person_image_position:'Кадрирование фото в карточке',person_image_position_x:'Горизонтальное смещение фото в карточке',person_image_zoom:'Приближение фото в карточке',movie_id:'🎬 Из фильма',card_fx:'✨ Эффект при наклоне',card_shine:'💫 Постоянный эффект',title_fx:'🔤 Эффект шрифта',title_style:'🔤 Настройка шрифта заголовка',person2_link:'Второе фото (новый облик)',person2_from_chapter:'С какой главы (фото и «Таймскип»)',person2_from_episode:'С какого эпизода (фото и «Таймскип»)',timeskip_description:'Чем персонаж занят спустя два года',nickname2:'Новое прозвище',status2:'Статусы после таймскипа',ts_fruit_article_id:'Новый дьявольский плод',ts_ship:'Новый корабль',ts_ship_link:'Ссылка на новый корабль',ts_ship_description:'Описание нового корабля',ts_flag:'Новый флаг / команда',ts_flag_link:'Ссылка на новый флаг',ts_flag_description:'Описание нового флага',person2_image_position:'Кадрирование второго фото',person2_image_position_x:'Горизонталь второго фото, %',person2_image_zoom:'Приближение второго фото, %',chapter:'Глава появления',episode:'Эпизод появления',description:'Описание',fruit:'Дьявольский плод (старое поле)',fruit_link:'Ссылка на плод (старое поле)',fruit_article_id:'Дьявольский плод — статья из раздела «Плоды»',fruit2:'Второй плод (старое поле)',fruit2_link:'Ссылка на второй плод (старое поле)',fruit2_article_id:'Второй дьявольский плод — статья из раздела «Плоды»',arc:'Арка (манга)',saga:'Сага (манга)',connect:'Связанные ID (через запятую)',ship:'Корабль',ship_link:'Ссылка на корабль',ship_description:'Описание корабля',ship2:'Второй корабль',ship2_link:'Ссылка на второй корабль',ship2_description:'Описание второго корабля',flag:'Флаг',flag_link:'Ссылка на флаг',flag_description:'Описание флага',status:'Статус',characters:'ID персонажей (через запятую)',chapters:'Главы',episodes:'Эпизоды',ongoing:'Арка продолжается',filler:'Филлер / аниме-оригинал',movie:'Полнометражный фильм',character_id:'ID персонажа',reward:'Награда',ka:'КА',rank:'Место в топе',rank_total:'Всего в топе',reward_image:'Ссылка на изображение для карточки награды',appearance:'Глава появления',appearance_chapter:'Глава появления',appearance_episode:'Эпизод появления',image:'Ссылка на изображение',image_position:'Кадрирование фото в карточке',image_position_x:'Горизонтальное смещение фото',image_zoom:'Приближение фото',owner:'Владелец(ы)',type:'Тип',arc_anime:'Арка (аниме)',saga_anime:'Сага (аниме)'};
     const types = Object.keys(collections);
     let activeType = 'character';
     let editingId = null;
@@ -10376,19 +10376,19 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
             } else if(k==='title_fx'){
                 const list=window.__wikiTextFxList||[];const def=window.__wikiTextFxDefault?window.__wikiTextFxDefault(activeType,obj):'';
                 const nameOf=v=>(list.find(f=>f.v===v)||{}).n||v;
-                control=selectHTML(k,String(val||''),list.map(f=>({value:f.v,label:f.n})),'Авто'+(def?' — '+nameOf(def):' — обычный шрифт'));
-                hint='Заголовок статьи и имя на карточке. «Авто»: Мугивары — переливающийся, короли — золото, Шичибукаи — королевская воля, революционеры — пламя, мировая знать — хром, топ-3 наград — золото/хром/бронза, идущие арки — неон. Отключить у себя можно в Каюте.';
+                control=selectHTML(k,String(val||''),list.map(f=>({value:f.v,label:f.n})),'Авто'+(def?' — '+nameOf(def):' — обычный шрифт'))+`<input type="hidden" data-field="title_style" value="${escapeHTMLLocal(fieldText(rawValue(obj,'title_style')))}">`;
+                hint='Заголовок статьи и имя на карточке. Ниже — свой цвет, капс, жирность, наклон, интервал и скорость перелива. «Авто»: Мугивары — переливающийся, короли — золото, Шичибукаи — королевская воля, революционеры — пламя, мировая знать — хром, топ-3 наград — золото/хром/бронза, идущие арки — неон. Отключить у себя можно в Каюте.';
             } else if(k==='card_shine'){
                 const list=window.__wikiCardAmbList||[];const def=window.__wikiCardAmbDefault?window.__wikiCardAmbDefault(activeType):'';
                 const nameOf=v=>(list.find(f=>f.v===v)||{}).n||v;
                 let cur=(val===true||val==='true'||val===1)?'shine':(typeof val==='string'?val:'');
-                const legacy=String(rawValue(obj,'card_fx')||'');if(!cur&&list.some(f=>f.v===legacy&&f.v!=='none'))cur=legacy;
+                const legacy=String(rawValue(obj,'card_fx')||'');if((!cur||cur==='none')&&list.some(f=>f.v===legacy&&f.v!=='none'))cur=legacy;
                 control=selectHTML(k,cur,list.map(f=>({value:f.v,label:f.n})),'Авто'+(def?' — '+nameOf(def)+' (плакат награды)':' — нет'));
-                hint='Идёт сам, без наведения — видно и на телефоне. Сочетается с эффектом при наклоне. «Авто»: у наград — золотой блик.';
+                hint='Идёт сам, без наведения — видно и на телефоне. Сочетается с эффектом при наклоне. Призмы, ROOM, Понеглиф, Лёд, Королевская воля и Старый плакат теперь здесь: они видны всегда. «Авто»: у наград — золотой блик.';
             } else if(k==='card_fx'){
-                const list=window.__wikiCardFxList||[];const def=window.__wikiCardFxDefault?window.__wikiCardFxDefault(activeType,obj):'';
+                const moved=window.__wikiCardFxMoved||[];const list=(window.__wikiCardFxList||[]).concat(moved.filter(f=>f.v===String(val||'')&&String(rawValue(obj,'card_shine')||'').trim()&&String(rawValue(obj,'card_shine'))!=='none').map(f=>({v:f.v,n:f.n+' (старый вариант)'})));const def=window.__wikiCardFxDefault?window.__wikiCardFxDefault(activeType,obj):'';
                 const nameOf=v=>(list.find(f=>f.v===v)||{}).n||v;
-                control=selectHTML(k,val,list.map(f=>({value:f.v,label:f.n})),'Авто'+(def?' — '+nameOf(def)+(window.__wikiCardFxDefaultWhy?' ('+window.__wikiCardFxDefaultWhy(activeType,obj)+')':''):' — без эффекта'));
+                control=selectHTML(k,(moved.some(f=>f.v===String(val||''))&&!list.some(f=>f.v===String(val||'')))?'none':val,list.map(f=>({value:f.v,label:f.n})),'Авто'+(def?' — '+nameOf(def)+(window.__wikiCardFxDefaultWhy?' ('+window.__wikiCardFxDefaultWhy(activeType,obj)+')':''):' — без эффекта'));
                 hint='Проявляется при наведении мышью или наклоне пальцем. Работает в каталоге, в Каюте и на главном фото статьи. «Авто»: Мугивары — голограмма, награды — золотая фольга.';
             } else if(k==='movie_id' && activeType==='character'){
                 const films=allRecords('story').filter(a=>{const m=rawValue(a,'movie');return m===true||m==='true'||String(rawValue(a,'saga')||'').trim()==='Полнометражные фильмы';});
@@ -21259,21 +21259,34 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     { v: 'cosmos', n: 'Космос' },
     { v: 'gold', n: 'Золотая фольга' },
     { v: 'silver', n: 'Серебряная фольга' },
-    { v: 'prism', n: 'Призма' },
-    { v: 'accentprism', n: 'Призма цвета статьи' },
-    { v: 'haki', n: 'Королевская воля' },
     { v: 'armament', n: 'Воля вооружения' },
     { v: 'gear5', n: 'Ника (Гир 5)' },
+    { v: 'strings', n: 'Нити (Ито Ито)' }
+  ];
+  // Эти эффекты видны и без наведения — теперь они в списке постоянных.
+  // Старые записи с ними в card_fx показываются как постоянный эффект.
+  var MOVED_FX = [
+    { v: 'prism', n: 'Призма (радужная рамка)' },
+    { v: 'accentprism', n: 'Призма цвета статьи' },
     { v: 'room', n: 'ROOM (Опэ Опэ)' },
-    { v: 'strings', n: 'Нити (Ито Ито)' },
+    { v: 'haki', n: 'Королевская воля (разряды)' },
     { v: 'poneglyph', n: 'Понеглиф' },
     { v: 'ice', n: 'Лёд' },
     { v: 'wanted', n: 'Старый плакат' }
   ];
+  window.__wikiCardFxMoved = MOVED_FX;
+  function isMoved(v) { return MOVED_FX.some(function (x) { return x.v === v; }); }
   var REMOVED_FX = ['glitter'];
   // Постоянные эффекты: идут сами (видно и на телефоне без касания), сочетаются с эффектом при наклоне.
   var AMB = [
     { v: 'none', n: 'Без постоянного эффекта' },
+    { v: 'prism', n: 'Призма (радужная рамка)' },
+    { v: 'accentprism', n: 'Призма цвета статьи' },
+    { v: 'room', n: 'ROOM (Опэ Опэ)' },
+    { v: 'haki', n: 'Королевская воля (разряды)' },
+    { v: 'poneglyph', n: 'Понеглиф' },
+    { v: 'ice', n: 'Лёд' },
+    { v: 'wanted', n: 'Старый плакат' },
     { v: 'shine', n: 'Блик по металлу' },
     { v: 'goldshine', n: 'Золотой блик' },
     { v: 'rainbowshine', n: 'Радужный блик' },
@@ -21325,7 +21338,8 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
   window.__wikiCardFxDefault = defaultFx;
   window.__wikiCardFxDefaultWhy = function (type, rec) { var d = defaultFx(type, rec); return d === 'holo' ? 'команда Мугивар' : d === 'gold' && type === 'reward' ? 'плакат награды' : ''; };
   function raw(rec) { return rec && (rec.__wikiRaw || rec); }
-  function fxOf(type, rec) { var r = raw(rec); var v = r ? String(r.card_fx || '').trim() : ''; if (isAmb(v) || REMOVED_FX.indexOf(v) >= 0) v = ''; return v || defaultFx(type, rec) || ''; }
+  function ownAmb(r) { var v = r && r.card_shine; if (v === true || v === 'true' || v === 1) return 'shine'; v = typeof v === 'string' ? v.trim() : ''; return v && v !== 'none' && isAmb(v) ? v : ''; }
+  function fxOf(type, rec) { var r = raw(rec); var v = r ? String(r.card_fx || '').trim() : ''; if (isMoved(v)) return ownAmb(r) && ownAmb(r) !== v ? v : ''; if (isAmb(v) || REMOVED_FX.indexOf(v) >= 0) v = ''; return v || defaultFx(type, rec) || ''; }
   function defaultAmb(type) { return type === 'reward' ? 'goldshine' : ''; }
   window.__wikiCardAmbDefault = defaultAmb;
   function ambOf(type, rec) {
@@ -21333,9 +21347,10 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     var v = r.card_shine;
     if (v === true || v === 'true' || v === 1) return 'shine';
     v = typeof v === 'string' ? v.trim() : '';
-    if (v === 'none') return '';
+    var f = String(r.card_fx || '').trim();
+    if (v === 'none') return isMoved(f) ? f : ''; // эффект переехал из «при наклоне» в постоянные
     if (isAmb(v)) return v;
-    var f = String(r.card_fx || '').trim(); if (isAmb(f)) return f; // старые записи: эффект был в общем списке
+    if (isAmb(f)) return f; // старые записи: эффект был в общем списке
     return defaultAmb(type);
   }
   window.__wikiCardAmb = ambOf;
@@ -21343,6 +21358,7 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
   /* ---------- Эффекты шрифта ---------- */
   var TFX = [
     { v: 'none', n: 'Обычный шрифт' },
+    { v: 'custom', n: '🎨 Свой цвет — перелив (настрой ниже)' },
     { v: 'shimmer', n: 'Переливающийся' },
     { v: 'accent', n: 'Цвет статьи' },
     { v: 'gold', n: 'Золото' },
@@ -21367,7 +21383,15 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     { v: 'galaxy', n: 'Космос' },
     { v: 'sakura', n: 'Сакура' },
     { v: 'devilfruit', n: 'Дьявольский фрукт' },
-    { v: 'wanted', n: 'Плакат розыска' },
+    { v: 'wanted', n: 'Плакат розыска · капс' },
+    { v: 'rainbowcaps', n: 'Радужный плакат · капс' },
+    { v: 'marine', n: 'Морской дозор · капс' },
+    { v: 'yonko', n: 'Йонко · капс' },
+    { v: 'jollyroger', n: 'Весёлый Роджер · капс' },
+    { v: 'scroll', n: 'Древний свиток · капс' },
+    { v: 'redline', n: 'Ред Лайн · капс' },
+    { v: 'dressrosa', n: 'Колизей Дрессрозы · капс' },
+    { v: 'samurai', n: 'Самурай Вано · капс' },
     { v: 'comic', n: 'Комикс' },
     { v: 'sunset', n: 'Закат' },
     { v: 'aurora', n: 'Северное сияние' },
@@ -21504,8 +21528,19 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     });
     el.appendChild(p);
   }
+  function ambFx(el, amb) {
+    var host = el.querySelector(':scope > .wk-amb-fx');
+    if (!isMoved(amb)) { if (host) host.remove(); return; }
+    if (!host) {
+      host = document.createElement('span'); host.className = 'wk-amb-fx wk-fx-on'; host.setAttribute('aria-hidden', 'true');
+      host.innerHTML = '<span class="wk-fx-a"></span><span class="wk-fx-b"></span>';
+      el.appendChild(host);
+    }
+    if (host.getAttribute('data-fx') !== amb) host.setAttribute('data-fx', amb);
+  }
   function applyAmb(el, amb, id) {
     var old = el.querySelector(':scope > .wk-shine'); if (old) old.remove(); el.removeAttribute('data-shine');
+    ambFx(el, amb);
     if (!amb || amb === 'none') { if (el.hasAttribute('data-amb')) el.removeAttribute('data-amb'); buildParts(el, '', id, 0); return; }
     if (el.getAttribute('data-amb') !== amb) el.setAttribute('data-amb', amb);
     var delay = hashDelay(id);
@@ -21531,14 +21566,18 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
       if (el.closest('#wikiEditorOverlay')) return;
       var id = identify(el); if (!id || !id.rec) return;
       apply(el, fxOf(id.type, id.rec)); applyAmb(el, ambOf(id.type, id.rec), id.rec.id);
-      applyTfx(el.querySelector('.card-title'), tfxOf(id.type, id.rec, el));
+      var ct = el.querySelector('.card-title'), ctv = tfxOf(id.type, id.rec, el);
+      applyTfx(ct, ctv);
+      if (ct && window.__wikiApplyTitleStyle) window.__wikiApplyTitleStyle(ct, (raw(id.rec) || {}).title_style, ctv);
     });
     // Главное фото открытой статьи: эффекты и цвет статьи (неон, призма цвета статьи и т.п.).
     Object.keys(ARTICLES).forEach(function (cid) {
       var c = document.getElementById(cid); if (!c) return;
       var hid = c.getAttribute('data-wk-plus-for'); var hrec = hid ? byId(ARTICLES[cid], hid) : null;
       var h1 = c.querySelector('h1');
-      applyTfx(h1, hrec ? tfxOf(ARTICLES[cid], hrec, null) : '');
+      var h1v = hrec ? tfxOf(ARTICLES[cid], hrec, null) : '';
+      applyTfx(h1, h1v);
+      if (h1 && window.__wikiApplyTitleStyle) window.__wikiApplyTitleStyle(h1, hrec ? (raw(hrec) || {}).title_style : '', h1v);
       var acc = hrec ? accentFor(ARTICLES[cid], hrec) : '';
       setAcc(h1, acc);
       var w = c.querySelector('.article-inline-image-wrap'); if (!w) return;
@@ -21546,7 +21585,7 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     });
   }
   var pend = 0;
-  var OWN = ['wk-fx-a', 'wk-fx-b', 'wk-amb-a', 'wk-amb-b', 'wk-amb-p', 'wk-fl', 'wk-dk', 'wk-cl', 'wk-pv-glare'];
+  var OWN = ['wk-fx-a', 'wk-fx-b', 'wk-amb-a', 'wk-amb-b', 'wk-amb-p', 'wk-amb-fx', 'wk-fl', 'wk-dk', 'wk-cl', 'wk-pv-glare'];
   function own(t) { if (!t || !t.classList) return false; for (var i = 0; i < OWN.length; i++) if (t.classList.contains(OWN[i])) return true; return false; }
   new MutationObserver(function (muts) {
     for (var i = 0; i < muts.length; i++) {
@@ -21584,7 +21623,7 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     var type = editorType();
     var idv = fieldVal(f, 'id');
     var rec = byId(type, idv) || { id: idv };
-    var fx = sel.value; if (REMOVED_FX.indexOf(fx) >= 0) fx = ''; fx = fx || defaultFx(type, { id: idv });
+    var fx = sel.value; if (REMOVED_FX.indexOf(fx) >= 0) fx = ''; var shv = f.querySelector('[data-field="card_shine"]'); if (isMoved(fx) && !(shv && shv.value && shv.value !== 'none' && shv.value !== fx)) fx = 'none'; fx = fx || defaultFx(type, { id: idv });
     if (fx && fx !== 'none') pv.setAttribute('data-fx', fx); else pv.removeAttribute('data-fx');
     var sh = f.querySelector('[data-field="card_shine"]'); var amb = sh ? String(sh.value || '') : ''; if (!amb) amb = defaultAmb(type); if (amb === 'none') amb = '';
     applyAmb(pv, amb, 'preview');
@@ -21624,24 +21663,41 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
   }
   var pend2 = 0;
   new MutationObserver(function () { if (!pend2) pend2 = requestAnimationFrame(function () { pend2 = 0; var f = document.getElementById('wikiEditorForm'); if (f && f.querySelector('[data-field="card_fx"]') && !f.querySelector('.wk-fx-row')) preview(); }); }).observe(document.documentElement, { childList: true, subtree: true });
-  document.addEventListener('change', function (e) { if (e.target && e.target.getAttribute && /^(card_fx|card_shine|person_link|image|reward_image|status|saga|type|character_id)$/.test(e.target.getAttribute('data-field') || '')) { preview(); tfxSample(); } if (e.target && e.target.getAttribute && e.target.getAttribute('data-field') === 'title_fx') tfxSample(); });
+  document.addEventListener('change', function (e) { if (e.target && e.target.getAttribute && /^(card_fx|card_shine|person_link|image|reward_image|status|saga|type|character_id)$/.test(e.target.getAttribute('data-field') || '')) { preview(); tfxSample(); } if (e.target && e.target.getAttribute && /^(title_fx|title_style|name)$/.test(e.target.getAttribute('data-field') || '')) tfxSample(); });
   function tfxSample() {
     var f = document.getElementById('wikiEditorForm'); if (!f) return;
     var sel = f.querySelector('[data-field="title_fx"]'); if (!sel) return;
     var box = sel.closest('[data-editor-field], .wiki-editor-field'); if (!box) return;
-    var sm = box.querySelector('.wk-tfx-sample'); if (!sm) { sm = document.createElement('span'); sm.className = 'wk-tfx-sample'; box.appendChild(sm); }
-    var nm = f.querySelector('[data-field="name"]'); sm.textContent = (nm && nm.value.trim()) || 'Заголовок статьи';
+    var wrap = box.querySelector('.wk-tfx-samples');
+    if (!wrap) {
+      wrap = document.createElement('div'); wrap.className = 'wk-tfx-samples';
+      wrap.innerHTML = '<div class="wk-tfx-pv is-card"><span class="wk-tfx-pv-bg"></span><span class="wk-tfx-sample is-card"></span><small>на обложке</small></div>'
+        + '<div class="wk-tfx-pv is-article"><span class="wk-tfx-sample is-article"></span><small>в статье</small></div>';
+      var panel = box.querySelector('.wk-ts-panel'); box.insertBefore(wrap, panel || null);
+    }
     var type = editorType();
     var idv = fieldVal(f, 'id');
     var rec = byId(type, idv) || { id: idv };
+    var title = fieldVal(f, 'name');
+    if (!title && type === 'reward') { var ch = byId('character', fieldVal(f, 'character_id')); title = ch ? String(ch.name || '') : ''; }
+    title = title || 'Заголовок статьи';
     var v = sel.value; if (v === 'none') v = ''; if (!v) v = defaultTfx(type, rec, null);
-    applyTfx(sm, v);
+    var stEl = f.querySelector('[data-field="title_style"]'); var st = stEl ? stEl.value : '';
     var live = { status: fieldVal(f, 'status') || (raw(rec) || {}).status, saga: fieldVal(f, 'saga') || (raw(rec) || {}).saga, type: fieldVal(f, 'type') || (raw(rec) || {}).type, character_id: fieldVal(f, 'character_id') || (raw(rec) || {}).character_id };
-    setAcc(sm, accentFor(type, live) || '');
+    var acc = accentFor(type, live) || '';
+    wrap.querySelectorAll('.wk-tfx-sample').forEach(function (sm) {
+      if (sm.textContent !== title) sm.textContent = title;
+      applyTfx(sm, v); setAcc(sm, acc);
+      if (window.__wikiApplyTitleStyle) window.__wikiApplyTitleStyle(sm, st, v);
+    });
+    var img = ['person_link', 'image', 'reward_image'].map(function (k) { return fieldVal(f, k); }).filter(Boolean)[0] || '';
+    var bg = wrap.querySelector('.wk-tfx-pv-bg');
+    bg.style.backgroundImage = /^(https?:|data:image)/.test(img) ? 'url("' + img.replace(/"/g, '%22') + '")' : '';
   }
+  window.__wikiTfxSample = tfxSample;
   var pend3 = 0;
-  new MutationObserver(function () { if (!pend3) pend3 = requestAnimationFrame(function () { pend3 = 0; var f = document.getElementById('wikiEditorForm'); if (f && f.querySelector('[data-field="title_fx"]') && !f.querySelector('.wk-tfx-sample')) tfxSample(); }); }).observe(document.documentElement, { childList: true, subtree: true });
-  document.addEventListener('input', function (e) { if (e.target && e.target.getAttribute && /^(person_link|image|reward_image)$/.test(e.target.getAttribute('data-field') || '')) preview(); });
+  new MutationObserver(function () { if (!pend3) pend3 = requestAnimationFrame(function () { pend3 = 0; var f = document.getElementById('wikiEditorForm'); if (f && f.querySelector('[data-field="title_fx"]') && !f.querySelector('.wk-tfx-samples')) tfxSample(); }); }).observe(document.documentElement, { childList: true, subtree: true });
+  document.addEventListener('input', function (e) { if (e.target && e.target.getAttribute && /^(person_link|image|reward_image)$/.test(e.target.getAttribute('data-field') || '')) { preview(); tfxSample(); } if (e.target && e.target.getAttribute && /^(title_style|name)$/.test(e.target.getAttribute('data-field') || '')) tfxSample(); });
 })();
 </script>
 <style id="wiki-medal-fx-style">
@@ -23143,6 +23199,276 @@ html[data-wk-title-font] :is(.character-item .card-title,[id$="ArticleContent"] 
     schedule();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>
+<style id="wiki-title-style-v1">
+/* ===== Полная настройка шрифта заголовков: свой цвет, капс, жирность, наклон, интервал, скорость ===== */
+[data-tfx="custom"]{--k1:var(--wk-ts-c1,var(--wk-acc,#ffd36b));--k2:var(--wk-ts-c2,color-mix(in srgb,var(--k1) 62%,#000))}
+html:not(.wk-tfx-off) body [data-tfx="custom"][data-tfx]{background-image:linear-gradient(90deg,color-mix(in srgb,var(--k1) 50%,#fff),var(--k1),color-mix(in srgb,var(--k2) 45%,#fff),var(--k2),color-mix(in srgb,var(--k1) 50%,#fff))!important;background-size:200% 100%!important;animation:wkTfxFlow 6s linear infinite;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.8)) drop-shadow(0 0 1.5px color-mix(in srgb,var(--k1) 60%,transparent));text-shadow:none!important;-webkit-text-stroke:0!important}
+html:not(.wk-tfx-off) body [data-tfx="custom"][data-wk-glow]{filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.8)) drop-shadow(0 0 4px color-mix(in srgb,var(--k1) 80%,transparent)) drop-shadow(0 0 10px color-mix(in srgb,var(--k1) 45%,transparent))}
+html:not(.wk-tfx-off) body [data-tfx="rainbowcaps"][data-tfx]{background-image:linear-gradient(90deg,#ff3060,#ff8c1a,#ffe01a,#22d65e,#1aa0ff,#7a4dff,#ff3060)!important;background-size:200% 100%!important;animation:wkTfxFlow 5s linear infinite;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.8)) drop-shadow(0 0 2px rgba(255,255,255,.4));text-shadow:none!important;-webkit-text-stroke:0!important;text-transform:uppercase;letter-spacing:.04em}
+html:not(.wk-tfx-off) body [data-tfx="rainbowcaps"][data-tfx][data-tfx],html:not(.wk-tfx-off) body [id$="ArticleContent"] h1[data-tfx="rainbowcaps"],html:not(.wk-tfx-off) body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title[data-tfx="rainbowcaps"]{letter-spacing:.04em!important;text-transform:uppercase!important}
+html:not(.wk-tfx-off) body [data-tfx="marine"][data-tfx]{background-image:linear-gradient(90deg,#ffffff,#9ed2ff,#ffffff,#4f9dff,#ffffff)!important;background-size:200% 100%!important;animation:wkTfxFlow 6s linear infinite;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.8)) drop-shadow(0 0 2px rgba(90,170,255,.75));text-shadow:none!important;-webkit-text-stroke:0!important;text-transform:uppercase;letter-spacing:.05em}
+html:not(.wk-tfx-off) body [data-tfx="marine"][data-tfx][data-tfx],html:not(.wk-tfx-off) body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title[data-tfx="marine"]{font-family:'Russo One',"Samsung Sans",Arial,sans-serif!important;font-weight:400!important;font-size-adjust:none!important}
+html:not(.wk-tfx-off) body [data-tfx="marine"][data-tfx][data-tfx],html:not(.wk-tfx-off) body [id$="ArticleContent"] h1[data-tfx="marine"],html:not(.wk-tfx-off) body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title[data-tfx="marine"]{letter-spacing:.05em!important;text-transform:uppercase!important}
+html:not(.wk-tfx-off) body [data-tfx="yonko"][data-tfx]{background-image:linear-gradient(90deg,#ffe9a8,#ff4040,#ffd56b,#c4122f,#ffe9a8)!important;background-size:200% 100%!important;animation:wkTfxFlow 6s linear infinite;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.8)) drop-shadow(0 0 2px rgba(255,70,70,.7));text-shadow:none!important;-webkit-text-stroke:0!important;text-transform:uppercase;letter-spacing:.04em}
+html:not(.wk-tfx-off) body [data-tfx="yonko"][data-tfx][data-tfx],html:not(.wk-tfx-off) body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title[data-tfx="yonko"]{font-family:'Playfair Display',"Samsung Sans",Arial,sans-serif!important;font-weight:900!important;font-size-adjust:none!important}
+html:not(.wk-tfx-off) body [data-tfx="yonko"][data-tfx][data-tfx],html:not(.wk-tfx-off) body [id$="ArticleContent"] h1[data-tfx="yonko"],html:not(.wk-tfx-off) body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title[data-tfx="yonko"]{letter-spacing:.04em!important;text-transform:uppercase!important}
+html:not(.wk-tfx-off) body [data-tfx="jollyroger"][data-tfx]{background-image:linear-gradient(90deg,#ffffff,#c9ced6,#f5f5f5,#8d949e,#ffffff)!important;background-size:200% 100%!important;animation:wkTfxFlow 7s linear infinite;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.8)) drop-shadow(0 0 2px rgba(255,255,255,.45));text-shadow:none!important;-webkit-text-stroke:0!important;text-transform:uppercase;letter-spacing:.08em}
+html:not(.wk-tfx-off) body [data-tfx="jollyroger"][data-tfx][data-tfx],html:not(.wk-tfx-off) body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title[data-tfx="jollyroger"]{font-family:'Oswald',"Samsung Sans",Arial,sans-serif!important;font-weight:700!important;font-size-adjust:none!important}
+html:not(.wk-tfx-off) body [data-tfx="jollyroger"][data-tfx][data-tfx],html:not(.wk-tfx-off) body [id$="ArticleContent"] h1[data-tfx="jollyroger"],html:not(.wk-tfx-off) body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title[data-tfx="jollyroger"]{letter-spacing:.08em!important;text-transform:uppercase!important}
+html:not(.wk-tfx-off) body [data-tfx="scroll"][data-tfx]{background-image:linear-gradient(90deg,#f6e6b8,#c08a3e,#fff4d2,#8f5a1c,#f6e6b8)!important;background-size:200% 100%!important;animation:wkTfxFlow 9s linear infinite;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.8)) drop-shadow(0 0 2px rgba(230,180,100,.55));text-shadow:none!important;-webkit-text-stroke:0!important;text-transform:uppercase;letter-spacing:.09em}
+html:not(.wk-tfx-off) body [data-tfx="scroll"][data-tfx][data-tfx],html:not(.wk-tfx-off) body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title[data-tfx="scroll"]{font-family:'Cormorant Garamond',"Samsung Sans",Arial,sans-serif!important;font-weight:700!important;font-size-adjust:none!important}
+html:not(.wk-tfx-off) body [data-tfx="scroll"][data-tfx][data-tfx],html:not(.wk-tfx-off) body [id$="ArticleContent"] h1[data-tfx="scroll"],html:not(.wk-tfx-off) body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title[data-tfx="scroll"]{letter-spacing:.09em!important;text-transform:uppercase!important}
+html:not(.wk-tfx-off) body [data-tfx="redline"][data-tfx]{background-image:linear-gradient(90deg,#ffffff,#ff5a5a,#ffe1e1,#d11a2a,#ffffff)!important;background-size:200% 100%!important;animation:wkTfxFlow 5s linear infinite;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.8)) drop-shadow(0 0 2px rgba(255,60,60,.7));text-shadow:none!important;-webkit-text-stroke:0!important;text-transform:uppercase;letter-spacing:.02em}
+html:not(.wk-tfx-off) body [data-tfx="redline"][data-tfx][data-tfx],html:not(.wk-tfx-off) body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title[data-tfx="redline"]{font-family:'Unbounded',"Samsung Sans",Arial,sans-serif!important;font-weight:800!important;font-size-adjust:none!important}
+html:not(.wk-tfx-off) body [data-tfx="redline"][data-tfx][data-tfx],html:not(.wk-tfx-off) body [id$="ArticleContent"] h1[data-tfx="redline"],html:not(.wk-tfx-off) body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title[data-tfx="redline"]{letter-spacing:.02em!important;text-transform:uppercase!important}
+html:not(.wk-tfx-off) body [data-tfx="dressrosa"][data-tfx]{background-image:linear-gradient(90deg,#ffd2a1,#ff7a3d,#ffe7c7,#e0452a,#ffd2a1)!important;background-size:200% 100%!important;animation:wkTfxFlow 6s linear infinite;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.8)) drop-shadow(0 0 2px rgba(255,120,60,.7));text-shadow:none!important;-webkit-text-stroke:0!important;text-transform:uppercase;letter-spacing:.06em}
+html:not(.wk-tfx-off) body [data-tfx="dressrosa"][data-tfx][data-tfx],html:not(.wk-tfx-off) body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title[data-tfx="dressrosa"]{font-family:'Ruslan Display',"Samsung Sans",Arial,sans-serif!important;font-weight:400!important;font-size-adjust:none!important}
+html:not(.wk-tfx-off) body [data-tfx="dressrosa"][data-tfx][data-tfx],html:not(.wk-tfx-off) body [id$="ArticleContent"] h1[data-tfx="dressrosa"],html:not(.wk-tfx-off) body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title[data-tfx="dressrosa"]{letter-spacing:.06em!important;text-transform:uppercase!important}
+html:not(.wk-tfx-off) body [data-tfx="samurai"][data-tfx]{background-image:linear-gradient(90deg,#ffe2e2,#ff4d6d,#ffffff,#b8002b,#ffe2e2)!important;background-size:200% 100%!important;animation:wkTfxFlow 6s linear infinite;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.8)) drop-shadow(0 0 2px rgba(255,60,100,.65));text-shadow:none!important;-webkit-text-stroke:0!important;text-transform:uppercase;letter-spacing:.08em}
+html:not(.wk-tfx-off) body [data-tfx="samurai"][data-tfx][data-tfx],html:not(.wk-tfx-off) body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title[data-tfx="samurai"]{font-family:'Yeseva One',"Samsung Sans",Arial,sans-serif!important;font-weight:400!important;font-size-adjust:none!important}
+html:not(.wk-tfx-off) body [data-tfx="samurai"][data-tfx][data-tfx],html:not(.wk-tfx-off) body [id$="ArticleContent"] h1[data-tfx="samurai"],html:not(.wk-tfx-off) body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title[data-tfx="samurai"]{letter-spacing:.08em!important;text-transform:uppercase!important}
+html:not(.wk-tfx-off) body [data-tfx]:is([data-tfx="rainbowcaps"],[data-tfx="marine"],[data-tfx="yonko"],[data-tfx="jollyroger"],[data-tfx="scroll"],[data-tfx="redline"],[data-tfx="dressrosa"],[data-tfx="samurai"],[data-tfx="custom"]){-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;color:transparent!important;background-repeat:repeat!important}
+html:not(.wk-tfx-off) body [data-tfx]:is([data-tfx="rainbowcaps"],[data-tfx="marine"],[data-tfx="yonko"],[data-tfx="jollyroger"],[data-tfx="scroll"],[data-tfx="redline"],[data-tfx="dressrosa"],[data-tfx="samurai"],[data-tfx="custom"]) *{-webkit-text-fill-color:transparent!important;color:transparent!important;background:none!important}
+html:not(.wk-tfx-off) body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title[data-tfx]:is([data-tfx="rainbowcaps"],[data-tfx="marine"],[data-tfx="yonko"],[data-tfx="jollyroger"],[data-tfx="scroll"],[data-tfx="redline"],[data-tfx="dressrosa"],[data-tfx="samurai"],[data-tfx="custom"]){-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;color:transparent!important;text-shadow:none!important}
+html body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title:not([data-tfx]),html body .character-item .card-title:not([data-tfx]){text-shadow:0 1px 2px rgba(0,0,0,.85),0 0 1px rgba(0,0,0,.55)!important}
+html.wk-tfx-off body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title{text-shadow:0 1px 2px rgba(0,0,0,.85),0 0 1px rgba(0,0,0,.55)!important}
+
+/* Постоянные эффекты, переехавшие из «при наклоне»: отдельный слой, всегда включён */
+.wk-amb-fx[data-fx]{position:absolute!important;inset:0;border-radius:inherit;pointer-events:none;display:block;isolation:auto!important;z-index:auto!important;--mx:inherit;--my:inherit;--pos:inherit;--o:inherit}
+.wk-amb-fx[data-fx]>.wk-fx-a,.wk-amb-fx[data-fx]>.wk-fx-b{border-radius:inherit}
+/* Предпросмотр шрифта в редакторе: как на обложке и как в статье */
+.wk-tfx-samples{display:grid;grid-template-columns:minmax(150px,200px) minmax(0,1fr);gap:10px;margin-top:10px;align-items:stretch}
+.wk-tfx-pv{position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;min-width:0;padding:12px;border-radius:12px;border:1px solid #334155;background:#0b1220;overflow:hidden}
+.wk-tfx-pv small{position:relative;z-index:1;color:#64748b;font:600 10.5px Arial,sans-serif;letter-spacing:.04em;text-transform:uppercase}
+.wk-tfx-pv.is-card{min-height:118px;background:linear-gradient(160deg,#3d4f73 0%,#24304a 38%,#1a2133 62%,#4a3140 100%)}
+.wk-tfx-pv-bg{position:absolute;inset:0;background-size:cover;background-position:center 25%}
+.wk-tfx-pv.is-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(6,10,18,.88) 100%)}
+.wk-tfx-pv.is-card small{color:#94a3b8}
+.wk-tfx-pv.is-article{justify-content:center}
+.wk-tfx-samples .wk-tfx-sample{position:relative;z-index:1;display:block;margin:0;padding:0;border:0;background:none;border-radius:0;min-width:0;overflow-wrap:anywhere;font-family:"Samsung Sans",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:#f3f6fb}
+.wk-tfx-samples .wk-tfx-sample.is-card{font-size:15px;font-weight:760;line-height:1.22;letter-spacing:-.01em;zoom:var(--wk-tz-card,1);text-shadow:0 1px 2px rgba(0,0,0,.85),0 0 1px rgba(0,0,0,.55)}
+.wk-tfx-samples .wk-tfx-sample.is-article{font-size:34px;font-weight:800;line-height:1.1;letter-spacing:-.025em;zoom:var(--wk-tz-art,1)}
+html:not(.wk-tfx-off) .wk-tfx-samples .wk-tfx-sample.is-card[data-tfx]{filter:drop-shadow(0 1px 2px rgba(0,0,0,.75))!important}
+html[data-wk-title-font] .wk-tfx-samples .wk-tfx-sample.wk-tfx-sample{font-family:var(--wk-title-font),"Samsung Sans","SamsungOne",Arial,sans-serif!important;font-weight:var(--wk-title-fw,700)!important;font-size-adjust:var(--wk-title-adj,.53);letter-spacing:var(--wk-title-ls,normal)}
+@media (max-width:640px){.wk-tfx-samples{grid-template-columns:1fr}.wk-tfx-samples .wk-tfx-sample.is-article{font-size:28px}}
+/* Панель ручных настроек */
+.wk-ts-panel{margin-top:10px;padding:12px;border-radius:12px;border:1px solid #334155;background:rgba(255,255,255,.025);display:grid;gap:10px}
+.wk-ts-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.wk-ts-head b{color:#e2e8f0;font:700 13px Arial,sans-serif}
+.wk-ts-reset{padding:4px 10px;border-radius:8px;border:1px solid #475569;background:transparent;color:#94a3b8;font:600 11.5px Arial,sans-serif;cursor:pointer}
+.wk-ts-reset:hover{color:#e2e8f0;border-color:#64748b}
+.wk-ts-row{display:grid;grid-template-columns:118px minmax(0,1fr);align-items:center;gap:10px;color:#cbd5e1;font:600 12px Arial,sans-serif}
+.wk-ts-row>span:first-child{color:#94a3b8}
+.wk-ts-seg{display:flex;flex-wrap:wrap;gap:4px}
+.wk-ts-seg button{padding:5px 10px;border-radius:8px;border:1px solid #334155;background:rgba(255,255,255,.03);color:#cbd5e1;font:600 12px Arial,sans-serif;cursor:pointer}
+.wk-ts-seg button:hover{border-color:#64748b}
+.wk-ts-seg button.is-on{border-color:#d4a84f;background:rgba(212,168,79,.16);color:#f4d99e}
+.wk-ts-colors{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.wk-ts-color{display:inline-flex;align-items:center;gap:6px;color:#cbd5e1;font:600 12px Arial,sans-serif;cursor:pointer}
+.wk-ts-color input[type=color]{width:34px;height:28px;padding:0;border:1px solid #475569;border-radius:8px;background:none;cursor:pointer}
+.wk-ts-color input[type=color]::-webkit-color-swatch-wrapper{padding:2px}
+.wk-ts-color input[type=color]::-webkit-color-swatch{border:0;border-radius:6px}
+.wk-ts-color.is-off input[type=color]{opacity:.35}
+.wk-ts-check{display:inline-flex;align-items:center;gap:6px;color:#cbd5e1;font:600 12px Arial,sans-serif;cursor:pointer}
+.wk-ts-check input{accent-color:#d4a84f}
+.wk-ts-swatches{display:flex;flex-wrap:wrap;gap:5px}
+.wk-ts-swatches button{width:20px;height:20px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.25);cursor:pointer}
+.wk-ts-range{display:grid;grid-template-columns:minmax(0,1fr) 54px auto;align-items:center;gap:8px}
+.wk-ts-range input[type=range]{width:100%;accent-color:#d4a84f}
+.wk-ts-range output{text-align:right;color:#f4d99e;font:700 12px Arial,sans-serif}
+.wk-ts-range button{padding:3px 8px;border-radius:7px;border:1px solid #475569;background:transparent;color:#94a3b8;font:600 11px Arial,sans-serif;cursor:pointer}
+.wk-ts-range.is-auto output{color:#64748b}
+.wk-ts-panel select{min-width:0;padding:6px 8px;border-radius:8px;border:1px solid #475569;background:#0b1220;color:#e2e8f0;font:600 12px Arial,sans-serif}
+.wk-ts-note{color:#64748b;font:500 11.5px/1.45 Arial,sans-serif}
+#wikiEditorForm .wiki-editor-field[data-editor-field="title_fx"]{grid-column:1 / -1!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel label,#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel span,#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel button,#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel output{text-transform:none!important;letter-spacing:normal!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel label{display:inline-flex!important;align-items:center!important;gap:6px!important;margin:0!important;width:auto!important;color:#cbd5e1!important;font:600 12px Arial,sans-serif!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel input[type=checkbox]{width:16px!important;height:16px!important;min-height:0!important;margin:0!important;padding:0!important;flex:0 0 auto!important;accent-color:#d4a84f}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel input[type=color]{-webkit-appearance:none;appearance:none;width:36px!important;height:28px!important;min-height:0!important;padding:2px!important;margin:0!important;border:1px solid #475569!important;border-radius:8px!important;background:#0b1220!important;cursor:pointer;flex:0 0 auto}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel input[type=color]::-webkit-color-swatch-wrapper{padding:0}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel input[type=color]::-webkit-color-swatch{border:0;border-radius:5px}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel input[type=color]::-moz-color-swatch{border:0;border-radius:5px}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel input[type=range]{width:100%!important;min-height:0!important;height:auto!important;padding:0!important;margin:0!important;border:0!important;background:none!important;box-shadow:none!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel select{width:auto!important;min-height:0!important;height:auto!important;padding:6px 28px 6px 10px!important;font:600 12.5px Arial,sans-serif!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-ts-seg button{width:auto!important;min-height:0!important;padding:5px 10px!important;font:600 12px Arial,sans-serif!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-ts-swatches button{width:20px!important;height:20px!important;min-height:0!important;padding:0!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-ts-head b{font:700 13px Arial,sans-serif!important;color:#e2e8f0!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel .wk-ts-row>span:first-child{color:#94a3b8!important}
+@media (max-width:640px){.wk-ts-row{grid-template-columns:1fr;gap:6px}}
+</style>
+<script id="wiki-title-style-v1-js">
+(function () {
+  'use strict';
+  var MAP_KEY = 'onePieceWikiMedalArtV1', STORAGE_KEY = 'onePieceWikiLocalContentV1', LS_KEY = 'font:titles:ls';
+  var PRESET_FONTS = {"marine": "Russo+One", "yonko": "Playfair+Display:wght@900", "jollyroger": "Oswald:wght@700", "scroll": "Cormorant+Garamond:wght@700", "redline": "Unbounded:wght@800", "dressrosa": "Ruslan+Display", "samurai": "Yeseva+One"};
+  var OWN_LS = ["rainbowcaps", "marine", "yonko", "jollyroger", "scroll", "redline", "dressrosa", "samurai", "wanted"];
+  function readMap() { try { var v = JSON.parse(localStorage.getItem(MAP_KEY) || '{}'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
+  function writeMap(map) {
+    try { localStorage.setItem(MAP_KEY, JSON.stringify(map)); } catch (e) {}
+    try { var raw = localStorage.getItem(STORAGE_KEY); if (raw) { var d = JSON.parse(raw); d.medalArt = map; d.updatedAt = new Date().toISOString(); localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } } catch (e) {}
+  }
+  // Общий межбуквенный интервал заголовков, в сотых долях em (−5…30). null — как у шрифта.
+  var previewLs = undefined;
+  function globalLs() { if (previewLs !== undefined) return previewLs; var m = readMap(); if (!(LS_KEY in m)) return null; var v = Number(m[LS_KEY]); return isFinite(v) ? v : null; }
+  function parse(v) {
+    if (!v) return {};
+    if (typeof v === 'object') return v;
+    try { var o = JSON.parse(String(v)); return o && typeof o === 'object' ? o : {}; } catch (e) { return {}; }
+  }
+  var loadedFonts = {};
+  function loadFont(param) {
+    if (!param || loadedFonts[param]) return; loadedFonts[param] = true;
+    var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=' + param + '&display=swap';
+    document.head.appendChild(l);
+  }
+  // Чтобы «убрать жирность» работало и у шрифтов из Google, подгружаем все начертания выбранного шрифта заголовков.
+  function ensureTitleWeights() {
+    var root = document.documentElement; if (!root.hasAttribute('data-wk-title-font')) return;
+    var fam = getComputedStyle(root).getPropertyValue('--wk-title-font').trim().replace(/^['"]|['"]$/g, '');
+    if (!fam) return;
+    var p = fam.replace(/\s+/g, '+');
+    [300, 400, 500, 600, 700, 800, 900].forEach(function (w) { loadFont(p + ':wght@' + w); });
+  }
+  var PROPS = ['text-transform', 'font-weight', 'font-style', 'letter-spacing', 'animation-duration', 'animation-play-state'];
+  function apply(el, styleValue, tfx) {
+    if (!el) return;
+    var st = parse(styleValue);
+    tfx = tfx == null ? (el.getAttribute('data-tfx') || '') : tfx;
+    if (PRESET_FONTS[tfx]) loadFont(PRESET_FONTS[tfx]);
+    var ls = st.ls != null && st.ls !== '' && isFinite(Number(st.ls)) ? Number(st.ls) : (OWN_LS.indexOf(tfx) >= 0 ? null : globalLs());
+    var sig = JSON.stringify([st, tfx, ls]);
+    if (el.__wkTsSig === sig) return;
+    el.__wkTsSig = sig; el.__wkTsRaw = styleValue || ''; el.__wkTsTfx = tfx;
+    var s = el.style;
+    PROPS.forEach(function (p) { s.removeProperty(p); });
+    if (st.caps === 'up') s.setProperty('text-transform', 'uppercase', 'important');
+    else if (st.caps === 'none') s.setProperty('text-transform', 'none', 'important');
+    var w = Number(st.w); if (w >= 100 && w <= 900) { s.setProperty('font-weight', String(w), 'important'); ensureTitleWeights(); }
+    if (st.it) s.setProperty('font-style', 'italic', 'important');
+    if (ls != null) s.setProperty('letter-spacing', (ls / 100) + 'em', 'important');
+    if (tfx === 'custom' && st.c1) s.setProperty('--wk-ts-c1', st.c1); else s.removeProperty('--wk-ts-c1');
+    if (tfx === 'custom' && st.c1 && st.c2) s.setProperty('--wk-ts-c2', st.c2); else s.removeProperty('--wk-ts-c2');
+    if (tfx === 'custom' && st.glow) el.setAttribute('data-wk-glow', ''); else el.removeAttribute('data-wk-glow');
+    if (st.sp === 'stop') s.setProperty('animation-play-state', 'paused', 'important');
+    else if (st.sp === 'slow' || st.sp === 'fast') {
+      var k = st.sp === 'slow' ? 2.2 : 0.45;
+      var d = getComputedStyle(el).animationDuration || '';
+      if (d && d !== '0s') s.setProperty('animation-duration', d.split(',').map(function (x) { return (parseFloat(x) * k).toFixed(2) + 's'; }).join(', '), 'important');
+    }
+  }
+  window.__wikiApplyTitleStyle = apply;
+  function reapplyAll() {
+    document.querySelectorAll('.character-item .card-title, [id$="ArticleContent"] h1, .wk-tfx-samples .wk-tfx-sample').forEach(function (el) {
+      el.__wkTsSig = null; apply(el, el.__wkTsRaw || '', el.__wkTsTfx);
+    });
+  }
+  window.__wikiReapplyTitleStyles = reapplyAll;
+  // Настройки пришли из облака позже или поменялись в другой вкладке
+  var lastLs = globalLs();
+  setInterval(function () { var v = globalLs(); if (v !== lastLs) { lastLs = v; reapplyAll(); } }, 2500);
+  window.addEventListener('storage', function (e) { if (!e.key || e.key === MAP_KEY) { lastLs = globalLs(); reapplyAll(); } });
+  // Шрифты новых эффектов — при первом появлении на странице
+  function scanPresetFonts() { Object.keys(PRESET_FONTS).forEach(function (k) { if (document.querySelector('[data-tfx="' + k + '"]')) loadFont(PRESET_FONTS[k]); }); }
+  var pf = 0;
+  new MutationObserver(function () { if (!pf) pf = requestAnimationFrame(function () { pf = 0; scanPresetFonts(); }); }).observe(document.documentElement, { subtree: true, attributes: true, attributeFilter: ['data-tfx'] });
+
+  /* ---------- Межбуквенный интервал в окне «Шрифт заголовков» ---------- */
+  function lsText(v) { return v == null ? 'как у шрифта' : (v > 0 ? '+' : '') + v; }
+  function mountLs(pop) {
+    var box = pop.querySelector('.wk-tf-size'); if (!box || box.querySelector('[data-ls]')) return;
+    var lab = document.createElement('label');
+    lab.innerHTML = 'Интервал<input type="range" min="-5" max="30" step="1" data-ls><output></output>';
+    var row = box.querySelector('.row'); box.insertBefore(lab, row || null);
+    var r = lab.querySelector('input'), out = lab.querySelector('output');
+    var cur = globalLs(); r.value = cur == null ? 0 : cur; out.textContent = lsText(cur);
+    out.title = 'В сотых долях высоты буквы. 0 — как задумано шрифтом.';
+    r.addEventListener('click', function (e) { e.stopPropagation(); });
+    r.addEventListener('input', function () { previewLs = Number(r.value); out.textContent = lsText(previewLs); reapplyAll(); });
+    r.addEventListener('change', function () {
+      var m = readMap(), v = Number(r.value); m[LS_KEY] = v; writeMap(m); previewLs = undefined; lastLs = globalLs(); reapplyAll();
+      var stx = pop.querySelector('.wk-tf-status'); if (stx) stx.textContent = '✓ Интервал заголовков: ' + lsText(v);
+    });
+    var reset = box.querySelector('[data-size-reset]');
+    if (reset) {
+      reset.textContent = 'Сбросить размер и интервал';
+      reset.addEventListener('click', function () { var m = readMap(); delete m[LS_KEY]; writeMap(m); previewLs = undefined; lastLs = null; r.value = 0; out.textContent = lsText(null); reapplyAll(); });
+    }
+    var h = pop.querySelector('h3'); if (h) h.textContent = 'Шрифт, размер и интервал заголовков';
+  }
+  new MutationObserver(function () { var pop = document.querySelector('.wk-tf-pop'); if (pop) mountLs(pop); }).observe(document.body, { childList: true, subtree: true });
+  // Выбор шрифта заголовков → обновить предпросмотр в редакторе и подгрузить начертания
+  var lastFont = '';
+  setInterval(function () { var f = document.documentElement.getAttribute('data-wk-title-font') || ''; if (f !== lastFont) { lastFont = f; if (document.querySelector('[style*="font-weight"][data-tfx-text], .wk-tfx-sample')) ensureTitleWeights(); } }, 1000);
+
+  /* ---------- Панель настроек в редакторе статьи ---------- */
+  var SWATCHES = ['#ffd36b', '#ff6b6b', '#ff8ac6', '#b18cff', '#6bb6ff', '#4fe3c1', '#7cf06a', '#ffffff', '#c0c8d4', '#ff9d3d'];
+  var WEIGHTS = [['', 'Авто'], ['300', '300 · тонкий'], ['400', '400 · обычный'], ['500', '500 · средний'], ['600', '600 · полужирный'], ['700', '700 · жирный'], ['800', '800 · очень жирный'], ['900', '900 · чёрный']];
+  function seg(name, items, cur) { return '<div class="wk-ts-seg" data-seg="' + name + '">' + items.map(function (it) { return '<button type="button" data-v="' + it[0] + '"' + (String(cur || '') === it[0] ? ' class="is-on"' : '') + '>' + it[1] + '</button>'; }).join('') + '</div>'; }
+  function build(field) {
+    var hidden = field.querySelector('[data-field="title_style"]'); if (!hidden) return;
+    var sel = field.querySelector('[data-field="title_fx"]');
+    var st = parse(hidden.value);
+    var panel = document.createElement('div'); panel.className = 'wk-ts-panel';
+    function render() {
+      var isCustom = sel && sel.value === 'custom';
+      var lsAuto = !(st.ls != null && st.ls !== '');
+      var g = globalLs();
+      panel.innerHTML = '<div class="wk-ts-head"><b>Настройка шрифта заголовка</b><button type="button" class="wk-ts-reset">Сбросить</button></div>'
+        + (isCustom ? '<div class="wk-ts-row"><span>Цвета перелива</span><div class="wk-ts-colors">'
+          + '<label class="wk-ts-color">1<input type="color" data-k="c1" value="' + (st.c1 || '#ffd36b') + '"></label>'
+          + '<label class="wk-ts-color' + (st.c2 ? '' : ' is-off') + '"><input type="checkbox" data-k="c2on"' + (st.c2 ? ' checked' : '') + '> 2<input type="color" data-k="c2" value="' + (st.c2 || '#6bb6ff') + '"></label>'
+          + '<label class="wk-ts-check"><input type="checkbox" data-k="glow"' + (st.glow ? ' checked' : '') + '> свечение</label></div></div>'
+          + '<div class="wk-ts-row"><span></span><div class="wk-ts-swatches">' + SWATCHES.map(function (c) { return '<button type="button" data-sw="' + c + '" style="background:' + c + '" title="' + c + '"></button>'; }).join('') + '</div></div>'
+          + (st.c1 ? '' : '<div class="wk-ts-row"><span></span><span class="wk-ts-note">Пока цвет не выбран, перелив идёт в цвете статьи.</span></div>') : '')
+        + '<div class="wk-ts-row"><span>Буквы</span>' + seg('caps', [['', 'Как в эффекте'], ['up', 'ЗАГЛАВНЫЕ'], ['none', 'Обычные']], st.caps) + '</div>'
+        + '<div class="wk-ts-row"><span>Жирность</span><div class="wk-ts-colors"><select data-k="w">' + WEIGHTS.map(function (w) { return '<option value="' + w[0] + '"' + (String(st.w || '') === w[0] ? ' selected' : '') + '>' + w[1] + '</option>'; }).join('') + '</select>'
+        + '<label class="wk-ts-check"><input type="checkbox" data-k="it"' + (st.it ? ' checked' : '') + '> курсив</label></div></div>'
+        + '<div class="wk-ts-row"><span>Интервал</span><div class="wk-ts-range' + (lsAuto ? ' is-auto' : '') + '"><input type="range" min="-5" max="30" step="1" data-k="ls" value="' + (lsAuto ? (g == null ? 0 : g) : st.ls) + '"><output>' + (lsAuto ? 'общий' : (st.ls > 0 ? '+' : '') + st.ls) + '</output>' + (lsAuto ? '' : '<button type="button" data-ls-auto>общий</button>') + '</div></div>'
+        + '<div class="wk-ts-row"><span>Скорость перелива</span>' + seg('sp', [['', 'Обычная'], ['slow', 'Медленно'], ['fast', 'Быстро'], ['stop', 'Стоп']], st.sp) + '</div>'
+        + '<div class="wk-ts-note">Работает с любым эффектом: например, «Радуга» + ЗАГЛАВНЫЕ. «Общий» интервал задаётся для всех статей в «Аа Шрифт заголовков».</div>';
+    }
+    function commit(rerender) {
+      var clean = {}; Object.keys(st).forEach(function (k) { var v = st[k]; if (v !== '' && v != null && v !== false) clean[k] = v; });
+      var val = Object.keys(clean).length ? JSON.stringify(clean) : '';
+      if (hidden.value !== val) { hidden.value = val; hidden.dispatchEvent(new Event('input', { bubbles: true })); hidden.dispatchEvent(new Event('change', { bubbles: true })); }
+      if (rerender) render();
+      if (window.__wikiTfxSample) window.__wikiTfxSample();
+    }
+    panel.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      if (b.classList.contains('wk-ts-reset')) { st = {}; commit(true); return; }
+      if (b.hasAttribute('data-sw')) { st.c1 = b.getAttribute('data-sw'); commit(true); return; }
+      if (b.hasAttribute('data-ls-auto')) { delete st.ls; commit(true); return; }
+      var sg = b.closest('[data-seg]'); if (sg) { st[sg.getAttribute('data-seg')] = b.getAttribute('data-v'); commit(true); }
+    });
+    panel.addEventListener('input', function (e) {
+      var t = e.target, k = t.getAttribute('data-k'); if (!k) return;
+      if (k === 'c1' || k === 'c2') { st[k] = t.value; if (k === 'c2') { var cb = panel.querySelector('[data-k="c2on"]'); if (cb) { cb.checked = true; cb.closest('.wk-ts-color').classList.remove('is-off'); } } commit(false); }
+      else if (k === 'ls') { st.ls = Number(t.value); var o = t.parentNode.querySelector('output'); o.textContent = (st.ls > 0 ? '+' : '') + st.ls; t.parentNode.classList.remove('is-auto'); commit(false); }
+    });
+    panel.addEventListener('change', function (e) {
+      var t = e.target, k = t.getAttribute('data-k'); if (!k) return;
+      if (k === 'c2on') { if (t.checked) st.c2 = panel.querySelector('[data-k="c2"]').value; else delete st.c2; commit(true); }
+      else if (k === 'glow' || k === 'it') { st[k] = t.checked; commit(false); }
+      else if (k === 'w') { st.w = t.value; commit(false); }
+      else if (k === 'ls' || k === 'c1' || k === 'c2') commit(k === 'ls');
+    });
+    if (sel) sel.addEventListener('change', function () { render(); });
+    render();
+    var samples = field.querySelector('.wk-tfx-samples');
+    if (samples && samples.nextSibling) field.insertBefore(panel, samples.nextSibling); else field.appendChild(panel);
+  }
+  var pt = 0;
+  new MutationObserver(function () { if (!pt) pt = requestAnimationFrame(function () {
+    pt = 0;
+    var f = document.getElementById('wikiEditorForm'); if (!f) return;
+    var h = f.querySelector('[data-field="title_style"]'); if (!h) return;
+    var field = h.closest('[data-editor-field], .wiki-editor-field'); if (!field || field.querySelector('.wk-ts-panel')) return;
+    build(field);
+    if (window.__wikiTfxSample) window.__wikiTfxSample();
+  }); }).observe(document.documentElement, { childList: true, subtree: true });
 })();
 </script>
 </body></html>
