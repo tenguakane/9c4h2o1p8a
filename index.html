@@ -8482,14 +8482,14 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         useful: {label:'Полезное', plural:'Полезные статьи', array:usefulArticles, icon:'💡'}
     };
     const schemas = {
-        character: {id:'char_new',name:'',nickname:'',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',person_link:'',person_image_position:50,person_image_position_x:50,person_image_zoom:100,person2_link:'',person2_from_chapter:'',person2_from_episode:'',person2_image_position:50,person2_image_position_x:50,person2_image_zoom:100,timeskip_description:'',nickname2:'',status2:'',ts_fruit_article_id:'',ts_ship:'',ts_ship_link:'',ts_ship_description:'',ts_flag:'',ts_flag_link:'',ts_flag_description:'',chapter:'',episode:'',description:'',filler:false,fruit:'',fruit_link:'',fruit_article_id:'',fruit2:'',fruit2_link:'',fruit2_article_id:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],ship:'',ship_link:'',ship_description:'',ship2:'',ship2_link:'',ship2_description:'',flag:'',flag_link:'',flag_description:'',status:''},
+        character: {id:'char_new',name:'',nickname:'',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',person_link:'',person_image_position:50,person_image_position_x:50,person_image_zoom:100,person2_link:'',person2_from_chapter:'',person2_from_episode:'',person2_image_position:50,person2_image_position_x:50,person2_image_zoom:100,timeskip_description:'',nickname2:'',status2:'',future_status:'',ts_fruit_article_id:'',ts_ship:'',ts_ship_link:'',ts_ship_description:'',ts_flag:'',ts_flag_link:'',ts_flag_description:'',chapter:'',episode:'',description:'',filler:false,fruit:'',fruit_link:'',fruit_article_id:'',fruit2:'',fruit2_link:'',fruit2_article_id:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],ship:'',ship_link:'',ship_description:'',ship2:'',ship2_link:'',ship2_description:'',flag:'',flag_link:'',flag_description:'',status:''},
         story: {id:'arc_new',name:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',image:'',image_position:50,image_position_x:50,image_zoom:100,chapters:'',episodes:'',ongoing:false,filler:false,movie:false,saga:'',description:'',key:'',characters:[],connect:[]},
         reward: {id:'reward_new',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',character_id:'',reward:0,ka:0,rank:'',rank_total:'',reward_image:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',appearance_chapter:'',appearance_episode:'',connect:[]},
         fruit: {id:'fruit_new',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',name:'',appearance:'',episode:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,owner:'',type:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[]},
         useful: {id:'article_new',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',name:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,type:'',appearance_chapter:'',appearance_episode:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[]}
     };
     const fieldLabels = {
-        id:'ID',name:'Название / имя',nickname:'Прозвище',person_link:'Ссылка на изображение',person_image_position:'Кадрирование фото в карточке',person_image_position_x:'Горизонтальное смещение фото в карточке',person_image_zoom:'Приближение фото в карточке',movie_id:'🎬 Из фильма',card_fx:'✨ Эффект при наклоне',card_shine:'💫 Постоянный эффект',title_fx:'🔤 Эффект шрифта',title_style:'🔤 Настройка шрифта заголовка',card_style:'🎛 Конструктор эффектов карточки',person2_link:'Второе фото (новый облик)',person2_from_chapter:'С какой главы (фото и «Таймскип»)',person2_from_episode:'С какого эпизода (фото и «Таймскип»)',timeskip_description:'Чем персонаж занят спустя два года',nickname2:'Новое прозвище',status2:'Статусы после таймскипа',ts_fruit_article_id:'Новый дьявольский плод',ts_ship:'Новый корабль',ts_ship_link:'Ссылка на новый корабль',ts_ship_description:'Описание нового корабля',ts_flag:'Новый флаг / команда',ts_flag_link:'Ссылка на новый флаг',ts_flag_description:'Описание нового флага',person2_image_position:'Кадрирование второго фото',person2_image_position_x:'Горизонталь второго фото, %',person2_image_zoom:'Приближение второго фото, %',chapter:'Глава появления',episode:'Эпизод появления',description:'Описание',fruit:'Дьявольский плод (старое поле)',fruit_link:'Ссылка на плод (старое поле)',fruit_article_id:'Дьявольский плод — статья из раздела «Плоды»',fruit2:'Второй плод (старое поле)',fruit2_link:'Ссылка на второй плод (старое поле)',fruit2_article_id:'Второй дьявольский плод — статья из раздела «Плоды»',arc:'Арка (манга)',saga:'Сага (манга)',connect:'Связанные ID (через запятую)',ship:'Корабль',ship_link:'Ссылка на корабль',ship_description:'Описание корабля',ship2:'Второй корабль',ship2_link:'Ссылка на второй корабль',ship2_description:'Описание второго корабля',flag:'Флаг',flag_link:'Ссылка на флаг',flag_description:'Описание флага',status:'Статус',characters:'ID персонажей (через запятую)',chapters:'Главы',episodes:'Эпизоды',ongoing:'Арка продолжается',filler:'Филлер / аниме-оригинал',movie:'Полнометражный фильм',character_id:'ID персонажа',reward:'Награда',ka:'КА',rank:'Место в топе',rank_total:'Всего в топе',reward_image:'Ссылка на изображение для карточки награды',appearance:'Глава появления',appearance_chapter:'Глава появления',appearance_episode:'Эпизод появления',image:'Ссылка на изображение',image_position:'Кадрирование фото в карточке',image_position_x:'Горизонтальное смещение фото',image_zoom:'Приближение фото',owner:'Владелец(ы)',type:'Тип',arc_anime:'Арка (аниме)',saga_anime:'Сага (аниме)'};
+        id:'ID',name:'Название / имя',nickname:'Прозвище',person_link:'Ссылка на изображение',person_image_position:'Кадрирование фото в карточке',person_image_position_x:'Горизонтальное смещение фото в карточке',person_image_zoom:'Приближение фото в карточке',movie_id:'🎬 Из фильма',card_fx:'✨ Эффект при наклоне',card_shine:'💫 Постоянный эффект',title_fx:'🔤 Эффект шрифта',title_style:'🔤 Настройка шрифта заголовка',card_style:'🎛 Конструктор эффектов карточки',person2_link:'Второе фото (новый облик)',person2_from_chapter:'С какой главы (фото и «Таймскип»)',person2_from_episode:'С какого эпизода (фото и «Таймскип»)',timeskip_description:'Чем персонаж занят спустя два года',nickname2:'Новое прозвище',status2:'Статусы после таймскипа',future_status:'Будущие статусы',ts_fruit_article_id:'Новый дьявольский плод',ts_ship:'Новый корабль',ts_ship_link:'Ссылка на новый корабль',ts_ship_description:'Описание нового корабля',ts_flag:'Новый флаг / команда',ts_flag_link:'Ссылка на новый флаг',ts_flag_description:'Описание нового флага',person2_image_position:'Кадрирование второго фото',person2_image_position_x:'Горизонталь второго фото, %',person2_image_zoom:'Приближение второго фото, %',chapter:'Глава появления',episode:'Эпизод появления',description:'Описание',fruit:'Дьявольский плод (старое поле)',fruit_link:'Ссылка на плод (старое поле)',fruit_article_id:'Дьявольский плод — статья из раздела «Плоды»',fruit2:'Второй плод (старое поле)',fruit2_link:'Ссылка на второй плод (старое поле)',fruit2_article_id:'Второй дьявольский плод — статья из раздела «Плоды»',arc:'Арка (манга)',saga:'Сага (манга)',connect:'Связанные ID (через запятую)',ship:'Корабль',ship_link:'Ссылка на корабль',ship_description:'Описание корабля',ship2:'Второй корабль',ship2_link:'Ссылка на второй корабль',ship2_description:'Описание второго корабля',flag:'Флаг',flag_link:'Ссылка на флаг',flag_description:'Описание флага',status:'Статус',characters:'ID персонажей (через запятую)',chapters:'Главы',episodes:'Эпизоды',ongoing:'Арка продолжается',filler:'Филлер / аниме-оригинал',movie:'Полнометражный фильм',character_id:'ID персонажа',reward:'Награда',ka:'КА',rank:'Место в топе',rank_total:'Всего в топе',reward_image:'Ссылка на изображение для карточки награды',appearance:'Глава появления',appearance_chapter:'Глава появления',appearance_episode:'Эпизод появления',image:'Ссылка на изображение',image_position:'Кадрирование фото в карточке',image_position_x:'Горизонтальное смещение фото',image_zoom:'Приближение фото',owner:'Владелец(ы)',type:'Тип',arc_anime:'Арка (аниме)',saga_anime:'Сага (аниме)'};
     const types = Object.keys(collections);
     let activeType = 'character';
     let editingId = null;
@@ -8664,6 +8664,33 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         flag_link:raw=>tsFilled(raw.ts_flag)?raw.ts_flag_link:undefined,
         flag_description:raw=>tsFilled(raw.ts_flag)?raw.ts_flag_description:undefined
     };
+    // Будущие статусы: появляются, когда человек дошёл до главы ИЛИ серии. «Основной» — встаёт первым (с ним карточка и цвет на главной).
+    const futureCache=new WeakMap();
+    function futureList(raw){
+        const txt=String(raw&&raw.future_status||'');if(!txt.trim())return [];
+        const c=futureCache.get(raw);if(c&&c.t===txt)return c.v;
+        let v=[];try{const a=JSON.parse(txt);if(Array.isArray(a))v=a.filter(f=>f&&String(f.s||'').trim());}catch(e){}
+        futureCache.set(raw,{t:txt,v});return v;
+    }
+    function futureReached(f){
+        if(spoilerAuditMode)return true;
+        const ch=numericThreshold(f.ch),ep=numericThreshold(f.ep);
+        if(!ch&&!ep)return false;
+        return !!((ch&&spoilerProgress.chapter>=ch)||(ep&&spoilerProgress.episode>=ep));
+    }
+    function applyFutureStatus(raw,value){
+        const fs=futureList(raw).filter(futureReached);if(!fs.length)return value;
+        const low=x=>String(x).toLocaleLowerCase('ru');
+        let list=splitStatus(value);
+        fs.forEach(f=>{
+            const add=splitStatus(f.s),rm=splitStatus(f.rm).map(low),addL=add.map(low);
+            list=list.filter(x=>!rm.includes(low(x))&&!addL.includes(low(x)));
+            list=f.main?add.concat(list):list.concat(add);
+        });
+        return list.join(', ');
+    }
+    window.__wikiFutureStatusReached=function(f){try{return futureReached(f||{});}catch(e){return false;}};
+    window.__wikiSpoilerProgressNow=function(){return {chapter:spoilerProgress.chapter,episode:spoilerProgress.episode};};
     // «Фруктовик» ставится сам, если к персонажу привязана статья плода (и этот плод уже открыт по прогрессу).
     const FRUIT_STATUS='Фруктовик';
     const splitStatus=v=>String(v??'').split(',').map(x=>x.trim()).filter(Boolean);
@@ -8711,7 +8738,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
             if(k==='__wikiSpoiler'||k==='__wikiFieldSpoilers') return;
             const swap=type==='character'?TS_SWAP[k]:null;
             const isStatus=type==='character'&&k==='status';
-            try { Object.defineProperty(obj,k,{enumerable:true,configurable:true,get(){let v;if(swap&&tsReached(raw)){v=swap(raw);}if(v===undefined)v=raw[k];return isStatus?applyFruitStatus(obj,v):v;},set(v){raw[k]=v;}}); } catch(e){}
+            try { Object.defineProperty(obj,k,{enumerable:true,configurable:true,get(){let v;if(swap&&tsReached(raw)){v=swap(raw);}if(v===undefined)v=raw[k];return isStatus?applyFruitStatus(obj,applyFutureStatus(raw,v)):v;},set(v){raw[k]=v;}}); } catch(e){}
         });
         return obj;
     }
@@ -10375,6 +10402,9 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
                 control=selectHTML(k,val,vals.map(v=>({value:v,label:v})),'— выбери тип —');
             } else if(k==='owner' && activeType==='fruit'){
                 control=searchableSelectHTML(k,val,linkedOptions('character'),'Поиск владельца по имени или ID…').replace('class="wiki-search-select"','class="wiki-search-select wiki-owner-select"'); hint='Можно выбрать и спойлерного персонажа заранее (он отмечен 🔒). До раскрытия персонажа владелец не показывается публично; после достижения его главы или эпизода имя появится автоматически.';
+            } else if(k==='future_status' && activeType==='character'){
+                control=`<input type="hidden" data-field="future_status" value="${escapeHTMLLocal(fieldText(rawValue(obj,'future_status')))}">`;
+                hint='';
             } else if(k==='title_fx'){
                 const list=window.__wikiTextFxList||[];const def=window.__wikiTextFxDefault?window.__wikiTextFxDefault(activeType,obj):'';
                 const nameOf=v=>(list.find(f=>f.v===v)||{}).n||v;
@@ -10530,7 +10560,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
             const cropEditor=cropField?.querySelector('.wiki-character-crop-editor');
             if(cropField&&cropEditor){
                 const side=document.createElement('div');side.className='wiki-character-crop-side-fields';
-                ['status','chapter','episode','saga','arc','saga_anime','arc_anime'].forEach(key=>{const field=fieldBucket.querySelector(`[data-editor-field="${key}"]`);if(field)side.appendChild(field);});
+                ['status','future_status','chapter','episode','saga','arc','saga_anime','arc_anime'].forEach(key=>{const field=fieldBucket.querySelector(`[data-editor-field="${key}"]`);if(field)side.appendChild(field);});
                 cropEditor.appendChild(side);cropField.classList.add('wiki-character-crop-wide');
             }
         }
@@ -18350,13 +18380,14 @@ img.wk-fade.wk-loaded{opacity:1}
   }
   var CATS = [
     { key: 'villains', title: 'Злодеи', icon: '😈', type: 'character', size: function () { return 10; },
-      pool: function () { return list('characters').filter(function (c) { return !hidden(c, 'character'); }).sort(function (a, b) { return villainScore(b) - villainScore(a); }); } },
+      pool: function () { return list('characters').filter(function (c) { return !hidden(c, 'character') && isAntagonist(c); }).sort(function (a, b) { return String(a.name).localeCompare(String(b.name), 'ru'); }); } },
     { key: 'crew', title: 'Команда Луффи', icon: '🏴‍☠️', type: 'character', size: function () { return Math.min(10, crewMembers().length); }, pool: crewMembers },
     { key: 'arcs', title: 'Сюжетные арки', icon: '📖', type: 'arc', size: function () { return 10; },
       pool: function () { return list('storyArcs').filter(function (a) { return !hidden(a, 'story') && !isMovie(a); }); } },
     { key: 'all', title: 'Все персонажи', icon: '⭐', type: 'character', size: function () { return 10; },
       pool: function () { return list('characters').filter(function (c) { return !hidden(c, 'character'); }); } }
   ];
+  function isAntagonist(c) { return String(c.status || '').split(',').some(function (x) { return x.trim().toLocaleLowerCase('ru') === 'антагонист'; }); }
   function villainScore(c) { var s = String(c.status || '').toLowerCase(); return /антагонист|злод/.test(s) ? 2 : /барок воркс|cp9|шичибукай|бандит|работорговец/.test(s) ? 1 : 0; }
   function defaultPeople() {
     var acc = (window.WIKI_CLOUD_CONFIG && window.WIKI_CLOUD_CONFIG.accounts) || [];
@@ -18493,7 +18524,7 @@ img.wk-fade.wk-loaded{opacity:1}
       var pool = cat.pool();
       var pop = document.createElement('div');
       pop.className = 'wk-top-popover';
-      pop.innerHTML = '<input type="search" placeholder="Поиск ' + (cat.type === 'arc' ? 'арки' : 'персонажа') + '…" autocomplete="off" aria-label="Поиск"><div class="wk-top-options" role="listbox"></div>';
+      pop.innerHTML = '<input type="search" placeholder="Поиск ' + (cat.type === 'arc' ? 'арки' : cat.key === 'villains' ? 'антагониста' : 'персонажа') + '…" autocomplete="off" aria-label="Поиск"><div class="wk-top-options" role="listbox"></div>';
       row.appendChild(pop); openPicker = pop;
       var input = pop.querySelector('input'), box = pop.querySelector('.wk-top-options'), active = 0, items = [];
       function draw() {
@@ -18503,7 +18534,7 @@ img.wk-fade.wk-loaded{opacity:1}
         box.innerHTML = items.length ? items.map(function (r, k) {
           var info = recordInfo(cat, r.id), pos = lists[who].indexOf(r.id);
           return '<button type="button" role="option" data-k="' + k + '" class="' + (k === active ? 'is-active' : '') + '">' + thumb(info) + '<span class="wk-top-name"><b>' + esc(info.name) + '</b><small>' + esc(info.sub) + '</small></span>' + (pos >= 0 ? '<em>уже #' + (pos + 1) + ' — поменяются</em>' : '') + '</button>';
-        }).join('') : '<div class="wk-top-noresult">Ничего не найдено</div>';
+        }).join('') : '<div class="wk-top-noresult">' + (cat.key === 'villains' ? 'Ничего не найдено. Здесь только персонажи со статусом «Антагонист» — добавь его в редакторе.' : 'Ничего не найдено') + '</div>';
       }
       function choose(r) {
         var arr = lists[who].slice(), prev = arr.indexOf(r.id);
@@ -18710,7 +18741,7 @@ img.wk-fade.wk-loaded{opacity:1}
   var SESSION_KEY = 'wkCloudSessionV1', CONTENT_KEY = 'wkCloudContentV1', TOPS_CACHE_KEY = 'wkCloudTopsV1', STORAGE_KEY = 'onePieceWikiLocalContentV1';
   var PROGRESS_KEY = 'onePieceWikiSpoilerProgressV1';
   // Личные данные участника, которые ездят вместе с учёткой.
-  var PERSONAL_KEYS = ['onePieceWikiViewedV1', PROGRESS_KEY, 'onePieceWikiFilmProgressV1', 'onePieceWikiFavorites', 'onePieceWikiRecentVisits', 'onePieceWikiSkippedArcsV1'];
+  var PERSONAL_KEYS = ['onePieceWikiViewedV1', PROGRESS_KEY, 'onePieceWikiFilmProgressV1', 'onePieceWikiFavorites', 'onePieceWikiRecentVisits', 'onePieceWikiSkippedArcsV1', 'onePieceWikiQuizV1'];
   var SDK = 'https://www.gstatic.com/firebasejs/10.12.2/';
   var TYPES = ['character', 'story', 'reward', 'fruit', 'useful'];
 
@@ -19588,6 +19619,16 @@ img.wk-fade.wk-loaded{opacity:1}
       return '<div><span class="wk-ava" style="background:' + p.color + '">' + esc(p.role === 'guest' ? '👀' : (p.name || '?')[0]) + '</span><span><b>' + esc(p.name) + '</b> ' + what + '</span><em>' + ago(e.ts) + '</em></div>';
     }).join('') + '</div>' : '<div class="wk-st-empty">Пока пусто.</div>') + '</div>';
 
+    // Опросы: как участники знают вики
+    try {
+      if (window.__wikiQuizSummary) {
+        var qrows = people.map(function (p) { var u = users[p.login]; var raw = u && u.keys && u.keys.onePieceWikiQuizV1; if (p.login === me.login) { try { raw = localStorage.getItem('onePieceWikiQuizV1') || raw; } catch (e) {} } return raw ? { p: p, q: window.__wikiQuizSummary(raw) } : null; }).filter(function (x) { return x && x.q.total; });
+        html += '<div class="wk-st-quiz"><h3>🧠 Опросы — как участники знают вики</h3>' + (qrows.length ? '<table><thead><tr><th>Кто</th><th style="text-align:right">Ответов</th><th style="text-align:right">Верно</th><th style="text-align:right">Было → стало</th><th>Сильнее всего</th><th>Слабее всего</th><th style="text-align:right">Дней</th></tr></thead><tbody>' + qrows.map(function (x) {
+          var q = x.q, tr = q.firstPct != null ? q.firstPct + '% → ' + q.lastPct + '%' + (q.lastPct > q.firstPct ? ' ▲' : q.lastPct < q.firstPct ? ' ▼' : '') : '—';
+          return '<tr><td><b style="color:' + esc(x.p.color) + '">' + esc(x.p.name) + '</b></td><td class="n">' + q.total + '</td><td class="n">' + q.pct + '%</td><td class="n">' + tr + '</td><td>' + (q.best ? esc(q.best.n) + ' ' + q.best.p + '%' : '—') + '</td><td>' + (q.worst ? esc(q.worst.n) + ' ' + q.worst.p + '%' : '—') + '</td><td class="n">' + q.days + '</td></tr>';
+        }).join('') + '</tbody></table>' : '<div class="wk-st-empty">Пока никто не проходил опросы (Каюта → 🧠 Опросы).</div>') + '</div>';
+      }
+    } catch (e) {}
     if (me.role === 'admin') html += '<div class="wk-st-admin"><span>Облако статей:</span><button type="button" data-reupload>⬆ Перезалить все статьи из этого браузера в облако</button><span>— если облачная копия разошлась с нужной.</span></div>';
     pane.innerHTML = html;
     try {
@@ -22851,7 +22892,8 @@ html.ios-app body .container :is(button,.back-button):active{opacity:.6}
     arcs: { c: '#ff375f', g: G('<circle cx="12" cy="9" r="5"/><path d="m9 13.4-1.3 6.6 4.3-2.2 4.3 2.2-1.3-6.6"/>') },
     watchgrid: { c: '#34c759', g: G('<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>') },
     tops: { c: '#bf5af2', g: G('<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8.5 20h7"/>') },
-    stats: { c: '#5e5ce6', g: G('<path d="M5 19V11M10 19V5M15 19v-6M20 19V9" stroke-width="2.4"/>') }
+    stats: { c: '#5e5ce6', g: G('<path d="M5 19V11M10 19V5M15 19v-6M20 19V9" stroke-width="2.4"/>') },
+    quiz: { c: '#ff2d55', g: G('<circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1.1.8-1.1 1.5v.5"/><circle cx="12" cy="16.9" r=".9" fill="currentColor" stroke="none"/>') }
   };
   var CHEV = '<svg class="ios-cab-chev" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m1.5 1.5 5 5.5-5 5.5"/></svg>';
   var FIRST = { favorites: 1, history: 1, progress: 1 };
@@ -23455,6 +23497,9 @@ html:not(.wk-tfx-off) body :is(#charactersSection,#favoritesSection,#fruitsSecti
 html body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title:not([data-tfx]),html body .character-item .card-title:not([data-tfx]){text-shadow:0 1px 2px rgba(0,0,0,.85),0 0 1px rgba(0,0,0,.55)!important}
 html.wk-tfx-off body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item .card-title{text-shadow:0 1px 2px rgba(0,0,0,.85),0 0 1px rgba(0,0,0,.55)!important}
 
+.wk-tf-size label.wk-tf-fw{grid-template-columns:110px 1fr}
+.wk-tf-size .wk-tf-fw select{min-width:0;padding:5px 8px;border-radius:8px;border:1px solid #475569;background:#0f172a;color:#e2e8f0;font:600 12px Arial,sans-serif}
+.wk-tf-size .wk-tf-fw small{grid-column:2;color:#64748b;font:500 11px/1.35 Arial,sans-serif;margin-top:-4px}
 /* Постоянные эффекты, переехавшие из «при наклоне»: отдельный слой, всегда включён */
 .wk-amb-fx[data-fx]{position:absolute!important;inset:0;border-radius:inherit;pointer-events:none;display:block;isolation:auto!important;z-index:auto!important;--mx:inherit;--my:inherit;--pos:inherit;--o:inherit}
 .wk-amb-fx[data-fx]>.wk-fx-a,.wk-amb-fx[data-fx]>.wk-fx-b{border-radius:inherit}
@@ -23555,7 +23600,7 @@ html body #characterArticleContent#characterArticleContent#characterArticleConte
 <script id="wiki-title-style-v1-js">
 (function () {
   'use strict';
-  var MAP_KEY = 'onePieceWikiMedalArtV1', STORAGE_KEY = 'onePieceWikiLocalContentV1', LS_KEY = 'font:titles:ls';
+  var MAP_KEY = 'onePieceWikiMedalArtV1', STORAGE_KEY = 'onePieceWikiLocalContentV1', LS_KEY = 'font:titles:ls', FW_KEY = 'font:titles:fw';
   var PRESET_FONTS = {"marine": "Russo+One", "yonko": "Playfair+Display:wght@900", "jollyroger": "Oswald:wght@700", "scroll": "Cormorant+Garamond:wght@700", "redline": "Unbounded:wght@800", "dressrosa": "Ruslan+Display", "samurai": "Yeseva+One"};
   var OWN_LS = ["rainbowcaps", "marine", "yonko", "jollyroger", "scroll", "redline", "dressrosa", "samurai", "wanted"];
   function readMap() { try { var v = JSON.parse(localStorage.getItem(MAP_KEY) || '{}'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
@@ -23566,6 +23611,9 @@ html body #characterArticleContent#characterArticleContent#characterArticleConte
   // Общий межбуквенный интервал заголовков, в сотых долях em (−5…30). null — как у шрифта.
   var previewLs = undefined;
   function globalLs() { if (previewLs !== undefined) return previewLs; var m = readMap(); if (!(LS_KEY in m)) return null; var v = Number(m[LS_KEY]); return isFinite(v) ? v : null; }
+  // Общая жирность заголовков (300…900). null — как задано шрифтом. У статей со своей жирностью остаётся своя.
+  var previewFw = undefined;
+  function globalFw() { if (previewFw !== undefined) return previewFw; var v = Number(readMap()[FW_KEY]); return v >= 100 && v <= 900 ? v : null; }
   function parse(v) {
     if (!v) return {};
     if (typeof v === 'object') return v;
@@ -23603,7 +23651,8 @@ html body #characterArticleContent#characterArticleContent#characterArticleConte
     tfx = tfx == null ? (el.getAttribute('data-tfx') || '') : tfx;
     if (PRESET_FONTS[tfx]) loadFont(PRESET_FONTS[tfx]);
     var ls = st.ls != null && st.ls !== '' && isFinite(Number(st.ls)) ? Number(st.ls) : (OWN_LS.indexOf(tfx) >= 0 ? null : globalLs());
-    var sig = JSON.stringify([st, tfx, ls]);
+    var gw = globalFw();
+    var sig = JSON.stringify([st, tfx, ls, gw]);
     if (el.__wkTsSig === sig) return;
     el.__wkTsSig = sig; el.__wkTsRaw = styleValue || ''; el.__wkTsTfx = tfx;
     var s = el.style;
@@ -23619,6 +23668,7 @@ html body #characterArticleContent#characterArticleContent#characterArticleConte
       if (F.ls && !(st.ls != null && st.ls !== '')) s.setProperty('letter-spacing', F.ls, 'important');
     }
     var w = Number(st.w); if (w >= 100 && w <= 900) { s.setProperty('font-weight', String(w), 'important'); if (F && F.v) familyWeights(F); else ensureTitleWeights(); }
+    else if (gw) { s.setProperty('font-weight', String(gw), 'important'); if (F && F.v) familyWeights(F); else ensureTitleWeights(); }
     if (st.it) s.setProperty('font-style', 'italic', 'important');
     if (ls != null && !(F && F.v && F.ls && !(st.ls != null && st.ls !== ''))) s.setProperty('letter-spacing', (ls / 100) + 'em', 'important');
     if (tfx === 'custom' && st.c1) s.setProperty('--wk-ts-c1', st.c1); else s.removeProperty('--wk-ts-c1');
@@ -23635,6 +23685,15 @@ html body #characterArticleContent#characterArticleContent#characterArticleConte
     }
   }
   window.__wikiApplyTitleStyle = apply;
+  // Сколько статей со своей жирностью (их общая настройка не трогает)
+  function ownFwCount() {
+    var n = 0;
+    ['characters', 'storyArcs', 'rewards', 'fruits', 'usefulArticles'].forEach(function (k) {
+      var arr = window[k]; try { arr = arr || eval(k); } catch (e) {}
+      (arr || []).forEach(function (r) { var raw = r && (r.__wikiRaw || r); var st = parse(raw && raw.title_style); if (Number(st.w) >= 100) n++; });
+    });
+    return n;
+  }
   // Шрифт основного текста статьи. Хранится там же, в настройках статьи (поле bf), отдельно от шрифта заголовка.
   function bodyFont(F) { return F.f + ',"Samsung Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif'; }
   function applyBody(container, styleValue) {
@@ -23651,15 +23710,15 @@ html body #characterArticleContent#characterArticleContent#characterArticleConte
   }
   window.__wikiApplyBodyFont = applyBody;
   function reapplyAll() {
-    document.querySelectorAll('.character-item .card-title, [id$="ArticleContent"] h1, .wk-tfx-samples .wk-tfx-sample').forEach(function (el) {
+    document.querySelectorAll('.character-item .card-title, [id$="ArticleContent"] h1, .wk-tfx-samples .wk-tfx-sample, .wk-fx-preview .wk-pv-name').forEach(function (el) {
       el.__wkTsSig = null; apply(el, el.__wkTsRaw || '', el.__wkTsTfx);
     });
   }
   window.__wikiReapplyTitleStyles = reapplyAll;
   // Настройки пришли из облака позже или поменялись в другой вкладке
-  var lastLs = globalLs();
-  setInterval(function () { var v = globalLs(); if (v !== lastLs) { lastLs = v; reapplyAll(); } }, 2500);
-  window.addEventListener('storage', function (e) { if (!e.key || e.key === MAP_KEY) { lastLs = globalLs(); reapplyAll(); } });
+  var lastLs = globalLs(), lastFw = globalFw();
+  setInterval(function () { var v = globalLs(), f = globalFw(); if (v !== lastLs || f !== lastFw) { lastLs = v; lastFw = f; reapplyAll(); } }, 2500);
+  window.addEventListener('storage', function (e) { if (!e.key || e.key === MAP_KEY) { lastLs = globalLs(); lastFw = globalFw(); reapplyAll(); } });
   // Шрифты новых эффектов — при первом появлении на странице
   function scanPresetFonts() { Object.keys(PRESET_FONTS).forEach(function (k) { if (document.querySelector('[data-tfx="' + k + '"]')) loadFont(PRESET_FONTS[k]); }); }
   var pf = 0;
@@ -23686,7 +23745,17 @@ html body #characterArticleContent#characterArticleContent#characterArticleConte
       reset.textContent = 'Сбросить размер и интервал';
       reset.addEventListener('click', function () { var m = readMap(); delete m[LS_KEY]; writeMap(m); previewLs = undefined; lastLs = null; r.value = 0; out.textContent = lsText(null); reapplyAll(); });
     }
-    var h = pop.querySelector('h3'); if (h) h.textContent = 'Шрифт, размер и интервал заголовков';
+    // Общая жирность
+    var fl = document.createElement('label'); fl.className = 'wk-tf-fw';
+    fl.innerHTML = 'Жирность<select data-fw><option value="">как у шрифта</option>' + [300, 400, 500, 600, 700, 800, 900].map(function (w) { return '<option value="' + w + '">' + w + ' · ' + ({ 300: 'тонкий', 400: 'обычный', 500: 'средний', 600: 'полужирный', 700: 'жирный', 800: 'очень жирный', 900: 'чёрный' })[w] + '</option>'; }).join('') + '</select><small>для всех заголовков, кроме статей, где жирность задана отдельно</small>';
+    box.insertBefore(fl, box.querySelector('.row') || null);
+    var fs = fl.querySelector('select'); var gf = globalFw(); fs.value = gf ? String(gf) : '';
+    fs.addEventListener('click', function (e) { e.stopPropagation(); });
+    fs.addEventListener('change', function () {
+      var m = readMap(); if (fs.value) m[FW_KEY] = Number(fs.value); else delete m[FW_KEY]; writeMap(m); previewFw = undefined; lastFw = globalFw(); reapplyAll();
+      var stx = pop.querySelector('.wk-tf-status'); if (stx) stx.textContent = '✓ Жирность заголовков: ' + (fs.value || 'как у шрифта') + ' — кроме статей со своей жирностью (' + ownFwCount() + ')';
+    });
+    var h = pop.querySelector('h3'); if (h) h.textContent = 'Шрифт, размер, интервал и жирность заголовков';
   }
   new MutationObserver(function () { var pop = document.querySelector('.wk-tf-pop'); if (pop) mountLs(pop); }).observe(document.body, { childList: true, subtree: true });
   // Выбор шрифта заголовков → обновить предпросмотр в редакторе и подгрузить начертания
@@ -23781,7 +23850,7 @@ html body #characterArticleContent#characterArticleContent#characterArticleConte
         + (findOpen ? '<div class="wk-ts-row"><span></span><div class="wk-tp-form"><input type="text" list="wkTfNames2" placeholder="Название латиницей, например Bebas Neue" data-font-q><button type="button" class="wk-tp-ok" data-font-go>Найти</button><button type="button" class="wk-tp-cancel" data-font-cancel>Отмена</button></div></div>' : '')
         + (fontMsg ? '<div class="wk-ts-row"><span></span><div class="wk-ts-note' + (/^✓/.test(fontMsg) ? ' is-ok' : '') + '">' + esc(fontMsg) + '</div></div>' : '')
         + '<div class="wk-ts-row"><span>Буквы</span>' + seg('caps', [['', 'Как в эффекте'], ['up', 'ЗАГЛАВНЫЕ'], ['none', 'Обычные']], st.caps) + '</div>'
-        + '<div class="wk-ts-row"><span>Жирность</span><div class="wk-ts-colors"><select data-k="w">' + WEIGHTS.map(function (w) { return '<option value="' + w[0] + '"' + (String(st.w || '') === w[0] ? ' selected' : '') + '>' + w[1] + '</option>'; }).join('') + '</select>'
+        + '<div class="wk-ts-row"><span>Жирность</span><div class="wk-ts-colors"><select data-k="w">' + WEIGHTS.map(function (w) { return '<option value="' + w[0] + '"' + (String(st.w || '') === w[0] ? ' selected' : '') + '>' + (w[0] === '' && globalFw() ? 'Общая — ' + globalFw() : w[1]) + '</option>'; }).join('') + '</select>'
         + '<label class="wk-ts-check"><input type="checkbox" data-k="it"' + (st.it ? ' checked' : '') + '> курсив</label></div></div>'
         + '<div class="wk-ts-row"><span>Интервал</span><div class="wk-ts-range' + (lsAuto ? ' is-auto' : '') + '"><input type="range" min="-5" max="30" step="1" data-k="ls" value="' + (lsAuto ? (g == null ? 0 : g) : st.ls) + '"><output>' + (lsAuto ? 'общий' : (st.ls > 0 ? '+' : '') + st.ls) + '</output>' + (lsAuto ? '' : '<button type="button" data-ls-auto>общий</button>') + '</div></div>'
         + '<div class="wk-ts-row"><span>Насыщенность</span><div class="wk-ts-range' + (st.sat == null || Number(st.sat) === 100 ? ' is-auto' : '') + '"><input type="range" min="0" max="200" step="5" data-k="sat" value="' + (st.sat == null ? 100 : st.sat) + '"><output>' + (st.sat == null ? 100 : st.sat) + '%</output>' + (st.sat == null || Number(st.sat) === 100 ? '' : '<button type="button" data-sat-reset>сброс</button>') + '</div></div>'
@@ -24855,6 +24924,687 @@ html body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSectio
   // если эффект сменили и вернули — снова случайное место
   new MutationObserver(function (ms) { ms.forEach(function (m) { if (m.target.getAttribute && m.target.getAttribute('data-amb') !== 'quake') m.target.__qAmb = false; }); })
     .observe(document.documentElement, { attributes: true, attributeFilter: ['data-amb'], subtree: true });
+})();
+</script>
+<style id="wiki-future-status">
+.wiki-character-crop-side-fields > [data-editor-field="future_status"]{grid-column:1 / -1}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst{display:grid;gap:8px;margin-top:2px}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst-row{display:grid;gap:7px;padding:9px 10px;border-radius:10px;border:1px solid #334155;background:rgba(255,255,255,.025)}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst-row.is-main{border-color:rgba(212,168,79,.55);background:rgba(212,168,79,.06)}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst-line{display:grid;grid-template-columns:minmax(0,1fr) 78px 78px auto;gap:7px;align-items:end}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst-line2{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst label{display:grid;gap:3px;margin:0;color:#94a3b8;font:600 11px Arial,sans-serif;text-transform:none;letter-spacing:0;width:auto}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst input[type=text],#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst input[type=number]{width:100%;min-width:0;min-height:0;height:auto;padding:6px 8px;margin:0;border-radius:8px;border:1px solid #475569;background:#0f172a;color:#f8fafc;font:500 13px Arial,sans-serif;box-sizing:border-box}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst input[type=number]{-moz-appearance:textfield}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst label.wk-fst-check{display:inline-flex;align-items:center;gap:6px;color:#e2e8f0;font:600 12px Arial,sans-serif;cursor:pointer}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst input[type=checkbox]{width:16px;height:16px;min-height:0;margin:0;padding:0;accent-color:#d4a84f}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst-rm{display:inline-flex!important;grid-auto-flow:column;align-items:center;gap:6px!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst-rm input{width:170px!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst-del{width:30px;height:30px;min-height:0;padding:0;border-radius:8px;border:1px solid #7f1d1d;background:transparent;color:#fca5a5;font:700 14px Arial,sans-serif;cursor:pointer}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst-add{justify-self:start;width:auto;min-height:0;padding:7px 12px;border-radius:9px;border:1px dashed rgba(212,168,79,.6);background:rgba(212,168,79,.07);color:#f4d99e;font:700 12.5px Arial,sans-serif;cursor:pointer}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst-state{font:600 11.5px Arial,sans-serif;color:#64748b;margin-left:auto}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst-state.is-on{color:#86efac}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst-state.is-warn{color:#fbbf24}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst-note{color:#64748b;font:500 11.5px/1.45 Arial,sans-serif}
+@media (max-width:520px){#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst-line{grid-template-columns:1fr 1fr auto}#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fst-line>label:first-child{grid-column:1 / -1}}
+</style>
+<script id="wiki-future-status-js">
+(function () {
+  'use strict';
+  function esc(t) { return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function parse(v) { try { var a = JSON.parse(v || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+  function allStatuses() {
+    var set = {};
+    try {
+      (typeof characters !== 'undefined' ? characters : []).forEach(function (c) {
+        var raw = c.__wikiRaw || c;
+        [raw.status, raw.status2].concat(parse(raw.future_status).map(function (f) { return f && f.s; })).forEach(function (v) {
+          String(v || '').split(',').forEach(function (x) { x = x.trim(); if (x) set[x.toLocaleLowerCase('ru')] = set[x.toLocaleLowerCase('ru')] || x; });
+        });
+      });
+    } catch (e) {}
+    return Object.keys(set).map(function (k) { return set[k]; }).sort(function (a, b) { return a.localeCompare(b, 'ru'); });
+  }
+  function stateText(f) {
+    var ch = Number(f.ch) || 0, ep = Number(f.ep) || 0;
+    if (!String(f.s || '').trim()) return ['', ''];
+    if (!ch && !ep) return ['Укажи главу или серию', 'is-warn'];
+    var on = window.__wikiFutureStatusReached ? window.__wikiFutureStatusReached({ ch: ch, ep: ep }) : false;
+    var when = [ch ? 'гл. ' + ch : '', ep ? 'сер. ' + ep : ''].filter(Boolean).join(' или ');
+    return on ? ['✓ У тебя уже виден (' + when + ')', 'is-on'] : ['Откроется с ' + when, ''];
+  }
+  function mount(hidden) {
+    var field = hidden.closest('[data-editor-field]') || hidden.parentNode;
+    if (field.querySelector('.wk-fst')) return;
+    var box = document.createElement('div'); box.className = 'wk-fst';
+    hidden.parentNode.insertBefore(box, hidden.nextSibling);
+    var list = parse(hidden.value).map(function (f) { return { s: f.s || '', ch: f.ch || '', ep: f.ep || '', main: !!f.main, rm: f.rm || '' }; });
+    var dlId = 'wkFstList' + Math.random().toString(36).slice(2, 7);
+    function save() {
+      var out = list.filter(function (f) { return String(f.s).trim(); }).map(function (f) {
+        var o = { s: String(f.s).trim() }; if (String(f.ch).trim()) o.ch = String(f.ch).trim(); if (String(f.ep).trim()) o.ep = String(f.ep).trim(); if (f.main) o.main = true; if (String(f.rm).trim()) o.rm = String(f.rm).trim(); return o;
+      });
+      var v = out.length ? JSON.stringify(out) : '';
+      if (hidden.value === v) return;
+      hidden.value = v;
+      hidden.dispatchEvent(new Event('input', { bubbles: true })); hidden.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    function render() {
+      box.innerHTML = '<datalist id="' + dlId + '">' + allStatuses().map(function (s) { return '<option value="' + esc(s) + '"></option>'; }).join('') + '</datalist>'
+        + list.map(function (f, i) {
+          var st = stateText(f);
+          return '<div class="wk-fst-row' + (f.main ? ' is-main' : '') + '" data-i="' + i + '">'
+            + '<div class="wk-fst-line"><label>Новый статус<input type="text" data-k="s" list="' + dlId + '" placeholder="например: Ёнко" value="' + esc(f.s) + '"></label>'
+            + '<label>с главы<input type="number" min="1" inputmode="numeric" data-k="ch" placeholder="—" value="' + esc(f.ch) + '"></label>'
+            + '<label>или серии<input type="number" min="1" inputmode="numeric" data-k="ep" placeholder="—" value="' + esc(f.ep) + '"></label>'
+            + '<button type="button" class="wk-fst-del" data-del title="Удалить этот будущий статус">✕</button></div>'
+            + '<div class="wk-fst-line2"><label class="wk-fst-check"><input type="checkbox" data-k="main"' + (f.main ? ' checked' : '') + '> отображать этот статус основным</label>'
+            + '<label class="wk-fst-rm">убирает<input type="text" data-k="rm" list="' + dlId + '" placeholder="необязательно, напр. Капитан" value="' + esc(f.rm) + '"></label>'
+            + '<span class="wk-fst-state ' + st[1] + '">' + esc(st[0]) + '</span></div></div>';
+        }).join('')
+        + '<button type="button" class="wk-fst-add" data-add>＋ Добавить будущий статус</button>'
+        + '<div class="wk-fst-note">Статус добавится человеку, когда он дойдёт до указанной главы <b>или</b> серии. «Основной» — с ним персонаж будет показан на главной вкладке (цвет и подпись карточки). Если их несколько — позже в списке главнее.</div>';
+    }
+    box.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      if (b.hasAttribute('data-add')) { list.push({ s: '', ch: '', ep: '', main: false, rm: '' }); render(); var inp = box.querySelectorAll('.wk-fst-row input[data-k="s"]'); if (inp.length) inp[inp.length - 1].focus(); return; }
+      if (b.hasAttribute('data-del')) { var i = Number(b.closest('.wk-fst-row').getAttribute('data-i')); list.splice(i, 1); save(); render(); }
+    });
+    box.addEventListener('input', function (e) {
+      var t = e.target, k = t.getAttribute && t.getAttribute('data-k'); if (!k) return;
+      var row = t.closest('.wk-fst-row'); var i = Number(row.getAttribute('data-i')), f = list[i];
+      if (k === 'main') { f.main = t.checked; row.classList.toggle('is-main', f.main); }
+      else f[k] = t.value;
+      var st = stateText(f), se = row.querySelector('.wk-fst-state'); se.textContent = st[0]; se.className = 'wk-fst-state ' + st[1];
+      save();
+    });
+    box.addEventListener('change', function (e) { var t = e.target; if (t && t.getAttribute && t.getAttribute('data-k') === 'main') { t.dispatchEvent(new Event('input', { bubbles: true })); } });
+    render();
+  }
+  var pt = 0;
+  new MutationObserver(function () {
+    if (pt) return; pt = requestAnimationFrame(function () {
+      pt = 0;
+      document.querySelectorAll('#wikiEditorForm input[data-field="future_status"]').forEach(mount);
+    });
+  }).observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
+<style id="wiki-quiz">
+/* ===== Каюта → Опросы: проверка знаний ===== */
+.wk-qz{--qa:#d4a84f;--qok:#22c55e;--qbad:#ef4444;display:grid;gap:14px;min-width:0;grid-template-columns:minmax(0,1fr)}
+.wk-qz-top>*{min-width:0;max-width:100%}
+.wk-qz-top{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.wk-qz-modes{display:flex;flex-wrap:wrap;gap:6px}
+.wk-qz-modes button{padding:7px 12px;border-radius:999px;border:1px solid color-mix(in srgb,var(--line,#334155) 85%,transparent);background:color-mix(in srgb,var(--panel,#0f1623) 85%,transparent);color:color-mix(in srgb,var(--text,#e5e7eb) 80%,transparent);font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.wk-qz-modes button.active{border-color:var(--qa);background:color-mix(in srgb,var(--qa) 18%,transparent);color:#f4d99e}
+.wk-qz-modes button[disabled]{opacity:.4;cursor:default}
+.wk-qz-today{display:flex;gap:10px;align-items:center;font-size:13px;color:color-mix(in srgb,var(--text,#e5e7eb) 70%,transparent)}
+.wk-qz-today b{color:#f4d99e;font-variant-numeric:tabular-nums}
+.wk-qz-streak{padding:3px 9px;border-radius:999px;background:rgba(249,115,22,.14);color:#fdba74;font-weight:800}
+.wk-qz-card{position:relative;display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:18px;padding:18px;border-radius:18px;border:1px solid color-mix(in srgb,var(--line,#334155) 80%,transparent);background:linear-gradient(160deg,color-mix(in srgb,var(--panel,#0f1623) 92%,transparent),rgba(15,22,35,.7));box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.wk-qz-card.no-img{grid-template-columns:minmax(0,1fr)}
+.wk-qz-img{position:relative;aspect-ratio:3/4;border-radius:14px;overflow:hidden;background:#0b1220;border:1px solid rgba(255,255,255,.06)}
+.wk-qz-img.wide{aspect-ratio:4/3}
+.wk-qz-img img{width:100%;height:100%;object-fit:cover;display:block}
+.wk-qz-img.contain img{object-fit:contain;background:radial-gradient(circle,#1e293b,#0b1220)}
+.wk-qz-body{display:flex;flex-direction:column;gap:12px;min-width:0}
+.wk-qz-kind{display:flex;gap:8px;align-items:center;font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:color-mix(in srgb,var(--text,#e5e7eb) 55%,transparent)}
+.wk-qz-kind i{font-style:normal;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--qa) 16%,transparent);color:#f4d99e;letter-spacing:.02em}
+.wk-qz-q{margin:0;font-size:21px;line-height:1.3;font-weight:800;color:var(--text,#f8fafc)}
+.wk-qz-quote{margin:0;padding:12px 14px;border-left:3px solid var(--qa);border-radius:4px 12px 12px 4px;background:rgba(255,255,255,.035);font-size:14.5px;line-height:1.55;color:color-mix(in srgb,var(--text,#e5e7eb) 88%,transparent)}
+.wk-qz-quote mark{background:rgba(212,168,79,.22);color:transparent;border-radius:4px;padding:0 .2em;box-shadow:inset 0 0 0 1px rgba(212,168,79,.35)}
+.wk-qz-opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.wk-qz-opts.pics{grid-template-columns:repeat(4,minmax(0,1fr))}
+.wk-qz-opt{position:relative;display:flex;align-items:center;gap:10px;min-height:52px;padding:10px 14px;border-radius:12px;border:1px solid color-mix(in srgb,var(--line,#334155) 90%,transparent);background:rgba(255,255,255,.03);color:var(--text,#f1f5f9);font:inherit;font-size:15px;font-weight:700;text-align:left;cursor:pointer;transition:transform .12s,border-color .12s,background .12s}
+.wk-qz-opt:hover:not([disabled]){border-color:var(--qa);background:color-mix(in srgb,var(--qa) 10%,transparent);transform:translateY(-1px)}
+.wk-qz-opt kbd{flex:0 0 auto;display:grid;place-items:center;width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,.07);color:color-mix(in srgb,var(--text,#e5e7eb) 60%,transparent);font:800 11px Arial,sans-serif}
+.wk-qz-opt[disabled]{cursor:default}
+.wk-qz-opt.is-ok{border-color:var(--qok);background:rgba(34,197,94,.14)}
+.wk-qz-opt.is-bad{border-color:var(--qbad);background:rgba(239,68,68,.14)}
+.wk-qz-opt.is-ok kbd{background:var(--qok);color:#04210f}
+.wk-qz-opt.is-bad kbd{background:var(--qbad);color:#fff}
+.wk-qz-opt.is-dim{opacity:.45}
+.wk-qz-opts.pics .wk-qz-opt{flex-direction:column;align-items:stretch;padding:6px;min-height:0;gap:6px}
+.wk-qz-opts.pics .wk-qz-opt img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:8px;display:block;background:#0b1220}
+.wk-qz-opts.pics .wk-qz-opt kbd{position:absolute;left:10px;top:10px;background:rgba(0,0,0,.6);color:#fff}
+.wk-qz-opts.pics .wk-qz-opt span{display:none;font-size:12.5px;text-align:center}
+.wk-qz-opts.pics.answered .wk-qz-opt span{display:block}
+.wk-qz-res{display:none;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 12px;border-radius:12px;font-size:14px;line-height:1.45}
+.wk-qz-res.show{display:flex}
+.wk-qz-res.ok{background:rgba(34,197,94,.1);color:#bbf7d0}
+.wk-qz-res.bad{background:rgba(239,68,68,.1);color:#fecaca}
+.wk-qz-res .grow{flex:1 1 220px}
+.wk-qz-res a,.wk-qz-res button{font:inherit;font-size:13px;font-weight:800;cursor:pointer}
+.wk-qz-link{background:none;border:0;color:#f4d99e;text-decoration:underline;padding:0}
+.wk-qz-next{padding:9px 16px;border-radius:10px;border:0;background:var(--qa);color:#1a1205}
+.wk-qz-skip{align-self:flex-start;padding:5px 10px;border-radius:8px;border:1px solid color-mix(in srgb,var(--line,#334155) 90%,transparent);background:transparent;color:color-mix(in srgb,var(--text,#e5e7eb) 60%,transparent);font:inherit;font-size:12px;cursor:pointer}
+.wk-qz-empty{padding:30px;text-align:center;border:1px dashed color-mix(in srgb,var(--line,#334155) 90%,transparent);border-radius:16px;color:color-mix(in srgb,var(--text,#e5e7eb) 65%,transparent)}
+/* статистика */
+.wk-qz-stats{display:grid;gap:14px}
+.wk-qz-stats h3{margin:6px 0 0;font-size:16px}
+.wk-qz-tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.wk-qz-tile{padding:10px 14px;border:1px solid color-mix(in srgb,var(--line,#334155) 70%,transparent);border-radius:12px;background:color-mix(in srgb,var(--panel,#0f1623) 80%,transparent);min-width:0}
+.wk-qz-tile small{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:color-mix(in srgb,var(--text,#e5e7eb) 55%,transparent)}
+.wk-qz-tile b{display:block;margin-top:2px;font-size:21px;font-variant-numeric:tabular-nums}
+.wk-qz-tile span{font-size:12px;color:color-mix(in srgb,var(--text,#e5e7eb) 60%,transparent)}
+.wk-qz-tile .up{color:#86efac}.wk-qz-tile .down{color:#fca5a5}
+.wk-qz-chart{padding:12px 14px;border:1px solid color-mix(in srgb,var(--line,#334155) 70%,transparent);border-radius:14px;background:color-mix(in srgb,var(--panel,#0f1623) 80%,transparent);overflow:hidden}
+.wk-qz-chart svg{display:block;width:100%;height:auto}
+.wk-qz-chart .lg{display:flex;flex-wrap:wrap;gap:14px;margin-top:6px;font-size:12px;color:color-mix(in srgb,var(--text,#e5e7eb) 65%,transparent)}
+.wk-qz-chart .lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.wk-qz-cats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 18px}
+.wk-qz-cat{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;font-size:13.5px}
+.wk-qz-cat b{font-variant-numeric:tabular-nums}
+.wk-qz-cat small{grid-column:1/-1;color:color-mix(in srgb,var(--text,#e5e7eb) 50%,transparent);font-size:11.5px;margin-top:-2px}
+.wk-qz-bar{grid-column:1/-1;height:8px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.wk-qz-bar>i{display:block;height:100%;border-radius:inherit}
+.wk-qz-table{width:100%;border-collapse:collapse;font-size:13px}
+.wk-qz-table th,.wk-qz-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left}
+.wk-qz-table th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:color-mix(in srgb,var(--text,#e5e7eb) 50%,transparent)}
+.wk-qz-table td.n{text-align:right;font-variant-numeric:tabular-nums}
+.wk-qz-table .pc{display:inline-block;min-width:44px;text-align:right;font-weight:800}
+.wk-qz-reset{justify-self:start;padding:6px 12px;border-radius:9px;border:1px solid #7f1d1d;background:transparent;color:#fca5a5;font:inherit;font-size:12px;cursor:pointer}
+@media (max-width:760px){
+  .wk-qz-card{grid-template-columns:minmax(0,1fr);padding:14px}
+  .wk-qz-img{max-width:240px;width:100%;justify-self:center}
+  .wk-qz-img{max-width:180px}
+  .wk-qz-img.wide{max-width:100%;aspect-ratio:16/9}
+  .wk-qz-modes{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .wk-qz-modes::-webkit-scrollbar{display:none}
+  .wk-qz-modes button{flex:0 0 auto}
+  .wk-qz-q{font-size:18px}
+  .wk-qz-opts{grid-template-columns:minmax(0,1fr)}
+  .wk-qz-opts.pics{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .wk-qz-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .wk-qz-cats{grid-template-columns:minmax(0,1fr)}
+}
+/* блок в статистике админа */
+.wk-st-quiz{display:grid;gap:8px;margin:14px 0;padding:12px 14px;border:1px solid color-mix(in srgb,var(--line,#334155) 70%,transparent);border-radius:14px;background:color-mix(in srgb,var(--panel,#0f1623) 80%,transparent);overflow-x:auto}
+.wk-st-quiz h3{margin:0;font-size:15px}
+.wk-st-quiz table{width:100%;border-collapse:collapse;font-size:13px}
+.wk-st-quiz th,.wk-st-quiz td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left}
+.wk-st-quiz td.n{text-align:right;font-variant-numeric:tabular-nums}
+.wk-st-quiz th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.6}
+</style>
+<script id="wiki-quiz-js">
+(function () {
+  'use strict';
+  var KEY = 'onePieceWikiQuizV1';
+  var R = Math.random;
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function arr(name) { try { var v = eval(name); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+  function hidden(rec, type) { try { return window.__wikiIsSpoilerActive ? !!window.__wikiIsSpoilerActive(rec, type) : !!rec.__wikiSpoiler; } catch (e) { return true; } }
+  function raw(rec) { return (rec && rec.__wikiRaw) || rec || {}; }
+  function fspoil(rec, f) { var l = raw(rec).__wikiFieldSpoilers; return Array.isArray(l) && l.indexOf(f) >= 0; }
+  function val(rec, f) { if (!rec || fspoil(rec, f)) return ''; var v = rec[f]; v = v == null ? '' : String(v).trim(); return v === 'Нет' || v === '-' ? '' : v; }
+  function url(rec, f) { var u = val(rec, f); return /^(https?:\/\/|data:image\/)/i.test(u) ? u : ''; }
+  function truthy(v) { return v === true || v === 'true' || v === 1 || v === '1'; }
+  function low(s) { return String(s || '').trim().toLocaleLowerCase('ru'); }
+  function pick(a) { return a[Math.floor(R() * a.length)]; }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(R() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function num(v) { var m = String(v || '').match(/\d+/); return m ? Number(m[0]) : 0; }
+  function statuses(c) { return String(c && c.status || '').split(',').map(function (x) { return x.trim(); }).filter(Boolean); }
+  function money(n) { return Number(n).toLocaleString('ru-RU') + ' ฿'; }
+  function jsonList(v) { try { var a = JSON.parse(v || '[]'); return Array.isArray(a) ? a.map(String) : []; } catch (e) { return String(v || '').split(/[,;]+/).map(function (x) { return x.trim(); }).filter(Boolean); } }
+  function pos(rec, pre) { pre = pre || ''; var x = rec[pre + 'image_position_x'], y = rec[pre + 'image_position']; return (x === '' || x == null ? 50 : x) + '% ' + (y === '' || y == null ? 35 : y) + '%'; }
+
+  /* ---------- Что доступно читателю прямо сейчас ---------- */
+  function pool() {
+    var chars = arr('characters').filter(function (c) { return c && c.name && !hidden(c, 'character'); });
+    var arcs = arr('storyArcs').filter(function (a) { return a && a.name && !hidden(a, 'story') && !truthy(a.movie) && low(a.saga) !== 'полнометражные фильмы'; });
+    var fr = arr('fruits').filter(function (f) { return f && f.name && !hidden(f, 'fruit'); });
+    var byId = {}; chars.forEach(function (c) { byId[c.id] = c; });
+    var rw = arr('rewards').filter(function (r) { return r && byId[r.character_id] && Number(r.reward) > 0 && !hidden(r, 'reward'); });
+    var us = arr('usefulArticles').filter(function (u) { return u && u.name && !hidden(u, 'useful'); });
+    return { chars: chars, arcs: arcs, fruits: fr, rewards: rw, useful: us, byId: byId };
+  }
+
+  /* ---------- Варианты ответа ---------- */
+  // 4 варианта: правильный + 3 из запаса (без повторов по тексту)
+  function options(correct, candidates, n, keyFn) {
+    n = n || 4; keyFn = keyFn || function (o) { return low(o.t); };
+    var seen = {}; seen[keyFn(correct)] = 1; var out = [];
+    shuffle(candidates).forEach(function (c) { if (out.length >= n - 1) return; var k = keyFn(c); if (!k || seen[k]) return; seen[k] = 1; out.push(c); });
+    if (out.length < n - 1) return null;
+    var all = shuffle(out.concat([correct]));
+    return { opts: all, ans: all.indexOf(correct) };
+  }
+  function near(n, cands) { // похожие числа для глав и серий
+    var set = {}; set[n] = 1; var out = [];
+    var spread = Math.max(6, Math.round(n * 0.12));
+    for (var g = 0; out.length < 3 && g < 60; g++) { var d = Math.round((R() * 2 - 1) * spread); var v = n + (d === 0 ? (R() < .5 ? -3 : 3) : d); if (v > 0 && !set[v]) { set[v] = 1; out.push(v); } }
+    return out;
+  }
+  function charOpt(c) { return { t: c.name, id: c.id }; }
+  function similarChars(P, c, filter) { // сначала похожие (тот же статус или сага), потом остальные
+    var st = low(statuses(c)[0]);
+    var same = P.chars.filter(function (x) { return x !== c && (filter ? filter(x) : true) && (low(statuses(x)[0]) === st || (x.saga && x.saga === c.saga)); });
+    var rest = P.chars.filter(function (x) { return x !== c && (filter ? filter(x) : true); });
+    return shuffle(same).slice(0, 6).concat(shuffle(rest).slice(0, 20));
+  }
+  // Описание без имени: имя и прозвище закрываем плашкой
+  function masked(text, words) {
+    var t = String(text || '').replace(/\s+/g, ' ').trim(); if (!t) return '';
+    if (t.length > 320) { var cut = t.slice(0, 320); var k = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('! '), cut.lastIndexOf('? ')); t = (k > 120 ? cut.slice(0, k + 1) : cut.replace(/\s+\S*$/, '') + '…'); }
+    var h = esc(t);
+    var stems = [];
+    words.forEach(function (w) { String(w || '').split(/[\s«»"().,:;!?—–-]+/).forEach(function (p) { if (p.length >= 3 && !/^(но|ми|до|де|ди|фон|ван|дер)$/i.test(p)) stems.push(p.length > 5 ? p.slice(0, p.length - 2) : p.slice(0, Math.max(3, p.length - 1))); }); });
+    stems.sort(function (a, b) { return b.length - a.length; });
+    stems.forEach(function (s) {
+      try { h = h.replace(new RegExp('(?<![\\p{L}])' + s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\p{L}*', 'giu'), function (m) { return '<mark>' + m + '</mark>'; }); } catch (e) {}
+    });
+    return h;
+  }
+  function quoteHidesAnswer(h, answer) { return low(h.replace(/<mark>[^<]*<\/mark>/g, '')).indexOf(low(answer)) >= 0; }
+
+  /* ---------- Типы вопросов ---------- */
+  // cat: character | story | fruit | reward | ship | useful
+  var CATS = { character: 'Персонажи', story: 'Арки', fruit: 'Плоды', reward: 'Награды', ship: 'Корабли и флаги', useful: 'Полезное' };
+  var CAT_ICON = { character: '👤', story: '📖', fruit: '🍇', reward: '💰', ship: '⛵', useful: '📚' };
+  var Q = [];
+  function def(id, cat, name, w, fn) { Q.push({ id: id, cat: cat, name: name, w: w, fn: fn }); }
+
+  def('char_photo', 'character', 'Кто на фото', 5, function (P, t) {
+    var c = t || pick(P.chars.filter(function (x) { return url(x, 'person_link'); })); if (!c || !url(c, 'person_link')) return null;
+    var o = options(charOpt(c), similarChars(P, c).map(charOpt)); if (!o) return null;
+    return { rec: c, type: 'character', q: 'Как зовут этого персонажа?', img: url(c, 'person_link'), imgPos: pos(c, 'person_'), opts: o.opts, ans: o.ans };
+  });
+  def('char_pics', 'character', 'Найди по фото', 3, function (P, t) {
+    var withImg = function (x) { return !!url(x, 'person_link'); };
+    var c = t || pick(P.chars.filter(withImg)); if (!c || !withImg(c)) return null;
+    var o = options(charOpt(c), similarChars(P, c, withImg).map(charOpt)); if (!o) return null;
+    o.opts.forEach(function (op) { var r = P.byId[op.id]; op.img = url(r, 'person_link'); op.pos = pos(r, 'person_'); });
+    return { rec: c, type: 'character', q: 'Где здесь ' + c.name + '?', pics: true, opts: o.opts, ans: o.ans };
+  });
+  def('char_nick', 'character', 'Прозвище', 4, function (P, t) {
+    var c = t || pick(P.chars.filter(function (x) { return val(x, 'nickname'); })); if (!c || !val(c, 'nickname')) return null;
+    var nick = val(c, 'nickname'); if (low(nick).indexOf(low(String(c.name).split(' ')[0])) >= 0) return null;
+    var o = options(charOpt(c), similarChars(P, c).map(charOpt)); if (!o) return null;
+    return { rec: c, type: 'character', q: 'Кого называют «' + nick + '»?', opts: o.opts, ans: o.ans };
+  });
+  def('char_nick_rev', 'character', 'Чьё прозвище', 3, function (P, t) {
+    var has = function (x) { return !!val(x, 'nickname'); };
+    var c = t || pick(P.chars.filter(has)); if (!c || !has(c)) return null;
+    var o = options({ t: val(c, 'nickname') }, similarChars(P, c, has).map(function (x) { return { t: val(x, 'nickname') }; })); if (!o) return null;
+    return { rec: c, type: 'character', q: 'Какое прозвище у персонажа ' + c.name + '?', img: url(c, 'person_link'), imgPos: pos(c, 'person_'), opts: o.opts, ans: o.ans };
+  });
+  def('char_desc', 'character', 'Чьё описание', 5, function (P, t) {
+    var c = t || pick(P.chars.filter(function (x) { return val(x, 'description').length > 60; })); if (!c || val(c, 'description').length < 60) return null;
+    var h = masked(val(c, 'description'), [c.name, val(c, 'nickname')]); if (!h || quoteHidesAnswer(h, c.name)) return null;
+    var o = options(charOpt(c), similarChars(P, c).map(charOpt)); if (!o) return null;
+    return { rec: c, type: 'character', q: 'Чьё это описание?', quote: h, opts: o.opts, ans: o.ans };
+  });
+  def('char_status', 'character', 'Статус персонажа', 3, function (P, t) {
+    var c = t || pick(P.chars.filter(function (x) { return statuses(x).length; })); if (!c) return null;
+    var mine = statuses(c).filter(function (x) { return low(x) !== 'фруктовик'; }); if (!mine.length) return null; var ml = statuses(c).map(low);
+    var all = {}; P.chars.forEach(function (x) { statuses(x).forEach(function (s) { if (ml.indexOf(low(s)) < 0 && low(s) !== 'фруктовик') all[low(s)] = s; }); });
+    var o = options({ t: mine[0] }, Object.keys(all).map(function (k) { return { t: all[k] }; })); if (!o) return null;
+    return { rec: c, type: 'character', q: 'Какой статус у персонажа ' + c.name + '?', img: url(c, 'person_link'), imgPos: pos(c, 'person_'), opts: o.opts, ans: o.ans };
+  });
+  def('char_odd', 'character', 'Лишний', 3, function (P, t) {
+    var groups = {}; P.chars.forEach(function (c) { statuses(c).forEach(function (s) { var k = low(s); (groups[k] = groups[k] || { s: s, l: [] }).l.push(c); }); });
+    var keys = Object.keys(groups).filter(function (k) { return groups[k].l.length >= 3 && k !== 'фруктовик'; }); if (!keys.length) return null;
+    var g = groups[pick(keys)];
+    var odd = t && statuses(t).map(low).indexOf(low(g.s)) < 0 ? t : pick(P.chars.filter(function (c) { return statuses(c).length && statuses(c).map(low).indexOf(low(g.s)) < 0; })); if (!odd) return null;
+    var three = shuffle(g.l).slice(0, 3).map(charOpt), all = shuffle(three.concat([charOpt(odd)]));
+    return { rec: odd, type: 'character', q: 'Кто из них НЕ «' + g.s + '»?', opts: all, ans: all.findIndex(function (o) { return o.id === odd.id; }), note: odd.name + ': ' + statuses(odd).join(', ') };
+  });
+  def('char_arc', 'character', 'Арка появления', 3, function (P, t) {
+    var names = P.arcs.map(function (a) { return a.name; });
+    var has = function (x) { return names.indexOf(val(x, 'arc')) >= 0; };
+    var c = t || pick(P.chars.filter(has)); if (!c || !has(c)) return null;
+    var arc = P.arcs.find(function (a) { return a.name === val(c, 'arc'); });
+    var cand = P.arcs.filter(function (a) { return a !== arc; }).sort(function (a, b) { return (a.saga === arc.saga ? 0 : 1) - (b.saga === arc.saga ? 0 : 1) + (R() - .5); });
+    var o = options({ t: arc.name }, cand.slice(0, 8).map(function (a) { return { t: a.name }; })); if (!o) return null;
+    return { rec: c, type: 'character', q: 'В какой арке впервые появляется ' + c.name + '?', img: url(c, 'person_link'), imgPos: pos(c, 'person_'), opts: o.opts, ans: o.ans };
+  });
+  def('char_chapter', 'character', 'Глава появления', 1, function (P, t) {
+    var c = t || pick(P.chars.filter(function (x) { return num(val(x, 'chapter')) > 0; })); if (!c) return null;
+    var n = num(val(c, 'chapter')); if (!n) return null;
+    var o = options({ t: String(n) }, near(n).map(function (v) { return { t: String(v) }; })); if (!o) return null;
+    return { rec: c, type: 'character', q: 'В какой главе манги впервые появляется ' + c.name + '?', img: url(c, 'person_link'), imgPos: pos(c, 'person_'), opts: o.opts, ans: o.ans, hard: true };
+  });
+  def('char_episode', 'character', 'Серия появления', 1, function (P, t) {
+    var c = t || pick(P.chars.filter(function (x) { return num(val(x, 'episode')) > 0; })); if (!c) return null;
+    var n = num(val(c, 'episode')); if (!n) return null;
+    var o = options({ t: String(n) }, near(n).map(function (v) { return { t: String(v) }; })); if (!o) return null;
+    return { rec: c, type: 'character', q: 'В какой серии аниме впервые появляется ' + c.name + '?', img: url(c, 'person_link'), imgPos: pos(c, 'person_'), opts: o.opts, ans: o.ans, hard: true };
+  });
+  // Плоды
+  function fruitOwner(P, f) { var id = val(f, 'owner'); if (P.byId[id]) return P.byId[id]; return P.chars.find(function (c) { return val(c, 'fruit_article_id') === f.id || val(c, 'fruit2_article_id') === f.id; }) || null; }
+  def('fruit_owner', 'fruit', 'Чей плод', 5, function (P, t) {
+    var f = t || pick(P.fruits.filter(function (x) { return fruitOwner(P, x); })); if (!f) return null; var c = fruitOwner(P, f); if (!c) return null;
+    var o = options(charOpt(c), similarChars(P, c, function (x) { return val(x, 'fruit_article_id') || /фруктов/i.test(x.status || ''); }).map(charOpt)); if (!o) return null;
+    return { rec: f, type: 'fruit', q: 'Чей это плод — «' + f.name + '»?', img: url(f, 'image'), imgPos: pos(f), contain: true, opts: o.opts, ans: o.ans };
+  });
+  def('fruit_photo', 'fruit', 'Плод по фото', 4, function (P, t) {
+    var f = t || pick(P.fruits.filter(function (x) { return url(x, 'image'); })); if (!f || !url(f, 'image')) return null;
+    var o = options({ t: f.name }, P.fruits.filter(function (x) { return x !== f; }).sort(function (a, b) { return (a.type === f.type ? 0 : 1) - (b.type === f.type ? 0 : 1) + (R() - .5); }).map(function (x) { return { t: x.name }; })); if (!o) return null;
+    return { rec: f, type: 'fruit', q: 'Как называется этот Дьявольский плод?', img: url(f, 'image'), imgPos: pos(f), contain: true, opts: o.opts, ans: o.ans };
+  });
+  def('fruit_of_char', 'fruit', 'Какой плод съел', 4, function (P, t) {
+    var f = t || pick(P.fruits.filter(function (x) { return fruitOwner(P, x); })); if (!f) return null; var c = fruitOwner(P, f); if (!c) return null;
+    var o = options({ t: f.name }, P.fruits.filter(function (x) { return x !== f; }).map(function (x) { return { t: x.name }; })); if (!o) return null;
+    return { rec: f, type: 'fruit', q: 'Какой плод съел ' + c.name + '?', img: url(c, 'person_link'), imgPos: pos(c, 'person_'), opts: o.opts, ans: o.ans };
+  });
+  def('fruit_type', 'fruit', 'Тип плода', 3, function (P, t) {
+    var f = t || pick(P.fruits.filter(function (x) { return val(x, 'type'); })); if (!f || !val(f, 'type')) return null;
+    var types = {}; P.fruits.forEach(function (x) { var v = val(x, 'type'); if (v) types[low(v)] = v; }); ['Парамеция', 'Логия', 'Зоан', 'Мифический Зоан', 'Древний Зоан'].forEach(function (v) { if (!types[low(v)]) types[low(v)] = v; });
+    var o = options({ t: val(f, 'type') }, Object.keys(types).map(function (k) { return { t: types[k] }; })); if (!o) return null;
+    return { rec: f, type: 'fruit', q: 'К какому типу относится «' + f.name + '»?', img: url(f, 'image'), imgPos: pos(f), contain: true, opts: o.opts, ans: o.ans };
+  });
+  def('fruit_desc', 'fruit', 'Описание плода', 3, function (P, t) {
+    var f = t || pick(P.fruits.filter(function (x) { return val(x, 'description').length > 50; })); if (!f || val(f, 'description').length < 50) return null;
+    var c = fruitOwner(P, f), h = masked(val(f, 'description'), [f.name, c && c.name]); if (!h || quoteHidesAnswer(h, f.name)) return null;
+    var o = options({ t: f.name }, P.fruits.filter(function (x) { return x !== f; }).map(function (x) { return { t: x.name }; })); if (!o) return null;
+    return { rec: f, type: 'fruit', q: 'О каком плоде идёт речь?', quote: h, opts: o.opts, ans: o.ans };
+  });
+  // Арки
+  function arcOpts(P, a) { return P.arcs.filter(function (x) { return x !== a; }).sort(function (x, y) { return (x.saga === a.saga ? 0 : 1) - (y.saga === a.saga ? 0 : 1) + (R() - .5); }).slice(0, 9).map(function (x) { return { t: x.name }; }); }
+  def('arc_events', 'story', 'События арки', 5, function (P, t) {
+    var a = t || pick(P.arcs.filter(function (x) { return val(x, 'key').length > 40; })); if (!a || val(a, 'key').length < 40) return null;
+    var h = masked(val(a, 'key'), [a.name]); if (!h || quoteHidesAnswer(h, a.name)) return null;
+    var o = options({ t: a.name }, arcOpts(P, a)); if (!o) return null;
+    return { rec: a, type: 'story', q: 'В какой арке происходили эти события?', quote: h, opts: o.opts, ans: o.ans };
+  });
+  def('arc_desc', 'story', 'Описание арки', 4, function (P, t) {
+    var a = t || pick(P.arcs.filter(function (x) { return val(x, 'description').length > 50; })); if (!a || val(a, 'description').length < 50) return null;
+    var h = masked(val(a, 'description'), [a.name]); if (!h || quoteHidesAnswer(h, a.name)) return null;
+    var o = options({ t: a.name }, arcOpts(P, a)); if (!o) return null;
+    return { rec: a, type: 'story', q: 'Как называется эта арка?', quote: h, opts: o.opts, ans: o.ans };
+  });
+  def('arc_photo', 'story', 'Арка по кадру', 3, function (P, t) {
+    var a = t || pick(P.arcs.filter(function (x) { return url(x, 'image'); })); if (!a || !url(a, 'image')) return null;
+    var same = P.arcs.filter(function (x) { return x !== a && url(x, 'image') === url(a, 'image'); }); if (same.length) return null; // одна картинка на несколько арок
+    var o = options({ t: a.name }, arcOpts(P, a)); if (!o) return null;
+    return { rec: a, type: 'story', q: 'Из какой арки этот кадр?', img: url(a, 'image'), imgPos: pos(a), wide: true, opts: o.opts, ans: o.ans };
+  });
+  def('arc_saga', 'story', 'Сага арки', 3, function (P, t) {
+    var a = t || pick(P.arcs.filter(function (x) { return val(x, 'saga'); })); if (!a || !val(a, 'saga')) return null;
+    var sagas = {}; P.arcs.forEach(function (x) { var s = val(x, 'saga'); if (s) sagas[low(s)] = s; });
+    var o = options({ t: val(a, 'saga') }, Object.keys(sagas).map(function (k) { return { t: sagas[k] }; })); if (!o) return null;
+    return { rec: a, type: 'story', q: 'К какой саге относится арка «' + a.name + '»?', opts: o.opts, ans: o.ans };
+  });
+  def('arc_order', 'story', 'Что было раньше', 3, function (P) {
+    var list = P.arcs.filter(function (x) { return num(val(x, 'chapters')) > 0 && !truthy(x.filler); }); if (list.length < 4) return null;
+    var four = shuffle(list).slice(0, 4); var first = four.slice().sort(function (a, b) { return num(a.chapters) - num(b.chapters); })[0];
+    var opts = four.map(function (x) { return { t: x.name }; });
+    return { rec: first, type: 'story', q: 'Какая из этих арок идёт раньше всех?', opts: opts, ans: four.indexOf(first), note: four.slice().sort(function (a, b) { return num(a.chapters) - num(b.chapters); }).map(function (x) { return x.name + ' — гл. ' + num(x.chapters); }).join(' → ') };
+  });
+  def('arc_who', 'story', 'Кто был в арке', 3, function (P, t) {
+    var a = t || pick(P.arcs.filter(function (x) { return jsonList(x.characters).some(function (id) { return P.byId[id]; }); })); if (!a) return null;
+    var ids = jsonList(a.characters).filter(function (id) { return P.byId[id]; }); if (!ids.length) return null;
+    var c = P.byId[pick(ids)];
+    var cand = P.chars.filter(function (x) { return ids.indexOf(x.id) < 0 && val(x, 'arc') !== a.name; });
+    var o = options(charOpt(c), cand.map(charOpt)); if (!o) return null;
+    return { rec: a, type: 'story', q: 'Кто из них появляется в арке «' + a.name + '»?', opts: o.opts, ans: o.ans };
+  });
+  def('arc_chapter', 'story', 'Глава начала арки', 1, function (P, t) {
+    var a = t || pick(P.arcs.filter(function (x) { return num(val(x, 'chapters')) > 0; })); if (!a) return null; var n = num(val(a, 'chapters')); if (!n) return null;
+    var o = options({ t: String(n) }, near(n).map(function (v) { return { t: String(v) }; })); if (!o) return null;
+    return { rec: a, type: 'story', q: 'С какой главы начинается арка «' + a.name + '»?', opts: o.opts, ans: o.ans, hard: true };
+  });
+  // Награды
+  function bestReward(P, c) { return P.rewards.filter(function (r) { return r.character_id === c.id; }).sort(function (a, b) { return Number(b.reward) - Number(a.reward); })[0]; }
+  def('rw_amount', 'reward', 'Размер награды', 5, function (P, t) {
+    var r = t || pick(P.rewards); if (!r) return null; var c = P.byId[r.character_id]; if (!c) return null;
+    var n = Number(r.reward), others = P.rewards.filter(function (x) { return Number(x.reward) !== n; }).map(function (x) { return Number(x.reward); });
+    var fake = [n * 2, Math.round(n / 2), n * 3, Math.round(n * 1.5)].filter(function (v) { return v > 0; });
+    var o = options({ t: money(n) }, shuffle(others).slice(0, 4).concat(fake).map(function (v) { return { t: money(v) }; })); if (!o) return null;
+    return { rec: r, type: 'reward', q: 'Какую награду назначили за голову ' + c.name + (val(r, 'arc') ? ' в арке «' + val(r, 'arc') + '»' : '') + '?', img: url(c, 'person_link'), imgPos: pos(c, 'person_'), opts: o.opts, ans: o.ans, link: { type: 'character', id: c.id } };
+  });
+  def('rw_whose', 'reward', 'Чья награда', 4, function (P, t) {
+    var r = t || pick(P.rewards); if (!r) return null; var c = P.byId[r.character_id]; if (!c) return null;
+    var cand = P.rewards.filter(function (x) { return x.character_id !== c.id; }).map(function (x) { return P.byId[x.character_id]; }).concat(similarChars(P, c));
+    var o = options(charOpt(c), cand.filter(Boolean).map(charOpt)); if (!o) return null;
+    return { rec: r, type: 'reward', q: 'За чью голову назначили ' + money(r.reward) + (val(r, 'arc') ? ' (арка «' + val(r, 'arc') + '»)' : '') + '?', opts: o.opts, ans: o.ans, link: { type: 'character', id: c.id } };
+  });
+  def('rw_arc', 'reward', 'Когда назначили', 2, function (P, t) {
+    var r = t || pick(P.rewards.filter(function (x) { return val(x, 'arc'); })); if (!r || !val(r, 'arc')) return null; var c = P.byId[r.character_id];
+    var arc = P.arcs.find(function (a) { return a.name === val(r, 'arc'); }); var cand = arc ? arcOpts(P, arc) : P.arcs.map(function (a) { return { t: a.name }; });
+    var o = options({ t: val(r, 'arc') }, cand); if (!o) return null;
+    return { rec: r, type: 'reward', q: 'В какой арке за голову ' + c.name + ' назначили ' + money(r.reward) + '?', img: url(c, 'person_link'), imgPos: pos(c, 'person_'), opts: o.opts, ans: o.ans, link: { type: 'character', id: c.id } };
+  });
+  def('rw_max', 'reward', 'У кого больше', 3, function (P) {
+    var ids = {}; P.rewards.forEach(function (r) { ids[r.character_id] = 1; }); var cs = Object.keys(ids).map(function (id) { return P.byId[id]; }).filter(Boolean); if (cs.length < 4) return null;
+    var four = shuffle(cs).slice(0, 4), vals = four.map(function (c) { return Number(bestReward(P, c).reward); });
+    var mx = Math.max.apply(null, vals); if (vals.filter(function (v) { return v === mx; }).length > 1) return null;
+    var w = four[vals.indexOf(mx)];
+    return { rec: bestReward(P, w), type: 'reward', q: 'У кого из них самая большая награда?', opts: four.map(charOpt), ans: four.indexOf(w), note: four.map(function (c, i) { return c.name + ' — ' + money(vals[i]); }).join(' · '), link: { type: 'character', id: w.id } };
+  });
+  // Корабли и флаги
+  function shipOwners(P, f) { return P.chars.filter(function (c) { return val(c, f); }); }
+  def('ship_owner', 'ship', 'Чей корабль', 4, function (P, t) {
+    var c = t || pick(shipOwners(P, 'ship')); if (!c || !val(c, 'ship')) return null; var ship = val(c, 'ship');
+    var cand = shipOwners(P, 'ship').filter(function (x) { return low(val(x, 'ship')) !== low(ship); }).concat(similarChars(P, c));
+    var o = options(charOpt(c), cand.map(charOpt)); if (!o) return null;
+    return { rec: c, type: 'ship', q: url(c, 'ship_link') ? 'Чей это корабль?' : 'Кому принадлежит корабль ' + ship + '?', img: url(c, 'ship_link'), wide: true, opts: o.opts, ans: o.ans, note: 'Корабль: ' + ship, link: { type: 'character', id: c.id } };
+  });
+  def('ship_name', 'ship', 'Название корабля', 3, function (P, t) {
+    var c = t || pick(shipOwners(P, 'ship').filter(function (x) { return url(x, 'ship_link'); })); if (!c || !url(c, 'ship_link')) return null;
+    var o = options({ t: val(c, 'ship') }, shipOwners(P, 'ship').map(function (x) { return { t: val(x, 'ship') }; })); if (!o) return null;
+    return { rec: c, type: 'ship', q: 'Как называется этот корабль?', img: url(c, 'ship_link'), wide: true, opts: o.opts, ans: o.ans, link: { type: 'character', id: c.id } };
+  });
+  def('flag_owner', 'ship', 'Чей флаг', 3, function (P, t) {
+    var c = t || pick(shipOwners(P, 'flag_link').filter(function (x) { return url(x, 'flag_link'); })); if (!c || !url(c, 'flag_link')) return null;
+    var cand = shipOwners(P, 'flag_link').filter(function (x) { return url(x, 'flag_link') !== url(c, 'flag_link'); }).concat(similarChars(P, c));
+    var o = options(charOpt(c), cand.map(charOpt)); if (!o) return null;
+    return { rec: c, type: 'ship', q: 'Чей это пиратский флаг?', img: url(c, 'flag_link'), wide: true, contain: true, opts: o.opts, ans: o.ans, note: val(c, 'flag') ? 'Флаг: ' + val(c, 'flag') : '', link: { type: 'character', id: c.id } };
+  });
+  // Полезные статьи
+  def('useful_desc', 'useful', 'О чём статья', 3, function (P, t) {
+    var u = t || pick(P.useful.filter(function (x) { return val(x, 'description').length > 50; })); if (!u || val(u, 'description').length < 50) return null;
+    var h = masked(val(u, 'description'), [u.name]); if (!h || quoteHidesAnswer(h, u.name)) return null;
+    var o = options({ t: u.name }, P.useful.filter(function (x) { return x !== u; }).map(function (x) { return { t: x.name }; })); if (!o) return null;
+    return { rec: u, type: 'useful', q: 'О чём здесь говорится?', quote: h, opts: o.opts, ans: o.ans };
+  });
+  def('useful_photo', 'useful', 'Статья по картинке', 2, function (P, t) {
+    var u = t || pick(P.useful.filter(function (x) { return url(x, 'image'); })); if (!u || !url(u, 'image')) return null;
+    var o = options({ t: u.name }, P.useful.filter(function (x) { return x !== u; }).map(function (x) { return { t: x.name }; })); if (!o) return null;
+    return { rec: u, type: 'useful', q: 'К какой теме относится эта картинка?', img: url(u, 'image'), imgPos: pos(u), wide: true, opts: o.opts, ans: o.ans };
+  });
+
+  /* ---------- Статистика ---------- */
+  function today(d) { d = d || new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  function load() { try { var v = JSON.parse(localStorage.getItem(KEY) || 'null'); if (v && typeof v === 'object') return norm(v); } catch (e) {} return norm({}); }
+  function norm(v) { v.days = v.days || {}; v.cat = v.cat || {}; v.qt = v.qt || {}; v.miss = Array.isArray(v.miss) ? v.miss : []; v.streak = v.streak || 0; v.best = v.best || 0; return v; }
+  function save(v) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) {} }
+  function add(pair, ok) { pair = pair || [0, 0]; pair[ok ? 0 : 1]++; return pair; }
+  function record(qq, ok) {
+    var s = load(), d = today();
+    var day = s.days[d] = s.days[d] || { c: 0, w: 0, cat: {} };
+    day[ok ? 'c' : 'w']++; day.cat[qq.cat] = add(day.cat[qq.cat], ok);
+    s.cat[qq.cat] = add(s.cat[qq.cat], ok); s.qt[qq.id] = add(s.qt[qq.id], ok);
+    s.streak = ok ? s.streak + 1 : 0; s.best = Math.max(s.best, s.streak);
+    var key = qq.id + ':' + (qq.rec && qq.rec.id);
+    s.miss = s.miss.filter(function (m) { return m.k !== key; });
+    if (!ok) { s.miss.unshift({ k: key, q: qq.id, id: qq.rec && qq.rec.id, ts: Date.now() }); s.miss = s.miss.slice(0, 120); }
+    save(s); return s;
+  }
+  function pct(p) { return p && (p[0] + p[1]) ? Math.round(p[0] / (p[0] + p[1]) * 100) : null; }
+  function totals(s) { var c = 0, w = 0; Object.keys(s.days).forEach(function (k) { c += s.days[k].c; w += s.days[k].w; }); return [c, w]; }
+  // Краткая сводка для статистики админа
+  window.__wikiQuizSummary = function (v) {
+    var s = norm(typeof v === 'string' ? (function () { try { return JSON.parse(v) || {}; } catch (e) { return {}; } })() : (v || {}));
+    var t = totals(s), days = Object.keys(s.days).sort();
+    var first = days.slice(0, 3), last = days.slice(-3);
+    function acc(list) { var c = 0, w = 0; list.forEach(function (k) { c += s.days[k].c; w += s.days[k].w; }); return c + w ? Math.round(c / (c + w) * 100) : null; }
+    var cats = Object.keys(s.cat).map(function (k) { return { k: k, n: CATS[k] || k, p: pct(s.cat[k]), t: s.cat[k][0] + s.cat[k][1] }; }).filter(function (x) { return x.t >= 3; }).sort(function (a, b) { return b.p - a.p; });
+    return { total: t[0] + t[1], correct: t[0], pct: pct(t), days: days.length, last: days[days.length - 1] || '', firstPct: days.length >= 4 ? acc(first) : null, lastPct: days.length >= 4 ? acc(last) : null, best: cats[0] || null, worst: cats.length > 1 ? cats[cats.length - 1] : null, streak: s.best };
+  };
+
+  /* ---------- Интерфейс ---------- */
+  var MODE_KEY = 'onePieceWikiQuizModeV1';
+  var MODES = [['all', '🎲 Всё вперемешку']].concat(Object.keys(CATS).map(function (k) { return [k, CAT_ICON[k] + ' ' + CATS[k]]; })).concat([['miss', '🔁 Работа над ошибками']]);
+  var cur = null, answered = false, recent = [], view = 'play', paneEl = null;
+  function mode() { try { return localStorage.getItem(MODE_KEY) || 'all'; } catch (e) { return 'all'; } }
+  function generate(P) {
+    var m = mode(), s = load();
+    if (m === 'miss') {
+      for (var i = 0; i < Math.min(30, s.miss.length); i++) {
+        var mm = s.miss[Math.floor(R() * Math.min(s.miss.length, 30))]; var d = Q.find(function (x) { return x.id === mm.q; }); if (!d) continue;
+        var src = d.cat === 'story' ? P.arcs : d.cat === 'fruit' ? P.fruits : d.cat === 'reward' ? P.rewards : d.cat === 'useful' ? P.useful : P.chars;
+        var rec = src.find(function (x) { return String(x.id) === String(mm.id); });
+        var q1 = rec ? safe(d, P, rec) : null; if (q1) return q1;
+      }
+      return null;
+    }
+    var list = Q.filter(function (d) { return m === 'all' || d.cat === m; });
+    for (var tries = 0; tries < 60; tries++) {
+      var tot = list.reduce(function (a, d) { return a + d.w; }, 0), r = R() * tot, def0 = list[0];
+      for (var j = 0; j < list.length; j++) { r -= list[j].w; if (r <= 0) { def0 = list[j]; break; } }
+      var q = safe(def0, P, null);
+      if (q && recent.indexOf(q.key) < 0) { recent.unshift(q.key); recent = recent.slice(0, 40); return q; }
+    }
+    return null;
+  }
+  function safe(d, P, t) { try { var q = d.fn(P, t); if (!q) return null; q.id = d.id; q.cat = d.cat; q.kind = d.name; q.key = d.id + ':' + (q.rec && q.rec.id) + ':' + q.q; return q; } catch (e) { return null; } }
+  function counts(P) { var c = {}; Object.keys(CATS).forEach(function (k) { c[k] = 0; }); Q.forEach(function (d) { for (var i = 0; i < 3; i++) if (safe(d, P, null)) { c[d.cat]++; break; } }); return c; }
+
+  function render(pane) {
+    paneEl = pane;
+    var s = load(), t = totals(s), td = s.days[today()] || { c: 0, w: 0 };
+    pane.innerHTML = '<div class="wk-pane-head"><div><h2>Опросы</h2><p>Проверка знаний по статьям, которые тебе уже открыты. Вопросы каждый раз новые.</p></div>'
+      + '<div class="wk-seg" role="group"><button type="button" data-view="play" class="' + (view === 'play' ? 'active' : '') + '">🧠 Вопросы</button><button type="button" data-view="stats" class="' + (view === 'stats' ? 'active' : '') + '">📈 Моя статистика</button></div></div>'
+      + '<div class="wk-qz" data-qz></div>';
+    var box = pane.querySelector('[data-qz]');
+    pane.querySelectorAll('[data-view]').forEach(function (b) { b.addEventListener('click', function () { view = b.getAttribute('data-view'); render(pane); }); });
+    if (view === 'stats') { drawStats(box, s); return; }
+    var P = pool(), cn = counts(P), m = mode();
+    box.innerHTML = '<div class="wk-qz-top"><div class="wk-qz-modes">' + MODES.map(function (x) {
+      var dis = x[0] !== 'all' && x[0] !== 'miss' && !cn[x[0]]; if (x[0] === 'miss') dis = !s.miss.length;
+      return '<button type="button" data-mode="' + x[0] + '" class="' + (m === x[0] ? 'active' : '') + '"' + (dis ? ' disabled title="Пока нет открытых статей для таких вопросов"' : '') + '>' + x[1] + (x[0] === 'miss' && s.miss.length ? ' (' + s.miss.length + ')' : '') + '</button>';
+    }).join('') + '</div><div class="wk-qz-today">Сегодня: <b>' + (td.c + td.w) + '</b> · верно <b>' + (td.c + td.w ? Math.round(td.c / (td.c + td.w) * 100) + '%' : '—') + '</b>' + (s.streak >= 3 ? '<span class="wk-qz-streak">🔥 ' + s.streak + ' подряд</span>' : '') + '</div></div><div data-q></div>';
+    box.querySelectorAll('[data-mode]').forEach(function (b) { b.addEventListener('click', function () { try { localStorage.setItem(MODE_KEY, b.getAttribute('data-mode')); } catch (e) {} cur = null; render(pane); }); });
+    if (!cur || answered) { cur = generate(P); answered = false; }
+    drawQ(box.querySelector('[data-q]'));
+  }
+  function img(src, p, cls) { return '<div class="wk-qz-img ' + (cls || '') + '"><img alt="" src="' + esc(src) + '" style="object-position:' + esc(p || '50% 35%') + '" onerror="this.closest(\'.wk-qz-img\').style.display=\'none\'"></div>'; }
+  function drawQ(host) {
+    var q = cur;
+    if (!q) { host.innerHTML = '<div class="wk-qz-empty">' + (mode() === 'miss' ? 'Ошибок для повторения нет — отлично! 🎉' : 'Для этого раздела пока мало открытых статей. Продвинься по главам или выбери «Всё вперемешку».') + '</div>'; return; }
+    var hasImg = !!q.img;
+    host.innerHTML = '<div class="wk-qz-card' + (hasImg ? '' : ' no-img') + '">'
+      + (hasImg ? img(q.img, q.imgPos, (q.wide ? 'wide ' : '') + (q.contain ? 'contain' : '')) : '')
+      + '<div class="wk-qz-body"><div class="wk-qz-kind"><i>' + CAT_ICON[q.cat] + ' ' + esc(CATS[q.cat]) + '</i>' + esc(q.kind) + (q.hard ? ' · сложный' : '') + '</div>'
+      + '<h3 class="wk-qz-q">' + esc(q.q) + '</h3>'
+      + (q.quote ? '<blockquote class="wk-qz-quote">' + q.quote + '</blockquote>' : '')
+      + '<div class="wk-qz-opts' + (q.pics ? ' pics' : '') + '">' + q.opts.map(function (o, i) {
+        return '<button type="button" class="wk-qz-opt" data-i="' + i + '"><kbd>' + (i + 1) + '</kbd>' + (q.pics ? '<img alt="" src="' + esc(o.img) + '" style="object-position:' + esc(o.pos || '50% 30%') + '">' : '') + '<span>' + esc(o.t) + '</span></button>';
+      }).join('') + '</div>'
+      + '<div class="wk-qz-res" data-res></div>'
+      + '<button type="button" class="wk-qz-skip" data-skip>Пропустить →</button></div></div>';
+    host.querySelectorAll('.wk-qz-opt').forEach(function (b) { b.addEventListener('click', function () { answer(host, Number(b.getAttribute('data-i'))); }); });
+    host.querySelector('[data-skip]').addEventListener('click', next);
+  }
+  function answer(host, i) {
+    if (answered || !cur) return; answered = true;
+    var q = cur, ok = i === q.ans, s = record(q, ok);
+    var btns = host.querySelectorAll('.wk-qz-opt');
+    btns.forEach(function (b, k) { b.disabled = true; if (k === q.ans) b.classList.add('is-ok'); else if (k === i) b.classList.add('is-bad'); else b.classList.add('is-dim'); });
+    var opts = host.querySelector('.wk-qz-opts'); if (opts) opts.classList.add('answered');
+    var res = host.querySelector('[data-res]'); res.className = 'wk-qz-res show ' + (ok ? 'ok' : 'bad');
+    var link = q.link || { type: q.type, id: q.rec && q.rec.id };
+    res.innerHTML = '<span class="grow">' + (ok ? '✓ Верно!' + (s.streak >= 3 ? ' 🔥 ' + s.streak + ' подряд' : '') : '✗ Правильный ответ: <b>' + esc(q.opts[q.ans].t) + '</b>') + (q.note ? '<br><small>' + esc(q.note) + '</small>' : '') + '</span>'
+      + (link.id ? '<button type="button" class="wk-qz-link" data-open>Открыть статью</button>' : '') + '<button type="button" class="wk-qz-next" data-next>Дальше →</button>';
+    var sk = host.querySelector('[data-skip]'); if (sk) sk.remove();
+    res.querySelector('[data-next]').addEventListener('click', next);
+    var ob = res.querySelector('[data-open]'); if (ob) ob.addEventListener('click', function () { openRec(link); });
+    var tdEl = paneEl && paneEl.querySelector('.wk-qz-today'); if (tdEl) { var td = s.days[today()]; tdEl.innerHTML = 'Сегодня: <b>' + (td.c + td.w) + '</b> · верно <b>' + Math.round(td.c / (td.c + td.w) * 100) + '%</b>' + (s.streak >= 3 ? '<span class="wk-qz-streak">🔥 ' + s.streak + ' подряд</span>' : ''); }
+    res.querySelector('[data-next]').focus({ preventScroll: true });
+    try { var rb = res.getBoundingClientRect(); if (rb.bottom > window.innerHeight - 70) window.scrollBy({ top: rb.bottom - window.innerHeight + 90, behavior: 'smooth' }); } catch (e) {}
+  }
+  function next() { if (!paneEl) return; cur = null; answered = false; render(paneEl); }
+  function openRec(l) {
+    try {
+      if (l.type === 'character') openCharacterArticle(l.id);
+      else if (l.type === 'story') openStoryArticle(l.id);
+      else if (l.type === 'fruit') openFruitArticle(l.id);
+      else if (l.type === 'useful') openUsefulArticle(l.id);
+    } catch (e) {}
+  }
+  document.addEventListener('keydown', function (e) {
+    if (!paneEl || paneEl.hidden || !paneEl.isConnected || view !== 'play' || !cur) return;
+    var t = e.target; if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    if (document.querySelector('#wikiEditorOverlay.open')) return;
+    if (!answered && /^[1-4]$/.test(e.key)) { var host = paneEl.querySelector('[data-q]'); if (host && Number(e.key) <= cur.opts.length) { e.preventDefault(); answer(host, Number(e.key) - 1); } }
+    else if (answered && (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowRight') && !(t && t.tagName === 'BUTTON' && t.hasAttribute('data-open'))) { e.preventDefault(); next(); }
+  });
+
+  /* ---------- Экран статистики ---------- */
+  function color(p) { return p == null ? '#475569' : p >= 80 ? '#22c55e' : p >= 60 ? '#84cc16' : p >= 40 ? '#eab308' : '#ef4444'; }
+  function drawStats(box, s) {
+    var t = totals(s), all = t[0] + t[1], days = Object.keys(s.days).sort();
+    if (!all) { box.innerHTML = '<div class="wk-qz-empty">Пока нет ответов. Открой «🧠 Вопросы» — статистика начнёт копиться с первого ответа.</div>'; return; }
+    var last7 = days.filter(function (d) { return d >= today(new Date(Date.now() - 6 * 864e5)); });
+    var a7 = last7.reduce(function (a, d) { a[0] += s.days[d].c; a[1] += s.days[d].w; return a; }, [0, 0]);
+    var half = Math.max(1, Math.floor(days.length / 2));
+    function acc(list) { var c = 0, w = 0; list.forEach(function (k) { c += s.days[k].c; w += s.days[k].w; }); return c + w ? Math.round(c / (c + w) * 100) : null; }
+    var early = days.length >= 2 ? acc(days.slice(0, half)) : null, late = days.length >= 2 ? acc(days.slice(-half)) : null, delta = early != null && late != null ? late - early : null;
+    var h = '<div class="wk-qz-stats"><div class="wk-qz-tiles">'
+      + tile('Всего ответов', all, days.length + ' ' + plural(days.length, 'день', 'дня', 'дней'))
+      + tile('Верно', pct(t) + '%', t[0] + ' из ' + all)
+      + tile('Неверно', t[1], Math.round(t[1] / all * 100) + '%')
+      + tile('За 7 дней', a7[0] + a7[1] ? pct(a7) + '%' : '—', (a7[0] + a7[1]) + ' ответов')
+      + tile('Рекорд серии', '🔥 ' + s.best, delta == null ? 'сейчас ' + s.streak : '<span class="' + (delta >= 0 ? 'up' : 'down') + '">' + (delta >= 0 ? '▲ +' : '▼ ') + delta + '% к началу</span>')
+      + '</div>';
+    h += '<h3>По дням</h3>' + dayChart(s, days, box.clientWidth);
+    h += '<h3>Знание по разделам</h3><div class="wk-qz-cats">' + Object.keys(CATS).map(function (k) {
+      var p = s.cat[k], v = pct(p), n = p ? p[0] + p[1] : 0;
+      return '<div class="wk-qz-cat"><span>' + CAT_ICON[k] + ' Знание: ' + esc(CATS[k].toLocaleLowerCase('ru')) + '</span><b style="color:' + color(v) + '">' + (v == null ? '—' : v + '%') + '</b><div class="wk-qz-bar"><i style="width:' + (v || 0) + '%;background:' + color(v) + '"></i></div><small>' + (n ? p[0] + ' верно из ' + n : 'ещё не было вопросов') + '</small></div>';
+    }).join('') + '</div>';
+    var rows = Q.map(function (d) { var p = s.qt[d.id]; return { d: d, p: p, v: pct(p), n: p ? p[0] + p[1] : 0 }; }).filter(function (x) { return x.n; }).sort(function (a, b) { return a.v - b.v; });
+    h += '<h3>По типам вопросов</h3><table class="wk-qz-table"><thead><tr><th>Вопрос</th><th>Раздел</th><th class="n">Ответов</th><th class="n">Верно</th></tr></thead><tbody>'
+      + rows.map(function (x) { return '<tr><td>' + esc(x.d.name) + '</td><td>' + CAT_ICON[x.d.cat] + ' ' + esc(CATS[x.d.cat]) + '</td><td class="n">' + x.n + '</td><td class="n"><span class="pc" style="color:' + color(x.v) + '">' + x.v + '%</span></td></tr>'; }).join('') + '</tbody></table>';
+    h += '<button type="button" class="wk-qz-reset" data-reset>Сбросить мою статистику опросов</button></div>';
+    box.innerHTML = h;
+    var rb = box.querySelector('[data-reset]');
+    rb.addEventListener('click', function () {
+      if (rb.getAttribute('data-c') !== '1') { rb.setAttribute('data-c', '1'); rb.textContent = 'Точно сбросить? Нажми ещё раз'; setTimeout(function () { if (rb.isConnected) { rb.removeAttribute('data-c'); rb.textContent = 'Сбросить мою статистику опросов'; } }, 3500); return; }
+      save(norm({})); render(paneEl);
+    });
+  }
+  function plural(n, a, b, c) { n = Math.abs(n) % 100; var n1 = n % 10; if (n > 10 && n < 20) return c; if (n1 > 1 && n1 < 5) return b; if (n1 === 1) return a; return c; }
+  function tile(l, v, sub) { return '<div class="wk-qz-tile"><small>' + l + '</small><b>' + v + '</b><span>' + sub + '</span></div>'; }
+  // Столбики: верно / неверно за день; линия — % верных (сглаженная по 3 дням)
+  function dayChart(s, days, width) {
+    var start = days.length ? new Date(days[0] + 'T12:00:00') : new Date(), end = new Date();
+    var span = Math.round((end - start) / 864e5) + 1, N = Math.max(7, Math.min(45, span));
+    var list = []; for (var i = N - 1; i >= 0; i--) { var d = today(new Date(Date.now() - i * 864e5)); list.push({ d: d, v: s.days[d] || null }); }
+    var W = Math.max(320, Math.min(1400, (width || 760) - 30)), H = W < 500 ? 190 : 230, L = 34, Rr = 34, T = 14, B = 34, cw = (W - L - Rr) / N, bw = Math.max(4, Math.min(22, cw * 0.62));
+    var mx = Math.max(4, Math.max.apply(null, list.map(function (x) { return x.v ? x.v.c + x.v.w : 0; })));
+    var y = function (v) { return T + (H - T - B) * (1 - v / mx); }, yp = function (p) { return T + (H - T - B) * (1 - p / 100); };
+    var g = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Ответы по дням">';
+    [0, 50, 100].forEach(function (p) { g += '<line x1="' + L + '" x2="' + (W - Rr) + '" y1="' + yp(p) + '" y2="' + yp(p) + '" stroke="rgba(255,255,255,.07)"/><text x="' + (W - Rr + 6) + '" y="' + (yp(p) + 4) + '" fill="#a78bfa" font-size="11">' + p + '%</text>'; });
+    g += '<text x="' + (L - 6) + '" y="' + (y(mx) + 4) + '" fill="#64748b" font-size="11" text-anchor="end">' + mx + '</text><text x="' + (L - 6) + '" y="' + (y(0) + 4) + '" fill="#64748b" font-size="11" text-anchor="end">0</text>';
+    var pts = [];
+    list.forEach(function (x, i) {
+      var cx = L + cw * i + cw / 2;
+      if (x.v) {
+        var yc = y(x.v.c), yw = y(x.v.c + x.v.w);
+        g += '<rect x="' + (cx - bw / 2) + '" y="' + yc + '" width="' + bw + '" height="' + (y(0) - yc) + '" rx="2" fill="#22c55e" opacity=".85"><title>' + x.d + ': верно ' + x.v.c + ', неверно ' + x.v.w + '</title></rect>';
+        if (x.v.w) g += '<rect x="' + (cx - bw / 2) + '" y="' + yw + '" width="' + bw + '" height="' + (yc - yw) + '" rx="2" fill="#ef4444" opacity=".8"><title>' + x.d + ': верно ' + x.v.c + ', неверно ' + x.v.w + '</title></rect>';
+        // сглаживание по последним 3 дням с ответами
+        var c = 0, w = 0, k = 0; for (var j = i; j >= 0 && k < 3; j--) if (list[j].v) { c += list[j].v.c; w += list[j].v.w; k++; }
+        pts.push([cx, yp(c / (c + w) * 100), Math.round(c / (c + w) * 100)]);
+      }
+      if (N <= 14 || i % Math.ceil(N / 10) === 0 || i === N - 1) g += '<text x="' + cx + '" y="' + (H - B + 16) + '" fill="#64748b" font-size="10.5" text-anchor="middle">' + x.d.slice(8) + '.' + x.d.slice(5, 7) + '</text>';
+    });
+    if (pts.length > 1) g += '<polyline fill="none" stroke="#a78bfa" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" points="' + pts.map(function (p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' ') + '"/>';
+    pts.forEach(function (p) { g += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="3.5" fill="#a78bfa"><title>' + p[2] + '% верных (среднее за 3 дня с ответами)</title></circle>'; });
+    g += '</svg>';
+    return '<div class="wk-qz-chart">' + g + '<div class="lg"><span><i style="background:#22c55e"></i>верно</span><span><i style="background:#ef4444"></i>неверно</span><span><i style="background:#a78bfa"></i>% верных (среднее за 3 дня)</span></div></div>';
+  }
+
+  /* ---------- Вкладка в Каюте ---------- */
+  function reg() {
+    if (typeof window.__wikiRegisterCabinTab !== 'function') return false;
+    window.__wikiRegisterCabinTab({ key: 'quiz', icon: '🧠', label: 'Опросы', pane: 'wkCabinPaneQuiz', render: render });
+    return true;
+  }
+  if (!reg()) { var tries = 0, tm = setInterval(function () { if (reg() || ++tries > 40) clearInterval(tm); }, 250); }
+  window.__wikiQuizDebug = { pool: pool, gen: function (id) { var d = Q.find(function (x) { return x.id === id; }); return d ? safe(d, pool(), null) : null; }, types: Q };
 })();
 </script>
 </body></html>
