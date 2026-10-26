@@ -21274,7 +21274,6 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     { v: 'cosmos', n: 'Космос' },
     { v: 'refractor', n: 'Покрытие · рефрактор' },
     { v: 'iridescent', n: 'Покрытие · иридисцентное' },
-    { v: 'pearl', n: 'Покрытие · перламутровое' },
     { v: 'diagonal', n: 'Покрытие · диагональный перелив' },
     { v: 'crosshatch', n: 'Покрытие · перекрёстная штриховка' },
     { v: 'lenticular', n: 'Покрытие · лентикулярное' },
@@ -23711,8 +23710,8 @@ html body #characterArticleContent#characterArticleContent#characterArticleConte
 </script>
 <style id="wiki-card-style-v1">
 /* ===== Конструктор эффектов карточки: настройка библиотеки + свои слои + частицы ===== */
-.wk-cs{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:3;overflow:hidden;display:block}
-.wk-cs>span{position:absolute;inset:0;border-radius:inherit;display:block;pointer-events:none}
+.wk-cs{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:auto;overflow:hidden;display:block}
+.wk-cs>span{position:absolute;inset:0;border-radius:inherit;display:block;pointer-events:none;z-index:3}
 .wk-cs-pulse{box-shadow:inset 0 0 0 2px var(--cs-pc),inset 0 0 22px color-mix(in srgb,var(--cs-pc) 70%,transparent),inset 0 0 60px color-mix(in srgb,var(--cs-pc) 28%,transparent);animation:wkCsPulse var(--cs-pt,2s) ease-in-out infinite}
 @keyframes wkCsPulse{0%,100%{opacity:.25}50%{opacity:1}}
 .wk-cs-shine{--w:var(--cs-sw,7%);background:linear-gradient(115deg,transparent calc(50% - var(--w) * 2),color-mix(in srgb,var(--cs-sc) 35%,transparent) calc(50% - var(--w)),var(--cs-sc) 50%,color-mix(in srgb,var(--cs-sc) 35%,transparent) calc(50% + var(--w)),transparent calc(50% + var(--w) * 2));background-size:300% 100%;background-repeat:no-repeat;mix-blend-mode:var(--cs-sb,screen);opacity:var(--cs-so,.55);animation:wkCsShine var(--cs-st,3s) ease-in-out infinite}
@@ -23731,6 +23730,7 @@ html body #characterArticleContent#characterArticleContent#characterArticleConte
 .wk-cs-parts .sh-bubble{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='9.5' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3Ccircle cx='8.5' cy='8' r='2.2'/%3E%3C/svg%3E")}
 .wk-cs-parts .sh-coin{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 1.5a10.5 10.5 0 1 1 0 21 10.5 10.5 0 0 1 0-21zm0 3a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15z'/%3E%3Cpath d='M10 7h3.2c1.6 0 2.6.9 2.6 2.2 0 .9-.5 1.5-1.2 1.8.9.3 1.6 1 1.6 2.1 0 1.5-1.2 2.4-2.9 2.4H10zm1.6 1.4v2.1h1.4c.7 0 1.2-.4 1.2-1s-.5-1.1-1.2-1.1zm0 3.5v2.3h1.6c.8 0 1.3-.4 1.3-1.2 0-.7-.5-1.1-1.3-1.1z'/%3E%3C/svg%3E")}
 .wk-cs-parts .sh-berry{--m:url("https://upload.wikimedia.org/wikipedia/commons/f/fa/Berrysymbol.svg")}
+.wk-cs-parts .sh-drop{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1.5S4.8 10.2 4.8 15a7.2 7.2 0 0 0 14.4 0C19.2 10.2 12 1.5 12 1.5z'/%3E%3C/svg%3E")}
 .wk-cs-parts .sh-note{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 3v11.3A3.5 3.5 0 1 0 11 17V8h7V3z'/%3E%3C/svg%3E")}
 .wk-cs-parts .sh-diamond{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1.5l8 10.5-8 10.5L4 12z'/%3E%3C/svg%3E")}
 .wk-cs-parts .sh-skull{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 2C6.8 2 3 5.6 3 10.4c0 2.8 1.3 4.9 3.3 6.1V20c0 .8.6 1.5 1.5 1.5h1.4v-2h1.4v2h2.8v-2h1.4v2h1.4c.8 0 1.5-.7 1.5-1.5v-3.5c2-1.2 3.3-3.3 3.3-6.1C21 5.6 17.2 2 12 2zM8.5 9.2a2.3 2.3 0 1 1 0 4.6 2.3 2.3 0 0 1 0-4.6zm7 0a2.3 2.3 0 1 1 0 4.6 2.3 2.3 0 0 1 0-4.6zM12 13.6l1.4 2.4h-2.8z'/%3E%3C/svg%3E")}
@@ -23743,12 +23743,19 @@ html body #characterArticleContent#characterArticleContent#characterArticleConte
 .wk-cs-parts .sh-firefly{-webkit-mask:none;mask:none;border-radius:50%;background:radial-gradient(circle,#fff 0 14%,var(--pc) 30%,color-mix(in srgb,var(--pc) 40%,transparent) 48%,transparent 70%);animation:wkCsBlink calc(var(--t) * .45) ease-in-out var(--d) infinite;width:calc(var(--cs-ps,10px) * var(--s) * 1.6);height:calc(var(--cs-ps,10px) * var(--s) * 1.6)}
 @keyframes wkCsBlink{0%,100%{opacity:.08;transform:scale(.6)}35%,55%{opacity:1;transform:scale(1)}}
 .wk-cs-parts .sh-sand{-webkit-mask:none;mask:none;border-radius:45% 55% 40% 60%;width:calc(var(--cs-ps,10px) * var(--s) * .32);height:calc(var(--cs-ps,10px) * var(--s) * .26);background:var(--pc);opacity:.9}
-.wk-cs-parts .sh-smoke{-webkit-mask:none;mask:none;border-radius:50%;width:calc(var(--cs-ps,10px) * var(--s) * 4.2);height:calc(var(--cs-ps,10px) * var(--s) * 4.2);background:radial-gradient(circle,color-mix(in srgb,var(--pc) 75%,transparent) 0,color-mix(in srgb,var(--pc) 35%,transparent) 40%,transparent 70%);filter:blur(3px);animation:wkCsPuff var(--t) ease-out var(--d) infinite}
-@keyframes wkCsPuff{0%{transform:scale(.35);opacity:.2}30%{opacity:.85}100%{transform:scale(1.9);opacity:0}}
+.wk-cs-parts .sh-smoke{-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.045' numOctaves='4' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 2.6 0 0 0 -.95'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url%28%23n%29'/%3E%3C/svg%3E") center/100% 100% no-repeat,radial-gradient(circle,#000 0,#000 30%,transparent 68%);-webkit-mask-composite:source-in;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.045' numOctaves='4' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 2.6 0 0 0 -.95'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url%28%23n%29'/%3E%3C/svg%3E") center/100% 100% no-repeat,radial-gradient(circle,#000 0,#000 30%,transparent 68%);mask-composite:intersect;border-radius:50%;width:calc(var(--cs-ps,10px) * var(--s) * 6.5);height:calc(var(--cs-ps,10px) * var(--s) * 6.5);background:radial-gradient(circle at 50% 55%,color-mix(in srgb,var(--pc) 85%,#fff) 0,var(--pc) 35%,color-mix(in srgb,var(--pc) 60%,transparent) 60%);filter:blur(1.5px);animation:wkCsPuff var(--t) ease-out var(--d) infinite}
+@keyframes wkCsPuff{0%{transform:scale(.45) rotate(var(--r));opacity:0}18%{opacity:.75}60%{opacity:.45}100%{transform:scale(2.3) rotate(calc(var(--r) + 70deg));opacity:0}}
 .wk-cs-parts .sh-petal{background:linear-gradient(170deg,#fff 0,color-mix(in srgb,var(--pc) 45%,#fff) 35%,var(--pc) 100%);animation:wkCsFlut calc(var(--t) * .4) ease-in-out var(--d) infinite}
 @keyframes wkCsFlut{0%{transform:rotate(var(--r)) scaleX(1)}25%{transform:rotate(calc(var(--r) + 40deg)) scaleX(.25)}50%{transform:rotate(calc(var(--r) + 80deg)) scaleX(1)}75%{transform:rotate(calc(var(--r) + 40deg)) scaleX(-.6)}100%{transform:rotate(var(--r)) scaleX(1)}}
 .wk-cs-parts .sh-leaf{background:linear-gradient(135deg,color-mix(in srgb,var(--pc) 55%,#fff) 0,var(--pc) 45%,color-mix(in srgb,var(--pc) 60%,#102000) 100%);animation:wkCsTumble calc(var(--t) * .55) linear var(--d) infinite}
 @keyframes wkCsTumble{0%{transform:rotate(var(--r)) scaleY(1)}50%{transform:rotate(calc(var(--r) + 180deg)) scaleY(-.5)}100%{transform:rotate(calc(var(--r) + 360deg)) scaleY(1)}}
+.wk-cs-parts :is(.sh-drop,.sh-blood){--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1.5S4.8 10.2 4.8 15a7.2 7.2 0 0 0 14.4 0C19.2 10.2 12 1.5 12 1.5z'/%3E%3C/svg%3E");background:radial-gradient(circle at 40% 64%,#fff 0 9%,color-mix(in srgb,var(--pc) 45%,#fff) 20%,var(--pc) 52%,color-mix(in srgb,var(--pc) 65%,#000) 100%);width:calc(var(--cs-ps,10px) * var(--s) * .8);height:calc(var(--cs-ps,10px) * var(--s) * 1.05)}
+.wk-cs-parts .sh-blood{background:radial-gradient(circle at 40% 64%,#ff9aa5 0 7%,color-mix(in srgb,var(--pc) 75%,#fff) 16%,var(--pc) 48%,color-mix(in srgb,var(--pc) 55%,#000) 100%);filter:drop-shadow(0 1px 1px rgba(0,0,0,.45))}
+.wk-cs-parts .sh-rainline{-webkit-mask:none;mask:none;border-radius:2px;width:calc(var(--cs-ps,10px) * var(--s) * .14);height:calc(var(--cs-ps,10px) * var(--s) * 2.2);background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--pc) 85%,transparent));transform:rotate(12deg)}
+.wk-cs-parts .m-trickle{animation:wkCsTrickle var(--t) cubic-bezier(.55,0,.75,.45) var(--d) infinite}
+.wk-cs-parts .m-trickle>b{transform-origin:50% 0;animation:wkCsStretch var(--t) ease-in var(--d) infinite}
+@keyframes wkCsTrickle{0%{transform:translate(0,0);opacity:0}8%{opacity:1}25%{transform:translate(0,1%)}80%{opacity:.95}100%{transform:translate(var(--dx),var(--dy));opacity:0}}
+@keyframes wkCsStretch{0%,25%{transform:scaleY(1)}100%{transform:scaleY(1.7)}}
 .wk-cs-parts .m-wind{animation:wkCsWind var(--t) linear var(--d) infinite}
 @keyframes wkCsWind{0%{transform:translate(0,0);opacity:0}8%{opacity:1}50%{transform:translate(58%,calc(var(--dy) * .4))}90%{opacity:1}100%{transform:translate(118%,var(--dy));opacity:0}}
 .wk-cs>.wk-cs-native{position:absolute!important;inset:0;isolation:auto!important}
@@ -23759,7 +23766,7 @@ html body #characterArticleContent#characterArticleContent#characterArticleConte
 .wk-cs-parts .m-float{animation:wkCsFloat var(--t) ease-in-out var(--d) infinite}
 .wk-cs-parts .m-burst{animation:wkCsBurst var(--t) cubic-bezier(.2,.7,.3,1) var(--d) infinite}
 .wk-cs-parts .m-twinkle>b{animation:wkCsTw var(--t) ease-in-out var(--d) infinite}
-.wk-cs-parts :is(.m-up,.m-down,.m-float,.m-burst)>b:not(.sh-dot,.sh-bubble,.sh-coin,.sh-note,.sh-skull,.sh-flame,.sh-firefly,.sh-sand,.sh-smoke,.sh-berry,.sh-petal,.sh-leaf){animation:wkCsRot calc(var(--t) * .8) linear var(--d) infinite}
+.wk-cs-parts :is(.m-up,.m-down,.m-float,.m-burst)>b:not(.sh-drop,.sh-blood,.sh-rainline,.sh-dot,.sh-bubble,.sh-coin,.sh-note,.sh-skull,.sh-flame,.sh-firefly,.sh-sand,.sh-smoke,.sh-berry,.sh-petal,.sh-leaf){animation:wkCsRot calc(var(--t) * .8) linear var(--d) infinite}
 .wk-cs-parts .m-up>.sh-bubble{animation:wkCsWob 1.6s ease-in-out var(--d) infinite alternate}
 @keyframes wkCsUp{0%{transform:translate(0,0);opacity:0}10%{opacity:1}82%{opacity:1}100%{transform:translate(var(--dx),-118%);opacity:0}}
 @keyframes wkCsDown{0%{transform:translate(0,0);opacity:0}10%{opacity:1}88%{opacity:1}100%{transform:translate(var(--dx),118%);opacity:0}}
@@ -23771,26 +23778,34 @@ html body #characterArticleContent#characterArticleContent#characterArticleConte
 .wk-cs>.wk-cs-hit{opacity:0;will-change:opacity}
 .wk-cs>.wk-cs-hit.is-play{animation:wkCsHitOnce var(--hd,.85s) linear 1 both!important}
 @keyframes wkCsHitOnce{0%{opacity:0}8%{opacity:1}35%{opacity:.15}50%{opacity:1}80%{opacity:.6}100%{opacity:0}}
-.wk-cs>.wk-cs-ring{padding:var(--rw);background:var(--rbg);background-size:300% 300%;background-position:var(--pos,50%) var(--pos,50%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:wkCsRing var(--rt) linear infinite;filter:drop-shadow(0 0 3px rgba(255,255,255,.25))}
-.wk-cs>.wk-cs-ring.t-neon{background:var(--rc);animation:wkCsNeonRing 2.4s ease-in-out infinite;filter:drop-shadow(0 0 4px var(--rc)) drop-shadow(0 0 9px var(--rc))}
-.wk-cs>.wk-cs-ring.t-refractor{background-size:auto;animation:wkCsRefr var(--rt) linear infinite}
-.wk-cs>.wk-cs-ring.t-fire{background-size:100% 300%;animation:wkCsRingUp var(--rt) linear infinite;filter:drop-shadow(0 0 4px #ff7a1a)}
+.wk-cs>.wk-cs-ring{background:var(--rbg);background-size:300% 300%;background-position:var(--pos,50%) var(--pos,50%);opacity:var(--ro,1);mix-blend-mode:var(--rmb,normal)}
+.wk-cs>.wk-cs-ring.e-hard{padding:var(--rw);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.wk-cs>.wk-cs-ring.e-soft{-webkit-mask:linear-gradient(90deg,#000,transparent) left/var(--rw) 100% no-repeat,linear-gradient(270deg,#000,transparent) right/var(--rw) 100% no-repeat,linear-gradient(180deg,#000,transparent) top/100% var(--rw) no-repeat,linear-gradient(0deg,#000,transparent) bottom/100% var(--rw) no-repeat;mask:linear-gradient(90deg,#000,transparent) left/var(--rw) 100% no-repeat,linear-gradient(270deg,#000,transparent) right/var(--rw) 100% no-repeat,linear-gradient(180deg,#000,transparent) top/100% var(--rw) no-repeat,linear-gradient(0deg,#000,transparent) bottom/100% var(--rw) no-repeat}
+.wk-cs>.wk-cs-ring.m-solid{filter:drop-shadow(0 0 3px rgba(255,255,255,.25))}
+.wk-cs>.wk-cs-ring.t-neon{background:var(--rc)}
+.wk-cs>.wk-cs-ring.t-neon.m-solid{filter:drop-shadow(0 0 4px var(--rc)) drop-shadow(0 0 9px var(--rc))}
+.wk-cs>.wk-cs-ring.t-refractor{background-size:auto}
+.wk-cs>.wk-cs-ring.t-fire{background-size:100% 300%}
 @keyframes wkCsRing{from{background-position:0% 50%}to{background-position:300% 50%}}
 @keyframes wkCsRingUp{from{background-position:0 0}to{background-position:0 -300%}}
 @keyframes wkCsRefr{from{background-position:0 0}to{background-position:96px 0}}
 @keyframes wkCsNeonRing{0%,100%{opacity:.75}50%{opacity:1}}
 :is([data-amb="fire"],[data-amb="phoenix"])>.wk-amb-p>.wk-fl{transform:scaleY(.62);transform-origin:50% 100%}
 :is([data-amb="fire"],[data-amb="phoenix"])>.wk-amb-a{background:linear-gradient(0deg,var(--fh1),var(--fh2) 20%,transparent 38%)!important}
-.wk-cs-hit.k-neg{-webkit-backdrop-filter:invert(1) hue-rotate(180deg) contrast(1.1);backdrop-filter:invert(1) hue-rotate(180deg) contrast(1.1)}
-.wk-cs-hit.k-mono{-webkit-backdrop-filter:grayscale(1) contrast(1.5) brightness(1.1);backdrop-filter:grayscale(1) contrast(1.5) brightness(1.1)}
+.wk-cs-hit.k-neg{background:#fff;mix-blend-mode:difference}
+.wk-cs-hit.k-mono{background:#808080;mix-blend-mode:saturation}
 .wk-cs-hit::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none}
-.wk-cs-hit.k-red{-webkit-backdrop-filter:saturate(.35) contrast(1.3);backdrop-filter:saturate(.35) contrast(1.3)}
+.wk-cs-hit.k-red{background:none}
 .wk-cs-hit.k-red::after{background:radial-gradient(ellipse at 50% 45%,color-mix(in srgb,var(--cs-hc) 18%,transparent),color-mix(in srgb,var(--cs-hc) 70%,transparent));mix-blend-mode:hard-light;box-shadow:inset 0 0 0 3px var(--cs-hc),inset 0 0 40px var(--cs-hc)}
-.wk-cs-hit.k-both{-webkit-backdrop-filter:invert(1) hue-rotate(180deg) contrast(1.15);backdrop-filter:invert(1) hue-rotate(180deg) contrast(1.15)}
+.wk-cs-hit.k-both{background:#fff;mix-blend-mode:difference}
 .wk-cs-hit.k-both::after{background:color-mix(in srgb,var(--cs-hc) 45%,transparent);mix-blend-mode:multiply;box-shadow:inset 0 0 0 2px var(--cs-hc),inset 0 0 30px var(--cs-hc)}
 .wk-cs-hit.k-flash::after{background:radial-gradient(circle at 50% 45%,#fff,color-mix(in srgb,var(--cs-hc) 60%,transparent) 70%);mix-blend-mode:screen}
 @media (prefers-reduced-motion:reduce){.wk-cs *{animation:none!important}}
 html.wk-fx-off .wk-cs{display:none}
+
+.wk-cs-shape i.sh-drop{--m:" + SHAPES['drop'] + ";background:linear-gradient(#cfeeff,#4fb0ff)}
+.wk-cs-shape i.sh-blood{--m:" + SHAPES['drop'] + ";background:linear-gradient(#ff6b7d,#8a0014)}
+.wk-cs-shape i.sh-rainline{-webkit-mask:none;mask:none;background:repeating-linear-gradient(102deg,transparent 0 3px,#a9d8ff 3px 4.5px)}
 
 .wk-cs-shape i.sh-coin{-webkit-mask:none!important;mask:none!important;border-radius:50%;background:radial-gradient(circle at 34% 30%,#fff7cf 0 8%,#ffcf4a 42%,#8a5a00 100%)!important;position:relative}
 .wk-cs-shape i.sh-coin::after{content:"";position:absolute;inset:18% 26%;background:#5a3a00;-webkit-mask:url("https://upload.wikimedia.org/wikipedia/commons/f/fa/Berrysymbol.svg") center/contain no-repeat;mask:url("https://upload.wikimedia.org/wikipedia/commons/f/fa/Berrysymbol.svg") center/contain no-repeat}
@@ -23865,6 +23880,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
 .wk-cs-shape i.sh-bubble{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='9.5' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3Ccircle cx='8.5' cy='8' r='2.2'/%3E%3C/svg%3E")}
 .wk-cs-shape i.sh-coin{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 1.5a10.5 10.5 0 1 1 0 21 10.5 10.5 0 0 1 0-21zm0 3a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15z'/%3E%3Cpath d='M10 7h3.2c1.6 0 2.6.9 2.6 2.2 0 .9-.5 1.5-1.2 1.8.9.3 1.6 1 1.6 2.1 0 1.5-1.2 2.4-2.9 2.4H10zm1.6 1.4v2.1h1.4c.7 0 1.2-.4 1.2-1s-.5-1.1-1.2-1.1zm0 3.5v2.3h1.6c.8 0 1.3-.4 1.3-1.2 0-.7-.5-1.1-1.3-1.1z'/%3E%3C/svg%3E")}
 .wk-cs-shape i.sh-berry{--m:url("https://upload.wikimedia.org/wikipedia/commons/f/fa/Berrysymbol.svg")}
+.wk-cs-shape i.sh-drop{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1.5S4.8 10.2 4.8 15a7.2 7.2 0 0 0 14.4 0C19.2 10.2 12 1.5 12 1.5z'/%3E%3C/svg%3E")}
 .wk-cs-shape i.sh-note{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 3v11.3A3.5 3.5 0 1 0 11 17V8h7V3z'/%3E%3C/svg%3E")}
 .wk-cs-shape i.sh-diamond{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1.5l8 10.5-8 10.5L4 12z'/%3E%3C/svg%3E")}
 .wk-cs-shape i.sh-skull{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 2C6.8 2 3 5.6 3 10.4c0 2.8 1.3 4.9 3.3 6.1V20c0 .8.6 1.5 1.5 1.5h1.4v-2h1.4v2h2.8v-2h1.4v2h1.4c.8 0 1.5-.7 1.5-1.5v-3.5c2-1.2 3.3-3.3 3.3-6.1C21 5.6 17.2 2 12 2zM8.5 9.2a2.3 2.3 0 1 1 0 4.6 2.3 2.3 0 0 1 0-4.6zm7 0a2.3 2.3 0 1 1 0 4.6 2.3 2.3 0 0 1 0-4.6zM12 13.6l1.4 2.4h-2.8z'/%3E%3C/svg%3E")}
@@ -23883,8 +23899,8 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
   function hashNum(s) { var h = 2166136261; s = String(s || ''); for (var i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619); return h >>> 0; }
   function rng(seed) { var a = seed >>> 0; return function () { a = (a + 0x6D2B79F5) >>> 0; var t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
   var SPEED = { slow: 1.8, '': 1, fast: 0.55 };
-  var MOTION_T = { up: 5.5, down: 7, float: 6, burst: 2.8, twinkle: 2.8, wind: 3.6 };
-  var SHAPE_COLOR = { sand: '#e3b973', smoke: '#9aa3b2', petal: '#ff9cc4', leaf: '#6fcf4f', coin: '#ffcf4a', berry: '#ffd36b', flame: '#ff8a1f', dot: '#ff8a1f', firefly: '#d9ff6b' };
+  var MOTION_T = { up: 5.5, down: 7, float: 6, burst: 2.8, twinkle: 2.8, wind: 3.6, trickle: 6 };
+  var SHAPE_COLOR = { sand: '#e3b973', smoke: '#9aa3b2', drop: '#8fd3ff', blood: '#b3001b', rainline: '#cfe8ff', petal: '#ff9cc4', leaf: '#6fcf4f', coin: '#ffcf4a', berry: '#ffd36b', flame: '#ff8a1f', dot: '#ff8a1f', firefly: '#d9ff6b' };
   var LIB = ['wk-fx-a', 'wk-fx-b', 'wk-amb-a', 'wk-amb-b', 'wk-amb-p', 'wk-amb-fx'];
   function libLayers(el) { return Array.prototype.filter.call(el.children, function (c) { return LIB.some(function (k) { return c.classList.contains(k); }); }); }
   function animatesFilter(n) { try { return n.getAnimations().some(function (a) { return a.effect && a.effect.getKeyframes().some(function (k) { return 'filter' in k; }); }); } catch (e) { return false; } }
@@ -23917,12 +23933,13 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
   function partsHTML(p, seed) {
     var R = rng(hashNum('cs:' + seed + ':' + JSON.stringify(p)));
     var n = Math.max(3, Math.min(40, Number(p.n) || 14)), shape = p.shape || 'sparkle', mo = p.mo || 'up';
-    var base = (MOTION_T[mo] || 5) * (SPEED[p.sp || ''] || 1), out = '';
+    var base = (MOTION_T[mo] || 5) * (SPEED[p.sp || ''] || 1) * (shape === 'rainline' && mo === 'down' ? .22 : shape === 'smoke' ? 1.5 : 1), out = '';
     for (var i = 0; i < n; i++) {
       var x = 4 + R() * 92, y = 4 + R() * 92, dx = 0, dy = 0;
       if (mo === 'up') { y = 104; dx = (R() * 2 - 1) * 14; }
       else if (mo === 'down') { y = -6; dx = (R() * 2 - 1) * 14; }
       else if (mo === 'float') { dx = (R() * 2 - 1) * 10; dy = (R() * 2 - 1) * 8; }
+      else if (mo === 'trickle') { y = 3 + R() * 60; dx = (R() * 2 - 1) * 1.5; dy = 18 + R() * 30; }
       else if (mo === 'wind') { x = -6; y = 4 + R() * 92; dy = (R() * 2 - 1) * 12; }
       else if (mo === 'burst') { x = 50 + (R() * 2 - 1) * 6; y = 50 + (R() * 2 - 1) * 6; var a = R() * Math.PI * 2, d = 38 + R() * 30; dx = Math.cos(a) * d; dy = Math.sin(a) * d; }
       var t = base * (0.75 + R() * 0.55), del = -R() * t;
@@ -23942,12 +23959,11 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
     if (!host) { host = document.createElement('span'); host.className = 'wk-cs'; host.setAttribute('aria-hidden', 'true'); el.appendChild(host); }
     host.__sig = sig;
     var h = '';
-    if (st.frame && st.frame.on) h += '<span class="wk-cs-frame" style="--cs-f1:' + esc(st.frame.c1 || '#ff3d7f') + ';--cs-f2:' + esc(st.frame.c2 || '#ffd36b') + ';--cs-f3:' + esc(st.frame.c3 || '#4fb8ff') + ';--cs-ft:' + DUR.frame[st.frame.sp || ''] + ';--cs-fw:' + (Number(st.frame.w) || 2) + 'px"></span>';
     if (st.pulse && st.pulse.on) h += '<span class="wk-cs-pulse" style="--cs-pc:' + esc(st.pulse.c || '#ff5a5a') + ';--cs-pt:' + DUR.pulse[st.pulse.sp || ''] + '"></span>';
     if (st.shine && st.shine.on) { var shc = st.shine.c || '#ffffff'; var dark = /^#/.test(shc) && (function (hx) { hx = hx.replace('#', ''); if (hx.length === 3) hx = hx.replace(/./g, '$&$&'); var n = parseInt(hx, 16); return ((n >> 16) * .299 + ((n >> 8) & 255) * .587 + (n & 255) * .114) < 70; })(shc);
       h += '<span class="wk-cs-shine' + (st.shine.core ? ' is-core' : '') + '" style="--cs-sc:' + esc(shc) + ';--cs-st:' + DUR.shine[st.shine.sp || ''] + ';--cs-so:' + ((st.shine.o == null ? 55 : Number(st.shine.o)) / 100) + ';--cs-sw:' + ({ thin: '3.5%', '': '7%', wide: '13%' }[st.shine.w || ''] || '7%') + ';--cs-sb:' + (dark ? 'multiply' : 'screen') + '"></span>'; }
     var native = st.parts && st.parts.on && /^n:/.test(st.parts.shape || '') ? st.parts.shape.slice(2) : '';
-    if (st.ring && st.ring.on) h += ringHTML(st.ring);
+    var rg = ringOf(st); if (rg) h += ringHTML(rg);
     if (st.parts && st.parts.on && native) h += '<span class="wk-cs-native" data-amb="' + esc(native) + '" style="' + (Number(st.parts.hue) ? 'filter:hue-rotate(' + Number(st.parts.hue) + 'deg)' : '') + '"></span>';
     if (st.parts && st.parts.on && !native) h += '<span class="wk-cs-parts' + (st.parts.glow ? ' is-glow' : '') + '" style="--cs-ps:' + Math.round(10 * (Number(st.parts.size) || 100) / 100) + 'px">' + partsHTML(st.parts, seed) + '</span>';
     if (st.hit && st.hit.on) {
@@ -23960,21 +23976,35 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
     var nh = host.querySelector('.wk-cs-native'); if (nh && window.__wikiNativeParts) window.__wikiNativeParts(nh, native, 'cs:' + seed, (Number(st.parts.nm) || 100) / 100);
   }
   // Эффект на обводке: кольцо заданной ширины, внутри — выбранное покрытие
-  var RING_BG = {
-    holo: 'linear-gradient(115deg,#ff9ec4,#ffd86b,#7ef0c0,#7cc4ff,#c2a2ff,#ff9ec4,#ffd86b,#7ef0c0)',
-    gold: 'linear-gradient(115deg,#7a5418,#f6dc8a,#fff3c4,#b8862e,#ffe9a8,#7a5418,#f6dc8a,#b8862e)',
-    silver: 'linear-gradient(115deg,#5d6676,#f2f6fb,#ffffff,#8892a3,#e6ebf2,#5d6676,#f2f6fb,#8892a3)',
-    rose: 'linear-gradient(115deg,#8a4a3f,#f7c6b5,#ffe3d8,#b06a5a,#ffd4c6,#8a4a3f,#f7c6b5,#b06a5a)',
-    irid: 'linear-gradient(115deg,#5be0d0,#7c8cff,#d47cff,#ff8ab3,#ffd08a,#9cf0a0,#5be0d0,#7c8cff)',
-    pearl: 'linear-gradient(115deg,#f6f2ff,#ffe3ef,#e3fff6,#e6ecff,#fff6e0,#f6f2ff,#ffe3ef,#e3fff6)',
-    refractor: 'repeating-linear-gradient(115deg,#ff5f8f 0 4px,#ffb35c 4px 8px,#ffe66b 8px 12px,#6bf0a5 12px 16px,#5cc8ff 16px 20px,#a98bff 20px 24px)',
-    fire: 'linear-gradient(0deg,#ff3d00,#ff8a00,#ffd36b,#ff6a00,#ff3d00,#ffb02e)'
+  // Эффект на обводке. Цвета-«остановки» для перелива или вращения.
+  var RING_STOPS = {
+    holo: '#ff9ec4,#ffd86b,#7ef0c0,#7cc4ff,#c2a2ff,#ff9ec4',
+    gold: '#7a5418,#f6dc8a,#fff3c4,#b8862e,#ffe9a8,#7a5418',
+    silver: '#5d6676,#f2f6fb,#ffffff,#8892a3,#e6ebf2,#5d6676',
+    rose: '#8a4a3f,#f7c6b5,#ffe3d8,#b06a5a,#ffd4c6,#8a4a3f',
+    irid: '#5be0d0,#7c8cff,#d47cff,#ff8ab3,#ffd08a,#9cf0a0,#5be0d0',
+    pearl: '#f6f2ff,#ffe3ef,#e3fff6,#e6ecff,#fff6e0,#f6f2ff',
+    fire: '#ff3d00,#ff8a00,#ffd36b,#ff6a00,#ff3d00'
   };
+  // Старая «Рамка-призма своих цветов» превращается в обводку: свои 3 цвета, вращение, сплошная
+  function frameToRing(f) { return { on: true, type: 'custom', c: f.c1 || '#ff3d7f', c2: f.c2 || '#ffd36b', c3: f.c3 || '#4fb8ff', w: Number(f.w) || 2, mv: 'spin', sp: f.sp || '', mode: 'solid', edge: 'hard', o: 100 }; }
+  function ringOf(st) { if (st.ring && st.ring.on) return st.ring; if (st.frame && st.frame.on) return frameToRing(st.frame); return null; }
   function ringHTML(r) {
-    var type = r.type || 'holo', w = Math.max(1, Math.min(16, Number(r.w) || 4));
-    var bg = type === 'neon' ? (r.c || '#4ff0ff') : type === 'custom' ? 'linear-gradient(115deg,' + (r.c || '#ff3d7f') + ',' + (r.c2 || '#4fb8ff') + ',' + (r.c || '#ff3d7f') + ',' + (r.c2 || '#4fb8ff') + ')' : (RING_BG[type] || RING_BG.holo);
-    var sp = { slow: '9s', '': '5s', fast: '2.4s', off: '0s' }[r.sp || ''] || '5s';
-    return '<span class="wk-cs-ring t-' + esc(type) + '" style="--rw:' + w + 'px;--rbg:' + esc(bg) + ';--rc:' + esc(r.c || '#4ff0ff') + ';--rt:' + sp + '"></span>';
+    var type = r.type || 'holo', mode = r.mode || 'art', edge = r.edge || (mode === 'art' ? 'soft' : 'hard');
+    var w = Math.max(1, Math.min(40, Number(r.w) || (mode === 'art' ? 14 : 4)));
+    var mv = r.mv || (r.sp === 'off' ? 'tilt' : 'flow');
+    var stops = type === 'custom' ? [r.c || '#ff3d7f', r.c2 || '#4fb8ff'].concat(r.c3 ? [r.c3] : []).concat([r.c || '#ff3d7f']).join(',') : (RING_STOPS[type] || RING_STOPS.holo);
+    var bg;
+    if (type === 'neon') bg = r.c || '#4ff0ff';
+    else if (type === 'refractor') bg = 'repeating-linear-gradient(115deg,#ff5f8f 0 4px,#ffb35c 4px 8px,#ffe66b 8px 12px,#6bf0a5 12px 16px,#5cc8ff 16px 20px,#a98bff 20px 24px)';
+    else if (mv === 'spin') bg = 'conic-gradient(from var(--wk-ang),' + stops + ')';
+    else bg = (type === 'fire' ? 'linear-gradient(0deg,' : 'linear-gradient(115deg,') + stops + ',' + stops + ')';
+    var dur = { slow: 9, '': 5, fast: 2.4 }[r.sp === 'off' ? '' : (r.sp || '')] || 5;
+    if (mv === 'spin') dur = { slow: 7, '': 4, fast: 2 }[r.sp || ''] || 4;
+    var anim = mv === 'tilt' ? 'none' : type === 'neon' ? 'wkCsNeonRing 2.4s ease-in-out infinite' : mv === 'spin' && type !== 'refractor' ? 'wkFxSpin ' + dur + 's linear infinite' : type === 'refractor' ? 'wkCsRefr ' + dur + 's linear infinite' : type === 'fire' ? 'wkCsRingUp ' + dur + 's linear infinite' : 'wkCsRing ' + dur + 's linear infinite';
+    var o = (r.o == null ? (mode === 'art' ? 70 : 100) : Number(r.o)) / 100;
+    var mb = mode === 'art' ? (type === 'gold' || type === 'silver' || type === 'rose' ? 'overlay' : 'screen') : 'normal';
+    return '<span class="wk-cs-ring t-' + esc(type) + ' m-' + esc(mode) + ' e-' + esc(edge) + '" style="--rw:' + w + 'px;--rbg:' + esc(bg) + ';--rc:' + esc(r.c || '#4ff0ff') + ';--ro:' + o + ';--rmb:' + mb + ';animation:' + anim + '"></span>';
   }
   // Удар по нажатию: короткая двойная вспышка один раз
   function playHit(hit) {
@@ -23986,6 +24016,19 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
     clearTimeout(hit.__hitT); hit.__hitT = setTimeout(function () { hit.classList.remove('is-play'); }, (d + .25) * 1000);
   }
   window.__wikiPlayHit = playHit;
+  document.addEventListener('animationiteration', function (e) {
+    var t = e.target; if (!t || !t.classList || e.pseudoElement) return;
+    var R = Math.random;
+    if (t.classList.contains('cw') && t.closest('.wk-amb-p')) { t.style.setProperty('--x', (8 + R() * 70).toFixed(1) + '%'); t.style.setProperty('--y', (6 + R() * 62).toFixed(1) + '%'); }
+    else if (t.classList.contains('sw') && t.closest('.wk-amb-p')) { t.style.setProperty('--y', (12 + R() * 76).toFixed(1) + '%'); t.style.setProperty('--r', (R() * 2 - 1).toFixed(2)); }
+  }, true);
+  // Укусы: следы двигаются целым слоем — в начале каждого цикла (пока невидимы) переносим в новое место
+  document.addEventListener('animationiteration', function (e) {
+    var t = e.target; if (!t || !t.classList || !t.classList.contains('wk-amb-a') || e.pseudoElement !== '::before') return;
+    var host = t.parentElement; if (!host || host.getAttribute('data-amb') !== 'fangs') return;
+    var x = ((Math.random() * 2 - 1) * 22).toFixed(1) + '%', y = ((Math.random() * 2 - 1) * 26).toFixed(1) + '%', r = ((Math.random() * 2 - 1) * 18).toFixed(0) + 'deg';
+    [t, host.querySelector(':scope > .wk-amb-b')].forEach(function (n) { if (n) { n.style.setProperty('translate', x + ' ' + y); n.style.setProperty('rotate', r); } });
+  }, true);
   document.addEventListener('pointerdown', function (e) {
     var t = e.target; if (!t || !t.closest) return;
     var host = t.closest('.character-item, .article-inline-image-wrap, .wk-fx-preview'); if (!host) return;
@@ -24068,10 +24111,10 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
 
   /* ---------- Панель в редакторе ---------- */
   var SW = ['#ffd36b', '#ff5a5a', '#ff8ac6', '#b18cff', '#4fb8ff', '#4fe3c1', '#7cf06a', '#ffffff', '#ff9d3d', '#1e1e2e'];
-  var SHAPE_LIST = [['sparkle', 'Искры-звёзды'], ['star', 'Звёзды'], ['flame', 'Огоньки'], ['firefly', 'Светлячки'], ['heart', 'Сердца'], ['petal', 'Лепестки сакуры'], ['leaf', 'Листья'], ['snow', 'Снежинки'], ['bubble', 'Пузыри'], ['sand', 'Песок'], ['smoke', 'Дым'], ['coin', 'Монеты Белли'], ['berry', 'Знак Белли'], ['note', 'Ноты'], ['diamond', 'Кристаллы'], ['skull', 'Черепа']];
+  var SHAPE_LIST = [['sparkle', 'Искры-звёзды'], ['star', 'Звёзды'], ['flame', 'Огоньки'], ['firefly', 'Светлячки'], ['heart', 'Сердца'], ['petal', 'Лепестки сакуры'], ['leaf', 'Листья'], ['snow', 'Снежинки'], ['bubble', 'Пузыри'], ['rainline', 'Дождь'], ['drop', 'Капли воды'], ['blood', 'Капли крови'], ['sand', 'Песок'], ['smoke', 'Дым'], ['coin', 'Монеты Белли'], ['berry', 'Знак Белли'], ['note', 'Ноты'], ['diamond', 'Кристаллы'], ['skull', 'Черепа']];
   // Частицы бывших постоянных эффектов — со своим движением
   var NATIVE_LIST = [['souls', '👻 Души (Йоми Йоми)'], ['ghosts', '👻 Призраки (Хоро Хоро)'], ['flowers', '🌸 Цветы (Хана Хана)'], ['dark', '🌑 Тьма'], ['light', '✨ Свет (Пика Пика)'], ['claws', '🐾 Следы когтей'], ['swords', '⚔️ Удары мечей'], ['twinkle', '✦ Мерцающие искры']];
-  var MOTIONS = [['up', 'Вверх'], ['down', 'Вниз'], ['float', 'Парят'], ['burst', 'Разлёт'], ['twinkle', 'Мерцают'], ['wind', 'Ветер']];
+  var MOTIONS = [['up', 'Вверх'], ['down', 'Вниз'], ['float', 'Парят'], ['burst', 'Разлёт'], ['twinkle', 'Мерцают'], ['wind', 'Ветер'], ['trickle', 'Стекают']];
   var SP = [['slow', 'Медленно'], ['', 'Обычно'], ['fast', 'Быстро']];
   function seg(attr, items, cur) { return '<div class="wk-ts-seg" ' + attr + '>' + items.map(function (it) { return '<button type="button" data-v="' + it[0] + '"' + (String(cur || '') === it[0] ? ' class="is-on"' : '') + '>' + it[1] + '</button>'; }).join('') + '</div>'; }
   function sw(path) { return '<div class="wk-ts-swatches" data-sw-for="' + path + '">' + SW.map(function (c) { return '<button type="button" data-sw="' + c + '" style="background:' + c + '" title="' + c + '"></button>'; }).join('') + '</div>'; }
@@ -24082,6 +24125,8 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
     var fxSel = field.querySelector('select[data-field="card_fx"]');
     var shSel = form.querySelector('select[data-field="card_shine"]');
     var st = parse(hidden.value);
+    if (st.frame && st.frame.on && !(st.ring && st.ring.on)) { st.ring = frameToRing(st.frame); delete st.frame; }
+    else if (st.frame) delete st.frame;
     var saving = false, flash = '';
     var wrapEl = document.createElement('div'); wrapEl.className = 'wk-cs-wrap';
     var panel = document.createElement('div'); panel.className = 'wk-cs-panel';
@@ -24133,7 +24178,6 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
           + '<div class="wk-ts-row"><span>Ширина</span>' + seg('data-seg="shine.w"', [['thin', 'Узкий'], ['', 'Обычный'], ['wide', 'Широкий']], get('shine.w')) + '</div>'
           + '<div class="wk-ts-row"><span></span><label><input type="checkbox" data-p="shine.core"' + (get('shine.core') ? ' checked' : '') + '> светлая сердцевина</label></div>'
           + '<div class="wk-ts-row"><span>Скорость</span>' + seg('data-seg="shine.sp"', SP, get('shine.sp')) + '</div>')
-        + group('frame', '🌈 Рамка-призма своих цветов', '<div class="wk-ts-row"><span>Цвета</span><div class="wk-cs-colors"><input type="color" data-p="frame.c1" value="' + esc(get('frame.c1') || '#ff3d7f') + '"><input type="color" data-p="frame.c2" value="' + esc(get('frame.c2') || '#ffd36b') + '"><input type="color" data-p="frame.c3" value="' + esc(get('frame.c3') || '#4fb8ff') + '"></div></div><div class="wk-ts-row"><span>Толщина</span>' + seg('data-seg="frame.w"', [['', '2px'], ['3', '3px'], ['4', '4px']], get('frame.w')) + '</div><div class="wk-ts-row"><span>Скорость</span>' + seg('data-seg="frame.sp"', SP, get('frame.sp')) + '</div>')
         + group('parts', '🎇 Частицы', (function () {
           var isN = /^n:/.test(p.shape || ''), sh = p.shape || 'sparkle';
           var html = '<div class="wk-ts-row"><span>Форма</span><div class="wk-cs-shapes">' + SHAPE_LIST.map(function (s) { return '<button type="button" class="wk-cs-shape' + (sh === s[0] || (s[0] === 'flame' && sh === 'dot') ? ' is-on' : '') + '" data-shape="' + s[0] + '"><i class="sh-' + s[0] + '"></i>' + s[1] + '</button>'; }).join('') + '</div></div>'
@@ -24146,15 +24190,24 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
           return html
             + '<div class="wk-ts-row"><span>Цвет</span><div class="wk-cs-colors">' + seg('data-seg="parts.cmode"', [['', 'Свой'], ['rainbow', 'Радужные'], ['accent', 'Цвет статьи']], cm ? p.c : '') + (cm ? '' : '<input type="color" data-p="parts.c" value="' + esc(p.c || SHAPE_COLOR[sh] || '#ffd36b') + '">') + '<label><input type="checkbox" data-p="parts.glow"' + (p.glow ? ' checked' : '') + '> свечение</label></div></div>'
             + (cm ? '' : '<div class="wk-ts-row"><span></span>' + sw('parts.c') + '</div>')
-            + '<div class="wk-ts-row"><span>Движение</span>' + seg('data-seg="parts.mo"', MOTIONS, p.mo || (sh === 'sand' ? 'wind' : 'up')) + '</div>'
+            + '<div class="wk-ts-row"><span>Движение</span>' + seg('data-seg="parts.mo"', MOTIONS, p.mo || ({ sand: 'wind', blood: 'trickle', drop: 'trickle', rainline: 'down' }[sh] || 'up')) + '</div>'
             + '<div class="wk-ts-row"><span>Количество</span>' + range('parts.n', 3, 40, 1, Number(p.n) || 14, '', 14) + '</div>'
             + '<div class="wk-ts-row"><span>Размер</span>' + range('parts.size', 50, 250, 10, Number(p.size) || 100, '%', 100) + '</div>'
             + '<div class="wk-ts-row"><span>Скорость</span>' + seg('data-seg="parts.sp"', SP, p.sp) + '</div>';
         })())
-        + group('ring', '🖼 Эффект на обводке', '<div class="wk-ts-row"><span>Покрытие</span>' + seg('data-seg="ring.type"', [['holo', 'Голограмма'], ['irid', 'Иридисцент'], ['pearl', 'Перламутр'], ['refractor', 'Рефрактор'], ['gold', 'Золото'], ['silver', 'Серебро'], ['rose', 'Розовое золото'], ['fire', 'Пламя'], ['neon', 'Неон'], ['custom', 'Свои цвета']], get('ring.type') || 'holo') + '</div>'
-          + (/^(neon|custom)$/.test(get('ring.type') || '') ? '<div class="wk-ts-row"><span>Цвет</span><div class="wk-cs-colors"><input type="color" data-p="ring.c" value="' + esc(get('ring.c') || (get('ring.type') === 'neon' ? '#4ff0ff' : '#ff3d7f')) + '">' + (get('ring.type') === 'custom' ? '<input type="color" data-p="ring.c2" value="' + esc(get('ring.c2') || '#4fb8ff') + '">' : '') + '</div></div>' : '')
-          + '<div class="wk-ts-row"><span>Ширина</span>' + range('ring.w', 1, 16, 1, Number(get('ring.w')) || 4, 'px', 4) + '</div>'
-          + '<div class="wk-ts-row"><span>Движение</span>' + seg('data-seg="ring.sp"', [['slow', 'Медленно'], ['', 'Обычно'], ['fast', 'Быстро'], ['off', 'Только наклон']], get('ring.sp')) + '</div>');
+        + group('ring', '🖼 Эффект на обводке', (function () {
+          var r = st.ring || {}, mode = r.mode || 'art', type = r.type || 'holo', mv = r.mv || (r.sp === 'off' ? 'tilt' : 'flow');
+          var colorRow = type === 'neon' ? '<div class="wk-ts-row"><span>Цвет</span><div class="wk-cs-colors"><input type="color" data-p="ring.c" value="' + esc(r.c || '#4ff0ff') + '">' + sw('ring.c') + '</div></div>'
+            : type === 'custom' ? '<div class="wk-ts-row"><span>Цвета</span><div class="wk-cs-colors"><input type="color" data-p="ring.c" value="' + esc(r.c || '#ff3d7f') + '"><input type="color" data-p="ring.c2" value="' + esc(r.c2 || '#4fb8ff') + '"><label><input type="checkbox" data-ring-c3' + (r.c3 ? ' checked' : '') + '> третий</label>' + (r.c3 ? '<input type="color" data-p="ring.c3" value="' + esc(r.c3) + '">' : '') + '</div></div>' : '';
+          return '<div class="wk-ts-row"><span>Вид</span>' + seg('data-seg="ring.mode"', [['art', 'На арте, полупрозрачно'], ['solid', 'Сплошная рамка']], mode) + '</div>'
+            + '<div class="wk-ts-row"><span>Покрытие</span>' + seg('data-seg="ring.type"', [['holo', 'Голограмма'], ['irid', 'Иридисцент'], ['pearl', 'Перламутр'], ['refractor', 'Рефрактор'], ['gold', 'Золото'], ['silver', 'Серебро'], ['rose', 'Розовое золото'], ['fire', 'Пламя'], ['neon', 'Неон'], ['custom', 'Свои цвета']], type) + '</div>'
+            + colorRow
+            + '<div class="wk-ts-row"><span>Ширина</span>' + range('ring.w', 1, 40, 1, Number(r.w) || (mode === 'art' ? 14 : 4), 'px', mode === 'art' ? 14 : 4) + '</div>'
+            + '<div class="wk-ts-row"><span>Видимость</span>' + range('ring.o', 10, 100, 5, r.o == null ? (mode === 'art' ? 70 : 100) : Number(r.o), '%', mode === 'art' ? 70 : 100) + '</div>'
+            + '<div class="wk-ts-row"><span>Край</span>' + seg('data-seg="ring.edge"', [['soft', 'Мягкий'], ['hard', 'Чёткий']], r.edge || (mode === 'art' ? 'soft' : 'hard')) + '</div>'
+            + '<div class="wk-ts-row"><span>Движение</span>' + seg('data-seg="ring.mv"', [['flow', 'Перелив'], ['spin', 'Вращение'], ['tilt', 'Только наклон']], mv) + '</div>'
+            + (mv === 'tilt' ? '' : '<div class="wk-ts-row"><span>Скорость</span>' + seg('data-seg="ring.sp"', SP, r.sp === 'off' ? '' : r.sp) + '</div>');
+        })());
       panel.querySelector('[data-slot="fx"]').appendChild(libFx);
       panel.querySelector('[data-slot="amb"]').appendChild(libSh);
       var ni = panel.querySelector('[data-cp-name]'); if (ni) { ni.focus(); ni.select(); }
@@ -24186,8 +24239,9 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
       }
       if (b.hasAttribute('data-sw')) { var forp = b.closest('[data-sw-for]').getAttribute('data-sw-for'); set(forp, b.getAttribute('data-sw')); commit(true); return; }
       if (b.hasAttribute('data-def')) { var dp2 = b.getAttribute('data-def'); set(dp2, Number(b.getAttribute('data-defv'))); commit(true); return; }
+      if (b.hasAttribute('data-ring-c3')) { return; }
       if (b.hasAttribute('data-hit-test')) { var pvh = form.querySelector('.wk-fx-preview > .wk-cs > .wk-cs-hit'); if (window.__wikiPlayHit) window.__wikiPlayHit(pvh); return; }
-      if (b.hasAttribute('data-shape')) { var nsh = b.getAttribute('data-shape'); set('parts.shape', nsh); if (nsh === 'sand' && !get('parts.mo')) set('parts.mo', 'wind'); if (/^(smoke|sand|petal|leaf|coin|berry|flame|firefly)$/.test(nsh) && get('parts.c') && !/^(rainbow|accent)$/.test(get('parts.c'))) set('parts.c', ''); commit(true); return; }
+      if (b.hasAttribute('data-shape')) { var nsh = b.getAttribute('data-shape'); set('parts.shape', nsh); var defMo = { sand: 'wind', blood: 'trickle', drop: 'trickle', rainline: 'down', smoke: 'up' }[nsh]; if (defMo) set('parts.mo', defMo); if (/^(smoke|sand|petal|leaf|coin|berry|flame|firefly|drop|blood|rainline)$/.test(nsh) && get('parts.c') && !/^(rainbow|accent)$/.test(get('parts.c'))) set('parts.c', ''); commit(true); return; }
       var sg = b.closest('[data-seg]'); if (sg) {
         var path = sg.getAttribute('data-seg'), v = b.getAttribute('data-v');
         if (path === 'parts.cmode') { set('parts.c', v || '#ffd36b'); } else set(path, v);
@@ -24208,6 +24262,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
         flash = '✓ Применён набор «' + pp.name + '»'; commit(true); return;
       }
       var path = t.getAttribute && t.getAttribute('data-p');
+      if (t.hasAttribute && t.hasAttribute('data-ring-c3')) { if (t.checked) set('ring.c3', '#ffd36b'); else { var rr = st.ring || {}; delete rr.c3; } commit(true); return; }
       if (path && t.type === 'checkbox') { set(path, t.checked); commit(/\.on$/.test(path)); }
       else if (t === fxSel || t === shSel) { var tp = panel.querySelector('.wk-tp'); if (tp && !saving) tp.outerHTML = presetsHTML(); }
     });
@@ -24290,17 +24345,17 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
 [data-fx="holo-sparkle"]>.wk-fx-b::after,[data-fx="holo-stars"]>.wk-fx-b::after,[data-fx="holo-rays"]>.wk-fx-b::after,[data-fx="holo-scan"]>.wk-fx-b::after,[data-fx="holo-waves"]>.wk-fx-b::after,[data-fx="holo-checker"]>.wk-fx-b::after,[data-fx="holo-grain"]>.wk-fx-b::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(115deg,var(--h1),var(--h2),var(--h3),var(--h4),var(--h5));background-size:300% 300%;background-position:var(--pos) var(--pos);mix-blend-mode:color;opacity:calc(var(--o)*.35);pointer-events:none}
 :is([data-fx="foil-rose"],[data-fx="foil-copper"],[data-fx="foil-emerald"],[data-fx="foil-sapphire"],[data-fx="foil-ruby"],[data-fx="foil-violet"],[data-fx="foil-black"],[data-fx="foil-accent"],[data-fx="foil-gold-brushed"],[data-fx="foil-silver-brushed"],[data-fx="foil-silver-hammered"],[data-fx="foil-copper-hammered"],[data-fx="foil-gold-grain"],[data-fx="foil-silver-plate"],[data-fx="foil-rose-sparkle"],[data-fx="foil-black-grain"],[data-fx="holo-ocean"],[data-fx="holo-sunset"],[data-fx="holo-galaxy"],[data-fx="holo-aurora"],[data-fx="holo-gold"],[data-fx="holo-mono"],[data-fx="holo-accent"],[data-fx="holo-sparkle"],[data-fx="holo-stars"],[data-fx="holo-rays"],[data-fx="holo-scan"],[data-fx="holo-waves"],[data-fx="holo-checker"],[data-fx="holo-grain"])>:is(.wk-fx-a,.wk-fx-b){overflow:hidden}
 /* Покрытия */
-[data-fx="refractor"]>.wk-fx-a{background:repeating-linear-gradient(115deg,#ff5a8c 0 3px,#ffc35a 3px 6px,#6ef0aa 6px 9px,#5abeff 9px 12px,#aa82ff 12px 15px);background-position:var(--pos) 0;mix-blend-mode:color-dodge;opacity:calc(.05 + var(--o)*.36);-webkit-mask:linear-gradient(115deg,transparent 20%,#000 42% 58%,transparent 80%) var(--pos) var(--pos)/300% 300% no-repeat;mask:linear-gradient(115deg,transparent 20%,#000 42% 58%,transparent 80%) var(--pos) var(--pos)/300% 300% no-repeat}
+[data-fx="refractor"]>.wk-fx-a{background:repeating-linear-gradient(115deg,#ff5a8c 0 3px,#ffc35a 3px 6px,#6ef0aa 6px 9px,#5abeff 9px 12px,#aa82ff 12px 15px);background-position:var(--pos) 0;mix-blend-mode:color-dodge;opacity:calc(var(--o)*.42);-webkit-mask:radial-gradient(ellipse 42% 34% at var(--mx) var(--my),#000 0,rgba(0,0,0,.6) 45%,transparent 100%);mask:radial-gradient(ellipse 42% 34% at var(--mx) var(--my),#000 0,rgba(0,0,0,.6) 45%,transparent 100%)}
 [data-fx="refractor"]>.wk-fx-b{background:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.28) 50%,transparent 62%);background-size:300% 300%;background-position:var(--pos) var(--pos);mix-blend-mode:soft-light;opacity:calc(.2 + var(--o)*.6)}
 [data-fx="iridescent"]>.wk-fx-a{background:linear-gradient(125deg,#5be0d0,#7c8cff,#d47cff,#ff8ab3,#ffd08a,#9cf0a0,#5be0d0,#7c8cff,#d47cff);background-size:400% 400%;background-position:var(--pos) var(--pos);mix-blend-mode:color;opacity:calc(.14 + var(--o)*.36)}
 [data-fx="iridescent"]>.wk-fx-b{background:radial-gradient(ellipse 70% 55% at var(--mx) var(--my),rgba(255,255,255,.35),transparent 60%),linear-gradient(125deg,#5be0d0,#d47cff,#ffd08a,#5be0d0);background-size:auto,300% 300%;background-position:0 0,var(--pos) var(--pos);mix-blend-mode:overlay;opacity:calc(.2 + var(--o)*.55)}
 [data-fx="pearl"]>.wk-fx-a{background:linear-gradient(120deg,#ffffff 0,#ffe1ee 18%,#dffff4 36%,#e3e9ff 54%,#fff3dc 72%,#ffffff 90%);background-size:300% 300%;background-position:var(--pos) var(--pos);mix-blend-mode:soft-light;opacity:calc(.4 + var(--o)*.5)}
 [data-fx="pearl"]>.wk-fx-b{background:radial-gradient(ellipse 60% 45% at var(--mx) var(--my),rgba(255,255,255,.55),rgba(255,230,245,.18) 45%,transparent 70%);mix-blend-mode:screen;opacity:calc(.12 + var(--o)*.55)}
-[data-fx="diagonal"]>.wk-fx-a{background:repeating-linear-gradient(135deg,transparent 0 22px,rgba(255,255,255,.38) 30px,transparent 38px 60px);background-size:85px 85px;mix-blend-mode:overlay;opacity:calc(.25 + var(--o)*.6);animation:wkFxDiag 3.5s linear infinite}
+[data-fx="diagonal"]>.wk-fx-a{background:repeating-linear-gradient(135deg,transparent 0 22px,rgba(255,255,255,.42) 30px,transparent 38px 60px);background-size:170px 170px;background-position:var(--pos) var(--pos);mix-blend-mode:overlay;opacity:calc(var(--o)*.8)}
 [data-fx="diagonal"]>.wk-fx-b{background:linear-gradient(135deg,#ff9ec4,#ffd86b,#7ef0c0,#7cc4ff,#c2a2ff,#ff9ec4);background-size:300% 300%;background-position:var(--pos) var(--pos);mix-blend-mode:color;opacity:calc(var(--o)*.35)}
 @keyframes wkFxDiag{from{background-position:0 0}to{background-position:85px 85px}}
-[data-fx="crosshatch"]>.wk-fx-a{background:repeating-linear-gradient(45deg,rgba(255,255,255,.55) 0 1px,transparent 1px 7px),repeating-linear-gradient(-45deg,rgba(255,255,255,.55) 0 1px,transparent 1px 7px);mix-blend-mode:overlay;opacity:calc(.1 + var(--o)*.7)}
-[data-fx="crosshatch"]>.wk-fx-b{background:linear-gradient(115deg,#ff9ec4,#ffd86b,#7ef0c0,#7cc4ff,#c2a2ff,#ff9ec4);background-size:300% 300%;background-position:var(--pos) var(--pos);mix-blend-mode:color-dodge;opacity:calc(var(--o)*.55);-webkit-mask:repeating-linear-gradient(45deg,#000 0 1.2px,transparent 1.2px 7px),repeating-linear-gradient(-45deg,#000 0 1.2px,transparent 1.2px 7px);mask:repeating-linear-gradient(45deg,#000 0 1.2px,transparent 1.2px 7px),repeating-linear-gradient(-45deg,#000 0 1.2px,transparent 1.2px 7px)}
+[data-fx="crosshatch"]>.wk-fx-a{background:repeating-linear-gradient(45deg,rgba(255,255,255,.55) 0 1px,transparent 1px 7px),repeating-linear-gradient(-45deg,rgba(255,255,255,.55) 0 1px,transparent 1px 7px);mix-blend-mode:overlay;opacity:calc(var(--o)*.75);-webkit-mask:radial-gradient(ellipse 42% 34% at var(--mx) var(--my),#000 0,rgba(0,0,0,.6) 45%,transparent 100%);mask:radial-gradient(ellipse 42% 34% at var(--mx) var(--my),#000 0,rgba(0,0,0,.6) 45%,transparent 100%)}
+[data-fx="crosshatch"]>.wk-fx-b{background:linear-gradient(115deg,#ff9ec4,#ffd86b,#7ef0c0,#7cc4ff,#c2a2ff,#ff9ec4);background-size:300% 300%;background-position:var(--pos) var(--pos);mix-blend-mode:color-dodge;opacity:calc(var(--o)*.5);-webkit-mask:radial-gradient(ellipse 42% 34% at var(--mx) var(--my),#000 0,rgba(0,0,0,.6) 45%,transparent 100%),repeating-linear-gradient(45deg,#000 0 1.2px,transparent 1.2px 7px);-webkit-mask-composite:source-in;mask:radial-gradient(ellipse 42% 34% at var(--mx) var(--my),#000 0,rgba(0,0,0,.6) 45%,transparent 100%),repeating-linear-gradient(45deg,#000 0 1.2px,transparent 1.2px 7px);mask-composite:intersect}
 [data-fx="lenticular"]>.wk-fx-a{background:linear-gradient(180deg,#ff6b9d,#ffd36b,#6bffb8,#6bb6ff,#c36bff,#ff6b9d,#ffd36b);background-size:100% 500%;background-position:0 var(--pos);mix-blend-mode:overlay;opacity:calc(.15 + var(--o)*.65);-webkit-mask:repeating-linear-gradient(90deg,#000 0 2px,transparent 2px 4px);mask:repeating-linear-gradient(90deg,#000 0 2px,transparent 2px 4px)}
 [data-fx="lenticular"]>.wk-fx-b{background:repeating-linear-gradient(90deg,rgba(0,0,0,.22) 0 1px,transparent 1px 4px),linear-gradient(180deg,transparent 30%,rgba(255,255,255,.25) 50%,transparent 70%);background-size:auto,100% 300%;background-position:0 0,0 var(--pos);mix-blend-mode:soft-light;opacity:calc(.15 + var(--o)*.4)}
 </style>
@@ -24326,7 +24381,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
       ['✨ Блики', ['gloss', 'cosmos']],
       ['🌈 Голограммы', ['holo', 'reverse', 'holo-ocean', 'holo-sunset', 'holo-galaxy', 'holo-aurora', 'holo-gold', 'holo-mono', 'holo-accent']],
       ['🌈 Голограммы с текстурой', ['holo-sparkle', 'holo-stars', 'holo-rays', 'holo-scan', 'holo-waves', 'holo-checker', 'holo-grain']],
-      ['💿 Покрытия', ['refractor', 'iridescent', 'pearl', 'diagonal', 'crosshatch', 'lenticular']],
+      ['💿 Покрытия', ['refractor', 'iridescent', 'diagonal', 'crosshatch', 'lenticular']],
       ['🥇 Фольга', ['gold', 'silver', 'foil-rose', 'foil-copper', 'foil-emerald', 'foil-sapphire', 'foil-ruby', 'foil-violet', 'foil-black', 'foil-accent']],
       ['🥇 Фольга с текстурой', ['foil-gold-brushed', 'foil-silver-brushed', 'foil-silver-hammered', 'foil-copper-hammered', 'foil-gold-grain', 'foil-silver-plate', 'foil-rose-sparkle', 'foil-black-grain']],
       ['⚔️ Силы', ['armament', 'gear5', 'strings']]
@@ -24418,6 +24473,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
   }); }).observe(document.documentElement, { childList: true, subtree: true });
 })();
 </script>
+
 
 
 </body></html>
