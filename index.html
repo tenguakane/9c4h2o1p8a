@@ -21493,7 +21493,8 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
   /* ---------- Частицы постоянных эффектов ----------
      c — класс частицы, n — сколько, wrap — общий слой с размытием, pos — где рождаются,
      t — длительность (с), s — размер, v — число вариантов внешности. */
-  var FIRE_PARTS = [{ c: 'fb', n: 7, wrap: 'wk-fl', pos: 'bottom', t: [0.8, 1.4], s: [0.8, 1.2] }, { c: 'fp', n: 58, wrap: 'wk-fl', pos: 'bottom', t: [0.85, 1.6], s: [0.6, 1.25], v: 2 }, { c: 'e', n: 12, pos: 'bottom', t: [2.4, 4.2], s: [0.6, 1.4], v: 2 }];
+  // Пламя ниже (слой сжат по высоте в CSS), искр больше: крупные медленные + мелкие быстрые.
+  var FIRE_PARTS = [{ c: 'fb', n: 7, wrap: 'wk-fl', pos: 'bottom', t: [0.8, 1.4], s: [0.8, 1.2] }, { c: 'fp', n: 58, wrap: 'wk-fl', pos: 'bottom', t: [0.85, 1.6], s: [0.6, 1.25], v: 2 }, { c: 'e', n: 22, pos: 'bottom', t: [2.4, 4.4], s: [0.5, 1.4], v: 2 }, { c: 'e', n: 20, pos: 'bottom', t: [1.3, 2.3], s: [0.25, 0.6], v: 2 }];
   var PARTS = {
     goldshine: [{ c: 'gl', n: 6, pos: 'any', s: [0.45, 0.9], sync: 'gold' }],
     twinkle: [{ c: 'tw', n: 14, pos: 'any', t: [2.2, 3.8], s: [0.7, 1.5], v: 3 }],
@@ -23731,8 +23732,22 @@ html body #characterArticleContent#characterArticleContent#characterArticleConte
 @keyframes wkCsTw{0%,100%{opacity:0;transform:rotate(var(--r)) scale(.3)}50%{opacity:1;transform:rotate(calc(var(--r) + 45deg)) scale(1)}}
 @keyframes wkCsRot{to{transform:rotate(calc(var(--r) + 360deg))}}
 @keyframes wkCsWob{from{transform:translateX(-4px)}to{transform:translateX(4px)}}
+.wk-cs>.wk-cs-hit{opacity:0;will-change:opacity}
+:is([data-amb="fire"],[data-amb="phoenix"])>.wk-amb-p>.wk-fl{transform:scaleY(.62);transform-origin:50% 100%}
+:is([data-amb="fire"],[data-amb="phoenix"])>.wk-amb-a{background:linear-gradient(0deg,var(--fh1),var(--fh2) 20%,transparent 38%)!important}
+.wk-cs-hit.k-neg{-webkit-backdrop-filter:invert(1) hue-rotate(180deg) contrast(1.1);backdrop-filter:invert(1) hue-rotate(180deg) contrast(1.1)}
+.wk-cs-hit.k-mono{-webkit-backdrop-filter:grayscale(1) contrast(1.5) brightness(1.1);backdrop-filter:grayscale(1) contrast(1.5) brightness(1.1)}
+.wk-cs-hit::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none}
+.wk-cs-hit.k-red{-webkit-backdrop-filter:saturate(.35) contrast(1.3);backdrop-filter:saturate(.35) contrast(1.3)}
+.wk-cs-hit.k-red::after{background:radial-gradient(ellipse at 50% 45%,color-mix(in srgb,var(--cs-hc) 18%,transparent),color-mix(in srgb,var(--cs-hc) 70%,transparent));mix-blend-mode:hard-light;box-shadow:inset 0 0 0 3px var(--cs-hc),inset 0 0 40px var(--cs-hc)}
+.wk-cs-hit.k-both{-webkit-backdrop-filter:invert(1) hue-rotate(180deg) contrast(1.15);backdrop-filter:invert(1) hue-rotate(180deg) contrast(1.15)}
+.wk-cs-hit.k-both::after{background:color-mix(in srgb,var(--cs-hc) 45%,transparent);mix-blend-mode:multiply;box-shadow:inset 0 0 0 2px var(--cs-hc),inset 0 0 30px var(--cs-hc)}
+.wk-cs-hit.k-flash::after{background:radial-gradient(circle at 50% 45%,#fff,color-mix(in srgb,var(--cs-hc) 60%,transparent) 70%);mix-blend-mode:screen}
 @media (prefers-reduced-motion:reduce){.wk-cs *{animation:none!important}}
 html.wk-fx-off .wk-cs{display:none}
+
+/* Эффект рамки выбран — без цветной полоски статьи внизу карточки */
+html body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection) .character-item[data-wk-frame]::after,html body .character-item.character-item[data-wk-frame]::after{opacity:0!important;background:none!important}
 
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-cs-panel input[type=range],#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel input[type=range],#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-tf-size input[type=range]{-webkit-appearance:none!important;appearance:none!important;height:20px!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;background:transparent!important;box-shadow:none!important;cursor:pointer}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-cs-panel input[type=range]::-webkit-slider-runnable-track,#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-ts-panel input[type=range]::-webkit-slider-runnable-track,#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-tf-size input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:4px;background:linear-gradient(to right,#d4a84f var(--fill,50%),#334155 var(--fill,50%))}
@@ -23838,6 +23853,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
   document.addEventListener('animationstart', function (e) {
     var t = e.target; if (!t || !t.closest) return;
     var host = t.closest('[data-cs-rate]'); if (!host || t === host || t.closest('.wk-cs')) return;
+    var layer = t.closest('.wk-fx-a,.wk-fx-b,.wk-amb-a,.wk-amb-b,.wk-amb-p,.wk-amb-fx'); if (!layer || layer.parentElement !== host && !(layer.parentElement && layer.parentElement.classList.contains('wk-amb-fx') && layer.parentElement.parentElement === host)) return;
     var rate = Number(host.getAttribute('data-cs-rate')); if (!isFinite(rate)) return;
     try { t.getAnimations().forEach(function (a) { if (a.animationName === e.animationName) a.playbackRate = rate; }); } catch (err) {}
   }, true);
@@ -23862,9 +23878,9 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
   var DUR = { pulse: { slow: '3.4s', '': '2s', fast: '1.1s' }, shine: { slow: '5s', '': '3s', fast: '1.7s' }, frame: { slow: '7s', '': '4s', fast: '2s' } };
   function buildLayers(el, st, seed) {
     var host = el.querySelector(':scope > .wk-cs');
-    var any = (st.pulse && st.pulse.on) || (st.shine && st.shine.on) || (st.frame && st.frame.on) || (st.parts && st.parts.on);
+    var any = (st.pulse && st.pulse.on) || (st.shine && st.shine.on) || (st.frame && st.frame.on) || (st.parts && st.parts.on) || (st.hit && st.hit.on);
     if (!any) { if (host) host.remove(); return; }
-    var sig = JSON.stringify([st.pulse, st.shine, st.frame, st.parts, seed]);
+    var sig = JSON.stringify([st.pulse, st.shine, st.frame, st.parts, st.hit, seed]);
     if (host && host.__sig === sig) return;
     if (!host) { host = document.createElement('span'); host.className = 'wk-cs'; host.setAttribute('aria-hidden', 'true'); el.appendChild(host); }
     host.__sig = sig;
@@ -23874,15 +23890,55 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
     if (st.shine && st.shine.on) { var shc = st.shine.c || '#ffffff'; var dark = /^#/.test(shc) && (function (hx) { hx = hx.replace('#', ''); if (hx.length === 3) hx = hx.replace(/./g, '$&$&'); var n = parseInt(hx, 16); return ((n >> 16) * .299 + ((n >> 8) & 255) * .587 + (n & 255) * .114) < 70; })(shc);
       h += '<span class="wk-cs-shine' + (st.shine.core ? ' is-core' : '') + '" style="--cs-sc:' + esc(shc) + ';--cs-st:' + DUR.shine[st.shine.sp || ''] + ';--cs-so:' + ((st.shine.o == null ? 55 : Number(st.shine.o)) / 100) + ';--cs-sw:' + ({ thin: '3.5%', '': '7%', wide: '13%' }[st.shine.w || ''] || '7%') + ';--cs-sb:' + (dark ? 'multiply' : 'screen') + '"></span>'; }
     if (st.parts && st.parts.on) h += '<span class="wk-cs-parts' + (st.parts.glow ? ' is-glow' : '') + '" style="--cs-ps:' + Math.round(10 * (Number(st.parts.size) || 100) / 100) + 'px">' + partsHTML(st.parts, seed) + '</span>';
+    if (st.hit && st.hit.on) {
+      var every = Number(st.hit.every) || 5, dur = { short: .35, '': .7, long: 1.3 }[st.hit.dur || ''] || .7;
+      var name = hitKeyframes(dur / every), ph = (hashNum('hit:' + seed) % 1000) / 1000 * every;
+      h += '<span class="wk-cs-hit k-' + esc(st.hit.kind || 'neg') + '" style="--cs-hc:' + esc(st.hit.c || '#ff2a3d') + ';animation:' + name + ' ' + every + 's linear -' + ph.toFixed(2) + 's infinite"></span>';
+    }
     host.innerHTML = h;
+  }
+  // Кадры «удара»: короткая двойная вспышка в начале цикла, дальше пауза. Доля f = длительность / период.
+  var hitDone = {};
+  function hitKeyframes(f) {
+    var pct = Math.max(1, Math.min(60, Math.round(f * 100))), name = 'wkCsHit' + pct;
+    if (hitDone[name]) return name; hitDone[name] = true;
+    var st = document.getElementById('wk-cs-dyn'); if (!st) { st = document.createElement('style'); st.id = 'wk-cs-dyn'; document.head.appendChild(st); }
+    var k = function (x) { return (pct * x).toFixed(2) + '%'; };
+    st.appendChild(document.createTextNode('@keyframes ' + name + '{0%{opacity:0}' + k(.06) + '{opacity:1}' + k(.28) + '{opacity:.15}' + k(.42) + '{opacity:1}' + k(.75) + '{opacity:.6}' + pct + '%{opacity:0}100%{opacity:0}}'));
+    return name;
+  }
+  // Частота появления: эффект виден короткое окно, затем пропадает до следующего цикла.
+  var FREQ = { often: 3, sometimes: 6, rare: 12, vrare: 20 };
+  function applyFreq(el, st, seed) {
+    var T = FREQ[st.freq || ''] || 0;
+    var nodes = libLayers(el).concat(Array.prototype.slice.call(el.querySelectorAll(':scope > .wk-cs > span:not(.wk-cs-hit)')));
+    nodes.forEach(function (n) { if (n.__csVis) { try { n.__csVis.cancel(); } catch (e) {} n.__csVis = null; } });
+    if (!T || !nodes.length || !el.animate) return;
+    var win = Math.min(T * .6, Number(st.win) || 2.2), f = win / T, fade = Math.min(.08, f / 4);
+    var ph = (hashNum('freq:' + seed) % 1000) / 1000 * T * 1000;
+    nodes.forEach(function (n) {
+      // filter: opacity() дописывается к собственному фильтру эффекта (composite: add), прозрачность эффекта не трогаем.
+      var kf = [{ filter: 'opacity(0)', offset: 0 }, { filter: 'opacity(1)', offset: fade }, { filter: 'opacity(1)', offset: f - fade }, { filter: 'opacity(0)', offset: f }, { filter: 'opacity(0)', offset: 1 }];
+      try { n.__csVis = n.animate(kf, { duration: T * 1000, iterations: Infinity, delay: -ph, composite: 'add' }); }
+      catch (e) { try { n.__csVis = n.animate([{ visibility: 'visible', offset: 0 }, { visibility: 'visible', offset: f }, { visibility: 'hidden', offset: f }, { visibility: 'hidden', offset: 1 }], { duration: T * 1000, iterations: Infinity, delay: -ph }); } catch (e2) {} }
+    });
+  }
+  // Эффекты, которые рисуют рамку: с ними снимаем цветную полоску статьи внизу карточки.
+  var FRAME_FX = /^(gold|silver|prism|accentprism|poneglyph|foil-.+)$/, FRAME_AMB = /^(prism|accentprism|poneglyph|goldshine|neon|barrier|drums|magma)$/;
+  function markFrame(el, st) {
+    var fx = el.getAttribute('data-fx') || '', amb = el.getAttribute('data-amb') || '';
+    var on = FRAME_FX.test(fx) || FRAME_AMB.test(amb) || !!(st.frame && st.frame.on) || !!(st.pulse && st.pulse.on);
+    if (on) el.setAttribute('data-wk-frame', ''); else el.removeAttribute('data-wk-frame');
   }
   function applyCardStyle(el, value, seed) {
     if (!el) return;
     var st = parse(value);
+    markFrame(el, st);
     var sig = JSON.stringify(st) + '|' + (el.getAttribute('data-fx') || '') + '|' + (el.getAttribute('data-amb') || '') + '|' + libLayers(el).length + '|' + seed;
     if (el.__csSig === sig) return; el.__csSig = sig;
     tuneLibrary(el, st);
     buildLayers(el, st, seed || '');
+    applyFreq(el, st, seed || '');
   }
   window.__wikiApplyCardStyle = applyCardStyle;
   // Заливка дорожки ползунка (для Chrome/Safari; Firefox рисует её сам)
@@ -23959,9 +24015,15 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
         + '<div class="wk-ts-row"><span>Оттенок</span>' + range('hue', -180, 180, 5, Number(st.hue) || 0, '°', 0) + '</div>'
         + '<div class="wk-ts-row"><span>Насыщенность</span>' + range('sat', 0, 200, 5, st.sat == null ? 100 : Number(st.sat), '%', 100) + '</div>'
         + '<div class="wk-ts-row"><span>Сила</span>' + range('pow', 20, 160, 5, st.pow == null ? 100 : Number(st.pow), '%', 100) + '</div>'
+        + '<div class="wk-ts-row"><span>Появление</span>' + seg('data-seg="freq"', [['', 'Всегда'], ['often', 'Часто'], ['sometimes', 'Иногда'], ['rare', 'Редко'], ['vrare', 'Очень редко']], st.freq) + '</div>'
+        + (st.freq ? '<div class="wk-ts-row"><span>Длится</span>' + seg('data-seg="win"', [['1', '1 с'], ['', '2 с'], ['3.5', '3,5 с']], st.win) + '</div>' : '')
         + '<div class="wk-ts-row"><span>Скорость</span>' + range('spd', 0, 300, 10, st.spd == null ? 100 : Number(st.spd), '%', 100) + '</div>'
-        + '<div class="wk-cs-libnote">Оттенок, насыщенность, сила и скорость меняют выбранные эффекты из библиотеки. Скорость 0% — эффект замирает.</div>'
+        + '<div class="wk-cs-libnote">Оттенок, насыщенность, сила и скорость меняют выбранные эффекты из библиотеки. Скорость 0% — эффект замирает. «Появление» отдельно от скорости: например, быстро, но редко (каждые 3 / 6 / 12 / 20 с) — действует и на свои слои.</div>'
         + '<div class="wk-cs-cap">Свои слои</div>'
+        + group('hit', '💥 Удар / негатив', '<div class="wk-ts-row"><span>Вид</span>' + seg('data-seg="hit.kind"', [['neg', 'Негатив'], ['red', 'Урон (цвет)'], ['both', 'Негатив + цвет'], ['flash', 'Вспышка'], ['mono', 'Чёрно-белый']], get('hit.kind') || 'neg') + '</div>'
+          + (/^(red|both|flash)$/.test(get('hit.kind') || '') ? '<div class="wk-ts-row"><span>Цвет</span><div class="wk-cs-colors"><input type="color" data-p="hit.c" value="' + esc(get('hit.c') || '#ff2a3d') + '">' + sw('hit.c') + '</div></div>' : '')
+          + '<div class="wk-ts-row"><span>Как часто</span>' + seg('data-seg="hit.every"', [['2', 'каждые 2 с'], ['', '5 с'], ['9', '9 с'], ['15', '15 с']], get('hit.every')) + '</div>'
+          + '<div class="wk-ts-row"><span>Длительность</span>' + seg('data-seg="hit.dur"', [['short', 'Мгновенно'], ['', 'Коротко'], ['long', 'Дольше']], get('hit.dur')) + '</div>')
         + group('pulse', '💓 Пульсация по краю', '<div class="wk-ts-row"><span>Цвет</span><div class="wk-cs-colors"><input type="color" data-p="pulse.c" value="' + esc(get('pulse.c') || '#ff5a5a') + '">' + sw('pulse.c') + '</div></div><div class="wk-ts-row"><span>Скорость</span>' + seg('data-seg="pulse.sp"', SP, get('pulse.sp')) + '</div>')
         + group('shine', '✨ Свой блик', '<div class="wk-ts-row"><span>Цвет</span><div class="wk-cs-colors"><input type="color" data-p="shine.c" value="' + esc(get('shine.c') || '#ffffff') + '">' + sw('shine.c') + '</div></div><div class="wk-ts-row"><span>Яркость</span>' + range('shine.o', 10, 100, 5, get('shine.o') == null ? 55 : Number(get('shine.o')), '%', 55) + '</div>'
           + '<div class="wk-ts-row"><span>Ширина</span>' + seg('data-seg="shine.w"', [['thin', 'Узкий'], ['', 'Обычный'], ['wide', 'Широкий']], get('shine.w')) + '</div>'
