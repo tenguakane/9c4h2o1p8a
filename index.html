@@ -9090,7 +9090,8 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
             for(const el of host.querySelectorAll('[data-field]')){
                 const k=el.dataset.field; if(!k)continue;
                 const current=el.type==='checkbox'?String(el.checked):(el.multiple?Array.from(el.selectedOptions).map(o=>o.value).join(','):String(el.value??''));
-                const original=fieldText(rawValue(obj,k));
+                let original=fieldText(rawValue(obj,k));if(Array.isArray(rawValue(obj,k)))original=rawValue(obj,k).join(',');
+                if(host.__wkBase&&String(host.__wkBaseId)===String(editingId)&&Object.prototype.hasOwnProperty.call(host.__wkBase,k))original=host.__wkBase[k];
                 if(current!==original){changed=true;break;}
             }
             
@@ -10730,7 +10731,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
             let dirty=false;
             host.querySelectorAll('[data-field]').forEach(el=>{
                 const k=el.dataset.field;let cur=el.type==='checkbox'?String(el.checked):(el.multiple?Array.from(el.selectedOptions).map(o=>o.value).join(','):String(el.value??''));
-                let original=fieldText(rawValue(obj,k));if(Array.isArray(rawValue(obj,k)))original=rawValue(obj,k).join(',');
+                let original=fieldText(rawValue(obj,k));if(Array.isArray(rawValue(obj,k)))original=rawValue(obj,k).join(',');if(host.__wkBase&&Object.prototype.hasOwnProperty.call(host.__wkBase,k))original=host.__wkBase[k];
                 if(cur!==String(original??''))dirty=true;
             });
             
@@ -10758,6 +10759,14 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         });
         if(['character','reward','fruit','useful'].includes(activeType))updateDerivedAppearanceContext(true);
         host.querySelectorAll('[data-field], [data-field-spoiler], [data-linked-id], #wikiArticleSpoiler').forEach(el=>{el.addEventListener('input',updateDirtyIndicator);el.addEventListener('change',updateDirtyIndicator);});
+        // «Без изменений» = как форма выглядела сразу после открытия. Автоматические пересчёты (арка, сага по главе,
+        // подстановка старых эффектов) не считаются правкой и не превращают статью в черновик при закрытии.
+        host.__wkBase=null;host.__wkBaseId=editingId;
+        const wkSnap=()=>{const b={};host.querySelectorAll('[data-field]').forEach(el=>{const k=el.dataset.field;if(!k)return;b[k]=el.type==='checkbox'?String(el.checked):(el.multiple?Array.from(el.selectedOptions).map(o=>o.value).join(','):String(el.value??''));});return b;};
+        const wkTouched={};host.addEventListener('input',e=>{if(e.isTrusted&&e.target&&e.target.dataset&&e.target.dataset.field)wkTouched[e.target.dataset.field]=1;},true);host.addEventListener('change',e=>{if(e.isTrusted&&e.target&&e.target.dataset&&e.target.dataset.field)wkTouched[e.target.dataset.field]=1;},true);
+        host.addEventListener('pointerdown',()=>{wkTouched.__any=1;},{capture:true,once:true});host.addEventListener('keydown',()=>{wkTouched.__any=1;},{capture:true,once:true});
+        const wkBaseId=editingId;
+        setTimeout(()=>{if(String(editingId)!==String(wkBaseId)||!host.isConnected)return;if(wkTouched.__any)return;host.__wkBase=wkSnap();host.__wkBaseId=wkBaseId;updateDirtyIndicator();},450);
         updateDirtyIndicator();
         host.querySelectorAll('[data-field-spoiler]').forEach(ch=>ch.addEventListener('change',()=>{const field=ch.dataset.fieldSpoiler;const val=host.querySelector(`[data-field="${field}"]`);if(ch.checked&&val&&!String(val.value||'').trim()){ch.checked=false;alert('Сначала заполни поле, затем отмечай его спойлером.');}const icon=ch.parentElement?.querySelector('span');if(icon)icon.textContent=ch.checked?'🔒':'◉';}));
         host.querySelectorAll('[data-search-select]').forEach(picker=>{
