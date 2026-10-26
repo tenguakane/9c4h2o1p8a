@@ -18790,7 +18790,7 @@ img.wk-fade.wk-loaded{opacity:1}
   function renderMenu() {
     var menu = document.getElementById('wkMeMenu'); if (!menu) return;
     var s = session(); if (!s) return;
-    var roleText = s.role === 'editor' ? 'Редактор: правит статьи, свой прогресс, топ и избранное' : s.role === 'admin' ? 'Администратор: редактор статей и статистика' : s.role === 'guest' ? 'Гость: только просмотр, прогресс до ' + GUEST.progress.chapter + ' главы и ' + GUEST.progress.episode + ' серии' : 'Участник: свой прогресс, избранное и топ';
+    var roleText = s.role === 'editor' ? 'Редактор: правит статьи, видит статистику и историю правок, свой прогресс, топ и избранное' : s.role === 'admin' ? 'Администратор: редактор статей и статистика' : s.role === 'guest' ? 'Гость: только просмотр, прогресс до ' + GUEST.progress.chapter + ' главы и ' + GUEST.progress.episode + ' серии' : 'Участник: свой прогресс, избранное и топ';
     menu.innerHTML = '<div><b>' + esc(s.name) + '</b><br><small>' + esc(roleText) + '</small></div>' +
       (canEditRole(s.role) ? '<button type="button" data-me="editor">✏️ Открыть редактор статей</button>' : '') +
       '<button type="button" data-me="switch">🔁 Сменить учётку</button><button type="button" data-me="logout">🚪 Выйти</button>';
@@ -19479,9 +19479,9 @@ img.wk-fade.wk-loaded{opacity:1}
     }, function (er) { toast('Не получилось откатить: ' + (er && (er.code || er.message))); });
   }
   function renderStats(pane) {
-    if (!db || !me || me.role !== 'admin') { pane.innerHTML = '<div class="wk-st-empty">Статистика доступна администратору после входа.</div>'; return; }
+    if (!db || !me || !canEditRole(me.role)) { pane.innerHTML = '<div class="wk-st-empty">Статистика доступна администратору и редактору после входа.</div>'; return; }
     var prefs = readJSON(ST_KEY, { days: 30, hideAdmin: false });
-    pane.innerHTML = '<div class="wk-pane-head"><div><h2>Статистика участников</h2><p>Визиты, время на сайте и самые читаемые статьи. Видно только администратору.</p></div></div><div class="wk-st-empty">Загружаю данные…</div>';
+    pane.innerHTML = '<div class="wk-pane-head"><div><h2>Статистика участников</h2><p>Визиты, время на сайте и самые читаемые статьи. Видно администратору и редактору.</p></div></div><div class="wk-st-empty">Загружаю данные…</div>';
     var since = Date.now() - prefs.days * 86400000;
     var q1 = fb.fs.query(fb.fs.collection(db, 'sessions'), fb.fs.where('start', '>=', since), fb.fs.orderBy('start', 'desc'), fb.fs.limit(5000));
     var q2 = fb.fs.query(fb.fs.collection(db, 'events'), fb.fs.where('ts', '>=', since), fb.fs.orderBy('ts', 'desc'), fb.fs.limit(10000));
@@ -19495,7 +19495,7 @@ img.wk-fade.wk-loaded{opacity:1}
       r[1].forEach(function (d) { events.push(d.data()); });
       r[2].forEach(function (d) { var x = d.data(); users[x.login] = x; });
       r[3].forEach(function (d) { var x = d.data(); try { tops[x.login] = JSON.parse(x.lists || '{}'); } catch (e) {} });
-      if (prefs.hideAdmin) { sessions = sessions.filter(function (s) { return s.role !== 'admin'; }); events = events.filter(function (e) { return e.login !== me.login; }); }
+      if (prefs.hideAdmin) { sessions = sessions.filter(function (s) { return s.login !== me.login; }); events = events.filter(function (e) { return e.login !== me.login; }); }
       drawStats(pane, prefs, sessions, events, users, tops);
     }).catch(function (e) {
       pane.querySelector('.wk-st-empty').textContent = 'Не удалось загрузить статистику: ' + (e && (e.code || e.message));
@@ -19503,7 +19503,7 @@ img.wk-fade.wk-loaded{opacity:1}
   }
   function drawStats(pane, prefs, sessions, events, users, tops) {
     var people = ACCOUNTS.map(function (a) { return { login: a.login, name: a.name, color: a.color, role: a.role, gender: a.gender }; }).concat([{ login: 'guest', name: GUEST.name, color: '#94a3b8', role: 'guest' }]);
-    if (prefs.hideAdmin) people = people.filter(function (p) { return p.role !== 'admin'; });
+    if (prefs.hideAdmin) people = people.filter(function (p) { return p.login !== me.login; });
     var views = events.filter(function (e) { return e.kind === 'view'; }), tabs = events.filter(function (e) { return e.kind === 'tab'; });
     var per = {};
     people.forEach(function (p) { per[p.login] = { visits: 0, views: 0, sec: 0, last: 0, days: {} }; });
@@ -19511,7 +19511,7 @@ img.wk-fade.wk-loaded{opacity:1}
     views.forEach(function (e) { var x = per[e.login]; if (x) { x.views++; x.last = Math.max(x.last, e.ts); } });
     var totalSec = sessions.reduce(function (a, s) { return a + (s.durationSec || 0); }, 0);
     var active7 = people.filter(function (p) { return per[p.login].last > Date.now() - 7 * 86400000; }).length;
-    var html = '<div class="wk-pane-head"><div><h2>Статистика участников</h2><p>Визиты, время на сайте и самые читаемые статьи. Видно только администратору.</p></div></div>' +
+    var html = '<div class="wk-pane-head"><div><h2>Статистика участников</h2><p>Визиты, время на сайте и самые читаемые статьи. Видно администратору и редактору.</p></div></div>' +
       '<div class="wk-st-controls"><div class="wk-seg" role="group" aria-label="Период">' + [7, 30, 90].map(function (d) { return '<button type="button" data-days="' + d + '" class="' + (prefs.days === d ? 'active' : '') + '">' + d + ' дн</button>'; }).join('') + '</div>' +
       '<label><input type="checkbox" data-hide-admin ' + (prefs.hideAdmin ? 'checked' : '') + '> не учитывать мои визиты</label><button type="button" class="wk-btn" data-refresh style="padding:7px 12px">⟳ Обновить</button></div>' +
       '<div class="wk-st-kpis">' +
@@ -19588,7 +19588,7 @@ img.wk-fade.wk-loaded{opacity:1}
       return '<div><span class="wk-ava" style="background:' + p.color + '">' + esc(p.role === 'guest' ? '👀' : (p.name || '?')[0]) + '</span><span><b>' + esc(p.name) + '</b> ' + what + '</span><em>' + ago(e.ts) + '</em></div>';
     }).join('') + '</div>' : '<div class="wk-st-empty">Пока пусто.</div>') + '</div>';
 
-    html += '<div class="wk-st-admin"><span>Облако статей:</span><button type="button" data-reupload>⬆ Перезалить все статьи из этого браузера в облако</button><span>— если облачная копия разошлась с нужной.</span></div>';
+    if (me.role === 'admin') html += '<div class="wk-st-admin"><span>Облако статей:</span><button type="button" data-reupload>⬆ Перезалить все статьи из этого браузера в облако</button><span>— если облачная копия разошлась с нужной.</span></div>';
     pane.innerHTML = html;
     try {
       var headEl = pane.querySelector('.wk-pane-head'), ctr = pane.querySelector('.wk-st-controls');
@@ -19601,7 +19601,7 @@ img.wk-fade.wk-loaded{opacity:1}
     pane.querySelectorAll('[data-days]').forEach(function (b) { b.addEventListener('click', function () { prefs.days = Number(b.getAttribute('data-days')); quietSet(ST_KEY, JSON.stringify(prefs)); renderStats(pane); }); });
     pane.querySelector('[data-hide-admin]').addEventListener('change', function (e) { prefs.hideAdmin = e.target.checked; quietSet(ST_KEY, JSON.stringify(prefs)); renderStats(pane); });
     pane.querySelector('[data-refresh]').addEventListener('click', function () { renderStats(pane); });
-    pane.querySelector('[data-reupload]').addEventListener('click', function () {
+    var reupBtn = pane.querySelector('[data-reupload]'); if (reupBtn) reupBtn.addEventListener('click', function () {
       if (!confirm('Перезаписать облачную копию статей данными из этого браузера?')) return;
       var snap = localSnapshot(); if (!snap) return;
       var cache = readJSON(CONTENT_KEY, null);
@@ -19609,7 +19609,7 @@ img.wk-fade.wk-loaded{opacity:1}
     });
   }
   if (typeof window.__wikiRegisterCabinTab === 'function') {
-    window.__wikiRegisterCabinTab({ key: 'stats', icon: '📊', label: 'Статистика', pane: 'wkCabinPaneStats', render: renderStats, visible: function () { var s = session(); return !!(s && s.role === 'admin'); } });
+    window.__wikiRegisterCabinTab({ key: 'stats', icon: '📊', label: 'Статистика', pane: 'wkCabinPaneStats', render: renderStats, visible: function () { var s = session(); return !!(s && canEditRole(s.role)); } });
   }
 
   /* ---------- запуск ---------- */
@@ -21668,7 +21668,7 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
      c — класс частицы, n — сколько, wrap — общий слой с размытием, pos — где рождаются,
      t — длительность (с), s — размер, v — число вариантов внешности. */
   // Пламя ниже (слой сжат по высоте в CSS), искр больше: крупные медленные + мелкие быстрые.
-  var FIRE_PARTS = [{ c: 'fb', n: 7, wrap: 'wk-fl', pos: 'bottom', t: [0.8, 1.4], s: [0.8, 1.2] }, { c: 'fp', n: 58, wrap: 'wk-fl', pos: 'bottom', t: [0.85, 1.6], s: [0.6, 1.25], v: 2 }, { c: 'e', n: 22, pos: 'bottom', t: [2.4, 4.4], s: [0.5, 1.4], v: 2 }, { c: 'e', n: 20, pos: 'bottom', t: [1.3, 2.3], s: [0.25, 0.6], v: 2 }];
+  var FIRE_PARTS = [{ c: 'fb', n: 7, wrap: 'wk-fl', pos: 'bottom', t: [0.8, 1.4], s: [0.8, 1.2] }, { c: 'fp', n: 58, wrap: 'wk-fl', pos: 'bottom', t: [0.85, 1.6], s: [0.6, 1.25], v: 2 }, { c: 'e eh', n: 9, pos: 'bottom', t: [3.4, 5.4], s: [0.5, 1.4], v: 2 }, { c: 'e eh', n: 7, pos: 'bottom', t: [2.3, 3.4], s: [0.25, 0.6], v: 2 }];
   var PARTS = {
     goldshine: [{ c: 'gl', n: 6, pos: 'any', s: [0.45, 0.9], sync: 'gold' }],
     twinkle: [{ c: 'tw', n: 14, pos: 'any', t: [2.2, 3.8], s: [0.7, 1.5], v: 3 }],
@@ -24132,9 +24132,9 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
   var DUR = { pulse: { slow: '3.4s', '': '2s', fast: '1.1s' }, shine: { slow: '5s', '': '3s', fast: '1.7s' }, frame: { slow: '7s', '': '4s', fast: '2s' } };
   function buildLayers(el, st, seed) {
     var host = el.querySelector(':scope > .wk-cs');
-    var any = (st.pulse && st.pulse.on) || (st.shine && st.shine.on) || (st.frame && st.frame.on) || (st.parts && st.parts.on) || (st.hit && st.hit.on) || (st.ring && st.ring.on);
+    var any = (st.pulse && st.pulse.on) || (st.shine && st.shine.on) || (st.frame && st.frame.on) || (st.parts && st.parts.on) || (st.hit && st.hit.on) || (st.ring && st.ring.on) || (st.bolt && st.bolt.on);
     if (!any) { if (host) host.remove(); return; }
-    var sig = JSON.stringify([st.pulse, st.shine, st.frame, st.parts, st.hit, st.ring, seed]);
+    var sig = JSON.stringify([st.pulse, st.shine, st.frame, st.parts, st.hit, st.ring, st.bolt, seed]);
     if (host && host.__sig === sig) return;
     if (!host) { host = document.createElement('span'); host.className = 'wk-cs'; host.setAttribute('aria-hidden', 'true'); el.appendChild(host); }
     host.__sig = sig;
@@ -24146,6 +24146,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
     var rg = ringOf(st); if (rg) h += ringHTML(rg);
     if (st.parts && st.parts.on && native) h += '<span class="wk-cs-native" data-amb="' + esc(native) + '" style="' + (Number(st.parts.hue) ? 'filter:hue-rotate(' + Number(st.parts.hue) + 'deg)' : '') + '"></span>';
     if (st.parts && st.parts.on && !native) h += '<span class="wk-cs-parts' + (st.parts.glow ? ' is-glow' : '') + '" style="--cs-ps:' + Math.round(10 * (Number(st.parts.size) || 100) / 100) + 'px">' + partsHTML(st.parts, seed) + '</span>';
+    if (st.bolt && st.bolt.on) { var bo = st.bolt; h += '<span class="wk-cs-bolt" data-c="' + esc(bo.c || '#9fd4ff') + '" data-every="' + esc(bo.every || 4) + '" data-len="' + esc(bo.len || 'mix') + '" data-from="' + esc(bo.from || 'top') + '" data-br="' + esc(bo.br || '') + '" data-flash="' + esc(bo.flash || '') + '" data-w="' + esc(bo.w || 2) + '"></span>'; }
     if (st.hit && st.hit.on) {
       var every = Number(st.hit.every) || 5, dur = { short: .35, '': .7, long: 1.3 }[st.hit.dur || ''] || .7;
       var name = hitKeyframes(dur / every), ph = seed === 'preview' ? every - .4 : (hashNum('hit:' + seed) % 1000) / 1000 * every;
@@ -24153,6 +24154,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
       h += '<span class="wk-cs-hit k-' + esc(st.hit.kind || 'neg') + '" data-trig="' + esc(trig || 'timer') + '" data-dur="' + dur + '" style="--cs-hc:' + esc(st.hit.c || '#ff2a3d') + anim + '"></span>';
     }
     host.innerHTML = h;
+    if (window.__wikiBoltScan) window.__wikiBoltScan();
     var nh = host.querySelector('.wk-cs-native'); if (nh && window.__wikiNativeParts) window.__wikiNativeParts(nh, native, 'cs:' + seed, (Number(st.parts.nm) || 100) / 100);
   }
   // Эффект на обводке: кольцо заданной ширины, внутри — выбранное покрытие
@@ -24353,6 +24355,14 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
           + '<div class="wk-ts-row"><span>Срабатывает</span>' + seg('data-seg="hit.trig"', [['', 'По таймеру'], ['click', 'При нажатии'], ['both', 'Таймер + нажатие']], get('hit.trig')) + '<button type="button" class="wk-ts-reset" data-hit-test style="margin-left:8px">▶ Проверить</button></div>'
           + (/^(click|both)$/.test(get('hit.trig') || '') ? '<div class="wk-ts-row"><span></span><span class="wk-cs-libnote">При нажатии на карточку и при открытии статьи — по главному фото. В превью: нажми на карточку.</span></div>' : '')
           + '<div class="wk-ts-row"><span>Длительность</span>' + seg('data-seg="hit.dur"', [['short', 'Мгновенно'], ['', 'Коротко'], ['long', 'Дольше']], get('hit.dur')) + '</div>')
+        + group('bolt', '⚡ Молнии', '<div class="wk-ts-row"><span>Цвет</span><div class="wk-cs-colors"><input type="color" data-p="bolt.c" value="' + esc(get('bolt.c') || '#9fd4ff') + '">' + sw('bolt.c') + '</div></div>'
+          + '<div class="wk-ts-row"><span>Как часто</span>' + seg('data-seg="bolt.every"', [['1.5', 'Часто'], ['', 'Обычно'], ['8', 'Редко'], ['15', 'Очень редко']], get('bolt.every')) + '</div>'
+          + '<div class="wk-ts-row"><span>Длина</span>' + seg('data-seg="bolt.len"', [['', 'Разная'], ['short', 'Короткие'], ['long', 'Длинные']], get('bolt.len')) + '</div>'
+          + '<div class="wk-ts-row"><span>Откуда бьют</span>' + seg('data-seg="bolt.from"', [['', 'Сверху'], ['edge', 'С краёв'], ['any', 'Где угодно']], get('bolt.from')) + '</div>'
+          + '<div class="wk-ts-row"><span>Толщина</span>' + range('bolt.w', 1, 5, 0.5, Number(get('bolt.w')) || 2, 'px', 2) + '</div>'
+          + '<div class="wk-ts-row"><span>Ветвление</span>' + seg('data-seg="bolt.br"', [['', 'С ветками'], ['none', 'Одна линия']], get('bolt.br')) + '</div>'
+          + '<div class="wk-ts-row"><span>Вспышка</span>' + seg('data-seg="bolt.flash"', [['', 'Подсвечивать арт'], ['off', 'Без вспышки']], get('bolt.flash')) + '<button type="button" class="wk-ts-reset" data-bolt-test style="margin-left:8px">▶ Разряд</button></div>'
+          + '<div class="wk-ts-row"><span></span><span class="wk-cs-libnote">Каждый разряд рисуется заново: в случайном месте, разной длины и формы, с ветками.</span></div>')
         + group('pulse', '💓 Пульсация по краю', '<div class="wk-ts-row"><span>Цвет</span><div class="wk-cs-colors"><input type="color" data-p="pulse.c" value="' + esc(get('pulse.c') || '#ff5a5a') + '">' + sw('pulse.c') + '</div></div><div class="wk-ts-row"><span>Скорость</span>' + seg('data-seg="pulse.sp"', SP, get('pulse.sp')) + '</div>')
         + group('shine', '✨ Свой блик', '<div class="wk-ts-row"><span>Цвет</span><div class="wk-cs-colors"><input type="color" data-p="shine.c" value="' + esc(get('shine.c') || '#ffffff') + '">' + sw('shine.c') + '</div></div><div class="wk-ts-row"><span>Яркость</span>' + range('shine.o', 10, 100, 5, get('shine.o') == null ? 55 : Number(get('shine.o')), '%', 55) + '</div>'
           + '<div class="wk-ts-row"><span>Ширина</span>' + seg('data-seg="shine.w"', [['thin', 'Узкий'], ['', 'Обычный'], ['wide', 'Широкий']], get('shine.w')) + '</div>'
@@ -24420,6 +24430,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
       if (b.hasAttribute('data-sw')) { var forp = b.closest('[data-sw-for]').getAttribute('data-sw-for'); set(forp, b.getAttribute('data-sw')); commit(true); return; }
       if (b.hasAttribute('data-def')) { var dp2 = b.getAttribute('data-def'); set(dp2, Number(b.getAttribute('data-defv'))); commit(true); return; }
       if (b.hasAttribute('data-ring-c3')) { return; }
+      if (b.hasAttribute('data-bolt-test')) { var pvb = form.querySelector('.wk-fx-preview > .wk-cs > .wk-cs-bolt'); if (window.__wikiBoltStrike) window.__wikiBoltStrike(pvb); return; }
       if (b.hasAttribute('data-hit-test')) { var pvh = form.querySelector('.wk-fx-preview > .wk-cs > .wk-cs-hit'); if (window.__wikiPlayHit) window.__wikiPlayHit(pvh); return; }
       if (b.hasAttribute('data-shape')) { var nsh = b.getAttribute('data-shape'); set('parts.shape', nsh); var defMo = { sand: 'wind', blood: 'trickle', drop: 'glass', rainline: 'down', smoke: 'up' }[nsh]; if (defMo === 'glass' && !get('parts.n')) set('parts.n', 26); if (defMo) set('parts.mo', defMo); if (/^(smoke|sand|petal|leaf|coin|berry|flame|firefly|drop|blood|rainline)$/.test(nsh) && get('parts.c') && !/^(rainbow|accent)$/.test(get('parts.c'))) set('parts.c', ''); commit(true); return; }
       var sg = b.closest('[data-seg]'); if (sg) {
@@ -24669,4 +24680,181 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
 <style id="wiki-editor-fx-section-style">
 #wikiEditorForm .wiki-editor-section[data-wk-fx] .wiki-editor-field[data-editor-field="title_fx"]{margin-top:6px;padding-top:14px;border-top:1px dashed #334155}
 </style>
+<style id="wiki-bolt-v1">
+/* ===== Заголовок и тип статьи всегда поверх эффектов карточки ===== */
+.character-item>:is(.character-grid-content,.fruit-grid-content,.reward-grid-content,.card-title,.character-meta,.card-meta-right,.reward-grid-rank-badge,.story-saga-arrow){z-index:8!important}
+html body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection,#searchSection,#homeSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection,#searchSection,#homeSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection,#searchSection,#homeSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection,#searchSection,#homeSection):is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSection,#storySection,#usefulSection,#searchSection,#homeSection) .character-item.character-item>:is(.character-grid-content,.fruit-grid-content,.reward-grid-content,.card-title,.character-meta,.card-meta-right,.reward-grid-rank-badge,.story-saga-arrow){z-index:8!important}
+.character-item>:is(.fruit-grid-content,.reward-grid-content){position:relative}
+.wk-fx-preview>.wk-pv-name{z-index:8!important}
+.wk-fx-preview>.wk-pv-shade{z-index:2!important}
+
+/* ===== Молнии: случайные разряды разной длины (свой слой и библиотечная «Молния») ===== */
+.wk-bolt-svg{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;pointer-events:none;mix-blend-mode:screen;opacity:0;border-radius:inherit}
+.wk-bolt-flash{position:absolute;inset:0;pointer-events:none;border-radius:inherit;mix-blend-mode:screen;opacity:0}
+.wk-cs>span.wk-cs-bolt{overflow:hidden}
+/* Старые нарисованные молнии на одних и тех же местах больше не показываем */
+[data-amb="thunder"]>.wk-amb-a::before,[data-amb="thunder"]>.wk-amb-a::after{display:none!important}
+[data-amb="thunder"]>.wk-amb-b,[data-amb="thunder"]>.wk-amb-b::before,[data-amb="thunder"]>.wk-amb-b::after{animation:none!important;opacity:0!important}
+[data-amb="thunder"]>.wk-amb-a{overflow:hidden}
+
+/* ===== Землетрясение: удар каждый раз в новом месте ===== */
+[data-amb="quake"]>.wk-amb-a::before{transform-origin:42% 42%!important;transform:translate(calc(var(--qx,42%) - 42%),calc(var(--qy,42%) - 42%)) rotate(var(--qr,0deg)) scale(var(--qs,1))!important}
+[data-amb="quake"]>.wk-amb-b::before{background:radial-gradient(circle at var(--qx,42%) var(--qy,42%),rgba(235,248,255,.8),rgba(150,210,255,.25) 7%,transparent 16%)!important}
+[data-amb="quake"]>.wk-amb-b::after{left:var(--qx,42%)!important;top:var(--qy,42%)!important}
+
+/* ===== Огонь: искр меньше, летят выше ===== */
+.wk-amb-p .e.eh{animation-name:wkEmberHi}
+.wk-amb-p .e.eh.v1{animation-name:wkEmberHi2}
+@keyframes wkEmberHi{0%{opacity:0;transform:translate(0,0) scale(1)}6%{opacity:1}35%{transform:translate(calc(var(--r) * 7cqw),-40cqh)}65%{opacity:1;transform:translate(calc(var(--r) * -4cqw),-80cqh) scale(.8)}86%{opacity:.8}100%{opacity:0;transform:translate(calc(var(--r) * 6cqw),-122cqh) scale(.4)}}
+@keyframes wkEmberHi2{0%{opacity:0;transform:translate(0,0) scale(1)}8%{opacity:1}40%{transform:translate(calc(var(--r) * -8cqw),-46cqh)}52%{opacity:.45}60%{opacity:1}88%{opacity:.75}100%{opacity:0;transform:translate(calc(var(--r) * 10cqw),-115cqh) scale(.4)}}
+</style>
+<script id="wiki-bolt-v1-js">
+(function () {
+  'use strict';
+  var R = Math.random, nodes = [], uid = 0;
+  var reduce = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+  var io = 'IntersectionObserver' in window ? new IntersectionObserver(function (es) { es.forEach(function (e) { e.target.__bVis = e.isIntersecting; }); }) : null;
+
+  function cfg(n) {
+    if (n.classList.contains('wk-cs-bolt')) {
+      var d = n.dataset;
+      return { c: d.c || '#9fd4ff', every: Number(d.every) || 4, len: d.len || 'mix', br: d.br !== 'none', w: Number(d.w) || 2, flash: d.flash !== 'off', from: d.from || 'top' };
+    }
+    return { c: '#a9d2ff', every: 3.4, len: 'mix', br: true, w: 2, flash: true, from: 'top' }; // библиотечная «Молния»
+  }
+  function rate(n) { var h = n.closest('[data-cs-rate]'); if (!h || n.classList.contains('wk-cs-bolt')) return 1; var r = Number(h.getAttribute('data-cs-rate')); return isFinite(r) ? r : 1; }
+  function nextDelay(c) {
+    if (R() < 0.18) return 250 + R() * 450;           // иногда — серия из двух разрядов подряд
+    return c.every * 1000 * (0.35 + R() * 1.3);
+  }
+  function reg(n) {
+    if (n.__bolt) return; n.__bolt = true; nodes.push(n);
+    n.__bVis = !io; if (io) io.observe(n);
+    n.__bNext = performance.now() + (n.closest('.wk-fx-preview') ? 450 : 300 + R() * cfg(n).every * 1000);
+  }
+  function scan() { document.querySelectorAll('.wk-cs-bolt, [data-amb="thunder"] > .wk-amb-a').forEach(reg); }
+  window.__wikiBoltScan = scan;
+
+  // Ломаная молнии: делим отрезок пополам и сдвигаем середину поперёк — так получается «рваный» разряд.
+  function zig(x0, y0, x1, y1, rough, depth) {
+    var pts = [[x0, y0], [x1, y1]];
+    for (var d = 0; d < depth; d++) {
+      var np = [pts[0]];
+      for (var i = 0; i < pts.length - 1; i++) {
+        var a = pts[i], b = pts[i + 1], dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1, off = (R() * 2 - 1) * L * rough;
+        np.push([(a[0] + b[0]) / 2 - dy / L * off, (a[1] + b[1]) / 2 + dx / L * off], b);
+      }
+      pts = np;
+    }
+    return pts;
+  }
+  function pd(pts) { return 'M' + pts.map(function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join('L'); }
+  function lenFrac(len) {
+    if (len === 'short') return 0.22 + R() * 0.25;
+    if (len === 'long') return 0.8 + R() * 0.35;
+    return R() < 0.45 ? 0.2 + R() * 0.3 : 0.55 + R() * 0.55;
+  }
+  function start(c, W, H) {
+    var x, y, ang;
+    if (c.from === 'any') { x = W * (0.12 + R() * 0.76); y = H * (0.08 + R() * 0.6); ang = R() * Math.PI * 2; }
+    else if (c.from === 'edge') {
+      var s = Math.floor(R() * 4);
+      if (s === 0) { x = W * R(); y = -3; ang = Math.PI / 2; } else if (s === 1) { x = W + 3; y = H * R(); ang = Math.PI; }
+      else if (s === 2) { x = -3; y = H * R(); ang = 0; } else { x = W * R(); y = H + 3; ang = -Math.PI / 2; }
+      ang += (R() * 2 - 1) * 0.6;
+    } else { x = W * (0.08 + R() * 0.84); y = -4; ang = Math.PI / 2 + (R() * 2 - 1) * 0.45; }
+    return [x, y, ang];
+  }
+  function strokes(pts, w, op, cls) { return '<path class="' + cls + '" d="' + pd(pts) + '" stroke-width="' + w.toFixed(2) + '" opacity="' + op + '"/>'; }
+  function draw(n, c) {
+    var W = n.clientWidth, H = n.clientHeight; if (W < 20 || H < 20) return;
+    var k = Math.max(0.7, Math.min(1.6, W / 220));          // в статье и в превью — толще
+    var s = start(c, W, H), L = H * lenFrac(c.len) * (c.from === 'any' ? 0.7 : 1);
+    var x1 = s[0] + Math.cos(s[2]) * L, y1 = s[1] + Math.sin(s[2]) * L;
+    var main = zig(s[0], s[1], x1, y1, 0.2 + R() * 0.08, L > H * 0.5 ? 6 : 5);
+    var w = c.w * k, core = '', glow = '';
+    // Сужение к концу: три куска основного ствола
+    var q = Math.floor(main.length / 3);
+    [[0, q + 1, 1], [q, 2 * q + 1, 0.72], [2 * q, main.length, 0.45]].forEach(function (seg) {
+      var part = main.slice(seg[0], seg[1]); core += strokes(part, w * seg[2], 1, 'c'); glow += strokes(part, w * seg[2] * 4.5, 0.5, 'g');
+    });
+    if (c.br) {
+      var nb = Math.max(1, Math.round(L / H * 3 + R() * 1.5));
+      for (var b = 0; b < nb; b++) {
+        var i = Math.floor(main.length * (0.12 + R() * 0.6)), p = main[i], p2 = main[Math.min(main.length - 1, i + 3)];
+        var dir = Math.atan2(p2[1] - p[1], p2[0] - p[0]) + (R() < 0.5 ? -1 : 1) * (0.35 + R() * 0.6), bl = L * (0.14 + R() * 0.32);
+        var br = zig(p[0], p[1], p[0] + Math.cos(dir) * bl, p[1] + Math.sin(dir) * bl, 0.25, 4);
+        core += strokes(br, w * 0.5, 0.85, 'c'); glow += strokes(br, w * 2.6, 0.35, 'g');
+        if (R() < 0.4) {
+          var j = Math.floor(br.length * (0.3 + R() * 0.4)), bp = br[j], d2 = dir + (R() < 0.5 ? -1 : 1) * (0.3 + R() * 0.5), sl = bl * (0.3 + R() * 0.35);
+          var sb = zig(bp[0], bp[1], bp[0] + Math.cos(d2) * sl, bp[1] + Math.sin(d2) * sl, 0.25, 3);
+          core += strokes(sb, w * 0.32, 0.7, 'c'); glow += strokes(sb, w * 1.6, 0.3, 'g');
+        }
+      }
+    }
+    var id = 'wkbg' + (++uid);
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('class', 'wk-bolt-svg'); svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.setAttribute('aria-hidden', 'true');
+    svg.innerHTML = '<defs><filter id="' + id + '" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="' + (2.2 * k).toFixed(1) + '"/></filter></defs>'
+      + '<g fill="none" stroke-linecap="round" stroke-linejoin="round">'
+      + '<g stroke="' + c.c + '" filter="url(#' + id + ')">' + glow + '</g>'
+      + '<g stroke="' + c.c + '" opacity=".9">' + core.replace(/class="c"/g, 'class="m"').replace(/stroke-width="([\d.]+)"/g, function (m, v) { return 'stroke-width="' + (Number(v) * 2).toFixed(2) + '"'; }) + '</g>'
+      + '<g stroke="#fff">' + core + '</g></g>';
+    n.appendChild(svg);
+    // Мерцание: разряд вспыхивает 2–3 раза и гаснет
+    var pats = [
+      [[0, 0], [0.04, 1], [0.14, 0.2], [0.22, 0.95], [0.36, 0.25], [0.46, 0.75], [1, 0]],
+      [[0, 0], [0.05, 1], [0.2, 0.35], [0.3, 1], [1, 0]],
+      [[0, 0], [0.03, 0.9], [0.1, 0.1], [0.16, 1], [0.28, 0.4], [0.4, 0.85], [0.55, 0.2], [1, 0]]
+    ];
+    var pat = pats[Math.floor(R() * pats.length)], dur = 380 + R() * 260;
+    var kf = pat.map(function (p) { return { opacity: p[1], offset: p[0] }; });
+    var a = svg.animate(kf, { duration: dur, easing: 'linear' });
+    var fl = null;
+    if (c.flash) {
+      fl = document.createElement('span'); fl.className = 'wk-bolt-flash';
+      var fx = (s[0] / W * 100).toFixed(0) + '% ' + (Math.max(0, s[1]) / H * 100).toFixed(0) + '%';
+      fl.style.background = 'radial-gradient(ellipse at ' + fx + ',color-mix(in srgb,' + c.c + ' 55%,#fff) 0,color-mix(in srgb,' + c.c + ' 45%,transparent) 30%,transparent 72%)';
+      n.appendChild(fl);
+      fl.animate(pat.map(function (p) { return { opacity: p[1] * 0.55, offset: p[0] }; }), { duration: dur, easing: 'linear' });
+    }
+    a.onfinish = function () { svg.remove(); if (fl) fl.remove(); };
+    setTimeout(function () { svg.remove(); if (fl) fl.remove(); }, dur + 300);
+  }
+  window.__wikiBoltStrike = function (n) { if (n) draw(n, cfg(n)); };
+
+  setInterval(function () {
+    var now = performance.now();
+    for (var i = nodes.length - 1; i >= 0; i--) {
+      var n = nodes[i];
+      if (!n.isConnected) { nodes.splice(i, 1); n.__bolt = false; if (io) io.unobserve(n); continue; }
+      if (document.hidden || !n.__bVis || reduce.matches || now < n.__bNext) continue;
+      var c = cfg(n), r = rate(n);
+      if (r <= 0) { n.__bNext = now + 1000; continue; }
+      if (n.querySelectorAll(':scope > .wk-bolt-svg').length < 2) draw(n, c);
+      n.__bNext = now + nextDelay(c) / r;
+    }
+  }, 90);
+  setInterval(scan, 1000);
+  scan();
+
+  // Землетрясение: каждый новый удар — в случайном месте карточки
+  function quakeSpot(el) {
+    el.style.setProperty('--qx', (18 + R() * 64).toFixed(1) + '%');
+    el.style.setProperty('--qy', (16 + R() * 64).toFixed(1) + '%');
+    el.style.setProperty('--qr', ((R() * 2 - 1) * 45).toFixed(0) + 'deg');
+    el.style.setProperty('--qs', (0.85 + R() * 0.4).toFixed(2));
+  }
+  document.addEventListener('animationiteration', function (e) {
+    if (e.animationName !== 'wkQuake' || e.pseudoElement) return;
+    var t = e.target; if (t && t.getAttribute && t.getAttribute('data-amb') === 'quake') quakeSpot(t);
+  }, true);
+  setInterval(function () {
+    document.querySelectorAll('[data-amb="quake"]').forEach(function (el) { if (el.__qAmb !== true) { el.__qAmb = true; quakeSpot(el); } });
+  }, 1000);
+  // если эффект сменили и вернули — снова случайное место
+  new MutationObserver(function (ms) { ms.forEach(function (m) { if (m.target.getAttribute && m.target.getAttribute('data-amb') !== 'quake') m.target.__qAmb = false; }); })
+    .observe(document.documentElement, { attributes: true, attributeFilter: ['data-amb'], subtree: true });
+})();
+</script>
 </body></html>
