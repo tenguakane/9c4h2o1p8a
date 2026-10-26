@@ -23931,8 +23931,8 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
     wrapEl.appendChild(panel); wrapEl.appendChild(side);
     var libFx = document.createElement('div'), libSh = document.createElement('div');
     // Переносим стандартные списки внутрь конструктора, чтобы всё было в одном месте.
-    if (fxSel) { (fxSel.closest('.wiki-editor-control-shell') || fxSel).style.width = '100%'; libFx.appendChild(fxSel.closest('.wiki-editor-control-shell') || fxSel); }
-    if (shSel) { var shBox = shSel.closest('.wiki-editor-field'); libSh.appendChild(shSel.closest('.wiki-editor-control-shell') || shSel); if (shBox) shBox.classList.add('wk-cs-moved'); }
+    if (fxSel) { var fxHost = fxSel.closest('.wk-fxg') || fxSel.closest('.wiki-editor-control-shell') || fxSel; fxHost.style.width = '100%'; libFx.appendChild(fxHost); }
+    if (shSel) { var shBox = shSel.closest('.wiki-editor-field'); libSh.appendChild(shSel.closest('.wk-fxg') || shSel.closest('.wiki-editor-control-shell') || shSel); if (shBox) shBox.classList.add('wk-cs-moved'); }
     field.querySelectorAll(':scope > .wiki-editor-hint, :scope > small.wiki-editor-hint').forEach(function (h) { h.style.display = 'none'; });
     function get(path) { var o = st; path.split('.').forEach(function (k) { o = o == null ? undefined : o[k]; }); return o; }
     function set(path, v) { var ks = path.split('.'), o = st; for (var i = 0; i < ks.length - 1; i++) { if (!o[ks[i]] || typeof o[ks[i]] !== 'object') o[ks[i]] = {}; o = o[ks[i]]; } o[ks[ks.length - 1]] = v; }
@@ -24109,4 +24109,106 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
 [data-fx="holo-sparkle"]>.wk-fx-b::after,[data-fx="holo-stars"]>.wk-fx-b::after,[data-fx="holo-rays"]>.wk-fx-b::after,[data-fx="holo-scan"]>.wk-fx-b::after,[data-fx="holo-waves"]>.wk-fx-b::after,[data-fx="holo-checker"]>.wk-fx-b::after,[data-fx="holo-grain"]>.wk-fx-b::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(115deg,var(--h1),var(--h2),var(--h3),var(--h4),var(--h5));background-size:300% 300%;background-position:var(--pos) var(--pos);mix-blend-mode:color;opacity:calc(var(--o)*.35);pointer-events:none}
 :is([data-fx="foil-rose"],[data-fx="foil-copper"],[data-fx="foil-emerald"],[data-fx="foil-sapphire"],[data-fx="foil-ruby"],[data-fx="foil-violet"],[data-fx="foil-black"],[data-fx="foil-accent"],[data-fx="foil-gold-brushed"],[data-fx="foil-silver-brushed"],[data-fx="foil-silver-hammered"],[data-fx="foil-copper-hammered"],[data-fx="foil-gold-grain"],[data-fx="foil-silver-plate"],[data-fx="foil-rose-sparkle"],[data-fx="foil-black-grain"],[data-fx="holo-ocean"],[data-fx="holo-sunset"],[data-fx="holo-galaxy"],[data-fx="holo-aurora"],[data-fx="holo-gold"],[data-fx="holo-mono"],[data-fx="holo-accent"],[data-fx="holo-sparkle"],[data-fx="holo-stars"],[data-fx="holo-rays"],[data-fx="holo-scan"],[data-fx="holo-waves"],[data-fx="holo-checker"],[data-fx="holo-grain"])>:is(.wk-fx-a,.wk-fx-b){overflow:hidden}
 </style>
+<style id="wiki-fx-groups-style">
+/* Группы и поиск в списках эффектов */
+.wk-fxg{display:grid;gap:6px;width:100%;min-width:0}
+.wk-fxg-top{display:flex;gap:6px;align-items:center;min-width:0}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fxg-search{flex:1 1 160px;min-width:0;width:auto!important;min-height:0!important;height:auto!important;padding:6px 10px 6px 28px!important;border-radius:8px!important;border:1px solid #334155!important;background:#0b1220 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='M15.5 15.5L21 21'/%3E%3C/svg%3E") 9px 50%/13px no-repeat!important;color:#e2e8f0!important;font:500 12.5px Arial,sans-serif!important;text-transform:none!important}
+.wk-fxg-count{flex:0 0 auto;color:#64748b;font:600 11px Arial,sans-serif;white-space:nowrap}
+.wk-fxg-chips{display:flex;flex-wrap:wrap;gap:4px}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fxg-chip{width:auto!important;min-height:0!important;padding:3px 9px!important;border-radius:99px!important;border:1px solid #334155!important;background:rgba(255,255,255,.03)!important;color:#94a3b8!important;font:600 11px Arial,sans-serif!important;cursor:pointer}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fxg-chip:hover{color:#e2e8f0!important;border-color:#64748b!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-fxg-chip.is-on{border-color:#d4a84f!important;background:rgba(212,168,79,.16)!important;color:#f4d99e!important}
+</style>
+<script id="wiki-fx-groups">
+(function () {
+  'use strict';
+  // Группы: порядок групп = порядок в списке. Что не попало ни в одну — в «Другие».
+  var GROUPS = {
+    card_fx: [
+      ['✨ Блики', ['gloss', 'cosmos']],
+      ['🌈 Голограммы', ['holo', 'reverse', 'holo-ocean', 'holo-sunset', 'holo-galaxy', 'holo-aurora', 'holo-gold', 'holo-mono', 'holo-accent']],
+      ['🌈 Голограммы с текстурой', ['holo-sparkle', 'holo-stars', 'holo-rays', 'holo-scan', 'holo-waves', 'holo-checker', 'holo-grain']],
+      ['🥇 Фольга', ['gold', 'silver', 'foil-rose', 'foil-copper', 'foil-emerald', 'foil-sapphire', 'foil-ruby', 'foil-violet', 'foil-black', 'foil-accent']],
+      ['🥇 Фольга с текстурой', ['foil-gold-brushed', 'foil-silver-brushed', 'foil-silver-hammered', 'foil-copper-hammered', 'foil-gold-grain', 'foil-silver-plate', 'foil-rose-sparkle', 'foil-black-grain']],
+      ['⚔️ Силы', ['armament', 'gear5', 'strings']]
+    ],
+    card_shine: [
+      ['🌈 Рамки и блики', ['prism', 'accentprism', 'shine', 'goldshine', 'rainbowshine', 'twinkle', 'holodrift', 'neon']],
+      ['🔥 Стихии', ['fire', 'phoenix', 'magma', 'smoke', 'dark', 'thunder', 'light', 'frost', 'ice', 'sand', 'sea', 'rain', 'poison']],
+      ['👑 Воля и бой', ['haki', 'haoclash', 'drums', 'swords', 'claws', 'fangs', 'explosion', 'quake']],
+      ['🍎 Дьявольские плоды', ['room', 'souls', 'barrier', 'ghosts', 'love', 'diamond', 'mochi', 'flowers', 'time', 'rust', 'sweets', 'devil']],
+      ['🌸 Атмосфера и фактура', ['sakura', 'bubbles', 'poneglyph', 'wanted']]
+    ],
+    title_fx: [
+      ['🎨 Свой', ['custom']],
+      ['🥇 Металлы', ['gold', 'chrome', 'bronze']],
+      ['🌈 Перелив и радуга', ['shimmer', 'rainbow', 'accent', 'galaxy', 'aurora', 'sunset', 'cotton', 'twilight']],
+      ['💡 Свечение', ['neon', 'thunder', 'haki', 'yami', 'gear5', 'mist', 'glitch']],
+      ['🔥 Стихии', ['fire', 'phoenix', 'magma', 'ice', 'sea', 'toxic', 'blood']],
+      ['💎 Камни и цвета', ['emerald', 'ruby', 'sapphire', 'amber', 'mint', 'peach', 'lilac', 'sakura', 'devilfruit']],
+      ['📜 Плакаты · капс', ['wanted', 'rainbowcaps', 'marine', 'yonko', 'jollyroger', 'scroll', 'redline', 'dressrosa', 'samurai', 'comic', 'poneglyph']]
+    ]
+  };
+  function short(label) { return label.replace(/^\S+\s/, ''); }
+  function group(sel) {
+    var key = sel.getAttribute('data-field'); var spec = GROUPS[key]; if (!spec || sel.dataset.wkGrouped) return;
+    sel.dataset.wkGrouped = '1';
+    var cur = sel.value, opts = Array.prototype.slice.call(sel.querySelectorAll('option'));
+    var top = [], byVal = {};
+    opts.forEach(function (o) { if (o.value === '' || o.value === 'none') top.push(o); else byVal[o.value] = o; });
+    var frag = document.createDocumentFragment(); top.forEach(function (o) { frag.appendChild(o); });
+    var used = {};
+    spec.forEach(function (g) {
+      var og = document.createElement('optgroup'); og.label = g[0];
+      g[1].forEach(function (v) { if (byVal[v]) { og.appendChild(byVal[v]); used[v] = 1; } });
+      if (og.children.length) frag.appendChild(og);
+    });
+    var rest = Object.keys(byVal).filter(function (v) { return !used[v]; });
+    if (rest.length) { var og = document.createElement('optgroup'); og.label = '✳️ Другие'; rest.forEach(function (v) { og.appendChild(byVal[v]); }); frag.appendChild(og); }
+    sel.innerHTML = ''; sel.appendChild(frag); sel.value = cur;
+    // Поиск и быстрые группы
+    var host = sel.closest('.wiki-editor-control-shell') || sel;
+    var box = document.createElement('div'); box.className = 'wk-fxg';
+    var total = sel.querySelectorAll('optgroup option').length;
+    box.innerHTML = '<div class="wk-fxg-top"><input type="search" class="wk-fxg-search" placeholder="Найти эффект…" autocomplete="off"><span class="wk-fxg-count">' + total + ' вариантов</span></div>'
+      + '<div class="wk-fxg-chips"><button type="button" class="wk-fxg-chip is-on" data-g="">Все</button>' + Array.prototype.map.call(sel.querySelectorAll('optgroup'), function (og, i) { return '<button type="button" class="wk-fxg-chip" data-g="' + i + '" title="' + og.label + '">' + short(og.label) + '</button>'; }).join('') + '</div>';
+    host.parentNode.insertBefore(box, host);
+    box.appendChild(host);
+    var input = box.querySelector('.wk-fxg-search'), count = box.querySelector('.wk-fxg-count'), gsel = '';
+    function apply() {
+      var q = input.value.trim().toLowerCase(), shown = 0, firstVisible = null;
+      Array.prototype.forEach.call(sel.querySelectorAll('optgroup'), function (og, i) {
+        var any = false;
+        Array.prototype.forEach.call(og.children, function (o) {
+          var ok = (gsel === '' || String(i) === gsel) && (!q || o.textContent.toLowerCase().indexOf(q) >= 0 || og.label.toLowerCase().indexOf(q) >= 0);
+          o.hidden = !ok; o.disabled = !ok && o.value !== sel.value; if (ok) { any = true; shown++; if (!firstVisible) firstVisible = o; }
+        });
+        og.hidden = !any; og.style.display = any ? '' : 'none';
+      });
+      count.textContent = (q || gsel !== '') ? 'найдено: ' + shown : total + ' вариантов';
+      return firstVisible;
+    }
+    input.addEventListener('input', apply);
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); var f = apply(); if (f && sel.value !== f.value) { sel.value = f.value; sel.dispatchEvent(new Event('input', { bubbles: true })); sel.dispatchEvent(new Event('change', { bubbles: true })); } }
+      else if (e.key === 'Escape') { e.stopPropagation(); input.value = ''; apply(); }
+    });
+    box.querySelector('.wk-fxg-chips').addEventListener('click', function (e) {
+      var b = e.target.closest('.wk-fxg-chip'); if (!b) return;
+      gsel = b.getAttribute('data-g'); box.querySelectorAll('.wk-fxg-chip').forEach(function (c) { c.classList.toggle('is-on', c === b); });
+      var f = apply();
+      // В выбранной группе сразу показываем первый вариант, если текущий в неё не входит.
+      var cur = sel.selectedOptions[0];
+      if (gsel !== '' && f && (!cur || cur.hidden || cur.value === '' || cur.value === 'none')) { sel.value = f.value; sel.dispatchEvent(new Event('input', { bubbles: true })); sel.dispatchEvent(new Event('change', { bubbles: true })); }
+    });
+  }
+  var pend = 0;
+  new MutationObserver(function () { if (!pend) pend = requestAnimationFrame(function () {
+    pend = 0;
+    document.querySelectorAll('#wikiEditorForm select[data-field="card_fx"], #wikiEditorForm select[data-field="card_shine"], #wikiEditorForm select[data-field="title_fx"]').forEach(group);
+  }); }).observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
+
 </body></html>
