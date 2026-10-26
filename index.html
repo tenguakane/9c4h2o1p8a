@@ -10437,34 +10437,39 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         }).join('');
         const sectionLayouts = {
             character: [
-                {title:'Основная информация',icon:'🧭',desc:'Идентификатор, имя и главное изображение.',keys:['id','name','nickname','movie_id','person_link','person_image_position','card_fx','card_shine','title_fx']},
+                {title:'Основная информация',icon:'🧭',desc:'Идентификатор, имя и главное изображение.',keys:['id','name','nickname','movie_id','person_link','person_image_position']},
                 {title:'Когда наступает таймскип',icon:'⏳',group:'ts',keys:['person2_from_chapter','person2_from_episode']},
                 {title:'Новый облик',icon:'🖼️',group:'ts',keys:['person2_link','person2_image_position','person2_image_position_x','person2_image_zoom']},
                 {title:'Новое описание и статусы',icon:'📝',group:'ts',keys:['timeskip_description','nickname2','status2']},
                 {title:'Новые плод, корабль и флаг',icon:'⛵',group:'ts',keys:['ts_fruit_article_id','ts_ship','ts_ship_link','ts_ship_description','ts_flag','ts_flag_link','ts_flag_description']},
                 {title:'Описание и плоды',icon:'📖',desc:'Биография и ссылки на статьи плодов. Имя, изображение и описание подтягиваются автоматически.',keys:['description','fruit_article_id','fruit2_article_id']},
+                {title:'Эффекты карточки и заголовка',icon:'✨',desc:'Эффекты при наклоне и постоянные, конструктор слоёв и частиц, шрифт и эффект заголовка. Раздел можно свернуть.',fx:true,keys:['card_fx','card_shine','title_fx']},
                 {title:'Корабли и символика',icon:'⛵',desc:'Изображения и описания кораблей персонажа и его флага.',keys:['ship','ship_link','ship_description','ship2','ship2_link','ship2_description','flag','flag_link','flag_description']},
                 {title:'Связанные статьи',icon:'🔗',desc:'Отметь материалы, которые должны быть связаны с этой статьёй.',keys:['connect']}
             ],
             story: [
-                {title:'Основная информация',icon:'🧭',desc:'Название арки, изображение карточки с настройкой кадрирования, сага и диапазоны глав/эпизодов.',keys:['id','name','image','image_position','saga','chapters','episodes','ongoing','filler','movie','card_fx','card_shine','title_fx']},
+                {title:'Основная информация',icon:'🧭',desc:'Название арки, изображение карточки с настройкой кадрирования, сага и диапазоны глав/эпизодов.',keys:['id','name','image','image_position','saga','chapters','episodes','ongoing','filler','movie']},
                 {title:'Содержание арки',icon:'📖',desc:'Описание и ключевые события.',keys:['description','key']},
+                {title:'Эффекты карточки и заголовка',icon:'✨',desc:'Эффекты при наклоне и постоянные, конструктор слоёв и частиц, шрифт и эффект заголовка. Раздел можно свернуть.',fx:true,keys:['card_fx','card_shine','title_fx']},
                 {title:'Связанные статьи',icon:'🔗',desc:'Выбери персонажей и другие материалы для связи с аркой.',keys:['characters','connect']}
             ],
             reward: [
                 {title:'Награда',icon:'💰',desc:'Укажи размер награды. Место в общем рейтинге и количество позиций рассчитываются автоматически по всем видимым наградам. КА рассчитывается автоматически.',keys:['id','character_id','reward','ka']},
-                {title:'Изображение карточки',icon:'🖼️',desc:'Укажи отдельную картинку для карточки этой награды. Она не зависит от главного изображения персонажа. Вставь прямую ссылку на изображение.',keys:['reward_image','card_fx','card_shine','title_fx']},
+                {title:'Изображение карточки',icon:'🖼️',desc:'Укажи отдельную картинку для карточки этой награды. Она не зависит от главного изображения персонажа. Вставь прямую ссылку на изображение.',keys:['reward_image']},
+                {title:'Эффекты карточки и заголовка',icon:'✨',desc:'Эффекты при наклоне и постоянные, конструктор слоёв и частиц, шрифт и эффект заголовка. Раздел можно свернуть.',fx:true,keys:['card_fx','card_shine','title_fx']},
                 {title:'Сюжетная принадлежность и появление',icon:'🗺️',desc:'Арка и сага вычисляются автоматически по главе манги и эпизоду аниме.',keys:['saga','arc','saga_anime','arc_anime','appearance_chapter','appearance_episode']},
                 {title:'Связанные статьи',icon:'🔗',desc:'Дополнительные связи с другими материалами вики.',keys:['connect']}
             ],
             fruit: [
-                {title:'Основная информация',icon:'🍎',desc:'Главные поля статьи: ID, название, фотография с настройкой кадрирования и описание.',keys:['id','name','image','image_position','description','card_fx','card_shine','title_fx']},
+                {title:'Основная информация',icon:'🍎',desc:'Главные поля статьи: ID, название, фотография с настройкой кадрирования и описание.',keys:['id','name','image','image_position','description']},
+                {title:'Эффекты карточки и заголовка',icon:'✨',desc:'Эффекты при наклоне и постоянные, конструктор слоёв и частиц, шрифт и эффект заголовка. Раздел можно свернуть.',fx:true,keys:['card_fx','card_shine','title_fx']},
                 {title:'Тип и владелец',icon:'👤',desc:'Выбери тип плода и владельца. Владельца можно найти по имени или ID.',keys:['type','owner']},
                 {title:'Появление и сюжетная принадлежность',icon:'🗺️',desc:'Глава и эпизод появления; арки и саги манги и аниме вычисляются автоматически.',keys:['appearance','episode','saga','arc','saga_anime','arc_anime']},
                 {title:'Связанные статьи',icon:'🔗',desc:'Персонажи, арки и другие материалы, связанные с плодом.',keys:['connect']}
             ],
             useful: [
-                {title:'Основная информация',icon:'💡',desc:'Главные поля статьи: ID, название, фотография с настройкой кадрирования и описание.',keys:['id','name','image','image_position','description','card_fx','card_shine','title_fx']},
+                {title:'Основная информация',icon:'💡',desc:'Главные поля статьи: ID, название, фотография с настройкой кадрирования и описание.',keys:['id','name','image','image_position','description']},
+                {title:'Эффекты карточки и заголовка',icon:'✨',desc:'Эффекты при наклоне и постоянные, конструктор слоёв и частиц, шрифт и эффект заголовка. Раздел можно свернуть.',fx:true,keys:['card_fx','card_shine','title_fx']},
                 {title:'Категория',icon:'🏷️',desc:'Выбери тип полезной статьи.',keys:['type']},
                 {title:'Появление и сюжетная принадлежность',icon:'🗺️',desc:'Глава и эпизод появления; арки и саги манги и аниме вычисляются автоматически.',keys:['appearance_chapter','appearance_episode','saga','arc','saga_anime','arc_anime']},
                 {title:'Связанные статьи',icon:'🔗',desc:'Связи с персонажами, арками, плодами и другими публикациями.',keys:['connect']}
@@ -10536,8 +10541,8 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
                 ? '<button type="button" class="wiki-editor-add-optional" data-add-optional="fruit2">＋ Добавить плод</button>'
                 : (activeType==='character' && section.title==='Корабли и символика' && !secondShipPresent
                     ? '<button type="button" class="wiki-editor-add-optional" data-add-optional="ship2">＋ Добавить корабль</button>' : '');
-            const collapsedByDefault = section.title==='Связанные статьи' || (activeType==='character' && section.title==='Корабли и символика');
-            return `<section class="wiki-editor-section${collapsedByDefault?' collapsed':''}" data-editor-section="${index}" data-wk-group="${section.group||'main'}"><header class="wiki-editor-section-head" role="button" tabindex="0" aria-expanded="${!collapsedByDefault}" data-toggle-section="${index}"><div class="wiki-editor-section-icon">${section.icon}</div><div class="wiki-editor-section-heading"><h4>${section.title}</h4></div><span class="wiki-editor-section-chevron">⌄</span></header><div class="wiki-editor-section-body"><div class="wiki-editor-fields">${inner}${addOptional}</div></div></section>`;
+            const collapsedByDefault = section.title==='Связанные статьи' || (activeType==='character' && section.title==='Корабли и символика') || (section.fx && (()=>{try{return localStorage.getItem('wkEditorFxCollapsed')==='1'}catch(e){return false}})());
+            return `<section class="wiki-editor-section${collapsedByDefault?' collapsed':''}" data-editor-section="${index}" data-wk-group="${section.group||'main'}"${section.fx?' data-wk-fx="1"':''}><header class="wiki-editor-section-head" role="button" tabindex="0" aria-expanded="${!collapsedByDefault}" data-toggle-section="${index}"><div class="wiki-editor-section-icon">${section.icon}</div><div class="wiki-editor-section-heading"><h4>${section.title}</h4></div><span class="wiki-editor-section-chevron">⌄</span></header><div class="wiki-editor-section-body"><div class="wiki-editor-fields">${inner}${addOptional}</div></div></section>`;
         }).join('');
         // Ranking is derived automatically from the complete visible reward list; no per-article inputs.
         const characterRewardRankPanel = '';
@@ -23749,11 +23754,18 @@ html body #characterArticleContent#characterArticleContent#characterArticleConte
 @keyframes wkCsFlut{0%{transform:rotate(var(--r)) scaleX(1)}25%{transform:rotate(calc(var(--r) + 40deg)) scaleX(.25)}50%{transform:rotate(calc(var(--r) + 80deg)) scaleX(1)}75%{transform:rotate(calc(var(--r) + 40deg)) scaleX(-.6)}100%{transform:rotate(var(--r)) scaleX(1)}}
 .wk-cs-parts .sh-leaf{background:linear-gradient(135deg,color-mix(in srgb,var(--pc) 55%,#fff) 0,var(--pc) 45%,color-mix(in srgb,var(--pc) 60%,#102000) 100%);animation:wkCsTumble calc(var(--t) * .55) linear var(--d) infinite}
 @keyframes wkCsTumble{0%{transform:rotate(var(--r)) scaleY(1)}50%{transform:rotate(calc(var(--r) + 180deg)) scaleY(-.5)}100%{transform:rotate(calc(var(--r) + 360deg)) scaleY(1)}}
-.wk-cs-parts :is(.sh-drop,.sh-blood){--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1.5S4.8 10.2 4.8 15a7.2 7.2 0 0 0 14.4 0C19.2 10.2 12 1.5 12 1.5z'/%3E%3C/svg%3E");background:radial-gradient(circle at 40% 64%,#fff 0 9%,color-mix(in srgb,var(--pc) 45%,#fff) 20%,var(--pc) 52%,color-mix(in srgb,var(--pc) 65%,#000) 100%);width:calc(var(--cs-ps,10px) * var(--s) * .8);height:calc(var(--cs-ps,10px) * var(--s) * 1.05)}
-.wk-cs-parts .sh-blood{background:radial-gradient(circle at 40% 64%,#ff9aa5 0 7%,color-mix(in srgb,var(--pc) 75%,#fff) 16%,var(--pc) 48%,color-mix(in srgb,var(--pc) 55%,#000) 100%);filter:drop-shadow(0 1px 1px rgba(0,0,0,.45))}
+.wk-cs-parts .sh-drop{-webkit-mask:none;mask:none;border-radius:50% 50% 47% 53%/58% 56% 44% 42%;width:calc(var(--cs-ps,10px) * var(--s) * .95);height:calc(var(--cs-ps,10px) * var(--s) * 1.02);background:radial-gradient(circle at 33% 27%,rgba(255,255,255,.95) 0 6%,rgba(255,255,255,.4) 11%,transparent 20%),radial-gradient(ellipse 40% 26% at 58% 80%,rgba(255,255,255,.45),transparent 70%),radial-gradient(ellipse at 50% 48%,color-mix(in srgb,var(--pc) 8%,transparent) 0 46%,color-mix(in srgb,var(--pc) 22%,rgba(0,0,0,.18)) 72%,rgba(0,0,0,.5) 100%);box-shadow:inset 0 -1px 1.5px rgba(255,255,255,.35),inset 0 1px 1px rgba(0,0,0,.25),0 1.5px 2px rgba(0,0,0,.4);-webkit-backdrop-filter:blur(.7px) brightness(1.12) contrast(1.12) saturate(1.2);backdrop-filter:blur(.7px) brightness(1.12) contrast(1.12) saturate(1.2)}
+.wk-cs-parts .sh-blood{-webkit-mask:none;mask:none;border-radius:50% 50% 48% 52%/62% 60% 40% 38%;width:calc(var(--cs-ps,10px) * var(--s) * .9);height:calc(var(--cs-ps,10px) * var(--s) * 1.12);background:radial-gradient(circle at 34% 28%,rgba(255,215,215,.95) 0 5%,rgba(255,170,170,.35) 10%,transparent 18%),radial-gradient(ellipse at 50% 58%,color-mix(in srgb,var(--pc) 88%,#ff6a6a) 0,var(--pc) 42%,color-mix(in srgb,var(--pc) 50%,#000) 100%);box-shadow:inset 0 -1px 2px rgba(0,0,0,.45),0 1.5px 2px rgba(0,0,0,.55)}
 .wk-cs-parts .sh-rainline{-webkit-mask:none;mask:none;border-radius:2px;width:calc(var(--cs-ps,10px) * var(--s) * .14);height:calc(var(--cs-ps,10px) * var(--s) * 2.2);background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--pc) 85%,transparent));transform:rotate(12deg)}
 .wk-cs-parts .m-trickle{animation:wkCsTrickle var(--t) cubic-bezier(.55,0,.75,.45) var(--d) infinite}
-.wk-cs-parts .m-trickle>b{transform-origin:50% 0;animation:wkCsStretch var(--t) ease-in var(--d) infinite}
+.wk-cs-parts :is(.m-trickle,.m-glass.is-slide)>b{transform-origin:50% 100%;animation:wkCsStretch var(--t) ease-in var(--d) infinite}
+.wk-cs-parts .m-glass{animation:none}
+.wk-cs-parts .m-glass:not(.is-slide)>b{animation:wkCsBead var(--t) ease-out var(--d) infinite}
+.wk-cs-parts .m-glass.is-slide{animation:wkCsTrickle var(--t) cubic-bezier(.6,0,.8,.4) var(--d) infinite}
+@keyframes wkCsBead{0%{transform:scale(.2);opacity:0}6%{transform:scale(1);opacity:1}88%{transform:scale(1);opacity:1}100%{transform:scale(.9);opacity:0}}
+.wk-cs-parts .m-trail{animation:none}
+.wk-cs-parts .m-trail>s{position:absolute;left:var(--x);top:var(--y);width:calc(var(--cs-ps,10px) * var(--s) * .32);margin-left:calc(var(--cs-ps,10px) * var(--s) * -.16);height:0;border-radius:0 0 50% 50%;background:linear-gradient(180deg,transparent,var(--tc) 30%,var(--tc));animation:wkCsTrail var(--t) cubic-bezier(.6,0,.8,.4) var(--d) infinite}
+@keyframes wkCsTrail{0%,25%{height:0;opacity:0}30%{opacity:1}90%{height:var(--dy);opacity:.9}100%{height:var(--dy);opacity:0}}
 @keyframes wkCsTrickle{0%{transform:translate(0,0);opacity:0}8%{opacity:1}25%{transform:translate(0,1%)}80%{opacity:.95}100%{transform:translate(var(--dx),var(--dy));opacity:0}}
 @keyframes wkCsStretch{0%,25%{transform:scaleY(1)}100%{transform:scaleY(1.7)}}
 .wk-cs-parts .m-wind{animation:wkCsWind var(--t) linear var(--d) infinite}
@@ -23803,8 +23815,10 @@ html body #characterArticleContent#characterArticleContent#characterArticleConte
 @media (prefers-reduced-motion:reduce){.wk-cs *{animation:none!important}}
 html.wk-fx-off .wk-cs{display:none}
 
-.wk-cs-shape i.sh-drop{--m:" + SHAPES['drop'] + ";background:linear-gradient(#cfeeff,#4fb0ff)}
-.wk-cs-shape i.sh-blood{--m:" + SHAPES['drop'] + ";background:linear-gradient(#ff6b7d,#8a0014)}
+.wk-cs-shape i.sh-drop{-webkit-mask:none!important;mask:none!important;border-radius:50% 50% 47% 53%/58% 56% 44% 42%;background:radial-gradient(circle at 33% 27%,#fff 0 9%,transparent 20%),radial-gradient(ellipse at 50% 48%,rgba(160,200,230,.25) 0 45%,rgba(0,0,0,.55) 100%)!important;box-shadow:0 1px 2px rgba(0,0,0,.4)}
+.wk-cs-shape i.sh-drop-old{--m:" + SHAPES['drop'] + ";background:linear-gradient(#cfeeff,#4fb0ff)}
+.wk-cs-shape i.sh-blood{-webkit-mask:none!important;mask:none!important;border-radius:50% 50% 48% 52%/62% 60% 40% 38%;background:radial-gradient(circle at 34% 28%,#ffd7d7 0 7%,transparent 16%),radial-gradient(ellipse at 50% 58%,#d0102a 0,#8e0012 45%,#3a0008 100%)!important}
+.wk-cs-shape i.sh-blood-old{--m:" + SHAPES['drop'] + ";background:linear-gradient(#ff6b7d,#8a0014)}
 .wk-cs-shape i.sh-rainline{-webkit-mask:none;mask:none;background:repeating-linear-gradient(102deg,transparent 0 3px,#a9d8ff 3px 4.5px)}
 
 .wk-cs-shape i.sh-coin{-webkit-mask:none!important;mask:none!important;border-radius:50%;background:radial-gradient(circle at 34% 30%,#fff7cf 0 8%,#ffcf4a 42%,#8a5a00 100%)!important;position:relative}
@@ -23899,8 +23913,8 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
   function hashNum(s) { var h = 2166136261; s = String(s || ''); for (var i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619); return h >>> 0; }
   function rng(seed) { var a = seed >>> 0; return function () { a = (a + 0x6D2B79F5) >>> 0; var t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
   var SPEED = { slow: 1.8, '': 1, fast: 0.55 };
-  var MOTION_T = { up: 5.5, down: 7, float: 6, burst: 2.8, twinkle: 2.8, wind: 3.6, trickle: 6 };
-  var SHAPE_COLOR = { sand: '#e3b973', smoke: '#9aa3b2', drop: '#8fd3ff', blood: '#b3001b', rainline: '#cfe8ff', petal: '#ff9cc4', leaf: '#6fcf4f', coin: '#ffcf4a', berry: '#ffd36b', flame: '#ff8a1f', dot: '#ff8a1f', firefly: '#d9ff6b' };
+  var MOTION_T = { up: 5.5, down: 7, float: 6, burst: 2.8, twinkle: 2.8, wind: 3.6, trickle: 6, glass: 5.5 };
+  var SHAPE_COLOR = { sand: '#e3b973', smoke: '#9aa3b2', drop: '#dff1ff', blood: '#8e0012', rainline: '#cfe8ff', petal: '#ff9cc4', leaf: '#6fcf4f', coin: '#ffcf4a', berry: '#ffd36b', flame: '#ff8a1f', dot: '#ff8a1f', firefly: '#d9ff6b' };
   var LIB = ['wk-fx-a', 'wk-fx-b', 'wk-amb-a', 'wk-amb-b', 'wk-amb-p', 'wk-amb-fx'];
   function libLayers(el) { return Array.prototype.filter.call(el.children, function (c) { return LIB.some(function (k) { return c.classList.contains(k); }); }); }
   function animatesFilter(n) { try { return n.getAnimations().some(function (a) { return a.effect && a.effect.getKeyframes().some(function (k) { return 'filter' in k; }); }); } catch (e) { return false; } }
@@ -23939,13 +23953,18 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
       if (mo === 'up') { y = 104; dx = (R() * 2 - 1) * 14; }
       else if (mo === 'down') { y = -6; dx = (R() * 2 - 1) * 14; }
       else if (mo === 'float') { dx = (R() * 2 - 1) * 10; dy = (R() * 2 - 1) * 8; }
-      else if (mo === 'trickle') { y = 3 + R() * 60; dx = (R() * 2 - 1) * 1.5; dy = 18 + R() * 30; }
+      var slide = mo === 'trickle' || (mo === 'glass' && R() < .3);
+      if (slide) { y = 3 + R() * 60; dx = (R() * 2 - 1) * 1.2; dy = 18 + R() * 30; }
       else if (mo === 'wind') { x = -6; y = 4 + R() * 92; dy = (R() * 2 - 1) * 12; }
       else if (mo === 'burst') { x = 50 + (R() * 2 - 1) * 6; y = 50 + (R() * 2 - 1) * 6; var a = R() * Math.PI * 2, d = 38 + R() * 30; dx = Math.cos(a) * d; dy = Math.sin(a) * d; }
       var t = base * (0.75 + R() * 0.55), del = -R() * t;
       var col = p.c === 'rainbow' ? 'hsl(' + Math.round(R() * 360) + ',95%,66%)' : p.c === 'accent' ? 'var(--wk-acc,#ffd36b)' : (p.c || SHAPE_COLOR[shape] || '#ffd36b');
       if (shape === 'sand' && !p.c) col = 'hsl(' + (36 + R() * 10).toFixed(0) + ',' + (55 + R() * 20).toFixed(0) + '%,' + (60 + R() * 18).toFixed(0) + '%)';
-      out += '<i class="m-' + mo + '" style="--x:' + x.toFixed(1) + '%;--y:' + y.toFixed(1) + '%;--dx:' + dx.toFixed(1) + '%;--dy:' + dy.toFixed(1) + '%;--t:' + t.toFixed(2) + 's;--d:' + del.toFixed(2) + 's;--s:' + (0.6 + R() * 0.75).toFixed(2) + ';--r:' + Math.round(R() * 360) + 'deg;--pc:' + col + '"><b class="sh-' + shape + '"></b></i>';
+      var sz = mo === 'glass' ? (slide ? 0.9 + R() * 0.6 : 0.35 + R() * 0.75) : (0.6 + R() * 0.75);
+      if (mo === 'glass' && !slide) t = base * (1.6 + R() * 1.2);
+      var vars = '--x:' + x.toFixed(1) + '%;--y:' + y.toFixed(1) + '%;--dx:' + dx.toFixed(1) + '%;--dy:' + dy.toFixed(1) + '%;--t:' + t.toFixed(2) + 's;--d:' + (-R() * t).toFixed(2) + 's;--s:' + sz.toFixed(2) + ';--r:' + Math.round(R() * 360) + 'deg;--pc:' + col;
+      if (slide && (shape === 'drop' || shape === 'blood')) out += '<i class="m-trail" style="' + vars + ';--tc:' + (shape === 'blood' ? 'color-mix(in srgb,' + col + ' 75%,transparent)' : 'rgba(255,255,255,.16)') + '"><s></s></i>';
+      out += '<i class="m-' + mo + (slide && mo === 'glass' ? ' is-slide' : '') + '" style="' + vars + '"><b class="sh-' + shape + '"></b></i>';
     }
     return out;
   }
@@ -24114,7 +24133,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
   var SHAPE_LIST = [['sparkle', 'Искры-звёзды'], ['star', 'Звёзды'], ['flame', 'Огоньки'], ['firefly', 'Светлячки'], ['heart', 'Сердца'], ['petal', 'Лепестки сакуры'], ['leaf', 'Листья'], ['snow', 'Снежинки'], ['bubble', 'Пузыри'], ['rainline', 'Дождь'], ['drop', 'Капли воды'], ['blood', 'Капли крови'], ['sand', 'Песок'], ['smoke', 'Дым'], ['coin', 'Монеты Белли'], ['berry', 'Знак Белли'], ['note', 'Ноты'], ['diamond', 'Кристаллы'], ['skull', 'Черепа']];
   // Частицы бывших постоянных эффектов — со своим движением
   var NATIVE_LIST = [['souls', '👻 Души (Йоми Йоми)'], ['ghosts', '👻 Призраки (Хоро Хоро)'], ['flowers', '🌸 Цветы (Хана Хана)'], ['dark', '🌑 Тьма'], ['light', '✨ Свет (Пика Пика)'], ['claws', '🐾 Следы когтей'], ['swords', '⚔️ Удары мечей'], ['twinkle', '✦ Мерцающие искры']];
-  var MOTIONS = [['up', 'Вверх'], ['down', 'Вниз'], ['float', 'Парят'], ['burst', 'Разлёт'], ['twinkle', 'Мерцают'], ['wind', 'Ветер'], ['trickle', 'Стекают']];
+  var MOTIONS = [['up', 'Вверх'], ['down', 'Вниз'], ['float', 'Парят'], ['burst', 'Разлёт'], ['twinkle', 'Мерцают'], ['wind', 'Ветер'], ['trickle', 'Стекают'], ['glass', 'На стекле']];
   var SP = [['slow', 'Медленно'], ['', 'Обычно'], ['fast', 'Быстро']];
   function seg(attr, items, cur) { return '<div class="wk-ts-seg" ' + attr + '>' + items.map(function (it) { return '<button type="button" data-v="' + it[0] + '"' + (String(cur || '') === it[0] ? ' class="is-on"' : '') + '>' + it[1] + '</button>'; }).join('') + '</div>'; }
   function sw(path) { return '<div class="wk-ts-swatches" data-sw-for="' + path + '">' + SW.map(function (c) { return '<button type="button" data-sw="' + c + '" style="background:' + c + '" title="' + c + '"></button>'; }).join('') + '</div>'; }
@@ -24190,7 +24209,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
           return html
             + '<div class="wk-ts-row"><span>Цвет</span><div class="wk-cs-colors">' + seg('data-seg="parts.cmode"', [['', 'Свой'], ['rainbow', 'Радужные'], ['accent', 'Цвет статьи']], cm ? p.c : '') + (cm ? '' : '<input type="color" data-p="parts.c" value="' + esc(p.c || SHAPE_COLOR[sh] || '#ffd36b') + '">') + '<label><input type="checkbox" data-p="parts.glow"' + (p.glow ? ' checked' : '') + '> свечение</label></div></div>'
             + (cm ? '' : '<div class="wk-ts-row"><span></span>' + sw('parts.c') + '</div>')
-            + '<div class="wk-ts-row"><span>Движение</span>' + seg('data-seg="parts.mo"', MOTIONS, p.mo || ({ sand: 'wind', blood: 'trickle', drop: 'trickle', rainline: 'down' }[sh] || 'up')) + '</div>'
+            + '<div class="wk-ts-row"><span>Движение</span>' + seg('data-seg="parts.mo"', MOTIONS, p.mo || ({ sand: 'wind', blood: 'trickle', drop: 'glass', rainline: 'down' }[sh] || 'up')) + '</div>'
             + '<div class="wk-ts-row"><span>Количество</span>' + range('parts.n', 3, 40, 1, Number(p.n) || 14, '', 14) + '</div>'
             + '<div class="wk-ts-row"><span>Размер</span>' + range('parts.size', 50, 250, 10, Number(p.size) || 100, '%', 100) + '</div>'
             + '<div class="wk-ts-row"><span>Скорость</span>' + seg('data-seg="parts.sp"', SP, p.sp) + '</div>';
@@ -24241,7 +24260,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
       if (b.hasAttribute('data-def')) { var dp2 = b.getAttribute('data-def'); set(dp2, Number(b.getAttribute('data-defv'))); commit(true); return; }
       if (b.hasAttribute('data-ring-c3')) { return; }
       if (b.hasAttribute('data-hit-test')) { var pvh = form.querySelector('.wk-fx-preview > .wk-cs > .wk-cs-hit'); if (window.__wikiPlayHit) window.__wikiPlayHit(pvh); return; }
-      if (b.hasAttribute('data-shape')) { var nsh = b.getAttribute('data-shape'); set('parts.shape', nsh); var defMo = { sand: 'wind', blood: 'trickle', drop: 'trickle', rainline: 'down', smoke: 'up' }[nsh]; if (defMo) set('parts.mo', defMo); if (/^(smoke|sand|petal|leaf|coin|berry|flame|firefly|drop|blood|rainline)$/.test(nsh) && get('parts.c') && !/^(rainbow|accent)$/.test(get('parts.c'))) set('parts.c', ''); commit(true); return; }
+      if (b.hasAttribute('data-shape')) { var nsh = b.getAttribute('data-shape'); set('parts.shape', nsh); var defMo = { sand: 'wind', blood: 'trickle', drop: 'glass', rainline: 'down', smoke: 'up' }[nsh]; if (defMo === 'glass' && !get('parts.n')) set('parts.n', 26); if (defMo) set('parts.mo', defMo); if (/^(smoke|sand|petal|leaf|coin|berry|flame|firefly|drop|blood|rainline)$/.test(nsh) && get('parts.c') && !/^(rainbow|accent)$/.test(get('parts.c'))) set('parts.c', ''); commit(true); return; }
       var sg = b.closest('[data-seg]'); if (sg) {
         var path = sg.getAttribute('data-seg'), v = b.getAttribute('data-v');
         if (path === 'parts.cmode') { set('parts.c', v || '#ffd36b'); } else set(path, v);
@@ -24476,4 +24495,17 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
 
 
 
+<script id="wiki-editor-fx-section">
+/* Раздел «Эффекты карточки и заголовка»: запоминаем, свёрнут он или нет */
+(function () {
+  document.addEventListener('click', function (e) {
+    var head = e.target.closest && e.target.closest('.wiki-editor-section[data-wk-fx] [data-toggle-section]'); if (!head) return;
+    var sec = head.closest('.wiki-editor-section');
+    setTimeout(function () { try { localStorage.setItem('wkEditorFxCollapsed', sec.classList.contains('collapsed') ? '1' : '0'); } catch (err) {} }, 0);
+  }, true);
+})();
+</script>
+<style id="wiki-editor-fx-section-style">
+#wikiEditorForm .wiki-editor-section[data-wk-fx] .wiki-editor-field[data-editor-field="title_fx"]{margin-top:6px;padding-top:14px;border-top:1px dashed #334155}
+</style>
 </body></html>
