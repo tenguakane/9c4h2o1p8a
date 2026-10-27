@@ -1325,7 +1325,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "27.10.2026 · 49";
+const WIKI_VERSION = "27.10.2026 · 50";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -21729,7 +21729,7 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     mochi: [{ c: 'mo', n: 4, pos: 'any', t: [3.5, 6], s: [0.7, 1.2] }],
     flowers: [{ c: 'fw', n: 7, pos: 'any', t: [4.5, 7.5], s: [0.6, 1.3], v: 3 }],
     smoke: [{ c: 'sm', n: 8, pos: 'low', t: [8, 13], s: [0.7, 1.2], v: 3 }],
-    sea: [{ c: 'ray', n: 4, pos: 'any', t: [6, 10], s: [0.7, 1.4] }, { c: 'bb', n: 10, pos: 'bottom', t: [5, 9], s: [0.5, 1.3] }, { c: 'pk', n: 14, pos: 'any', t: [5, 9], s: [0.6, 1.3] }],
+    sea: [{ c: 'ms', n: 26, pos: 'any', t: [8, 15], s: [0.4, 1.3], v: 2 }, { c: 'bb', n: 6, pos: 'bottom', t: [6, 10], s: [0.35, 0.9] }, { c: 'bl', n: 7, pos: 'any', t: [3.5, 7], s: [0.5, 1.4], v: 2 }],
     rain: [{ c: 'rp', n: 9, pos: 'any', t: [0.9, 1.6], s: [0.6, 1.3] }, { c: 'gd', n: 5, pos: 'any', t: [5, 9], s: [0.7, 1.3] }],
     rust: [{ c: 'rf', n: 9, pos: 'edge', t: [3.5, 6], s: [0.6, 1.3] }],
     poison: [{ c: 'pb', n: 10, pos: 'bottom', t: [3.2, 6.2], s: [0.4, 1.3], v: 2 }]
@@ -24057,8 +24057,14 @@ html.wk-fx-off .wk-cs{display:none}
 /* Песок: песчинки с объёмом, в ветре — со шлейфом; над ними пыльная дымка */
 .wk-cs-parts .sh-sand{background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--pc) 45%,#fff) 0 20%,var(--pc) 52%,color-mix(in srgb,var(--pc) 60%,#3a2200) 100%)!important;border-radius:42% 58% 55% 45%/52% 44% 56% 48%!important;box-shadow:0 0 1px rgba(0,0,0,.35);opacity:1!important}
 .wk-cs-parts .m-wind>.sh-sand::before{content:"";position:absolute;right:55%;top:18%;width:520%;height:64%;border-radius:50%;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--pc) 45%,transparent));filter:blur(.4px)}
-.wk-cs-parts.p-sand::before{content:"";position:absolute;inset:-10% 0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200' preserveAspectRatio='none'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.008 .03' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .86 0 0 0 0 .7 0 0 0 0 .45 0 0 0 1.5 -.62'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E") 0 0/200% 100% repeat-x;opacity:.55;animation:wkSandHaze 7s linear infinite;mix-blend-mode:screen}
+.wk-cs-parts.p-sand::before{content:none}
 @keyframes wkSandHaze{to{background-position:200% 0}}
+
+/* Песок в стиле «Песчаной бури» */
+.wk-cs-parts .sl{position:absolute;inset:-45%;display:block;background:var(--img) 0 0/var(--tw) var(--th);transform:rotate(var(--ang));animation:wkSandL var(--dur) linear infinite;will-change:background-position}
+@keyframes wkSandL{to{background-position:var(--tw) 0}}
+.wk-cs-parts .sg{position:absolute;inset:auto;left:0;top:var(--y);width:calc(var(--s) * 75%);height:calc(var(--s) * 26%);background:radial-gradient(ellipse,color-mix(in srgb,var(--pc) 42%,transparent),color-mix(in srgb,var(--pc) 15%,transparent) 45%,transparent 70%);opacity:0;transform:translate(-100%,-50%);animation:wkSandGust var(--t) ease-in-out var(--d) infinite}
+@keyframes wkSandGust{0%{opacity:0;transform:translate(-100%,-50%)}25%{opacity:1}75%{opacity:.8}100%{opacity:0;transform:translate(160%,-46%)}}
 /* Кристаллы: гранёный кристалл с бликом, поворачивается */
 .wk-cs-parts .sh-diamond{background:linear-gradient(90deg,rgba(255,255,255,.06) 0 31%,rgba(255,255,255,.5) 31% 50%,rgba(0,20,60,.22) 50% 69%,rgba(255,255,255,.14) 69%),linear-gradient(180deg,rgba(255,255,255,.75) 0 24%,transparent 24% 86%,rgba(0,0,40,.25) 86%),linear-gradient(160deg,color-mix(in srgb,var(--pc) 35%,#fff),var(--pc) 55%,color-mix(in srgb,var(--pc) 55%,#001535))!important;width:calc(var(--cs-ps,10px) * var(--s) * 1.15)!important;height:calc(var(--cs-ps,10px) * var(--s) * 1.8)!important;animation:wkCrysTurn calc(var(--t) * .45) ease-in-out var(--d) infinite}
 .wk-cs-parts .sh-diamond::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.95) 48%,transparent 60%);background-size:300% 100%;animation:wkCrysGlint calc(var(--t) * .45) ease-in-out var(--d) infinite}
@@ -24227,7 +24233,34 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
   }, true);
 
   /* ---------- Свои слои ---------- */
+  // Песок — как в «Песчаной буре»: три слоя мелких песчинок и смазанных в движении штрихов летят с разной скоростью, плюс порывы пыли
+  function hexOf(c, d) { return /^#[0-9a-f]{6}$/i.test(c || '') ? c : d; }
+  function mixHex(a, b, t) { var x = parseInt(a.slice(1), 16), y = parseInt(b.slice(1), 16); function ch(sh) { return Math.round(((x >> sh) & 255) * (1 - t) + ((y >> sh) & 255) * t); } return '#' + ((1 << 24) | (ch(16) << 16) | (ch(8) << 8) | ch(0)).toString(16).slice(1); }
+  function sandTile(R, w, h, cnt, cols, k) {
+    var o = '';
+    function put(x, y, body) { o += body(x, y); if (x < 8) o += body(x + w, y); if (x > w - 8) o += body(x - w, y); }
+    for (var i = 0; i < cnt; i++) {
+      var col = cols[Math.floor(R() * cols.length)], op = (0.35 + R() * 0.6).toFixed(2);
+      if (R() < 0.38) { var rx = ((1.6 + R() * 2) * k).toFixed(2), ry = ((0.3 + R() * 0.26) * k).toFixed(2); put(R() * w, R() * h, function (x, y) { return "<ellipse cx='" + x.toFixed(1) + "' cy='" + y.toFixed(1) + "' rx='" + rx + "' ry='" + ry + "' fill='" + col + "' opacity='" + op + "'/>"; }); }
+      else { var r = ((0.5 + R() * 0.5) * k).toFixed(2); put(R() * w, R() * h, function (x, y) { return "<circle cx='" + x.toFixed(1) + "' cy='" + y.toFixed(1) + "' r='" + r + "' fill='" + col + "' opacity='" + op + "'/>"; }); }
+    }
+    return 'url("data:image/svg+xml,' + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 " + w + " " + h + "'>" + o + "</svg>") + '")';
+  }
+  function sandHTML(p, seed) {
+    var R = rng(hashNum('sand:' + seed + ':' + JSON.stringify(p)));
+    var base = hexOf(p.c, '#e3b973'), cols = [mixHex(base, '#fff2d0', .55), mixHex(base, '#ffffff', .25), base, mixHex(base, '#000000', .12), mixHex(base, '#ffe7b0', .4)];
+    if (p.c === 'rainbow') cols = ['#ff6b6b', '#ffd36b', '#7cf06a', '#4fb8ff', '#c58cff'];
+    var n = Math.max(3, Math.min(40, Number(p.n) || 14)), k = (Number(p.size) || 100) / 100, sp = SPEED[p.sp || ''] || 1, mo = p.mo || 'wind';
+    var ang = mo === 'down' ? 74 : mo === 'up' ? -74 : 6;
+    var out = '';
+    [[220, 110, 1, .92, .95], [160, 80, .78, .72, .7], [120, 60, .56, .55, .55]].forEach(function (L) {
+      out += '<i class="sl" style="--img:' + sandTile(R, L[0], L[1], Math.round(n * 4.2 * L[0] * L[1] / 24200), cols, L[2] * k).replace(/"/g, '&quot;') + ';--tw:' + L[0] + 'px;--th:' + L[1] + 'px;--ang:' + ang + 'deg;--dur:' + (L[4] * sp).toFixed(2) + 's;opacity:' + L[3] + '"></i>';
+    });
+    if (ang === 6) for (var g = 0; g < 3; g++) { var t = (2.8 + R() * 1.8) * sp; out += '<i class="sg" style="--y:' + (15 + R() * 70).toFixed(1) + '%;--t:' + t.toFixed(2) + 's;--d:' + (-R() * t).toFixed(2) + 's;--s:' + (0.8 + R() * 0.5).toFixed(2) + ';--pc:' + (p.c === 'rainbow' || p.c === 'accent' ? '#f5cd87' : cols[1]) + '"></i>'; }
+    return out;
+  }
   function partsHTML(p, seed) {
+    if ((p.shape || '') === 'sand') return sandHTML(p, seed);
     var R = rng(hashNum('cs:' + seed + ':' + JSON.stringify(p)));
     var n = Math.max(3, Math.min(40, Number(p.n) || 14)), shape = p.shape || 'sparkle', mo = p.mo || 'up';
     var base = (MOTION_T[mo] || 5) * (SPEED[p.sp || ''] || 1) * (shape === 'rainline' && mo === 'down' ? .22 : shape === 'smoke' ? 1.5 : 1), out = '';
@@ -24356,20 +24389,32 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
   }
   // Частота появления: эффект виден короткое окно, затем пропадает до следующего цикла.
   var FREQ = { often: 3, sometimes: 6, rare: 12, vrare: 20 };
-  function applyFreq(el, st, seed) {
-    var T = FREQ[st.freq || ''] || 0;
-    var nodes = libLayers(el).concat(Array.prototype.slice.call(el.querySelectorAll(':scope > .wk-cs > span:not(.wk-cs-hit)')));
-    nodes.forEach(function (n) { if (n.__csVis) { try { n.__csVis.cancel(); } catch (e) {} n.__csVis = null; } });
-    if (!T || !nodes.length || !el.animate) return;
-    var win = Math.min(T * .6, Number(st.win) || 2.2), f = win / T, fade = Math.min(.08, f / 4);
-    var ph = (hashNum('freq:' + seed) % 1000) / 1000 * T * 1000;
+  // «Появление»: у эффектов из библиотеки — общее, у каждого своего слоя — своё.
+  var FREQ_LAYERS = { pulse: '.wk-cs-pulse', shine: '.wk-cs-shine', parts: '.wk-cs-parts, .wk-cs-native', ring: '.wk-cs-ring' };
+  function freqAnim(nodes, freq, winV, phaseKey) {
+    var T = FREQ[freq || ''] || 0;
+    if (!T || !nodes.length) return;
+    var win = Math.min(T * .6, Number(winV) || 2.2), f = win / T, fade = Math.min(.08, f / 4);
+    var ph = (hashNum(phaseKey) % 1000) / 1000 * T * 1000;
     nodes.forEach(function (n) {
+      if (!n.animate) return;
       // filter: opacity() дописывается к собственному фильтру эффекта (composite: add), прозрачность эффекта не трогаем.
       var kf = [{ filter: 'opacity(0)', offset: 0 }, { filter: 'opacity(1)', offset: fade }, { filter: 'opacity(1)', offset: f - fade }, { filter: 'opacity(0)', offset: f }, { filter: 'opacity(0)', offset: 1 }];
       try { n.__csVis = n.animate(kf, { duration: T * 1000, iterations: Infinity, delay: -ph, composite: 'add' }); }
       catch (e) { try { n.__csVis = n.animate([{ visibility: 'visible', offset: 0 }, { visibility: 'visible', offset: f }, { visibility: 'hidden', offset: f }, { visibility: 'hidden', offset: 1 }], { duration: T * 1000, iterations: Infinity, delay: -ph }); } catch (e2) {} }
     });
   }
+  function applyFreq(el, st, seed) {
+    var all = libLayers(el).concat(Array.prototype.slice.call(el.querySelectorAll(':scope > .wk-cs > span')));
+    all.forEach(function (n) { if (n.__csVis) { try { n.__csVis.cancel(); } catch (e) {} n.__csVis = null; } });
+    if (!el.animate) return;
+    freqAnim(libLayers(el), st.freq, st.win, 'freq:' + seed);
+    Object.keys(FREQ_LAYERS).forEach(function (k) {
+      var L = st[k]; if (!L || !L.on || !L.freq) return;
+      freqAnim(Array.prototype.slice.call(el.querySelectorAll(':scope > .wk-cs > :is(' + FREQ_LAYERS[k] + ')')), L.freq, L.win, 'freq:' + k + ':' + seed);
+    });
+  }
+
   // Эффекты, которые рисуют рамку: с ними снимаем цветную полоску статьи внизу карточки.
   var FRAME_FX = /^(gold|silver|prism|accentprism|poneglyph|foil-.+)$/, FRAME_AMB = /^(prism|accentprism|poneglyph|goldshine|neon|barrier|drums|magma)$/;
   function markFrame(el, st) {
@@ -24448,7 +24493,8 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
     field.querySelectorAll(':scope > .wiki-editor-hint, :scope > small.wiki-editor-hint').forEach(function (h) { h.style.display = 'none'; });
     function get(path) { var o = st; path.split('.').forEach(function (k) { o = o == null ? undefined : o[k]; }); return o; }
     function set(path, v) { var ks = path.split('.'), o = st; for (var i = 0; i < ks.length - 1; i++) { if (!o[ks[i]] || typeof o[ks[i]] !== 'object') o[ks[i]] = {}; o = o[ks[i]]; } o[ks[ks.length - 1]] = v; }
-    function group(key, title, body) { var on = !!get(key + '.on'); return '<div class="wk-cs-group' + (on ? ' is-on' : '') + '"><div class="wk-cs-gh"><label><input type="checkbox" data-p="' + key + '.on"' + (on ? ' checked' : '') + '> <b>' + title + '</b></label></div>' + (on ? body : '') + '</div>'; }
+    function freqRows(k) { var f = get(k + '.freq'); return '<div class="wk-ts-row"><span>Появление</span>' + seg('data-seg="' + k + '.freq"', [['', 'Всегда'], ['often', 'Часто'], ['sometimes', 'Иногда'], ['rare', 'Редко'], ['vrare', 'Очень редко']], f) + '</div>' + (f ? '<div class="wk-ts-row"><span>Длится</span>' + seg('data-seg="' + k + '.win"', [['1', '1 с'], ['', '2 с'], ['3.5', '3,5 с']], get(k + '.win')) + '</div>' : ''); }
+    function group(key, title, body) { var on = !!get(key + '.on'); if (on && ['pulse', 'shine', 'parts', 'ring'].indexOf(key) >= 0) body += freqRows(key); return '<div class="wk-cs-group' + (on ? ' is-on' : '') + '"><div class="wk-cs-gh"><label><input type="checkbox" data-p="' + key + '.on"' + (on ? ' checked' : '') + '> <b>' + title + '</b></label></div>' + (on ? body : '') + '</div>'; }
     function presetsHTML() {
       var list = readPresets(), cur = -1, now = current();
       list.forEach(function (p, i) { if (cur < 0 && norm(p.v) === norm(now)) cur = i; });
@@ -24474,7 +24520,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
         + '<div class="wk-ts-row"><span>Появление</span>' + seg('data-seg="freq"', [['', 'Всегда'], ['often', 'Часто'], ['sometimes', 'Иногда'], ['rare', 'Редко'], ['vrare', 'Очень редко']], st.freq) + '</div>'
         + (st.freq ? '<div class="wk-ts-row"><span>Длится</span>' + seg('data-seg="win"', [['1', '1 с'], ['', '2 с'], ['3.5', '3,5 с']], st.win) + '</div>' : '')
         + '<div class="wk-ts-row"><span>Скорость</span>' + range('spd', 0, 300, 10, st.spd == null ? 100 : Number(st.spd), '%', 100) + '</div>'
-        + '<div class="wk-cs-libnote">Оттенок, насыщенность, сила и скорость меняют выбранные эффекты из библиотеки. Скорость 0% — эффект замирает. «Появление» отдельно от скорости: например, быстро, но редко (каждые 3 / 6 / 12 / 20 с) — действует и на свои слои.</div>'
+        + '<div class="wk-cs-libnote">Оттенок, насыщенность, сила и скорость меняют выбранные эффекты из библиотеки. Скорость 0% — эффект замирает. «Появление» отдельно от скорости: например, быстро, но редко (каждые 3 / 6 / 12 / 20 с). Здесь оно только для эффектов из библиотеки — у каждого своего слоя ниже есть своё «Появление».</div>'
         + '<div class="wk-cs-cap">Свои слои</div>'
         + group('hit', '💥 Удар / негатив', '<div class="wk-ts-row"><span>Вид</span>' + seg('data-seg="hit.kind"', [['neg', 'Негатив'], ['red', 'Урон (цвет)'], ['both', 'Негатив + цвет'], ['flash', 'Вспышка'], ['mono', 'Чёрно-белый']], get('hit.kind') || 'neg') + '</div>'
           + (/^(red|both|flash)$/.test(get('hit.kind') || '') ? '<div class="wk-ts-row"><span>Цвет</span><div class="wk-cs-colors"><input type="color" data-p="hit.c" value="' + esc(get('hit.c') || '#ff2a3d') + '">' + sw('hit.c') + '</div></div>' : '')
@@ -25974,6 +26020,21 @@ html body [data-amb="poison"]>.wk-amb-b{display:block!important;background:radia
 @keyframes wkBiteL{0%{transform:translateY(60%) scale(1.06);opacity:0}4%{opacity:1}7%{transform:translateY(-6%) scale(.98)}10%{transform:translateY(0) scale(1)}62%{opacity:.95}86%,100%{transform:translateY(0);opacity:0}}
 html body [data-amb="fangs"]>.wk-amb-b{display:block!important;background:radial-gradient(ellipse 55% 30% at 50% 50%,rgba(255,40,60,.45),transparent 70%),radial-gradient(ellipse 90% 85% at 50% 50%,transparent 45%,rgba(80,0,12,.5))!important;mix-blend-mode:hard-light!important;opacity:0;animation:wkBiteFlash 5.2s linear infinite!important;animation-delay:inherit!important}
 @keyframes wkBiteFlash{0%,5%{opacity:0}7%{opacity:1}14%{opacity:.35}40%,100%{opacity:0}}
+
+/* Морская глубина: тёмная толща воды, слабые лучи далеко сверху, морской снег, пузыри, свечение и стайка рыб */
+html body [data-amb="sea"]>.wk-amb-a{background:linear-gradient(180deg,rgba(70,160,215,.5) 0,rgba(14,70,140,.82) 45%,rgba(4,20,55,.96) 100%)!important;mix-blend-mode:multiply!important;-webkit-mask:none!important;mask:none!important;opacity:.92!important}
+html body [data-amb="sea"]>.wk-amb-a::after{content:""!important;position:absolute!important;inset:auto!important;left:0!important;top:30%!important;width:85%!important;height:32%!important;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 70'%3E%3Cg fill='%2306233d'%3E%3Cg transform='translate%28124.5 13.2%29 scale%280.99%29'%3E%3Cellipse cx='0' cy='0' rx='7' ry='2.6'/%3E%3Cpath d='M6 0 L11 -3.2 L10 0 L11 3.2Z'/%3E%3Cpath d='M-2 -2.2 L1 -4.4 L2 -2Z'/%3E%3C/g%3E%3Cg transform='translate%2851.3 45.9%29 scale%281.27%29'%3E%3Cellipse cx='0' cy='0' rx='7' ry='2.6'/%3E%3Cpath d='M6 0 L11 -3.2 L10 0 L11 3.2Z'/%3E%3Cpath d='M-2 -2.2 L1 -4.4 L2 -2Z'/%3E%3C/g%3E%3Cg transform='translate%28169.0 16.0%29 scale%281.10%29'%3E%3Cellipse cx='0' cy='0' rx='7' ry='2.6'/%3E%3Cpath d='M6 0 L11 -3.2 L10 0 L11 3.2Z'/%3E%3Cpath d='M-2 -2.2 L1 -4.4 L2 -2Z'/%3E%3C/g%3E%3Cg transform='translate%2817.2 22.1%29 scale%281.15%29'%3E%3Cellipse cx='0' cy='0' rx='7' ry='2.6'/%3E%3Cpath d='M6 0 L11 -3.2 L10 0 L11 3.2Z'/%3E%3Cpath d='M-2 -2.2 L1 -4.4 L2 -2Z'/%3E%3C/g%3E%3Cg transform='translate%2816.7 21.1%29 scale%281.25%29'%3E%3Cellipse cx='0' cy='0' rx='7' ry='2.6'/%3E%3Cpath d='M6 0 L11 -3.2 L10 0 L11 3.2Z'/%3E%3Cpath d='M-2 -2.2 L1 -4.4 L2 -2Z'/%3E%3C/g%3E%3Cg transform='translate%28107.9 22.1%29 scale%281.21%29'%3E%3Cellipse cx='0' cy='0' rx='7' ry='2.6'/%3E%3Cpath d='M6 0 L11 -3.2 L10 0 L11 3.2Z'/%3E%3Cpath d='M-2 -2.2 L1 -4.4 L2 -2Z'/%3E%3C/g%3E%3Cg transform='translate%28154.5 12.3%29 scale%281.36%29'%3E%3Cellipse cx='0' cy='0' rx='7' ry='2.6'/%3E%3Cpath d='M6 0 L11 -3.2 L10 0 L11 3.2Z'/%3E%3Cpath d='M-2 -2.2 L1 -4.4 L2 -2Z'/%3E%3C/g%3E%3Cg transform='translate%28134.9 27.7%29 scale%280.91%29'%3E%3Cellipse cx='0' cy='0' rx='7' ry='2.6'/%3E%3Cpath d='M6 0 L11 -3.2 L10 0 L11 3.2Z'/%3E%3Cpath d='M-2 -2.2 L1 -4.4 L2 -2Z'/%3E%3C/g%3E%3Cg transform='translate%28180.5 27.5%29 scale%280.86%29'%3E%3Cellipse cx='0' cy='0' rx='7' ry='2.6'/%3E%3Cpath d='M6 0 L11 -3.2 L10 0 L11 3.2Z'/%3E%3Cpath d='M-2 -2.2 L1 -4.4 L2 -2Z'/%3E%3C/g%3E%3Cg transform='translate%2829.0 51.0%29 scale%281.22%29'%3E%3Cellipse cx='0' cy='0' rx='7' ry='2.6'/%3E%3Cpath d='M6 0 L11 -3.2 L10 0 L11 3.2Z'/%3E%3Cpath d='M-2 -2.2 L1 -4.4 L2 -2Z'/%3E%3C/g%3E%3Cg transform='translate%28154.1 45.6%29 scale%281.18%29'%3E%3Cellipse cx='0' cy='0' rx='7' ry='2.6'/%3E%3Cpath d='M6 0 L11 -3.2 L10 0 L11 3.2Z'/%3E%3Cpath d='M-2 -2.2 L1 -4.4 L2 -2Z'/%3E%3C/g%3E%3Cg transform='translate%28183.3 29.4%29 scale%281.19%29'%3E%3Cellipse cx='0' cy='0' rx='7' ry='2.6'/%3E%3Cpath d='M6 0 L11 -3.2 L10 0 L11 3.2Z'/%3E%3Cpath d='M-2 -2.2 L1 -4.4 L2 -2Z'/%3E%3C/g%3E%3Cg transform='translate%28158.0 40.5%29 scale%281.40%29'%3E%3Cellipse cx='0' cy='0' rx='7' ry='2.6'/%3E%3Cpath d='M6 0 L11 -3.2 L10 0 L11 3.2Z'/%3E%3Cpath d='M-2 -2.2 L1 -4.4 L2 -2Z'/%3E%3C/g%3E%3Cg transform='translate%28113.6 44.4%29 scale%280.83%29'%3E%3Cellipse cx='0' cy='0' rx='7' ry='2.6'/%3E%3Cpath d='M6 0 L11 -3.2 L10 0 L11 3.2Z'/%3E%3Cpath d='M-2 -2.2 L1 -4.4 L2 -2Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat!important;opacity:.55!important;filter:blur(.7px)!important;animation:wkFishSwim 26s linear infinite!important}
+@keyframes wkFishSwim{0%{transform:translate(160%,0) scaleX(1)}50%{transform:translate(30%,-12%)}100%{transform:translate(-110%,6%)}}
+html body [data-amb="sea"]>.wk-amb-b{background:radial-gradient(ellipse 90% 28% at 50% -6%,rgba(130,205,255,.38),transparent 72%)!important;mix-blend-mode:screen!important;-webkit-mask:linear-gradient(180deg,#000,rgba(0,0,0,.3) 65%,transparent 92%)!important;mask:linear-gradient(180deg,#000,rgba(0,0,0,.3) 65%,transparent 92%)!important}
+html body [data-amb="sea"]>.wk-amb-b::after{content:""!important;position:absolute!important;inset:-10% -30%!important;background:repeating-linear-gradient(100deg,transparent 0 26px,rgba(140,210,255,.13) 34px,transparent 50px,transparent 70px,rgba(160,220,255,.08) 78px,transparent 92px)!important;background-size:auto!important;opacity:.8!important;filter:blur(3px)!important;animation:wkSeaShafts 12s ease-in-out infinite alternate!important}
+@keyframes wkSeaShafts{0%{transform:translateX(-4%) skewX(-4deg)}100%{transform:translateX(4%) skewX(4deg)}}
+.wk-amb-p .ray{display:none!important}
+.wk-amb-p .ms{left:var(--x);top:var(--y);width:calc(1px + var(--s) * 1.6px);aspect-ratio:1;border-radius:50%;background:rgba(220,240,255,.75);box-shadow:0 0 2px rgba(200,235,255,.5);opacity:0;animation:wkSnowDrift var(--t) linear infinite;animation-delay:var(--d)}
+.wk-amb-p .ms.v1{width:calc(1.5px + var(--s) * 1.2px);aspect-ratio:2.2;border-radius:40%;background:rgba(200,225,240,.6)}
+@keyframes wkSnowDrift{0%{opacity:0;transform:translate(0,-6cqh)}15%{opacity:.85}50%{transform:translate(calc(var(--r) * 3cqw),6cqh)}85%{opacity:.7}100%{opacity:0;transform:translate(calc(var(--r) * -2cqw),18cqh)}}
+.wk-amb-p .bl{left:var(--x);top:var(--y);width:calc(3px + var(--s) * 6px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#e8fffb 0 12%,rgba(80,255,220,.75) 30%,rgba(40,200,255,.25) 55%,transparent 72%);opacity:0;animation:wkBioGlow var(--t) ease-in-out infinite;animation-delay:var(--d)}
+.wk-amb-p .bl.v1{background:radial-gradient(circle,#f3eaff 0 12%,rgba(150,120,255,.7) 30%,rgba(90,80,255,.22) 55%,transparent 72%)}
+@keyframes wkBioGlow{0%,100%{opacity:0;transform:translate(0,0) scale(.6)}30%{opacity:.9;transform:translate(calc(var(--r) * 2cqw),-2cqh) scale(1)}55%{opacity:.35}70%{opacity:.8;transform:translate(calc(var(--r) * 3cqw),-4cqh) scale(.9)}}
 /* Выстрелы и деление на части */
 .wk-cs>span.wk-cs-gun,.wk-cs>span.wk-cs-split{overflow:hidden}
 .wk-gun-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
