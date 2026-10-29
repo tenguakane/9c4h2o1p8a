@@ -19381,6 +19381,106 @@ img.wk-fade.wk-loaded{opacity:1}
       syncContent().then(function () { location.reload(); }, function () { location.reload(); });
     }, function (er) { toast('Не получилось откатить: ' + (er && (er.code || er.message))); });
   }
+  /* ---------- Безопасный перенос недостающих статей из текущего HTML в облако ----------
+     Важно: облачный кэш при старте намеренно является главным источником записей.
+     Поэтому новые статьи из встроенного HTML не видны автоматически. Эта операция
+     добавляет только отсутствующие character/fruit-записи и никогда не перезаписывает
+     документ, уже существующий в Firestore. */
+  function importMissingBundledArticlesToCloud() {
+    if (!db || !me || me.role !== 'admin') return Promise.reject(new Error('Нужен вход администратора.'));
+    var node = document.getElementById('wikiEmbeddedBackup');
+    var source;
+    try { source = node ? JSON.parse(node.textContent || '{}') : null; }
+    catch (e) { return Promise.reject(new Error('Не удалось прочитать встроенную базу HTML.')); }
+    if (!source || !source.collections) return Promise.reject(new Error('Во встроенном HTML нет базы статей.'));
+
+    function nameKey(value) {
+      var v = String(value == null ? '' : value).trim().toLowerCase().replace(/ё/g, 'е');
+      try { if (v.normalize) v = v.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); } catch (e) {}
+      return v.replace(/[^a-zа-я0-9]/gi, '');
+    }
+    var targetTypes = ['character', 'fruit'];
+    var metaRef = fb.fs.doc(db, 'content', 'meta');
+    return fb.fs.getDoc(metaRef).then(function (metaSnap) {
+      if (!metaSnap.exists()) throw new Error('В облаке ещё нет основной записи content/meta. Сначала откройте Wiki под администратором и дождитесь первичной загрузки.');
+      var meta = metaSnap.data() || {};
+      var order = {};
+      try { order = JSON.parse(meta.order || '{}') || {}; } catch (e) { order = {}; }
+      targetTypes.forEach(function (t) { if (!Array.isArray(order[t])) order[t] = []; });
+      return fb.fs.getDocs(fb.fs.collection(db, 'records')).then(function (qs) {
+        var exists = Object.create(null), names = { character: Object.create(null), fruit: Object.create(null) };
+        qs.forEach(function (docSnap) {
+          var x = docSnap.data() || {};
+          if (x.type && x.id != null) exists[recId(x.type, x.id)] = true;
+          if (targetTypes.indexOf(x.type) >= 0) {
+            try {
+              var record = JSON.parse(x.json || '{}'), nk = nameKey(record && record.name);
+              if (nk) names[x.type][nk] = true;
+            } catch (e) {}
+          }
+        });
+        var additions = [], duplicateNames = 0, orderChanged = false;
+        targetTypes.forEach(function (t) {
+          var records = Array.isArray(source.collections[t]) ? source.collections[t] : [];
+          records.forEach(function (record) {
+            if (!record || record.id == null || String(record.id).trim() === '') return;
+            var id = String(record.id), key = recId(t, id);
+            if (exists[key]) {
+              if (!order[t].some(function (v) { return String(v) === id; })) { order[t].push(record.id); orderChanged = true; }
+              return;
+            }
+            var nk = nameKey(record.name);
+            // Avoid obvious duplicate titles already present in the cloud under another ID.
+            if (nk && names[t][nk]) { duplicateNames++; return; }
+            additions.push({ type: t, record: record, id: id });
+            exists[key] = true;
+            if (nk) names[t][nk] = true;
+            if (!order[t].some(function (v) { return String(v) === id; })) { order[t].push(record.id); orderChanged = true; }
+          });
+        });
+        if (!additions.length && !orderChanged) {
+          return { added: 0, duplicateNames: duplicateNames, synced: false };
+        }
+        var now = new Date().toISOString();
+        var version = Date.now();
+        var chain = Promise.resolve();
+        for (var i = 0; i < additions.length; i += 400) {
+          (function (chunk) {
+            chain = chain.then(function () {
+              var batch = fb.fs.writeBatch(db);
+              chunk.forEach(function (item) {
+                var documentId = recId(item.type, item.id);
+                batch.set(fb.fs.doc(db, 'records', documentId), {
+                  type: item.type,
+                  id: item.id,
+                  json: JSON.stringify(item.record),
+                  updatedAt: now
+                });
+              });
+              return batch.commit();
+            });
+          })(additions.slice(i, i + 400));
+        }
+        return chain.then(function () {
+          return fb.fs.setDoc(metaRef, {
+            version: version,
+            updatedAt: now,
+            updatedBy: me.login,
+            order: JSON.stringify(order),
+            records: qs.size + additions.length
+          }, { merge: true });
+        }).then(function () {
+          // Force a fresh cloud read; do not leave the old cached version active.
+          var cache = readJSON(CONTENT_KEY, null);
+          if (cache) { cache.version = 0; quietSet(CONTENT_KEY, JSON.stringify(cache)); }
+          return syncContent().then(function () {
+            return { added: additions.length, duplicateNames: duplicateNames, synced: true };
+          });
+        });
+      });
+    });
+  }
+
   function renderStats(pane) {
     if (!db || !me || !canEditRole(me.role)) { pane.innerHTML = '<div class="wk-st-empty">Статистика доступна администратору и редактору после входа.</div>'; return; }
     var prefs = readJSON(ST_KEY, { days: 30, hideAdmin: false });
@@ -19501,7 +19601,7 @@ img.wk-fade.wk-loaded{opacity:1}
         }).join('') + '</tbody></table>' : '<div class="wk-st-empty">Пока никто не проходил опросы (Каюта → 🧠 Опросы).</div>') + '</div>';
       }
     } catch (e) {}
-    if (me.role === 'admin') html += '<div class="wk-st-admin"><span>Облако статей:</span><button type="button" data-reupload>⬆ Перезалить все статьи из этого браузера в облако</button><span>— если облачная копия разошлась с нужной.</span></div>';
+    if (me.role === 'admin') html += '<div class="wk-st-admin"><span>Облако статей:</span><button type="button" data-import-missing>＋ Добавить отсутствующие статьи из этого HTML в облако</button><span>Добавляет только отсутствующих персонажей и плоды; существующие записи не перезаписывает.</span><button type="button" data-reupload>⬆ Перезалить все статьи из этого браузера в облако</button><span>— полная перезапись облачной копии.</span></div>';
     pane.innerHTML = html;
     try {
       var headEl = pane.querySelector('.wk-pane-head'), ctr = pane.querySelector('.wk-st-controls');
@@ -19514,6 +19614,25 @@ img.wk-fade.wk-loaded{opacity:1}
     pane.querySelectorAll('[data-days]').forEach(function (b) { b.addEventListener('click', function () { prefs.days = Number(b.getAttribute('data-days')); quietSet(ST_KEY, JSON.stringify(prefs)); renderStats(pane); }); });
     pane.querySelector('[data-hide-admin]').addEventListener('change', function (e) { prefs.hideAdmin = e.target.checked; quietSet(ST_KEY, JSON.stringify(prefs)); renderStats(pane); });
     pane.querySelector('[data-refresh]').addEventListener('click', function () { renderStats(pane); });
+    var importMissingBtn = pane.querySelector('[data-import-missing]'); if (importMissingBtn) importMissingBtn.addEventListener('click', function () {
+      if (!confirm('Добавить в облако только те статьи персонажей и плодов из этого HTML, которых там ещё нет? Уже существующие облачные записи останутся без изменений.')) return;
+      importMissingBtn.disabled = true;
+      importMissingBtn.textContent = '⏳ Проверяю облачную базу…';
+      importMissingBundledArticlesToCloud().then(function (result) {
+        if (!result || !result.added) {
+          toast('Новых статей для переноса нет. Совпадения по названиям пропущены: ' + ((result && result.duplicateNames) || 0));
+          importMissingBtn.disabled = false;
+          importMissingBtn.textContent = '＋ Добавить отсутствующие статьи из этого HTML в облако';
+          return;
+        }
+        toast('В облако добавлено ' + result.added + ' статей. Обновляю страницу…', null, 5000);
+        setTimeout(function () { location.reload(); }, 700);
+      }).catch(function (e) {
+        toast('Не удалось добавить статьи: ' + (e && (e.code || e.message) || e));
+        importMissingBtn.disabled = false;
+        importMissingBtn.textContent = '＋ Добавить отсутствующие статьи из этого HTML в облако';
+      });
+    });
     var reupBtn = pane.querySelector('[data-reupload]'); if (reupBtn) reupBtn.addEventListener('click', function () {
       if (!confirm('Перезаписать облачную копию статей данными из этого браузера?')) return;
       var snap = localSnapshot(); if (!snap) return;
