@@ -19473,94 +19473,6 @@ img.wk-fade.wk-loaded{opacity:1}
   }
 
 
-  /* One-time repair: remove only the 65 character records accidentally restored from an older HTML.
-     IDs are guarded against the canonical embedded snapshot, so any ID intentionally re-added later is kept. */
-  var RESTORED_CHARACTER_IDS = ["char_yonka", "char_yonka_two", "char_agotogi", "char_agsilly", "char_adele", "char_akehende", "char_amadob", "char_ammo_knights", "char_andre", "char_aswa", "char_baggaley", "char_banshee", "char_barry_wb", "char_blondie", "char_bobbin", "char_brocca", "char_brew", "char_garcia", "char_gotan", "char_daisy", "char_gina", "char_junan", "char_dogya", "char_zururin", "char_ideaman", "char_ichika", "char_ishilly", "char_kairen", "char_kikyo", "char_cornelia", "char_lacuba", "char_laskey", "char_luca", "char_lulis", "char_meverly", "char_mizuira", "char_mishoin_cashible", "char_moodie", "char_mero", "char_nerine", "char_nika", "char_octopako", "char_pansy", "char_papaneel", "char_pisaro", "char_poppy", "char_ran", "char_rindo", "char_sanka", "char_seira", "char_sora_mermaid", "char_stainless", "char_saber", "char_tilestone", "char_togare", "char_farafra", "char_fillonce", "char_finamore", "char_hangan", "char_happa_yamao", "char_hiramera", "char_happygun", "char_aggie68", "char_epoida", "char_yamakaji"];
-  function removeMistakenlyRestoredCharactersFromCloud() {
-    if (!db || !me || me.role !== 'admin') return Promise.reject(new Error('Нужен вход администратора.'));
-    var node = document.getElementById('wikiEmbeddedBackup'), source;
-    try { source = node ? JSON.parse(node.textContent || '{}') : null; }
-    catch (e) { return Promise.reject(new Error('Не удалось прочитать встроенную базу HTML.')); }
-    if (!source || !source.collections || !Array.isArray(source.collections.character)) {
-      return Promise.reject(new Error('Во встроенном HTML не найдена коллекция персонажей.'));
-    }
-    var sourceIds = Object.create(null);
-    source.collections.character.forEach(function (r) { if (r && r.id != null) sourceIds[String(r.id)] = true; });
-    var targets = RESTORED_CHARACTER_IDS.filter(function (id) { return !sourceIds[id]; });
-    if (!targets.length) return Promise.resolve({ deleted: 0, added: 0, alreadyClean: true });
-    var targetSet = Object.create(null); targets.forEach(function (id) { targetSet[id] = true; });
-
-    // Normalize the local record snapshot too, so a stale browser cache cannot re-send these rows.
-    var localSnap = readJSON(STORAGE_KEY, null) || source;
-    try { localSnap = JSON.parse(JSON.stringify(localSnap)); } catch (e) { localSnap = JSON.parse(JSON.stringify(source)); }
-    if (!localSnap.collections) localSnap.collections = {};
-    if (Array.isArray(localSnap.collections.character)) {
-      localSnap.collections.character = localSnap.collections.character.filter(function (r) {
-        return !r || r.id == null || !targetSet[String(r.id)];
-      });
-    }
-    contentRepairInProgress = true;
-    quietSet(STORAGE_KEY, JSON.stringify(localSnap));
-    quietSet(PENDING_KEY, null);
-    base = baseFrom(contentOf(localSnap));
-
-    var metaRef = fb.fs.doc(db, 'content', 'meta');
-    return Promise.all([fb.fs.getDoc(metaRef), fb.fs.getDocs(fb.fs.collection(db, 'records'))]).then(function (res) {
-      var metaSnap = res[0], qs = res[1];
-      if (!metaSnap.exists()) throw new Error('В облаке не найдена запись content/meta.');
-      var meta = metaSnap.data() || {}, order = {};
-      try { order = JSON.parse(meta.order || '{}') || {}; } catch (e) { order = {}; }
-      if (!Array.isArray(order.character)) order.character = [];
-      var removedDocs = [];
-      qs.forEach(function (docSnap) {
-        var x = docSnap.data() || {};
-        if (x.type === 'character' && x.id != null && targetSet[String(x.id)]) removedDocs.push({ ref: docSnap.ref, data: x });
-      });
-      var beforeOrder = order.character.length;
-      order.character = order.character.filter(function (id) { return !targetSet[String(id)]; });
-      var orderChanged = beforeOrder !== order.character.length;
-      if (!removedDocs.length && !orderChanged) {
-        // Even when cloud records are already gone, refresh from the actual cloud snapshot.
-        return { deleted: 0, added: 0, alreadyClean: true, metaRef: metaRef, meta: meta, order: order, qsSize: qs.size };
-      }
-      var now = new Date().toISOString(), version = Date.now();
-      var batch = fb.fs.writeBatch(db);
-      removedDocs.forEach(function (x) { batch.delete(x.ref); });
-      batch.set(metaRef, {
-        version: version,
-        updatedAt: now,
-        updatedBy: me.login,
-        order: JSON.stringify(order),
-        records: Math.max(0, qs.size - removedDocs.length)
-      }, { merge: true });
-      return batch.commit().then(function () {
-        return { deleted: removedDocs.length, added: 0, alreadyClean: false };
-      });
-    }).then(function (result) {
-      // Add only any missing records actually present in this HTML (notably audited rewards), without overwriting cloud rows.
-      return importMissingBundledArticlesToCloud().catch(function (e) {
-        result.importError = e && (e.code || e.message) || String(e);
-        return { added: 0 };
-      }).then(function (imp) {
-        result.added = imp && imp.added || 0;
-        // Force cache refetch even when the importer had no additions.
-        var cache = readJSON(CONTENT_KEY, null);
-        if (!cache) cache = { version: 0, data: {} };
-        cache.version = 0;
-        quietSet(CONTENT_KEY, JSON.stringify(cache));
-        return syncContent().then(function () {
-          return { deleted: result.deleted || 0, added: result.added || 0, alreadyClean: !!result.alreadyClean, importError: result.importError || '' };
-        });
-      });
-    }).then(function (result) {
-      // Keep the repair lock active until the page reloads; otherwise a stale in-memory array could re-create the deleted rows.
-      return result;
-    }).catch(function (e) {
-      // Stay locked on failure to avoid re-uploading stale rows from the live array.
-      throw e;
-    });
-  }
-
   function renderStats(pane) {
     if (!db || !me || !canEditRole(me.role)) { pane.innerHTML = '<div class="wk-st-empty">Статистика доступна администратору и редактору после входа.</div>'; return; }
     var prefs = readJSON(ST_KEY, { days: 30, hideAdmin: false });
@@ -19681,7 +19593,7 @@ img.wk-fade.wk-loaded{opacity:1}
         }).join('') + '</tbody></table>' : '<div class="wk-st-empty">Пока никто не проходил опросы (Каюта → 🧠 Опросы).</div>') + '</div>';
       }
     } catch (e) {}
-    if (me.role === 'admin') html += '<div class="wk-st-admin"><span>Облако статей:</span><button type="button" data-cleanup-restored>🧹 Удалить 65 случайно возвращённых персонажей из облака</button><span>Удаляет только известные ID, отсутствующие во встроенной базе этого HTML; остальные статьи не трогает.</span><button type="button" data-import-missing>＋ Добавить отсутствующие статьи из этого HTML в облако</button><span>Добавляет только отсутствующие статьи персонажей, плодов и наград; существующие записи не перезаписывает.</span><button type="button" data-reupload>⬆ Перезалить все статьи из этого браузера в облако</button><span>— полная перезапись облачной копии.</span></div>';
+    if (me.role === 'admin') html += '<div class="wk-st-admin"><span>Облако статей:</span><button type="button" data-import-missing>＋ Добавить отсутствующие статьи из этого HTML в облако</button><span>Добавляет только отсутствующие статьи персонажей, плодов и наград; существующие записи не перезаписывает.</span><button type="button" data-reupload>⬆ Перезалить все статьи из этого браузера в облако</button><span>— полная перезапись облачной копии.</span></div>';
     pane.innerHTML = html;
     try {
       var headEl = pane.querySelector('.wk-pane-head'), ctr = pane.querySelector('.wk-st-controls');
@@ -19694,22 +19606,6 @@ img.wk-fade.wk-loaded{opacity:1}
     pane.querySelectorAll('[data-days]').forEach(function (b) { b.addEventListener('click', function () { prefs.days = Number(b.getAttribute('data-days')); quietSet(ST_KEY, JSON.stringify(prefs)); renderStats(pane); }); });
     pane.querySelector('[data-hide-admin]').addEventListener('change', function (e) { prefs.hideAdmin = e.target.checked; quietSet(ST_KEY, JSON.stringify(prefs)); renderStats(pane); });
     pane.querySelector('[data-refresh]').addEventListener('click', function () { renderStats(pane); });
-    var cleanupRestoredBtn = pane.querySelector('[data-cleanup-restored]'); if (cleanupRestoredBtn) cleanupRestoredBtn.addEventListener('click', function () {
-      if (!confirm('Удалить из облака ровно те 65 карточек персонажей, которые отсутствуют в актуальном HTML и были случайно возвращены старым импортом? Также будут добавлены только отсутствующие записи из текущего HTML. Остальные облачные записи не удаляются и не перезаписываются.')) return;
-      cleanupRestoredBtn.disabled = true;
-      cleanupRestoredBtn.textContent = '⏳ Удаляю старые записи из облака…';
-      removeMistakenlyRestoredCharactersFromCloud().then(function (result) {
-        var msg = 'Удалено из облака персонажей: ' + (result.deleted || 0) + '. Добавлено недостающих записей: ' + (result.added || 0) + '. Обновляю страницу…';
-        if (result.importError) msg += ' Предупреждение при импорте: ' + result.importError + '.';
-        toast(msg, null, 7000);
-        setTimeout(function () { location.reload(); }, 900);
-      }).catch(function (e) {
-        // Keep the content-push lock in place so this stale page cannot recreate deleted IDs.
-        toast('Очистка не завершена: ' + (e && (e.code || e.message) || e) + '. Обнови страницу только после проверки состояния облака.', null, 10000);
-        cleanupRestoredBtn.disabled = false;
-        cleanupRestoredBtn.textContent = '🧹 Повторить очистку ошибочно возвращённых персонажей';
-      });
-    });
     var importMissingBtn = pane.querySelector('[data-import-missing]'); if (importMissingBtn) importMissingBtn.addEventListener('click', function () {
       if (!confirm('Добавить в облако только те статьи персонажей, плодов и наград из этого HTML, которых там ещё нет? Уже существующие облачные записи останутся без изменений.')) return;
       importMissingBtn.disabled = true;
