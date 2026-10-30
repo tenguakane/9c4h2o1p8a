@@ -18710,12 +18710,14 @@ img.wk-fade.wk-loaded{opacity:1}
     var roleText = s.role === 'editor' ? 'Редактор: правит статьи, видит статистику и историю правок, свой прогресс, топ и избранное' : s.role === 'admin' ? 'Администратор: редактор статей и статистика' : s.role === 'guest' ? 'Гость: только просмотр, прогресс до ' + GUEST.progress.chapter + ' главы и ' + GUEST.progress.episode + ' серии' : 'Участник: свой прогресс, избранное и топ';
     menu.innerHTML = '<div><b>' + esc(s.name) + '</b><br><small>' + esc(roleText) + '</small></div>' +
       (canEditRole(s.role) ? '<button type="button" data-me="editor">✏️ Открыть редактор статей</button>' : '') +
+      (s.role === 'admin' ? '<button type="button" data-me="replace">☁️ Заменить статьи в облаке из файла</button>' : '') +
       '<button type="button" data-me="switch">🔁 Сменить учётку</button><button type="button" data-me="logout">🚪 Выйти</button>';
     menu.querySelectorAll('[data-me]').forEach(function (b) {
       b.addEventListener('click', function () {
         menu.hidden = true;
         var act = b.getAttribute('data-me');
         if (act === 'editor' && typeof window.openWikiEditor === 'function') window.openWikiEditor();
+        if (act === 'replace') replaceCloudWithFile();
         if (act === 'logout' || act === 'switch') logout();
       });
     });
@@ -19135,6 +19137,66 @@ img.wk-fade.wk-loaded{opacity:1}
     };
     contentBusy = (contentBusy || Promise.resolve()).then(run, run);
     return contentBusy;
+  }
+  /* ---------- Полная замена статей в облаке данными из этого HTML-файла (только администратор) ----------
+     Берёт встроенную в файл копию (wikiEmbeddedBackup), записывает в облако все её статьи, удаляет
+     из облака статьи, которых в файле нет, и ставит порядок и общие настройки из файла.
+     Личные данные участников (прогресс, избранное, топы, история просмотров) не трогаются. */
+  function fileSnapshot() {
+    try { var n = document.getElementById('wikiEmbeddedBackup'); var d = n ? JSON.parse(n.textContent || '{}') : null; return d && d.collections ? d : null; } catch (e) { return null; }
+  }
+  var replaceBusy = false;
+  function replaceCloudWithFile() {
+    if (replaceBusy) return;
+    if (!me || me.role !== 'admin' || !db) { toast('Заменить статьи в облаке может только администратор после входа.'); return; }
+    var file = fileSnapshot();
+    if (!file) { toast('В этом файле нет встроенной копии статей — замена невозможна.'); return; }
+    var content = contentOf(file);
+    var labels = { character: 'персонажей', story: 'арок', reward: 'наград', fruit: 'плодов', useful: 'статей «Полезное»' };
+    var fileCount = 0, lines = [];
+    TYPES.forEach(function (t) { var n = (content.collections[t] || []).filter(function (r) { return r && r.id != null; }).length; fileCount += n; lines.push('• ' + labels[t] + ': ' + n); });
+    replaceBusy = true;
+    fb.fs.getDocs(fb.fs.collection(db, 'records')).then(function (qs) {
+      var cloudIds = []; qs.forEach(function (d) { cloudIds.push(d.id); });
+      var msg = 'Заменить ВСЕ статьи в облаке статьями из этого файла?\n\nВ файле ' + fileCount + ' записей:\n' + lines.join('\n') +
+        '\n\nСейчас в облаке: ' + cloudIds.length + ' записей. Всё, чего нет в файле, будет удалено из облака, а правки, сделанные в облаке после создания файла, пропадут.' +
+        '\n\nЛичные данные участников (прогресс, избранное, топы) не изменятся. Отменить замену нельзя.';
+      if (!window.confirm(msg)) { replaceBusy = false; return; }
+      clearTimeout(contentTimer); contentTimer = 0;
+      contentRepairInProgress = true;
+      var now = new Date().toISOString(), ops = [], seen = {}, order = {};
+      TYPES.forEach(function (t) {
+        order[t] = [];
+        (content.collections[t] || []).forEach(function (r) {
+          if (!r || r.id == null) return;
+          var k = recId(t, r.id); if (seen[k]) return; seen[k] = 1;
+          order[t].push(r.id);
+          ops.push({ ref: fb.fs.doc(db, 'records', k), data: { type: t, id: String(r.id), json: JSON.stringify(r), updatedAt: now } });
+        });
+      });
+      var removed = cloudIds.filter(function (k) { return !seen[k]; });
+      removed.forEach(function (k) { ops.push({ ref: fb.fs.doc(db, 'records', k), del: true }); });
+      var extra = {}; EXTRA_KEYS.forEach(function (k) { extra[k] = content[k]; });
+      var version = Date.now();
+      // Мета-запись — последней: пока она не обновлена, остальные участники не подхватят частично записанные данные.
+      ops.push({ ref: fb.fs.doc(db, 'content', 'meta'), data: { version: version, updatedAt: now, updatedBy: me.login, order: JSON.stringify(order), extra: JSON.stringify(extra), records: Object.keys(seen).length } });
+      toast('Заменяю статьи в облаке… Не закрывай страницу.', null, 6000);
+      return writeBatches(ops, function (d, n) { if (d < n) toast('Записано в облако: ' + d + ' из ' + n, null, 1500); }).then(function () {
+        var data = { version: 1, updatedAt: now, updatedBy: me.login, collections: content.collections };
+        EXTRA_KEYS.forEach(function (k) { data[k] = content[k]; });
+        quietSet(CONTENT_KEY, JSON.stringify({ version: version, data: data }));
+        quietSet(STORAGE_KEY, JSON.stringify(data));
+        quietSet(PENDING_KEY, null);
+        base = baseFrom(content);
+        lastSyncVersion = version;
+        setSync('ok');
+        toast('Готово: в облаке ' + Object.keys(seen).length + ' записей из файла' + (removed.length ? ', удалено ' + removed.length : '') + ' ✓ Перезагружаю страницу…', null, 4000);
+        setTimeout(function () { location.reload(); }, 1800);
+      });
+    }).catch(function (e) {
+      console.warn('Замена статей в облаке:', e);
+      toast('Не удалось заменить статьи в облаке (' + (e && (e.code || e.message) || 'ошибка') + '). Можно спокойно повторить — замена начнётся заново.', null, 12000);
+    }).then(function () { replaceBusy = false; contentRepairInProgress = false; });
   }
   // Коллега сохранил правки, пока страница открыта — подсказываем обновить (свои правки при этом не теряются).
   var watchStarted = false, notifiedVersion = '';
