@@ -1185,7 +1185,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "31.10.2026 · 54";
+const WIKI_VERSION = "31.10.2026 · 55";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -28085,6 +28085,42 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     var base = 'https://onepiece.fandom.com/wiki/Special:FilePath/';
     return [title + ' Anime Infobox.png', title + ' Anime Post Timeskip Infobox.png', title + ' Manga Infobox.png', title + ' Infobox.png', title + '.png'].map(function (f) { return base + encodeURIComponent(f.replace(/ /g, '_')); });
   }
+  /* ---------- Источники, которые грузятся на любом сайте ----------
+     Картинки Fandom напрямую на чужих сайтах не показываются (защита от хотлинка), поэтому:
+     1) персонажи — MyAnimeList (через открытый API Jikan, CDN MAL отдаёт картинки любым сайтам);
+     2) всё остальное и запасной вариант — картинка Fandom через прокси wsrv.nl (он уже используется на сайте). */
+  function isFandom(u) { return /wikia\.nocookie\.net|fandom\.com/i.test(String(u || '')); }
+  function viaProxy(u) { if (!u || /^https?:\/\/(wsrv\.nl|images\.weserv\.nl)\//i.test(u)) return u; return 'https://wsrv.nl/?url=' + encodeURIComponent(u) + '&w=900&we'; }
+  function normName(s) {
+    return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ou/g, 'o').replace(/uu/g, 'u').replace(/oo/g, 'o')
+      .replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter(Boolean).sort();
+  }
+  var malIndex = null;
+  function loadMal() {
+    if (malIndex) return Promise.resolve(malIndex);
+    return fetch('https://api.jikan.moe/v4/anime/21/characters', { mode: 'cors', credentials: 'omit' }).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(function (j) {
+      malIndex = (j && j.data || []).map(function (x) {
+        var c = x.character || {}, im = c.images && (c.images.jpg && c.images.jpg.image_url || c.images.webp && c.images.webp.image_url) || '';
+        if (!im || /questionmark|apple-touch|na\.gif|na_series/i.test(im)) return null;
+        return { toks: normName(c.name), img: im };
+      }).filter(Boolean);
+      return malIndex;
+    }).catch(function (e) { console.warn('MyAnimeList (Jikan):', e); malIndex = []; return malIndex; });
+  }
+  function malFind(titles) {
+    if (!malIndex || !malIndex.length) return '';
+    for (var i = 0; i < titles.length; i++) {
+      var t = normName(titles[i]); if (!t.length) continue;
+      var key = t.join(' ');
+      var exact = malIndex.filter(function (m) { return m.toks.join(' ') === key; });
+      if (exact.length) return exact[0].img;
+      var longest = t.slice().sort(function (a, b) { return b.length - a.length; })[0];
+      if (longest.length < 4) continue;
+      var sub = malIndex.filter(function (m) { return t.every(function (w) { return m.toks.indexOf(w) >= 0; }) || (m.toks.length > 1 && m.toks.every(function (w) { return t.indexOf(w) >= 0; }) && m.toks.indexOf(longest) >= 0); });
+      if (sub.length === 1) return sub[0].img;
+    }
+    return '';
+  }
   function loads(u) {
     if (typeof window.__wikiImgCheck === 'function') return window.__wikiImgCheck(u, { fresh: true, quick: true, timeout: 12000 }).then(function (r) { return r && r.s === 'ok'; });
     return new Promise(function (res) { var im = new Image(), t = setTimeout(function () { res(false); }, 12000); im.onload = function () { clearTimeout(t); res(im.naturalWidth > 1); }; im.onerror = function () { clearTimeout(t); res(false); }; im.src = u; });
@@ -28102,15 +28138,17 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
       return new Promise(function (r) { setTimeout(r, 4000); }).then(function () { return badNow(u); });
     });
   }
-  var PHOTO_RUN_KEY = 'wkPhotoFinderV1', running = false;
+  var PHOTO_RUN_KEY = 'wkPhotoFinderV2', running = false;
   function candidates() {
     var list = [];
     ['character', 'fruit', 'useful', 'story'].forEach(function (type) {
       arr(LISTS[type]).forEach(function (rec) {
         var key = IMG_KEY[type], u = rv(rec, key);
         if (rec.__wikiDraft) return;
-        if (window.__wkIsAutoPhoto(type, rec)) return; // уже подбирали — не трогаем, пока человек не решит
-        list.push({ type: type, id: rv(rec, 'id'), name: rv(rec, 'name') || rv(rec, 'id'), url: u, key: key });
+        var auto = window.__wkIsAutoPhoto(type, rec);
+        if (auto && !isFandom(u)) return; // уже подбирали — не трогаем, пока человек не решит
+        // Фото, которое Claude брал с Fandom напрямую, на сайте не грузится — подбираем заново, прежняя ссылка сохраняется.
+        list.push({ type: type, id: rv(rec, 'id'), name: rv(rec, 'name') || rv(rec, 'id'), url: u, key: key, redo: auto, prev: auto ? rv(rec, 'photo_auto_prev') : u });
       });
     });
     return list;
@@ -28129,44 +28167,51 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     var ui = opts.ui || function () {};
     var all = candidates(), report = { checked: all.length, missing: 0, broken: 0, found: [], notFound: [] };
     ui('Проверяю картинки: 0 из ' + all.length);
-    var checked = 0;
+    var checked = 0, need = [];
     return pool(all, 6, function (c) {
-      var p = !c.url ? Promise.resolve(true) : reallyBad(c.url);
+      var p = (!c.url || c.redo || isFandom(c.url)) ? Promise.resolve(true) : reallyBad(c.url);
       return p.then(function (bad) { checked++; if (checked % 10 === 0) ui('Проверяю картинки: ' + checked + ' из ' + all.length); c.bad = bad; if (bad) { if (c.url) report.broken++; else report.missing++; } });
     }).then(function () {
-      var need = all.filter(function (c) { return c.bad; });
+      need = all.filter(function (c) { return c.bad; });
       need.forEach(function (c) { var rec = arr(LISTS[c.type]).find(function (r) { return String(r.id) === c.id; }); c.titles = guessTitles(c.type, rec || { id: c.id }); });
       var withTitles = need.filter(function (c) { return c.titles.length; });
       need.filter(function (c) { return !c.titles.length; }).forEach(function (c) { report.notFound.push(c); });
       if (!need.length) return [];
       ui('Ищу фото на One Piece Wiki для ' + need.length + ' статей…');
       var titles = []; withTitles.forEach(function (c) { c.titles.forEach(function (t) { if (titles.indexOf(t) < 0) titles.push(t); }); });
-      return pageImages(titles).then(function (map) {
+      return Promise.all([pageImages(titles), loadMal()]).then(function (res) {
+        var map = res[0];
         return pool(withTitles, 3, function (c, k) {
           if (k % 5 === 0) ui('Проверяю найденные фото: ' + (k + 1) + ' из ' + withTitles.length);
-          var tries = c.titles.map(function (t) { return map[t]; }).filter(Boolean);
           function tryList(list) {
+            list = list.map(viaProxy);
             if (!list.length) return Promise.resolve('');
             return loads(list[0]).then(function (ok) { return ok ? list[0] : tryList(list.slice(1)); });
           }
-          return tryList(tries).then(function (u) {
+          var mal = c.type === 'character' ? malFind(c.titles) : '';
+          var tries = c.titles.map(function (t) { return map[t]; }).filter(Boolean);
+          return (mal ? loads(mal).then(function (ok) { if (ok) return mal; var pm = viaProxy(mal); return loads(pm).then(function (ok2) { return ok2 ? pm : ''; }); }) : Promise.resolve('')).then(function (u) {
+            return u || tryList(tries);
+          }).then(function (u) {
             if (u) return u;
-            return c.titles.reduce(function (p, t) { return p.then(function (got) { return got || infoboxImage(t).then(function (x) { return x ? loads(x).then(function (ok) { return ok ? x : ''; }) : ''; }); }); }, Promise.resolve(''));
+            return c.titles.reduce(function (p, t) { return p.then(function (got) { return got || infoboxImage(t).then(function (x) { x = viaProxy(x); return x ? loads(x).then(function (ok) { return ok ? x : ''; }) : ''; }); }); }, Promise.resolve(''));
           }).then(function (u) {
             if (u) return u;
             return searchTitle(c.titles[0]).then(function (t) {
               if (!t || c.titles.indexOf(t) >= 0) return '';
-              return pageImages([t]).then(function (m) { var x = m[t]; return x ? loads(x).then(function (ok) { return ok ? x : ''; }) : infoboxImage(t); });
+              return pageImages([t]).then(function (m) { var x = viaProxy(m[t]); return x ? loads(x).then(function (ok) { return ok ? x : ''; }) : infoboxImage(t).then(viaProxy); });
             });
           }).then(function (u) {
             if (u) return u;
             return tryList([].concat.apply([], c.titles.map(filePathGuesses)));
-          }).then(function (u) { c.found = u; if (u) report.found.push(c); else report.notFound.push(c); });
+          }).then(function (u) { c.found = u; if (u) report.found.push(c); else { report.notFound.push(c); if (c.redo) c.revert = true; } });
         });
       });
     }).then(function () {
+      // Не нашли замену для старого фото с Fandom — пропускаем через прокси, чтобы оно хотя бы показывалось.
+      need.filter(function (c) { return c.revert && c.url; }).forEach(function (c) { c.found = viaProxy(c.url); report.found.push(c); });
       var ops = report.found.map(function (c) {
-        var ch = { photo_auto: c.found, photo_auto_prev: c.url || '' }; ch[c.key] = c.found;
+        var ch = { photo_auto: c.found, photo_auto_prev: c.prev || '' }; ch[c.key] = c.found;
         if (c.type === 'character') ch.person_link_fallbacks = [];
         return { type: c.type, id: c.id, changes: ch };
       });
