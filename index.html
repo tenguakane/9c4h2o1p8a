@@ -29501,6 +29501,13 @@ html body :is(#fruitsSection#fruitsSection#fruitsSection,#usefulSection#usefulSe
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-rar-seg button{width:auto;min-height:0;margin:0;padding:5px 11px;border-radius:999px;border:1px solid #475569;background:transparent;color:#cbd5e1;font:600 12px Arial,sans-serif;cursor:pointer;text-transform:none;letter-spacing:0}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-rar-seg button.active{border-color:#facc15;background:rgba(250,204,21,.16);color:#fde68a}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-rar-ed small{flex-basis:100%;color:#94a3b8;font:500 11.5px Arial,sans-serif}
+/* Развёрнутая сага — узкая полоса: метку переносим вправо, полоску прогресса прячем */
+.story-saga-group.is-open>.story-saga-folder>.wk-saga-bar{display:none!important}
+.story-saga-group.is-open>.story-saga-folder>.wk-saga-tag{display:none!important}
+html body #storyList .story-saga-group.is-open>.story-saga-folder.wk-saga-here{outline-offset:0}
+html body :is(#usefulFiltersButton,#fruitsFiltersButton),html.ios-app body :is(#usefulSection,#fruitsSection) .section-filters-button{display:none!important}
+html body #fruitsSection#fruitsSection#fruitsSection #fruitsFiltersButton#fruitsFiltersButton,html body #usefulSection#usefulSection#usefulSection #usefulFiltersButton#usefulFiltersButton{display:none!important}
+@layer wk-redesign{html body :is(#usefulFiltersButton,#fruitsFiltersButton){display:none!important}}
 </style><script id="wk-v8-js">
 /* ===================================================================
    Обновление v8 (31.10.2026 · 64): витрина и оборот карточек у «Плодов»
