@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "31.10.2026 · 62";
+const WIKI_VERSION = "31.10.2026 · 63";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -25428,7 +25428,7 @@ html body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSectio
     for (var i = nodes.length - 1; i >= 0; i--) {
       var n = nodes[i];
       if (!n.isConnected) { nodes.splice(i, 1); n.__bolt = false; if (io) io.unobserve(n); continue; }
-      if (document.hidden || !n.__bVis || reduce.matches || now < n.__bNext) continue;
+      if (document.hidden || !n.__bVis || reduce.matches || now < n.__bNext || (window.__wkFxGate && !window.__wkFxGate(n))) continue;
       var c = cfg(n), r = rate(n);
       if (r <= 0) { n.__bNext = now + 1000; continue; }
       if (n.querySelectorAll(':scope > .wk-bolt-svg').length < 2) draw(n, c);
@@ -26671,12 +26671,12 @@ html body .wk-amb-p .mo{left:var(--x)!important;top:calc(17% + var(--s) * 4%)!im
       if (n.classList.contains('wk-cs-move')) {
         var mc = moveCfg(n);
         if (reduce.matches) { if (n.__mvLoop) { try { n.__mvLoop.cancel(); } catch (e) {} n.__mvLoop = null; } continue; }
-        if (LOOP[mc.kind]) { loopMove(n); continue; }
+        if (LOOP[mc.kind]) { if (window.__wkFxGate && !window.__wkFxGate(n)) { if (n.__mvLoop) { try { n.__mvLoop.cancel(); } catch (e) {} n.__mvLoop = null; } n.__mvSig = ''; continue; } loopMove(n); continue; }
         if (n.__mvLoop) { try { n.__mvLoop.cancel(); } catch (e) {} n.__mvLoop = null; }
-        if (mc.trig === 'click' || document.hidden || !n.__v5Vis || reduce.matches || now < n.__v5Next) continue;
+        if (mc.trig === 'click' || document.hidden || !n.__v5Vis || reduce.matches || now < n.__v5Next || (window.__wkFxGate && !window.__wkFxGate(n))) continue;
         playMove(n); n.__v5Next = now + (Number(n.dataset.every) || 4) * 1000 * (0.6 + R() * 0.8); continue;
       }
-      if (document.hidden || !n.__v5Vis || reduce.matches || now < n.__v5Next) continue;
+      if (document.hidden || !n.__v5Vis || reduce.matches || now < n.__v5Next || (window.__wkFxGate && !window.__wkFxGate(n))) continue;
       var isGun = n.classList.contains('wk-cs-gun'), ev = Number(n.dataset.every) || (isGun ? 4 : 6);
       if (isGun) fire(n); else split(n);
       n.__v5Next = now + ev * 1000 * (0.6 + R() * 0.8) + (isGun ? 0 : 3000);
@@ -29081,6 +29081,376 @@ html body #charactersSection#charactersSection #characterList#characterList.char
     }).observe(s, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden', 'class'] });
     ['wiki:spoiler-progress-restored', 'wiki:cloud-ready', 'resize'].forEach(function (ev) { window.addEventListener(ev, schedule); });
     document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('.main-tab, [data-mobile-tab]')) setTimeout(schedule, 60); });
+    schedule();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
+</script><style id="wk-v7">
+/* ===== v7 (31.10.2026 · 63): вкладки и статьи ===== */
+/* Быстрые фильтры */
+.wk-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.wk-chip{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1px solid var(--line,rgba(148,163,184,.3));background:rgba(255,255,255,.03);color:var(--text-soft,#c9d3df);font:600 13.5px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;cursor:pointer;transition:border-color .15s,background .15s}
+.wk-chip i{width:8px;height:8px;border-radius:50%;background:var(--chip,#94a3b8)}
+.wk-chip small{font-size:11.5px;font-weight:700;opacity:.65;font-variant-numeric:tabular-nums}
+.wk-chip:hover{border-color:color-mix(in srgb,var(--chip,var(--accent,#d8b45a)) 60%,transparent)}
+.wk-chip.active{border-color:var(--chip,var(--accent,#d8b45a));background:color-mix(in srgb,var(--chip,var(--accent,#d8b45a)) 16%,transparent);color:#fff}
+@media (max-width:760px){.wk-chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}.wk-chip{flex:none}}
+/* Единый шрифт заголовков карточек: плоды как остальные */
+/* Сводка наград */
+.wk-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 14px}
+.wk-stats>div{display:grid;gap:3px;padding:12px 14px;border-radius:14px;border:1px solid var(--line-soft,rgba(148,163,184,.18));background:rgba(255,255,255,.03)}
+.wk-stats small{font-size:12px;color:var(--muted,#aeb7c3);letter-spacing:.02em}
+.wk-stats b{font-size:21px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--text,#f3f6fb)}
+.wk-stats em{font-style:normal;font-size:12.5px;color:#facc15;font-weight:700}
+.wk-stats .is-top{border-color:rgba(250,204,21,.4);background:linear-gradient(135deg,rgba(250,204,21,.1),rgba(255,255,255,.02))}
+.wk-stats .is-top a{color:inherit;text-decoration:none}
+#rewardsSection.wk-crew-mode .wk-stats{display:none}
+@media (max-width:760px){.wk-stats{grid-template-columns:1fr 1fr}.wk-stats b{font-size:18px}}
+/* Сюжет: прогресс саги на папке */
+.wk-saga-bar{position:absolute;left:14px;right:14px;bottom:9px;z-index:6;height:5px;border-radius:999px;background:rgba(0,0,0,.5);overflow:hidden;pointer-events:none}
+.wk-saga-bar i{position:absolute;inset:0 auto 0 0;background:var(--story-accent,#60a5fa);border-radius:inherit}
+.wk-saga-tag{position:absolute;top:12px;left:12px;z-index:7;padding:2px 9px;border-radius:999px;background:rgba(5,8,13,.75);border:1px solid rgba(255,255,255,.18);color:#e5e7eb;font:700 11px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;pointer-events:none}
+.wk-saga-tag.is-here{background:var(--story-accent,#60a5fa);border-color:transparent;color:#06101c}
+.wk-saga-tag.is-done{color:#86efac;border-color:rgba(134,239,172,.4)}
+html body #storyList .story-saga-folder.wk-saga-here{outline:2px solid var(--story-accent,#60a5fa);outline-offset:2px}
+/* ---------- Статьи ---------- */
+.wk-toc{position:relative;z-index:3;display:flex;gap:6px;margin:4px 0 16px;padding:7px;border-radius:14px;border:1px solid var(--line-soft,rgba(148,163,184,.18));background:color-mix(in srgb,var(--bg,#07090d) 82%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);overflow-x:auto;scrollbar-width:none}
+.wk-toc a{flex:none;padding:6px 12px;border-radius:999px;color:var(--text-soft,#c9d3df);font:600 13px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;text-decoration:none;white-space:nowrap}
+.wk-toc a:hover{background:rgba(255,255,255,.07);color:#fff}
+
+.wk-art .article-section,.wk-art .description-section{scroll-margin-top:140px}
+.wk-dup{display:none!important}
+/* Владелец плода */
+.wk-owner-card{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:14px;align-items:center;width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line-soft,rgba(148,163,184,.18));background:rgba(255,255,255,.03);color:var(--text,#f3f6fb);font:inherit;text-align:left;cursor:pointer;transition:border-color .15s}
+.wk-owner-card:hover{border-color:var(--accent,#d8b45a)}
+.wk-owner-img{width:64px;height:80px;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.06)}
+.wk-owner-img img{width:100%;height:100%;object-fit:cover}
+.wk-owner-text{display:grid;gap:2px}
+.wk-owner-text b{font-size:17px}
+.wk-owner-text small{color:var(--text-soft,#c9d3df);font-style:italic}
+.wk-owner-meta{font-size:13px;color:var(--muted,#aeb7c3)}
+.wk-owner-go{font-size:20px;color:var(--muted,#aeb7c3)}
+/* Навигация «предыдущая / следующая» на всю ширину */
+.wk-art :is(.article-navigation,.article-nav,.wk-article-nav) :is(.article-nav-grid,.article-navigation-grid){grid-template-columns:1fr 1fr!important}
+.wk-art :is(.article-navigation,.article-nav) > div:last-child{display:grid!important;grid-template-columns:1fr 1fr!important;gap:12px}
+/* Наверх */
+.wk-totop{position:fixed;right:18px;bottom:calc(22px + env(safe-area-inset-bottom,0px));z-index:9000;width:44px;height:44px;border-radius:50%;border:1px solid color-mix(in srgb,var(--accent,#d8b45a) 50%,transparent);background:color-mix(in srgb,var(--bg,#07090d) 85%,transparent);color:var(--accent,#d8b45a);font-size:20px;cursor:pointer;opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .2s,transform .2s}
+.wk-totop.show{opacity:1;transform:none;pointer-events:auto}
+html.ios-app .wk-totop{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+/* Превью кадра в редакторе */
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-crop-sizes{grid-column:1 / -1;margin:10px 0 4px;padding:10px 12px;border-radius:10px;border:1px solid #334155;background:rgba(255,255,255,.02)}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-cs-head{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin-bottom:8px;color:#e2e8f0;font:700 12.5px Arial,sans-serif}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-cs-head small{color:#64748b;font-weight:500}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-cs-row{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-csz{margin:0;display:grid;gap:4px;justify-items:center}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-csz-frame{position:relative;overflow:hidden;border-radius:9px;border:1px solid #475569;background:#0f172a}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-csz-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .is-hero .wk-csz-frame{width:208px;height:162px;cursor:grab;touch-action:none;border-color:#d4a84f}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .has-hero .is-hero .wk-csz-frame{box-shadow:0 0 0 2px rgba(212,168,79,.5)}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .is-shelf .wk-csz-frame{width:84px;height:112px}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .is-s .wk-csz-frame{width:68px;height:90px}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .is-m .wk-csz-frame{width:93px;height:124px}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .is-l .wk-csz-frame{width:125px;height:166px}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-csz figcaption{display:grid;justify-items:center;gap:2px;color:#cbd5e1;font:700 11.5px Arial,sans-serif;text-align:center}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-csz figcaption small{color:#64748b;font-weight:500;font-size:10.5px}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-csz-reset{width:auto;min-height:0;margin:2px 0 0;padding:2px 8px;border-radius:999px;border:1px solid #475569;background:transparent;color:#cbd5e1;font:600 10.5px Arial,sans-serif;cursor:pointer;text-transform:none;letter-spacing:0}
+</style><script id="wk-v7-js">
+/* ===================================================================
+   Обновление v7 (31.10.2026 · 63): вкладки «Плоды», «Полезное», «Награды»,
+   «Сюжет» и вид статей.
+   =================================================================== */
+(function () {
+  'use strict';
+  function $(s, r) { return (r || document).querySelector(s); }
+  function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+  function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function arr(name) { try { var v = window.eval(name); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+  function hidden(rec, type) { try { return typeof window.__wikiIsSpoilerActive === 'function' ? !!window.__wikiIsSpoilerActive(rec, type) : !!(rec && rec.__wikiSpoiler); } catch (e) { return false; } }
+  function byId(list, id) { id = String(id || ''); for (var i = 0; i < list.length; i++) if (String(list[i] && list[i].id) === id) return list[i]; return null; }
+  function money(n) { return Number(n || 0).toLocaleString('ru-RU').replace(/ | /g, ' '); }
+  function short(n) { n = Number(n) || 0; if (n >= 1e9) return (Math.round(n / 1e8) / 10).toString().replace('.', ',') + ' млрд'; if (n >= 1e6) return Math.round(n / 1e6) + ' млн'; return money(n); }
+  function plural(n, a, b, c) { n = Math.abs(n) % 100; var n1 = n % 10; if (n > 10 && n < 20) return c; if (n1 > 1 && n1 < 5) return b; if (n1 === 1) return a; return c; }
+  function split(v) { return String(v || '').split(/[,;]+/).map(function (x) { return x.trim(); }).filter(Boolean); }
+  function progress() { var p = window.__wikiSpoilerProgress || {}; if (!p.chapter && !p.episode) { try { p = JSON.parse(localStorage.getItem('onePieceWikiSpoilerProgressV1') || '{}'); } catch (e) {} } return { chapter: Number(p.chapter) || 0, episode: Number(p.episode) || 0 }; }
+  function segs(v) { try { return parseStoryRangeSegments(v) || []; } catch (e) { return []; } }
+
+  /* =========================================================
+     1. Быстрые фильтры-чипы: «Плоды» по типу, «Полезное» по категории
+     ========================================================= */
+  var CHIP_COLORS = { 'парамеция': '#a78bfa', 'зоан': '#34d399', 'логия': '#f472b6' };
+  function chipRow(id, before, items, active, onPick) {
+    var row = document.getElementById(id);
+    if (!before) return;
+    if (!row) { row = document.createElement('div'); row.id = id; row.className = 'wk-chips'; row.setAttribute('role', 'toolbar'); before.parentNode.insertBefore(row, before); row.addEventListener('click', function (e) { var b = e.target.closest('[data-chip]'); if (b) onPick(b.getAttribute('data-chip')); }); }
+    var key = JSON.stringify([items, active]); if (row.getAttribute('data-k') === key) return; row.setAttribute('data-k', key);
+    row.innerHTML = items.map(function (it) {
+      var on = it.v === active, col = CHIP_COLORS[String(it.v).toLocaleLowerCase('ru')] || it.c || '';
+      return '<button type="button" class="wk-chip' + (on ? ' active' : '') + '" data-chip="' + esc(it.v) + '" aria-pressed="' + on + '"' + (col ? ' style="--chip:' + col + '"' : '') + '>' + (col ? '<i></i>' : '') + esc(it.l) + '<small>' + it.n + '</small></button>';
+    }).join('');
+  }
+  function fruitChips() {
+    var list = document.getElementById('fruitsList'); if (!list) return;
+    var vis = arr('fruits').filter(function (f) { return !hidden(f, 'fruit'); }), counts = {};
+    vis.forEach(function (f) { split(f.type).forEach(function (t) { counts[t] = (counts[t] || 0) + 1; }); });
+    var sel = document.getElementById('fruitTypeFilter'), active = sel ? (sel.value || '__all__') : '__all__';
+    var order = ['Парамеция', 'Зоан', 'Логия'];
+    var types = Object.keys(counts).sort(function (a, b) { var ia = order.indexOf(a), ib = order.indexOf(b); return (ia < 0 ? 9 : ia) - (ib < 0 ? 9 : ib) || a.localeCompare(b, 'ru'); });
+    var items = [{ v: '__all__', l: 'Все', n: vis.length }].concat(types.map(function (t) { return { v: t, l: t, n: counts[t] }; }));
+    chipRow('wkFruitChips', list, items, active, function (v) { try { setFruitTypeFilter(v); } catch (e) {} });
+  }
+  function usefulChips() {
+    var list = document.getElementById('usefulList'); if (!list) return;
+    var vis = arr('usefulArticles').filter(function (u) { return !hidden(u, 'useful'); }), counts = {};
+    vis.forEach(function (u) { split(u.type).forEach(function (t) { counts[t] = (counts[t] || 0) + 1; }); });
+    var active = ''; try { active = window.eval('usefulTypeFilter') || ''; } catch (e) {}
+    var types = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a] || a.localeCompare(b, 'ru'); });
+    var items = [{ v: '', l: 'Все', n: vis.length }].concat(types.map(function (t) { var c = ''; try { c = typeof usefulTypeAccent === 'function' ? usefulTypeAccent(t) : ''; } catch (e) {} return { v: t, l: t, n: counts[t], c: c }; }));
+    chipRow('wkUsefulChips', list, items, active, function (v) { try { setUsefulTypeFilter(v); } catch (e) {} });
+  }
+
+  /* =========================================================
+     2. «Награды»: сводка над списком
+     ========================================================= */
+  function rewardStats() {
+    var list = document.getElementById('rewardsList'); if (!list) return;
+    var box = document.getElementById('wkRewardStats');
+    var vis = arr('rewards').filter(function (r) { return !hidden(r, 'reward'); });
+    var chars = arr('characters'), best = {}, sum = 0;
+    vis.forEach(function (r) { var cid = String(r.character_id || ''); var v = Number(r.reward) || 0; if (!best[cid] || v > best[cid].v) best[cid] = { v: v, r: r }; });
+    Object.keys(best).forEach(function (k) { sum += best[k].v; });
+    var top = Object.keys(best).map(function (k) { return best[k]; }).sort(function (a, b) { return b.v - a.v; })[0];
+    var topC = top ? byId(chars, top.r.character_id) : null;
+    var key = [vis.length, sum, top && top.v].join('|');
+    if (!box) { box = document.createElement('div'); box.id = 'wkRewardStats'; box.className = 'wk-stats'; var crew = document.getElementById('wkCrewTop'); list.parentNode.insertBefore(box, list); }
+    if (box.getAttribute('data-k') === key) return; box.setAttribute('data-k', key);
+    box.innerHTML = '<div><small>Открыто плакатов</small><b>' + vis.length + '</b></div>' +
+      '<div><small>Персонажей с наградой</small><b>' + Object.keys(best).length + '</b></div>' +
+      '<div><small>Сумма актуальных наград</small><b>' + short(sum) + ' ฿</b></div>' +
+      (topC ? '<div class="is-top"><small>Самый разыскиваемый</small><b><a href="#" data-wk-open="character" data-wk-id="' + esc(topC.id) + '">' + esc(topC.name) + '</a></b><em>' + money(top.v) + ' ฿</em></div>' : '');
+  }
+
+  /* =========================================================
+     3. «Сюжет»: прогресс по каждой саге на папке + «вы здесь»
+     ========================================================= */
+  function sagaProgress() {
+    var p = progress(), arcs = arr('storyArcs').filter(function (a) { return !hidden(a, 'story'); });
+    $$('#storyList .story-saga-folder[data-story-saga]').forEach(function (f) {
+      var saga = f.getAttribute('data-story-saga');
+      var mine = arcs.filter(function (a) { return String(a.saga || '') === saga; });
+      if (!mine.length) return;
+      var done = 0, here = false, hM = false, hA = false, ranged = 0;
+      mine.forEach(function (a) {
+        var ch = segs(a.chapters), ep = segs(a.episodes), endC = 0, endE = 0;
+        if (!ch.length && !ep.length) return; // фильмы и обложки без глав — не считаем
+        ranged++;
+        ch.forEach(function (s) { endC = Math.max(endC, s.end); if (p.chapter >= s.start && p.chapter <= s.end) { here = true; hM = true; } });
+        ep.forEach(function (s) { endE = Math.max(endE, s.end); if (p.episode >= s.start && p.episode <= s.end) { here = true; hA = true; } });
+        if ((endC && p.chapter >= endC) || (endE && p.episode >= endE)) done++;
+      });
+      var bar = f.querySelector(':scope > .wk-saga-bar'), tag = f.querySelector(':scope > .wk-saga-tag');
+      if (!ranged || /Обложки|фильм/i.test(saga)) { if (bar) bar.remove(); if (tag) tag.remove(); f.classList.remove('wk-saga-here', 'wk-saga-done'); return; }
+      var pc = Math.round(done / ranged * 100);
+      var k = pc + '|' + here;
+      if (bar && bar.getAttribute('data-k') === k) return;
+      if (!bar) { bar = document.createElement('div'); bar.className = 'wk-saga-bar'; f.appendChild(bar); }
+      bar.setAttribute('data-k', k);
+      bar.title = done + ' из ' + ranged + ' ' + plural(ranged, 'арки', 'арок', 'арок') + ' пройдено';
+      bar.innerHTML = '<i style="width:' + pc + '%"></i>';
+      if (!tag) { tag = document.createElement('span'); tag.className = 'wk-saga-tag'; f.appendChild(tag); }
+      tag.textContent = here ? (hM && hA ? 'вы здесь' : hM ? '📖 вы здесь' : '📺 вы здесь') : pc >= 100 ? '✓ пройдена' : done + ' / ' + ranged;
+      tag.className = 'wk-saga-tag' + (here ? ' is-here' : pc >= 100 ? ' is-done' : '');
+      f.classList.toggle('wk-saga-here', here);
+      f.classList.toggle('wk-saga-done', pc >= 100);
+    });
+  }
+
+  /* =========================================================
+     4. Статьи
+     ========================================================= */
+  var BOX = { character: 'characterArticleContent', story: 'storyArticleContent', fruit: 'fruitArticleContent', useful: 'usefulArticleContent' };
+  function curArt() { var st = null; try { st = window.eval('appArticleState'); } catch (e) {} return st && BOX[st.type] ? { type: st.type, id: String(st.id) } : null; }
+  function sectionTitle(sec) { var h = sec.querySelector(':scope > h2, :scope > header h2, :scope > .wk-rel-head h2, :scope > div > h2'); return h ? h.childNodes[0] && h.childNodes[0].nodeType === 3 ? h.childNodes[0].textContent.trim() || h.textContent.trim() : h.textContent.trim() : ''; }
+  // Оглавление-чипы под заголовком
+  function toc(box) {
+    var secs = $$('.article-section, .description-section, .wk-rel, [class*="wk-rel-wrap"], .wk-gal', box).filter(function (s) {
+      if (s.closest('.article-info-block') || s.classList.contains('article-info-block')) return false;
+      if (s.parentNode && s.parentNode.closest && s.parentNode.closest('.article-section')) return false;
+      return s.offsetParent !== null && s.querySelector('h2');
+    });
+    var items = [], seen = {};
+    secs.forEach(function (s) {
+      var t = (s.querySelector('h2').textContent || '').replace(/[✎⟲]/g, '').replace(/\s*\d+\s*$/, '').replace(/＋\s*Добавить/, '').trim();
+      if (!t || seen[t] || t.length > 32) return; seen[t] = 1;
+      if (!s.id) s.id = 'wk-sec-' + Math.random().toString(36).slice(2, 8);
+      items.push({ id: s.id, t: t });
+    });
+    var nav = box.querySelector(':scope .wk-toc');
+    if (items.length < 4) { if (nav) nav.remove(); return; }
+    var key = items.map(function (i) { return i.t; }).join('|');
+    if (nav && nav.getAttribute('data-k') === key) return;
+    if (!nav) {
+      nav = document.createElement('nav'); nav.className = 'wk-toc'; nav.setAttribute('aria-label', 'Разделы статьи');
+      var anchor = box.querySelector('.article-hero-layout') || box.querySelector('h1');
+      if (!anchor) return;
+      anchor.parentNode.insertBefore(nav, anchor);
+      nav.addEventListener('click', function (e) { var a = e.target.closest('[data-toc]'); if (!a) return; e.preventDefault(); var t = document.getElementById(a.getAttribute('data-toc')); if (t) { var y = t.getBoundingClientRect().top + window.scrollY - 120; window.scrollTo({ top: y, behavior: 'smooth' }); } });
+    }
+    nav.setAttribute('data-k', key);
+    nav.innerHTML = items.map(function (i) { return '<a href="#' + i.id + '" data-toc="' + i.id + '">' + esc(i.t) + '</a>'; }).join('');
+  }
+  // Сюжет: убираем текстовый дубль «Персонажи», если есть лента карточек участников
+  function storyDedupe(box) {
+    var strip = $$('h2', box).some(function (h) { return /Участники/.test(h.textContent); });
+    $$('.article-section', box).forEach(function (s) { var h = s.querySelector(':scope > h2'); if (h && /^Персонажи$/.test(h.textContent.trim().replace(/[✎\s]+$/, ''))) s.classList.toggle('wk-dup', strip); });
+  }
+  // Плод: карточка владельца
+  function fruitOwner(box, id) {
+    var f = byId(arr('fruits'), id); if (!f) return;
+    var ownerId = split(f.owner)[0], c = ownerId ? byId(arr('characters'), ownerId) : null;
+    var old = box.querySelector('.wk-owner');
+    if (!c || hidden(c, 'character')) { if (old) old.remove(); return; }
+    if (old && old.getAttribute('data-id') === c.id) return;
+    if (old) old.remove();
+    var b = null; try { b = window.__wkCurrentBounty ? window.__wkCurrentBounty(c.id) : null; } catch (e) {}
+    var team = ''; try { var t = window.__wkUsefulById && window.__wkUsefulById(c.team_article_id); if (t && !hidden(t, 'useful')) team = t.name; } catch (e) {}
+    var img = c.person_link && c.person_link !== 'Нет' ? c.person_link : '';
+    var sec = document.createElement('div'); sec.className = 'article-section wk-owner'; sec.setAttribute('data-id', c.id);
+    sec.innerHTML = '<h2>Владелец</h2><button type="button" class="wk-owner-card" data-wk-open="character" data-wk-id="' + esc(c.id) + '">' +
+      '<span class="wk-owner-img">' + (img ? '<img src="' + esc(img) + '" alt="" loading="lazy" style="object-position:' + (c.person_image_position_x || 50) + '% ' + (c.person_image_position || 50) + '%" onerror="this.remove()">' : '') + '</span>' +
+      '<span class="wk-owner-text"><b>' + esc(c.name) + '</b>' + (c.nickname && c.nickname !== 'Нет' ? '<small>«' + esc(c.nickname) + '»</small>' : '') +
+      '<span class="wk-owner-meta">' + [team ? '⚓ ' + esc(team) : '', b ? '฿ ' + money(b) : ''].filter(Boolean).join(' · ') + '</span></span><span class="wk-owner-go">→</span></button>';
+    var after = box.querySelector('.article-hero-layout') || box.querySelector('.description-section');
+    if (after && after.parentNode) after.parentNode.insertBefore(sec, after.nextSibling); else box.appendChild(sec);
+  }
+  // Кнопка «наверх»
+  var topBtn = null;
+  function topButton() {
+    if (!topBtn) {
+      topBtn = document.createElement('button'); topBtn.type = 'button'; topBtn.className = 'wk-totop'; topBtn.setAttribute('aria-label', 'Наверх'); topBtn.textContent = '↑';
+      topBtn.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+      document.body.appendChild(topBtn);
+    }
+    topBtn.classList.toggle('show', !!curArt() && window.scrollY > 900);
+  }
+  window.addEventListener('scroll', function () { if (topBtn) topButton(); }, { passive: true });
+
+  function articles() {
+    var cur = curArt();
+    Object.keys(BOX).forEach(function (t) {
+      var box = document.getElementById(BOX[t]); if (!box || box.offsetParent === null) return;
+      box.classList.add('wk-art', 'wk-art-' + t);
+      if (!cur || cur.type !== t) return;
+      if (t === 'fruit') fruitOwner(box, cur.id);
+      if (t === 'story') storyDedupe(box);
+      toc(box);
+    });
+    topButton();
+  }
+
+
+  /* =========================================================
+     5. Спокойный режим для эффектов на таймерах (деление, выстрел, молния, движение)
+     ========================================================= */
+  var LIST_SEL = '#characterList, #fruitsList, #usefulList, #storyList, #rewardsList, .wk-sc';
+  window.__wkFxGate = function (n) {
+    if (!document.documentElement.classList.contains('wk-calm')) return true;
+    var host = n && n.closest && n.closest('.character-item');
+    if (!host || !host.closest(LIST_SEL)) return true; // статья, редактор, просмотр фото — всегда
+    return host.classList.contains('wk-live');
+  };
+  // Карточка ожила — её таймерные эффекты срабатывают сразу, а не через несколько секунд
+  new MutationObserver(function (ms) {
+    ms.forEach(function (m) {
+      var el = m.target; if (!el.classList || !el.classList.contains('wk-live')) return;
+      $$('.wk-cs > span', el).forEach(function (sp) { sp.__v5Next = 0; sp.__bNext = 0; sp.__mvSig = ''; });
+    });
+  }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'], subtree: true });
+
+  /* =========================================================
+     6. Кадр фото для нестандартных карточек: превью в редакторе + свой кадр для витрины
+     ========================================================= */
+  function cropOf(rec) { var r = rec && (rec.__wikiRaw || rec) || {}; return { x: Math.max(0, Math.min(100, Number(r.person_image_position_x) || 50)), y: Math.max(0, Math.min(100, Number(r.person_image_position) || 50)), z: Math.max(100, Math.min(250, Number(r.person_image_zoom) || 100)) }; }
+  function heroOf(rec) { var r = rec && (rec.__wikiRaw || rec) || {}; var m = String(r.hero_crop || '').split(','); if (m.length < 3 || !m[0]) return null; return { x: +m[0], y: +m[1], z: +m[2] }; }
+  function styleImg(img, c) { img.style.setProperty('object-position', c.x + '% ' + c.y + '%', 'important'); img.style.setProperty('transform', 'scale(' + (c.z / 100) + ')', 'important'); img.style.setProperty('transform-origin', c.x + '% ' + c.y + '%', 'important'); }
+  function heroCrops() {
+    $$('.wk-hero-card .character-item').forEach(function (el) {
+      var m = (el.getAttribute('onclick') || '').match(/openCharacterArticle\('([^']+)'/); if (!m) return;
+      var rec = byId(arr('characters'), m[1]), img = el.querySelector('img.character-grid-image'); if (!rec || !img) return;
+      var c = heroOf(rec); if (c) styleImg(img, c);
+    });
+  }
+  var SIZES = [['hero', 'Витрина', 'большая карточка'], ['shelf', 'Полка', ''], ['s', 'S', ''], ['m', 'M', 'как в каталоге'], ['l', 'L', '']];
+  function cropPreviews() {
+    var ed = document.querySelector('#wikiEditorForm .wiki-character-crop-editor[data-crop-type="character"]'); if (!ed) return;
+    var form = document.getElementById('wikiEditorForm');
+    var urlEl = form.querySelector('[data-field="person_link"]'), idEl = form.querySelector('[data-field="id"]');
+    var id = idEl ? String(idEl.value || '').trim() : '', rec = id ? byId(arr('characters'), id) : null;
+    var box = ed.parentNode.querySelector(':scope > .wk-crop-sizes');
+    if (!box) {
+      box = document.createElement('div'); box.className = 'wk-crop-sizes';
+      box.innerHTML = '<div class="wk-cs-head"><b>Как фото выглядит в разных карточках</b><small>Витрину можно кадрировать отдельно: тяни фото в ней, колесо — масштаб.</small></div><div class="wk-cs-row">' +
+        SIZES.map(function (s) { return '<figure class="wk-csz is-' + s[0] + '" data-sz="' + s[0] + '"><div class="wk-csz-frame"><img alt=""></div><figcaption>' + s[1] + (s[2] ? '<small>' + s[2] + '</small>' : '') + (s[0] === 'hero' ? '<button type="button" class="wk-csz-reset" data-hero-reset title="Как в обычной карточке">⟲ как обычно</button>' : '') + '</figcaption></figure>'; }).join('') + '</div>';
+      ed.after(box);
+      wireHero(box);
+    }
+    var u = urlEl ? String(urlEl.value || '').trim() : '';
+    var get = function (k, d) { var el = form.querySelector('[data-field="' + k + '"]'); var v = el ? Number(el.value) : NaN; return isFinite(v) && el.value !== '' ? v : d; };
+    var base = { x: get('person_image_position_x', 50), y: get('person_image_position', 50), z: Math.max(100, get('person_image_zoom', 100)) };
+    if (box.__id && box.__id !== id) box.__hero = null;
+    var hero = box.__hero || (rec && heroOf(rec)) || null;
+    box.__id = id; box.__base = base;
+    $$('.wk-csz', box).forEach(function (f) {
+      var img = f.querySelector('img');
+      if (u && img.getAttribute('src') !== u) img.setAttribute('src', u);
+      if (!u) img.removeAttribute('src');
+      var c = f.getAttribute('data-sz') === 'hero' && hero ? hero : base;
+      styleImg(img, c);
+    });
+    box.classList.toggle('has-hero', !!hero);
+  }
+  function wireHero(box) {
+    var fr = box.querySelector('.is-hero .wk-csz-frame'), drag = null, saveT = 0;
+    function cur() { return box.__hero || { x: box.__base.x, y: box.__base.y, z: box.__base.z }; }
+    function commit() {
+      clearTimeout(saveT);
+      saveT = setTimeout(function () {
+        if (!box.__id) return;
+        var h = box.__hero, v = h ? [Math.round(h.x), Math.round(h.y), Math.round(h.z)].join(',') : '';
+        try { window.__wikiQuickSave('character', box.__id, { hero_crop: v }); } catch (e) { console.warn(e); }
+      }, 500);
+    }
+    fr.addEventListener('pointerdown', function (e) { var c = cur(); drag = { x: e.clientX, y: e.clientY, c: { x: c.x, y: c.y, z: c.z } }; fr.setPointerCapture(e.pointerId); e.preventDefault(); });
+    fr.addEventListener('pointermove', function (e) {
+      if (!drag) return; var r = fr.getBoundingClientRect();
+      var k = 100 / (drag.c.z / 100 - 1 || 1);
+      var dx = (e.clientX - drag.x) / r.width * (drag.c.z > 100 ? k : 100), dy = (e.clientY - drag.y) / r.height * (drag.c.z > 100 ? k : 100);
+      box.__hero = { x: Math.max(0, Math.min(100, drag.c.x - dx)), y: Math.max(0, Math.min(100, drag.c.y - dy)), z: drag.c.z };
+      cropPreviews();
+    });
+    fr.addEventListener('pointerup', function () { if (drag) { drag = null; commit(); } });
+    fr.addEventListener('wheel', function (e) { e.preventDefault(); var c = cur(); box.__hero = { x: c.x, y: c.y, z: Math.max(100, Math.min(250, c.z + (e.deltaY < 0 ? 10 : -10))) }; cropPreviews(); commit(); }, { passive: false });
+    box.querySelector('[data-hero-reset]').addEventListener('click', function (e) { e.preventDefault(); box.__hero = null; cropPreviews(); clearTimeout(saveT); if (box.__id) try { window.__wikiQuickSave('character', box.__id, { hero_crop: '' }); } catch (er) {} });
+  }
+  document.addEventListener('input', function (e) { if (e.target && e.target.closest && e.target.closest('#wikiEditorForm')) setTimeout(cropPreviews, 0); });
+  document.addEventListener('pointerup', function (e) { if (e.target && e.target.closest && e.target.closest('.wiki-character-crop-preview, .wk-crop-tools')) setTimeout(cropPreviews, 30); });
+  document.addEventListener('wheel', function (e) { if (e.target && e.target.closest && e.target.closest('.wiki-character-crop-preview')) setTimeout(cropPreviews, 30); }, { passive: true });
+  document.addEventListener('click', function (e) { if (e.target && e.target.closest && e.target.closest('.wk-crop-tools')) setTimeout(cropPreviews, 30); });
+  var cpPend = 0;
+  new MutationObserver(function () { if (cpPend) return; cpPend = requestAnimationFrame(function () { cpPend = 0; try { cropPreviews(); heroCrops(); } catch (e) {} }); }).observe(document.documentElement, { childList: true, subtree: true });
+  /* ---------- Обход ---------- */
+  var pend = 0;
+  function run() { pend = 0; try { fruitChips(); usefulChips(); rewardStats(); sagaProgress(); articles(); } catch (e) { console.warn('v7:', e); } }
+  function schedule() { if (!pend) pend = requestAnimationFrame(run); }
+  function boot() {
+    ['fruitsList', 'usefulList', 'rewardsList', 'storyList', 'characterArticleContent', 'storyArticleContent', 'fruitArticleContent', 'usefulArticleContent'].forEach(function watch(id) {
+      var el = document.getElementById(id); if (!el) { setTimeout(function () { watch(id); }, 600); return; }
+      new MutationObserver(function (ms) {
+        for (var i = 0; i < ms.length; i++) { var tg = ms[i].target; if (tg.closest && (tg.closest('.wk-toc') || tg.closest('.wk-owner') || tg.closest('.wk-saga-bar'))) continue; schedule(); return; }
+      }).observe(el, { childList: true, subtree: true });
+    });
+    ['wiki:spoiler-progress-restored', 'wiki:cloud-ready'].forEach(function (ev) { window.addEventListener(ev, schedule); });
+    document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('.main-tab, [data-mobile-tab], .pagination, [data-useful-type], .stat-button')) setTimeout(schedule, 80); });
+    document.addEventListener('change', function (e) { if (e.target && e.target.id === 'fruitTypeFilter') setTimeout(schedule, 50); });
     schedule();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
