@@ -1185,7 +1185,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "31.10.2026 · 55";
+const WIKI_VERSION = "31.10.2026 · 56";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -9367,7 +9367,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         document.head.appendChild(style);
         // Запуск редактора доступен только сочетанием Ctrl+Shift+F10.
         const overlay=document.createElement('div');overlay.id='wikiEditorOverlay';overlay.className='wiki-editor-overlay';
-        overlay.innerHTML=`<div class="wiki-editor-panel" role="dialog" aria-modal="true" aria-label="Редактор вики"><div class="wiki-editor-head"><h2>✎ Управление One Piece Wiki</h2><div class="wiki-editor-actions"><button class="wiki-editor-btn" id="wikiEditorDiagnostics" aria-pressed="false">⚑ Проверка данных</button><button class="wiki-editor-btn" id="wikiEditorSettings">Связи и цвета</button><button class="wiki-editor-btn" id="wikiEditorExport">Экспорт JSON</button><button class="wiki-editor-btn" id="wikiEditorExportHTML">Скачать HTML с данными</button><button class="wiki-editor-btn" id="wikiEditorImportBtn">Импорт JSON</button><input id="wikiEditorImportFile" type="file" accept="application/json,.json" hidden><button class="wiki-editor-btn" id="wikiEditorClose">Закрыть ✕</button></div></div><div class="wiki-editor-body"><aside class="wiki-editor-sidebar"><div class="wiki-editor-tabs" id="wikiEditorTabs"></div><input id="wikiEditorSearch" class="wiki-editor-search" placeholder="Найти статью…"><div class="wiki-editor-list-tools" id="wikiEditorListTools"><select id="wikiEditorFilter" aria-label="Фильтр списка статей"><option value="all">Все статьи</option><option value="spoiler">Со спойлерами</option><option value="draft">Черновики</option><option value="issues">С ошибками</option><option value="no-image">Без изображения</option><option value="auto-photo">🤖 Фото от Claude</option><option value="no-description">Без описания</option><option value="no-links">Без связанных статей</option></select><select id="wikiEditorSort" aria-label="Сортировка списка статей"><option value="recent">Сначала новые</option><option value="name">Название: А—Я</option><option value="id">ID: А—Я</option><option value="issues">Больше ошибок</option><option value="chapter_asc">По главам: от ранних</option><option value="chapter_desc">По главам: от поздних</option><option value="episode_asc">По эпизодам: от ранних</option><option value="episode_desc">По эпизодам: от поздних</option></select></div><div class="wiki-editor-list-meta" id="wikiEditorListMeta" aria-live="polite"></div><button class="wiki-editor-btn primary" id="wikiEditorNew" style="width:100%;margin-bottom:12px">＋ Новая статья</button><div id="wikiEditorList" class="wiki-editor-list"></div><div class="wiki-editor-warning">Спойлерные статьи скрыты в обычной вики, но остаются здесь доступными для редактирования.</div></aside><main class="wiki-editor-main" id="wikiEditorForm"><div class="wiki-editor-empty">Выбери статью или создай новую.</div></main></div></div>`;
+        overlay.innerHTML=`<div class="wiki-editor-panel" role="dialog" aria-modal="true" aria-label="Редактор вики"><div class="wiki-editor-head"><h2>✎ Управление One Piece Wiki</h2><div class="wiki-editor-actions"><button class="wiki-editor-btn" id="wikiEditorDiagnostics" aria-pressed="false">⚑ Проверка данных</button><button class="wiki-editor-btn" id="wikiEditorSettings">Связи и цвета</button><button class="wiki-editor-btn" id="wikiEditorExport">Экспорт JSON</button><button class="wiki-editor-btn" id="wikiEditorExportHTML">Скачать HTML с данными</button><button class="wiki-editor-btn" id="wikiEditorImportBtn">Импорт JSON</button><input id="wikiEditorImportFile" type="file" accept="application/json,.json" hidden><button class="wiki-editor-btn" id="wikiEditorClose">Закрыть ✕</button></div></div><div class="wiki-editor-body"><aside class="wiki-editor-sidebar"><div class="wiki-editor-tabs" id="wikiEditorTabs"></div><input id="wikiEditorSearch" class="wiki-editor-search" placeholder="Найти статью…"><div class="wiki-editor-list-tools" id="wikiEditorListTools"><select id="wikiEditorFilter" aria-label="Фильтр списка статей"><option value="all">Все статьи</option><option value="spoiler">Со спойлерами</option><option value="draft">Черновики</option><option value="issues">С ошибками</option><option value="no-image">Без изображения</option><option value="no-description">Без описания</option><option value="no-links">Без связанных статей</option></select><select id="wikiEditorSort" aria-label="Сортировка списка статей"><option value="recent">Сначала новые</option><option value="name">Название: А—Я</option><option value="id">ID: А—Я</option><option value="issues">Больше ошибок</option><option value="chapter_asc">По главам: от ранних</option><option value="chapter_desc">По главам: от поздних</option><option value="episode_asc">По эпизодам: от ранних</option><option value="episode_desc">По эпизодам: от поздних</option></select></div><div class="wiki-editor-list-meta" id="wikiEditorListMeta" aria-live="polite"></div><button class="wiki-editor-btn primary" id="wikiEditorNew" style="width:100%;margin-bottom:12px">＋ Новая статья</button><div id="wikiEditorList" class="wiki-editor-list"></div><div class="wiki-editor-warning">Спойлерные статьи скрыты в обычной вики, но остаются здесь доступными для редактирования.</div></aside><main class="wiki-editor-main" id="wikiEditorForm"><div class="wiki-editor-empty">Выбери статью или создай новую.</div></main></div></div>`;
         /* Не закрывать редактор при клике по затемнённому фону: предотвращает случайную потерю несохранённых изменений. Закрытие доступно только кнопкой «Закрыть». */
         overlay.addEventListener('click',e=>{if(e.target===overlay){e.preventDefault();e.stopPropagation();}});document.body.appendChild(overlay);
         document.getElementById('wikiEditorClose').addEventListener('click',closeManager);
@@ -10147,7 +10147,6 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
             case 'draft':return !!record.__wikiDraft;
             case 'issues':return dataIssuesForRecord(type,record,record).length>0;
             case 'no-image':return supportsImageFilter(type)&&!hasRecordImage(type,record);
-            case 'auto-photo':return typeof window.__wkIsAutoPhoto==='function'&&window.__wkIsAutoPhoto(type,record);
             case 'no-description':return ['character','story','fruit','useful'].includes(type)&&!hasRecordDescription(type,record);
             case 'no-links':return !hasRecordLinks(type,record);
             default:return true;
@@ -10253,7 +10252,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         });
         if(meta)meta.textContent=`Показано ${items.length} из ${all.length}`;
         if(!items.length){host.innerHTML='<div class="wiki-editor-empty">По выбранным условиям статей нет.</div>';return;}
-        host.innerHTML=items.map(x=>{const count=dataIssuesForRecord(activeType,x,x).length;return `<button type="button" class="wiki-editor-record ${String(rawValue(x,'id'))===String(editingId)?'active':''}" data-id="${escapeHTMLLocal(rawValue(x,'id'))}"><span>${x.__wikiSpoiler?'🔒 ':''}${x.__wikiDraft?'📝 ':''}${count?'⚠️ ':''}${(typeof window.__wkIsAutoPhoto==='function'&&window.__wkIsAutoPhoto(activeType,x))?'🤖 ':''}${escapeHTMLLocal(getTitle(activeType,x))}<small>${escapeHTMLLocal(rawValue(x,'id'))}${x.__wikiSpoiler?' · СПОЙЛЕР':''}${x.__wikiDraft?' · ЧЕРНОВИК':''}${(typeof window.__wkIsAutoPhoto==='function'&&window.__wkIsAutoPhoto(activeType,x))?' · ФОТО ОТ CLAUDE':''}${count?` · проблем: ${count}`:''}</small></span><span>›</span></button>`;}).join('');
+        host.innerHTML=items.map(x=>{const count=dataIssuesForRecord(activeType,x,x).length;return `<button type="button" class="wiki-editor-record ${String(rawValue(x,'id'))===String(editingId)?'active':''}" data-id="${escapeHTMLLocal(rawValue(x,'id'))}"><span>${x.__wikiSpoiler?'🔒 ':''}${x.__wikiDraft?'📝 ':''}${count?'⚠️ ':''}${escapeHTMLLocal(getTitle(activeType,x))}<small>${escapeHTMLLocal(rawValue(x,'id'))}${x.__wikiSpoiler?' · СПОЙЛЕР':''}${x.__wikiDraft?' · ЧЕРНОВИК':''}${count?` · проблем: ${count}`:''}</small></span><span>›</span></button>`;}).join('');
         host.querySelectorAll('[data-id]').forEach(btn=>btn.addEventListener('click',()=>{editingId=btn.dataset.id;renderManagerList();renderEditorForm();}));
     }
     function newRecord(type){
@@ -27581,8 +27580,6 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     }
     var imgKey = type === 'character' ? 'person_link' : 'image', img = val(imgKey);
     if (img && !/^(https?:\/\/|data:image\/)/i.test(img)) add('warn', '🖼 Ссылка на фото должна начинаться с https://');
-    if (typeof window.__wkIsAutoPhoto === 'function' && window.__wkIsAutoPhoto(type, raw) && img === String(raw[imgKey] || '').trim())
-      add('info', '🤖 Это фото подобрал Claude. <button type="button" class="wk-qe-mini" data-qe-photo-ok>✓ Фото устраивает</button>' + (raw.photo_auto_prev ? ' <button type="button" class="wk-qe-mini" data-qe-photo-back>↩ Вернуть прежнее</button>' : '') + ' Если заменишь ссылку своей, пометка пропадёт сама.');
     box.innerHTML = out.join('');
     box.hidden = !out.length;
   }
@@ -27822,14 +27819,11 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     document.body.appendChild(n); setTimeout(function () { n.remove(); }, ms || 3200); return n;
   }
 
-  /* ---------- Пометка «Фото от Claude» ----------
+  /* ---------- Уборка после подбора фото (подбор удалён) ----------
      photo_auto хранит ссылку, которую поставил Claude. Пометка действует, пока картинка статьи та же самая:
      стоит заменить фото своим — пометка исчезает сама. «Фото устраивает» просто очищает photo_auto. */
   function rv(rec, k) { if (!rec) return ''; var r = rec.__wikiRaw; var v = r && Object.prototype.hasOwnProperty.call(r, k) ? r[k] : rec[k]; return v == null ? '' : String(v).trim(); }
-  window.__wkIsAutoPhoto = function (type, rec) {
-    var key = IMG_KEY[type]; if (!key || !rec) return false;
-    var pa = rv(rec, 'photo_auto'); return !!pa && pa === rv(rec, key);
-  };
+
 
   /* =========================================================
      ДАННЫЕ-ПАТЧ: то, что нашлось при проверке базы.
@@ -27842,7 +27836,7 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     return { type: 'useful', id: id, create: Object.assign({ crew: '', team: '', card_fx: '', card_shine: '', title_fx: '', title_style: '', card_style: '', image: '', image_position: '50', image_position_x: '50', image_zoom: '100', type: 'Команды', map_hide: [], __wikiSpoiler: false, __wikiFieldSpoilers: [], __wikiDraft: false, __wikiCreatedAt: NOW, crew_top: true }, o) };
   }
   var PATCH = {
-    id: 'v54-2026-10-31',
+    id: 'v56-2026-10-31',
     create: [
       { type: 'fruit', id: 'fruit_wara', create: { card_fx: '', card_shine: '', title_fx: '', title_style: '', card_style: '', name: 'Вара Вара но Ми', appearance: '508', episode: '399',
         description: 'Позволяет создавать солому и превращать в неё своё тело. Пользователь может «вплести» в себя жизни других людей: урон, который получает он сам, переносится на них, а соломенные куклы позволяют насылать проклятия. Пользователь — Бэзил Хокинс.',
@@ -27970,6 +27964,18 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
       var next = lines.join('\n'); if (next !== String(r.crew || '')) crewOps[c[0]] = next;
     });
     Object.keys(crewOps).forEach(function (id) { fills.push({ type: 'useful', id: id, changes: { crew: crewOps[id] } }); });
+    // Подбор фото удалён: возвращаем фото, которые ставил Claude (они не грузились), и снимаем пометки.
+    ['character', 'fruit', 'useful', 'story'].forEach(function (type) {
+      var key = IMG_KEY[type];
+      arr(LISTS[type]).forEach(function (rec) {
+        var pa = rv(rec, 'photo_auto'), prev = rv(rec, 'photo_auto_prev');
+        if (!pa && !prev) return;
+        var ch = { photo_auto: '', photo_auto_prev: '' };
+        if (pa && pa === rv(rec, key)) ch[key] = prev;
+        var id = rv(rec, 'id'), ex = fills.filter(function (f) { return f.type === type && f.id === id; })[0];
+        if (ex) Object.keys(ch).forEach(function (k) { ex.changes[k] = ch[k]; }); else fills.push({ type: type, id: id, changes: ch });
+      });
+    });
     var filled = fills.length ? window.__wikiBulkSave(fills) : 0;
     done[PATCH.id] = new Date().toISOString(); lsSet(PATCH_KEY, JSON.stringify(done));
     if (made || filled) { console.info('Данные-патч ' + PATCH.id + ': новых статей ' + made + ', заполнено ' + filled); toast('Обновил базу: ' + (made ? made + ' новых статей (команды, плод Хокинса)' : '') + (made && filled ? ', ' : '') + (filled ? 'заполнено полей у ' + filled + ' статей' : '')); }
@@ -27977,323 +27983,10 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   }
   window.__wkRunDataPatch = runPatch;
 
-  /* =========================================================
-     ПОДБОР ФОТО ОТ CLAUDE
-     Статьи без картинки или с битой/серой заглушкой получают картинку из инфобокса One Piece Wiki (Fandom).
-     Порядок: API Fandom (pageimages) → разбор инфобокса страницы → прямые имена файлов (Special:FilePath).
-     Каждая найденная картинка сначала проверяется загрузкой. Старая ссылка хранится в photo_auto_prev.
-     ========================================================= */
-  // Английские названия страниц Fandom (массив — запасные варианты).
-  var T = {
-    char_roshio: 'Roshio', char_nola: 'Nola', char_pierre: 'Pierre', char_funkfreed: 'Funkfreed', char_hattori: 'Hattori', char_clou_d_clover: ['Clover', 'Professor Clover'],
-    char_olvia: 'Nico Olvia', char_jaguar_saul: 'Jaguar D. Saul', char_shachi: 'Shachi', char_penguin: 'Penguin', char_minotaurus: 'Minotaurus', char_basilisk: 'Basilisk',
-    char_sphinx: 'Sphinx', char_manticore: 'Manticore', char_minokoala: 'Minokoala', char_minozebra: 'Minozebra', char_minorhinoceros: ['Minorhinoceros', 'Minorhinocerous'],
-    char_tsuru: 'Tsuru', char_portgas_rouge: 'Portgas D. Rouge', char_fisher_tiger: 'Fisher Tiger', char_blamenco: 'Blamenco', char_thatch: 'Thatch', char_stronger: 'Stronger',
-    char_sodom: ['Sodom', 'Sodom and Gomorrah'], char_gomorrah: ['Gomorrah', 'Sodom and Gomorrah'], char_bacura: 'Bacura', char_shelly: 'Shelly', char_shiki: 'Shiki',
-    char_demalo_black: 'Demalo Black', char_nora_gitsune: 'Nora Gitsune', char_caribou: 'Caribou', char_coribou: 'Coribou', char_albion: 'Albion', char_lip_doughty: 'Lip Doughty',
-    char_surume: 'Surume', char_vander_decken_ix: 'Vander Decken IX', char_ankoro: 'Ankoro', char_scales: 'Scales', char_kinemon: ["Kin'emon", 'Kinemon'], char_momonosuke: 'Kozuki Momonosuke',
-    char_vergo: 'Vergo', char_smiley: 'Smiley', char_baby5: 'Baby 5', char_buffalo: 'Buffalo', char_kanjuro: 'Kanjuro', char_issho: 'Issho', char_bartolomeo: 'Bartolomeo',
-    char_cavendish: 'Cavendish', char_diamante: 'Diamante', char_trebol: 'Trebol', char_pica: 'Pica', char_sugar: 'Sugar', char_viola: 'Viola', char_kyros: 'Kyros',
-    char_riku_doldo: 'Riku Doldo III', char_rosinante: 'Donquixote Rosinante', char_chinjao: 'Chinjao', char_sai: 'Sai', char_leo: 'Leo', char_hajrudin: 'Hajrudin',
-    char_senor_pink: ['Señor Pink', 'Senor Pink'], char_machvise: 'Machvise', char_dellinger: 'Dellinger', char_lao_g: 'Lao G', char_gladius: 'Gladius', char_jora: 'Jora',
-    char_homing: 'Donquixote Homing', char_scarlett: 'Scarlett', char_mansherry: 'Mansherry', char_jack: 'Jack', char_zunesha: 'Zunesha', char_carrot: 'Carrot', char_pedro: 'Pedro',
-    char_inuarashi: 'Inuarashi', char_nekomamushi: 'Nekomamushi', char_raizo: 'Raizo', char_yonji: 'Vinsmoke Yonji', char_chiffon: 'Charlotte Chiffon', char_reiju: 'Vinsmoke Reiju',
-    char_ichiji: 'Vinsmoke Ichiji', char_niji: 'Vinsmoke Niji', char_mont_dor: ["Charlotte Mont-d'Or", 'Charlotte Mont-dOr'], char_brulee: ['Charlotte Brûlée', 'Charlotte Brulee'],
-    char_judge: 'Vinsmoke Judge', char_perospero: 'Charlotte Perospero', char_cracker: 'Charlotte Cracker', char_sora: 'Vinsmoke Sora', char_smoothie: 'Charlotte Smoothie',
-    char_daifuku: 'Charlotte Daifuku', char_oven: 'Charlotte Oven', char_aramaki: 'Aramaki', char_im: ['Imu', 'Im'], char_tama: 'Tama', char_kikunojo: 'Kikunojo', char_toki: 'Kozuki Toki',
-    char_denjiro: 'Denjiro', char_oden: 'Kozuki Oden', char_ashura: 'Ashura Doji', char_kawamatsu: 'Kawamatsu', char_king: 'King', char_queen: 'Queen', char_shinobu: 'Shinobu',
-    char_hiyori: 'Kozuki Hiyori', char_orochi: 'Kurozumi Orochi', char_page_one: 'Page One', char_yasuie: 'Shimotsuki Yasuie', char_ulti: 'Ulti', char_sasaki: 'Sasaki',
-    char_black_maria: 'Black Maria', char_whos_who: ["Who's-Who", 'Whos-Who'], char_saturn: 'Jaygarcia Saturn', char_stussy: 'Stussy', char_shamrock: 'Figarland Shamrock',
-    char_jarul: 'Jarul', char_rocks: ['Rocks D. Xebec', 'Rocks D. Xebec'], char_lilith: ['Lilith', 'Vegapunk Lilith'], char_shaka: ['Shaka', 'Vegapunk Shaka'],
-    char_edison: ['Edison', 'Vegapunk Edison'], char_pythagoras: ['Pythagoras', 'Vegapunk Pythagoras'], char_atlas: ['Atlas', 'Vegapunk Atlas'], char_york: ['York', 'Vegapunk York'],
-    char_garling: 'Figarland Garling', char_ginny: 'Ginny', char_loki: 'Loki', char_harald: 'Harald', char_gunko: 'Gunko', char_sommers: 'Sommers', char_killingham: 'Killingham',
-    fruit_fuku: 'Fuku Fuku no Mi', fruit_uo_seiryu_art: 'Uo Uo no Mi, Model: Seiryu', fruit_sara_axolotl: 'Sara Sara no Mi, Model: Axolotl', fruit_buki: 'Buki Buki no Mi',
-    fruit_guru: 'Guru Guru no Mi', fruit_fude: 'Fude Fude no Mi', fruit_zushi: 'Zushi Zushi no Mi', fruit_bari: 'Bari Bari no Mi', fruit_hira: 'Hira Hira no Mi', fruit_beta: 'Beta Beta no Mi',
-    fruit_ishi: 'Ishi Ishi no Mi', fruit_hobi: 'Hobi Hobi no Mi', fruit_giro: 'Giro Giro no Mi', fruit_nagi: 'Nagi Nagi no Mi', fruit_nui: 'Nui Nui no Mi', fruit_sui: 'Sui Sui no Mi',
-    fruit_ton: 'Ton Ton no Mi', fruit_pamu: 'Pamu Pamu no Mi', fruit_ato: 'Ato Ato no Mi', fruit_chiyu: 'Chiyu Chiyu no Mi', fruit_zou_mammoth: 'Zou Zou no Mi, Model: Mammoth',
-    fruit_maki: 'Maki Maki no Mi', fruit_shibo: 'Shibo Shibo no Mi', fruit_bisu: 'Bisu Bisu no Mi', fruit_pero: 'Pero Pero no Mi', fruit_netsu: 'Netsu Netsu no Mi', fruit_hoya: 'Hoya Hoya no Mi',
-    fruit_mira: 'Mira Mira no Mi', fruit_buku: 'Buku Buku no Mi', fruit_hebi_orochi: 'Hebi Hebi no Mi, Model: Yamata no Orochi', fruit_ryu_pteranodon: 'Ryu Ryu no Mi, Model: Pteranodon',
-    fruit_ryu_brachiosaurus: 'Ryu Ryu no Mi, Model: Brachiosaurus', fruit_ryu_pachycephalosaurus: 'Ryu Ryu no Mi, Model: Pachycephalosaurus', fruit_ryu_spinosaurus: 'Ryu Ryu no Mi, Model: Spinosaurus',
-    fruit_ryu_triceratops: 'Ryu Ryu no Mi, Model: Triceratops', fruit_kumo_rosamygale: 'Kumo Kumo no Mi, Model: Rosamygale Grauvogeli', fruit_neko_sabertooth: ['Neko Neko no Mi, Model: Saber Tiger', 'Neko Neko no Mi, Model: Sabertooth'],
-    fruit_juku: 'Juku Juku no Mi', fruit_pera: 'Pera Pera no Mi', fruit_toki: 'Toki Toki no Mi', fruit_kibi: 'Kibi Kibi no Mi', fruit_mori: 'Mori Mori no Mi',
-    fruit_gyuki: ['Hito Hito no Mi, Model: Gyuki', 'Ushi Ushi no Mi, Model: Gyuki'], fruit_batto_vampire: ['Batto Batto no Mi, Model: Vampire', 'Koumori Koumori no Mi, Model: Vampire Bat'],
-    fruit_ryu_nidhoggr: ['Ryu Ryu no Mi, Model: Nidhoggr', 'Ryu Ryu no Mi, Model: Níðhöggr'], fruit_ira: 'Ira Ira no Mi', fruit_ryu_kirin: ['Ryu Ryu no Mi, Model: Kirin', 'Uma Uma no Mi, Model: Kirin'],
-    fruit_wara: 'Wara Wara no Mi',
-    article_isl_dawn: 'Dawn Island', article_isl_shells: 'Shells Town', article_isl_orange: 'Orange Town', article_isl_syrup: 'Syrup Village', article_isl_conomi: 'Conomi Islands',
-    article_isl_logue: 'Loguetown', article_isl_reverse: 'Reverse Mountain', article_isl_whisky: 'Whisky Peak', article_isl_little_garden: 'Little Garden', article_isl_drum: 'Drum Island',
-    article_isl_alabasta: ['Arabasta Kingdom', 'Alabasta'], article_isl_jaya: 'Jaya', article_isl_skypiea: 'Skypiea', article_isl_long_ring: 'Long Ring Long Land', article_isl_water7: 'Water 7',
-    article_isl_enies: 'Enies Lobby', article_isl_ohara: 'Ohara', article_isl_thriller: 'Thriller Bark', article_isl_sabaody: 'Sabaody Archipelago', article_isl_amazon_lily: 'Amazon Lily',
-    article_isl_impel_down: 'Impel Down', article_isl_marineford: 'Marineford', article_isl_fishman: 'Fish-Man Island', article_isl_punk_hazard: 'Punk Hazard', article_isl_dressrosa: 'Dressrosa',
-    article_isl_zou: 'Zou', article_isl_totto_land: 'Totto Land', article_isl_mariejois: 'Mary Geoise', article_isl_wano: 'Wano Country', article_isl_laugh_tale: 'Laugh Tale',
-    article_isl_egghead: 'Egghead', article_isl_elbaph: 'Elbaph',
-    article_ship_sunny: 'Thousand Sunny', article_ship_oro: 'Oro Jackson', article_ship_mobydick: 'Moby Dick', article_ship_saber: 'Saber of Xebec', article_ship_polartang: 'Polar Tang',
-    article_ship_victoriapunk: 'Victoria Punk', article_ship_yuda: 'Perfume Yuda', article_ship_maxim: 'Ark Maxim', article_ship_dutchman: 'Flying Dutchman', article_ship_sexyfoxy: 'Sexy Foxy',
-    article_ship_reelspider: ['Reel Spider', 'Leviathan'], article_ship_lufsenpai: ['Going Luffy-senpai', 'Going Luffy-Senpai'], article_ship_nostra: 'Nostra Castello',
-    article_race_humans: 'Humans', article_race_giants: 'Giants', article_race_merfolk: 'Merfolk', article_race_minks: 'Mink Tribe', article_race_tontatta: 'Tontatta Tribe',
-    article_race_longarm: 'Longarm Tribe', article_race_skypieans: 'Skypieans', article_race_lunarians: 'Lunarians',
-    article_crew_thriller: 'Thriller Bark Pirates', article_crew_rumbar: 'Rumbar Pirates', article_crew_kuja: 'Kuja Pirates', article_crew_spade: 'Spade Pirates', article_crew_goldenlion: 'Golden Lion Pirates'
-  };
-  function titleCase(w) { return w ? w.charAt(0).toUpperCase() + w.slice(1) : w; }
-  // Названия для статей, которых нет в списке: char_absalom → «Absalom», fruit_mane → «Mane Mane no Mi».
-  function guessTitles(type, rec) {
-    var id = String(rec.id || '');
-    if (T[id]) return [].concat(T[id]);
-    if (type === 'character' && /^char_/.test(id)) return [id.slice(5).split('_').map(titleCase).join(' ')];
-    if (type === 'fruit' && /^fruit_[a-z]+$/.test(id)) { var w = titleCase(id.slice(6)); return [w + ' ' + w + ' no Mi']; }
-    return [];
-  }
-  var API = 'https://onepiece.fandom.com/api.php';
-  function api(params) {
-    var q = Object.keys(params).map(function (k) { return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]); }).join('&');
-    return fetch(API + '?' + q + '&format=json&origin=*', { mode: 'cors', credentials: 'omit' }).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
-  }
-  // Картинки инфобокса пачкой по 40 названий. Возвращает {исходное название: url}
-  function pageImages(titles) {
-    var out = {}, chunks = [];
-    for (var i = 0; i < titles.length; i += 40) chunks.push(titles.slice(i, i + 40));
-    return chunks.reduce(function (p, ch) {
-      return p.then(function () {
-        return api({ action: 'query', prop: 'pageimages', piprop: 'original|thumbnail', pithumbsize: '800', redirects: '1', titles: ch.join('|') }).then(function (j) {
-          var q = j && j.query || {}, back = {};
-          ch.forEach(function (t) { back[t] = t; });
-          (q.normalized || []).forEach(function (n) { Object.keys(back).forEach(function (t) { if (back[t] === n.from) back[t] = n.to; }); });
-          (q.redirects || []).forEach(function (n) { Object.keys(back).forEach(function (t) { if (back[t] === n.from) back[t] = n.to; }); });
-          var byTitle = {};
-          Object.keys(q.pages || {}).forEach(function (k) { var pg = q.pages[k]; var src = (pg.thumbnail && pg.thumbnail.source) || (pg.original && pg.original.source); if (src) byTitle[pg.title] = src; });
-          ch.forEach(function (t) { if (byTitle[back[t]]) out[t] = byTitle[back[t]]; });
-        }).catch(function (e) { console.warn('Fandom pageimages:', e); });
-      });
-    }, Promise.resolve()).then(function () { return out; });
-  }
-  // Запасной путь: картинка из инфобокса самой страницы
-  function infoboxImage(title) {
-    return api({ action: 'parse', page: title, prop: 'text', section: '0', redirects: '1', disablelimitreport: '1' }).then(function (j) {
-      var html = j && j.parse && j.parse.text && (j.parse.text['*'] || j.parse.text) || '';
-      if (typeof html !== 'string') return '';
-      var box = html.indexOf('portable-infobox') >= 0 ? html.slice(html.indexOf('portable-infobox')) : html;
-      var m = box.match(/(?:data-src|src|href)="(https:\/\/static\.wikia\.nocookie\.net\/onepiece\/images\/[^"]+?\.(?:png|jpe?g|webp|gif)[^"]*)"/i);
-      return m ? m[1].replace(/&amp;/g, '&').replace(/\/scale-to-width-down\/\d+/, '/scale-to-width-down/800') : '';
-    }).catch(function () { return ''; });
-  }
-  // Поиск по вики, если название не угадали
-  function searchTitle(q) {
-    return api({ action: 'query', list: 'search', srsearch: q, srlimit: '1', srnamespace: '0' }).then(function (j) {
-      var s = j && j.query && j.query.search; return s && s[0] ? s[0].title : '';
-    }).catch(function () { return ''; });
-  }
-  function filePathGuesses(title) {
-    var base = 'https://onepiece.fandom.com/wiki/Special:FilePath/';
-    return [title + ' Anime Infobox.png', title + ' Anime Post Timeskip Infobox.png', title + ' Manga Infobox.png', title + ' Infobox.png', title + '.png'].map(function (f) { return base + encodeURIComponent(f.replace(/ /g, '_')); });
-  }
-  /* ---------- Источники, которые грузятся на любом сайте ----------
-     Картинки Fandom напрямую на чужих сайтах не показываются (защита от хотлинка), поэтому:
-     1) персонажи — MyAnimeList (через открытый API Jikan, CDN MAL отдаёт картинки любым сайтам);
-     2) всё остальное и запасной вариант — картинка Fandom через прокси wsrv.nl (он уже используется на сайте). */
-  function isFandom(u) { return /wikia\.nocookie\.net|fandom\.com/i.test(String(u || '')); }
-  function viaProxy(u) { if (!u || /^https?:\/\/(wsrv\.nl|images\.weserv\.nl)\//i.test(u)) return u; return 'https://wsrv.nl/?url=' + encodeURIComponent(u) + '&w=900&we'; }
-  function normName(s) {
-    return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ou/g, 'o').replace(/uu/g, 'u').replace(/oo/g, 'o')
-      .replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter(Boolean).sort();
-  }
-  var malIndex = null;
-  function loadMal() {
-    if (malIndex) return Promise.resolve(malIndex);
-    return fetch('https://api.jikan.moe/v4/anime/21/characters', { mode: 'cors', credentials: 'omit' }).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(function (j) {
-      malIndex = (j && j.data || []).map(function (x) {
-        var c = x.character || {}, im = c.images && (c.images.jpg && c.images.jpg.image_url || c.images.webp && c.images.webp.image_url) || '';
-        if (!im || /questionmark|apple-touch|na\.gif|na_series/i.test(im)) return null;
-        return { toks: normName(c.name), img: im };
-      }).filter(Boolean);
-      return malIndex;
-    }).catch(function (e) { console.warn('MyAnimeList (Jikan):', e); malIndex = []; return malIndex; });
-  }
-  function malFind(titles) {
-    if (!malIndex || !malIndex.length) return '';
-    for (var i = 0; i < titles.length; i++) {
-      var t = normName(titles[i]); if (!t.length) continue;
-      var key = t.join(' ');
-      var exact = malIndex.filter(function (m) { return m.toks.join(' ') === key; });
-      if (exact.length) return exact[0].img;
-      var longest = t.slice().sort(function (a, b) { return b.length - a.length; })[0];
-      if (longest.length < 4) continue;
-      var sub = malIndex.filter(function (m) { return t.every(function (w) { return m.toks.indexOf(w) >= 0; }) || (m.toks.length > 1 && m.toks.every(function (w) { return t.indexOf(w) >= 0; }) && m.toks.indexOf(longest) >= 0); });
-      if (sub.length === 1) return sub[0].img;
-    }
-    return '';
-  }
-  function loads(u) {
-    if (typeof window.__wikiImgCheck === 'function') return window.__wikiImgCheck(u, { fresh: true, quick: true, timeout: 12000 }).then(function (r) { return r && r.s === 'ok'; });
-    return new Promise(function (res) { var im = new Image(), t = setTimeout(function () { res(false); }, 12000); im.onload = function () { clearTimeout(t); res(im.naturalWidth > 1); }; im.onerror = function () { clearTimeout(t); res(false); }; im.src = u; });
-  }
-  function badNow(u) {
-    if (!u || !/^(https?:\/\/|data:image\/)/i.test(u)) return Promise.resolve(true);
-    if (/^data:image\//i.test(u)) return Promise.resolve(false);
-    if (typeof window.__wikiImgCheck !== 'function') return loads(u).then(function (ok) { return !ok; });
-    return window.__wikiImgCheck(u, { fresh: true, timeout: 15000 }).then(function (r) { return typeof window.__wikiImgBad === 'function' ? window.__wikiImgBad(r) : r.s !== 'ok'; });
-  }
-  // Битой считаем картинку, которая не загрузилась дважды с паузой (чтобы не менять фото из-за сбоя сети).
-  function reallyBad(u) {
-    return badNow(u).then(function (b1) {
-      if (!b1 || !/^https?:/i.test(u)) return b1;
-      return new Promise(function (r) { setTimeout(r, 4000); }).then(function () { return badNow(u); });
-    });
-  }
-  var PHOTO_RUN_KEY = 'wkPhotoFinderV2', running = false;
-  function candidates() {
-    var list = [];
-    ['character', 'fruit', 'useful', 'story'].forEach(function (type) {
-      arr(LISTS[type]).forEach(function (rec) {
-        var key = IMG_KEY[type], u = rv(rec, key);
-        if (rec.__wikiDraft) return;
-        var auto = window.__wkIsAutoPhoto(type, rec);
-        if (auto && !isFandom(u)) return; // уже подбирали — не трогаем, пока человек не решит
-        // Фото, которое Claude брал с Fandom напрямую, на сайте не грузится — подбираем заново, прежняя ссылка сохраняется.
-        list.push({ type: type, id: rv(rec, 'id'), name: rv(rec, 'name') || rv(rec, 'id'), url: u, key: key, redo: auto, prev: auto ? rv(rec, 'photo_auto_prev') : u });
-      });
-    });
-    return list;
-  }
-  function pool(items, n, fn) {
-    var i = 0, res = [];
-    function next() { if (i >= items.length) return Promise.resolve(); var k = i++; return Promise.resolve(fn(items[k], k)).then(function (v) { res[k] = v; return next(); }); }
-    var ws = []; for (var j = 0; j < n; j++) ws.push(next());
-    return Promise.all(ws).then(function () { return res; });
-  }
-  function findPhotos(opts) {
-    opts = opts || {};
-    if (running) return Promise.resolve(null);
-    if (!canEdit() || typeof window.__wikiBulkSave !== 'function') return Promise.resolve(null);
-    running = true;
-    var ui = opts.ui || function () {};
-    var all = candidates(), report = { checked: all.length, missing: 0, broken: 0, found: [], notFound: [] };
-    ui('Проверяю картинки: 0 из ' + all.length);
-    var checked = 0, need = [];
-    return pool(all, 6, function (c) {
-      var p = (!c.url || c.redo || isFandom(c.url)) ? Promise.resolve(true) : reallyBad(c.url);
-      return p.then(function (bad) { checked++; if (checked % 10 === 0) ui('Проверяю картинки: ' + checked + ' из ' + all.length); c.bad = bad; if (bad) { if (c.url) report.broken++; else report.missing++; } });
-    }).then(function () {
-      need = all.filter(function (c) { return c.bad; });
-      need.forEach(function (c) { var rec = arr(LISTS[c.type]).find(function (r) { return String(r.id) === c.id; }); c.titles = guessTitles(c.type, rec || { id: c.id }); });
-      var withTitles = need.filter(function (c) { return c.titles.length; });
-      need.filter(function (c) { return !c.titles.length; }).forEach(function (c) { report.notFound.push(c); });
-      if (!need.length) return [];
-      ui('Ищу фото на One Piece Wiki для ' + need.length + ' статей…');
-      var titles = []; withTitles.forEach(function (c) { c.titles.forEach(function (t) { if (titles.indexOf(t) < 0) titles.push(t); }); });
-      return Promise.all([pageImages(titles), loadMal()]).then(function (res) {
-        var map = res[0];
-        return pool(withTitles, 3, function (c, k) {
-          if (k % 5 === 0) ui('Проверяю найденные фото: ' + (k + 1) + ' из ' + withTitles.length);
-          function tryList(list) {
-            list = list.map(viaProxy);
-            if (!list.length) return Promise.resolve('');
-            return loads(list[0]).then(function (ok) { return ok ? list[0] : tryList(list.slice(1)); });
-          }
-          var mal = c.type === 'character' ? malFind(c.titles) : '';
-          var tries = c.titles.map(function (t) { return map[t]; }).filter(Boolean);
-          return (mal ? loads(mal).then(function (ok) { if (ok) return mal; var pm = viaProxy(mal); return loads(pm).then(function (ok2) { return ok2 ? pm : ''; }); }) : Promise.resolve('')).then(function (u) {
-            return u || tryList(tries);
-          }).then(function (u) {
-            if (u) return u;
-            return c.titles.reduce(function (p, t) { return p.then(function (got) { return got || infoboxImage(t).then(function (x) { x = viaProxy(x); return x ? loads(x).then(function (ok) { return ok ? x : ''; }) : ''; }); }); }, Promise.resolve(''));
-          }).then(function (u) {
-            if (u) return u;
-            return searchTitle(c.titles[0]).then(function (t) {
-              if (!t || c.titles.indexOf(t) >= 0) return '';
-              return pageImages([t]).then(function (m) { var x = viaProxy(m[t]); return x ? loads(x).then(function (ok) { return ok ? x : ''; }) : infoboxImage(t).then(viaProxy); });
-            });
-          }).then(function (u) {
-            if (u) return u;
-            return tryList([].concat.apply([], c.titles.map(filePathGuesses)));
-          }).then(function (u) { c.found = u; if (u) report.found.push(c); else { report.notFound.push(c); if (c.redo) c.revert = true; } });
-        });
-      });
-    }).then(function () {
-      // Не нашли замену для старого фото с Fandom — пропускаем через прокси, чтобы оно хотя бы показывалось.
-      need.filter(function (c) { return c.revert && c.url; }).forEach(function (c) { c.found = viaProxy(c.url); report.found.push(c); });
-      var ops = report.found.map(function (c) {
-        var ch = { photo_auto: c.found, photo_auto_prev: c.prev || '' }; ch[c.key] = c.found;
-        if (c.type === 'character') ch.person_link_fallbacks = [];
-        return { type: c.type, id: c.id, changes: ch };
-      });
-      var n = ops.length ? window.__wikiBulkSave(ops) : 0;
-      lsSet(PHOTO_RUN_KEY, JSON.stringify({ at: new Date().toISOString(), found: n, notFound: report.notFound.map(function (c) { return c.type + ':' + c.id; }) }));
-      running = false;
-      report.saved = n;
-      ui(null, report);
-      return report;
-    }, function (e) { running = false; console.warn('Подбор фото:', e); ui('Не удалось подобрать фото: ' + (e && e.message || e)); return null; });
-  }
-  window.__wkFindPhotos = findPhotos;
-
-  function reportHTML(r) {
-    var head = r.saved ? '🤖 Подобрал фото для ' + r.saved + ' ' + plural(r.saved, 'статьи', 'статей', 'статей') : '🤖 Новых фото не нашлось';
-    var nf = r.notFound.length ? '<details><summary>Не нашёл для ' + r.notFound.length + '</summary><p>' + r.notFound.map(function (c) { return esc(c.name); }).join(', ') + '</p></details>' : '';
-    return '<b>' + head + '</b><small>Проверено ' + r.checked + ' · без фото ' + r.missing + ' · битых ' + r.broken + '. ' + (r.saved ? 'Они отмечены «🤖 Фото от Claude» — фильтр в редакторе статей.' : '') + '</small>' + nf;
-  }
-  function plural(n, a, b, c) { n = Math.abs(n) % 100; var n1 = n % 10; if (n > 10 && n < 20) return c; if (n1 > 1 && n1 < 5) return b; if (n1 === 1) return a; return c; }
-  function progressBox() {
-    var box = document.getElementById('wkPhotoRun');
-    if (!box) { box = document.createElement('div'); box.id = 'wkPhotoRun'; box.className = 'wk-photo-run'; box.setAttribute('role', 'status'); document.body.appendChild(box); }
-    return function (text, report) {
-      if (report) {
-        box.innerHTML = reportHTML(report) + '<button type="button" class="wk-photo-run-x" aria-label="Закрыть">✕</button>';
-        box.querySelector('.wk-photo-run-x').addEventListener('click', function () { box.remove(); });
-        if (!report.saved && !report.notFound.length) setTimeout(function () { box.remove(); }, 5000);
-        return;
-      }
-      box.innerHTML = '<span class="wk-photo-spin"></span>' + esc(text);
-    };
-  }
-  function autoRun() {
-    if (!canEdit()) return;
-    try { runPatch(false); } catch (e) { console.warn('Данные-патч:', e); }
-    // Подбор фото — один раз в этом браузере (дальше вручную кнопкой в редакторе).
-    if (lsGet(PHOTO_RUN_KEY)) return;
-    setTimeout(function () { findPhotos({ ui: progressBox() }); }, 3000);
-  }
+  // Данные-патч запускается у администратора/редактора после загрузки облака.
+  function autoRun() { if (!canEdit()) return; try { runPatch(false); } catch (e) { console.warn('Данные-патч:', e); } }
   if (window.WIKI_CLOUD_ENABLED) window.addEventListener('wiki:cloud-ready', function () { setTimeout(autoRun, 2500); });
   else window.addEventListener('load', function () { setTimeout(autoRun, 2500); });
-
-  /* ---------- Редактор: кнопка «Подобрать фото» и пометка у поля фото ---------- */
-  function editorButton() {
-    var bar = document.querySelector('#wikiEditorOverlay .wiki-editor-actions'); if (!bar || bar.querySelector('[data-wk-photo-run]')) return;
-    var b = document.createElement('button'); b.type = 'button'; b.className = 'wiki-editor-btn'; b.setAttribute('data-wk-photo-run', '1');
-    b.textContent = '🤖 Подобрать фото'; b.title = 'Найти фото на One Piece Wiki для статей без картинки или с битой картинкой';
-    b.addEventListener('click', function () { if (running) return; findPhotos({ ui: progressBox() }); });
-    var close = bar.querySelector('#wikiEditorClose'); bar.insertBefore(b, close || null);
-  }
-  function editorNotice() {
-    var form = document.getElementById('wikiEditorForm'); if (!form) return;
-    var input = form.querySelector('[data-field="person_link"], [data-field="image"]'); if (!input) return;
-    var type = input.getAttribute('data-field') === 'person_link' ? 'character' : null;
-    var idEl = form.querySelector('[data-field="id"]'); var id = idEl ? String(idEl.value || '').trim() : '';
-    if (!type) { ['fruit', 'useful', 'story'].some(function (t) { if (raw(t, id)) { type = t; return true; } return false; }); }
-    var r = type && id ? raw(type, id) : null;
-    var holder = input.closest('[data-editor-field], .wiki-editor-field') || input.parentNode;
-    var note = holder.querySelector('.wk-auto-photo-note');
-    var on = !!(r && window.__wkIsAutoPhoto(type, r) && String(input.value || '').trim() === String(r.photo_auto || '').trim());
-    if (!on) { if (note) note.remove(); return; }
-    if (note && note.getAttribute('data-for') === type + ':' + id) return;
-    if (note) note.remove();
-    note = document.createElement('div'); note.className = 'wk-auto-photo-note'; note.setAttribute('data-for', type + ':' + id);
-    note.innerHTML = '🤖 <b>Это фото подобрал Claude</b> (с One Piece Wiki). Замени ссылку своей — пометка пропадёт сама.' +
-      '<span><button type="button" data-ok>✓ Фото устраивает</button>' + (r.photo_auto_prev ? '<button type="button" data-back title="' + esc(r.photo_auto_prev) + '">↩ Вернуть прежнее</button>' : '') + '</span>';
-    holder.appendChild(note);
-    note.addEventListener('click', function (e) {
-      var ok = e.target.closest('[data-ok]'), back = e.target.closest('[data-back]'); if (!ok && !back) return;
-      var key = IMG_KEY[type], ch = { photo_auto: '', photo_auto_prev: '' }; if (back) ch[key] = r.photo_auto_prev;
-      if (window.__wikiQuickSave(type, id, ch)) {
-        if (back) { input.value = r.photo_auto_prev; input.dispatchEvent(new Event('input', { bubbles: true })); }
-        note.remove(); toast(back ? 'Вернул прежнее фото' : 'Отмечено: фото устраивает', 2200);
-      }
-    });
-  }
-  var pend = 0;
-  new MutationObserver(function () {
-    if (pend) return;
-    pend = requestAnimationFrame(function () { pend = 0; try { if (canEdit()) { editorButton(); editorNotice(); } } catch (e) {} });
-  }).observe(document.documentElement, { childList: true, subtree: true });
-  document.addEventListener('input', function (e) { if (e.target && e.target.closest && e.target.closest('#wikiEditorForm')) setTimeout(editorNotice, 0); });
 
 
   /* ---------- Тактильный отклик на телефоне ----------
@@ -28345,9 +28038,9 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     var last = menu.querySelector('[data-me="switch"]'); menu.insertBefore(b, last || null);
   }
   new MutationObserver(hapticMenu).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden'] });
-  /* ---------- П.13. Длинные заголовки карточек «Полезного» не вылезают за картинку ---------- */
+  /* ---------- Длинные имена и заголовки карточек (персонажи, «Полезное»): шрифт уменьшается, чтобы влезло ---------- */
   function fitTitle(el) {
-    var card = el.closest('.useful-item'); if (!card || !card.offsetWidth) return;
+    var card = el.closest('.character-item'); if (!card || !card.offsetWidth) return;
     el.style.removeProperty('font-size');
     var base = parseFloat(getComputedStyle(el).fontSize) || 16, size = base, min = Math.max(11, base * 0.62);
     var lh = parseFloat(getComputedStyle(el).lineHeight) || size * 1.2;
@@ -28367,13 +28060,16 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     if (fitPend) return;
     fitPend = requestAnimationFrame(function () {
       fitPend = 0;
-      document.querySelectorAll('#usefulList.useful-display-grid .useful-item .card-title').forEach(fitTitle);
+      document.querySelectorAll('#usefulList.useful-display-grid .useful-item .card-title, #characterList.character-display-grid .character-item .card-title').forEach(fitTitle);
     });
   }
-  (function watchUsefulList() {
-    var list = document.getElementById('usefulList'); if (!list) { setTimeout(watchUsefulList, 600); return; }
+  ['usefulList', 'characterList'].forEach(function watchList(id) {
+    var list = document.getElementById(id); if (!list) { setTimeout(function () { watchList(id); }, 600); return; }
     new MutationObserver(fitAll).observe(list, { childList: true, subtree: false, attributes: true, attributeFilter: ['class'] });
+  });
+  (function () {
     window.addEventListener('resize', fitAll);
+    document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('.main-tab, [data-tab]')) setTimeout(fitAll, 60); });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitAll);
     fitAll();
   })();
