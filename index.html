@@ -28500,6 +28500,7 @@ html body #charactersSection#charactersSection #characterList#characterList.char
     return '<div class="wk-back-in"><b class="wk-back-name">' + esc(c.name) + '</b>' + (nick ? '<span class="wk-back-nick">«' + esc(nick) + '»</span>' : '') +
       (st.length ? '<span class="wk-back-st">' + esc(st.join(' · ')) + '</span>' : '') +
       '<dl>' + rows.map(function (r) { return '<dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd>'; }).join('') + '</dl>' +
+      (function () { var d = ''; try { d = (window.__wikiCharacterTimeskip && window.__wikiCharacterTimeskip(c)) || c.description || ''; } catch (e) { d = c.description || ''; } d = String(d).replace(/\s+/g, ' ').trim(); return d && d !== 'Нет' ? '<div class="wk-b2-desc wk-fit">' + esc(d) + '</div>' : ''; })() +
       '<button type="button" class="wk-back-open" data-wk-open-char="' + esc(c.id) + '">Открыть статью →</button></div>';
   }
   function flip(shell) {
@@ -28513,6 +28514,7 @@ html body #charactersSection#charactersSection #characterList#characterList.char
     shell.classList.add('wk-flipping');
     setTimeout(function () {
       shell.classList.toggle('wk-flipped');
+      try { if (window.__wkFitBack) window.__wkFitBack(shell); } catch (e) {}
       var b = shell.querySelector(':scope > .wk-flip-btn'); if (b) b.setAttribute('aria-pressed', String(shell.classList.contains('wk-flipped')));
     }, 170);
     setTimeout(function () { shell.classList.remove('wk-flipping'); }, 360);
@@ -29560,11 +29562,11 @@ html body #fruitsSection#fruitsSection#fruitsSection #fruitsFiltersButton#fruits
     }
     if (ch || ep) rows.push(['Появление', [ch ? 'гл. ' + ch : '', ep ? 'сер. ' + ep : ''].filter(Boolean).join(' · ')]);
     if (r.arc) rows.push(['Арка', r.arc]);
-    var desc = short(r.description, 150);
+    var desc = String(r.description || '').replace(/\s+/g, ' ').trim(); if (desc === 'Нет') desc = '';
     return '<div class="wk-back-in"><b class="wk-back-name">' + esc(r.name) + '</b>' +
       '<span class="wk-b2-types">' + split(r.type).map(function (t) { return typeBadge(t, type); }).join('') + '</span>' + extra +
       (rows.length ? '<dl>' + rows.map(function (x) { return '<dt>' + esc(x[0]) + '</dt><dd>' + esc(x[1]) + '</dd>'; }).join('') + '</dl>' : '') +
-      (desc ? '<p class="wk-b2-desc">' + esc(desc) + '</p>' : '') +
+      (desc ? '<div class="wk-b2-desc wk-fit">' + esc(desc) + '</div>' : '') +
       '<button type="button" class="wk-back-open" data-b2-open="' + type + '" data-b2-id="' + esc(r.id) + '">Открыть статью →</button></div>';
   }
   function flip(shell) {
@@ -29576,7 +29578,7 @@ html body #fruitsSection#fruitsSection#fruitsSection #fruitsFiltersButton#fruits
       back.innerHTML = backHTML(type, r);
     }
     shell.classList.add('wk-flipping');
-    setTimeout(function () { shell.classList.toggle('wk-flipped'); }, 170);
+    setTimeout(function () { shell.classList.toggle('wk-flipped'); try { if (window.__wkFitBack) window.__wkFitBack(shell); } catch (e) {} }, 170);
     setTimeout(function () { shell.classList.remove('wk-flipping'); }, 360);
     try { if (window.__wkHaptic) window.__wkHaptic('tap'); } catch (e) {}
   }
@@ -29729,5 +29731,52 @@ html body #fruitsSection#fruitsSection#fruitsSection #fruitsFiltersButton#fruits
   }
   var pend = 0;
   new MutationObserver(function () { if (pend) return; pend = requestAnimationFrame(function () { pend = 0; try { mount(); } catch (e) {} }); }).observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script><style id="wk-v9">
+.wk-back .wk-b2-desc{margin:4px 0 0;font-size:12px;line-height:1.45;color:#cbd5e1;overflow-wrap:anywhere}
+.wk-back{container-type:inline-size}
+.wk-back [hidden]{display:none!important}
+@container (max-width:210px){
+  .wk-back .wk-back-in{gap:4px}
+  .wk-back .wk-back-in::before{font-size:9px}
+  .wk-back .wk-back-name{font-size:14.5px}
+  .wk-back .wk-back-nick,.wk-back .wk-back-st{font-size:11px}
+  .wk-back dl{margin-top:2px;gap:2px 6px;font-size:11.5px;line-height:1.3}
+  .wk-back .wk-b2-desc{margin-top:2px;font-size:11.5px;line-height:1.4}
+  .wk-back .wk-back-open{margin-top:4px;padding:4px 10px;font-size:11.5px}
+}
+</style><script id="wk-v9-js">
+(function () {
+  // Описание на обороте занимает всё свободное место и обрезается по словам только там, где карточка заканчивается.
+  function fits(box) { return box.scrollHeight <= box.clientHeight + 1; }
+  function trim(p, box, full) {
+    p.hidden = false; p.textContent = full;
+    if (fits(box)) return 1e9;
+    var words = full.split(' '), lo = 0, hi = words.length - 1;
+    while (lo < hi) { var mid = (lo + hi + 1) >> 1; p.textContent = words.slice(0, mid).join(' ') + '…'; if (fits(box)) lo = mid; else hi = mid - 1; }
+    p.textContent = words.slice(0, lo).join(' ').replace(/[\s,.;:—–-]+$/, '') + '…';
+    return lo;
+  }
+  // Если места мало — сначала убираем второстепенные строки (арка, появление), чтобы осталось описание.
+  var OPTIONAL = ['Арка', 'Появление'];
+  function rowOf(box, label) { var dt = [].filter.call(box.querySelectorAll('dl > dt'), function (x) { return x.textContent.trim() === label; })[0]; return dt ? [dt, dt.nextElementSibling] : null; }
+  function fitOne(p) {
+    var box = p.closest('.wk-back'); if (!box || !box.clientHeight) return;
+    var full = p.getAttribute('data-full'); if (full == null) { full = p.textContent; p.setAttribute('data-full', full); }
+    p.removeAttribute('title');
+    box.querySelectorAll('dl > [data-wk-opt]').forEach(function (x) { x.hidden = false; x.removeAttribute('data-wk-opt'); });
+    var dl = box.querySelector('dl'); if (dl) dl.hidden = false;
+    var got = trim(p, box, full);
+    for (var i = 0; got < 10 && i < OPTIONAL.length; i++) {
+      var r = rowOf(box, OPTIONAL[i]); if (!r) continue;
+      r.forEach(function (x) { if (x) { x.hidden = true; x.setAttribute('data-wk-opt', '1'); } });
+      if (dl && ![].some.call(dl.children, function (x) { return !x.hidden; })) dl.hidden = true;
+      got = trim(p, box, full);
+    }
+    if (got < 3) { p.hidden = true; return; }
+    if (got < 1e9) p.title = full;
+  }
+  window.__wkFitBack = function (shell) { (shell || document).querySelectorAll('.wk-flipped > .wk-back .wk-fit').forEach(fitOne); };
+  var t = 0; window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(function () { window.__wkFitBack(document); }, 150); });
 })();
 </script></body></html>
