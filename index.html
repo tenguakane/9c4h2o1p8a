@@ -1185,7 +1185,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "31.10.2026 · 58";
+const WIKI_VERSION = "31.10.2026 · 60";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -8340,16 +8340,16 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         useful: {label:'Полезное', plural:'Полезные статьи', array:usefulArticles, icon:'💡'}
     };
     const schemas = {
-        character: {id:'char_new',name:'',nickname:'',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',person_link:'',person_image_position:50,person_image_position_x:50,person_image_zoom:100,person2_link:'',person2_from_chapter:'',person2_from_episode:'',person2_image_position:50,person2_image_position_x:50,person2_image_zoom:100,timeskip_description:'',nickname2:'',status2:'',future_status:'',ts_fruit_article_id:'',ts_ship:'',ts_ship_link:'',ts_ship_description:'',ts_flag:'',ts_flag_link:'',ts_flag_description:'',chapter:'',episode:'',description:'',filler:false,fruit_article_id:'',fruit2_article_id:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],map_hide:[],ship:'',ship_link:'',ship_description:'',ship2:'',ship2_link:'',ship2_description:'',flag:'',flag_link:'',flag_description:'',ship_article_id:'',ship2_article_id:'',team_article_id:'',status:''},
+        character: {id:'char_new',name:'',nickname:'',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',person_link:'',person_image_position:50,person_image_position_x:50,person_image_zoom:100,person2_link:'',person2_from_chapter:'',person2_from_episode:'',person2_image_position:50,person2_image_position_x:50,person2_image_zoom:100,timeskip_description:'',nickname2:'',status2:'',future_status:'',gallery:'',ts_fruit_article_id:'',ts_ship:'',ts_ship_link:'',ts_ship_description:'',ts_flag:'',ts_flag_link:'',ts_flag_description:'',chapter:'',episode:'',description:'',filler:false,fruit_article_id:'',fruit2_article_id:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],map_hide:[],ship:'',ship_link:'',ship_description:'',ship2:'',ship2_link:'',ship2_description:'',flag:'',flag_link:'',flag_description:'',ship_article_id:'',ship2_article_id:'',team_article_id:'',status:''},
         story: {id:'arc_new',name:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',image:'',image_position:50,image_position_x:50,image_zoom:100,chapters:'',episodes:'',ongoing:false,filler:false,movie:false,saga:'',description:'',key:'',characters:[],connect:[],map_hide:[]},
         reward: {id:'reward_new',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',character_id:'',reward:0,ka:0,rank:'',rank_total:'',reward_image:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',appearance_chapter:'',appearance_episode:'',connect:[]},
         fruit: {id:'fruit_new',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',name:'',appearance:'',episode:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,owner:'',type:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],map_hide:[]},
-        useful: {crew:'',team:'',id:'article_new',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',name:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,type:'',appearance_chapter:'',appearance_episode:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],map_hide:[]}
+        useful: {crew:'',team:'',gallery:'',id:'article_new',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',name:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,type:'',appearance_chapter:'',appearance_episode:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],map_hide:[]}
     };
     const fieldLabels = {
         ship_article_id:'Корабль',ship2_article_id:'Второй корабль',team_article_id:'Команда или организация',crew:'Экипаж и должности',team:'Команда корабля',
         map_hide:'Скрыто на карте связей',
-        id:'ID',name:'Название / имя',nickname:'Прозвище',person_link:'Ссылка на изображение',person_image_position:'Кадрирование фото в карточке',person_image_position_x:'Горизонтальное смещение фото в карточке',person_image_zoom:'Приближение фото в карточке',movie_id:'🎬 Из фильма',card_fx:'✨ Эффект при наклоне',card_shine:'💫 Постоянный эффект',title_fx:'🔤 Эффект шрифта',title_style:'🔤 Настройка шрифта заголовка',card_style:'🎛 Конструктор эффектов карточки',person2_link:'Второе фото (новый облик)',person2_from_chapter:'С какой главы (фото и «Таймскип»)',person2_from_episode:'С какого эпизода (фото и «Таймскип»)',timeskip_description:'Чем персонаж занят спустя два года',nickname2:'Новое прозвище',status2:'Статусы после таймскипа',future_status:'Будущие статусы',ts_fruit_article_id:'Новый дьявольский плод',ts_ship:'Новый корабль',ts_ship_link:'Ссылка на новый корабль',ts_ship_description:'Описание нового корабля',ts_flag:'Новый флаг / команда',ts_flag_link:'Ссылка на новый флаг',ts_flag_description:'Описание нового флага',person2_image_position:'Кадрирование второго фото',person2_image_position_x:'Горизонталь второго фото, %',person2_image_zoom:'Приближение второго фото, %',chapter:'Глава появления',episode:'Эпизод появления',description:'Описание',fruit:'Дьявольский плод (старое поле)',fruit_link:'Ссылка на плод (старое поле)',fruit_article_id:'Дьявольский плод — статья из раздела «Плоды»',fruit2:'Второй плод (старое поле)',fruit2_link:'Ссылка на второй плод (старое поле)',fruit2_article_id:'Второй дьявольский плод — статья из раздела «Плоды»',arc:'Арка (манга)',saga:'Сага (манга)',connect:'Связанные ID (через запятую)',ship:'Корабль',ship_link:'Ссылка на корабль',ship_description:'Описание корабля',ship2:'Второй корабль',ship2_link:'Ссылка на второй корабль',ship2_description:'Описание второго корабля',flag:'Флаг',flag_link:'Ссылка на флаг',flag_description:'Описание флага',status:'Статус',characters:'ID персонажей (через запятую)',chapters:'Главы',episodes:'Эпизоды',ongoing:'Арка продолжается',filler:'Филлер / аниме-оригинал',movie:'Полнометражный фильм',character_id:'ID персонажа',reward:'Награда',ka:'КА',rank:'Место в топе',rank_total:'Всего в топе',reward_image:'Ссылка на изображение для карточки награды',appearance:'Глава появления',appearance_chapter:'Глава появления',appearance_episode:'Эпизод появления',image:'Ссылка на изображение',image_position:'Кадрирование фото в карточке',image_position_x:'Горизонтальное смещение фото',image_zoom:'Приближение фото',owner:'Владелец(ы)',type:'Тип',arc_anime:'Арка (аниме)',saga_anime:'Сага (аниме)'};
+        id:'ID',name:'Название / имя',nickname:'Прозвище',person_link:'Ссылка на изображение',person_image_position:'Кадрирование фото в карточке',person_image_position_x:'Горизонтальное смещение фото в карточке',person_image_zoom:'Приближение фото в карточке',movie_id:'🎬 Из фильма',card_fx:'✨ Эффект при наклоне',card_shine:'💫 Постоянный эффект',title_fx:'🔤 Эффект шрифта',title_style:'🔤 Настройка шрифта заголовка',card_style:'🎛 Конструктор эффектов карточки',person2_link:'Второе фото (новый облик)',person2_from_chapter:'С какой главы (фото и «Таймскип»)',person2_from_episode:'С какого эпизода (фото и «Таймскип»)',timeskip_description:'Чем персонаж занят спустя два года',nickname2:'Новое прозвище',status2:'Статусы после таймскипа',future_status:'Будущие статусы',gallery:'Дополнительные фото',ts_fruit_article_id:'Новый дьявольский плод',ts_ship:'Новый корабль',ts_ship_link:'Ссылка на новый корабль',ts_ship_description:'Описание нового корабля',ts_flag:'Новый флаг / команда',ts_flag_link:'Ссылка на новый флаг',ts_flag_description:'Описание нового флага',person2_image_position:'Кадрирование второго фото',person2_image_position_x:'Горизонталь второго фото, %',person2_image_zoom:'Приближение второго фото, %',chapter:'Глава появления',episode:'Эпизод появления',description:'Описание',fruit:'Дьявольский плод (старое поле)',fruit_link:'Ссылка на плод (старое поле)',fruit_article_id:'Дьявольский плод — статья из раздела «Плоды»',fruit2:'Второй плод (старое поле)',fruit2_link:'Ссылка на второй плод (старое поле)',fruit2_article_id:'Второй дьявольский плод — статья из раздела «Плоды»',arc:'Арка (манга)',saga:'Сага (манга)',connect:'Связанные ID (через запятую)',ship:'Корабль',ship_link:'Ссылка на корабль',ship_description:'Описание корабля',ship2:'Второй корабль',ship2_link:'Ссылка на второй корабль',ship2_description:'Описание второго корабля',flag:'Флаг',flag_link:'Ссылка на флаг',flag_description:'Описание флага',status:'Статус',characters:'ID персонажей (через запятую)',chapters:'Главы',episodes:'Эпизоды',ongoing:'Арка продолжается',filler:'Филлер / аниме-оригинал',movie:'Полнометражный фильм',character_id:'ID персонажа',reward:'Награда',ka:'КА',rank:'Место в топе',rank_total:'Всего в топе',reward_image:'Ссылка на изображение для карточки награды',appearance:'Глава появления',appearance_chapter:'Глава появления',appearance_episode:'Эпизод появления',image:'Ссылка на изображение',image_position:'Кадрирование фото в карточке',image_position_x:'Горизонтальное смещение фото',image_zoom:'Приближение фото',owner:'Владелец(ы)',type:'Тип',arc_anime:'Арка (аниме)',saga_anime:'Сага (аниме)'};
     const types = Object.keys(collections);
     let activeType = 'character';
     let editingId = null;
@@ -10439,6 +10439,9 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
                 control=selectHTML(k,val,vals.map(v=>({value:v,label:v})),'— выбери тип —');
             } else if(k==='owner' && activeType==='fruit'){
                 control=searchableSelectHTML(k,val,linkedOptions('character'),'Поиск владельца по имени или ID…').replace('class="wiki-search-select"','class="wiki-search-select wiki-owner-select"'); hint='Можно выбрать и спойлерного персонажа заранее (он отмечен 🔒). До раскрытия персонажа владелец не показывается публично; после достижения его главы или эпизода имя появится автоматически.';
+            } else if(k==='gallery' && (activeType==='character'||activeType==='useful')){
+                control=`<input type="hidden" data-field="gallery" value="${escapeHTMLLocal(fieldText(rawValue(obj,'gallery')))}">`;
+                hint='';
             } else if(k==='future_status' && activeType==='character'){
                 control=`<input type="hidden" data-field="future_status" value="${escapeHTMLLocal(fieldText(rawValue(obj,'future_status')))}">`;
                 hint='';
@@ -10513,6 +10516,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
                 {title:'Описание и плоды',icon:'📖',desc:'Биография и ссылки на статьи плодов. Имя, изображение и описание подтягиваются автоматически.',keys:['description','fruit_article_id','fruit2_article_id']},
                 {title:'Эффекты карточки и заголовка',icon:'✨',desc:'Эффекты при наклоне и постоянные, конструктор слоёв и частиц, шрифт и эффект заголовка. Раздел можно свернуть.',fx:true,keys:['card_fx','card_shine','title_fx']},
                 {title:'Корабль и команда',icon:'⛵',desc:'Выбери статьи из «Полезного». Фото, название и описание корабля и команды подтянутся из них автоматически.',keys:['ship_article_id','ship2_article_id','team_article_id']},
+                {title:'Дополнительные фото',icon:'🖼',desc:'Фото в самом низу статьи: детство, другой облик, важный момент. Только ссылка и короткая подпись; можно скрыть фото до нужной главы или серии.',keys:['gallery']},
                 {title:'Связанные статьи',icon:'🔗',desc:'Отметь материалы, которые должны быть связаны с этой статьёй.',keys:['connect','map_hide']}
             ],
             story: [
@@ -10541,6 +10545,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
                 {title:'Категория',icon:'🏷️',desc:'Выбери тип полезной статьи.',keys:['type']},
                 {title:'Экипаж',icon:'⚓',desc:'Для команд, организаций и кораблей: по одному человеку в строке в виде «ID персонажа — должность». Если у человека нет статьи, пиши просто «Имя — должность». Приписка «@1050/1080» (глава/серия) прячет строку, пока человек не дойдёт до этого места; тогда же у персонажа появится связь с командой. Должность может меняться по ходу сюжета: «Старший мастер | Агент CP9 под прикрытием @345/243». Награды и общая сумма считаются сами. У корабля укажи капитанов и его команду.',keys:['crew','team']},
                 {title:'Появление и сюжетная принадлежность',icon:'🗺️',desc:'Глава и эпизод появления; арки и саги манги и аниме вычисляются автоматически.',keys:['appearance_chapter','appearance_episode','saga','arc','saga_anime','arc_anime']},
+                {title:'Дополнительные фото',icon:'🖼',desc:'Фото в самом низу статьи: карта, другой вид, важный момент. Только ссылка и короткая подпись; можно скрыть фото до нужной главы или серии.',keys:['gallery']},
                 {title:'Связанные статьи',icon:'🔗',desc:'Связи с персонажами, арками, плодами и другими публикациями.',keys:['connect','map_hide']}
             ]
         };
@@ -27803,6 +27808,49 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 #fruitsList#fruitsList.fruit-display-grid .fruit-grid-content{justify-content:flex-end!important}
 #fruitsSection#fruitsSection #fruitsList#fruitsList.fruit-display-grid .fruit-grid-content>.fruit-grid-type{margin-top:6px!important}
 #usefulSection#usefulSection #usefulList#usefulList.useful-display-grid .useful-item>.character-name.card-title{min-height:0!important;bottom:34px!important}
+/* Дополнительные фото персонажа */
+.wk-gal h2{display:flex;align-items:center;gap:10px}
+.wk-gal-plus{margin-left:auto;padding:4px 12px;border-radius:999px;border:1px dashed color-mix(in srgb,var(--accent,#d8b45a) 60%,transparent);background:transparent;color:var(--accent,#d8b45a);font:inherit;font-size:13px;font-weight:600;letter-spacing:0;text-transform:none;cursor:pointer}
+.wk-gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.wk-gal-item{position:relative;margin:0;display:grid;gap:6px}
+.wk-gal-open{display:block;width:100%;aspect-ratio:3/4;padding:0;border:1px solid var(--line-soft,rgba(148,163,184,.18));border-radius:12px;overflow:hidden;background:color-mix(in srgb,var(--text,#f3f6fb) 5%,transparent);cursor:zoom-in}
+.wk-gal-open img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s}
+.wk-gal-open:hover img{transform:scale(1.04)}
+.wk-gal-item figcaption{font-size:13.5px;line-height:1.35;color:var(--text-soft,#c9d3df);text-align:center}
+.wk-gal-x{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;border:0;background:rgba(10,14,20,.72);color:#fff;cursor:pointer;opacity:0;transition:opacity .15s}
+.wk-gal-item:hover .wk-gal-x,.wk-gal-x:focus-visible{opacity:1}
+@media (hover:none){.wk-gal-x{opacity:1}}
+.wk-gal-empty,.wk-gal-hidden{margin:0;font-size:13px;color:var(--muted,#aeb7c3)}
+.wk-gal-hidden{margin-top:8px}
+.wk-gal-form{display:grid;grid-template-columns:2fr 1.4fr 110px 110px auto auto;gap:8px;align-items:center;margin:0 0 12px}
+.wk-gal-form input{min-width:0;min-height:36px;padding:6px 10px;border-radius:9px;border:1px solid var(--line,rgba(148,163,184,.3));background:color-mix(in srgb,var(--bg,#07090d) 70%,transparent);color:var(--text,#f3f6fb);font:inherit;font-size:14px}
+.wk-gal-form button{min-height:36px;padding:0 14px;border-radius:999px;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.wk-gal-form .wk-qe-msg{grid-column:1 / -1}
+@media (max-width:720px){.wk-gal-form{grid-template-columns:1fr 1fr}.wk-gal-form input[data-gf="url"],.wk-gal-form input[data-gf="title"]{grid-column:1 / -1}.wk-gal-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.wk-gal-lb{position:fixed;inset:0;z-index:100005;display:grid;place-items:center;padding:24px;background:rgba(4,6,10,.9);cursor:zoom-out}
+.wk-gal-lb figure{margin:0;display:grid;gap:10px;justify-items:center;max-width:min(92vw,900px)}
+.wk-gal-lb img{max-width:100%;max-height:82vh;border-radius:12px;object-fit:contain;cursor:default}
+.wk-gal-lb figcaption{color:#e5e7eb;font-size:15px}
+.wk-gal-lb button{position:fixed;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(15,20,28,.7);color:#fff;font-size:22px;cursor:pointer}
+.wk-gal-lb-x{top:16px;right:16px}.wk-gal-lb-prev{left:16px;top:50%}.wk-gal-lb-next{right:16px;top:50%}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-gal-ed{display:grid;gap:8px}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-gal-row{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:10px;align-items:start;padding:9px 10px;border-radius:10px;border:1px solid #334155;background:rgba(255,255,255,.025)}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-gal-thumb{display:grid;place-items:center;width:64px;height:84px;border-radius:8px;overflow:hidden;background:#0f172a;color:#64748b;font-size:20px}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-gal-thumb img{width:100%;height:100%;object-fit:cover}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-gal-fields{display:grid;gap:6px;min-width:0}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-gal-fields label{display:grid;gap:3px;margin:0;color:#94a3b8;font:600 11px Arial,sans-serif;text-transform:none;letter-spacing:0}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-gal-fields input{width:100%;min-width:0;min-height:0;padding:6px 8px;margin:0;border-radius:8px;border:1px solid #475569;background:#0f172a;color:#f8fafc;font:500 13px Arial,sans-serif}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-gal-th{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-gal-btns{display:grid;gap:4px}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-gal-btns button{width:30px;height:28px;min-height:0;padding:0;margin:0;border-radius:8px;border:1px solid #475569;background:transparent;color:#cbd5e1;font:700 13px Arial,sans-serif;cursor:pointer}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-gal-btns button[data-del]{border-color:#7f1d1d;color:#fca5a5}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-gal-btns button:disabled{opacity:.35;cursor:default}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-gal-add{justify-self:start;width:auto;min-height:0;padding:7px 12px;margin:0;border-radius:9px;border:1px dashed rgba(212,168,79,.6);background:rgba(212,168,79,.07);color:#f4d99e;font:700 12.5px Arial,sans-serif;cursor:pointer;text-transform:none;letter-spacing:0}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-gal-note{color:#64748b;font:500 11.5px/1.45 Arial,sans-serif}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay [data-editor-field="gallery"]{grid-column:1 / -1}
+@media (min-width:900px){#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-gal-ed{grid-template-columns:repeat(2,minmax(0,1fr))}#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-gal-add,#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-gal-note{grid-column:1 / -1}}
+.wk-gal-grid.is-wide{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.wk-gal-grid.is-wide .wk-gal-open{aspect-ratio:4/3}
 </style><script id="wk-v4-js">
 /* ===================================================================
    Обновление v4 (31.10.2026 · 52): данные-патч (плоды, команды),
@@ -28103,6 +28151,140 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     var last = menu.querySelector('[data-me="switch"]'); menu.insertBefore(b, last || null);
   }
   new MutationObserver(hapticMenu).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden'] });
+
+  /* =========================================================
+     ДОПОЛНИТЕЛЬНЫЕ ФОТО ПЕРСОНАЖА (поле gallery: [{url, title, ch, ep}])
+     Блок в самом низу статьи. Редактор добавляет ссылку и короткую подпись,
+     при желании — главу/серию, до которой фото скрыто (спойлер).
+     ========================================================= */
+  function galParse(v) { try { var a = JSON.parse(v || '[]'); return Array.isArray(a) ? a.filter(function (x) { return x && String(x.url || '').trim(); }) : []; } catch (e) { return []; } }
+  function galDump(list) {
+    var out = list.filter(function (x) { return String(x.url || '').trim(); }).map(function (x) {
+      var o = { url: String(x.url).trim(), title: String(x.title || '').trim() };
+      if (Number(x.ch)) o.ch = String(Number(x.ch)); if (Number(x.ep)) o.ep = String(Number(x.ep)); return o;
+    });
+    return out.length ? JSON.stringify(out) : '';
+  }
+  function galOpen(x) {
+    if (!Number(x.ch) && !Number(x.ep)) return true;
+    try { return typeof window.__wikiFutureStatusReached === 'function' ? !!window.__wikiFutureStatusReached({ ch: Number(x.ch) || 0, ep: Number(x.ep) || 0 }) : true; } catch (e) { return true; }
+  }
+  function goodUrl(u) { return /^(https?:\/\/|data:image\/)/i.test(String(u || '').trim()); }
+
+  // --- редактор статей: список фото поверх скрытого поля
+  function galMount(hidden) {
+    var holder = hidden.parentNode; if (holder.querySelector('.wk-gal-ed')) return;
+    var list = galParse(hidden.value).map(function (x) { return { url: x.url, title: x.title || '', ch: x.ch || '', ep: x.ep || '' }; });
+    var box = document.createElement('div'); box.className = 'wk-gal-ed'; hidden.after(box);
+    function save() {
+      var v = galDump(list); if (hidden.value === v) return;
+      hidden.value = v; ['input', 'change'].forEach(function (t) { hidden.dispatchEvent(new Event(t, { bubbles: true })); });
+    }
+    function render() {
+      box.innerHTML = list.map(function (x, i) {
+        return '<div class="wk-gal-row" data-i="' + i + '"><span class="wk-gal-thumb">' + (goodUrl(x.url) ? '<img src="' + esc(x.url) + '" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode(\'⚠\'))">' : '🖼') + '</span>' +
+          '<div class="wk-gal-fields"><label>Ссылка на фото<input type="url" data-k="url" placeholder="https://…" value="' + esc(x.url) + '"></label>' +
+          '<label>Подпись<input type="text" data-k="title" maxlength="80" placeholder="например: В детстве" value="' + esc(x.title) + '"></label>' +
+          '<div class="wk-gal-th"><label>скрыть до главы<input type="number" min="0" data-k="ch" placeholder="—" value="' + esc(x.ch) + '"></label><label>или серии<input type="number" min="0" data-k="ep" placeholder="—" value="' + esc(x.ep) + '"></label></div></div>' +
+          '<div class="wk-gal-btns"><button type="button" data-mv="-1" title="Выше"' + (i ? '' : ' disabled') + '>↑</button><button type="button" data-mv="1" title="Ниже"' + (i < list.length - 1 ? '' : ' disabled') + '>↓</button><button type="button" data-del title="Убрать фото">✕</button></div></div>';
+      }).join('') + '<button type="button" class="wk-gal-add" data-add>＋ Добавить фото</button>' +
+        '<div class="wk-gal-note">Фото покажутся в самом низу статьи, в порядке списка. Можно вставить ссылку из буфера (Ctrl+V) прямо в поле.</div>';
+    }
+    box.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return; e.preventDefault();
+      if (b.hasAttribute('data-add')) { list.push({ url: '', title: '', ch: '', ep: '' }); render(); var u = box.querySelectorAll('[data-k="url"]'); if (u.length) u[u.length - 1].focus(); return; }
+      var i = Number(b.closest('.wk-gal-row').getAttribute('data-i'));
+      if (b.hasAttribute('data-del')) list.splice(i, 1);
+      else if (b.hasAttribute('data-mv')) { var j = i + Number(b.getAttribute('data-mv')); if (j < 0 || j >= list.length) return; var t = list[i]; list[i] = list[j]; list[j] = t; }
+      save(); render();
+    });
+    box.addEventListener('input', function (e) {
+      var k = e.target.getAttribute && e.target.getAttribute('data-k'); if (!k) return;
+      var row = e.target.closest('.wk-gal-row'), x = list[Number(row.getAttribute('data-i'))]; x[k] = e.target.value;
+      if (k === 'url') { var th = row.querySelector('.wk-gal-thumb'); th.innerHTML = goodUrl(x.url) ? '<img src="' + esc(x.url.trim()) + '" alt="" onerror="this.replaceWith(document.createTextNode(\'⚠\'))">' : '🖼'; }
+      save();
+    });
+    render();
+  }
+  new MutationObserver(function () {
+    document.querySelectorAll('#wikiEditorForm input[data-field="gallery"]').forEach(galMount);
+  }).observe(document.documentElement, { childList: true, subtree: true });
+
+  // --- статья персонажа: блок «Дополнительные фото» в самом низу
+  var GAL_BOX = { character: 'characterArticleContent', useful: 'usefulArticleContent' };
+  function curArt() { var st = null; try { st = window.eval('appArticleState'); } catch (e) {} return st && GAL_BOX[st.type] ? { type: st.type, id: String(st.id) } : null; }
+  function galSection(type, id) {
+    var r = raw(type, id); if (!r) return null;
+    var all = galParse(r.gallery), shown = all.filter(galOpen), edit = canEdit();
+    if (!shown.length && !edit) return null;
+    var sec = document.createElement('div'); sec.className = 'article-section wk-gal'; sec.setAttribute('data-wk-gal', id); sec.setAttribute('data-wk-gal-type', type);
+    sec.innerHTML = '<h2>Дополнительные фото' + (edit ? '<button type="button" class="wk-gal-plus" data-gal-add>＋ Добавить</button>' : '') + '</h2>' +
+      (shown.length ? '<div class="wk-gal-grid' + (type === 'useful' ? ' is-wide' : '') + '">' + shown.map(function (x) {
+        var i = all.indexOf(x);
+        return '<figure class="wk-gal-item" data-gal-i="' + i + '"><button type="button" class="wk-gal-open" data-gal-view="' + i + '" aria-label="Открыть фото' + (x.title ? ': ' + esc(x.title) : '') + '"><img src="' + esc(x.url) + '" alt="' + esc(x.title || '') + '" loading="lazy"></button>' +
+          (x.title ? '<figcaption>' + esc(x.title) + '</figcaption>' : '') +
+          (edit ? '<button type="button" class="wk-gal-x" data-gal-del="' + i + '" title="Убрать фото" aria-label="Убрать фото">✕</button>' : '') + '</figure>';
+      }).join('') + '</div>' : '<p class="wk-gal-empty">Пока нет фото. ' + (type === 'useful' ? 'Можно добавить, например, карту, другой ракурс или важный момент.' : 'Можно добавить, например, персонажа в детстве или в другом облике.') + '</p>') +
+      (edit && all.length > shown.length ? '<p class="wk-gal-hidden">Ещё ' + (all.length - shown.length) + ' фото скрыто до нужной главы/серии.</p>' : '');
+    return sec;
+  }
+  function galRender(force) {
+    var cur = curArt();
+    Object.keys(GAL_BOX).forEach(function (t) {
+      var box = document.getElementById(GAL_BOX[t]); if (!box) return;
+      var old = box.querySelector('.wk-gal');
+      if (!cur || cur.type !== t) { if (old) old.remove(); return; }
+      if (old && old.getAttribute('data-wk-gal') === cur.id && !force) return;
+      if (old) old.remove();
+      var sec = galSection(t, cur.id); if (sec) box.appendChild(sec);
+    });
+  }
+  function galSave(type, id, list, msg) {
+    var ok = false; try { ok = window.__wikiQuickSave(type, id, { gallery: galDump(list) }); } catch (e) { console.warn(e); }
+    if (ok) { galRender(true); toast(msg || 'Сохранено', 2000); }
+    return ok;
+  }
+  document.addEventListener('click', function (e) {
+    var sec = e.target.closest && e.target.closest('.wk-gal'); if (!sec) return;
+    var id = sec.getAttribute('data-wk-gal'), type = sec.getAttribute('data-wk-gal-type') || 'character', r = raw(type, id) || {}, all = galParse(r.gallery);
+    var view = e.target.closest('[data-gal-view]'), del = e.target.closest('[data-gal-del]'), add = e.target.closest('[data-gal-add]'), sv = e.target.closest('[data-gal-save]'), cancel = e.target.closest('[data-gal-cancel]');
+    if (view) { var x = all[Number(view.getAttribute('data-gal-view'))]; if (x) galLightbox(all.filter(galOpen), x); return; }
+    if (del) { var i = Number(del.getAttribute('data-gal-del')); if (!window.confirm('Убрать это фото из статьи?')) return; all.splice(i, 1); galSave(type, id, all, 'Фото убрано'); return; }
+    if (add) {
+      if (sec.querySelector('.wk-gal-form')) { sec.querySelector('.wk-gal-form input').focus(); return; }
+      var f = document.createElement('div'); f.className = 'wk-gal-form';
+      f.innerHTML = '<input type="url" data-gf="url" placeholder="Ссылка на фото https://…"><input type="text" data-gf="title" maxlength="80" placeholder="Подпись, например: В детстве">' +
+        '<input type="number" min="0" data-gf="ch" placeholder="скрыть до гл."><input type="number" min="0" data-gf="ep" placeholder="или сер.">' +
+        '<button type="button" class="wk-qe-cancel" data-gal-cancel>Отмена</button><button type="button" class="wk-qe-save" data-gal-save>Добавить</button><div class="wk-qe-msg"></div>';
+      sec.querySelector('h2').after(f); f.querySelector('input').focus();
+      f.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); f.querySelector('[data-gal-save]').click(); } if (ev.key === 'Escape') f.remove(); });
+      return;
+    }
+    if (cancel) { var ff = sec.querySelector('.wk-gal-form'); if (ff) ff.remove(); return; }
+    if (sv) {
+      var form = sec.querySelector('.wk-gal-form'), g = function (k) { return String(form.querySelector('[data-gf="' + k + '"]').value || '').trim(); };
+      if (!goodUrl(g('url'))) { form.querySelector('.wk-qe-msg').textContent = 'Нужна ссылка на картинку, начинающаяся с https://'; return; }
+      all.push({ url: g('url'), title: g('title'), ch: g('ch'), ep: g('ep') });
+      galSave(type, id, all, 'Фото добавлено');
+    }
+  });
+  function galLightbox(list, cur) {
+    var i = Math.max(0, list.indexOf(cur));
+    var ov = document.createElement('div'); ov.className = 'wk-gal-lb'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true');
+    function show() { var x = list[i]; ov.innerHTML = '<figure><img src="' + esc(x.url) + '" alt="' + esc(x.title || '') + '">' + (x.title ? '<figcaption>' + esc(x.title) + '</figcaption>' : '') + '</figure>' + (list.length > 1 ? '<button type="button" class="wk-gal-lb-prev" aria-label="Предыдущее">‹</button><button type="button" class="wk-gal-lb-next" aria-label="Следующее">›</button>' : '') + '<button type="button" class="wk-gal-lb-x" aria-label="Закрыть">✕</button>'; }
+    function close() { ov.remove(); document.removeEventListener('keydown', key); }
+    function step(d) { i = (i + d + list.length) % list.length; show(); }
+    function key(e) { if (e.key === 'Escape') close(); else if (e.key === 'ArrowRight') step(1); else if (e.key === 'ArrowLeft') step(-1); }
+    ov.addEventListener('click', function (e) { if (e.target.closest('.wk-gal-lb-prev')) step(-1); else if (e.target.closest('.wk-gal-lb-next')) step(1); else if (!e.target.closest('img')) close(); });
+    document.addEventListener('keydown', key);
+    show(); document.body.appendChild(ov);
+  }
+  (function watchGal() {
+    var pend2 = 0;
+    new MutationObserver(function () { if (pend2) return; pend2 = requestAnimationFrame(function () { pend2 = 0; try { galRender(false); } catch (e) {} }); })
+      .observe(document.body, { childList: true, subtree: true });
+    window.addEventListener('wiki:spoiler-progress-restored', function () { galRender(true); });
+  })();
   /* ---------- Длинные имена и заголовки карточек (персонажи, «Полезное»): шрифт уменьшается, чтобы влезло ---------- */
   function fitTitle(el) {
     var card = el.closest('.character-item'); if (!card || !card.offsetWidth) return;
