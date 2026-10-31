@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "31.10.2026 · 63";
+const WIKI_VERSION = "31.10.2026 · 64";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -28274,12 +28274,12 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 </script><style id="wk-v5">
 /* ===== v5 (31.10.2026 · 61): главный экран ===== */
 /* --- Спокойный режим: в покое эффекты замирают, оживают у карточки под курсором / в центре экрана --- */
-.wk-calm :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell:not(.wk-hero-card)>.character-item:not(.wk-live),
-.wk-calm :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell:not(.wk-hero-card)>.character-item:not(.wk-live)::before,
-.wk-calm :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell:not(.wk-hero-card)>.character-item:not(.wk-live)::after,
-.wk-calm :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell:not(.wk-hero-card)>.character-item:not(.wk-live) *:not(img),
-.wk-calm :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell:not(.wk-hero-card)>.character-item:not(.wk-live) *:not(img)::before,
-.wk-calm :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell:not(.wk-hero-card)>.character-item:not(.wk-live) *::after{animation-play-state:paused!important}
+.wk-calm :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell>.character-item:not(.wk-live),
+.wk-calm :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell>.character-item:not(.wk-live)::before,
+.wk-calm :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell>.character-item:not(.wk-live)::after,
+.wk-calm :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell>.character-item:not(.wk-live) *:not(img),
+.wk-calm :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell>.character-item:not(.wk-live) *:not(img)::before,
+.wk-calm :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell>.character-item:not(.wk-live) *::after{animation-play-state:paused!important}
 .wk-reduced .character-item:not(.wk-live) *:not(img){animation-play-state:paused!important}
 .wk-calm .wk-live{z-index:3}
 
@@ -28435,7 +28435,9 @@ html body #charactersSection#charactersSection #characterList#characterList.char
     var t = String(r.title_fx || '').trim(); if (t && t !== 'none' && t !== 'accent') s += 1;
     return s;
   }
-  function rarityOf(type, rec) { var s = rarityScore(type, rec); return s >= 3 ? 'legendary' : s >= 1 ? 'rare' : 'common'; }
+  function rarityAuto(type, rec) { var s = rarityScore(type, rec); return s >= 3 ? 'legendary' : s >= 1 ? 'rare' : 'common'; }
+  window.__wkRarityAuto = rarityAuto;
+  function rarityOf(type, rec) { var mv = String(raw(rec).rarity || ''); if (mv === 'common' || mv === 'rare' || mv === 'legendary') return mv; var s = rarityScore(type, rec); return s >= 3 ? 'legendary' : s >= 1 ? 'rare' : 'common'; }
   window.__wkRarity = rarityOf;
   var RARITY_NAME = { rare: 'Редкая карточка', legendary: 'Легендарная карточка' };
   function decorateRarity(el, info) {
@@ -29454,5 +29456,271 @@ html.ios-app .wk-totop{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
     schedule();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
+</script><style id="wk-v8">
+/* ===== v8 (31.10.2026 · 64) ===== */
+/* Лицевая сторона: только имя и фото */
+html body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList.fruit-display-grid .fruit-grid-content>:is(.fruit-grid-owner,.fruit-grid-type){display:none!important}
+html body #usefulSection#usefulSection#usefulSection #usefulList#usefulList.useful-display-grid .useful-item>.card-meta-right{display:none!important}
+html body #usefulSection#usefulSection #usefulList#usefulList.useful-display-grid .useful-item>.character-name.card-title{bottom:14px!important}
+/* Глава появления — только на обороте */
+:is(#characterList,.wk-sc) .wk-ci.is-dim{display:none!important}
+/* Фильтры «Плодов» и «Полезного» теперь снаружи — кнопка и панель не нужны */
+html body :is(#fruitsSection#fruitsSection#fruitsSection,#usefulSection#usefulSection#usefulSection) :is(.section-filters-button,.section-filters-panel){display:none!important}
+/* Кнопка оборота у плодов и статей */
+.wk-flip2{position:absolute;top:10px;right:10px;z-index:9;width:30px;height:30px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.22);background:rgba(8,11,16,.7);color:#f8fafc;font-size:15px;line-height:1;cursor:pointer;opacity:0;transition:opacity .15s}
+.catalog-item-shell:hover>.wk-flip2,.wk-flip2:focus-visible,.wk-flipped>.wk-flip2{opacity:1}
+.wk-flipped>.wk-flip2{top:auto;bottom:10px}
+@media (hover:none){.wk-flip2{opacity:.85}}
+#usefulList .catalog-item-shell>.wk-flip2,#fruitsList .catalog-item-shell>.wk-flip2{top:10px;right:46px}
+#usefulList .wk-flipped>.wk-flip2,#fruitsList .wk-flipped>.wk-flip2{right:10px;top:auto;bottom:10px}
+.wk-b2-types{display:flex;flex-wrap:wrap;gap:5px}
+.wk-b2-type{padding:2px 9px;border-radius:999px;border:1px solid color-mix(in srgb,var(--c) 60%,transparent);background:color-mix(in srgb,var(--c) 18%,transparent);color:#fff;font-size:11.5px;font-weight:700}
+.wk-b2-owner{display:grid;gap:1px;justify-items:start;margin-top:4px;padding:7px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);color:#fff;font:inherit;text-align:left;cursor:pointer}
+.wk-b2-owner span{font-size:11px;color:#94a3b8}
+.wk-b2-owner b{font-size:14px}
+.wk-b2-desc{margin:4px 0 0;font-size:12px;line-height:1.45;color:#cbd5e1}
+/* Оборот по редкости */
+.catalog-item-shell:not(.wk-r-rare):not(.wk-r-legendary)>.wk-back{background:linear-gradient(170deg,#141b26,#0b111b);border-color:rgba(148,163,184,.3)}
+.wk-r-rare>.wk-back{background:linear-gradient(155deg,rgba(226,232,240,.16),rgba(148,163,184,.06) 40%,#0b111b 75%),repeating-linear-gradient(135deg,rgba(255,255,255,.035) 0 2px,transparent 2px 9px),#0d131d;border:1px solid rgba(226,232,240,.55);box-shadow:inset 0 0 0 3px rgba(13,19,29,1),inset 0 0 0 4px rgba(226,232,240,.25)}
+.wk-r-rare>.wk-back .wk-back-name{color:#f1f5f9;text-shadow:0 0 12px rgba(226,232,240,.35)}
+.wk-r-legendary>.wk-back{background:radial-gradient(120% 70% at 50% 0%,rgba(250,204,21,.28),transparent 60%),linear-gradient(160deg,#2a1d06,#120c03 55%,#0b0803);border:1px solid rgba(250,204,21,.8);box-shadow:inset 0 0 0 3px #120c03,inset 0 0 0 4px rgba(250,204,21,.45),0 0 24px -6px rgba(250,204,21,.6)}
+.wk-r-legendary>.wk-back::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,transparent 35%,rgba(255,236,170,.22) 50%,transparent 65%);background-size:250% 100%;animation:wkLegSheen 3.8s ease-in-out infinite}
+@keyframes wkLegSheen{0%{background-position:120% 0}60%,100%{background-position:-60% 0}}
+.wk-r-legendary>.wk-back .wk-back-name{color:#fde68a;text-shadow:0 0 14px rgba(250,204,21,.55)}
+.wk-r-legendary>.wk-back dt{color:#d6b25e}
+.wk-r-legendary>.wk-back .wk-back-open{border-color:rgba(250,204,21,.6);color:#fde68a}
+.wk-back .wk-back-in::before{display:block;font:800 10px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#64748b;content:"Обычная"}
+.wk-r-rare>.wk-back .wk-back-in::before{content:"◆ Редкая";color:#e2e8f0}
+.wk-r-legendary>.wk-back .wk-back-in::before{content:"◆◆ Легендарная";color:#facc15}
+.wk-reduced .wk-r-legendary>.wk-back::before{animation:none}
+/* Ручная редкость в редакторе */
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-rar-ed{grid-column:1 / -1;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:0 0 12px;padding:10px 12px;border-radius:10px;border:1px solid rgba(250,204,21,.35);background:rgba(250,204,21,.05)}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-rar-l{color:#fde68a;font:700 12.5px Arial,sans-serif}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-rar-seg{display:inline-flex;flex-wrap:wrap;gap:4px}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-rar-seg button{width:auto;min-height:0;margin:0;padding:5px 11px;border-radius:999px;border:1px solid #475569;background:transparent;color:#cbd5e1;font:600 12px Arial,sans-serif;cursor:pointer;text-transform:none;letter-spacing:0}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-rar-seg button.active{border-color:#facc15;background:rgba(250,204,21,.16);color:#fde68a}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-rar-ed small{flex-basis:100%;color:#94a3b8;font:500 11.5px Arial,sans-serif}
+</style><script id="wk-v8-js">
+/* ===================================================================
+   Обновление v8 (31.10.2026 · 64): витрина и оборот карточек у «Плодов»
+   и «Полезного», на лицевой стороне только имя и фото.
+   =================================================================== */
+(function () {
+  'use strict';
+  function $(s, r) { return (r || document).querySelector(s); }
+  function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+  function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function arr(name) { try { var v = window.eval(name); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+  function hidden(rec, type) { try { return typeof window.__wikiIsSpoilerActive === 'function' ? !!window.__wikiIsSpoilerActive(rec, type) : !!(rec && rec.__wikiSpoiler); } catch (e) { return false; } }
+  function byId(list, id) { id = String(id || ''); for (var i = 0; i < list.length; i++) if (String(list[i] && list[i].id) === id) return list[i]; return null; }
+  function split(v) { return String(v || '').split(/[,;]+/).map(function (x) { return x.trim(); }).filter(Boolean); }
+  function num(v) { var m = String(v == null ? '' : v).match(/\d+/); return m ? Number(m[0]) : 0; }
+  function money(n) { return Number(n || 0).toLocaleString('ru-RU').replace(/ | /g, ' '); }
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function short(s, n) { s = String(s || '').replace(/\s+/g, ' ').trim(); return s.length > n ? s.slice(0, n - 1).replace(/[\s,.;:—-]+\S*$/, '') + '…' : s; }
+  function progress() { var p = window.__wikiSpoilerProgress || {}; if (!p.chapter && !p.episode) { try { p = JSON.parse(lsGet('onePieceWikiSpoilerProgressV1') || '{}'); } catch (e) {} } return { chapter: Number(p.chapter) || 0, episode: Number(p.episode) || 0 }; }
+  function rarity(type, rec) { try { return window.__wkRarity ? window.__wkRarity(type, rec) : 'common'; } catch (e) { return 'common'; } }
+  function rank(type, rec) { var r = rarity(type, rec); return r === 'legendary' ? 2 : r === 'rare' ? 1 : 0; }
+  var coarse = false; try { coarse = window.matchMedia('(pointer: coarse)').matches; } catch (e) {}
+
+  var CFG = {
+    fruit: { list: 'fruitsList', section: 'fruitsSection', arr: 'fruits', open: function (id) { openFruitArticle(id, 'fruits'); }, attr: 'data-fruit-id', all: 'Все плоды', sc: 'wkShowcaseFruitV1',
+      filtered: function () { var s = document.getElementById('fruitTypeFilter'); var q = document.getElementById('fruitSearch'); return (s && s.value && s.value !== '__all__') || (q && q.value.trim()); }, page: 'fruitCurrentPage' },
+    useful: { list: 'usefulList', section: 'usefulSection', arr: 'usefulArticles', open: function (id) { openUsefulArticle(id); }, attr: 'data-useful-id', all: 'Все статьи', sc: 'wkShowcaseUsefulV1',
+      filtered: function () { var t = ''; try { t = window.eval('usefulTypeFilter'); } catch (e) {} var q = document.getElementById('usefulSearch'); return t || (q && q.value.trim()); }, page: 'usefulCurrentPage' }
+  };
+  function recOf(type, el) { var v = el.getAttribute(CFG[type].attr); if (!v) return null; try { v = decodeURIComponent(v); } catch (e) {} return byId(arr(CFG[type].arr), v); }
+  function typeOfCard(el) { return el.hasAttribute('data-fruit-id') ? 'fruit' : el.hasAttribute('data-useful-id') ? 'useful' : ''; }
+
+  /* =========================================================
+     Оборот карточки
+     ========================================================= */
+  function ownerOf(f) { var id = split(f.owner)[0], c = id ? byId(arr('characters'), id) : null; return c && !hidden(c, 'character') ? c : null; }
+  function typeBadge(t, kind) {
+    var c = ''; try { c = kind === 'fruit' ? (typeof getFruitTypeAccent === 'function' ? getFruitTypeAccent(t) : '') : (typeof usefulTypeAccent === 'function' ? usefulTypeAccent(t) : ''); } catch (e) {}
+    return '<span class="wk-b2-type" style="--c:' + esc(c || '#94a3b8') + '">' + esc(t) + '</span>';
+  }
+  function backHTML(type, r) {
+    var rows = [], extra = '';
+    var ch = num(type === 'fruit' ? r.appearance : r.appearance_chapter), ep = num(type === 'fruit' ? r.episode : r.appearance_episode);
+    if (type === 'fruit') {
+      var o = ownerOf(r);
+      if (o) extra += '<button type="button" class="wk-b2-owner" data-wk-open="character" data-wk-id="' + esc(o.id) + '"><span>Владелец</span><b>' + esc(o.name) + '</b></button>';
+    } else {
+      try { var st = window.__wkCrewStats ? window.__wkCrewStats(r) : null; if (st && st.rows.length) { rows.push(['Состав', st.rows.length + '']); if (st.withBounty) rows.push(['Награды', money(st.total) + ' ฿']); } } catch (e) {}
+    }
+    if (ch || ep) rows.push(['Появление', [ch ? 'гл. ' + ch : '', ep ? 'сер. ' + ep : ''].filter(Boolean).join(' · ')]);
+    if (r.arc) rows.push(['Арка', r.arc]);
+    var desc = short(r.description, 150);
+    return '<div class="wk-back-in"><b class="wk-back-name">' + esc(r.name) + '</b>' +
+      '<span class="wk-b2-types">' + split(r.type).map(function (t) { return typeBadge(t, type); }).join('') + '</span>' + extra +
+      (rows.length ? '<dl>' + rows.map(function (x) { return '<dt>' + esc(x[0]) + '</dt><dd>' + esc(x[1]) + '</dd>'; }).join('') + '</dl>' : '') +
+      (desc ? '<p class="wk-b2-desc">' + esc(desc) + '</p>' : '') +
+      '<button type="button" class="wk-back-open" data-b2-open="' + type + '" data-b2-id="' + esc(r.id) + '">Открыть статью →</button></div>';
+  }
+  function flip(shell) {
+    if (!shell || shell.classList.contains('wk-flipping')) return;
+    var card = shell.querySelector('.character-item'); var type = card && typeOfCard(card), r = type && recOf(type, card); if (!r) return;
+    if (!shell.classList.contains('wk-flipped')) {
+      var back = shell.querySelector(':scope > .wk-back2');
+      if (!back) { back = document.createElement('div'); back.className = 'wk-back wk-back2'; shell.appendChild(back); }
+      back.innerHTML = backHTML(type, r);
+    }
+    shell.classList.add('wk-flipping');
+    setTimeout(function () { shell.classList.toggle('wk-flipped'); }, 170);
+    setTimeout(function () { shell.classList.remove('wk-flipping'); }, 360);
+    try { if (window.__wkHaptic) window.__wkHaptic('tap'); } catch (e) {}
+  }
+  function decorateFlip(card) {
+    var shell = card.closest('.catalog-item-shell'); if (!shell || shell.querySelector(':scope > .wk-flip2')) return;
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'wk-flip2'; b.textContent = '⟲';
+    b.title = 'Перевернуть карточку'; b.setAttribute('aria-label', 'Перевернуть карточку'); shell.appendChild(b);
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target; if (!t.closest) return;
+    var fb = t.closest('.wk-flip2'); if (fb) { e.preventDefault(); e.stopPropagation(); flip(fb.closest('.catalog-item-shell')); return; }
+    var op = t.closest('[data-b2-open]');
+    if (op) { e.preventDefault(); e.stopPropagation(); try { CFG[op.getAttribute('data-b2-open')].open(op.getAttribute('data-b2-id')); } catch (er) {} return; }
+    var ow = t.closest('.wk-back2 [data-wk-open]'); if (ow) return; // ссылка на владельца — обрабатывает общий обработчик
+    var back = t.closest('.wk-back2'); if (back) { e.preventDefault(); e.stopPropagation(); flip(back.closest('.catalog-item-shell')); }
+  }, true);
+  var lp = null, lpFired = false;
+  document.addEventListener('pointerdown', function (e) {
+    if (e.pointerType !== 'touch') return;
+    var card = e.target.closest && e.target.closest('#fruitsList .character-item, #usefulList .character-item, .wk-sc .character-item[data-fruit-id], .wk-sc .character-item[data-useful-id]'); if (!card) return;
+    lpFired = false; lp = { t: setTimeout(function () { lpFired = true; flip(card.closest('.catalog-item-shell')); }, 480), x: e.clientX, y: e.clientY };
+  }, { passive: true });
+  function lpCancel(e) { if (!lp) return; if (e && e.type === 'pointermove' && Math.hypot(e.clientX - lp.x, e.clientY - lp.y) < 10) return; clearTimeout(lp.t); lp = null; }
+  ['pointerup', 'pointercancel', 'pointermove'].forEach(function (t) { document.addEventListener(t, lpCancel, { passive: true }); });
+  document.addEventListener('click', function (e) { if (lpFired) { lpFired = false; e.preventDefault(); e.stopPropagation(); } }, true);
+
+  /* =========================================================
+     Витрина
+     ========================================================= */
+  function imgOf(type, r) { var u = String(r.image || '').trim(); return /^(https?:|data:image)/.test(u) && u !== 'Нет' ? u : ''; }
+  function cardHTML(type, r, extra) {
+    var u = imgOf(type, r), x = Math.max(0, Math.min(100, Number(r.image_position_x) || 50)), y = Math.max(0, Math.min(100, Number(r.image_position) || 50)), z = Math.max(100, Math.min(250, Number(r.image_zoom) || 100));
+    var id = esc(r.id), enc = esc(encodeURIComponent(String(r.id))), call = type === 'fruit' ? "openFruitArticle(decodeURIComponent(this.getAttribute('data-fruit-id')),'fruits')" : "openUsefulArticle(decodeURIComponent(this.getAttribute('data-useful-id')))";
+    var acc = ''; try { var t0 = split(r.type)[0]; acc = type === 'fruit' ? getFruitTypeAccent(t0) : usefulTypeAccent(t0); } catch (e) {}
+    return '<div class="catalog-item-shell character-grid-shell ' + (extra || '') + '"><div class="character-item character-grid-card wk-sc-' + type + '" ' + CFG[type].attr + '="' + enc + '" role="button" tabindex="0" aria-label="Открыть статью: ' + esc(r.name) + '" onclick="' + call + '" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();this.click();}"' + (acc ? ' style="--catalog-accent:' + esc(acc) + '"' : '') + '>' +
+      '<div class="character-grid-image-wrap">' + (u ? '<img class="character-grid-image" src="' + esc(u) + '" alt="' + esc(r.name) + '" style="object-position:' + x + '% ' + y + '%;transform:scale(' + (z / 100) + ');transform-origin:' + x + '% ' + y + '%" loading="lazy" decoding="async" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><div class="character-grid-image-fallback" style="display:none" aria-hidden="true">' + (type === 'fruit' ? '🍎' : '💡') + '</div>' : '<div class="character-grid-image-fallback" aria-hidden="true">' + (type === 'fruit' ? '🍎' : '💡') + '</div>') + '</div>' +
+      '<div class="character-grid-content"><div class="character-name card-title" title="' + esc(r.name) + '">' + esc(r.name) + '</div></div></div></div>';
+  }
+  function shelf(type, key, title, list, note) {
+    if (list.length < 2) return '';
+    return '<section class="wk-shelf" data-shelf="' + key + '"><header><h3>' + title + '</h3><span>' + (note || list.length) + '</span>' +
+      '<span class="wk-shelf-nav"><button type="button" data-shelf-go="-1" aria-label="Назад">‹</button><button type="button" data-shelf-go="1" aria-label="Вперёд">›</button></span></header>' +
+      '<div class="wk-shelf-row wk-sc">' + list.map(function (r) { return cardHTML(type, r, 'wk-shelf-card'); }).join('') + '</div></section>';
+  }
+  function currentArc() {
+    var p = progress(), best = null;
+    arr('storyArcs').forEach(function (a) { if (hidden(a, 'story')) return; var s = []; try { s = parseStoryRangeSegments(a.chapters) || []; } catch (e) {} s.forEach(function (g) { if (p.chapter >= g.start && p.chapter <= g.end) best = a; }); });
+    return best;
+  }
+  function dayPick(list, salt) { if (!list.length) return null; var d = new Date(), k = d.getFullYear() * 1000 + d.getMonth() * 40 + d.getDate() + (salt || 0); return list[k % list.length]; }
+  function visible(type) { return arr(CFG[type].arr).filter(function (r) { return !hidden(r, type); }); }
+  function build(type) {
+    var vis = visible(type); if (vis.length < 4) return '';
+    var arc = currentArc(), inArc = arc ? vis.filter(function (r) { return r.arc === arc.name || r.arc_anime === arc.name; }) : [];
+    var sorted = vis.slice().sort(function (a, b) { return rank(type, b) - rank(type, a); });
+    var head, hero;
+    if (inArc.length) { head = (type === 'fruit' ? '🧭 Плоды твоей арки · ' : '🧭 Твоя арка · ') + esc(arc.name); hero = inArc.slice().sort(function (a, b) { return rank(type, b) - rank(type, a); })[0]; }
+    else { head = type === 'fruit' ? '🎲 Плод дня' : '🎲 Статья дня'; hero = dayPick(sorted.filter(function (r) { return rank(type, r) > 0 && imgOf(type, r); }), type === 'fruit' ? 3 : 7) || dayPick(vis, 1); }
+    var pool = (inArc.length > 1 ? inArc : sorted).filter(function (r) { return r !== hero; });
+    var rest = pool.slice(0, 4);
+    if (rest.length < 4) sorted.forEach(function (r) { if (rest.length < 4 && r !== hero && rest.indexOf(r) < 0) rest.push(r); });
+    var groups = {};
+    vis.forEach(function (r) { split(r.type).forEach(function (t) { (groups[t] = groups[t] || []).push(r); }); });
+    var order = type === 'fruit' ? ['Логия', 'Зоан', 'Парамеция'] : ['Команды', 'Корабли', 'Организации', 'География'];
+    var ICON = { 'Логия': '🌪', 'Зоан': '🐾', 'Парамеция': '✨', 'Команды': '🏴‍☠️', 'Корабли': '⛵', 'Организации': '🏛', 'География': '🗺' };
+    var shelves = order.map(function (t) { return groups[t] ? shelf(type, t, (ICON[t] ? ICON[t] + ' ' : '') + t, groups[t].slice().sort(function (a, b) { return rank(type, b) - rank(type, a); })) : ''; }).join('');
+    return '<div class="wk-sc-head"><h2>' + head + '</h2><button type="button" class="wk-sc-toggle is-min" data-sc2-toggle="' + type + '">Скрыть витрину</button></div>' +
+      '<div class="wk-sc wk-sc-grid"><div class="wk-sc-hero">' + cardHTML(type, hero, 'wk-hero-card') + '</div>' + rest.map(function (r) { return cardHTML(type, r, 'wk-sc-small'); }).join('') + '</div>' +
+      shelves + '<h2 class="wk-sc-all">' + CFG[type].all + '</h2>';
+  }
+  function showcase(type) {
+    var c = CFG[type], list = document.getElementById(c.list); if (!list) return;
+    var box = document.getElementById('wkShowcase_' + type);
+    var page1 = true; try { page1 = window.eval(c.page) === 1; } catch (e) {}
+    var show = /display-grid/.test(list.className) && page1 && !c.filtered();
+    if (!show) { if (box) box.hidden = true; return; }
+    if (!box) { box = document.createElement('div'); box.id = 'wkShowcase_' + type; box.className = 'wk-showcase'; list.parentNode.insertBefore(box, list); }
+    var chips = document.getElementById(type === 'fruit' ? 'wkFruitChips' : 'wkUsefulChips');
+    if (chips && box.previousElementSibling !== chips && chips.parentNode === box.parentNode) chips.after(box);
+    box.hidden = false;
+    var p = progress(), key = [p.chapter, p.episode, visible(type).length, lsGet(c.sc) || ''].join('|');
+    if (box.getAttribute('data-k') === key) return; box.setAttribute('data-k', key);
+    if (lsGet(c.sc) === 'off') { box.innerHTML = '<button type="button" class="wk-sc-toggle" data-sc2-toggle="' + type + '">✨ Показать витрину</button>'; return; }
+    box.innerHTML = build(type);
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('[data-sc2-toggle]'); if (!t) return;
+    var type = t.getAttribute('data-sc2-toggle'), c = CFG[type]; lsSet(c.sc, lsGet(c.sc) === 'off' ? 'on' : 'off');
+    var b = document.getElementById('wkShowcase_' + type); if (b) b.removeAttribute('data-k'); schedule();
+  });
+
+  /* ---------- Обход ---------- */
+  var pend = 0;
+  function run() {
+    pend = 0;
+    try {
+      showcase('fruit'); showcase('useful');
+      $$('#fruitsList.fruit-display-grid .character-item, #usefulList.useful-display-grid .character-item, .wk-sc .character-item[data-fruit-id], .wk-sc .character-item[data-useful-id]').forEach(decorateFlip);
+    } catch (e) { console.warn('v8:', e); }
+  }
+  function schedule() { if (!pend) pend = requestAnimationFrame(run); }
+  function boot() {
+    ['fruitsList', 'usefulList'].forEach(function watch(id) {
+      var el = document.getElementById(id); if (!el) { setTimeout(function () { watch(id); }, 600); return; }
+      new MutationObserver(schedule).observe(el, { childList: true, attributes: true, attributeFilter: ['class'] });
+    });
+    ['wiki:spoiler-progress-restored', 'wiki:cloud-ready'].forEach(function (ev) { window.addEventListener(ev, function () { $$('.wk-showcase[id^="wkShowcase_"]').forEach(function (b) { b.removeAttribute('data-k'); }); schedule(); }); });
+    document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('.main-tab, [data-mobile-tab], .pagination, .wk-chip, .character-view-mode-button')) setTimeout(schedule, 80); });
+    document.addEventListener('input', function (e) { if (e.target && /^(fruitSearch|usefulSearch)$/.test(e.target.id)) setTimeout(schedule, 120); });
+    schedule();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
+/* ---------- Редкость вручную (поле rarity: '' — авто, common / rare / legendary) ---------- */
+(function () {
+  'use strict';
+  var TYPES = { character: 'person_link', fruit: 'image', useful: 'image', story: 'image' };
+  var OPTS = [['', 'Авто — по эффектам'], ['common', 'Обычная'], ['rare', '◆ Редкая'], ['legendary', '◆◆ Легендарная']];
+  function raw(type, id) { try { return window.__wikiRawRecord ? window.__wikiRawRecord(type, id) : null; } catch (e) { return null; } }
+  function editorType(form) {
+    var id = form.querySelector('[data-field="id"]'); id = id ? String(id.value || '').trim() : '';
+    if (!id) return null;
+    var t = form.querySelector('[data-field="person_link"]') ? 'character' : null;
+    if (!t) ['fruit', 'useful', 'story'].some(function (x) { if (raw(x, id)) { t = x; return true; } return false; });
+    return t ? { type: t, id: id } : null;
+  }
+  function mount() {
+    var form = document.getElementById('wikiEditorForm'); if (!form) return;
+    var fx = form.querySelector('[data-field="card_fx"]'); if (!fx) return;
+    var who = editorType(form); if (!who) return;
+    var holder = fx.closest('[data-editor-field], .wiki-editor-field') || fx.parentNode;
+    var box = holder.parentNode.querySelector(':scope > .wk-rar-ed');
+    if (box && box.getAttribute('data-for') === who.type + ':' + who.id) return;
+    if (box) box.remove();
+    var r = raw(who.type, who.id) || {}, cur = String(r.rarity || '');
+    var auto = ''; try { var rec = window.eval({ character: 'characters', fruit: 'fruits', useful: 'usefulArticles', story: 'storyArcs' }[who.type]).find(function (x) { return String(x.id) === who.id; }); auto = window.__wkRarityAuto ? window.__wkRarityAuto(who.type, rec) : ''; } catch (e) {}
+    var NAME = { common: 'обычная', rare: 'редкая', legendary: 'легендарная' };
+    box = document.createElement('div'); box.className = 'wk-rar-ed'; box.setAttribute('data-for', who.type + ':' + who.id);
+    box.innerHTML = '<span class="wk-rar-l">Редкость карточки</span><div class="wk-rar-seg" role="radiogroup">' + OPTS.map(function (o) { return '<button type="button" data-rar="' + o[0] + '" aria-pressed="' + (o[0] === cur) + '" class="' + (o[0] === cur ? 'active' : '') + '">' + o[1] + '</button>'; }).join('') + '</div>' +
+      '<small>' + (auto ? 'По эффектам сейчас получается: ' + NAME[auto] + '. ' : '') + 'Выбор сохраняется сразу.</small>';
+    holder.parentNode.insertBefore(box, holder);
+    box.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-rar]'); if (!b) return; e.preventDefault();
+      var v = b.getAttribute('data-rar');
+      var ok = false; try { ok = window.__wikiQuickSave(who.type, who.id, { rarity: v }); } catch (er) { console.warn(er); }
+      if (!ok) return;
+      box.querySelectorAll('[data-rar]').forEach(function (x) { var on = x === b; x.classList.toggle('active', on); x.setAttribute('aria-pressed', String(on)); });
+      document.querySelectorAll('[data-wk-rarity]').forEach(function (el) { el.removeAttribute('data-wk-rarity'); });
+    });
+  }
+  var pend = 0;
+  new MutationObserver(function () { if (pend) return; pend = requestAnimationFrame(function () { pend = 0; try { mount(); } catch (e) {} }); }).observe(document.documentElement, { childList: true, subtree: true });
 })();
 </script></body></html>
