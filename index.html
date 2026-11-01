@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "31.10.2026 · 64";
+const WIKI_VERSION = "01.11.2026 · 66";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -13359,7 +13359,7 @@ function overlaps(h,key){var inp=$('[data-field="'+key+'"]',h),note=$('[data-wk-
   var u=res.filter(function(x,i){return res.indexOf(x)===i;});
   note.textContent=u.length?'⚠ Пересекается с: '+u.slice(0,3).join(', ')+(u.length>3?' и ещё '+(u.length-3):''):'';}
 // картинки: вставка и перетаскивание
-function toUri(file,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var sc=Math.min(1,720/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*sc));c.height=Math.max(1,Math.round(im.height*sc));c.getContext('2d').drawImage(im,0,0,c.width,c.height);var u=c.toDataURL('image/webp',.8);if(u.indexOf('image/webp')<0)u=c.toDataURL('image/jpeg',.8);cb(u);};im.onerror=function(){toast('Не удалось прочитать изображение.','err');};im.src=r.result;};r.readAsDataURL(file);}
+function toUri(file,cb){if(file&&file.type==='image/gif'&&window.__wkGifFile){window.__wkGifFile(file,cb);return;}var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var sc=Math.min(1,720/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*sc));c.height=Math.max(1,Math.round(im.height*sc));c.getContext('2d').drawImage(im,0,0,c.width,c.height);var u=c.toDataURL('image/webp',.8);if(u.indexOf('image/webp')<0)u=c.toDataURL('image/jpeg',.8);cb(u);};im.onerror=function(){toast('Не удалось прочитать изображение.','err');};im.src=r.result;};r.readAsDataURL(file);}
 function takeImage(el,file){if(!file||!/^image\//.test(file.type))return false;toUri(file,function(u){el.value=u;el.dispatchEvent(new Event('input',{bubbles:true}));
   toast('Изображение вставлено ('+Math.round(u.length/1370)+' КБ). Оно хранится в браузере, поэтому лучше небольшие картинки.',u.length>200000?'err':'ok');});return true;}
 var IMG=['person_link','image','reward_image'];
@@ -29149,7 +29149,7 @@ html.ios-app .wk-totop{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-csz{margin:0;display:grid;gap:4px;justify-items:center}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-csz-frame{position:relative;overflow:hidden;border-radius:9px;border:1px solid #475569;background:#0f172a}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-csz-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
-#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .is-hero .wk-csz-frame{width:208px;height:162px;cursor:grab;touch-action:none;border-color:#d4a84f}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .is-hero .wk-csz-frame{width:208px;height:156px;cursor:grab;touch-action:none;border-color:#d4a84f}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .has-hero .is-hero .wk-csz-frame{box-shadow:0 0 0 2px rgba(212,168,79,.5)}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .is-shelf .wk-csz-frame{width:84px;height:112px}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .is-s .wk-csz-frame{width:68px;height:90px}
@@ -29383,7 +29383,7 @@ html.ios-app .wk-totop{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
       var c = heroOf(rec); if (c) styleImg(img, c);
     });
   }
-  var SIZES = [['hero', 'Витрина', 'большая карточка'], ['shelf', 'Полка', ''], ['s', 'S', ''], ['m', 'M', 'как в каталоге'], ['l', 'L', '']];
+  var SIZES = [['hero', 'Витрина', 'большая карточка · ПК и телефон'], ['shelf', 'Полка', ''], ['s', 'S', ''], ['m', 'M', 'как в каталоге'], ['l', 'L', '']];
   function cropPreviews() {
     var ed = document.querySelector('#wikiEditorForm .wiki-character-crop-editor[data-crop-type="character"]'); if (!ed) return;
     var form = document.getElementById('wikiEditorForm');
@@ -29779,4 +29779,132 @@ html body #fruitsSection#fruitsSection#fruitsSection #fruitsFiltersButton#fruits
   window.__wkFitBack = function (shell) { (shell || document).querySelectorAll('.wk-flipped > .wk-back .wk-fit').forEach(fitOne); };
   var t = 0; window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(function () { window.__wkFitBack(document); }, 150); });
 })();
-</script></body></html>
+</script><style id="wk-gif">
+.wk-gif-still{pointer-events:none}
+.wk-qe-toast.wk-gif-bad{background:#7f1d1d;color:#fff;max-width:min(560px,92vw);border-radius:14px;text-align:center}
+</style><script id="wk-gif-js">
+/* ===================================================================
+   Обновление 01.11.2026 · 65: гифки на сайте.
+   — ссылки Giphy / Imgur .gifv превращаются в прямые ссылки на гифку;
+   — перетащенный или вставленный GIF-файл остаётся анимированным;
+   — в спокойном режиме гифка на карточке каталога стоит на первом кадре
+     и оживает при наведении (на телефоне — в центре экрана).
+   =================================================================== */
+(function () {
+  'use strict';
+  function toast(t, bad) { var n = document.createElement('div'); n.className = 'wk-qe-toast' + (bad ? ' wk-gif-bad' : ''); n.setAttribute('role', 'status'); n.textContent = t; document.body.appendChild(n); setTimeout(function () { n.remove(); }, bad ? 6000 : 3200); }
+
+  /* ---------- Ссылки ---------- */
+  function fixGifUrl(u) {
+    u = String(u || '').trim(); if (!u || /^data:/i.test(u)) return { url: u };
+    var m;
+    // Giphy: страница, embed, короткая ссылка gph.is не раскрывается без сети
+    if ((m = u.match(/^https?:\/\/(?:www\.)?giphy\.com\/(?:gifs|stickers|clips)\/(?:[^\/?#]*-)?([A-Za-z0-9]{8,})\/?(?:[?#].*)?$/i))) return { url: 'https://media.giphy.com/media/' + m[1] + '/giphy.gif', note: 'Ссылка на страницу Giphy заменена прямой ссылкой на гифку.' };
+    if ((m = u.match(/^https?:\/\/(?:www\.)?giphy\.com\/embed\/([A-Za-z0-9]+)/i))) return { url: 'https://media.giphy.com/media/' + m[1] + '/giphy.gif', note: 'Ссылка Giphy заменена прямой ссылкой на гифку.' };
+    if ((m = u.match(/^https?:\/\/media\d*\.giphy\.com\/media\/(?:v1\.[^\/]+\/)?([A-Za-z0-9]+)\/[^?#]*\.(?:webp|mp4)(?:[?#].*)?$/i))) return { url: 'https://media.giphy.com/media/' + m[1] + '/giphy.gif', note: 'Ссылка Giphy переведена в формат GIF.' };
+    // Imgur: .gifv / .mp4 → .gif
+    if ((m = u.match(/^https?:\/\/i\.imgur\.com\/([A-Za-z0-9]+)\.(?:gifv|mp4|webm)(?:[?#].*)?$/i))) return { url: 'https://i.imgur.com/' + m[1] + '.gif', note: 'Ссылка Imgur переведена в формат GIF.' };
+    // Tenor: страница не является картинкой
+    if (/^https?:\/\/(?:www\.)?tenor\.com\/(?:[a-z-]+\/)?view\//i.test(u)) return { url: u, warn: 'Это ссылка на страницу Tenor, а не на гифку. Открой гифку, нажми на неё правой кнопкой → «Копировать адрес изображения» (ссылка вида media.tenor.com/…/….gif) и вставь её.' };
+    return { url: u };
+  }
+  window.__wkFixGifUrl = fixGifUrl;
+  var FIELD = '[data-field="person_link"],[data-field="person2_link"],[data-field="image"],[data-field="reward_image"],[data-qe="person_link"],[data-qe="image"],.wk-gal-ed [data-k="url"],[data-gf="url"]';
+  function onUrl(e) {
+    var el = e.target; if (!el || !el.matches || !el.matches(FIELD)) return;
+    var r = fixGifUrl(el.value);
+    if (r.warn) { toast(r.warn, true); return; }
+    if (r.url !== String(el.value).trim()) { el.value = r.url; ['input', 'change'].forEach(function (t) { el.dispatchEvent(new Event(t, { bubbles: true })); }); if (r.note) toast('🎞 ' + r.note); }
+  }
+  document.addEventListener('change', onUrl, true);
+  document.addEventListener('paste', function (e) { var el = e.target; if (el && el.matches && el.matches(FIELD)) setTimeout(function () { onUrl({ target: el }); }, 0); }, true);
+
+  /* ---------- GIF-файлы: без перекодирования (иначе остаётся один кадр) ---------- */
+  window.__wkGifFile = function (file, cb) {
+    var LIMIT = 900 * 1024;
+    if (file.size > LIMIT) {
+      toast('Гифка весит ' + Math.round(file.size / 1024) + ' КБ — в облако такую не сохранить (лимит около 900 КБ). Загрузи её на хостинг картинок (например, imgbb.com или imgur.com) и вставь прямую ссылку на .gif.', true);
+      return;
+    }
+    var r = new FileReader(); r.onload = function () { cb(String(r.result)); }; r.readAsDataURL(file);
+  };
+
+  /* ---------- Спокойный режим: первый кадр, пока карточка не «живая» ---------- */
+  var LIST_SEL = '#characterList, #fruitsList, #usefulList, #storyList, #rewardsList, .wk-sc, #favoritesList, #recentVisitsList';
+  function isGif(u) { return /\.gif(?:[?#]|$)|giphy\.com\/media\/|media\d*\.tenor\.com\/|^data:image\/gif/i.test(String(u || '')); }
+  function still(img) {
+    if (img.__wkGif || !img.complete || !img.naturalWidth) return;
+    var card = img.closest('.character-item'); if (!card || !card.closest(LIST_SEL)) return;
+    img.__wkGif = true;
+    var cv = document.createElement('canvas');
+    var k = Math.min(1, 640 / Math.max(img.naturalWidth, img.naturalHeight));
+    cv.width = Math.max(1, Math.round(img.naturalWidth * k)); cv.height = Math.max(1, Math.round(img.naturalHeight * k));
+    try { cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height); } catch (e) { return; }
+    cv.className = String(img.className || '') + ' wk-gif-still';
+    var st = img.getAttribute('style'); if (st) cv.setAttribute('style', st);
+    cv.setAttribute('aria-hidden', 'true');
+    img.setAttribute('data-wk-gif', '1');
+    img.after(cv);
+    card.classList.add('wk-has-gif');
+    sync(card);
+  }
+  function scan() {
+    document.querySelectorAll('.character-item img:not([data-wk-gif])').forEach(function (img) {
+      if (img.__wkGif || !isGif(img.currentSrc || img.src)) return;
+      if (img.complete) still(img); else img.addEventListener('load', function () { still(img); }, { once: true });
+    });
+  }
+  var pend = 0;
+  new MutationObserver(function () { if (!pend) pend = requestAnimationFrame(function () { pend = 0; try { scan(); } catch (e) {} }); }).observe(document.documentElement, { childList: true, subtree: true });
+  // Что показывать: кадр (canvas) или живую гифку. Инлайн-стили — их не перебьют стили карточек.
+  function sync(card) {
+    var calm = document.documentElement.classList.contains('wk-calm'), live = card.classList.contains('wk-live'), showStill = calm && !live;
+    card.querySelectorAll('canvas.wk-gif-still').forEach(function (cv) { if (showStill) cv.style.removeProperty('display'); else cv.style.setProperty('display', 'none', 'important'); });
+    card.querySelectorAll('img[data-wk-gif]').forEach(function (img) {
+      if (showStill) img.style.setProperty('visibility', 'hidden', 'important'); else img.style.removeProperty('visibility');
+    });
+  }
+  window.__wkGifSync = sync;
+  new MutationObserver(function (ms) {
+    ms.forEach(function (m) {
+      var el = m.target; if (!el.classList) return;
+      if (el === document.documentElement) { document.querySelectorAll('.wk-has-gif').forEach(sync); return; }
+      if (!el.classList.contains('wk-has-gif')) return;
+      var was = String(m.oldValue || '').indexOf('wk-live') >= 0, now = el.classList.contains('wk-live');
+      if (was === now) return;
+      if (now) el.querySelectorAll('img[data-wk-gif]').forEach(function (img) { var s2 = img.src; img.src = ''; img.src = s2; });
+      sync(el);
+    });
+  }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'], subtree: true, attributeOldValue: true });
+})();
+</script><style id="wk-fix66">
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .is-hero .wk-csz-frame::after{content:"Имя персонажа";position:absolute;left:0;right:0;bottom:0;padding:22px 10px 8px;background:linear-gradient(to top,rgba(4,6,10,.85),transparent);color:#fff;font:700 13px Arial,sans-serif;pointer-events:none}
+/* ===== 01.11.2026 · 66: витрина на телефоне без лишнего, единый кадр витрины ===== */
+/* Большая карточка витрины везде 4:3 — тот же кадр, что в превью редактора */
+html body .wk-sc-grid{grid-auto-rows:auto!important}
+html body .wk-sc-grid>.wk-sc-hero{aspect-ratio:4/3;grid-row:span 2;height:auto;min-height:0}
+html body .wk-sc-grid>.wk-sc-small{min-height:150px}
+@media (max-width:760px){
+  html body .wk-sc-grid{grid-template-rows:auto!important;grid-auto-rows:190px!important}
+  html body .wk-sc-grid>.wk-sc-hero{grid-column:1 / -1;grid-row:auto}
+}
+/* Маленькие карточки витрины и полок: только фото, имя и статус в одну строку */
+.wk-sc :is(.wk-sc-small,.wk-shelf-card) :is(.wk-ci-row,.wk-gem){display:none!important}
+.wk-sc :is(.wk-sc-small,.wk-shelf-card)>.wk-flip-btn,.wk-sc :is(.wk-sc-small,.wk-shelf-card)>.wk-flip2{display:none!important}
+html body .wk-sc :is(.wk-sc-small,.wk-shelf-card) .character-grid-content{padding:10px 10px 11px!important;gap:5px!important}
+html body .wk-sc :is(.wk-sc-small,.wk-shelf-card) .card-title{font-size:15px!important;line-height:1.15!important;letter-spacing:.01em!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
+html body .wk-sc :is(.wk-sc-small,.wk-shelf-card) .character-grid-status{display:flex;flex-wrap:nowrap;overflow:hidden}
+html body .wk-sc :is(.wk-sc-small,.wk-shelf-card) .character-status-badge{white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;max-width:100%;font-size:11px!important}
+/* Большая карточка на телефоне: значки компактнее, кнопка оборота маленькая */
+@media (max-width:760px){
+  .wk-sc-hero .wk-ci-row{gap:3px}
+  .wk-sc-hero .wk-ci{font-size:11px!important;padding:2px 7px!important}
+  html body .wk-sc-hero .card-title{font-size:24px!important;line-height:1.1!important}
+  html body .wk-sc-hero .character-grid-content{padding:14px 14px 15px!important}
+}
+/* На сенсорных экранах кнопка оборота не висит поверх фото: переворот — долгим нажатием, кнопка только у большой карточки */
+@media (hover:none){
+  .catalog-item-shell:not(.wk-hero-card)>:is(.wk-flip-btn,.wk-flip2){display:none!important}
+  .wk-flipped>:is(.wk-flip-btn,.wk-flip2){display:grid!important;place-items:center;opacity:1}
+}
+</style></body></html>
