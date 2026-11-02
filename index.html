@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "02.11.2026 · 72";
+const WIKI_VERSION = "02.11.2026 · 73";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -29464,19 +29464,28 @@ html.ios-app .wk-totop{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
   function altActive(rec) { try { var a = window.__wikiCharacterAltPhoto ? window.__wikiCharacterAltPhoto(rec) : null; return !!(a && a.active); } catch (e) { return false; } }
   function heroOf(rec, second) { var r = fresh(rec); return parseCrop(second ? r.hero2_crop : r.hero_crop); }
   function styleImg(img, c) { img.style.setProperty('object-position', c.x + '% ' + c.y + '%', 'important'); img.style.setProperty('transform', 'scale(' + (c.z / 100) + ')', 'important'); img.style.setProperty('transform-origin', c.x + '% ' + c.y + '%', 'important'); }
+  // Кадр в витрине и на полках считаем по свежей записи: карточки витрины кешируются
+  // и могли быть отрисованы со старым кадром или старым фото.
+  function baseOf(r, second) { var pre = second ? 'person2_' : 'person_'; var n = function (k, d, a, b) { var v = Number(r[pre + k]); return r[pre + k] === '' || r[pre + k] == null || !isFinite(v) ? d : Math.max(a, Math.min(b, v)); }; return { x: n('image_position_x', 50, 0, 100), y: n('image_position', 50, 0, 100), z: n('image_zoom', 100, 100, 250) }; }
   function heroCrops() {
-    $$('.wk-hero-card .character-item').forEach(function (el) {
+    $$('.wk-sc .character-item, .wk-hero-card .character-item, #characterList .character-item').forEach(function (el) {
       var m = (el.getAttribute('onclick') || '').match(/openCharacterArticle\('([^']+)'/); if (!m) return;
       var rec = byId(arr('characters'), m[1]), img = el.querySelector('img.character-grid-image'); if (!rec || !img) return;
       var r = fresh(rec), src = img.getAttribute('src') || '';
-      var second = !!(r.person2_link && src && String(r.person2_link).trim() === src);
-      var c = heroOf(rec, second); if (!c) return;
-      var want = c.x + '% ' + c.y + '%|scale(' + (c.z / 100) + ')';
-      if (img.__wkHero !== want || img.style.getPropertyValue('object-position') !== c.x + '% ' + c.y + '%') { img.__wkHero = want; styleImg(img, c); }
-      // Если другой код перепишет кадр (например, после загрузки фото) — вернуть кадр витрины.
+      var second = altActive(rec) && !!String(r.person2_link || '').trim();
+      var want = String(second ? r.person2_link : r.person_link || '').trim();
+      if (want && /^(https?:\/\/|data:image\/)/i.test(want) && src !== want) img.setAttribute('src', want);
+      var isHero = !!el.closest('.wk-hero-card');
+      var c = (isHero && heroOf(rec, second)) || baseOf(r, second);
+      var key = c.x + '% ' + c.y + '%|' + c.z;
+      if (img.__wkHero !== key || img.style.getPropertyValue('object-position') !== c.x + '% ' + c.y + '%') { img.__wkHero = key; styleImg(img, c); }
+      // Если другой код перепишет кадр (например, после загрузки фото) — вернуть правильный.
       if (!img.__wkHeroObs) { img.__wkHeroObs = new MutationObserver(function () { if (img.__wkHeroBusy) return; img.__wkHeroBusy = true; try { img.__wkHero = ''; heroCrops(); } finally { setTimeout(function () { img.__wkHeroBusy = false; }, 0); } }); img.__wkHeroObs.observe(img, { attributes: true, attributeFilter: ['style', 'src'] }); }
     });
   }
+  window.__wkHeroCrops = heroCrops;
+  // После сохранения в редакторе витрина сразу берёт новый кадр
+  document.addEventListener('click', function (e) { if (e.target && e.target.closest && e.target.closest('#wikiEditorOverlay')) setTimeout(heroCrops, 400); }, true);
   var SIZES = [['hero', 'Витрина', 'большая карточка · ПК и телефон'], ['shelf', 'Полка', ''], ['s', 'S', ''], ['m', 'M', 'как в каталоге'], ['l', 'L', '']];
   function cropPreviews() {
     var ed = document.querySelector('#wikiEditorForm .wiki-character-crop-editor[data-crop-type="character"]'); if (!ed) return;
