@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "02.11.2026 · 77";
+const WIKI_VERSION = "02.11.2026 · 78";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -31488,10 +31488,24 @@ html body #storySection #storyList.story-display-grid[data-wk-size="s"] :is(.wk-
 #wikiEditorOverlay#wikiEditorOverlay .wk-over-chk:has(input:checked){color:#fde68a!important;border-color:rgba(216,180,90,.5)!important;background:rgba(216,180,90,.08)!important}
 #wikiEditorOverlay#wikiEditorOverlay .wk-over-chk span{text-transform:none!important;letter-spacing:0!important;font:inherit!important}
 /* Эффект «Радужная фольга · яркая»: плавный перелив радуги по всей карточке, сдвигается при наклоне */
-[data-fx="rainbow-foil"]>.wk-fx-a{background:linear-gradient(115deg,hsl(330 100% 60%) 0%,hsl(20 100% 58%) 8%,hsl(50 100% 55%) 16%,hsl(100 90% 55%) 24%,hsl(160 90% 50%) 32%,hsl(195 100% 55%) 40%,hsl(230 100% 65%) 48%,hsl(275 100% 65%) 56%,hsl(330 100% 60%) 64%,hsl(20 100% 58%) 72%,hsl(50 100% 55%) 80%,hsl(100 90% 55%) 88%,hsl(160 90% 50%) 96%,hsl(195 100% 55%) 100%);background-size:300% 300%;background-position:var(--pos,50%) var(--pos,50%);mix-blend-mode:color;opacity:calc(.24 + var(--o,0)*.26);filter:blur(10px);transform:scale(1.15);transition:opacity .35s}
-[data-fx="rainbow-foil"]>.wk-fx-b{background:linear-gradient(115deg,hsl(330 100% 70%) 0%,hsl(50 100% 65%) 16%,hsl(160 90% 60%) 32%,hsl(230 100% 72%) 48%,hsl(330 100% 70%) 64%,hsl(50 100% 65%) 80%,hsl(160 90% 60%) 100%),radial-gradient(circle at var(--mx,50%) var(--my,35%),rgba(255,255,255,.55),rgba(255,255,255,0) 50%);background-size:300% 300%,100% 100%;background-position:calc(var(--pos,50%) + 12%) calc(var(--pos,50%) + 12%),0 0;mix-blend-mode:soft-light;opacity:calc(.2 + var(--o,0)*.5);filter:blur(6px)}
+[data-fx="rainbow-foil"]>.wk-fx-a{background:var(--rf-grad,linear-gradient(115deg,hsl(330 100% 60%) 0%,hsl(20 100% 58%) 8%,hsl(50 100% 55%) 16%,hsl(100 90% 55%) 24%,hsl(160 90% 50%) 32%,hsl(195 100% 55%) 40%,hsl(230 100% 65%) 48%,hsl(275 100% 65%) 56%,hsl(330 100% 60%) 64%,hsl(20 100% 58%) 72%,hsl(50 100% 55%) 80%,hsl(100 90% 55%) 88%,hsl(160 90% 50%) 96%,hsl(195 100% 55%) 100%));background-size:300% 300%;background-position:var(--pos,50%) var(--pos,50%);mix-blend-mode:color;opacity:calc(.24 + var(--o,0)*.26);filter:blur(10px);transform:scale(1.15);transition:opacity .35s}
+[data-fx="rainbow-foil"]>.wk-fx-b{background:var(--rf-grad,linear-gradient(115deg,hsl(330 100% 70%) 0%,hsl(50 100% 65%) 16%,hsl(160 90% 60%) 32%,hsl(230 100% 72%) 48%,hsl(330 100% 70%) 64%,hsl(50 100% 65%) 80%,hsl(160 90% 60%) 100%)),radial-gradient(circle at var(--mx,50%) var(--my,35%),rgba(255,255,255,.55),rgba(255,255,255,0) 50%);background-size:300% 300%,100% 100%;background-position:calc(var(--pos,50%) + 12%) calc(var(--pos,50%) + 12%),0 0;mix-blend-mode:soft-light;opacity:calc(.2 + var(--o,0)*.5);filter:blur(6px)}
 [data-fx="rainbow-foil"]:not(.wk-fx-on)>.wk-fx-a{animation:wkRainbowDrift 10s ease-in-out infinite}
 @keyframes wkRainbowDrift{0%,100%{background-position:15% 15%}50%{background-position:85% 85%}}
+.wk-foil-ed{order:0;display:grid;gap:8px;margin:0 0 12px;padding:12px;border-radius:14px;border:1px solid rgba(216,180,90,.3);background:rgba(216,180,90,.05)}
+.wk-foil-ed[hidden]{display:none!important}
+.wk-foil-l{font-size:13.5px;color:#fde68a}
+.wk-foil-pre{display:flex;flex-wrap:wrap;gap:6px}
+.wk-foil-pre button{display:inline-flex;align-items:center;gap:7px;padding:4px 10px 4px 4px;border-radius:999px;border:1px solid rgba(148,163,184,.3);background:rgba(255,255,255,.03);color:#cbd5e1;font:inherit;font-size:12.5px;cursor:pointer}
+.wk-foil-pre button i{width:30px;height:20px;border-radius:999px;display:block;background-size:200% 100%!important}
+.wk-foil-pre button.active{border-color:#d8b45a;color:#fff;background:rgba(216,180,90,.14)}
+.wk-foil-custom{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.wk-foil-custom[hidden],.wk-foil-add[hidden]{display:none!important}
+.wk-foil-col{position:relative;display:inline-flex}
+.wk-foil-col input{width:40px;height:32px;padding:0;border:1px solid rgba(148,163,184,.4);border-radius:9px;background:none;cursor:pointer}
+.wk-foil-col button{position:absolute;top:-7px;right:-7px;width:18px;height:18px;border-radius:50%;border:0;background:#334155;color:#e2e8f0;font-size:10px;line-height:18px;cursor:pointer;padding:0}
+.wk-foil-add{height:32px;padding:0 12px;border-radius:9px;border:1px dashed rgba(148,163,184,.45);background:transparent;color:#cbd5e1;font:inherit;font-size:12.5px;cursor:pointer}
+.wk-foil-ed small{font-size:11.5px;color:#64748b;line-height:1.4}
 </style>
 <script id="wk-v13-js">
 /* ===================================================================
@@ -31750,6 +31764,134 @@ html body #storySection #storyList.story-display-grid[data-wk-size="s"] :is(.wk-
     MS.crop = { x: g('image_position_x', 50), y: g('image_position', 50), z: Math.max(100, g('image_zoom', 100)) };
     var box = form.querySelector('.wk-map-ed'); if (box) sync(box, form);
   }, true);
+})();
+
+</script>
+<script id="wk-v15-js">
+/* ===================================================================
+   Обновление v15 (02.11.2026 · 78): цвета «Радужной фольги».
+   Поле записи foil_cfg = {"p":"rainbow|accent|gold|pearl|ocean|sunset|aurora|fire|custom","c":["#..",..]}
+   =================================================================== */
+(function () {
+  'use strict';
+  var PRESETS = [
+    ['rainbow', 'Радуга', ['#ff3399', '#ff8a1f', '#ffe14a', '#5cff6e', '#22e3ff', '#5b7bff', '#b452ff']],
+    ['accent', 'Цвет статьи', null],
+    ['gold', 'Золото', ['#fff3c4', '#f6c453', '#d98f2b', '#fff8dc', '#c9861d']],
+    ['pearl', 'Перламутр', ['#ffffff', '#cfe0ff', '#ffd6f0', '#d6fff4', '#ece4ff']],
+    ['ocean', 'Океан', ['#00f0ff', '#00a8ff', '#3d6bff', '#00ffc6']],
+    ['sunset', 'Закат', ['#ff2d95', '#ff6a3d', '#ffc23d', '#ff4f8b']],
+    ['aurora', 'Северное сияние', ['#3dff9e', '#00e0ff', '#9d5cff', '#3dffd0']],
+    ['fire', 'Пламя', ['#ff2a00', '#ff8a00', '#ffe600', '#ff4d00']],
+    ['custom', 'Свои цвета', null]
+  ];
+  var BY = {}; PRESETS.forEach(function (p) { BY[p[0]] = p; });
+  function hex(v) { v = String(v || '').trim(); return /^#[0-9a-f]{6}$/i.test(v) ? v.toLowerCase() : ''; }
+  function parse(s) { var o = {}; try { o = typeof s === 'object' && s ? s : JSON.parse(s || '{}') || {}; } catch (e) {} var p = BY[o.p] ? o.p : 'rainbow'; var c = (Array.isArray(o.c) ? o.c : []).map(hex).filter(Boolean).slice(0, 6); if (p === 'custom' && c.length < 2) c = ['#ff3399', '#22e3ff', '#ffe14a']; return { p: p, c: c }; }
+  function toRgb(h) { var n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+  function rgb2hsl(r, g, b) { r /= 255; g /= 255; b /= 255; var mx = Math.max(r, g, b), mn = Math.min(r, g, b), h = 0, s = 0, l = (mx + mn) / 2; if (mx !== mn) { var d = mx - mn; s = l > .5 ? d / (2 - mx - mn) : d / (mx + mn); h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; } return [h, s * 100, l * 100]; }
+  function cssColor(v) { v = String(v || '').trim(); if (hex(v)) return v; var m = v.match(/rgba?\(([^)]+)\)/); if (m) { var a = m[1].split(/[ ,]+/).map(Number); return '#' + a.slice(0, 3).map(function (x) { return ('0' + Math.round(x).toString(16)).slice(-2); }).join(''); } return ''; }
+  function accentPalette(acc) {
+    acc = cssColor(acc) || '#d8b45a'; var h = rgb2hsl.apply(null, toRgb(acc)), H = h[0], S = Math.max(70, h[1]);
+    return [[H - 35, S, 62], [H, S, 58], [H + 25, S, 70], [H + 55, S - 10, 66], [H - 10, S, 76]].map(function (x) { return 'hsl(' + Math.round((x[0] + 360) % 360) + ' ' + Math.round(Math.min(100, x[1])) + '% ' + x[2] + '%)'; });
+  }
+  function colorsOf(cfg, acc) { if (cfg.p === 'accent') return accentPalette(acc); if (cfg.p === 'custom') return cfg.c; return BY[cfg.p][2]; }
+  function grad(cols) {
+    var seq = cols.concat(cols).concat([cols[0]]), n = seq.length - 1;
+    return 'linear-gradient(115deg,' + seq.map(function (c, i) { return c + ' ' + (i / n * 100).toFixed(1) + '%'; }).join(',') + ')';
+  }
+  window.__wkFoilGrad = function (cfg, acc) { return grad(colorsOf(parse(cfg), acc)); };
+
+  function raw(t, id) { try { return window.__wikiRawRecord ? window.__wikiRawRecord(t, id) : null; } catch (e) { return null; } }
+  function identify(el) {
+    var oc = el.getAttribute('onclick') || '', m;
+    if ((m = oc.match(/open(?:Recent|Favorite)Article\('(\w+)',\s*'([^']+)'/))) return { type: m[1], id: m[2] };
+    if ((m = oc.match(/openCharacterArticle\('([^']+)'/))) return { type: 'character', id: m[1] };
+    if ((m = oc.match(/openFruitArticle\('([^']+)'/))) return { type: 'fruit', id: m[1] };
+    if ((m = oc.match(/openUsefulArticle\('([^']+)'/))) return { type: 'useful', id: m[1] };
+    if (el.hasAttribute('data-story-arc-id')) return { type: 'story', id: el.getAttribute('data-story-arc-id') };
+    var f = el.getAttribute('data-fruit-id'); if (f) { try { f = decodeURIComponent(f); } catch (e) {} return { type: 'fruit', id: f }; }
+    var u = el.getAttribute('data-useful-id'); if (u) { try { u = decodeURIComponent(u); } catch (e) {} return { type: 'useful', id: u }; }
+    var c = el.getAttribute('data-character-id'); if (c) return { type: 'character', id: c };
+    return null;
+  }
+  var ARTICLES = { characterArticleContent: 'character', storyArticleContent: 'story', fruitArticleContent: 'fruit', usefulArticleContent: 'useful' };
+  var FS = null; // настройки фольги открытой в редакторе записи
+  window.__wkFoilEditor = function () { return FS; };
+  var lastGrad = { g: '', t: 0 };
+  function cfgFor(el) {
+    if (el.closest('#wikiEditorOverlay')) return FS ? FS.cfg : null;
+    if (el.classList.contains('wk-tilt')) return Date.now() - lastGrad.t < 2000 ? { grad: lastGrad.g } : null;
+    var art = el.closest('[id$="ArticleContent"]');
+    if (art && el.classList.contains('article-inline-image-wrap')) { var id = art.getAttribute('data-wk-plus-for'); return id ? parse((raw(ARTICLES[art.id], id) || {}).foil_cfg) : null; }
+    var who = identify(el); return who ? parse((raw(who.type, who.id) || {}).foil_cfg) : null;
+  }
+  function accOf(el) { var cs = getComputedStyle(el); return (cs.getPropertyValue('--wk-acc') || cs.getPropertyValue('--catalog-accent') || cs.getPropertyValue('--user-accent') || '').trim(); }
+  function apply(el) {
+    var cfg = cfgFor(el), g = '';
+    if (cfg && cfg.grad) g = cfg.grad;
+    else if (cfg && cfg.p !== 'rainbow') g = grad(colorsOf(cfg, accOf(el)));
+    if (g) { if (el.style.getPropertyValue('--rf-grad') !== g) el.style.setProperty('--rf-grad', g); }
+    else if (el.style.getPropertyValue('--rf-grad')) el.style.removeProperty('--rf-grad');
+  }
+  function run() { pend = 0; document.querySelectorAll('[data-fx="rainbow-foil"]').forEach(function (el) { try { apply(el); } catch (e) {} }); document.querySelectorAll('[style*="--rf-grad"]:not([data-fx="rainbow-foil"])').forEach(function (el) { el.style.removeProperty('--rf-grad'); }); try { mount(); } catch (e) { console.warn('v15', e); } }
+  var pend = 0;
+  function sched() { if (!pend) pend = requestAnimationFrame(run); }
+  new MutationObserver(function (ms) { for (var i = 0; i < ms.length; i++) { var t = ms[i].target; if (ms[i].type === 'attributes' && ms[i].attributeName === 'style') continue; if (t && t.closest && t.closest('.wk-foil-ed')) continue; sched(); return; } }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-fx'] });
+  document.addEventListener('click', function (e) { var h = e.target && e.target.closest && e.target.closest('[data-fx="rainbow-foil"]'); if (h && !h.closest('#imageViewer')) { lastGrad = { g: h.style.getPropertyValue('--rf-grad') || '', t: Date.now() }; } }, true);
+
+  /* ---------- Редактор ---------- */
+  function editorWho(form) {
+    var id = form.querySelector('[data-field="id"]'); id = id ? String(id.value || '').trim() : ''; if (!id) return null;
+    var t = form.querySelector('[data-field="person_link"]') ? 'character' : null;
+    if (!t) ['fruit', 'useful', 'story', 'reward'].some(function (x) { if (raw(x, id)) { t = x; return true; } return false; });
+    return t ? { type: t, id: id } : null;
+  }
+  function mount() {
+    var form = document.getElementById('wikiEditorForm'); if (!form) { FS = null; return; }
+    var fxSel = form.querySelector('[data-field="card_fx"]'); if (!fxSel) return;
+    var pv = form.querySelector('.wk-fx-preview'), cur = pv ? pv.getAttribute('data-fx') : fxSel.value;
+    var holder = fxSel.closest('.wiki-editor-field[class]') || fxSel.parentNode;
+    var top = form.querySelector('.wiki-editor-field:has([data-field="card_style"])') || holder;
+    var who = editorWho(form); if (!who) return;
+    var key = who.type + ':' + who.id, box = top.querySelector(':scope > .wk-foil-ed');
+    if (!box || box.getAttribute('data-for') !== key) {
+      if (box) box.remove();
+      FS = { key: key, type: who.type, id: who.id, cfg: parse((raw(who.type, who.id) || {}).foil_cfg) };
+      box = document.createElement('div'); box.className = 'wk-foil-ed'; box.setAttribute('data-for', key);
+      var fxrow = top.querySelector(':scope > .wk-fx-row'); if (fxrow) fxrow.after(box); else top.insertBefore(box, top.firstChild);
+      build(box);
+    }
+    var on = cur === 'rainbow-foil'; box.hidden = !on;
+  }
+  function build(box) {
+    var c = FS.cfg, acc = '';
+    try { var pv = document.querySelector('#wikiEditorForm .wk-fx-preview'); acc = pv ? accOf(pv) : ''; } catch (e) {}
+    box.innerHTML = '<b class="wk-foil-l">🌈 Цвета радужной фольги</b>'
+      + '<div class="wk-foil-pre">' + PRESETS.map(function (p) {
+        var g = p[0] === 'custom' ? grad(c.c.length >= 2 ? c.c : ['#ff3399', '#22e3ff', '#ffe14a']) : grad(colorsOf({ p: p[0], c: [] }, acc));
+        return '<button type="button" data-foil="' + p[0] + '" class="' + (c.p === p[0] ? 'active' : '') + '" aria-pressed="' + (c.p === p[0]) + '"><i style="background:' + g + '"></i>' + p[1] + '</button>';
+      }).join('') + '</div>'
+      + '<div class="wk-foil-custom"' + (c.p === 'custom' ? '' : ' hidden') + '>' + (c.p === 'custom' ? c.c : ['#ff3399', '#22e3ff', '#ffe14a']).map(function (h, i) { return '<label class="wk-foil-col"><input type="color" data-ci="' + i + '" value="' + h + '"><button type="button" data-cdel="' + i + '" title="Убрать цвет">✕</button></label>'; }).join('')
+      + '<button type="button" class="wk-foil-add" data-cadd' + ((c.p === 'custom' ? c.c.length : 3) >= 6 ? ' hidden' : '') + '>＋ цвет</button></div>'
+      + '<small>«Цвет статьи» подбирает оттенки под цвет статьи (статус, сагу, тип). В «Своих цветах» — от 2 до 6 цветов, переходы между ними плавные.</small>';
+    box.onclick = function (e) {
+      var b = e.target.closest('[data-foil]'); if (b) { e.preventDefault(); var p = b.getAttribute('data-foil'); FS.cfg.p = p; if (p === 'custom' && FS.cfg.c.length < 2) FS.cfg.c = ['#ff3399', '#22e3ff', '#ffe14a']; save(); build(box); return; }
+      var d = e.target.closest('[data-cdel]'); if (d) { e.preventDefault(); if (FS.cfg.c.length > 2) { FS.cfg.c.splice(Number(d.getAttribute('data-cdel')), 1); save(); build(box); } return; }
+      if (e.target.closest('[data-cadd]')) { e.preventDefault(); if (FS.cfg.c.length < 6) { var last = FS.cfg.c[FS.cfg.c.length - 1] || '#ffffff'; FS.cfg.c.push(shift(last)); save(); build(box); } }
+    };
+    box.oninput = function (e) { var t = e.target; if (!t.matches('[data-ci]')) return; FS.cfg.c[Number(t.getAttribute('data-ci'))] = t.value; save(true); var cb = box.querySelector('[data-foil="custom"] i'); if (cb) cb.style.background = grad(FS.cfg.c); };
+  }
+  function shift(h) { var r = toRgb(hex(h) || '#ffffff'), x = rgb2hsl(r[0], r[1], r[2]); var hh = (x[0] + 60) % 360; return hslHex(hh, Math.max(60, x[1]), Math.min(70, Math.max(45, x[2]))); }
+  function hslHex(h, s, l) { s /= 100; l /= 100; var k = function (n) { return (n + h / 30) % 12; }, a = s * Math.min(l, 1 - l), f = function (n) { return l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1))); }; return '#' + [f(0), f(8), f(4)].map(function (v) { return ('0' + Math.round(v * 255).toString(16)).slice(-2); }).join(''); }
+  var st = 0;
+  function save(soft) {
+    var go = function () { var c = FS.cfg, v = c.p === 'rainbow' ? '' : JSON.stringify(c.p === 'custom' ? { p: 'custom', c: c.c } : { p: c.p }); try { window.__wikiQuickSave(FS.type, FS.id, { foil_cfg: v }); } catch (e) { console.warn(e); } sched(); };
+    clearTimeout(st); sched(); if (soft) st = setTimeout(go, 300); else go();
+    try { if (window.__wkLookUpdate) window.__wkLookUpdate(); } catch (e) {}
+  }
+  document.addEventListener('change', function (e) { if (e.target && e.target.closest && e.target.closest('#wikiEditorForm')) setTimeout(sched, 60); }, true);
+  document.addEventListener('click', function (e) { if (e.target && e.target.closest && e.target.closest('#wikiEditorForm')) setTimeout(sched, 120); }, true);
 })();
 
 </script>
