@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "02.11.2026 · 70";
+const WIKI_VERSION = "02.11.2026 · 71";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -29487,7 +29487,7 @@ html.ios-app .wk-totop{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
     var hero = box.__hero || (rec && heroOf(rec)) || null;
     box.__id = id; box.__base = base;
     $$('.wk-csz', box).forEach(function (f) {
-      var img = f.querySelector('img');
+      var img = f.querySelector('.wk-csz-frame > img') || f.querySelector('img');
       if (u && img.getAttribute('src') !== u) img.setAttribute('src', u);
       if (!u) img.removeAttribute('src');
       var c = f.getAttribute('data-sz') === 'hero' && hero ? hero : base;
@@ -30469,7 +30469,7 @@ img.wk-cut-front{z-index:5!important;background:none!important}
     }
     // 3) кадры «как фото выглядит в разных карточках»
     form.parentNode && document.querySelectorAll('#wikiEditorOverlay .wk-crop-sizes .wk-csz-frame').forEach(function (f) {
-      var im = f.querySelector('img'); if (!im) return; setCut(f, v || '', ED.back, ED.cfg, { front: im });
+      var im = f.querySelector(':scope > img:not(.wk-cbg img)') || f.querySelector(':scope > img'); if (!im) return; setCut(f, v || '', ED.back, ED.cfg, { front: im });
     });
   }
   window.__wkCutPreviews = previews;
