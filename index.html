@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "02.11.2026 · 69";
+const WIKI_VERSION = "02.11.2026 · 70";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -29457,7 +29457,7 @@ html.ios-app .wk-totop{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
      6. Кадр фото для нестандартных карточек: превью в редакторе + свой кадр для витрины
      ========================================================= */
   function cropOf(rec) { var r = rec && (rec.__wikiRaw || rec) || {}; return { x: Math.max(0, Math.min(100, Number(r.person_image_position_x) || 50)), y: Math.max(0, Math.min(100, Number(r.person_image_position) || 50)), z: Math.max(100, Math.min(250, Number(r.person_image_zoom) || 100)) }; }
-  function heroOf(rec) { var r = rec && (rec.__wikiRaw || rec) || {}; var m = String(r.hero_crop || '').split(','); if (m.length < 3 || !m[0]) return null; return { x: +m[0], y: +m[1], z: +m[2] }; }
+  function heroOf(rec) { var r = null; try { if (rec && rec.id && window.__wikiRawRecord) r = window.__wikiRawRecord('character', rec.id); } catch (e) {} r = r || rec && (rec.__wikiRaw || rec) || {}; var m = String(r.hero_crop || '').split(','); if (m.length < 3 || !m[0]) return null; return { x: +m[0], y: +m[1], z: +m[2] }; }
   function styleImg(img, c) { img.style.setProperty('object-position', c.x + '% ' + c.y + '%', 'important'); img.style.setProperty('transform', 'scale(' + (c.z / 100) + ')', 'important'); img.style.setProperty('transform-origin', c.x + '% ' + c.y + '%', 'important'); }
   function heroCrops() {
     $$('.wk-hero-card .character-item').forEach(function (el) {
