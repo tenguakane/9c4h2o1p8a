@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "02.11.2026 · 80";
+const WIKI_VERSION = "02.11.2026 · 81";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -32028,6 +32028,19 @@ html body .global-search-trigger{border-radius:10px!important}
     var list = [], n; while ((n = w.nextNode())) list.push(n);
     list.forEach(function (x) { var guard = 0; while (x && x.parentNode && guard++ < 4) { if (!iconizeText(x)) break; x = x.parentNode && x.nextSibling && x.nextSibling.nodeType === 3 ? x.nextSibling : null; } });
   }
+  // Служебные элементы внутри статей и заглушки карточек — тоже обвязка
+  var ART_CHROME = '.wk-owner-pill, .wk-arc-no, .wk-appear-label, .character-reward-icon, .wk-qe-photo, .wk-owner-meta, [class*="owner"] small, [class*="owner"] .meta, .article-hero-media > button, .character-item [class*="fallback"], [id$="ArticleContent"] [class*="owner-chip"], [id$="ArticleContent"] .wk-count';
+  function scanChrome() { document.querySelectorAll(ART_CHROME).forEach(function (el) { var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), n, l = []; while ((n = w.nextNode())) if (RE.test(n.nodeValue)) l.push(n); l.forEach(iconizeText); }); }
+  // «Глава №001 • Эпизод №001» → «гл. 1 · сер. 1»
+  function logDates() {
+    document.querySelectorAll('[id$="ArticleContent"] .article-info-value, [id$="ArticleContent"] .article-info-block > div, [id$="ArticleContent"] .article-info-block > p').forEach(function (el) {
+      if (el.querySelector('*:not(br)') && el.children.length > 2) return;
+      var t = el.textContent, m = t.match(/Глава\s*№?\s*0*(\d+)\s*[•·,]\s*Эпизод\s*№?\s*0*(\d+)/);
+      if (m) { el.textContent = 'гл. ' + m[1] + ' · сер. ' + m[2]; el.classList.add('wk-log'); return; }
+      m = t.match(/^\s*Глава\s*№?\s*0*(\d+)\s*$/); if (m) { el.textContent = 'гл. ' + m[1]; el.classList.add('wk-log'); return; }
+      m = t.match(/^\s*Эпизод\s*№?\s*0*(\d+)\s*$/); if (m) { el.textContent = 'сер. ' + m[1]; el.classList.add('wk-log'); }
+    });
+  }
   // Значки «вы здесь» на карточках арок — это тоже обвязка
   function scanBadge(el) { [].slice.call(el.childNodes).forEach(function (n) { if (n.nodeType === 3 && RE.test(n.nodeValue)) iconizeText(n); }); }
   // Логотип: флаг-эмодзи → плоский знак
@@ -32049,7 +32062,7 @@ html body .global-search-trigger{border-radius:10px!important}
   var pend = 0;
   function run() {
     pend = 0;
-    try { brand(); document.querySelectorAll(ROOTS).forEach(scan); document.querySelectorAll('.character-item [class*="here"]').forEach(scanBadge); cabinTitle(); greet(); logChips(); } catch (e) { console.warn('v16', e); }
+    try { brand(); document.querySelectorAll(ROOTS).forEach(scan); document.querySelectorAll('.character-item [class*="here"]').forEach(scanBadge); cabinTitle(); greet(); logChips(); scanChrome(); logDates(); } catch (e) { console.warn('v16', e); }
   }
   new MutationObserver(function (ms) {
     for (var i = 0; i < ms.length; i++) { var t = ms[i].target; if (t && t.closest && t.closest('.wk-ic')) continue; if (!pend) pend = requestAnimationFrame(run); return; }
@@ -32059,4 +32072,40 @@ html body .global-search-trigger{border-radius:10px!important}
 })();
 
 </script>
+<style id="wk-v17">/* ===== v17 (02.11.2026 · 81): статьи и главные вкладки по методике unslop (by @heydamir, CC BY 4.0) ===== */
+@layer wk-redesign{
+/* Панель статьи: без цветного облака сверху, спокойная поверхность; тонкая линия цвета статьи остаётся */
+html body .article#characterArticle,html body .article#fruitArticle,html body .article#usefulArticle,html body .article#storyArticle,html body div.article[id$="Article"]{background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0) 280px),#0e131b!important;border-color:rgba(255,255,255,.07)!important;box-shadow:none!important}
+html body div.article[id$="Article"]::before{height:2px!important;opacity:.8}
+html body div.article.article[id$="Article"][id$="Article"]{background-color:#0e131b!important}
+/* Заголовки разделов: без точки и цветного градиента, одна тонкая линия; вес 600 */
+html body div.article[id$="Article"] :is(.article-section,.description-section,[class*="-section"])>h2,html body div.article[id$="Article"] .wk-rel-head h2{font-size:18px!important;font-weight:600!important;letter-spacing:0!important}
+html body div.article[id$="Article"] :is(.article-section,.description-section,[class*="-section"])>h2::before,html body div.article[id$="Article"] .wk-rel-head h2::before{display:none!important}
+html body div.article[id$="Article"] :is(.article-section,.description-section,[class*="-section"])>h2::after{background:rgba(255,255,255,.07)!important}
+/* Подписи-метки в инфоблоках: обычный регистр, приглушённый цвет */
+html body div.article[id$="Article"] .article-info-block>h2,html body div.article[id$="Article"] .article-info-block.article-info-block>h2,html body div.article[id$="Article"] [class*="appear"] h2,html body div.article[id$="Article"] .character-reward-label{font-size:12.5px!important;font-weight:500!important;letter-spacing:0!important;text-transform:none!important;color:var(--muted,#94a3b8)!important}
+/* Капс с разрядкой — только у названий по выбору админа (h1 и эффект шрифта), остальное обычным регистром */
+html body div.article[id$="Article"] :not(h1,[data-tfx],[data-tfx] *,.character-item,.character-item *){text-transform:none!important}
+html body div.article[id$="Article"] :is(.wk-appear-title,.wk-appear h3,.wk-nav-label,.article-nav-label,small){letter-spacing:0!important}
+/* Жирность: значения и кнопки — 500, акценты — не толще 600 */
+html body div.article[id$="Article"] :is(.article-info-value,.article-info-block b,.article-info-block strong){font-weight:500!important}
+html body div.article[id$="Article"] .character-status-badge{font-weight:500!important}
+html body div.article[id$="Article"] :is(.article-back-button,.back-button,.favorite-button,.article-actions button,.article-top-actions button,[class*="back"] ,.wk-qe-edit){font-weight:500!important}
+html body div.article[id$="Article"] :is(.character-reward-value,.reward-amount,[class*="reward-value"]){font-weight:600!important}
+html body div.article[id$="Article"] :is(em,i:not([class]),small,.nickname,[class*="nick"]){font-style:normal!important}
+html body div.article[id$="Article"] .wk-count{background:none!important;border:0!important;padding:0 0 0 6px!important;font-family:var(--wk-mono)!important;font-size:12px!important;font-weight:400!important;color:var(--muted,#94a3b8)!important}
+html body div.article[id$="Article"] .wk-log{font-family:var(--wk-mono)!important;font-weight:500!important;font-variant-numeric:tabular-nums}
+/* Иконки в статьях — цветом текста */
+html body div.article[id$="Article"] .wk-ic{color:var(--muted,#94a3b8)}
+html body div.article[id$="Article"] .character-reward-icon .wk-ic{width:22px;height:22px;margin:0;color:var(--accent,#d8b45a)}
+/* Заглушка без фото — тихая линейная иконка вместо эмодзи */
+.character-item [class*="fallback"] .wk-ic{width:40px;height:40px;margin:0;color:rgba(255,255,255,.28)}
+.character-item [class*="fallback"] .wk-ic .wk-i{stroke-width:1.2}
+/* Главные вкладки: иконки перед заголовками полок и витрины ничего не добавляют */
+html body :is(.wk-sc-head h2,.wk-shelf header h3)>.wk-ic{display:none!important}
+html body .wk-shelf header h3{font-weight:500!important}
+}
+html body div.article[id$="Article"]>.wk-article-backdrop{display:none!important}
+html body div.article[id$="Article"] [class*="badge"]:not(.character-item *){font-weight:500!important}
+</style>
 </body></html>
