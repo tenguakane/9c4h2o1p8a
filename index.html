@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "02.11.2026 · 71";
+const WIKI_VERSION = "02.11.2026 · 72";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -29457,35 +29457,52 @@ html.ios-app .wk-totop{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
      6. Кадр фото для нестандартных карточек: превью в редакторе + свой кадр для витрины
      ========================================================= */
   function cropOf(rec) { var r = rec && (rec.__wikiRaw || rec) || {}; return { x: Math.max(0, Math.min(100, Number(r.person_image_position_x) || 50)), y: Math.max(0, Math.min(100, Number(r.person_image_position) || 50)), z: Math.max(100, Math.min(250, Number(r.person_image_zoom) || 100)) }; }
-  function heroOf(rec) { var r = null; try { if (rec && rec.id && window.__wikiRawRecord) r = window.__wikiRawRecord('character', rec.id); } catch (e) {} r = r || rec && (rec.__wikiRaw || rec) || {}; var m = String(r.hero_crop || '').split(','); if (m.length < 3 || !m[0]) return null; return { x: +m[0], y: +m[1], z: +m[2] }; }
+  // Свежая запись (после быстрого сохранения __wikiRaw может быть устаревшим).
+  function fresh(rec) { var r = null; try { if (rec && rec.id && window.__wikiRawRecord) r = window.__wikiRawRecord('character', rec.id); } catch (e) {} return r || (rec && (rec.__wikiRaw || rec)) || {}; }
+  function parseCrop(v) { var m = String(v || '').split(','); if (m.length < 3 || m[0] === '') return null; return { x: +m[0], y: +m[1], z: +m[2] }; }
+  // Какое фото сейчас видит читатель: первое или второе (после таймскипа).
+  function altActive(rec) { try { var a = window.__wikiCharacterAltPhoto ? window.__wikiCharacterAltPhoto(rec) : null; return !!(a && a.active); } catch (e) { return false; } }
+  function heroOf(rec, second) { var r = fresh(rec); return parseCrop(second ? r.hero2_crop : r.hero_crop); }
   function styleImg(img, c) { img.style.setProperty('object-position', c.x + '% ' + c.y + '%', 'important'); img.style.setProperty('transform', 'scale(' + (c.z / 100) + ')', 'important'); img.style.setProperty('transform-origin', c.x + '% ' + c.y + '%', 'important'); }
   function heroCrops() {
     $$('.wk-hero-card .character-item').forEach(function (el) {
       var m = (el.getAttribute('onclick') || '').match(/openCharacterArticle\('([^']+)'/); if (!m) return;
       var rec = byId(arr('characters'), m[1]), img = el.querySelector('img.character-grid-image'); if (!rec || !img) return;
-      var c = heroOf(rec); if (c) styleImg(img, c);
+      var r = fresh(rec), src = img.getAttribute('src') || '';
+      var second = !!(r.person2_link && src && String(r.person2_link).trim() === src);
+      var c = heroOf(rec, second); if (!c) return;
+      var want = c.x + '% ' + c.y + '%|scale(' + (c.z / 100) + ')';
+      if (img.__wkHero !== want || img.style.getPropertyValue('object-position') !== c.x + '% ' + c.y + '%') { img.__wkHero = want; styleImg(img, c); }
+      // Если другой код перепишет кадр (например, после загрузки фото) — вернуть кадр витрины.
+      if (!img.__wkHeroObs) { img.__wkHeroObs = new MutationObserver(function () { if (img.__wkHeroBusy) return; img.__wkHeroBusy = true; try { img.__wkHero = ''; heroCrops(); } finally { setTimeout(function () { img.__wkHeroBusy = false; }, 0); } }); img.__wkHeroObs.observe(img, { attributes: true, attributeFilter: ['style', 'src'] }); }
     });
   }
   var SIZES = [['hero', 'Витрина', 'большая карточка · ПК и телефон'], ['shelf', 'Полка', ''], ['s', 'S', ''], ['m', 'M', 'как в каталоге'], ['l', 'L', '']];
   function cropPreviews() {
     var ed = document.querySelector('#wikiEditorForm .wiki-character-crop-editor[data-crop-type="character"]'); if (!ed) return;
     var form = document.getElementById('wikiEditorForm');
-    var urlEl = form.querySelector('[data-field="person_link"]'), idEl = form.querySelector('[data-field="id"]');
+    var idEl = form.querySelector('[data-field="id"]');
     var id = idEl ? String(idEl.value || '').trim() : '', rec = id ? byId(arr('characters'), id) : null;
     var box = ed.parentNode.querySelector(':scope > .wk-crop-sizes');
     if (!box) {
       box = document.createElement('div'); box.className = 'wk-crop-sizes';
-      box.innerHTML = '<div class="wk-cs-head"><b>Как фото выглядит в разных карточках</b><small>Витрину можно кадрировать отдельно: тяни фото в ней, колесо — масштаб.</small></div><div class="wk-cs-row">' +
+      box.innerHTML = '<div class="wk-cs-head"><b>Как фото выглядит в разных карточках</b><small>Витрину можно кадрировать отдельно: тяни фото в ней, колесо — масштаб.</small><em class="wk-cs-alt" hidden></em></div><div class="wk-cs-row">' +
         SIZES.map(function (s) { return '<figure class="wk-csz is-' + s[0] + '" data-sz="' + s[0] + '"><div class="wk-csz-frame"><img alt=""></div><figcaption>' + s[1] + (s[2] ? '<small>' + s[2] + '</small>' : '') + (s[0] === 'hero' ? '<button type="button" class="wk-csz-reset" data-hero-reset title="Как в обычной карточке">⟲ как обычно</button>' : '') + '</figcaption></figure>'; }).join('') + '</div>';
       ed.after(box);
       wireHero(box);
     }
-    var u = urlEl ? String(urlEl.value || '').trim() : '';
     var get = function (k, d) { var el = form.querySelector('[data-field="' + k + '"]'); var v = el ? Number(el.value) : NaN; return isFinite(v) && el.value !== '' ? v : d; };
-    var base = { x: get('person_image_position_x', 50), y: get('person_image_position', 50), z: Math.max(100, get('person_image_zoom', 100)) };
-    if (box.__id && box.__id !== id) box.__hero = null;
-    var hero = box.__hero || (rec && heroOf(rec)) || null;
-    box.__id = id; box.__base = base;
+    var str = function (k) { var el = form.querySelector('[data-field="' + k + '"]'); return el ? String(el.value || '').trim() : ''; };
+    // Если читателю уже показывается второе фото — превью показывают именно его.
+    var second = !!(rec && altActive(rec) && /^(https?:\/\/|data:image\/)/i.test(str('person2_link')));
+    var pre = second ? 'person2_' : 'person_';
+    var u = str(pre + 'link');
+    var base = { x: get(pre + 'image_position_x', 50), y: get(pre + 'image_position', 50), z: Math.max(100, get(pre + 'image_zoom', 100)) };
+    if ((box.__id && box.__id !== id) || box.__second !== second) box.__hero = null;
+    var hero = box.__hero || (rec && heroOf(rec, second)) || null;
+    box.__id = id; box.__base = base; box.__second = second;
+    var note = box.querySelector('.wk-cs-alt');
+    if (note) { note.hidden = !second; note.textContent = second ? 'Сейчас на сайте показывается второе фото (после таймскипа) — превью и кадр витрины относятся к нему.' : ''; }
     $$('.wk-csz', box).forEach(function (f) {
       var img = f.querySelector('.wk-csz-frame > img') || f.querySelector('img');
       if (u && img.getAttribute('src') !== u) img.setAttribute('src', u);
@@ -29497,14 +29514,16 @@ html.ios-app .wk-totop{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
   }
   function wireHero(box) {
     var fr = box.querySelector('.is-hero .wk-csz-frame'), drag = null, saveT = 0;
+    function field() { return box.__second ? 'hero2_crop' : 'hero_crop'; }
     function cur() { return box.__hero || { x: box.__base.x, y: box.__base.y, z: box.__base.z }; }
     function commit() {
       clearTimeout(saveT);
       saveT = setTimeout(function () {
         if (!box.__id) return;
-        var h = box.__hero, v = h ? [Math.round(h.x), Math.round(h.y), Math.round(h.z)].join(',') : '';
-        try { window.__wikiQuickSave('character', box.__id, { hero_crop: v }); } catch (e) { console.warn(e); }
-      }, 500);
+        var h = box.__hero, v = h ? [Math.round(h.x), Math.round(h.y), Math.round(h.z)].join(',') : '', ch = {}; ch[field()] = v;
+        try { window.__wikiQuickSave('character', box.__id, ch); } catch (e) { console.warn(e); }
+        setTimeout(heroCrops, 50);
+      }, 400);
     }
     fr.addEventListener('pointerdown', function (e) { var c = cur(); drag = { x: e.clientX, y: e.clientY, c: { x: c.x, y: c.y, z: c.z } }; fr.setPointerCapture(e.pointerId); e.preventDefault(); });
     fr.addEventListener('pointermove', function (e) {
@@ -29515,8 +29534,9 @@ html.ios-app .wk-totop{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
       cropPreviews();
     });
     fr.addEventListener('pointerup', function () { if (drag) { drag = null; commit(); } });
+    fr.addEventListener('pointercancel', function () { if (drag) { drag = null; commit(); } });
     fr.addEventListener('wheel', function (e) { e.preventDefault(); var c = cur(); box.__hero = { x: c.x, y: c.y, z: Math.max(100, Math.min(250, c.z + (e.deltaY < 0 ? 10 : -10))) }; cropPreviews(); commit(); }, { passive: false });
-    box.querySelector('[data-hero-reset]').addEventListener('click', function (e) { e.preventDefault(); box.__hero = null; cropPreviews(); clearTimeout(saveT); if (box.__id) try { window.__wikiQuickSave('character', box.__id, { hero_crop: '' }); } catch (er) {} });
+    box.querySelector('[data-hero-reset]').addEventListener('click', function (e) { e.preventDefault(); box.__hero = null; cropPreviews(); clearTimeout(saveT); var ch = {}; ch[field()] = ''; if (box.__id) try { window.__wikiQuickSave('character', box.__id, ch); } catch (er) {} setTimeout(heroCrops, 50); });
   }
   document.addEventListener('input', function (e) { if (e.target && e.target.closest && e.target.closest('#wikiEditorForm')) setTimeout(cropPreviews, 0); });
   document.addEventListener('pointerup', function (e) { if (e.target && e.target.closest && e.target.closest('.wiki-character-crop-preview, .wk-crop-tools')) setTimeout(cropPreviews, 30); });
@@ -30171,6 +30191,23 @@ img.wk-cut-front{z-index:5!important;background:none!important}
 .wk-cut-reset{justify-self:start;margin-top:4px;padding:6px 12px;border-radius:9px;border:1px dashed var(--line,rgba(148,163,184,.35));background:transparent;color:#94a3b8;font:inherit;font-size:12px;cursor:pointer}
 @media (max-width:560px){.wk-cut-tune{grid-template-columns:minmax(0,1fr)}.wk-cut-live-col{position:static;justify-items:center}.wk-cut-live{width:180px}}
 
+/* Цвет фона и эффекты поверх персонажа */
+[data-wk-cut]>.wk-ctint{position:absolute;inset:0;z-index:1;pointer-events:none;border-radius:inherit}
+.wk-cbg[data-t="solid"]{background:linear-gradient(160deg,var(--wk-acc,var(--catalog-accent,#d8b45a)),#0b111b)}
+[data-wk-cut][data-wk-cut][data-wk-over~="fx"]>:is(.wk-fx-a,.wk-fx-b,.wk-pv-glare,.wk-tilt-glare){z-index:6!important}
+[data-wk-cut][data-wk-cut][data-wk-over~="amb"]>:is(.wk-amb-a,.wk-amb-b,.wk-amb-p,.wk-amb-fx),[data-wk-cut][data-wk-cut][data-wk-over~="amb"]>.wk-cs>.wk-cs-native{z-index:6!important}
+[data-wk-cut][data-wk-cut][data-wk-over~="cs"]>.wk-cs>:not(.wk-cs-native){z-index:6!important}
+.wk-cut-colors{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.wk-cut-colors[hidden],.wk-cut-colsl[hidden],.wk-cut-colsl [hidden],.wk-cut-col[hidden]{display:none!important}
+.wk-cut-col{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text-soft,#c9d3df);cursor:pointer}
+.wk-cut-col input{width:34px;height:28px;padding:0;border:1px solid var(--line,rgba(148,163,184,.35));border-radius:8px;background:none;cursor:pointer}
+.wk-cut-grad-pv{flex:1 1 60px;min-width:60px;height:18px;border-radius:999px;border:1px solid rgba(255,255,255,.14)}
+.wk-cut-colsl{display:grid;gap:6px}
+.wk-cut-hint2{font-size:11.5px!important;color:#64748b!important;line-height:1.4}
+.wk-cut-over{display:grid;gap:6px}
+.wk-over-chk{margin-top:6px;font-size:12.5px!important;color:#cbd5e1}
+.wk-cut-opt[data-cut="solid"] .wk-cbg{background:linear-gradient(135deg,#e84a5f,#3b82f6)!important}
+
 }</style>
 <script id="wk-cut-js">
 /* ===================================================================
@@ -30197,6 +30234,7 @@ img.wk-cut-front{z-index:5!important;background:none!important}
     ['galaxy', 'Звёздное небо', 'Космос с мерцающими звёздами'],
     ['bolts', 'Молнии', 'Чёткие разряды на тёмном фоне'],
     ['flames', 'Пламя', 'Рисованный огонь снизу'],
+    ['solid', 'Заливка', 'Сплошной цвет или градиент — выбери ниже в «Цвет фона»'],
     ['photo', 'Своя картинка (2 слоя)', 'Задний слой — отдельная картинка, эффекты ложатся на неё']
   ];
   var KEYS = TEX.map(function (t) { return t[0]; });
@@ -30217,8 +30255,16 @@ img.wk-cut-front{z-index:5!important;background:none!important}
   function num(v, a, b, d) { v = Number(v); return isFinite(v) ? Math.max(a, Math.min(b, v)) : d; }
   function cfgParse(s) {
     var o = {}; if (s && typeof s === 'object') o = s; else { try { o = JSON.parse(s || '{}') || {}; } catch (e) {} }
-    return { link: !(o.link === false || o.link === 0 || o.link === '0'), x: num(o.x, 0, 100, 50), y: num(o.y, 0, 100, 50), z: num(o.z, 50, 400, 100), dim: num(o.dim, 0, 85, 0), blur: num(o.blur, 0, 20, 0), edge: EDGES.indexOf(o.edge) >= 0 ? o.edge : '' };
+    return { link: !(o.link === false || o.link === 0 || o.link === '0'), x: num(o.x, 0, 100, 50), y: num(o.y, 0, 100, 50), z: num(o.z, 50, 400, 100), dim: num(o.dim, 0, 85, 0), blur: num(o.blur, 0, 20, 0), edge: EDGES.indexOf(o.edge) >= 0 ? o.edge : '',
+      tint: ['color', 'grad'].indexOf(o.tint) >= 0 ? o.tint : '', c1: hex(o.c1, '#e84a5f'), c2: hex(o.c2, '#3b82f6'), ang: num(o.ang, 0, 360, 135), ts: num(o.ts, 0, 100, 80),
+      over: String(o.over || '').split(/[\s,]+/).filter(function (x) { return OVER_KEYS.indexOf(x) >= 0; }).join(' ') };
   }
+  var OVER_KEYS = ['fx', 'amb', 'cs'];
+  function hex(v, d) { v = String(v || '').trim(); return /^#[0-9a-f]{6}$/i.test(v) ? v.toLowerCase() : d; }
+  function tintOf(c) { return c.tint === 'color' ? c.c1 : c.tint === 'grad' ? 'linear-gradient(' + c.ang + 'deg,' + c.c1 + ',' + c.c2 + ')' : ''; }
+  window.__wkCutTintOf = tintOf;
+  // Чёрно-белые фоны перекрашиваем «умножением», цветные — заменой оттенка.
+  var MULT = { speed: 1, panels: 1, wanted: 1 };
   function cutCfg(type, id) { return cfgParse((rec(type, id) || {}).card_back_cfg); }
   window.__wkCutCfgParse = cfgParse;
   window.__wkCutOf = cutOf;
@@ -30239,19 +30285,30 @@ img.wk-cut-front{z-index:5!important;background:none!important}
     var front = opt.front || el.querySelector('.character-grid-image, .article-inline-image');
     el.__wkCut = v ? { v: v, back: back, cfg: cfg } : null;
     if (!v) {
-      ['data-wk-cut', 'data-wk-edge'].forEach(function (a) { if (el.hasAttribute(a)) el.removeAttribute(a); });
-      if (bg) bg.remove(); if (front && front.classList.contains('wk-cut-front')) front.classList.remove('wk-cut-front'); return;
+      ['data-wk-cut', 'data-wk-edge', 'data-wk-over'].forEach(function (a) { if (el.hasAttribute(a)) el.removeAttribute(a); });
+      if (bg) bg.remove(); var tn0 = el.querySelector(':scope > .wk-ctint'); if (tn0) tn0.remove(); if (front && front.classList.contains('wk-cut-front')) front.classList.remove('wk-cut-front'); return;
     }
     if (el.getAttribute('data-wk-cut') !== v) el.setAttribute('data-wk-cut', v);
     var edge = cfg.edge || (v === 'plain' ? 'none' : 'shadow');
     if (el.getAttribute('data-wk-edge') !== edge) el.setAttribute('data-wk-edge', edge);
     if (front && !front.classList.contains('wk-cut-front')) front.classList.add('wk-cut-front');
+    if (cfg.over) { if (el.getAttribute('data-wk-over') !== cfg.over) el.setAttribute('data-wk-over', cfg.over); } else if (el.hasAttribute('data-wk-over')) el.removeAttribute('data-wk-over');
+    // Цвет фона: слой-перекраска поверх фона (под эффектами и персонажем)
+    var tint = tintOf(cfg), tn = el.querySelector(':scope > .wk-ctint');
+    if (tint && v !== 'plain' && v !== 'solid') {
+      if (!tn) { tn = document.createElement('span'); tn.className = 'wk-ctint'; tn.setAttribute('aria-hidden', 'true'); }
+      var tst = 'background:' + tint + ';opacity:' + (cfg.ts / 100) + ';mix-blend-mode:' + (MULT[v] ? 'multiply' : 'color');
+      if (tn.getAttribute('style') !== tst) tn.setAttribute('style', tst);
+    } else if (tn) { tn.remove(); tn = null; }
     if (v === 'plain') { if (bg) bg.remove(); return; }
     if (!bg) { bg = document.createElement('span'); bg.className = 'wk-cbg'; bg.setAttribute('aria-hidden', 'true'); el.insertBefore(bg, el.firstChild); }
     if (bg.getAttribute('data-t') !== v) bg.setAttribute('data-t', v);
+    if (tn && tn.previousElementSibling !== bg) bg.after(tn);
     // Затемнение и размытие фона; в просмотрщике фон повторяет масштаб и сдвиг фото.
     var flt = (cfg.dim ? 'brightness(' + (1 - cfg.dim / 100).toFixed(2) + ')' : '') + (cfg.blur ? ' blur(' + cfg.blur + 'px)' : '');
     var bst = flt ? 'filter:' + flt.trim() : '';
+    if (cfg.tint) bst += (bst ? ';' : '') + '--ca:' + cfg.c1;
+    if (v === 'solid') bst += (bst ? ';' : '') + 'background:' + (tint || 'linear-gradient(160deg,var(--wk-acc,var(--catalog-accent,#d8b45a)),#0b111b)');
     if (opt.viewer && front) { var fcs = getComputedStyle(front); bst += (bst ? ';' : '') + 'transform:' + fcs.transform + ';transform-origin:' + fcs.transformOrigin; }
     if ((bg.getAttribute('style') || '') !== bst) { if (bst) bg.setAttribute('style', bst); else bg.removeAttribute('style'); }
     var bi = bg.querySelector('img');
@@ -30284,7 +30341,7 @@ img.wk-cut-front{z-index:5!important;background:none!important}
     });
   }
   var pend = 0;
-  function mine(n) { return n && n.classList && (n.classList.contains('wk-cbg') || n.classList.contains('wk-cut-ed')); }
+  function mine(n) { return n && n.classList && (n.classList.contains('wk-cbg') || n.classList.contains('wk-ctint') || n.classList.contains('wk-cut-ed') || n.classList.contains('wk-over-chk')); }
   new MutationObserver(function (ms) {
     for (var i = 0; i < ms.length; i++) {
       var m = ms[i], only = true, j;
@@ -30319,6 +30376,9 @@ img.wk-cut-front{z-index:5!important;background:none!important}
   function styleFront(img, c) { img.style.objectPosition = c.x + '% ' + c.y + '%'; img.style.transform = 'scale(' + (c.z / 100) + ')'; img.style.transformOrigin = c.x + '% ' + c.y + '%'; }
   var ED = null; // состояние открытой в редакторе записи: { key, type, id, v, back, cfg }
   window.__wkCutEditorState = function () { return ED; };
+  var OVER_LIST = [['fx', 'Эффект карточки (блик, фольга, голограмма)', 'card_fx'], ['amb', 'Постоянный эффект и частицы', 'card_shine'], ['cs', 'Свой стиль (рамка, удары, деление…)', 'card_style']];
+  function overHas(c, k) { return (' ' + c.over + ' ').indexOf(' ' + k + ' ') >= 0; }
+  function overSet(c, k, on) { var a = c.over ? c.over.split(' ') : []; a = a.filter(function (x) { return x !== k; }); if (on) a.push(k); c.over = a.join(' '); }
   var EDGE_OPTS = [['', 'Авто'], ['none', 'Без контура'], ['shadow', 'Тень'], ['glow', 'Свечение'], ['stroke', 'Обводка']];
   function mount() {
     var form = document.getElementById('wikiEditorForm'); if (!form) { ED = null; return; }
@@ -30352,7 +30412,12 @@ img.wk-cut-front{z-index:5!important;background:none!important}
       + (back.indexOf('data:') === 0 ? '<small class="wk-cut-note">Сейчас стоит загруженный файл.</small>' : '')
       + '<label class="wk-cut-chk"><input type="checkbox" data-cfg="link"' + (c.link ? ' checked' : '') + '> Кадрировать вместе с передним слоем</label>'
       + '<div class="wk-cut-pos"' + (c.link ? ' hidden' : '') + '>' + sl('x', 'По горизонтали', 0, 100, 1, '%') + sl('y', 'По вертикали', 0, 100, 1, '%') + sl('z', 'Масштаб', 50, 400, 5, '%') + '</div></div>'
+      + '<b class="wk-cut-sub">Цвет фона</b><div class="wk-cut-seg" data-tint-seg>' + [['', 'Как задумано'], ['color', 'Цвет'], ['grad', 'Градиент']].map(function (o) { return '<button type="button" data-tint="' + o[0] + '" class="' + (o[0] === c.tint ? 'active' : '') + '">' + o[1] + '</button>'; }).join('') + '</div>'
+      + '<div class="wk-cut-colors"' + (c.tint ? '' : ' hidden') + '><label class="wk-cut-col"><input type="color" data-col="c1" value="' + c.c1 + '"><span>Цвет 1</span></label><label class="wk-cut-col" data-c2' + (c.tint === 'grad' ? '' : ' hidden') + '><input type="color" data-col="c2" value="' + c.c2 + '"><span>Цвет 2</span></label><span class="wk-cut-grad-pv"></span></div>'
+      + '<div class="wk-cut-colsl"' + (c.tint ? '' : ' hidden') + '>' + '<span data-ang' + (c.tint === 'grad' ? '' : ' hidden') + '>' + sl('ang', 'Угол', 0, 360, 5, '°') + '</span>' + sl('ts', 'Сила цвета', 0, 100, 1, '%') + '</div>'
       + '<b class="wk-cut-sub">Фон</b>' + sl('dim', 'Затемнение', 0, 85, 1, '%') + sl('blur', 'Размытие', 0, 20, 1, ' px')
+      + '<b class="wk-cut-sub">Поверх персонажа</b><small class="wk-cut-hint2">Отмеченные эффекты лягут и на персонажа (например, блик фольги), остальные — только на фон.</small>'
+      + '<div class="wk-cut-over">' + OVER_LIST.map(function (o) { return '<label class="wk-cut-chk"><input type="checkbox" data-over="' + o[0] + '"' + (overHas(c, o[0]) ? ' checked' : '') + '> ' + o[1] + '</label>'; }).join('') + '</div>'
       + '<b class="wk-cut-sub">Контур персонажа</b><div class="wk-cut-seg" role="radiogroup">' + EDGE_OPTS.map(function (o) { return '<button type="button" data-edge="' + o[0] + '" class="' + (o[0] === c.edge ? 'active' : '') + '" aria-pressed="' + (o[0] === c.edge) + '">' + o[1] + '</button>'; }).join('') + '</div>'
       + '<button type="button" class="wk-cut-reset" data-cut-reset>Сбросить настройки слоёв</button>'
       + '</div></div></div>';
@@ -30367,6 +30432,7 @@ img.wk-cut-front{z-index:5!important;background:none!important}
       var sw = box.querySelector('[data-cut-on]'); sw.checked = !!v; sw.nextElementSibling.textContent = v ? 'Включено' : 'Выключено';
       box.querySelector('.wk-cut-body').hidden = !v;
       box.querySelector('.wk-cut-back').hidden = v !== 'photo';
+      syncOverChecks();
       try { if (window.__wkHaptic) window.__wkHaptic(8); } catch (e) {}
       refresh();
       return true;
@@ -30374,21 +30440,32 @@ img.wk-cut-front{z-index:5!important;background:none!important}
     var cfgT = 0;
     function saveCfg(now) {
       clearTimeout(cfgT);
-      var go = function () { var c2 = ED.cfg, o = {}; if (!c2.link) { o.link = false; o.x = Math.round(c2.x); o.y = Math.round(c2.y); o.z = Math.round(c2.z); } if (c2.dim) o.dim = c2.dim; if (c2.blur) o.blur = c2.blur; if (c2.edge) o.edge = c2.edge; var v = Object.keys(o).length ? JSON.stringify(o) : ''; try { window.__wikiQuickSave(who.type, who.id, { card_back_cfg: v }); } catch (er) { console.warn(er); } setTimeout(run, 30); };
+      var go = function () { var c2 = ED.cfg, o = {}; if (!c2.link) { o.link = false; o.x = Math.round(c2.x); o.y = Math.round(c2.y); o.z = Math.round(c2.z); } if (c2.dim) o.dim = c2.dim; if (c2.blur) o.blur = c2.blur; if (c2.edge) o.edge = c2.edge; if (c2.tint) { o.tint = c2.tint; o.c1 = c2.c1; o.ts = c2.ts; if (c2.tint === 'grad') { o.c2 = c2.c2; o.ang = c2.ang; } } if (c2.over) o.over = c2.over; var v = Object.keys(o).length ? JSON.stringify(o) : ''; try { window.__wikiQuickSave(who.type, who.id, { card_back_cfg: v }); } catch (er) { console.warn(er); } setTimeout(run, 30); };
       if (now) go(); else cfgT = setTimeout(go, 350);
     }
     function syncCtrls() {
       var c2 = ED.cfg;
-      box.querySelectorAll('input[type=range][data-cfg]').forEach(function (r) { var k = r.getAttribute('data-cfg'); r.value = c2[k]; r.nextElementSibling.textContent = Math.round(c2[k]) + (k === 'blur' ? ' px' : '%'); });
+      box.querySelectorAll('input[type=range][data-cfg]').forEach(function (r) { var k = r.getAttribute('data-cfg'); r.value = c2[k]; r.nextElementSibling.textContent = Math.round(c2[k]) + unit(k); });
+      box.querySelectorAll('[data-tint]').forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-tint') === c2.tint); });
+      box.querySelector('.wk-cut-colors').hidden = !c2.tint; box.querySelector('.wk-cut-colsl').hidden = !c2.tint;
+      box.querySelector('[data-c2]').hidden = c2.tint !== 'grad'; box.querySelector('[data-ang]').hidden = c2.tint !== 'grad';
+      box.querySelectorAll('[data-col]').forEach(function (i) { i.value = c2[i.getAttribute('data-col')]; });
+      var gp = box.querySelector('.wk-cut-grad-pv'); if (gp) gp.style.background = tintOf(c2) || 'transparent';
+      box.querySelectorAll('[data-over]').forEach(function (i) { i.checked = overHas(c2, i.getAttribute('data-over')); });
+      syncOverChecks();
       var lk = box.querySelector('[data-cfg="link"]'); lk.checked = c2.link; box.querySelector('.wk-cut-pos').hidden = c2.link;
       box.querySelectorAll('[data-edge]').forEach(function (b) { var on = b.getAttribute('data-edge') === c2.edge; b.classList.toggle('active', on); b.setAttribute('aria-pressed', String(on)); });
     }
     function unlink() { if (!ED.cfg.link) return; var fc = cropOf(form); ED.cfg.link = false; ED.cfg.x = fc.x; ED.cfg.y = fc.y; ED.cfg.z = fc.z; syncCtrls(); }
     box.addEventListener('input', function (e) {
       var t = e.target; if (!t.matches('input[type=range][data-cfg]')) return;
-      var k = t.getAttribute('data-cfg'); ED.cfg[k] = Number(t.value); t.nextElementSibling.textContent = t.value + (k === 'blur' ? ' px' : '%');
+      var k = t.getAttribute('data-cfg'); ED.cfg[k] = Number(t.value); t.nextElementSibling.textContent = t.value + unit(k);
+      if (k === 'ang') syncCtrls();
       previews(); saveCfg();
     });
+    box.addEventListener('input', function (e) { var t = e.target; if (!t.matches('[data-col]')) return; ED.cfg[t.getAttribute('data-col')] = t.value; var gp = box.querySelector('.wk-cut-grad-pv'); if (gp) gp.style.background = tintOf(ED.cfg); previews(); saveCfg(); });
+    box.addEventListener('change', function (e) { var t = e.target; if (!t.matches('[data-over]')) return; overSet(ED.cfg, t.getAttribute('data-over'), t.checked); syncCtrls(); previews(); saveCfg(true); });
+    box.__sync = syncCtrls; box.__save = saveCfg;
     box.addEventListener('change', function (e) {
       var t = e.target;
       if (t.matches('[data-cut-on]')) { if (!save(t.checked ? (cur || 'holo') : '')) t.checked = !t.checked; }
@@ -30402,6 +30479,7 @@ img.wk-cut-front{z-index:5!important;background:none!important}
     });
     box.addEventListener('click', function (e) {
       if (e.target.closest('[data-cut-back-del]')) { e.preventDefault(); saveBack(''); return; }
+      var tb = e.target.closest('[data-tint]'); if (tb) { e.preventDefault(); ED.cfg.tint = tb.getAttribute('data-tint'); if (ED.cfg.tint && ED.v === 'plain') save('solid'); syncCtrls(); previews(); saveCfg(true); return; }
       var ed = e.target.closest('[data-edge]'); if (ed) { e.preventDefault(); ED.cfg.edge = ed.getAttribute('data-edge'); syncCtrls(); previews(); saveCfg(true); return; }
       if (e.target.closest('[data-cut-reset]')) { e.preventDefault(); ED.cfg = cfgParse(''); syncCtrls(); previews(); saveCfg(true); return; }
       var b = e.target.closest('[data-cut]'); if (!b) return; e.preventDefault(); save(b.getAttribute('data-cut'));
@@ -30438,7 +30516,30 @@ img.wk-cut-front{z-index:5!important;background:none!important}
       if (ED.v !== 'photo' || !ED.back) return; e.preventDefault(); unlink();
       ED.cfg.z = num(ED.cfg.z + (e.deltaY < 0 ? 10 : -10), 50, 400, 100); syncCtrls(); previews(); saveCfg();
     }, { passive: false });
+    syncCtrls();
     previews();
+  }
+  function unit(k) { return k === 'blur' ? ' px' : k === 'ang' ? '°' : '%'; }
+  // Галочки «поверх персонажа» прямо под полями эффектов
+  function syncOverChecks() {
+    var form = document.getElementById('wikiEditorForm'); if (!form || !ED) return;
+    OVER_LIST.forEach(function (o) {
+      var f = form.querySelector('[data-field="' + o[2] + '"]'); if (!f) return;
+      var holder = f.closest('[data-editor-field], .wiki-editor-field') || f.parentNode;
+      var lb = holder.querySelector(':scope > .wk-over-chk[data-k="' + o[0] + '"]');
+      if (!ED.v) { if (lb) lb.remove(); return; }
+      if (!lb) {
+        lb = document.createElement('label'); lb.className = 'wk-over-chk wk-cut-chk'; lb.setAttribute('data-k', o[0]);
+        lb.innerHTML = '<input type="checkbox"> ✂️ ' + (o[0] === 'fx' ? 'Эффект' : o[0] === 'amb' ? 'Частицы' : 'Свой стиль') + ' поверх персонажа (PNG)';
+        holder.appendChild(lb);
+        lb.querySelector('input').addEventListener('change', function (e) {
+          if (!ED) return; overSet(ED.cfg, o[0], e.target.checked);
+          var box = form.querySelector('.wk-cut-ed'); if (box && box.__sync) { box.__sync(); box.__save(true); }
+          previews();
+        });
+      }
+      var inp = lb.querySelector('input'); inp.checked = overHas(ED.cfg, o[0]);
+    });
   }
   /* ---------- Превью в редакторе: учитывают режим, фон и задний слой ---------- */
   function previews() {
@@ -31126,6 +31227,174 @@ html.wk-at-lock,html.wk-at-lock body{overflow:hidden!important}
     window.__wikiRegisterCabinTab({ key: 'atlas', icon: '🕸', label: 'Карта мира', pane: 'wkCabinPaneAtlas', render: render });
   }
   reg();
+})();
+
+</script>
+<style id="wk-v12">/* ===== v12 (02.11.2026 · 72): размеры в «Сюжете», фото награды с карточки ===== */
+@layer wk-redesign{
+html body #storySection #storyList.story-display-grid[data-wk-size="s"],
+html body #storySection #storyList.story-display-grid[data-wk-size="s"]>.story-saga-group.is-open,
+html body #storySection #storyList.story-display-grid[data-wk-size="s"] .story-saga-arcs:not([hidden]){grid-template-columns:repeat(auto-fill,minmax(128px,1fr))!important;gap:10px!important}
+html body #storySection #storyList.story-display-grid[data-wk-size="l"],
+html body #storySection #storyList.story-display-grid[data-wk-size="l"]>.story-saga-group.is-open,
+html body #storySection #storyList.story-display-grid[data-wk-size="l"] .story-saga-arcs:not([hidden]){grid-template-columns:repeat(auto-fill,minmax(250px,1fr))!important;gap:16px!important}
+html body #storySection #storyList.story-display-grid:is([data-wk-size="s"],[data-wk-size="l"]) :is(.catalog-item-shell>.character-item,.story-saga-group:not(.is-open)>.story-saga-folder){width:auto!important;height:auto!important;min-height:0!important;aspect-ratio:3/4!important}
+html body #storySection #storyList.story-display-grid[data-wk-size="s"] .card-title{font-size:13px!important;line-height:1.15!important}
+html body #storySection #storyList.story-display-grid[data-wk-size="l"] .card-title{font-size:20px!important}
+html body #storySection #storyList.story-display-grid[data-wk-size="s"] :is(.wk-ci-row,.story-saga-meta small,.story-arc-child .story-count-badge){display:none!important}
+@media (max-width:560px){
+  html body #storySection #storyList.story-display-grid[data-wk-size="s"],
+  html body #storySection #storyList.story-display-grid[data-wk-size="s"]>.story-saga-group.is-open,
+  html body #storySection #storyList.story-display-grid[data-wk-size="s"] .story-saga-arcs:not([hidden]){grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}
+  html body #storySection #storyList.story-display-grid[data-wk-size="l"],
+  html body #storySection #storyList.story-display-grid[data-wk-size="l"]>.story-saga-group.is-open,
+  html body #storySection #storyList.story-display-grid[data-wk-size="l"] .story-saga-arcs:not([hidden]){grid-template-columns:minmax(0,1fr)!important}
+}
+.wk-vc-story[hidden]{display:none!important}
+}
+.wk-rw-ph{position:absolute;top:8px;right:8px;z-index:12;display:grid;place-items:center;width:32px;height:32px;border-radius:10px;border:1px solid rgba(255,255,255,.22);background:rgba(8,12,20,.72);color:#fff;font-size:15px;line-height:1;cursor:pointer;opacity:0;transform:scale(.9);transition:opacity .15s,transform .15s;backdrop-filter:blur(6px)}
+.character-item:hover>.wk-rw-ph,.character-item:focus-within>.wk-rw-ph,.wk-rw-ph:focus-visible{opacity:1;transform:none}
+.wk-rw-ph:hover{background:rgba(216,180,90,.9);color:#1a1405}
+@media (hover:none){.wk-rw-ph{opacity:.85;transform:none;width:30px;height:30px}}
+.wk-rw-pop{position:fixed;z-index:100001;display:grid;gap:10px;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:#0d1420;box-shadow:0 24px 60px -18px rgba(0,0,0,.85);color:#e5edf7;font-size:13px}
+.wk-rw-top{display:flex;align-items:baseline;gap:8px;padding-right:30px;position:relative}
+.wk-rw-top b{font-size:14px}
+.wk-rw-top span{color:#94a3b8;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wk-rw-top button{position:absolute;right:-4px;top:-6px;width:28px;height:28px;border-radius:8px;border:0;background:rgba(255,255,255,.06);color:#cbd5e1;cursor:pointer}
+.wk-rw-body{display:grid;grid-template-columns:84px minmax(0,1fr);gap:10px}
+.wk-rw-pv{width:84px;height:112px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:repeating-linear-gradient(45deg,#1e293b 0 6px,#0f172a 6px 12px) center/cover;background-size:cover;background-position:center}
+.wk-rw-f{display:grid;gap:8px;align-content:start}
+.wk-rw-f input[type=url]{height:36px;padding:0 10px;border-radius:10px;border:1px solid rgba(148,163,184,.35);background:rgba(0,0,0,.3);color:#f3f6fb;font:inherit;font-size:13px;min-width:0}
+.wk-rw-btns{display:flex;gap:8px}
+.wk-rw-file,.wk-rw-save{flex:1;display:inline-flex;align-items:center;justify-content:center;height:34px;border-radius:10px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.wk-rw-file{border:1px solid rgba(148,163,184,.35);background:rgba(255,255,255,.04)}
+.wk-rw-save{border:0;background:#d8b45a;color:#1a1405}
+.wk-rw-f small{color:#64748b;font-size:11.5px}
+</style>
+<script id="wk-v12-js">
+/* ===================================================================
+   Обновление v12 (02.11.2026 · 72):
+   — «Сюжет»: размер карточек S / M / L;
+   — «Награды»: сменить фото награды прямо с карточки (иконка при наведении).
+   =================================================================== */
+(function () {
+  'use strict';
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function arr(n) { try { var v = window.eval(n); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+  function canEdit() { try { if (typeof window.__wikiCanEdit === 'function') return !!window.__wikiCanEdit(); } catch (e) {} return !window.WIKI_CLOUD_ENABLED; }
+  function hidden(r) { try { return window.__wikiIsSpoilerActive ? !!window.__wikiIsSpoilerActive(r, 'reward') : false; } catch (e) { return false; } }
+  function toast(t) { var n = document.createElement('div'); n.className = 'wk-qe-toast'; n.setAttribute('role', 'status'); n.textContent = t; document.body.appendChild(n); setTimeout(function () { n.remove(); }, 3200); }
+
+  /* ---------- Сюжет: S / M / L ---------- */
+  var SKEY = 'wkStorySizeV1';
+  function sSize() { try { var v = localStorage.getItem(SKEY); return v === 's' || v === 'l' ? v : 'm'; } catch (e) { return 'm'; } }
+  function storyControls() {
+    var sec = document.getElementById('storySection'), list = document.getElementById('storyList'); if (!sec || !list) return;
+    if (list.getAttribute('data-wk-size') !== sSize()) list.setAttribute('data-wk-size', sSize());
+    var row = sec.querySelector('.character-view-mode-row'); if (!row) return;
+    var box = row.querySelector('.wk-vc-story');
+    if (!box) {
+      box = document.createElement('div'); box.className = 'wk-vc wk-vc-story'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Размер карточек');
+      box.innerHTML = '<span class="wk-vc-seg" role="radiogroup" aria-label="Размер карточек">' + [['s', 'S', 'Компактно'], ['m', 'M', 'Обычно'], ['l', 'L', 'Крупно']].map(function (s) { return '<button type="button" data-ssize="' + s[0] + '" title="' + s[2] + '">' + s[1] + '</button>'; }).join('') + '</span>';
+      row.appendChild(box);
+      box.addEventListener('click', function (e) { var b = e.target.closest('[data-ssize]'); if (!b) return; try { localStorage.setItem(SKEY, b.getAttribute('data-ssize')); } catch (er) {} storyControls(); try { if (window.__wkHaptic) window.__wkHaptic(5); } catch (er) {} });
+    }
+    var s = sSize(), grid = /display-grid/.test(list.className);
+    box.hidden = !grid;
+    box.querySelectorAll('[data-ssize]').forEach(function (b) { var on = b.getAttribute('data-ssize') === s; b.classList.toggle('active', on); b.setAttribute('aria-pressed', String(on)); });
+  }
+
+  /* ---------- Награды: фото с карточки ---------- */
+  function rewardFor(card) {
+    var cid = card.getAttribute('data-character-id'); if (!cid) return null;
+    var img = card.querySelector('img.reward-grid-image, img.reward-card-image'), src = img ? img.getAttribute('src') || '' : '';
+    var list = arr('rewards').filter(function (r) { return String(r.character_id) === cid && !hidden(r); });
+    if (!list.length) return null;
+    var byImg = src && list.find(function (r) { return String(r.reward_image || '').trim() === src; });
+    if (byImg) return byImg;
+    list.sort(function (a, b) { return (parseInt(b.appearance_chapter, 10) || 0) - (parseInt(a.appearance_chapter, 10) || 0) || (Number(b.reward) || 0) - (Number(a.reward) || 0); });
+    return list[0];
+  }
+  function rewardButtons() {
+    var on = canEdit();
+    document.querySelectorAll('#rewardsList .reward-grid-card, #rewardsList .reward-item-link').forEach(function (card) {
+      var b = card.querySelector(':scope > .wk-rw-ph');
+      if (!on) { if (b) b.remove(); return; }
+      if (b) return;
+      b = document.createElement('button'); b.type = 'button'; b.className = 'wk-rw-ph'; b.title = 'Сменить фото награды'; b.setAttribute('aria-label', 'Сменить фото награды'); b.innerHTML = '🖼';
+      b.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); openPop(card, b); });
+      b.addEventListener('keydown', function (e) { e.stopPropagation(); });
+      card.appendChild(b);
+    });
+  }
+  var pop = null;
+  function closePop() { if (pop) { pop.remove(); pop = null; } }
+  function openPop(card, btn) {
+    closePop();
+    var r = rewardFor(card); if (!r) { toast('Не нашёл награду для этой карточки.'); return; }
+    var cur = String(r.reward_image || '').trim(), name = (card.querySelector('.card-title') || {}).textContent || '';
+    pop = document.createElement('div'); pop.className = 'wk-rw-pop'; pop.setAttribute('role', 'dialog'); pop.setAttribute('aria-label', 'Фото награды');
+    pop.innerHTML = '<div class="wk-rw-top"><b>Фото награды</b><span>' + esc(name.trim()) + ' · ' + (Number(r.reward) || 0).toLocaleString('ru-RU') + ' ฿</span><button type="button" data-x aria-label="Закрыть">✕</button></div>'
+      + '<div class="wk-rw-body"><span class="wk-rw-pv"' + (cur ? ' style="background-image:url(&quot;' + esc(cur) + '&quot;)"' : '') + '></span>'
+      + '<div class="wk-rw-f"><input type="url" placeholder="Ссылка на картинку" value="' + esc(/^data:/.test(cur) ? '' : cur) + '">'
+      + '<div class="wk-rw-btns"><label class="wk-rw-file">📁 Файл<input type="file" accept="image/*" hidden></label><button type="button" data-save class="wk-rw-save">Сохранить</button></div>'
+      + '<small>Можно вставить картинку из буфера (Ctrl+V) прямо сюда.</small></div></div>';
+    document.body.appendChild(pop);
+    var rc = card.getBoundingClientRect(), pw = Math.min(330, window.innerWidth - 16);
+    pop.style.width = pw + 'px';
+    pop.style.left = Math.max(8, Math.min(window.innerWidth - pw - 8, rc.left + rc.width / 2 - pw / 2)) + 'px';
+    var top = rc.top + 40; if (top + 210 > window.innerHeight) top = Math.max(8, window.innerHeight - 220);
+    pop.style.top = top + 'px';
+    var inp = pop.querySelector('input[type=url]'), pv = pop.querySelector('.wk-rw-pv'), pending = null;
+    function show(u) { pv.style.backgroundImage = u ? 'url("' + u.replace(/"/g, '%22') + '")' : ''; }
+    inp.addEventListener('input', function () { pending = String(inp.value || '').trim(); if (window.__wkFixGifUrl && pending) { var f = window.__wkFixGifUrl(pending); if (f && f.url) pending = f.url; } show(pending); });
+    function takeFile(f) {
+      if (!f || !/^image\//.test(f.type)) return;
+      if (/gif$/i.test(f.type) && window.__wkGifFile) { window.__wkGifFile(f, function (d) { pending = d; show(d); inp.value = ''; inp.placeholder = 'Загружен файл'; }); return; }
+      shrink(f, function (d) { pending = d; show(d); inp.value = ''; inp.placeholder = 'Загружен файл'; });
+    }
+    pop.querySelector('input[type=file]').addEventListener('change', function (e) { takeFile(e.target.files && e.target.files[0]); });
+    pop.addEventListener('paste', function (e) { var it = [].slice.call((e.clipboardData || {}).items || []).find(function (x) { return /^image\//.test(x.type); }); if (it) { e.preventDefault(); takeFile(it.getAsFile()); } });
+    pop.querySelector('[data-x]').addEventListener('click', closePop);
+    pop.querySelector('[data-save]').addEventListener('click', function () {
+      var u = pending == null ? String(inp.value || '').trim() : pending;
+      if (u && !/^(https?:\/\/|data:image\/)/i.test(u)) { toast('Нужна прямая ссылка на картинку (https://…).'); return; }
+      var ok = false; try { ok = window.__wikiQuickSave('reward', r.id, { reward_image: u }); } catch (er) { console.warn(er); }
+      if (!ok) { toast('Не получилось сохранить.'); return; }
+      var im = card.querySelector('img.reward-grid-image, img.reward-card-image'); if (im && u) { im.style.display = ''; im.src = u; }
+      try { if (window.__wkHaptic) window.__wkHaptic(10); } catch (er) {}
+      toast('Фото награды сохранено.'); closePop();
+      setTimeout(function () { try { renderRewardList(); } catch (er) {} }, 80);
+    });
+    setTimeout(function () { inp.focus(); }, 30);
+  }
+  document.addEventListener('pointerdown', function (e) { if (pop && !pop.contains(e.target) && !(e.target.closest && e.target.closest('.wk-rw-ph'))) closePop(); }, true);
+  document.addEventListener('keydown', function (e) { if (pop && e.key === 'Escape') closePop(); });
+  window.addEventListener('scroll', function () { closePop(); }, { passive: true });
+  function shrink(file, cb) {
+    var rd = new FileReader();
+    rd.onload = function () {
+      var im = new Image();
+      im.onload = function () {
+        var k = Math.min(1, 900 / Math.max(im.naturalWidth, im.naturalHeight)), cv = document.createElement('canvas');
+        cv.width = Math.round(im.naturalWidth * k); cv.height = Math.round(im.naturalHeight * k);
+        cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height);
+        var out = cv.toDataURL('image/webp', 0.85); if (out.indexOf('data:image/webp') !== 0) out = cv.toDataURL('image/png');
+        if (out.length > 900 * 1024) out = cv.toDataURL('image/jpeg', 0.7);
+        cb(out);
+      };
+      im.src = String(rd.result);
+    };
+    rd.readAsDataURL(file);
+  }
+
+  var pend = 0;
+  function run() { pend = 0; try { storyControls(); rewardButtons(); } catch (e) { console.warn('v12', e); } }
+  function own(n) { return n && n.classList && (n.classList.contains('wk-rw-ph') || n.classList.contains('wk-rw-pop') || n.classList.contains('wk-vc-story')); }
+  new MutationObserver(function (ms) {
+    for (var i = 0; i < ms.length; i++) { var m = ms[i], only = m.addedNodes.length + m.removedNodes.length > 0, j; for (j = 0; j < m.addedNodes.length; j++) if (!own(m.addedNodes[j])) only = false; for (j = 0; j < m.removedNodes.length; j++) if (!own(m.removedNodes[j])) only = false; if (!only) { if (!pend) pend = requestAnimationFrame(run); return; } }
+  }).observe(document.documentElement, { childList: true, subtree: true });
+  run();
 })();
 
 </script>
