@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "02.11.2026 · 68";
+const WIKI_VERSION = "02.11.2026 · 69";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -30743,6 +30743,7 @@ html.wk-at-lock,html.wk-at-lock body{overflow:hidden!important}
       a.x += a.vx; a.y += a.vy;
     }
     alpha *= 0.99; if (alpha < 0.02) alpha = 0;
+    layoutVer++;
   }
 
   /* ---------- Рисование ---------- */
@@ -30757,16 +30758,61 @@ html.wk-at-lock,html.wk-at-lock body{overflow:hidden!important}
   }
   function toScreen(x, y) { return [x * view.k + view.x + W / 2, y * view.k + view.y + H / 2]; }
   function toWorld(sx, sy) { return [(sx - W / 2 - view.x) / view.k, (sy - H / 2 - view.y) / view.k]; }
+  /* ---------- Кластеры: издалека близкие точки сливаются в одну ---------- */
+  var layoutVer = 0, clCache = { key: '', items: null, of: null };
+  function clR(cnt) { return (12 + Math.sqrt(cnt) * 4.6) / view.k; }
+  function clusters() {
+    var Rw = 58 / view.k, lvl = Math.round(Math.log(Rw) / Math.LN2 * 2) / 2, R = Math.pow(2, lvl);
+    var key = lvl + '|' + (sel ? sel.k : '') + '|' + layoutVer + '|' + G.nodes.length;
+    if (clCache.key === key) return clCache;
+    var items = [], of = {};
+    var keep = {}; if (sel) { keep[sel.k] = 1; sel.nb.forEach(function (n) { keep[n.k] = 1; }); }
+    if (R <= 26) { G.nodes.forEach(function (n) { var it = { n: n }; items.push(it); of[n.k] = it; }); clCache = { key: key, items: items, of: of }; return clCache; }
+    var grid = {}, cell = R;
+    G.nodes.forEach(function (n) { var gk = Math.floor(n.x / cell) + ',' + Math.floor(n.y / cell); (grid[gk] = grid[gk] || []).push(n); });
+    var order = G.nodes.slice().sort(function (a, b) { return b.deg - a.deg || (a.k < b.k ? -1 : 1); });
+    var used = {};
+    order.forEach(function (s) {
+      if (used[s.k]) return; used[s.k] = 1;
+      if (keep[s.k]) { var it0 = { n: s }; items.push(it0); of[s.k] = it0; return; }
+      var mem = [s], gx = Math.floor(s.x / cell), gy = Math.floor(s.y / cell);
+      for (var dx = -1; dx <= 1; dx++) for (var dy = -1; dy <= 1; dy++) {
+        (grid[(gx + dx) + ',' + (gy + dy)] || []).forEach(function (n) {
+          if (used[n.k] || keep[n.k]) return;
+          var ex = n.x - s.x, ey = n.y - s.y; if (ex * ex + ey * ey < R * R) { used[n.k] = 1; mem.push(n); }
+        });
+      }
+      var it;
+      if (mem.length === 1) it = { n: s };
+      else {
+        var sx = 0, sy = 0, types = {}; mem.forEach(function (m) { sx += m.x; sy += m.y; types[m.type] = (types[m.type] || 0) + 1; });
+        it = { cl: true, k: 'cl:' + s.k, top: s, mem: mem, x: sx / mem.length, y: sy / mem.length, types: types };
+      }
+      items.push(it); mem.forEach(function (m) { of[m.k] = it; });
+    });
+    clCache = { key: key, items: items, of: of };
+    return clCache;
+  }
   function draw() {
     dirty = false;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
     if (!G || !G.nodes.length) return;
-    var focus = sel || hover, nbSet = null;
+    var hov = hover && !hover.cl ? hover : null;
+    var focus = sel || hov, nbSet = null;
     if (focus) { nbSet = {}; nbSet[focus.k] = 1; focus.nb.forEach(function (n) { nbSet[n.k] = 1; }); }
+    var C = clusters(), of = C.of;
     ctx.save(); ctx.translate(W / 2 + view.x, H / 2 + view.y); ctx.scale(view.k, view.k);
-    var lw = 1.1 / view.k;
+    var lw = 1.1 / view.k, agg = {};
     G.edges.forEach(function (e) {
+      var ia = of[e.a.k], ib = of[e.b.k]; if (!ia || !ib || ia === ib) return;
+      if (ia.cl || ib.cl) {
+        var ka = ia.cl ? ia.k : ia.n.k, kb = ib.cl ? ib.k : ib.n.k, kk = ka < kb ? ka + '|' + kb : kb + '|' + ka;
+        var g = agg[kk] || (agg[kk] = { a: ia.cl ? ia : ia.n, b: ib.cl ? ib : ib.n, c: 0, on: false }); g.c++;
+        if (focus && (e.a === focus || e.b === focus)) g.on = true;
+        if (hover && hover.cl && (ia === hover || ib === hover)) g.hl = true;
+        return;
+      }
       var on = focus && (e.a === focus || e.b === focus);
       var base = e.kind === 'arc' ? 0.12 : 0.28;
       var al = focus ? (on ? 0.95 : 0.05) : base;
@@ -30774,21 +30820,52 @@ html.wk-at-lock,html.wk-at-lock body{overflow:hidden!important}
       ctx.lineWidth = on ? lw * 2.2 : lw;
       ctx.beginPath(); ctx.moveTo(e.a.x, e.a.y); ctx.lineTo(e.b.x, e.b.y); ctx.stroke();
     });
-    var vx0 = (-W / 2 - view.x) / view.k - 60, vx1 = (W / 2 - view.x) / view.k + 60, vy0 = (-H / 2 - view.y) / view.k - 60, vy1 = (H / 2 - view.y) / view.k + 60;
-    var labels = [];
-    G.nodes.forEach(function (n) {
+    Object.keys(agg).forEach(function (kk) {
+      var g = agg[kk], al = focus ? (g.on ? 0.9 : 0.05) : (g.hl ? 0.75 : Math.min(0.5, 0.18 + g.c * 0.05));
+      ctx.strokeStyle = g.on ? 'rgba(255,255,255,' + al + ')' : 'rgba(148,163,184,' + al + ')';
+      ctx.lineWidth = lw * Math.min(6, 1 + Math.log(g.c) * 1.6) * (g.hl ? 1.4 : 1);
+      ctx.beginPath(); ctx.moveTo(g.a.x, g.a.y); ctx.lineTo(g.b.x, g.b.y); ctx.stroke();
+    });
+    var vx0 = (-W / 2 - view.x) / view.k - 80, vx1 = (W / 2 - view.x) / view.k + 80, vy0 = (-H / 2 - view.y) / view.k - 80, vy1 = (H / 2 - view.y) / view.k + 80;
+    var labels = [], clLabels = [];
+    C.items.forEach(function (it) {
+      if (it.cl) {
+        if (it.x < vx0 || it.x > vx1 || it.y < vy0 || it.y > vy1) return;
+        var r = clR(it.mem.length), dimC = !!nbSet;
+        ctx.globalAlpha = dimC ? 0.22 : 1;
+        ctx.beginPath(); ctx.arc(it.x, it.y, r, 0, Math.PI * 2); ctx.fillStyle = '#0d1420'; ctx.fill();
+        var im = img(it.top);
+        if (im) {
+          ctx.save(); ctx.beginPath(); ctx.arc(it.x, it.y, r - 1 / view.k, 0, Math.PI * 2); ctx.clip();
+          var iw = im.naturalWidth, ih = im.naturalHeight, sc = (r * 2) / Math.min(iw, ih), dw = iw * sc, dh = ih * sc;
+          ctx.globalAlpha = (dimC ? 0.22 : 1) * 0.55; ctx.drawImage(im, it.x - dw / 2, it.y - r - (dh - r * 2) * 0.18, dw, dh);
+          ctx.restore(); ctx.globalAlpha = dimC ? 0.22 : 1;
+          ctx.beginPath(); ctx.arc(it.x, it.y, r, 0, Math.PI * 2); ctx.fillStyle = 'rgba(8,12,20,.45)'; ctx.fill();
+        }
+        // кольцо из долей типов
+        var a0 = -Math.PI / 2, tot = it.mem.length;
+        ctx.lineWidth = 3.2 / view.k;
+        Object.keys(TYPES).forEach(function (t) { var c = it.types[t]; if (!c) return; var a1 = a0 + c / tot * Math.PI * 2; ctx.strokeStyle = TYPES[t].c; ctx.beginPath(); ctx.arc(it.x, it.y, r, a0, a1); ctx.stroke(); a0 = a1; });
+        if (hover === it) { ctx.lineWidth = 2 / view.k; ctx.strokeStyle = '#fff'; ctx.beginPath(); ctx.arc(it.x, it.y, r + 4 / view.k, 0, Math.PI * 2); ctx.stroke(); }
+        ctx.font = '800 ' + (Math.max(11, Math.min(18, 9 + Math.sqrt(tot) * 1.6)) / view.k) + 'px Onest,system-ui,sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#fff'; ctx.fillText(String(tot), it.x, it.y + 0.5 / view.k);
+        ctx.globalAlpha = 1;
+        if (!dimC) clLabels.push(it);
+        return;
+      }
+      var n = it.n;
       if (n.x < vx0 || n.x > vx1 || n.y < vy0 || n.y > vy1) return;
       var dim = nbSet && !nbSet[n.k];
       var col = TYPES[n.type].c, sr = n.r * view.k;
       ctx.globalAlpha = dim ? 0.18 : 1;
       ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
       ctx.fillStyle = '#0d1420'; ctx.fill();
-      var im = sr >= 7 ? img(n) : null;
-      if (im) {
+      var im2 = sr >= 7 ? img(n) : null;
+      if (im2) {
         ctx.save(); ctx.beginPath(); ctx.arc(n.x, n.y, n.r - 1, 0, Math.PI * 2); ctx.clip();
-        var iw = im.naturalWidth, ih = im.naturalHeight, s = (n.r * 2) / Math.min(iw, ih);
-        var dw = iw * s, dh = ih * s;
-        ctx.drawImage(im, n.x - dw / 2, n.y - n.r - (dh - n.r * 2) * (n.type === 'character' ? 0.18 : 0.5), dw, dh);
+        var iw2 = im2.naturalWidth, ih2 = im2.naturalHeight, s2 = (n.r * 2) / Math.min(iw2, ih2);
+        var dw2 = iw2 * s2, dh2 = ih2 * s2;
+        ctx.drawImage(im2, n.x - dw2 / 2, n.y - n.r - (dh2 - n.r * 2) * (n.type === 'character' ? 0.18 : 0.5), dw2, dh2);
         ctx.restore();
       } else if (sr >= 9) {
         ctx.font = (n.r * 0.95) + 'px system-ui,"Apple Color Emoji","Segoe UI Emoji",sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -30804,13 +30881,23 @@ html.wk-at-lock,html.wk-at-lock body{overflow:hidden!important}
     // подписи поверх, с подложкой
     var fs = 12 / view.k;
     ctx.font = '600 ' + fs + 'px Onest,system-ui,-apple-system,Segoe UI,Roboto,sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-    labels.forEach(function (n) {
-      var t = n.name.length > 26 ? n.name.slice(0, 25) + '…' : n.name;
-      var w = ctx.measureText(t).width, y = n.y + n.r + 4 / view.k;
-      ctx.fillStyle = 'rgba(6,10,18,.78)'; roundRect(n.x - w / 2 - 5 / view.k, y - 2 / view.k, w + 10 / view.k, fs + 5 / view.k, 5 / view.k); ctx.fill();
-      ctx.fillStyle = n === sel ? '#fff' : '#e5edf7'; ctx.fillText(t, n.x, y);
+    function tag(x, y, t, strong) {
+      var w = ctx.measureText(t).width;
+      ctx.fillStyle = 'rgba(6,10,18,.78)'; roundRect(x - w / 2 - 5 / view.k, y - 2 / view.k, w + 10 / view.k, fs + 5 / view.k, 5 / view.k); ctx.fill();
+      ctx.fillStyle = strong ? '#fff' : '#e5edf7'; ctx.fillText(t, x, y);
+    }
+    labels.forEach(function (n) { tag(n.x, n.y + n.r + 4 / view.k, n.name.length > 26 ? n.name.slice(0, 25) + '…' : n.name, n === sel); });
+    clLabels.sort(function (a, b) { return b.mem.length - a.mem.length; }).slice(0, 12).forEach(function (it) {
+      var nm = it.top.name.length > 18 ? it.top.name.slice(0, 17) + '…' : it.top.name;
+      tag(it.x, it.y + clR(it.mem.length) + 4 / view.k, nm + ' и ещё ' + (it.mem.length - 1), hover === it);
     });
     ctx.restore();
+  }
+  function flyBox(list) {
+    var x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+    list.forEach(function (p) { x0 = Math.min(x0, p.x - p.r); x1 = Math.max(x1, p.x + p.r); y0 = Math.min(y0, p.y - p.r); y1 = Math.max(y1, p.y + p.r + 24); });
+    var k = Math.min(2.2, Math.max(view.k * 1.6, Math.min((W - 80) / (x1 - x0 || 1), (H - 80) / (y1 - y0 || 1))));
+    anim = { t0: performance.now(), d: 520, f: { x: view.x, y: view.y, k: view.k }, to: { x: -(x0 + x1) / 2 * k, y: -(y0 + y1) / 2 * k, k: k } }; loop();
   }
   function roundRect(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
   var anim = null;
@@ -30848,7 +30935,10 @@ html.wk-at-lock,html.wk-at-lock body{overflow:hidden!important}
   function hit(sx, sy) {
     var p = toWorld(sx, sy), best = null, bd = Infinity;
     if (!G) return null;
-    G.nodes.forEach(function (n) { var dx = n.x - p[0], dy = n.y - p[1], d = dx * dx + dy * dy, rr = Math.max(n.r, 10 / view.k); if (d <= rr * rr && d < bd) { bd = d; best = n; } });
+    clusters().items.forEach(function (it) {
+      var x = it.cl ? it.x : it.n.x, y = it.cl ? it.y : it.n.y, rr = it.cl ? clR(it.mem.length) : Math.max(it.n.r, 10 / view.k);
+      var dx = x - p[0], dy = y - p[1], d = dx * dx + dy * dy; if (d <= rr * rr && d < bd) { bd = d; best = it.cl ? it : it.n; }
+    });
     return best;
   }
 
@@ -30920,7 +31010,7 @@ html.wk-at-lock,html.wk-at-lock body{overflow:hidden!important}
       var ids = Object.keys(ptrs);
       if (ids.length === 2) { var a = ptrs[ids[0]], b = ptrs[ids[1]]; pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]), k: view.k, cx: (a[0] + b[0]) / 2, cy: (a[1] + b[1]) / 2, vx: view.x, vy: view.y }; drag = null; return; }
       var n = hit(p[0], p[1]); anim = null;
-      drag = n ? { node: n, sx: p[0], sy: p[1] } : { sx: p[0], sy: p[1], vx: view.x, vy: view.y };
+      drag = n && !n.cl ? { node: n, sx: p[0], sy: p[1] } : { cl: n || null, sx: p[0], sy: p[1], vx: view.x, vy: view.y };
     });
     cv.addEventListener('pointermove', function (e) {
       var p = pt(e);
@@ -30936,12 +31026,13 @@ html.wk-at-lock,html.wk-at-lock body{overflow:hidden!important}
       if (!drag) return;
       if (Math.abs(p[0] - drag.sx) + Math.abs(p[1] - drag.sy) > 5) moved = true;
       if (!moved) return;
-      if (drag.node) { var wp = toWorld(p[0], p[1]); drag.node.x = wp[0]; drag.node.y = wp[1]; drag.node.fixed = true; if (alpha < 0.12) alpha = 0.12; cv.style.cursor = 'grabbing'; loop(); }
+      if (drag.node) { var wp = toWorld(p[0], p[1]); drag.node.x = wp[0]; drag.node.y = wp[1]; drag.node.fixed = true; layoutVer++; if (alpha < 0.12) alpha = 0.12; cv.style.cursor = 'grabbing'; loop(); }
       else { view.x = drag.vx + p[0] - drag.sx; view.y = drag.vy + p[1] - drag.sy; cv.style.cursor = 'grabbing'; redraw(); }
     });
     function up(e) {
       var p = ptrs[e.pointerId]; delete ptrs[e.pointerId];
       if (pinch) { if (Object.keys(ptrs).length < 2) pinch = null; return; }
+      if (drag && !moved && p && drag.cl) { flyBox(drag.cl.mem); haptic(5); drag = null; return; }
       if (drag && !moved && p) {
         var n = drag.node || null, now = Date.now();
         if (n && lastTap.n === n && now - lastTap.t < 380) { openArticle(n); lastTap = { t: 0, n: null }; }
@@ -30958,7 +31049,7 @@ html.wk-at-lock,html.wk-at-lock body{overflow:hidden!important}
       var k = Math.min(4, Math.max(0.12, view.k * Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0018))));
       view.k = k; view.x = p[0] - W / 2 - w[0] * k; view.y = p[1] - H / 2 - w[1] * k; redraw();
     }, { passive: false });
-    cv.addEventListener('dblclick', function (e) { var p = pt(e), n = hit(p[0], p[1]); if (n) openArticle(n); });
+    cv.addEventListener('dblclick', function (e) { var p = pt(e), n = hit(p[0], p[1]); if (n && !n.cl) openArticle(n); });
   }
   function zoomBy(f) { var k = Math.min(4, Math.max(0.12, view.k * f)); anim = { t0: performance.now(), d: 250, f: { x: view.x, y: view.y, k: view.k }, to: { x: view.x * k / view.k, y: view.y * k / view.k, k: k } }; loop(); }
 
@@ -30975,7 +31066,7 @@ html.wk-at-lock,html.wk-at-lock body{overflow:hidden!important}
   /* ---------- Вкладка ---------- */
   function counts() { return G ? G.nodes.length + ' ' + plural(G.nodes.length, 'статья', 'статьи', 'статей') + ' · ' + G.edges.length + ' ' + plural(G.edges.length, 'связь', 'связи', 'связей') : ''; }
   function render(pane) {
-    pane.innerHTML = '<div class="wk-pane-head"><div><h2>Карта мира</h2><p>Все открытые тебе статьи и связи между ними. Тяни, приближай, нажми на кружок — увидишь связи; двойное нажатие откроет статью.</p></div></div>'
+    pane.innerHTML = '<div class="wk-pane-head"><div><h2>Карта мира</h2><p>Все открытые тебе статьи и связи между ними. Тяни и приближай: издалека соседние статьи собираются в группы с числом, вблизи расходятся. Нажми на группу — карта приблизится к ней; на кружок — увидишь связи; двойное нажатие откроет статью.</p></div></div>'
       + '<div class="wk-atlas">'
       + '<div class="wk-at-bar">'
       + '<label class="wk-at-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="Найти на карте…" autocomplete="off" aria-label="Найти статью на карте"><div class="wk-at-sug" hidden></div></label>'
