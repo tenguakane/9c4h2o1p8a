@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "02.11.2026 · 73";
+const WIKI_VERSION = "02.11.2026 · 74";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -31404,6 +31404,191 @@ html body #storySection #storyList.story-display-grid[data-wk-size="s"] :is(.wk-
     for (var i = 0; i < ms.length; i++) { var m = ms[i], only = m.addedNodes.length + m.removedNodes.length > 0, j; for (j = 0; j < m.addedNodes.length; j++) if (!own(m.addedNodes[j])) only = false; for (j = 0; j < m.removedNodes.length; j++) if (!own(m.removedNodes[j])) only = false; if (!only) { if (!pend) pend = requestAnimationFrame(run); return; } }
   }).observe(document.documentElement, { childList: true, subtree: true });
   run();
+})();
+
+</script>
+<style id="wk-v13">/* ===== v13 (02.11.2026 · 74): редактор — вкладка «Оформление» ===== */
+@layer wk-redesign{
+#wikiEditorForm .wk-view-bar{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0 12px;padding:5px;border-radius:14px;background:rgba(15,23,42,.65);border:1px solid rgba(148,163,184,.2)}
+#wikiEditorForm .wk-view-bar button{display:grid;gap:2px;justify-items:start;padding:9px 14px;border-radius:10px;border:1px solid transparent;background:transparent;color:#cbd5e1;font:inherit;font-size:14.5px;font-weight:800;text-align:left;cursor:pointer}
+#wikiEditorForm .wk-view-bar button small{font-size:11.5px;font-weight:500;color:#64748b}
+#wikiEditorForm .wk-view-bar button.active{background:rgba(216,180,90,.15);border-color:rgba(216,180,90,.5);color:#fde68a}
+#wikiEditorForm .wk-view-bar button.active small{color:#cbb47a}
+/* «Статья»: без оформления */
+#wikiEditorForm[data-wk-view="main"] .wiki-editor-section.wk-look-sec{display:none!important}
+/* «Оформление»: только оформление, на всю ширину */
+#wikiEditorForm[data-wk-view="look"] .wiki-editor-section:not(.wk-look-sec),
+#wikiEditorForm[data-wk-view="look"] :is(.wk-ed-tabs,.wiki-editor-global-spoiler,.wiki-film-progress){display:none!important}
+#wikiEditorForm[data-wk-view="look"] .wk-look-sec>.wiki-editor-section-head{display:none!important}
+#wikiEditorForm[data-wk-view="look"] .wk-look-sec{border:0!important;background:none!important;padding:0!important;box-shadow:none!important}
+#wikiEditorForm[data-wk-view="look"] .wk-look-sec>.wiki-editor-section-body{display:block!important;padding:0!important}
+#wikiEditorOverlay.wk-ed-wide .wiki-editor-body{grid-template-columns:minmax(0,1fr)!important}
+#wikiEditorOverlay.wk-ed-wide .wiki-editor-sidebar{display:none!important}
+#wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields{display:grid!important;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr) minmax(0,1fr)!important;grid-template-rows:auto auto auto 1fr!important;gap:16px!important;align-items:start!important}
+#wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields>*{grid-column:auto!important;min-width:0}
+#wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields>.wk-lk-stage{grid-column:1 / -1!important;grid-row:1}
+#wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields>.wiki-editor-field:has([data-field="card_style"]){grid-column:1!important;grid-row:2 / 5}
+#wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields>.wk-rar-ed{grid-column:2!important;grid-row:2}
+#wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields>.wk-cut-ed{grid-column:2!important;grid-row:3}
+#wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields>.wiki-editor-field:has([data-field="title_fx"]){grid-column:3!important;grid-row:2 / 5}
+#wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields>.wk-cs-moved{display:none!important}
+#wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-field{padding:14px!important;border-radius:16px!important;border:1px solid rgba(148,163,184,.2)!important;background:rgba(255,255,255,.02)!important}
+/* большое превью эффекта — наверх своей колонки */
+#wikiEditorForm[data-wk-view="look"] .wiki-editor-field:has([data-field="card_style"]){display:flex!important;flex-direction:column}
+#wikiEditorForm[data-wk-view="look"] .wiki-editor-field:has([data-field="card_style"]) .wk-fx-row{order:-1;margin:0 0 12px!important}
+@media (max-width:1180px){
+  #wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+  #wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields>.wiki-editor-field:has([data-field="title_fx"]){grid-column:1 / -1!important;grid-row:auto}
+}
+@media (max-width:760px){
+  #wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields{grid-template-columns:minmax(0,1fr)!important}
+  #wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields>*{grid-column:1!important;grid-row:auto!important}
+}
+}
+/* Живые превью */
+.wk-lk-stage{position:static;top:0;z-index:20;display:grid;gap:10px;padding:12px 14px;border-radius:16px;border:1px solid rgba(216,180,90,.28);background:linear-gradient(180deg,rgba(13,20,32,.97),rgba(10,15,25,.97));box-shadow:0 14px 30px -18px rgba(0,0,0,.8)}
+.wk-lk-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+.wk-lk-head b{font-size:14px;color:#f1f5f9}
+.wk-lk-head small{font-size:12px;color:#64748b}
+.wk-lk-row{display:flex;gap:16px;align-items:flex-end;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+.wk-lk{margin:0;display:grid;gap:6px;justify-items:center;flex:0 0 auto}
+.wk-lk figcaption{font-size:12.5px;font-weight:700;color:#e2e8f0;text-align:center;display:grid}
+.wk-lk figcaption small{font-weight:500;color:#64748b;font-size:11px}
+.wk-lk-card{position:relative;overflow:hidden;isolation:isolate;border-radius:16px;border:1px solid rgba(255,255,255,.1);background:rgba(20,28,39,.9);box-shadow:0 10px 26px -14px rgba(0,0,0,.9)}
+.wk-lk.is-cat .wk-lk-card{width:156px;height:208px}
+.wk-lk.is-hero .wk-lk-card{width:277px;height:208px}
+.wk-lk.is-shelf .wk-lk-card{width:108px;height:144px;border-radius:13px}
+.wk-lk-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;max-width:none;z-index:1}
+.wk-lk-card::before{content:"";position:absolute;inset:0;z-index:6;pointer-events:none;background:linear-gradient(to top,rgba(5,8,14,.92) 0,rgba(5,8,14,.5) 22%,transparent 46%)}
+.wk-lk-txt{position:absolute;left:0;right:0;bottom:0;z-index:8;display:grid;gap:5px;justify-items:start;padding:10px 11px 11px}
+.wk-lk-title{font-size:17px;line-height:1.12;font-weight:700;color:#f8fafc;text-shadow:0 2px 6px rgba(0,0,0,.8);overflow-wrap:anywhere}
+.wk-lk.is-hero .wk-lk-title{font-size:22px}
+.wk-lk.is-shelf .wk-lk-title{font-size:13px}
+.wk-lk-chip{padding:2px 8px;border-radius:999px;border:1px solid color-mix(in srgb,var(--wk-acc,#d8b45a) 60%,transparent);color:color-mix(in srgb,var(--wk-acc,#d8b45a) 75%,#fff);font-size:11px;background:rgba(0,0,0,.35)}
+.wk-lk.is-shelf .wk-lk-chip{display:none}
+.wk-lk-chip[hidden]{display:none}
+@media (max-width:760px){.wk-lk-stage{position:static}.wk-lk.is-hero .wk-lk-card{width:240px;height:180px}}
+
+@media (min-width:761px) and (min-height:860px){.wk-lk-stage{position:sticky}}
+</style>
+<script id="wk-v13-js">
+/* ===================================================================
+   Обновление v13 (02.11.2026 · 74): редактор — отдельная вкладка «Оформление».
+   «📝 Статья» — имя, описание, привязки; «✨ Оформление» — эффекты карточки
+   и заголовка на всю ширину экрана с живыми превью в разных местах сайта.
+   =================================================================== */
+(function () {
+  'use strict';
+  var view = 'main';
+  try { view = sessionStorage.getItem('wkEdView') === 'look' ? 'look' : 'main'; } catch (e) {}
+  function $(s, r) { return (r || document).querySelector(s); }
+  function q(f, k) { return f.querySelector('[data-field="' + k + '"]'); }
+  function val(f, k) { var el = q(f, k); return el ? String(el.value || '').trim() : ''; }
+  function fxSection(f) { var el = q(f, 'card_fx') || q(f, 'title_fx'); return el ? el.closest('.wiki-editor-section') : null; }
+
+  function setView(f, v) {
+    view = v; try { sessionStorage.setItem('wkEdView', v); } catch (e) {}
+    f.setAttribute('data-wk-view', v);
+    var ov = document.getElementById('wikiEditorOverlay'); if (ov) ov.classList.toggle('wk-ed-wide', v === 'look');
+    f.querySelectorAll('.wk-view-bar [data-view]').forEach(function (b) { var on = b.getAttribute('data-view') === v; b.classList.toggle('active', on); b.setAttribute('aria-selected', String(on)); });
+    var sec = fxSection(f);
+    if (sec && v === 'look' && sec.classList.contains('collapsed')) { sec.classList.remove('collapsed'); var h = sec.querySelector('[aria-expanded]'); if (h) h.setAttribute('aria-expanded', 'true'); }
+    var sc = f.closest('.wiki-editor-main') || f; sc.scrollTop = 0; f.scrollTop = 0;
+    if (v === 'look') schedule();
+  }
+  function mount() {
+    var f = document.getElementById('wikiEditorForm'); if (!f) { var ov0 = document.getElementById('wikiEditorOverlay'); if (ov0) ov0.classList.remove('wk-ed-wide'); return; }
+    var sec = fxSection(f);
+    var bar = f.querySelector(':scope > .wk-view-bar');
+    if (!sec) { if (bar) bar.remove(); f.removeAttribute('data-wk-view'); var ov1 = document.getElementById('wikiEditorOverlay'); if (ov1) ov1.classList.remove('wk-ed-wide'); return; }
+    sec.classList.add('wk-look-sec');
+    if (!bar) {
+      bar = document.createElement('div'); bar.className = 'wk-view-bar'; bar.setAttribute('role', 'tablist');
+      bar.innerHTML = '<button type="button" role="tab" data-view="main">📝 Статья<small>имя, описание, привязки</small></button><button type="button" role="tab" data-view="look">✨ Оформление<small>эффекты карточки и заголовка</small></button>';
+      var anchor = f.querySelector(':scope > .wiki-editor-form-title');
+      if (anchor) anchor.after(bar); else f.insertBefore(bar, f.firstChild);
+      bar.addEventListener('click', function (e) { var b = e.target.closest('[data-view]'); if (b) setView(f, b.getAttribute('data-view')); });
+    }
+    if (f.getAttribute('data-wk-view') !== view) setView(f, view);
+    stage(f, sec);
+  }
+
+  /* ---------- Живые превью в разных местах ---------- */
+  var PLACES = [['cat', 'Каталог', 'карточка M'], ['hero', 'Витрина', 'большая карточка'], ['shelf', 'Полка', 'маленькая']];
+  function stage(f, sec) {
+    var fields = sec.querySelector('.wiki-editor-fields'); if (!fields) return null;
+    var st = fields.querySelector(':scope > .wk-lk-stage');
+    if (!st) {
+      st = document.createElement('div'); st.className = 'wk-lk-stage';
+      st.innerHTML = '<div class="wk-lk-head"><b>Как карточка выглядит на сайте</b><small>Превью обновляются сразу, пока ты меняешь настройки. Наведи на карточку — эффекты оживут.</small></div><div class="wk-lk-row">'
+        + PLACES.map(function (p) { return '<figure class="wk-lk is-' + p[0] + '"><div class="wk-lk-card"><img class="wk-lk-img" alt=""><div class="wk-lk-txt"><div class="wk-lk-title card-title"></div><span class="wk-lk-chip"></span></div></div><figcaption>' + p[1] + '<small>' + p[2] + '</small></figcaption></figure>'; }).join('') + '</div>';
+      fields.insertBefore(st, fields.firstChild);
+      st.querySelectorAll('.wk-lk-card').forEach(function (c) { c.addEventListener('pointerenter', function () { c.classList.add('wk-live', 'is-moving'); }); c.addEventListener('pointerleave', function () { c.classList.remove('wk-live', 'is-moving'); }); });
+    }
+    return st;
+  }
+  var pend = 0;
+  function schedule() { clearTimeout(pend); pend = setTimeout(update, 120); }
+  function cropStyle(f, place) {
+    // для персонажей берём кадры из блока «Как фото выглядит в разных карточках» — он всегда актуален
+    var map = { cat: 'm', hero: 'hero', shelf: 'shelf' };
+    var im = document.querySelector('#wikiEditorOverlay .wk-csz.is-' + map[place] + ' .wk-csz-frame > img');
+    if (im && im.getAttribute('src')) return { src: im.getAttribute('src'), pos: im.style.objectPosition, tr: im.style.transform, org: im.style.transformOrigin };
+    var pre = q(f, 'person_link') ? 'person_' : '';
+    var src = val(f, pre ? 'person_link' : 'image');
+    var n = function (k, d) { var v = Number(val(f, pre + k)); return val(f, pre + k) === '' || !isFinite(v) ? d : v; };
+    var x = n('image_position_x', 50), y = n('image_position', 50), z = Math.max(100, n('image_zoom', 100));
+    return { src: src, pos: x + '% ' + y + '%', tr: 'scale(' + z / 100 + ')', org: x + '% ' + y + '%' };
+  }
+  function update() {
+    var f = document.getElementById('wikiEditorForm'); if (!f || f.getAttribute('data-wk-view') !== 'look') return;
+    var sec = fxSection(f); var st = sec && stage(f, sec); if (!st) return;
+    var pv = f.querySelector('.wk-fx-preview');
+    var fx = pv ? pv.getAttribute('data-fx') || '' : '';
+    var amb = pv ? pv.getAttribute('data-amb') || '' : '';
+    var acc = pv ? (pv.style.getPropertyValue('--wk-acc') || getComputedStyle(pv).getPropertyValue('--wk-acc')).trim() : '';
+    var cs = val(f, 'card_style'), tfx = val(f, 'title_fx'), tst = val(f, 'title_style');
+    if (tfx === 'none') tfx = '';
+    var name = val(f, 'name') || 'Название', chip = (val(f, 'status').split(',')[0] || val(f, 'type') || val(f, 'saga') || '').trim();
+    var ed = window.__wkCutEditorState ? window.__wkCutEditorState() : null;
+    st.querySelectorAll('.wk-lk').forEach(function (fig, i) {
+      var place = fig.className.match(/is-(\w+)/)[1], card = fig.querySelector('.wk-lk-card'), img = card.querySelector('.wk-lk-img');
+      var c = cropStyle(f, place);
+      if (c.src && /^(https?:|data:image)/.test(c.src)) { if (img.getAttribute('src') !== c.src) img.setAttribute('src', c.src); img.hidden = false; } else { img.removeAttribute('src'); img.hidden = true; }
+      img.style.objectPosition = c.pos; img.style.transform = c.tr; img.style.transformOrigin = c.org;
+      if (acc) card.style.setProperty('--wk-acc', acc); else card.style.removeProperty('--wk-acc');
+      // эффект карточки
+      if (fx && fx !== 'none') {
+        if (card.getAttribute('data-fx') !== fx) card.setAttribute('data-fx', fx);
+        if (!card.querySelector(':scope > .wk-fx-a')) { var a = document.createElement('span'); a.className = 'wk-fx-a'; var b = document.createElement('span'); b.className = 'wk-fx-b'; card.appendChild(a); card.appendChild(b); }
+      } else card.removeAttribute('data-fx');
+      try { if (window.__wikiApplyAmb) window.__wikiApplyAmb(card, amb, 'wk-lk-' + i); } catch (e) {}
+      try { if (window.__wikiApplyCardStyle) window.__wikiApplyCardStyle(card, cs, 'wk-lk-' + i); } catch (e) {}
+      // заголовок
+      var t = card.querySelector('.wk-lk-title');
+      if (t.textContent !== name) t.textContent = name;
+      t.setAttribute('data-tfx-text', name); t.title = name;
+      if (tfx) t.setAttribute('data-tfx', tfx); else t.removeAttribute('data-tfx');
+      try { if (window.__wikiApplyTitleStyle) window.__wikiApplyTitleStyle(t, tst, tfx); } catch (e) {}
+      var ch = card.querySelector('.wk-lk-chip'); ch.textContent = chip; ch.hidden = !chip;
+      // PNG-режим
+      try {
+        if (window.__wkApplyCut) {
+          var v = ed && ed.v ? ed.v : ''; if (v === 'photo' && !ed.back) v = 'plain';
+          window.__wkApplyCut(card, v, ed ? ed.back : '', ed ? ed.cfg : null, { front: img });
+        }
+      } catch (e) {}
+    });
+  }
+  window.__wkLookUpdate = schedule;
+
+  var mp = 0;
+  new MutationObserver(function (ms) {
+    for (var i = 0; i < ms.length; i++) { var t = ms[i].target; if (t && t.closest && t.closest('.wk-lk-stage')) continue; if (!mp) mp = requestAnimationFrame(function () { mp = 0; try { mount(); } catch (e) { console.warn('v13', e); } }); break; }
+  }).observe(document.documentElement, { childList: true, subtree: true });
+  ['input', 'change', 'click', 'pointerup'].forEach(function (ev) { document.addEventListener(ev, function (e) { if (e.target && e.target.closest && e.target.closest('#wikiEditorForm') && !e.target.closest('.wk-lk-stage')) schedule(); }, true); });
+  // большое превью эффекта меняет атрибуты — повторяем их
+  new MutationObserver(function (ms) { if (ms.some(function (m) { return m.target.classList && m.target.classList.contains('wk-fx-preview'); })) schedule(); }).observe(document.documentElement, { attributes: true, subtree: true, attributeFilter: ['data-fx', 'data-amb', 'style'] });
 })();
 
 </script>
