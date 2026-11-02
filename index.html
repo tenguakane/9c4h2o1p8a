@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "02.11.2026 · 74";
+const WIKI_VERSION = "02.11.2026 · 75";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -30177,7 +30177,7 @@ img.wk-cut-front{z-index:5!important;background:none!important}
 .wk-cut-tune{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
 .wk-cut-live-col{flex:0 0 150px;margin:0 auto}
 .wk-cut-ctrls{flex:1 1 230px}
-.wk-cut-live-col{display:grid;gap:6px;position:sticky;top:8px}
+.wk-cut-live-col{display:grid;gap:6px;position:static}
 .wk-cut-live{position:relative;width:150px;aspect-ratio:3/4;border-radius:12px;overflow:hidden;isolation:isolate;background:radial-gradient(120% 90% at 50% 30%,#2a3446,#0b111b 75%);border:1px solid rgba(255,255,255,.14);touch-action:none}
 .wk-cut-live.can-drag{cursor:grab}
 .wk-cut-live.can-drag:active{cursor:grabbing}
@@ -30539,7 +30539,7 @@ img.wk-cut-front{z-index:5!important;background:none!important}
       if (!ED.v) { if (lb) lb.remove(); return; }
       if (!lb) {
         lb = document.createElement('label'); lb.className = 'wk-over-chk wk-cut-chk'; lb.setAttribute('data-k', o[0]);
-        lb.innerHTML = '<input type="checkbox"> ✂️ ' + (o[0] === 'fx' ? 'Эффект' : o[0] === 'amb' ? 'Частицы' : 'Свой стиль') + ' поверх персонажа (PNG)';
+        lb.innerHTML = '<input type="checkbox"><span>✂️ ' + (o[0] === 'fx' ? 'Эффект ложится' : o[0] === 'amb' ? 'Частицы ложатся' : 'Свой стиль ложится') + ' и на персонажа (PNG)</span>';
         holder.appendChild(lb);
         lb.querySelector('input').addEventListener('change', function (e) {
           if (!ED) return; overSet(ED.cfg, o[0], e.target.checked);
@@ -30765,6 +30765,7 @@ html.wk-at-lock,html.wk-at-lock body{overflow:hidden!important}
         if (t === 'story' && (truthy(r.movie) || /полнометражные фильмы/i.test(String(r.saga || '')))) return;
         var k = t + ':' + r.id; if (byKey[k]) return;
         var n = { k: k, type: t, id: String(r.id), name: String(r.name), img: url(r, TYPES[t].img), sub: t === 'character' ? val(r, 'status').split(',')[0] : t === 'story' ? val(r, 'saga') : val(r, 'type'), deg: 0, nb: [] };
+        try { n.crop = window.__wkMapCrop ? window.__wkMapCrop(t, n.id) : null; } catch (e) {}
         nodes.push(n); byKey[k] = n; if (!idKey[n.id]) idKey[n.id] = k;
       });
     });
@@ -30903,6 +30904,13 @@ html.wk-at-lock,html.wk-at-lock body{overflow:hidden!important}
     clCache = { key: key, items: items, of: of };
     return clCache;
   }
+  // Кадр иконки: как object-fit:cover + object-position x% y% + scale(z) вокруг той же точки
+  function drawCrop(im, cx, cy, r, c) {
+    c = c || { x: 50, y: 30, z: 100 };
+    var g = window.__wkMapGeom ? window.__wkMapGeom(im.naturalWidth, im.naturalHeight, r * 2, c) : null;
+    if (!g) { var s0 = (r * 2) / Math.min(im.naturalWidth, im.naturalHeight); g = { x: -(im.naturalWidth * s0 - r * 2) / 2, y: 0, w: im.naturalWidth * s0, h: im.naturalHeight * s0 }; }
+    ctx.drawImage(im, cx - r + g.x, cy - r + g.y, g.w, g.h);
+  }
   function draw() {
     dirty = false;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -30948,7 +30956,7 @@ html.wk-at-lock,html.wk-at-lock body{overflow:hidden!important}
         if (im) {
           ctx.save(); ctx.beginPath(); ctx.arc(it.x, it.y, r - 1 / view.k, 0, Math.PI * 2); ctx.clip();
           var iw = im.naturalWidth, ih = im.naturalHeight, sc = (r * 2) / Math.min(iw, ih), dw = iw * sc, dh = ih * sc;
-          ctx.globalAlpha = (dimC ? 0.22 : 1) * 0.55; ctx.drawImage(im, it.x - dw / 2, it.y - r - (dh - r * 2) * 0.18, dw, dh);
+          ctx.globalAlpha = (dimC ? 0.22 : 1) * 0.55; drawCrop(im, it.x, it.y, r, it.top.crop);
           ctx.restore(); ctx.globalAlpha = dimC ? 0.22 : 1;
           ctx.beginPath(); ctx.arc(it.x, it.y, r, 0, Math.PI * 2); ctx.fillStyle = 'rgba(8,12,20,.45)'; ctx.fill();
         }
@@ -30973,9 +30981,7 @@ html.wk-at-lock,html.wk-at-lock body{overflow:hidden!important}
       var im2 = sr >= 7 ? img(n) : null;
       if (im2) {
         ctx.save(); ctx.beginPath(); ctx.arc(n.x, n.y, n.r - 1, 0, Math.PI * 2); ctx.clip();
-        var iw2 = im2.naturalWidth, ih2 = im2.naturalHeight, s2 = (n.r * 2) / Math.min(iw2, ih2);
-        var dw2 = iw2 * s2, dh2 = ih2 * s2;
-        ctx.drawImage(im2, n.x - dw2 / 2, n.y - n.r - (dh2 - n.r * 2) * (n.type === 'character' ? 0.18 : 0.5), dw2, dh2);
+        drawCrop(im2, n.x, n.y, n.r, n.crop);
         ctx.restore();
       } else if (sr >= 9) {
         ctx.font = (n.r * 0.95) + 'px system-ui,"Apple Color Emoji","Segoe UI Emoji",sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -31424,12 +31430,13 @@ html body #storySection #storyList.story-display-grid[data-wk-size="s"] :is(.wk-
 #wikiEditorForm[data-wk-view="look"] .wk-look-sec>.wiki-editor-section-body{display:block!important;padding:0!important}
 #wikiEditorOverlay.wk-ed-wide .wiki-editor-body{grid-template-columns:minmax(0,1fr)!important}
 #wikiEditorOverlay.wk-ed-wide .wiki-editor-sidebar{display:none!important}
-#wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields{display:grid!important;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr) minmax(0,1fr)!important;grid-template-rows:auto auto auto 1fr!important;gap:16px!important;align-items:start!important}
+#wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields{display:grid!important;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,1fr)!important;grid-template-rows:auto auto auto 1fr!important;gap:16px!important;align-items:start!important}
 #wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields>*{grid-column:auto!important;min-width:0}
 #wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields>.wk-lk-stage{grid-column:1 / -1!important;grid-row:1}
 #wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields>.wiki-editor-field:has([data-field="card_style"]){grid-column:1!important;grid-row:2 / 5}
 #wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields>.wk-rar-ed{grid-column:2!important;grid-row:2}
 #wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields>.wk-cut-ed{grid-column:2!important;grid-row:3}
+#wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields>.wk-map-ed{grid-column:2!important;grid-row:4;align-self:start}
 #wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields>.wiki-editor-field:has([data-field="title_fx"]){grid-column:3!important;grid-row:2 / 5}
 #wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-fields>.wk-cs-moved{display:none!important}
 #wikiEditorForm[data-wk-view="look"] .wk-look-sec .wiki-editor-field{padding:14px!important;border-radius:16px!important;border:1px solid rgba(148,163,184,.2)!important;background:rgba(255,255,255,.02)!important}
@@ -31469,7 +31476,33 @@ html body #storySection #storyList.story-display-grid[data-wk-size="s"] :is(.wk-
 .wk-lk-chip[hidden]{display:none}
 @media (max-width:760px){.wk-lk-stage{position:static}.wk-lk.is-hero .wk-lk-card{width:240px;height:180px}}
 
-@media (min-width:761px) and (min-height:860px){.wk-lk-stage{position:sticky}}
+.wk-lk.is-map .wk-lk-card{width:96px;height:96px;border-radius:50%;border:3px solid var(--wk-mapc,#60a5fa)}
+.wk-lk.is-map .wk-lk-card::before,.wk-lk.is-map .wk-lk-txt{display:none}
+#wikiEditorForm .wk-look-sec .wiki-editor-fields>.wk-map-ed{grid-column:1 / -1}
+.wk-map-ed{display:grid;gap:8px;padding:12px;border-radius:14px;border:1px solid var(--line,rgba(148,163,184,.3));background:rgba(255,255,255,.025)}
+.wk-map-l{font-size:14px}
+.wk-map-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.wk-map-frames{display:flex;align-items:flex-end;gap:10px}
+.wk-map-circ{position:relative;display:block;border-radius:50%;overflow:hidden;background:#0d1420;border:3px solid #60a5fa;flex:0 0 auto}
+.wk-map-circ img{position:absolute;inset:0;width:100%;height:100%;display:block;max-width:none;pointer-events:none}
+.wk-map-circ.is-big{width:128px;height:128px;cursor:grab;touch-action:none}
+.wk-map-circ.is-big:active{cursor:grabbing}
+.wk-map-circ.is-mid{width:56px;height:56px;border-width:2px}
+.wk-map-circ.is-sm{width:34px;height:34px;border-width:2px}
+.wk-map-side{display:grid;gap:6px;flex:1 1 180px;min-width:0}
+.wk-map-side small{font-size:12px;color:var(--text-soft,#c9d3df);line-height:1.4}
+.wk-map-out{font-size:12px;color:#94a3b8;font-variant-numeric:tabular-nums}
+.wk-map-ed.is-own .wk-map-out{color:#fde68a}
+.wk-map-reset{justify-self:start;padding:5px 12px;border-radius:999px;border:1px solid var(--line,rgba(148,163,184,.35));background:transparent;color:var(--text-soft,#c9d3df);font:inherit;font-size:12px;cursor:pointer}
+/* галочки «поверх персонажа» под полями эффектов — аккуратный переключатель */
+#wikiEditorOverlay#wikiEditorOverlay .wk-over-chk{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important;width:auto!important;margin:10px 0 0!important;padding:8px 12px!important;border-radius:12px!important;border:1px solid rgba(148,163,184,.22)!important;background:rgba(255,255,255,.03)!important;font:600 12.5px/1.3 system-ui,-apple-system,Segoe UI,Roboto,sans-serif!important;letter-spacing:0!important;text-transform:none!important;color:#cbd5e1!important;cursor:pointer;grid-column:1 / -1}
+#wikiEditorOverlay#wikiEditorOverlay .wk-over-chk:hover{border-color:rgba(216,180,90,.45)!important}
+#wikiEditorOverlay#wikiEditorOverlay .wk-over-chk input{appearance:none!important;-webkit-appearance:none!important;flex:0 0 36px!important;width:36px!important;height:20px!important;min-height:0!important;margin:0!important;padding:0!important;border-radius:999px!important;border:1px solid rgba(148,163,184,.4)!important;background:#1e293b!important;position:relative;cursor:pointer;transition:background .15s}
+#wikiEditorOverlay#wikiEditorOverlay .wk-over-chk input::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#94a3b8;transition:transform .15s,background .15s}
+#wikiEditorOverlay#wikiEditorOverlay .wk-over-chk input:checked{background:rgba(216,180,90,.85)!important;border-color:#d8b45a!important}
+#wikiEditorOverlay#wikiEditorOverlay .wk-over-chk input:checked::after{transform:translateX(16px);background:#1a1405}
+#wikiEditorOverlay#wikiEditorOverlay .wk-over-chk:has(input:checked){color:#fde68a!important;border-color:rgba(216,180,90,.5)!important;background:rgba(216,180,90,.08)!important}
+#wikiEditorOverlay#wikiEditorOverlay .wk-over-chk span{text-transform:none!important;letter-spacing:0!important;font:inherit!important}
 </style>
 <script id="wk-v13-js">
 /* ===================================================================
@@ -31514,7 +31547,7 @@ html body #storySection #storyList.story-display-grid[data-wk-size="s"] :is(.wk-
   }
 
   /* ---------- Живые превью в разных местах ---------- */
-  var PLACES = [['cat', 'Каталог', 'карточка M'], ['hero', 'Витрина', 'большая карточка'], ['shelf', 'Полка', 'маленькая']];
+  var PLACES = [['cat', 'Каталог', 'карточка M'], ['hero', 'Витрина', 'большая карточка'], ['shelf', 'Полка', 'маленькая'], ['map', 'Карта связей', 'кружок']];
   function stage(f, sec) {
     var fields = sec.querySelector('.wiki-editor-fields'); if (!fields) return null;
     var st = fields.querySelector(':scope > .wk-lk-stage');
@@ -31531,7 +31564,11 @@ html body #storySection #storyList.story-display-grid[data-wk-size="s"] :is(.wk-
   function schedule() { clearTimeout(pend); pend = setTimeout(update, 120); }
   function cropStyle(f, place) {
     // для персонажей берём кадры из блока «Как фото выглядит в разных карточках» — он всегда актуален
-    var map = { cat: 'm', hero: 'hero', shelf: 'shelf' };
+    if (place === 'map') {
+      var mc = window.__wkMapEditorCrop ? window.__wkMapEditorCrop() : null, ms = val(f, q(f, 'person_link') ? 'person_link' : 'image');
+      if (mc) return { src: ms, pos: mc.x + '% ' + mc.y + '%', tr: 'scale(' + mc.z / 100 + ')', org: mc.x + '% ' + mc.y + '%' };
+    }
+    var map = { cat: 'm', hero: 'hero', shelf: 'shelf', map: 'm' };
     var im = document.querySelector('#wikiEditorOverlay .wk-csz.is-' + map[place] + ' .wk-csz-frame > img');
     if (im && im.getAttribute('src')) return { src: im.getAttribute('src'), pos: im.style.objectPosition, tr: im.style.transform, org: im.style.transformOrigin };
     var pre = q(f, 'person_link') ? 'person_' : '';
@@ -31557,6 +31594,7 @@ html body #storySection #storyList.story-display-grid[data-wk-size="s"] :is(.wk-
       if (c.src && /^(https?:|data:image)/.test(c.src)) { if (img.getAttribute('src') !== c.src) img.setAttribute('src', c.src); img.hidden = false; } else { img.removeAttribute('src'); img.hidden = true; }
       img.style.objectPosition = c.pos; img.style.transform = c.tr; img.style.transformOrigin = c.org;
       if (acc) card.style.setProperty('--wk-acc', acc); else card.style.removeProperty('--wk-acc');
+      if (place === 'map') { var TC = { person_link: '#60a5fa' }; card.style.setProperty('--wk-mapc', q(f, 'person_link') ? '#60a5fa' : (q(f, 'chapters') ? '#fbbf24' : (q(f, 'owner') ? '#f472b6' : '#34d399'))); return; }
       // эффект карточки
       if (fx && fx !== 'none') {
         if (card.getAttribute('data-fx') !== fx) card.setAttribute('data-fx', fx);
@@ -31589,6 +31627,140 @@ html body #storySection #storyList.story-display-grid[data-wk-size="s"] :is(.wk-
   ['input', 'change', 'click', 'pointerup'].forEach(function (ev) { document.addEventListener(ev, function (e) { if (e.target && e.target.closest && e.target.closest('#wikiEditorForm') && !e.target.closest('.wk-lk-stage')) schedule(); }, true); });
   // большое превью эффекта меняет атрибуты — повторяем их
   new MutationObserver(function (ms) { if (ms.some(function (m) { return m.target.classList && m.target.classList.contains('wk-fx-preview'); })) schedule(); }).observe(document.documentElement, { attributes: true, subtree: true, attributeFilter: ['data-fx', 'data-amb', 'style'] });
+})();
+
+</script>
+<script id="wk-v14-js">
+/* ===================================================================
+   Обновление v14 (02.11.2026 · 75): кадр иконки для карты связей.
+   Поле записи map_crop = "x,y,z" (по умолчанию — кадр карточки).
+   Работает в карте связей статьи, в «Карте мира» и в превью редактора.
+   =================================================================== */
+(function () {
+  'use strict';
+  function raw(t, id) { try { return window.__wikiRawRecord ? window.__wikiRawRecord(t, id) : null; } catch (e) { return null; } }
+  function num(v, a, b, d) { v = Number(v); return v === '' || !isFinite(v) ? d : Math.max(a, Math.min(b, v)); }
+  function parse(v) { var m = String(v || '').split(','); if (m.length < 3 || m[0] === '') return null; return { x: num(m[0], 0, 100, 50), y: num(m[1], 0, 100, 30), z: num(m[2], 100, 400, 100) }; }
+  function fromRec(t, r) {
+    if (!r) return { x: 50, y: 30, z: 100 };
+    var own = parse(r.map_crop); if (own) return own;
+    var pre = t === 'character' ? 'person_' : '';
+    return { x: num(r[pre + 'image_position_x'], 0, 100, 50), y: num(r[pre + 'image_position'], 0, 100, t === 'character' ? 25 : 50), z: num(r[pre + 'image_zoom'], 100, 400, 100) };
+  }
+  var cache = {}, cacheT = 0;
+  function mapCrop(t, id) {
+    if (t === 'arc') t = 'story';
+    var now = Date.now(); if (now - cacheT > 1500) { cache = {}; cacheT = now; }
+    var k = t + ':' + id; if (!(k in cache)) cache[k] = fromRec(t, raw(t, id));
+    return cache[k];
+  }
+  window.__wkMapCrop = mapCrop;
+  // Геометрия как у object-fit:cover + object-position + scale() вокруг той же точки
+  function geom(iw, ih, box, c) {
+    if (!iw || !ih) return null;
+    var s0 = box / Math.min(iw, ih), w0 = iw * s0, h0 = ih * s0;
+    var l0 = -(w0 - box) * c.x / 100, t0 = -(h0 - box) * c.y / 100, z = c.z / 100;
+    var ox = box * c.x / 100, oy = box * c.y / 100;
+    return { x: ox + (l0 - ox) * z, y: oy + (t0 - oy) * z, w: w0 * z, h: h0 * z };
+  }
+  window.__wkMapGeom = geom;
+  function cssCrop(img, c) { img.style.objectFit = 'cover'; img.style.objectPosition = c.x + '% ' + c.y + '%'; img.style.transform = 'scale(' + c.z / 100 + ')'; img.style.transformOrigin = c.x + '% ' + c.y + '%'; }
+
+  /* ---------- Карта связей в статье (SVG) ---------- */
+  var sizes = {};
+  function natural(url, cb) {
+    if (sizes[url]) { cb(sizes[url]); return; }
+    var im = new Image(); im.onload = function () { sizes[url] = [im.naturalWidth, im.naturalHeight]; cb(sizes[url]); }; im.src = url;
+  }
+  function fixSvg(svg) {
+    svg.querySelectorAll('g.wk-rel-node[data-type][data-id]').forEach(function (g) {
+      var im = g.querySelector('image'), cl = g.querySelector('clipPath circle'); if (!im || !cl) return;
+      var t = g.getAttribute('data-type'); if (!/^(character|fruit|useful|arc)$/.test(t)) return;
+      var c = mapCrop(t, g.getAttribute('data-id')), href = im.getAttribute('href') || im.getAttributeNS('http://www.w3.org/1999/xlink', 'href');
+      var cx = +cl.getAttribute('cx'), cy = +cl.getAttribute('cy'), r = +cl.getAttribute('r') + 2;
+      var sig = [c.x, c.y, c.z, href, cx, cy, r].join('|'); if (im.__wkSig === sig) return; im.__wkSig = sig;
+      natural(href, function (sz) {
+        var gm = geom(sz[0], sz[1], r * 2, c); if (!gm) return;
+        im.setAttribute('preserveAspectRatio', 'none');
+        im.setAttribute('x', (cx - r + gm.x).toFixed(1)); im.setAttribute('y', (cy - r + gm.y).toFixed(1));
+        im.setAttribute('width', gm.w.toFixed(1)); im.setAttribute('height', gm.h.toFixed(1));
+      });
+    });
+  }
+  function scanSvgs() { document.querySelectorAll('.wk-rel-canvas svg').forEach(fixSvg); }
+
+  /* ---------- Редактор: «Иконка на карте связей» ---------- */
+  function editorWho(form) {
+    var id = form.querySelector('[data-field="id"]'); id = id ? String(id.value || '').trim() : ''; if (!id) return null;
+    var t = form.querySelector('[data-field="person_link"]') ? 'character' : null;
+    if (!t) ['fruit', 'useful', 'story'].some(function (x) { if (raw(x, id)) { t = x; return true; } return false; });
+    return t ? { type: t, id: id } : null;
+  }
+  function imgOf(form) {
+    var v = ['person_link', 'image'].map(function (k) { var el = form.querySelector('[data-field="' + k + '"]'); return el ? String(el.value || '').trim() : ''; }).filter(Boolean)[0] || '';
+    return /^(https?:|data:image)/.test(v) ? v : '';
+  }
+  var MS = null; // { key, type, id, crop, own }
+  window.__wkMapEditorCrop = function () { return MS ? MS.crop : null; };
+  function mount() {
+    var form = document.getElementById('wikiEditorForm'); if (!form) { MS = null; return; }
+    var sec = (form.querySelector('[data-field="card_fx"]') || form.querySelector('[data-field="title_fx"]')); sec = sec && sec.closest('.wiki-editor-section');
+    var fields = sec && sec.querySelector('.wiki-editor-fields'); if (!fields) return;
+    var who = editorWho(form); if (!who) return;
+    var key = who.type + ':' + who.id, box = fields.querySelector(':scope > .wk-map-ed');
+    if (box && box.getAttribute('data-for') === key) { sync(box, form); return; }
+    if (box) box.remove();
+    var r = raw(who.type, who.id) || {};
+    MS = { key: key, type: who.type, id: who.id, own: !!parse(r.map_crop), crop: fromRec(who.type, r) };
+    box = document.createElement('div'); box.className = 'wk-map-ed'; box.setAttribute('data-for', key);
+    box.innerHTML = '<b class="wk-map-l">🕸 Иконка на карте связей</b>'
+      + '<div class="wk-map-row"><div class="wk-map-frames"><span class="wk-map-circ is-big" title="Тяни — сдвинуть, колесо — масштаб"><img alt=""></span><span class="wk-map-circ is-mid"><img alt=""></span><span class="wk-map-circ is-sm"><img alt=""></span></div>'
+      + '<div class="wk-map-side"><small>Тяни фото в большом круге, колесо или щипок — масштаб. Так кружок будет выглядеть в карте связей статьи и в «Карте мира».</small><output class="wk-map-out"></output><button type="button" class="wk-map-reset" data-map-reset>⟲ как в карточке</button></div></div>';
+    var ref = fields.querySelector(':scope > .wk-cut-ed'); if (ref) ref.after(box); else fields.appendChild(box);
+    wire(box);
+    sync(box, form);
+  }
+  function sync(box, form) {
+    var u = imgOf(form), c = MS.crop;
+    box.querySelectorAll('.wk-map-circ img').forEach(function (im) { if (u) { if (im.getAttribute('src') !== u) im.setAttribute('src', u); im.hidden = false; } else { im.removeAttribute('src'); im.hidden = true; } cssCrop(im, c); });
+    box.querySelector('.wk-map-out').textContent = (MS.own ? 'Свой кадр' : 'Как в карточке') + ' · ' + Math.round(c.x) + '% / ' + Math.round(c.y) + '% · ×' + (c.z / 100).toFixed(1);
+    box.classList.toggle('is-own', MS.own);
+    try { if (window.__wkLookUpdate) window.__wkLookUpdate(); } catch (e) {}
+  }
+  function wire(box) {
+    var fr = box.querySelector('.wk-map-circ.is-big'), drag = null, ptr = {}, t = 0;
+    function save(now) {
+      clearTimeout(t);
+      var go = function () { var c = MS.crop, v = MS.own ? [Math.round(c.x), Math.round(c.y), Math.round(c.z)].join(',') : ''; try { window.__wikiQuickSave(MS.type, MS.id, { map_crop: v }); } catch (e) { console.warn(e); } cache = {}; setTimeout(function () { scanSvgs(); if (window.__wkAtlasRebuild) window.__wkAtlasRebuild(); }, 50); };
+      if (now) go(); else t = setTimeout(go, 350);
+    }
+    fr.addEventListener('pointerdown', function (e) { fr.setPointerCapture(e.pointerId); ptr[e.pointerId] = [e.clientX, e.clientY]; var ids = Object.keys(ptr); if (ids.length === 2) { var a = ptr[ids[0]], b = ptr[ids[1]]; drag = { pinch: Math.hypot(a[0] - b[0], a[1] - b[1]), z: MS.crop.z }; } else drag = { x: e.clientX, y: e.clientY, c: { x: MS.crop.x, y: MS.crop.y, z: MS.crop.z } }; e.preventDefault(); });
+    fr.addEventListener('pointermove', function (e) {
+      if (!drag || !ptr[e.pointerId]) return; ptr[e.pointerId] = [e.clientX, e.clientY]; var form = document.getElementById('wikiEditorForm');
+      if (drag.pinch) { var ids = Object.keys(ptr); if (ids.length < 2) return; var a = ptr[ids[0]], b = ptr[ids[1]]; MS.crop = { x: MS.crop.x, y: MS.crop.y, z: num(drag.z * Math.hypot(a[0] - b[0], a[1] - b[1]) / drag.pinch, 100, 400, 100) }; }
+      else { var rc = fr.getBoundingClientRect(), k = drag.c.z > 100 ? Math.min(300, 100 / (drag.c.z / 100 - 1)) : 100; MS.crop = { x: num(drag.c.x - (e.clientX - drag.x) / rc.width * k, 0, 100, 50), y: num(drag.c.y - (e.clientY - drag.y) / rc.height * k, 0, 100, 50), z: drag.c.z }; }
+      MS.own = true; sync(box, form);
+    });
+    function up(e) { delete ptr[e.pointerId]; if (drag && !Object.keys(ptr).length) { drag = null; save(true); } else if (drag && drag.pinch) drag = null; }
+    fr.addEventListener('pointerup', up); fr.addEventListener('pointercancel', up);
+    fr.addEventListener('wheel', function (e) { e.preventDefault(); MS.crop = { x: MS.crop.x, y: MS.crop.y, z: num(MS.crop.z + (e.deltaY < 0 ? 10 : -10), 100, 400, 100) }; MS.own = true; sync(box, document.getElementById('wikiEditorForm')); save(); }, { passive: false });
+    box.querySelector('[data-map-reset]').addEventListener('click', function (e) { e.preventDefault(); MS.own = false; var r = raw(MS.type, MS.id) || {}; var rr = Object.assign({}, r, { map_crop: '' }); MS.crop = fromRec(MS.type, rr); sync(box, document.getElementById('wikiEditorForm')); save(true); });
+  }
+
+  var pend = 0;
+  function run() { pend = 0; try { scanSvgs(); mount(); } catch (e) { console.warn('v14', e); } }
+  new MutationObserver(function (ms) {
+    for (var i = 0; i < ms.length; i++) { var t = ms[i].target; if (t && t.closest && t.closest('.wk-map-ed, .wk-lk-stage')) continue; if (!pend) pend = requestAnimationFrame(run); break; }
+  }).observe(document.documentElement, { childList: true, subtree: true });
+  // кадр карточки в форме меняется — если своего кадра нет, иконка повторяет его
+  document.addEventListener('input', function (e) {
+    if (!MS || MS.own || !e.target || !e.target.closest || !e.target.closest('#wikiEditorForm')) return;
+    var f = e.target.getAttribute('data-field') || ''; if (!/image_position|image_zoom|person_link|^image$/.test(f)) return;
+    var form = document.getElementById('wikiEditorForm'), pre = MS.type === 'character' ? 'person_' : '';
+    var g = function (k, d) { var el = form.querySelector('[data-field="' + pre + k + '"]'); return el ? num(el.value, 0, 400, d) : d; };
+    MS.crop = { x: g('image_position_x', 50), y: g('image_position', 50), z: Math.max(100, g('image_zoom', 100)) };
+    var box = form.querySelector('.wk-map-ed'); if (box) sync(box, form);
+  }, true);
 })();
 
 </script>
