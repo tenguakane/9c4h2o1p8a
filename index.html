@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "02.11.2026 · 78";
+const WIKI_VERSION = "02.11.2026 · 80";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -31269,6 +31269,17 @@ html body #storySection #storyList.story-display-grid[data-wk-size="s"] :is(.wk-
 .wk-rw-file{border:1px solid rgba(148,163,184,.35);background:rgba(255,255,255,.04)}
 .wk-rw-save{border:0;background:#d8b45a;color:#1a1405}
 .wk-rw-f small{color:#64748b;font-size:11.5px}
+/* Кнопка переворота — в нижнем правом углу; текст карточки её не перекрывает */
+@layer wk-redesign{
+html body .catalog-item-shell>:is(.wk-flip-btn,.wk-flip2),
+html body #usefulList .catalog-item-shell>.wk-flip2,html body #fruitsList .catalog-item-shell>.wk-flip2{top:auto!important;bottom:10px!important;right:10px!important;left:auto!important;width:30px!important;height:30px!important;z-index:11!important}
+html body .catalog-item-shell:has(>.wk-flip-btn,>.wk-flip2):not(.wk-flipped) .character-item :is(.character-grid-content,.wk-lk-txt,.useful-grid-content,.fruit-grid-content){padding-right:46px!important}
+html body .catalog-item-shell:has(>.wk-flip-btn,>.wk-flip2) .character-item>.wk-gem{right:48px!important;bottom:20px!important}
+@media (max-width:760px){
+  html body .catalog-item-shell>:is(.wk-flip-btn,.wk-flip2){bottom:8px!important;right:8px!important;width:28px!important;height:28px!important;font-size:13px!important}
+  html body .catalog-item-shell:has(>.wk-flip-btn,>.wk-flip2):not(.wk-flipped) .character-item :is(.character-grid-content,.useful-grid-content,.fruit-grid-content){padding-right:42px!important}
+}
+}
 </style>
 <script id="wk-v12-js">
 /* ===================================================================
@@ -31892,6 +31903,159 @@ html body #storySection #storyList.story-display-grid[data-wk-size="s"] :is(.wk-
   }
   document.addEventListener('change', function (e) { if (e.target && e.target.closest && e.target.closest('#wikiEditorForm')) setTimeout(sched, 60); }, true);
   document.addEventListener('click', function (e) { if (e.target && e.target.closest && e.target.closest('#wikiEditorForm')) setTimeout(sched, 120); }, true);
+})();
+
+</script>
+<style id="wk-v16">/* ===== v16 (02.11.2026 · 80): полировка обвязки по методике unslop (by @heydamir, CC BY 4.0) ===== */
+:root{--wk-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+/* Иконки одного набора: 16–18 px, линия 1.6, цвет текста */
+.wk-ic{display:inline-grid;place-items:center;width:1.15em;height:1.15em;vertical-align:-.2em;flex:0 0 auto;color:inherit;margin-right:.45em}
+.cabin-subtab-icon .wk-ic,.wk-ov-ico .wk-ic,.wiki-continue-thumb .wk-ic,.global-search-icon .wk-ic,.wk-vc-fx .wk-ic,.wk-where-gear .wk-ic{margin-right:0}
+.wk-ic .wk-i,.wiki-brand-mark .wk-i{width:100%;height:100%;display:block}
+.main-tab .wk-ic{width:17px;height:17px;margin-right:7px;opacity:.85}
+.cabin-subtab-icon .wk-ic{width:17px;height:17px}
+.wk-ov-ico .wk-ic{width:20px;height:20px;color:var(--text-soft,#c9d3df)}
+.wiki-brand-mark{display:inline-grid;place-items:center;width:30px;height:30px;color:var(--accent,#d8b45a)}
+.wiki-brand-mark .wk-i{width:24px;height:24px}
+.wk-sc-head h2 .wk-ic,.wk-shelf header h3 .wk-ic{width:18px;height:18px;margin-right:6px;color:var(--accent,#d8b45a)}
+.wiki-continue-thumb .wk-ic{width:22px;height:22px;color:var(--accent,#d8b45a)}
+.global-search-icon .wk-ic{width:16px;height:16px}
+.wk-edit-site .wk-ic,.character-view-mode-button .wk-ic,.wk-vc-fx .wk-ic,.wk-where-gear .wk-ic{width:16px;height:16px}
+.wk-vc-fx{display:inline-grid!important;place-items:center}
+@layer wk-redesign{
+/* Одно золото для всех вкладок */
+html body .main-tab.active,html body .main-tab[aria-selected="true"]{color:var(--accent,#d8b45a)!important}
+html body .main-tab.active::after,html body .main-tab.active::before{background:var(--accent,#d8b45a)!important;box-shadow:none!important}
+html body .main-tab:hover{color:color-mix(in srgb,var(--accent,#d8b45a) 70%,#fff)!important}
+/* Обычный регистр в подписях вместо капса с разрядкой */
+html body #favoritesSection :is(.wk-ov-group h3,.achievement-kicker,.cabin-panel-kicker,.achievement-stat-label,.wk-qz-kind,.wk-pane-head small),
+html body :is(.wk-sc-head h2,.wk-shelf header h3,.wst-here-label,.wk-sc-all){text-transform:none!important;letter-spacing:0!important}
+html body #favoritesSection .wk-ov-group h3{font-size:14px!important;font-weight:600!important;color:var(--text-soft,#c9d3df)!important}
+/* Жирность: иерархия размером и цветом, не толщиной */
+html body :is(.character-view-mode-button,.wk-vc button,.wk-at-acts button,.wk-sc-toggle,.wiki-continue-card b,.wk-qz-modes button,.wk-seg button){font-weight:500!important}
+html body :is(#charactersFiltersButton,#storyFiltersButton,#rewardsFiltersButton,.filters-toggle,[id$="FiltersButton"]){font-weight:500!important}
+html body .wk-where-hi b{font-weight:500!important}
+html body #storySection .story-saga-folder .card-title,html body #storySection .story-saga-item .card-title{font-weight:600!important}
+/* Счётчики — тихий моноширинный текст, а не капсулы */
+html body :is(.cabin-subtab-count,.wk-sub-count,.cabin-subtab .count,.wk-at-count,.wk-shelf header>span:not(.wk-shelf-nav)){background:none!important;border:0!important;box-shadow:none!important;padding:0 0 0 2px!important;min-width:0!important;font-family:var(--wk-mono)!important;font-size:12px!important;font-weight:400!important;color:var(--muted,#94a3b8)!important}
+/* Подпись сайта: отметки глав и серий — как записи в судовом журнале */
+html body :is(.wk-log,.wk-ci,.wst-here button,#wikiStoryHere button,.wk-bar em,.wk-ov-body strong,.wk-where-hi span){font-variant-numeric:tabular-nums}
+html body :is(.wk-log,.wk-ci){font-family:var(--wk-mono)!important;letter-spacing:0!important}
+html body .wk-where-hi b.wk-log{font-size:20px!important;color:var(--text,#f3f6fb)!important}
+html body #wikiStoryHere button{font-weight:500!important}
+html body #wikiStoryHere button.wk-log{font-size:12.5px!important}
+/* Поиск: единое скругление вместо пилюли в шапке */
+html body .global-search-trigger{border-radius:10px!important}
+}
+</style>
+<script id="wk-v16-js">
+/* ===================================================================
+   Обновление v16 (02.11.2026 · 80): полировка «обвязки» по методике unslop
+   (unslop by Damir Sokolovsky, @heydamir, CC BY 4.0).
+   — эмодзи в интерфейсе → линейные иконки одного набора;
+   — заголовок Каюты вместо приветствия, отметки глав — моноширинным шрифтом.
+   Карточки, статьи и всё, что пишет админ, не трогаем.
+   =================================================================== */
+(function () {
+  'use strict';
+  var P = {
+    home: '<path d="M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z"/>',
+    user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',
+    book: '<path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/>',
+    coins: '<circle cx="9" cy="9" r="6"/><path d="M18.1 10.4A6 6 0 1 1 10.4 18.1"/><path d="M9 6.5v5M7 8h3.5a1 1 0 0 1 0 2H7"/>',
+    fruit: '<path d="M12 7.5c-2.2-1.8-6.3-1.3-7.3 2.2-1 3.7.4 8 3.3 9.8 1.5.9 2.6.5 4 0 1.4.5 2.5.9 4 0 2.9-1.8 4.3-6.1 3.3-9.8-1-3.5-5.1-4-7.3-2.2z"/><path d="M12 7.5c0-2.2 1.2-4 3.5-4.5"/>',
+    bulb: '<path d="M9 18h6M10 21.5h4"/><path d="M12 2.5a6.5 6.5 0 0 0-3.8 11.8c.5.4.8 1.1.8 1.7V16h6v0c0-.6.3-1.3.8-1.7A6.5 6.5 0 0 0 12 2.5z"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+    pencil: '<path d="M16.5 3.5a2.6 2.6 0 0 1 3.7 3.7L7.5 19.9 3 21l1.1-4.5z"/>',
+    star: '<path d="m12 3.2 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17.2l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    compass: '<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',
+    medal: '<circle cx="12" cy="15" r="5"/><path d="M8.6 11 6 3h4l2 4 2-4h4l-2.6 8"/>',
+    grid: '<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>',
+    trophy: '<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/>',
+    help: '<circle cx="12" cy="12" r="9"/><path d="M9.6 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1.1.8-1.1 1.5v.4"/><path d="M12 17h.01"/>',
+    network: '<circle cx="6" cy="7" r="2.2"/><circle cx="18" cy="6" r="2.2"/><circle cx="12" cy="13" r="2.6"/><circle cx="6" cy="19" r="2"/><circle cx="18.5" cy="18" r="2"/><path d="M7.8 8.3 10 11.3M16.3 7.4 13.9 11.2M10.3 14.8 7.4 17.6M14.2 14.6l2.8 2.2"/>',
+    sparkles: '<path d="M11 3.5l1.6 4.4L17 9.5l-4.4 1.6L11 15.5l-1.6-4.4L5 9.5l4.4-1.6z"/><path d="M18.5 14.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>',
+    list: '<path d="M9 6h12M9 12h12M9 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
+    image: '<rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><circle cx="9" cy="9" r="1.8"/><path d="m20.5 15-5-5L5 20.5"/>',
+    anchor: '<circle cx="12" cy="5" r="2"/><path d="M12 7v14M8 10h8M5 13H3a9 9 0 0 0 18 0h-2"/>',
+    tv: '<rect x="2.5" y="7" width="19" height="13.5" rx="2.5"/><path d="m16.5 2.5-4.5 4.5-4.5-4.5"/>',
+    skull: '<path d="M12 3a8 8 0 0 0-8 8c0 2.5 1.2 4.4 3 5.6V20h10v-3.4c1.8-1.2 3-3.1 3-5.6a8 8 0 0 0-8-8z"/><circle cx="9" cy="11" r="1.6"/><circle cx="15" cy="11" r="1.6"/><path d="M10.5 20v-2M13.5 20v-2"/>',
+    gear: '<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>',
+    flame: '<path d="M12 21.5c4 0 7-2.8 7-6.8 0-4.4-4.5-6.6-4.5-11.2-3 1.6-5 4.5-4.5 8-1-.7-1.8-2-2-3.5C6.3 9.7 5 12 5 14.7c0 4 3 6.8 7 6.8z"/>',
+    dice: '<rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M8.5 8.5h.01M15.5 15.5h.01M15.5 8.5h.01M8.5 15.5h.01M12 12h.01"/>',
+    repeat: '<path d="M17 2.5l3.5 3.5L17 9.5"/><path d="M3.5 11.5V10a4 4 0 0 1 4-4h13M7 21.5 3.5 18 7 14.5"/><path d="M20.5 12.5V14a4 4 0 0 1-4 4h-13"/>',
+    chart: '<path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/>',
+    film: '<rect x="3" y="3.5" width="18" height="17" rx="2.5"/><path d="M7 3.5v17M17 3.5v17M3 9h4M17 9h4M3 15h4M17 15h4"/>',
+    map: '<path d="M9 4 3.5 6v14L9 18l6 2 5.5-2V4L15 6z"/><path d="M9 4v14M15 6v14"/>',
+    ship: '<path d="M3 15h18l-2.5 5h-13z"/><path d="M12 3v12M12 4l6 8h-6M12 6l-5 6h5"/>',
+    users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 3-5.5 6.5-5.5s6.5 1.9 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.6c2.2.5 3.5 2.3 3.5 5.4"/>',
+    target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+    calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+    heart: '<path d="M12 20s-7.5-4.6-7.5-10A4.5 4.5 0 0 1 12 7.3 4.5 4.5 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/>'
+  };
+  var MAP = {
+    '🛖': 'home', '🏠': 'home', '🏡': 'home', '👤': 'user', '👥': 'users', '📖': 'book', '📚': 'book', '📘': 'book', '💰': 'coins', '💵': 'coins', '🪙': 'coins', '🍎': 'fruit', '🍏': 'fruit', '💡': 'bulb',
+    '⌕': 'search', '🔍': 'search', '🔎': 'search', '✏️': 'pencil', '✏': 'pencil', '📝': 'pencil', '⭐': 'star', '☆': 'star', '★': 'star', '🌟': 'star',
+    '🕘': 'clock', '🕑': 'clock', '🕐': 'clock', '🕒': 'clock', '◷': 'clock', '⏱': 'clock', '⏳': 'clock', '⌛': 'clock', '🧭': 'compass', '🏅': 'medal', '🎖': 'medal', '🟩': 'grid', '▦': 'grid', '🏆': 'trophy',
+    '🧠': 'help', '❓': 'help', '🕸': 'network', '✨': 'sparkles', '☷': 'list', '▧': 'image', '🖼': 'image', '⚓': 'anchor', '📺': 'tv', '🏴‍☠️': 'skull', '🏴': 'skull', '☠': 'skull', '☠️': 'skull',
+    '⚙': 'gear', '⚙️': 'gear', '🔥': 'flame', '🎲': 'dice', '🔁': 'repeat', '📈': 'chart', '📊': 'chart', '🎬': 'film', '🗺': 'map', '🗺️': 'map', '⛵': 'ship', '🚢': 'ship', '🎯': 'target', '📅': 'calendar', '❤️': 'heart', '💗': 'heart'
+  };
+  function svg(name) { return '<svg class="wk-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + P[name] + '</svg>'; }
+  window.__wkIcon = svg;
+  var RE = /(\p{Extended_Pictographic}️?(?:‍\p{Extended_Pictographic}️?)*|[☷▦▧⌕◷☆★⚓])/u;
+  // Где менять: вся «обвязка». Где не менять: карточки, статьи, редактор, медали, пользовательский контент.
+  var SKIP = '.character-item, [id$="ArticleContent"], .article-content, #wikiEditorOverlay, #imageViewer, [class*="medal"], [class*="achievement-icon"], .wk-at-stage, .wk-lk-stage, textarea, input, select, script, style, svg, .wk-qe-toast';
+  var ROOTS = 'header, .main-tabs, #favoritesSection, #charactersSection, #storySection, #rewardsSection, #fruitsSection, #usefulSection, .ios-tabbar, .wk-at-bar, .wk-at-card';
+  function iconizeText(node) {
+    var t = node.nodeValue, m = t.match(RE); if (!m) return false;
+    var em = m[1], name = MAP[em] || MAP[em.replace(/️/g, '')];
+    if (!name) {
+      // незнакомое эмодзи-украшение в обвязке просто убираем (у категорий и так есть цветные точки)
+      node.nodeValue = t.slice(0, m.index) + t.slice(m.index + em.length).replace(/^\s+/, m.index ? ' ' : '');
+      return true;
+    }
+    var before = t.slice(0, m.index), after = t.slice(m.index + em.length).replace(/^\s+/, '');
+    var span = document.createElement('span'); span.className = 'wk-ic'; span.setAttribute('aria-hidden', 'true'); span.innerHTML = svg(name);
+    var p = node.parentNode;
+    if (before.trim()) p.insertBefore(document.createTextNode(before), node);
+    p.insertBefore(span, node);
+    if (after) { node.nodeValue = (p.classList && p.classList.contains('cabin-subtab-icon') ? '' : ' ') + after; } else p.removeChild(node);
+    return true;
+  }
+  function scan(root) {
+    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: function (n) { var p = n.parentElement; if (!p || !RE.test(n.nodeValue)) return NodeFilter.FILTER_REJECT; if (p.closest(SKIP)) return NodeFilter.FILTER_REJECT; return NodeFilter.FILTER_ACCEPT; } });
+    var list = [], n; while ((n = w.nextNode())) list.push(n);
+    list.forEach(function (x) { var guard = 0; while (x && x.parentNode && guard++ < 4) { if (!iconizeText(x)) break; x = x.parentNode && x.nextSibling && x.nextSibling.nodeType === 3 ? x.nextSibling : null; } });
+  }
+  // Значки «вы здесь» на карточках арок — это тоже обвязка
+  function scanBadge(el) { [].slice.call(el.childNodes).forEach(function (n) { if (n.nodeType === 3 && RE.test(n.nodeValue)) iconizeText(n); }); }
+  // Логотип: флаг-эмодзи → плоский знак
+  function brand() { var m = document.querySelector('.wiki-brand-mark'); if (m && !m.querySelector('.wk-i') && RE.test(m.textContent)) m.innerHTML = svg('skull'); }
+
+  /* ---------- Каюта: заголовок вместо приветствия, отметки глав ---------- */
+  function progress() { try { var p = window.__wikiSpoilerProgressNow ? window.__wikiSpoilerProgressNow() : window.__wikiSpoilerProgress; return { ch: Number(p.chapter) || 0, ep: Number(p.episode) || 0 }; } catch (e) { return { ch: 0, ep: 0 }; } }
+  function cabinTitle() {
+    var b = document.querySelector('.wk-where-hi b'); if (!b) return;
+    var p = progress(); if (!p.ch && !p.ep) return; var want = 'Глава ' + p.ch + ' · серия ' + p.ep;
+    if (/^Привет/.test(b.textContent) || b.getAttribute('data-wk-t') !== want) { b.textContent = want; b.setAttribute('data-wk-t', want); b.classList.add('wk-log'); }
+  }
+  // Любое «Привет, путник!» в обвязке
+  function logChips() { document.querySelectorAll('#wikiStoryHere button').forEach(function (b) { if (/(Гл\.|Сер\.)\s*\d/.test(b.textContent) && !b.classList.contains('wk-log')) b.classList.add('wk-log'); }); }
+  function greet() {
+    document.querySelectorAll('.ios-large, .cabin-hero h2, .cabin-hero h1').forEach(function (el) { if (/^Привет,?\s*путник/i.test(el.textContent.trim())) el.textContent = 'Каюта'; });
+  }
+
+  var pend = 0;
+  function run() {
+    pend = 0;
+    try { brand(); document.querySelectorAll(ROOTS).forEach(scan); document.querySelectorAll('.character-item [class*="here"]').forEach(scanBadge); cabinTitle(); greet(); logChips(); } catch (e) { console.warn('v16', e); }
+  }
+  new MutationObserver(function (ms) {
+    for (var i = 0; i < ms.length; i++) { var t = ms[i].target; if (t && t.closest && t.closest('.wk-ic')) continue; if (!pend) pend = requestAnimationFrame(run); return; }
+  }).observe(document.documentElement, { childList: true, subtree: true });
+  if (!document.querySelector('link[data-wk-mono]')) { var l = document.createElement('link'); l.rel = 'stylesheet'; l.setAttribute('data-wk-mono', '1'); l.href = 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap'; document.head.appendChild(l); }
+  run();
 })();
 
 </script>
