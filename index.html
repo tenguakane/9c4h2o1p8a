@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "03.11.2026 · 86";
+const WIKI_VERSION = "03.11.2026 · 87";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -27514,9 +27514,9 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     return '<ol class="wk-crew-top">' + list.map(function (x, i) {
       var top = x.st.rows.filter(function (r) { return r.c && r.bounty != null && r.inTotal; }).sort(function (p, q) { return q.bounty - p.bounty; }).slice(0, window.innerWidth > 1100 ? 5 : 3);
       var img = x.a.image ? '<img src="' + esc(x.a.image) + '" alt="" loading="lazy" onerror="this.remove()">' : '';
-      var kind = String(x.a.type || '').indexOf('Организации') >= 0 ? '<span class="wk-crew-kind">организация</span>' : '';
+      var kind = '', ttl = String(x.a.type || '').indexOf('Организации') >= 0 ? 'Организация ' + x.a.name : x.a.name;
       return '<li class="wk-crew-top-item"><span class="wk-crew-pos">' + (i + 1) + '</span><span class="wk-crew-flag">' + img + '</span>' +
-        '<span class="wk-crew-main"><a href="#" class="wk-crew-title" data-wk-open="useful" data-wk-id="' + esc(x.a.id) + '">' + esc(x.a.name) + '</a>' + kind +
+        '<span class="wk-crew-main"><a href="#" class="wk-crew-title" data-wk-open="useful" data-wk-id="' + esc(x.a.id) + '">' + esc(ttl) + '</a>' + kind +
         '<span class="wk-crew-bar"><i style="width:' + Math.max(2, Math.round(x.st.total / max * 100)) + '%"></i></span>' +
         '<span class="wk-crew-members">' + top.map(function (r) { return esc(r.c.name) + ' · ' + money(r.bounty); }).join(' &nbsp;·&nbsp; ') + '</span></span>' +
         '<span class="wk-crew-sum"><b>' + money(x.st.total) + ' ฿</b><small>' + x.st.withBounty + ' ' + plural(x.st.withBounty, 'награда', 'награды', 'наград') + '</small></span></li>';
@@ -30040,7 +30040,7 @@ html body .wk-sc :is(.wk-sc-small,.wk-shelf-card) .character-status-badge{white-
 }
 /* На сенсорных экранах кнопка оборота не висит поверх фото: переворот — долгим нажатием, кнопка только у большой карточки */
 @media (hover:none){
-  .catalog-item-shell:not(.wk-hero-card)>:is(.wk-flip-btn,.wk-flip2){display:none!important}
+  .catalog-item-shell>:is(.wk-flip-btn,.wk-flip2){opacity:.92}
   .wk-flipped>:is(.wk-flip-btn,.wk-flip2){display:grid!important;place-items:center;opacity:1}
 }
 </style><style id="wk-qz10">
@@ -32131,6 +32131,136 @@ html body .wk-shelf header h3{font-weight:500!important}
 html body div.article[id$="Article"]>.wk-article-backdrop{display:none!important}
 html body div.article[id$="Article"] [class*="badge"]:not(.character-item *){font-weight:500!important}
 </style>
+
+<style id="wk-v19">@layer wk-redesign{/* v19: топы — крупные фото и копирование картинкой; полировка */
+.wk-top-row{grid-template-columns:34px minmax(0,1fr) auto;padding:6px 8px;gap:10px}
+.wk-top-row+.wk-top-row{margin-top:4px}
+.wk-top-rank{width:32px;height:32px;font-size:14px;border-radius:9px}
+.wk-top-thumb{width:64px;height:64px;border-radius:12px}
+.wk-top-name b{font-size:15.5px}
+.wk-top-name small{font-size:12px}
+.wk-top-options .wk-top-thumb{width:36px;height:36px;border-radius:9px}
+.wk-top-copy{display:inline-flex;align-items:center;gap:6px;margin-left:8px;padding:5px 10px;border-radius:999px;border:1px solid var(--line,rgba(148,163,184,.3));background:transparent;color:var(--text-soft,#c9d3df);font:500 12px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;cursor:pointer;white-space:nowrap}
+.wk-top-copy:hover,.wk-top-copy:focus-visible{border-color:#d8b45a;color:#f4e3b0;outline:none}
+.wk-top-copy[disabled]{opacity:.6;cursor:progress}
+.wk-tops-col h3:not(:has(small)) .wk-top-copy{margin-left:auto}
+.wk-top-toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);z-index:100002;max-width:min(92vw,420px);padding:10px 16px;border-radius:12px;background:#0d1420;border:1px solid rgba(216,180,90,.5);color:#f1ead2;font:500 13px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;box-shadow:0 18px 40px -14px rgba(0,0,0,.85)}
+@media (max-width:560px){.wk-top-thumb{width:56px;height:56px}.wk-top-row{grid-template-columns:30px minmax(0,1fr) auto;gap:8px}.wk-top-copy span{display:none}.wk-top-copy{padding:6px 9px}}
+/* команды в наградах: имена участников темнее */
+.wk-crew-members{color:#7f8b9b!important}
+/* сюжет: плашка с числом арок не залезает на линию прогресса */
+.story-saga-folder:has(>.wk-saga-bar) :is(.card-title,.card-meta-right){position:relative!important;bottom:12px!important}
+.wk-tops-cols{grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr))!important;gap:16px!important}
+.wk-tops-col h3 small{white-space:nowrap}
+}</style>
+<script id="wk-v19-js">
+/* v19: «Топы» — копирование топ-10 картинкой */
+(function () {
+  'use strict';
+  var W = 760, PAD = 32, ROW = 88, PH = 68, SC = 2;
+  function toast(t) { var n = document.createElement('div'); n.className = 'wk-top-toast'; n.setAttribute('role', 'status'); n.textContent = t; document.body.appendChild(n); setTimeout(function () { n.remove(); }, 4200); }
+  function css(v, d) { try { return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || d; } catch (e) { return d; } }
+  function loadImg(src) {
+    return new Promise(function (res) {
+      if (!src) return res(null);
+      var im = new Image(); im.crossOrigin = 'anonymous'; im.decoding = 'async';
+      var done = false, t = setTimeout(function () { if (!done) { done = true; res(null); } }, 7000);
+      im.onload = function () { if (!done) { done = true; clearTimeout(t); res(im); } };
+      im.onerror = function () { if (!done) { done = true; clearTimeout(t); res(null); } };
+      im.src = src;
+    });
+  }
+  function rr(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+  function fit(c, text, max) { text = String(text || ''); if (c.measureText(text).width <= max) return text; while (text.length > 1 && c.measureText(text + '…').width > max) text = text.slice(0, -1); return text + '…'; }
+  function readCol(col) {
+    var who = (col.querySelector('h3') || {}).textContent || '';
+    var h3 = col.querySelector('h3'); var name = h3 && h3.querySelector('i') ? (h3.childNodes[1] ? h3.childNodes[1].textContent : '').trim() : who.trim();
+    if (!name && h3) name = Array.prototype.filter.call(h3.childNodes, function (n) { return n.nodeType === 3; }).map(function (n) { return n.textContent; }).join('').trim();
+    var rows = Array.prototype.map.call(col.querySelectorAll('.wk-top-row'), function (r) {
+      var b = r.querySelector('.wk-top-name b'), s = r.querySelector('.wk-top-name small'), im = r.querySelector('.wk-top-thumb img');
+      var nm = b ? Array.prototype.filter.call(b.childNodes, function (n) { return n.nodeType === 3; }).map(function (n) { return n.textContent; }).join('').trim() : '';
+      var empty = !!r.querySelector('.wk-top-pick.is-empty');
+      return { rank: r.getAttribute('data-rank'), name: nm, sub: s ? s.textContent.trim() : '', img: im ? im.getAttribute('src') : '', pos: im ? (im.style.objectPosition || '50% 30%') : '50% 30%', empty: empty, locked: r.classList.contains('is-locked') };
+    });
+    return { name: name, color: getComputedStyle(col).getPropertyValue('--who').trim() || '#d8b45a', rows: rows };
+  }
+  function drawCover(c, im, x, y, w, h, pos) {
+    var p = String(pos || '50% 30%').split(/\s+/), px = parseFloat(p[0]) / 100, py = parseFloat(p[1] != null ? p[1] : '30') / 100;
+    if (!isFinite(px)) px = .5; if (!isFinite(py)) py = .3;
+    var s = Math.max(w / im.naturalWidth, h / im.naturalHeight), dw = im.naturalWidth * s, dh = im.naturalHeight * s;
+    c.drawImage(im, x - (dw - w) * px, y - (dh - h) * py, dw, dh);
+  }
+  async function render(data, title) {
+    var rows = data.rows, H = PAD + 78 + rows.length * ROW + 52;
+    var cv = document.createElement('canvas'); cv.width = W * SC; cv.height = H * SC; var c = cv.getContext('2d'); c.scale(SC, SC);
+    var imgs = await Promise.all(rows.map(function (r) { return r.empty || r.locked ? null : loadImg(r.img); }));
+    var fail = rows.filter(function (r, i) { return r.img && !r.empty && !r.locked && !imgs[i]; }).length;
+    var FF = 'system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif';
+    var bg = c.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#0f1622'); bg.addColorStop(1, '#070a10');
+    c.fillStyle = bg; c.fillRect(0, 0, W, H);
+    c.fillStyle = data.color; c.fillRect(0, 0, W, 4);
+    // шапка
+    c.beginPath(); c.arc(PAD + 22, PAD + 24, 22, 0, 7); c.fillStyle = data.color; c.fill();
+    c.fillStyle = '#0b1120'; c.font = '800 22px ' + FF; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText((data.name || '?')[0].toUpperCase(), PAD + 22, PAD + 25);
+    c.textAlign = 'left'; c.textBaseline = 'alphabetic'; c.fillStyle = '#f4efe2'; c.font = '600 26px ' + FF; c.fillText(fit(c, title, W - PAD * 2 - 64), PAD + 56, PAD + 22);
+    c.fillStyle = '#8f9bad'; c.font = '500 14px ' + FF; c.fillText('Топ участника: ' + data.name, PAD + 56, PAD + 44);
+    var y = PAD + 78;
+    rows.forEach(function (r, i) {
+      var top = y + i * ROW;
+      rr(c, PAD, top, W - PAD * 2, ROW - 8, 14); c.fillStyle = 'rgba(255,255,255,.04)'; c.fill();
+      var rk = Number(r.rank), mc = rk === 1 ? '#e9b949' : rk === 2 ? '#c9d1dc' : rk === 3 ? '#c9814f' : 'rgba(255,255,255,.08)';
+      rr(c, PAD + 12, top + (ROW - 8) / 2 - 17, 34, 34, 10); c.fillStyle = mc; c.fill();
+      c.fillStyle = rk <= 3 ? '#171007' : '#cfd6e0'; c.font = '800 16px ' + FF; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(String(rk), PAD + 29, top + (ROW - 8) / 2 + 1);
+      var px = PAD + 60, py = top + (ROW - 8 - PH) / 2;
+      c.save(); rr(c, px, py, PH, PH, 12); c.clip();
+      c.fillStyle = r.locked ? '#1b2431' : '#1a2230'; c.fillRect(px, py, PH, PH);
+      if (imgs[i]) drawCover(c, imgs[i], px, py, PH, PH, r.pos);
+      else { c.fillStyle = '#5f6b7d'; c.font = '700 26px ' + FF; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(r.locked ? '?' : (r.empty ? '' : (r.name || '?')[0]), px + PH / 2, py + PH / 2 + 1); }
+      c.restore();
+      c.textAlign = 'left'; c.textBaseline = 'alphabetic';
+      var tx = px + PH + 16, mw = W - PAD - 16 - tx;
+      c.fillStyle = r.empty ? '#5f6b7d' : (r.locked ? '#8f9bad' : '#f4efe2'); c.font = '600 20px ' + FF;
+      c.fillText(fit(c, r.empty ? 'Место свободно' : (r.locked ? 'Пока скрыто' : r.name), mw), tx, top + (ROW - 8) / 2 - (r.sub && !r.empty ? 2 : -7));
+      if (r.sub && !r.empty) { c.fillStyle = '#8f9bad'; c.font = '500 14px ' + FF; c.fillText(fit(c, r.sub, mw), tx, top + (ROW - 8) / 2 + 20); }
+    });
+    c.fillStyle = '#5f6b7d'; c.font = '500 13px ' + FF; c.textAlign = 'left'; c.fillText('One Piece Wiki', PAD, H - 22);
+    c.textAlign = 'right'; c.fillText(new Date().toLocaleDateString('ru-RU'), W - PAD, H - 22);
+    var blob = await new Promise(function (res) { try { cv.toBlob(res, 'image/png'); } catch (e) { res(null); } });
+    return { blob: blob, fail: fail };
+  }
+  function download(blob, name) { var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000); }
+  async function copy(col, btn) {
+    var data = readCol(col);
+    var cat = document.querySelector('[data-top-cat].active'), title = cat ? Array.prototype.filter.call(cat.childNodes, function (n) { return n.nodeType === 3; }).map(function (n) { return n.textContent; }).join('').trim() : 'Топ';
+    var sm = cat && cat.querySelector('small');
+    var top = (sm ? sm.textContent.trim() : ('топ-' + data.rows.length)); top = top.charAt(0).toUpperCase() + top.slice(1);
+    var full = top + ' — ' + title.replace(/^[^\p{L}\p{N}]+/u, '');
+    btn.disabled = true;
+    try {
+      var out = await render(data, full);
+      if (!out.blob) { toast('Не получилось собрать картинку.'); return; }
+      var note = out.fail ? ' У ' + out.fail + ' ' + (out.fail === 1 ? 'фото' : 'фото') + ' сайт-источник не отдаёт картинку — там буква вместо фото.' : '';
+      var ok = false;
+      try { if (navigator.clipboard && window.ClipboardItem) { await navigator.clipboard.write([new ClipboardItem({ 'image/png': out.blob })]); ok = true; } } catch (e) {}
+      if (ok) toast('Картинка скопирована — вставь её в чат.' + note);
+      else { download(out.blob, 'top-' + (data.name || 'wiki') + '.png'); toast('Буфер обмена недоступен — картинка сохранена файлом.' + note); }
+    } catch (e) { console.warn('v19', e); toast('Не получилось собрать картинку.'); }
+    finally { btn.disabled = false; }
+  }
+  var ICON = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"/></svg>';
+  function mount() {
+    document.querySelectorAll('.wk-tops-col').forEach(function (col) {
+      var h = col.querySelector('h3'); if (!h || h.querySelector('.wk-top-copy')) return;
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'wk-top-copy'; b.title = 'Скопировать этот топ-10 картинкой'; b.setAttribute('aria-label', 'Скопировать этот топ картинкой'); b.innerHTML = ICON + '<span>Копировать</span>';
+      b.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); copy(col, b); });
+      h.appendChild(b);
+    });
+  }
+  var pend = 0; new MutationObserver(function () { if (pend) return; pend = requestAnimationFrame(function () { pend = 0; try { mount(); } catch (e) {} }); }).observe(document.body, { childList: true, subtree: true });
+  mount();
+})();
+
+</script>
 
 <style id="wk-v18">@layer wk-redesign{/* v18: витрины — выключатель; горизонтальные карточки по вкладкам */
 html.wk-hz-v body #favoritesList#favoritesList#favoritesList .favorite-category-items{grid-template-columns:repeat(auto-fill,minmax(262px,1fr))!important;gap:12px!important}
