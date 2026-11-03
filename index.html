@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "03.11.2026 · 91";
+const WIKI_VERSION = "03.11.2026 · 92";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -32422,7 +32422,7 @@ html body .story-saga-item.has-story-image .story-card-thumb::after{content:"";p
   }
   function kids(e, reset) {
     var k = e.firstElementChild; if (!k || e.children.length !== 1 || !/title-text|name/.test(k.className || '')) return;
-    ['font-size', 'line-height', 'max-height'].forEach(function (p) { if (reset) k.style.removeProperty(p); else k.style.setProperty(p, p === 'max-height' ? 'none' : 'inherit', 'important'); });
+    ['font-size', 'line-height'].forEach(function (p) { if (reset) k.style.removeProperty(p); else k.style.setProperty(p, 'inherit', 'important'); });
   }
   var rng = document.createRange();
   function lines(el, cs) {
@@ -32435,7 +32435,9 @@ html body .story-saga-item.has-story-image .story-card-thumb::after{content:"";p
     });
     var inner = el.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0);
     var wide = cs.hyphens !== 'auto' && inner > 0 && longestWord(el, cs) > inner + 0.5;
-    return { n: tops.length, wide: wide };
+    var clip = el.scrollHeight > el.clientHeight + 1;
+    var k = el.firstElementChild; if (!clip && k && el.children.length === 1) clip = k.scrollHeight > k.clientHeight + 1;
+    return { n: tops.length, wide: wide || clip };
   }
   function pass() {
     timer = 0; if (busy) return; busy = true;
@@ -32458,7 +32460,7 @@ html body .story-saga-item.has-story-image .story-card-thumb::after{content:"";p
       for (var it = 0; it < MAXIT && todo.length; it++) {
         todo.forEach(function (i) {
           cur[i] = Math.max(MIN, cur[i] * STEP);
-          var e = all[i]; e.style.setProperty('font-size', cur[i].toFixed(2) + 'px', 'important'); e.style.setProperty('line-height', '1.15', 'important'); e.style.setProperty('max-height', 'none', 'important'); e.style.setProperty('-webkit-line-clamp', '2', 'important'); kids(e, false);
+          var e = all[i]; e.style.setProperty('font-size', cur[i].toFixed(2) + 'px', 'important'); e.style.setProperty('line-height', '1.15', 'important'); e.style.setProperty('-webkit-line-clamp', '2', 'important'); kids(e, false);
         });
         todo = todo.filter(function (i) { if (cur[i] <= MIN) return false; var l = lines(all[i], getComputedStyle(all[i])); return l.n > 2 || l.wide; });
       }
