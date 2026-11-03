@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "03.11.2026 · 84";
+const WIKI_VERSION = "03.11.2026 · 85";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -10732,6 +10732,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
                     frameWidth=196;frameHeight=window.matchMedia('(max-width:620px)').matches?187:(window.matchMedia('(max-width:380px)').matches?168:214);
                 }
                 if(cropConfig.type==='character'&&rect&&rect.width>=1&&rect.height>=1){frameWidth=Math.round(rect.width*100)/100;frameHeight=Math.round(rect.height*100)/100;}
+                {const hzK = { character: 'c', story: 's', fruit: 'f', useful: 'u' }[cropConfig.type]; if (hzK && document.documentElement.classList.contains('wk-hz-' + hzK)) { const wmax = Math.max(frameWidth, frameHeight); frameWidth = wmax; frameHeight = Math.round(wmax * 3 / 4); }}
                 {/* Компактный редактор показывает превью уменьшенным, но с теми же пропорциями, что у настоящей карточки, — кадр совпадает. */const k=Math.min(1,150/frameWidth);cropPreview.style.setProperty('width',Math.round(frameWidth*k)+'px','important');cropPreview.style.setProperty('height',Math.round(frameHeight*k)+'px','important');cropPreview.style.maxWidth='100%';cropPreview.style.marginInline='auto';cropPreview.style.setProperty('--wk-crop-k',String(k));}
                 if(cropPreviewImage){
                     cropPreviewImage.style.setProperty('object-fit','cover','important');
@@ -32177,6 +32178,7 @@ html.wk-hz-u body #wkShowcase_useful .wk-shelf-row{grid-auto-columns:224px!impor
 .wk-lk-stage[data-scoff="1"] .wk-lk.is-hero figcaption::after,.wk-lk-stage[data-scoff="1"] .wk-lk.is-shelf figcaption::after{content:"витрины скрыты в настройках";display:block;font-size:10.5px;color:#94a3b8}
 html.wk-hz-r body #rewardsSection#rewardsSection#rewardsSection #rewardsList#rewardsList#rewardsList .reward-grid-image-wrap{flex:0 0 38%!important;width:38%!important;height:100%!important;max-height:none!important;aspect-ratio:auto!important}
 html.wk-hz-r body #rewardsSection#rewardsSection#rewardsSection #rewardsList#rewardsList#rewardsList .reward-grid-content{flex:1 1 0!important;min-width:0!important;justify-content:flex-end}
+
 </style>
 <script id="wk-v18-js">
 /* v18: редактор учитывает настройки витрин и горизонтальных карточек */
