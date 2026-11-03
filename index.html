@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "02.11.2026 · 82";
+const WIKI_VERSION = "03.11.2026 · 84";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -22851,13 +22851,18 @@ html.wk-tilt-off.wk-gyro-on:not(.wk-cardfx-off) .character-item:not(.story-saga-
 (function () {
   'use strict';
   var root = document.documentElement;
-  var K = { text: 'onePieceWikiTextAnimV1', card: 'onePieceWikiCardAnimV1', tilt: 'onePieceWikiTiltV1' };
+  var K = { text: 'onePieceWikiTextAnimV1', card: 'onePieceWikiCardAnimV1', tilt: 'onePieceWikiTiltV1', sc: 'onePieceWikiShowcaseV1', scv: 'onePieceWikiHorizV1_' };
+  var SCV = [['c', 'Персонажи'], ['s', 'Сюжет'], ['r', 'Награды'], ['f', 'Плоды'], ['u', 'Полезное']];
+  function vget(k) { try { return localStorage.getItem(K.scv + k) === 'on'; } catch (e) { return false; } }
   function get(k) { try { return localStorage.getItem(k) !== 'off'; } catch (e) { return true; } }
   function put(k, on) { try { localStorage.setItem(k, on ? 'on' : 'off'); } catch (e) {} }
   function applyAll() {
     root.classList.toggle('wk-tfx-still', !get(K.text));
     root.classList.toggle('wk-cardfx-off', !get(K.card));
     root.classList.toggle('wk-tilt-off', !get(K.tilt));
+    root.classList.toggle('wk-sc-off', !get(K.sc));
+    SCV.forEach(function (t) { root.classList.toggle('wk-hz-' + t[0], vget(t[0])); });
+    try { window.dispatchEvent(new Event('wk-settings')); } catch (e) {}
   }
   applyAll();
   var THEMES = [['default', '🌑', 'Аметист'], ['ocean', '🌊', 'Океан'], ['light', '📜', 'Светлая'], ['mugiwara', '🏴‍☠️', 'Мугивара'], ['paper', '🗺️', 'Пергамент']];
@@ -22871,6 +22876,10 @@ html.wk-tilt-off.wk-gyro-on:not(.wk-cardfx-off) .character-item:not(.story-saga-
       row('tilt', '🧊', '3D-наклон', 'Карточки и фото наклоняются за курсором, пальцем или телефоном. Выключено — эффекты остаются, но карточка стоит ровно.') +
       row('gyro', '📱', 'Гироскоп на телефоне', '') +
       row('text', '✨', 'Анимации текста', 'Перелив, мерцание и блики в заголовках. Выключено — цвет остаётся, но не двигается.') +
+      '<h3>Витрины</h3>' +
+      row('sc', '🖼', 'Витрины', 'Большая карточка и полки над списком на вкладках Персонажи, Плоды и Полезное. Выключено — сразу все статьи.') +
+      '<h3>Форма карточек</h3>' +
+      SCV.map(function (t) { return row('scv-' + t[0], '▭', 'Горизонтальные карточки: ' + t[1], 'Вместо вертикальных — горизонтальные: ширина и высота меняются местами. Превью в редакторе покажет так же.'); }).join('') +
       '<h3>Внешний вид</h3>' +
       row('tfx', '🔤', 'Эффекты шрифта', 'Золотые, неоновые и другие заголовки. Выключено — обычный шрифт.') +
       '<h3>Тема</h3><div class="wk-set-themes" role="group" aria-label="Тема оформления">' + THEMES.map(function (t) { return '<button type="button" data-set-theme="' + t[0] + '"><span aria-hidden="true">' + t[1] + '</span>' + t[2] + '</button>'; }).join('') + '</div>' +
@@ -22884,6 +22893,8 @@ html.wk-tilt-off.wk-gyro-on:not(.wk-cardfx-off) .character-item:not(.story-saga-
       if (id === 'card') { put(K.card, on); applyAll(); }
       else if (id === 'text') { put(K.text, on); applyAll(); }
       else if (id === 'tilt') { put(K.tilt, on); applyAll(); }
+      else if (id === 'sc') { put(K.sc, on); applyAll(); }
+      else if (id.indexOf('scv-') === 0) { put(K.scv + id.slice(4), on); applyAll(); }
       else if (id === 'tfx') { if (window.__wikiTextFxSet) window.__wikiTextFxSet(on); }
       else if (id === 'gyro' && window.__wikiGyro) { window.__wikiGyro.set(on).then(sync, sync); setTimeout(sync, 1500); }
       sync();
@@ -22899,6 +22910,9 @@ html.wk-tilt-off.wk-gyro-on:not(.wk-cardfx-off) .character-item:not(.story-saga-
     if (!ov) return;
     var cardOn = get(K.card), tfxOn = window.__wikiTextFxOn ? window.__wikiTextFxOn() : true;
     setSw('card', cardOn);
+    var scOn = get(K.sc); setSw('sc', scOn);
+    SCV.forEach(function (t) { setSw('scv-' + t[0], vget(t[0])); });
+
     setSw('tilt', get(K.tilt) && cardOn, !cardOn, !cardOn ? 'Недоступно, пока выключены анимации карточек.' : null);
     if (cardOn) ov.querySelector('[data-set="tilt"] small').textContent = 'Карточки и фото наклоняются за курсором, пальцем или телефоном. Выключено — эффекты остаются, но карточка стоит ровно.';
     var g = window.__wikiGyro, gAvail = g && g.available();
@@ -32116,4 +32130,79 @@ html body .wk-shelf header h3{font-weight:500!important}
 html body div.article[id$="Article"]>.wk-article-backdrop{display:none!important}
 html body div.article[id$="Article"] [class*="badge"]:not(.character-item *){font-weight:500!important}
 </style>
+
+<style id="wk-v18">/* v18: витрины — выключатель; горизонтальные карточки по вкладкам */
+html.wk-sc-off body .wk-showcase{display:none!important}
+html.wk-hz-c body #charactersSection#charactersSection#charactersSection #characterList#characterList#characterList[data-wk-size="s"]{grid-template-columns:repeat(auto-fill,minmax(192px,1fr))!important;gap:12px!important}
+html.wk-hz-c body #charactersSection#charactersSection#charactersSection #characterList#characterList#characterList[data-wk-size="m"]{grid-template-columns:repeat(auto-fill,minmax(262px,1fr))!important;gap:12px!important}
+html.wk-hz-c body #charactersSection#charactersSection#charactersSection #characterList#characterList#characterList[data-wk-size="l"]{grid-template-columns:repeat(auto-fill,minmax(402px,1fr))!important;gap:12px!important}
+html.wk-hz-c body #charactersSection#charactersSection#charactersSection #characterList#characterList#characterList :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.character-item,html.wk-hz-c body #charactersSection#charactersSection#charactersSection #characterList#characterList#characterList :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.story-saga-folder{aspect-ratio:4/3!important;height:auto!important;min-height:0!important;width:100%!important}
+html.wk-hz-c body #charactersSection#charactersSection#charactersSection #characterList#characterList#characterList .catalog-item-shell{height:auto!important;min-height:0!important}
+@media (max-width:760px){html.wk-hz-c body #charactersSection#charactersSection#charactersSection #characterList#characterList#characterList[data-wk-size]{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}}
+html.wk-hz-s body #storySection#storySection#storySection #storyList#storyList#storyList[data-wk-size="s"]{grid-template-columns:repeat(auto-fill,minmax(192px,1fr))!important;gap:12px!important}
+html.wk-hz-s body #storySection#storySection#storySection #storyList#storyList#storyList[data-wk-size="m"]{grid-template-columns:repeat(auto-fill,minmax(262px,1fr))!important;gap:12px!important}
+html.wk-hz-s body #storySection#storySection#storySection #storyList#storyList#storyList[data-wk-size="l"]{grid-template-columns:repeat(auto-fill,minmax(402px,1fr))!important;gap:12px!important}
+html.wk-hz-s body #storySection#storySection#storySection #storyList#storyList#storyList :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.character-item,html.wk-hz-s body #storySection#storySection#storySection #storyList#storyList#storyList :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.story-saga-folder{aspect-ratio:4/3!important;height:auto!important;min-height:0!important;width:100%!important}
+html.wk-hz-s body #storySection#storySection#storySection #storyList#storyList#storyList .catalog-item-shell{height:auto!important;min-height:0!important}
+@media (max-width:760px){html.wk-hz-s body #storySection#storySection#storySection #storyList#storyList#storyList[data-wk-size]{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}}
+html.wk-hz-r body #rewardsSection#rewardsSection#rewardsSection #rewardsList#rewardsList#rewardsList.reward-display-grid{grid-template-columns:repeat(auto-fill,minmax(340px,1fr))!important;gap:12px!important}
+html.wk-hz-r body #rewardsSection#rewardsSection#rewardsSection #rewardsList#rewardsList#rewardsList .character-item{height:auto!important;min-height:0!important;aspect-ratio:2/1!important;width:100%!important;flex-direction:row!important}
+@media (max-width:760px){html.wk-hz-r body #rewardsSection#rewardsSection#rewardsSection #rewardsList#rewardsList#rewardsList.reward-display-grid{grid-template-columns:minmax(0,1fr)!important;gap:8px!important}}
+html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList[data-wk-size="s"]{grid-template-columns:repeat(auto-fill,minmax(192px,1fr))!important;gap:12px!important}
+html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList[data-wk-size="m"]{grid-template-columns:repeat(auto-fill,minmax(262px,1fr))!important;gap:12px!important}
+html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList[data-wk-size="l"]{grid-template-columns:repeat(auto-fill,minmax(402px,1fr))!important;gap:12px!important}
+html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.character-item,html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.story-saga-folder{aspect-ratio:4/3!important;height:auto!important;min-height:0!important;width:100%!important}
+html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList .catalog-item-shell{height:auto!important;min-height:0!important}
+@media (max-width:760px){html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList[data-wk-size]{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}}
+html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList[data-wk-size="s"]{grid-template-columns:repeat(auto-fill,minmax(192px,1fr))!important;gap:12px!important}
+html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList[data-wk-size="m"]{grid-template-columns:repeat(auto-fill,minmax(262px,1fr))!important;gap:12px!important}
+html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList[data-wk-size="l"]{grid-template-columns:repeat(auto-fill,minmax(402px,1fr))!important;gap:12px!important}
+html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.character-item,html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.story-saga-folder{aspect-ratio:4/3!important;height:auto!important;min-height:0!important;width:100%!important}
+html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList .catalog-item-shell{height:auto!important;min-height:0!important}
+@media (max-width:760px){html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList[data-wk-size]{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}}
+html.wk-hz-c body #wkShowcase .wk-shelf-row{grid-auto-columns:224px!important;grid-template-rows:168px!important}
+@media (max-width:760px){html.wk-hz-c body #wkShowcase .wk-shelf-row{grid-auto-columns:190px!important;grid-template-rows:142px!important}}
+html.wk-hz-f body #wkShowcase_fruit .wk-shelf-row{grid-auto-columns:224px!important;grid-template-rows:168px!important}
+@media (max-width:760px){html.wk-hz-f body #wkShowcase_fruit .wk-shelf-row{grid-auto-columns:190px!important;grid-template-rows:142px!important}}
+html.wk-hz-u body #wkShowcase_useful .wk-shelf-row{grid-auto-columns:224px!important;grid-template-rows:168px!important}
+@media (max-width:760px){html.wk-hz-u body #wkShowcase_useful .wk-shelf-row{grid-auto-columns:190px!important;grid-template-rows:142px!important}}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-crop-sizes.wk-hz .is-l .wk-csz-frame{width:166px;height:125px}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-crop-sizes.wk-hz .is-m .wk-csz-frame{width:124px;height:93px}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-crop-sizes.wk-hz .is-s .wk-csz-frame{width:90px;height:68px}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-crop-sizes.wk-hz .is-shelf .wk-csz-frame{width:112px;height:84px}
+.wk-lk-stage[data-hz="1"] .wk-lk.is-cat .wk-lk-card{width:208px;height:156px}
+.wk-lk-stage[data-hz="1"] .wk-lk.is-shelf .wk-lk-card{width:144px;height:108px}
+.wk-lk-stage[data-hz="1"] .wk-lk.is-cat .wk-lk-title{font-size:16px}
+.wk-lk-stage[data-scoff="1"] .wk-lk.is-hero,.wk-lk-stage[data-scoff="1"] .wk-lk.is-shelf{opacity:.4}
+.wk-lk-stage[data-scoff="1"] .wk-lk.is-hero figcaption::after,.wk-lk-stage[data-scoff="1"] .wk-lk.is-shelf figcaption::after{content:"витрины скрыты в настройках";display:block;font-size:10.5px;color:#94a3b8}
+html.wk-hz-r body #rewardsSection#rewardsSection#rewardsSection #rewardsList#rewardsList#rewardsList .reward-grid-image-wrap{flex:0 0 38%!important;width:38%!important;height:100%!important;max-height:none!important;aspect-ratio:auto!important}
+html.wk-hz-r body #rewardsSection#rewardsSection#rewardsSection #rewardsList#rewardsList#rewardsList .reward-grid-content{flex:1 1 0!important;min-width:0!important;justify-content:flex-end}
+</style>
+<script id="wk-v18-js">
+/* v18: редактор учитывает настройки витрин и горизонтальных карточек */
+(function () {
+  'use strict';
+  var root = document.documentElement, MAP = { character: 'c', story: 's', reward: 'r', fruit: 'f', useful: 'u' };
+  function raw(t, id) { try { return window.__wikiRawRecord ? window.__wikiRawRecord(t, id) : null; } catch (e) { return null; } }
+  function typeOf(f) {
+    var idEl = f.querySelector('[data-field="id"]'), id = idEl ? String(idEl.value || '').trim() : '';
+    if (f.querySelector('[data-field="person_link"]')) return 'character';
+    if (!id) return '';
+    var t = ''; ['fruit', 'useful', 'story', 'reward'].some(function (x) { if (raw(x, id)) { t = x; return true; } return false; });
+    return t;
+  }
+  function sync() {
+    var f = document.getElementById('wikiEditorForm'); if (!f) return;
+    var k = MAP[typeOf(f)] || '';
+    var hz = !!k && root.classList.contains('wk-hz-' + k), off = !!k && root.classList.contains('wk-sc-off');
+    var st = f.querySelector('.wk-lk-stage'); if (st) { st.setAttribute('data-hz', hz ? '1' : ''); st.setAttribute('data-scoff', off ? '1' : ''); }
+    var box = f.querySelector('.wk-crop-sizes'); if (box) box.classList.toggle('wk-hz', hz);
+  }
+  var pend = 0; function schedule() { if (pend) return; pend = requestAnimationFrame(function () { pend = 0; try { sync(); } catch (e) { console.warn('v18', e); } }); }
+  new MutationObserver(function (ms) { for (var i = 0; i < ms.length; i++) { var t = ms[i].target; if (t && t.closest && t.closest('#wikiEditorOverlay')) { schedule(); break; } } }).observe(document.body, { childList: true, subtree: true });
+  window.addEventListener('wk-settings', function () { schedule(); try { if (window.__wkLookUpdate) window.__wkLookUpdate(); } catch (e) {} });
+  schedule();
+})();
+
+</script>
 </body></html>
