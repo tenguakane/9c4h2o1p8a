@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "03.11.2026 · 87";
+const WIKI_VERSION = "03.11.2026 · 88";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -32160,15 +32160,25 @@ html body div.article[id$="Article"] [class*="badge"]:not(.character-item *){fon
   var W = 760, PAD = 32, ROW = 88, PH = 68, SC = 2;
   function toast(t) { var n = document.createElement('div'); n.className = 'wk-top-toast'; n.setAttribute('role', 'status'); n.textContent = t; document.body.appendChild(n); setTimeout(function () { n.remove(); }, 4200); }
   function css(v, d) { try { return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || d; } catch (e) { return d; } }
-  function loadImg(src) {
+  // Сначала прямая загрузка; если сайт-источник не отдаёт картинку чужим страницам — через публичный прокси wsrv.nl (он добавляет CORS).
+  function tryLoad(url) {
     return new Promise(function (res) {
-      if (!src) return res(null);
       var im = new Image(); im.crossOrigin = 'anonymous'; im.decoding = 'async';
-      var done = false, t = setTimeout(function () { if (!done) { done = true; res(null); } }, 7000);
+      var done = false, t = setTimeout(function () { if (!done) { done = true; res(null); } }, 9000);
       im.onload = function () { if (!done) { done = true; clearTimeout(t); res(im); } };
       im.onerror = function () { if (!done) { done = true; clearTimeout(t); res(null); } };
-      im.src = src;
+      im.src = url;
     });
+  }
+  function proxied(src, pos) { var p = String(pos || '50% 30%').split(/\s+/), fx = Math.min(1, Math.max(0, parseFloat(p[0]) / 100)), fy = Math.min(1, Math.max(0, parseFloat(p[1]) / 100)); if (!isFinite(fx)) fx = .5; if (!isFinite(fy)) fy = .3; return 'https://wsrv.nl/?url=' + encodeURIComponent(src) + '&w=256&h=256&fit=cover&a=focal&fpx=' + fx.toFixed(2) + '&fpy=' + fy.toFixed(2) + '&output=jpg&q=88'; }
+  async function loadImg(src, pos) {
+    if (!src) return null;
+    if (/^data:/i.test(src)) return tryLoad(src);
+    var im = await tryLoad(src);
+    if (im) return im;
+    // у прокси фото уже обрезано под квадрат: помечаем, чтобы не кадрировать повторно
+    im = await tryLoad(proxied(src, pos)); if (im) im.__wkProxy = true;
+    return im;
   }
   function rr(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
   function fit(c, text, max) { text = String(text || ''); if (c.measureText(text).width <= max) return text; while (text.length > 1 && c.measureText(text + '…').width > max) text = text.slice(0, -1); return text + '…'; }
@@ -32187,13 +32197,14 @@ html body div.article[id$="Article"] [class*="badge"]:not(.character-item *){fon
   function drawCover(c, im, x, y, w, h, pos) {
     var p = String(pos || '50% 30%').split(/\s+/), px = parseFloat(p[0]) / 100, py = parseFloat(p[1] != null ? p[1] : '30') / 100;
     if (!isFinite(px)) px = .5; if (!isFinite(py)) py = .3;
+    if (im.__wkProxy) { c.drawImage(im, x, y, w, h); return; }
     var s = Math.max(w / im.naturalWidth, h / im.naturalHeight), dw = im.naturalWidth * s, dh = im.naturalHeight * s;
     c.drawImage(im, x - (dw - w) * px, y - (dh - h) * py, dw, dh);
   }
   async function render(data, title) {
     var rows = data.rows, H = PAD + 78 + rows.length * ROW + 52;
     var cv = document.createElement('canvas'); cv.width = W * SC; cv.height = H * SC; var c = cv.getContext('2d'); c.scale(SC, SC);
-    var imgs = await Promise.all(rows.map(function (r) { return r.empty || r.locked ? null : loadImg(r.img); }));
+    var imgs = await Promise.all(rows.map(function (r) { return r.empty || r.locked ? null : loadImg(r.img, r.pos); }));
     var fail = rows.filter(function (r, i) { return r.img && !r.empty && !r.locked && !imgs[i]; }).length;
     var FF = 'system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif';
     var bg = c.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#0f1622'); bg.addColorStop(1, '#070a10');
@@ -32239,7 +32250,7 @@ html body div.article[id$="Article"] [class*="badge"]:not(.character-item *){fon
     try {
       var out = await render(data, full);
       if (!out.blob) { toast('Не получилось собрать картинку.'); return; }
-      var note = out.fail ? ' У ' + out.fail + ' ' + (out.fail === 1 ? 'фото' : 'фото') + ' сайт-источник не отдаёт картинку — там буква вместо фото.' : '';
+      var note = out.fail ? ' ' + out.fail + ' ' + (out.fail === 1 ? 'фото не загрузилось' : 'фото не загрузились') + ' даже через прокси — там буква вместо фото.' : '';
       var ok = false;
       try { if (navigator.clipboard && window.ClipboardItem) { await navigator.clipboard.write([new ClipboardItem({ 'image/png': out.blob })]); ok = true; } } catch (e) {}
       if (ok) toast('Картинка скопирована — вставь её в чат.' + note);
