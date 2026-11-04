@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "03.11.2026 · 92";
+const WIKI_VERSION = "04.11.2026 · 93";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -8291,10 +8291,10 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     };
     const schemas = {
         character: {id:'char_new',name:'',nickname:'',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',person_link:'',person_image_position:50,person_image_position_x:50,person_image_zoom:100,person2_link:'',person2_from_chapter:'',person2_from_episode:'',person2_image_position:50,person2_image_position_x:50,person2_image_zoom:100,timeskip_description:'',nickname2:'',status2:'',future_status:'',gallery:'',ts_fruit_article_id:'',ts_ship:'',ts_ship_link:'',ts_ship_description:'',ts_flag:'',ts_flag_link:'',ts_flag_description:'',chapter:'',episode:'',description:'',filler:false,fruit_article_id:'',fruit2_article_id:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],map_hide:[],ship:'',ship_link:'',ship_description:'',ship2:'',ship2_link:'',ship2_description:'',flag:'',flag_link:'',flag_description:'',ship_article_id:'',ship2_article_id:'',team_article_id:'',status:''},
-        story: {id:'arc_new',name:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',image:'',image_position:50,image_position_x:50,image_zoom:100,chapters:'',episodes:'',ongoing:false,filler:false,movie:false,saga:'',description:'',key:'',characters:[],connect:[],map_hide:[]},
-        reward: {id:'reward_new',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',character_id:'',reward:0,ka:0,rank:'',rank_total:'',reward_image:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',appearance_chapter:'',appearance_episode:'',connect:[]},
-        fruit: {id:'fruit_new',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',name:'',appearance:'',episode:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,owner:'',type:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],map_hide:[]},
-        useful: {crew:'',team:'',gallery:'',id:'article_new',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',name:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,type:'',appearance_chapter:'',appearance_episode:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],map_hide:[]}
+        story: {id:'arc_new',movie_id:'',name:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',image:'',image_position:50,image_position_x:50,image_zoom:100,chapters:'',episodes:'',ongoing:false,filler:false,movie:false,saga:'',description:'',key:'',characters:[],connect:[],map_hide:[]},
+        reward: {id:'reward_new',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',character_id:'',reward:0,ka:0,rank:'',rank_total:'',reward_image:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',appearance_chapter:'',appearance_episode:'',connect:[]},
+        fruit: {id:'fruit_new',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',name:'',appearance:'',episode:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,owner:'',type:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],map_hide:[]},
+        useful: {crew:'',team:'',gallery:'',id:'article_new',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',name:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,type:'',appearance_chapter:'',appearance_episode:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],map_hide:[]}
     };
     const fieldLabels = {
         ship_article_id:'Корабль',ship2_article_id:'Второй корабль',team_article_id:'Команда или организация',crew:'Экипаж и должности',team:'Команда корабля',
@@ -8381,9 +8381,19 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         char_mushuru:'film_chopper_plus_2008'
     });
     function characterMovieId(record,type){
-        if((type||record?.__wikiType)!=='character')return '';
+        const t0=type||record?.__wikiType;
         const recordId=String(rawValue(record,'id')||'').trim();
-        return String(rawValue(record,'movie_id')||FILM_ID_BY_CHARACTER_ID[recordId]||'').trim();
+        if(t0==='character')return String(rawValue(record,'movie_id')||FILM_ID_BY_CHARACTER_ID[recordId]||'').trim();
+        const own=String(rawValue(record,'movie_id')||'').trim();
+        if(own)return own;
+        // награда и плод наследуют фильм своего персонажа/владельца
+        try{
+            let cid='';
+            if(t0==='reward')cid=String(rawValue(record,'character_id')||'').trim();
+            else if(t0==='fruit')cid=String(rawValue(record,'owner')||'').split(/[,;]/)[0].trim();
+            if(cid&&typeof allRecords==='function'){const ch=allRecords('character').find(c=>String(rawValue(c,'id'))===cid);if(ch)return String(rawValue(ch,'movie_id')||FILM_ID_BY_CHARACTER_ID[cid]||'').trim();}
+        }catch(e){}
+        return '';
     }
     function isFilmWatchedForSpoilers(movieId){
         const id=String(movieId||'').trim();
@@ -8705,7 +8715,9 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     window.__wikiFilmOf=function(type,rec){
         if(!rec)return null;const isFilmArc=a=>{const m=rawValue(a,'movie');return m===true||m==='true'||String(rawValue(a,'saga')||'').trim()==='Полнометражные фильмы';};
         const arcById=id=>allRecords('story').find(a=>String(rawValue(a,'id'))===String(id));
-        if(type==='story')return isFilmArc(rec)?{id:String(rawValue(rec,'id')),name:String(rawValue(rec,'name'))}:null;
+        if(type==='story'&&isFilmArc(rec))return {id:String(rawValue(rec,'id')),name:String(rawValue(rec,'name'))};
+        if(type!=='character'){const own=String(rawValue(rec,'movie_id')||'').trim();if(own){const a=arcById(own);return {id:own,name:a?String(rawValue(a,'name')):own};}}
+        if(type==='story')return null;
         let charId='';
         if(type==='character')charId=String(rawValue(rec,'id'));
         else if(type==='reward')charId=String(rawValue(rec,'character_id')||'');
@@ -10413,11 +10425,11 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
                 control=selectHTML(k,(moved.some(f=>f.v===String(val||''))&&!list.some(f=>f.v===String(val||'')))?'none':val,list.map(f=>({value:f.v,label:f.n})),'Авто'+(def?' — '+nameOf(def)+(window.__wikiCardFxDefaultWhy?' ('+window.__wikiCardFxDefaultWhy(activeType,obj)+')':''):' — без эффекта'));
                 control+=`<input type="hidden" data-field="card_style" value="${escapeHTMLLocal(fieldText(rawValue(obj,'card_style')))}">`;
                 hint='Проявляется при наведении мышью или наклоне пальцем. Работает в каталоге, в Каюте и на главном фото статьи. «Авто»: Мугивары — голограмма, награды — золотая фольга.';
-            } else if(k==='movie_id' && activeType==='character'){
+            } else if(k==='movie_id'){
                 const films=allRecords('story').filter(a=>{const m=rawValue(a,'movie');return m===true||m==='true'||String(rawValue(a,'saga')||'').trim()==='Полнометражные фильмы';});
-                const current=String(val||FILM_ID_BY_CHARACTER_ID[String(rawValue(obj,'id')||'')]||'');
-                control=selectHTML(k,current,films.map(f=>({value:String(rawValue(f,'id')),label:String(rawValue(f,'name')||rawValue(f,'id'))})),'— нет, персонаж из сериала —');
-                hint='Выбери фильм, если персонаж есть только в нём. Тогда глава, эпизод, связи и арки не нужны: статья откроется, когда человек отметит фильм просмотренным.';
+                const current=String(val||(activeType==='character'?FILM_ID_BY_CHARACTER_ID[String(rawValue(obj,'id')||'')]:'')||'');
+                control=selectHTML(k,current,films.filter(f=>!(activeType==='story'&&String(rawValue(f,'id'))===String(rawValue(obj,'id')||''))).map(f=>({value:String(rawValue(f,'id')),label:String(rawValue(f,'name')||rawValue(f,'id'))})),activeType==='character'?'— нет, персонаж из сериала —':'— нет, из основного сюжета —');
+                hint=activeType==='character'?'Выбери фильм, если персонаж есть только в нём. Тогда глава, эпизод, связи и арки не нужны: статья откроется, когда человек отметит фильм просмотренным.':'Выбери фильм, если эта статья относится только к нему. Пока фильм не отмечен просмотренным, статья скрыта.';
             } else if(k==='character_id' && activeType==='reward'){
                 control=searchableSelectHTML(k,val,linkedOptions('character'),'Поиск персонажа по имени или ID…'); hint='Начни вводить имя или ID. В данных сохраняется ID персонажа.';
             } else if(['ship_article_id','ship2_article_id','team_article_id'].includes(k) && activeType==='character' || (k==='team' && activeType==='useful')){
@@ -10470,27 +10482,27 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
                 {title:'Связанные статьи',icon:'🔗',desc:'Отметь материалы, которые должны быть связаны с этой статьёй.',keys:['connect','map_hide']}
             ],
             story: [
-                {title:'Основная информация',icon:'🧭',desc:'Название арки, изображение карточки с настройкой кадрирования, сага и диапазоны глав/эпизодов.',keys:['id','name','image','image_position','saga','chapters','episodes','ongoing','filler','movie']},
+                {title:'Основная информация',icon:'🧭',desc:'Название арки, изображение карточки с настройкой кадрирования, сага и диапазоны глав/эпизодов.',keys:['id','name','movie_id','image','image_position','saga','chapters','episodes','ongoing','filler','movie']},
                 {title:'Содержание арки',icon:'📖',desc:'Описание и ключевые события.',keys:['description','key']},
                 {title:'Эффекты карточки и заголовка',icon:'✨',desc:'Эффекты при наклоне и постоянные, конструктор слоёв и частиц, шрифт и эффект заголовка. Раздел можно свернуть.',fx:true,keys:['card_fx','card_shine','title_fx']},
                 {title:'Связанные статьи',icon:'🔗',desc:'Выбери персонажей и другие материалы для связи с аркой.',keys:['characters','connect','map_hide']}
             ],
             reward: [
-                {title:'Награда',icon:'💰',desc:'Укажи размер награды. Место в общем рейтинге и количество позиций рассчитываются автоматически по всем видимым наградам. КА рассчитывается автоматически.',keys:['id','character_id','reward','ka']},
+                {title:'Награда',icon:'💰',desc:'Укажи размер награды. Место в общем рейтинге и количество позиций рассчитываются автоматически по всем видимым наградам. КА рассчитывается автоматически.',keys:['id','character_id','movie_id','reward','ka']},
                 {title:'Изображение карточки',icon:'🖼️',desc:'Укажи отдельную картинку для карточки этой награды. Она не зависит от главного изображения персонажа. Вставь прямую ссылку на изображение.',keys:['reward_image']},
                 {title:'Эффекты карточки и заголовка',icon:'✨',desc:'Эффекты при наклоне и постоянные, конструктор слоёв и частиц, шрифт и эффект заголовка. Раздел можно свернуть.',fx:true,keys:['card_fx','card_shine','title_fx']},
                 {title:'Сюжетная принадлежность и появление',icon:'🗺️',desc:'Арка и сага вычисляются автоматически по главе манги и эпизоду аниме.',keys:['saga','arc','saga_anime','arc_anime','appearance_chapter','appearance_episode']},
                 {title:'Связанные статьи',icon:'🔗',desc:'Дополнительные связи с другими материалами вики.',keys:['connect']}
             ],
             fruit: [
-                {title:'Основная информация',icon:'🍎',desc:'Главные поля статьи: ID, название, фотография с настройкой кадрирования и описание.',keys:['id','name','image','image_position','description']},
+                {title:'Основная информация',icon:'🍎',desc:'Главные поля статьи: ID, название, фотография с настройкой кадрирования и описание.',keys:['id','name','movie_id','image','image_position','description']},
                 {title:'Эффекты карточки и заголовка',icon:'✨',desc:'Эффекты при наклоне и постоянные, конструктор слоёв и частиц, шрифт и эффект заголовка. Раздел можно свернуть.',fx:true,keys:['card_fx','card_shine','title_fx']},
                 {title:'Тип и владелец',icon:'👤',desc:'Выбери тип плода и владельца. Владельца можно найти по имени или ID.',keys:['type','owner']},
                 {title:'Появление и сюжетная принадлежность',icon:'🗺️',desc:'Глава и эпизод появления; арки и саги манги и аниме вычисляются автоматически.',keys:['appearance','episode','saga','arc','saga_anime','arc_anime']},
                 {title:'Связанные статьи',icon:'🔗',desc:'Персонажи, арки и другие материалы, связанные с плодом.',keys:['connect','map_hide']}
             ],
             useful: [
-                {title:'Основная информация',icon:'💡',desc:'Главные поля статьи: ID, название, фотография с настройкой кадрирования и описание.',keys:['id','name','image','image_position','description']},
+                {title:'Основная информация',icon:'💡',desc:'Главные поля статьи: ID, название, фотография с настройкой кадрирования и описание.',keys:['id','name','movie_id','image','image_position','description']},
                 {title:'Эффекты карточки и заголовка',icon:'✨',desc:'Эффекты при наклоне и постоянные, конструктор слоёв и частиц, шрифт и эффект заголовка. Раздел можно свернуть.',fx:true,keys:['card_fx','card_shine','title_fx']},
                 {title:'Категория',icon:'🏷️',desc:'Выбери тип полезной статьи.',keys:['type']},
                 {title:'Экипаж',icon:'⚓',desc:'Для команд, организаций и кораблей: по одному человеку в строке в виде «ID персонажа — должность». Если у человека нет статьи, пиши просто «Имя — должность». Приписка «@1050/1080» (глава/серия) прячет строку, пока человек не дойдёт до этого места; тогда же у персонажа появится связь с командой. Должность может меняться по ходу сюжета: «Старший мастер | Агент CP9 под прикрытием @345/243». Награды и общая сумма считаются сами. У корабля укажи капитанов и его команду.',keys:['crew','team']},
@@ -20974,6 +20986,7 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
   }
   // Фильм по тому, что сейчас в форме (для персонажа — поле «Из фильма», для арки — галочка «Это фильм»).
   function formFilm(f, type) {
+    if (type !== 'character') { var sel0 = f.querySelector('[data-field="movie_id"]'); if (sel0 && sel0.value) { var o0 = sel0.options[sel0.selectedIndex]; return { id: sel0.value, name: o0 ? o0.textContent : sel0.value }; } }
     if (type === 'character') { var sel = f.querySelector('[data-field="movie_id"]'); if (sel && sel.value) { var o = sel.options[sel.selectedIndex]; return { id: sel.value, name: o ? o.textContent : sel.value }; } return null; }
     if (type === 'story') { var m = f.querySelector('[data-field="movie"]'), sg = f.querySelector('[data-field="saga"]'); if ((m && m.checked) || (sg && String(sg.value).trim() === 'Полнометражные фильмы')) return { id: '', name: 'фильм' }; return null; }
     var idv = (f.querySelector('[data-field="id"]') || {}).value, rec = arr(type).find(function (x) { return String(x.id) === String(idv); });
