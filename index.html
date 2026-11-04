@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "04.11.2026 · 93";
+const WIKI_VERSION = "04.11.2026 · 94";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -32488,6 +32488,66 @@ html body .story-saga-item.has-story-image .story-card-thumb::after{content:"";p
   document.addEventListener('click', function () { setTimeout(schedule, 260); }, true);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
   schedule();
+})();
+
+</script>
+<style id="wk-v21">@layer wk-redesign{.wk-sortbox{display:inline-flex;align-items:center;gap:9px;flex:0 0 auto;height:48px;padding:0 6px 0 14px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.035);color:#d7dde9;cursor:pointer}
+.wk-sortbox>span{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;opacity:.62;white-space:nowrap}
+.wk-sortbox select{appearance:auto;background:transparent;border:0;color:inherit;font:inherit;font-size:13.5px;height:100%;max-width:230px;outline:none;cursor:pointer;padding:0 6px 0 0}
+.wk-sortbox select option{background:#0f1520;color:#e8ecf4}
+.wk-sortbox:hover{border-color:rgba(255,255,255,.24)}.wk-sortbox:focus-within{border-color:rgba(255,206,110,.6);box-shadow:0 0 0 3px rgba(255,206,110,.12)}
+@media (max-width:760px){.wk-sortbox{flex:1 1 100%;grid-column:1 / -1!important;order:5;height:44px}.wk-sortbox select{flex:1;max-width:none}}
+}</style>
+<script id="wk-v21-js">
+/* v21: сортировка для вкладок «Плоды» и «Полезное» (как у Персонажей) */
+(function () {
+  'use strict';
+  var MODES = [['chapter_desc', 'По главам — по убыванию'], ['chapter_asc', 'По главам — по возрастанию'], ['alphabet', 'По алфавиту'], ['newest', 'Новые статьи сначала'], ['oldest', 'Старые статьи сначала']];
+  var CFG = {
+    fruit: { id: 'fruitSort', key: 'onePieceWikiSortFruitsV1', def: 'chapter_desc', host: '#fruitsSection .section-search-row', before: '.fruit-view-mode-row', modes: MODES },
+    useful: { id: 'usefulSort', key: 'onePieceWikiSortUsefulV1', def: 'default', host: '#usefulSection .section-search-row', before: '.story-useful-view-switch', modes: [['default', 'По умолчанию']].concat(MODES) }
+  };
+  var mode = {};
+  function load(t) { try { var v = localStorage.getItem(CFG[t].key); if (v && CFG[t].modes.some(function (m) { return m[0] === v; })) return v; } catch (e) {} return CFG[t].def; }
+  function num(v) { var m = String(v == null ? '' : v).match(/\d+/); return m ? parseInt(m[0], 10) : -1; }
+  function ch(t, x) { return t === 'fruit' ? num(x.appearance) : num(x.appearance_chapter); }
+  function nm(x) { return String(x.name || '').replace(/[«»"“”]/g, '').trim(); }
+  function ord(x) { return Number(x.excel_order) || 0; }
+  function sortList(t, list, m) {
+    m = m || mode[t]; if (m === 'default') return list;
+    var a = list.slice();
+    if (m === 'alphabet') a.sort(function (x, y) { return nm(x).localeCompare(nm(y), 'ru', { sensitivity: 'base' }); });
+    else if (m === 'newest') a.sort(function (x, y) { return ord(y) - ord(x); });
+    else if (m === 'oldest') a.sort(function (x, y) { return ord(x) - ord(y); });
+    else a.sort(function (x, y) {
+      var p = ch(t, x), q = ch(t, y);
+      if (p < 0 && q >= 0) return 1; if (q < 0 && p >= 0) return -1;        // без главы — в конец
+      var d = m === 'chapter_asc' ? p - q : q - p; return d || ord(x) - ord(y);
+    });
+    return a;
+  }
+  function rerender(t) {
+    try {
+      if (t === 'fruit') { fruitCurrentPage = 1; applyFruitFilter(); }
+      else { usefulCurrentPage = 1; renderUsefulList(); if (typeof syncUrl === 'function') syncUrl(); }
+    } catch (e) { console.warn('v21', e); }
+  }
+  function mount(t) {
+    var c = CFG[t]; if (document.getElementById(c.id)) return;
+    var host = document.querySelector(c.host); if (!host) return;
+    var box = document.createElement('label'); box.className = 'wk-sortbox'; box.setAttribute('for', c.id);
+    box.innerHTML = '<span>Сортировка</span><select id="' + c.id + '" aria-label="Сортировка">' + c.modes.map(function (m) { return '<option value="' + m[0] + '">' + m[1] + '</option>'; }).join('') + '</select>';
+    var anchor = host.querySelector(c.before); if (anchor) host.insertBefore(box, anchor); else host.appendChild(box);
+    var sel = box.querySelector('select'); sel.value = mode[t];
+    sel.addEventListener('change', function () { mode[t] = sel.value; try { localStorage.setItem(c.key, sel.value); } catch (e) {} rerender(t); });
+  }
+  mode.fruit = load('fruit'); mode.useful = load('useful');
+  var origUseful = window.getFilteredUsefulArticles;
+  window.sortFruitsByAppearanceDesc = function (list) { return sortList('fruit', list); };
+  if (typeof origUseful === 'function') window.getFilteredUsefulArticles = function () { return sortList('useful', origUseful.apply(this, arguments)); };
+  mount('fruit'); mount('useful');
+  if (mode.fruit !== CFG.fruit.def) setTimeout(function () { rerender('fruit'); }, 0);
+  if (mode.useful !== CFG.useful.def) setTimeout(function () { rerender('useful'); }, 0);
 })();
 
 </script></body></html>
