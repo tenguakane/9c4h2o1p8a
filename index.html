@@ -1135,7 +1135,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "04.11.2026 · 94";
+const WIKI_VERSION = "04.11.2026 · 95";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -22217,7 +22217,7 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     pend = 0;
     document.querySelectorAll('.character-item').forEach(function (el) {
       if (el.closest('#wikiEditorOverlay')) return;
-      var id = identify(el); if (!id || !id.rec) return;
+      var id = identify(el); if (!id || !id.rec) { var ct0 = el.querySelector('.card-title'); if (ct0 && window.__wikiApplyTitleStyle) window.__wikiApplyTitleStyle(ct0, '', ct0.getAttribute('data-tfx') || ''); return; }
       apply(el, fxOf(id.type, id.rec)); applyAmb(el, ambOf(id.type, id.rec), id.rec.id);
       if (window.__wikiApplyCardStyle) window.__wikiApplyCardStyle(el, (raw(id.rec) || {}).card_style, id.rec.id);
       var ct = el.querySelector('.card-title'), ctv = tfxOf(id.type, id.rec, el);
