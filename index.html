@@ -1285,7 +1285,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "07.11.2026 · 102";
+const WIKI_VERSION = "07.11.2026 · 104";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -8452,7 +8452,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         useful: {label:'Полезное', plural:'Полезные статьи', array:usefulArticles, icon:'💡'}
     };
     const schemas = {
-        character: {id:'char_new',name:'',nickname:'',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',person_link:'',person_image_position:50,person_image_position_x:50,person_image_zoom:100,person2_link:'',person2_from_chapter:'',person2_from_episode:'',person2_image_position:50,person2_image_position_x:50,person2_image_zoom:100,timeskip_description:'',nickname2:'',status2:'',future_status:'',gallery:'',ts_fruit_article_id:'',ts_ship:'',ts_ship_link:'',ts_ship_description:'',ts_flag:'',ts_flag_link:'',ts_flag_description:'',chapter:'',episode:'',description:'',filler:false,fruit_article_id:'',fruit2_article_id:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],map_hide:[],ship:'',ship_link:'',ship_description:'',ship2:'',ship2_link:'',ship2_description:'',flag:'',flag_link:'',flag_description:'',ship_article_id:'',ship2_article_id:'',team_article_id:'',status:''},
+        character: {id:'char_new',name:'',nickname:'',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',person_link:'',person_image_position:50,person_image_position_x:50,person_image_zoom:100,person2_link:'',person2_from_chapter:'',person2_from_episode:'',person2_image_position:50,person2_image_position_x:50,person2_image_zoom:100,poster_link:'',timeskip_description:'',nickname2:'',status2:'',future_status:'',gallery:'',ts_fruit_article_id:'',ts_ship:'',ts_ship_link:'',ts_ship_description:'',ts_flag:'',ts_flag_link:'',ts_flag_description:'',chapter:'',episode:'',description:'',filler:false,fruit_article_id:'',fruit2_article_id:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],map_hide:[],ship:'',ship_link:'',ship_description:'',ship2:'',ship2_link:'',ship2_description:'',flag:'',flag_link:'',flag_description:'',ship_article_id:'',ship2_article_id:'',team_article_id:'',status:''},
         story: {id:'arc_new',movie_id:'',name:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',image:'',image_position:50,image_position_x:50,image_zoom:100,chapters:'',episodes:'',ongoing:false,filler:false,movie:false,saga:'',description:'',key:'',characters:[],connect:[],map_hide:[]},
         reward: {id:'reward_new',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',character_id:'',reward:0,ka:0,rank:'',rank_total:'',reward_image:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',appearance_chapter:'',appearance_episode:'',connect:[]},
         fruit: {id:'fruit_new',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',name:'',appearance:'',episode:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,owner:'',type:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],map_hide:[]},
@@ -8461,7 +8461,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     const fieldLabels = {
         ship_article_id:'Корабль',ship2_article_id:'Второй корабль',team_article_id:'Команда или организация',crew:'Экипаж и должности',team:'Команда корабля',
         map_hide:'Скрыто на карте связей',
-        id:'ID',name:'Название / имя',nickname:'Прозвище',person_link:'Ссылка на изображение',person_image_position:'Кадрирование фото в карточке',person_image_position_x:'Горизонтальное смещение фото в карточке',person_image_zoom:'Приближение фото в карточке',movie_id:'🎬 Из фильма',card_fx:'✨ Эффект при наклоне',card_shine:'💫 Постоянный эффект',title_fx:'🔤 Эффект шрифта',title_style:'🔤 Настройка шрифта заголовка',card_style:'🎛 Конструктор эффектов карточки',person2_link:'Второе фото (новый облик)',person2_from_chapter:'С какой главы (фото и «Таймскип»)',person2_from_episode:'С какого эпизода (фото и «Таймскип»)',timeskip_description:'Чем персонаж занят спустя два года',nickname2:'Новое прозвище',status2:'Статусы после таймскипа',future_status:'Будущие статусы',gallery:'Дополнительные фото',ts_fruit_article_id:'Новый дьявольский плод',ts_ship:'Новый корабль',ts_ship_link:'Ссылка на новый корабль',ts_ship_description:'Описание нового корабля',ts_flag:'Новый флаг / команда',ts_flag_link:'Ссылка на новый флаг',ts_flag_description:'Описание нового флага',person2_image_position:'Кадрирование второго фото',person2_image_position_x:'Горизонталь второго фото, %',person2_image_zoom:'Приближение второго фото, %',chapter:'Глава появления',episode:'Эпизод появления',description:'Описание',fruit:'Дьявольский плод (старое поле)',fruit_link:'Ссылка на плод (старое поле)',fruit_article_id:'Дьявольский плод — статья из раздела «Плоды»',fruit2:'Второй плод (старое поле)',fruit2_link:'Ссылка на второй плод (старое поле)',fruit2_article_id:'Второй дьявольский плод — статья из раздела «Плоды»',arc:'Арка (манга)',saga:'Сага (манга)',connect:'Связанные ID (через запятую)',ship:'Корабль',ship_link:'Ссылка на корабль',ship_description:'Описание корабля',ship2:'Второй корабль',ship2_link:'Ссылка на второй корабль',ship2_description:'Описание второго корабля',flag:'Флаг',flag_link:'Ссылка на флаг',flag_description:'Описание флага',status:'Статус',characters:'ID персонажей (через запятую)',chapters:'Главы',episodes:'Эпизоды',ongoing:'Арка продолжается',filler:'Филлер / аниме-оригинал',movie:'Полнометражный фильм',character_id:'ID персонажа',reward:'Награда',ka:'КА',rank:'Место в топе',rank_total:'Всего в топе',reward_image:'Ссылка на изображение для карточки награды',appearance:'Глава появления',appearance_chapter:'Глава появления',appearance_episode:'Эпизод появления',image:'Ссылка на изображение',image_position:'Кадрирование фото в карточке',image_position_x:'Горизонтальное смещение фото',image_zoom:'Приближение фото',owner:'Владелец(ы)',type:'Тип',arc_anime:'Арка (аниме)',saga_anime:'Сага (аниме)'};
+        id:'ID',name:'Название / имя',nickname:'Прозвище',person_link:'Ссылка на изображение',person_image_position:'Кадрирование фото в карточке',person_image_position_x:'Горизонтальное смещение фото в карточке',person_image_zoom:'Приближение фото в карточке',movie_id:'🎬 Из фильма',card_fx:'✨ Эффект при наклоне',card_shine:'💫 Постоянный эффект',title_fx:'🔤 Эффект шрифта',title_style:'🔤 Настройка шрифта заголовка',card_style:'🎛 Конструктор эффектов карточки',person2_link:'Второе фото (новый облик)',poster_link:'Фото для плаката награды',person2_from_chapter:'С какой главы (фото и «Таймскип»)',person2_from_episode:'С какого эпизода (фото и «Таймскип»)',timeskip_description:'Чем персонаж занят спустя два года',nickname2:'Новое прозвище',status2:'Статусы после таймскипа',future_status:'Будущие статусы',gallery:'Дополнительные фото',ts_fruit_article_id:'Новый дьявольский плод',ts_ship:'Новый корабль',ts_ship_link:'Ссылка на новый корабль',ts_ship_description:'Описание нового корабля',ts_flag:'Новый флаг / команда',ts_flag_link:'Ссылка на новый флаг',ts_flag_description:'Описание нового флага',person2_image_position:'Кадрирование второго фото',person2_image_position_x:'Горизонталь второго фото, %',person2_image_zoom:'Приближение второго фото, %',chapter:'Глава появления',episode:'Эпизод появления',description:'Описание',fruit:'Дьявольский плод (старое поле)',fruit_link:'Ссылка на плод (старое поле)',fruit_article_id:'Дьявольский плод — статья из раздела «Плоды»',fruit2:'Второй плод (старое поле)',fruit2_link:'Ссылка на второй плод (старое поле)',fruit2_article_id:'Второй дьявольский плод — статья из раздела «Плоды»',arc:'Арка (манга)',saga:'Сага (манга)',connect:'Связанные ID (через запятую)',ship:'Корабль',ship_link:'Ссылка на корабль',ship_description:'Описание корабля',ship2:'Второй корабль',ship2_link:'Ссылка на второй корабль',ship2_description:'Описание второго корабля',flag:'Флаг',flag_link:'Ссылка на флаг',flag_description:'Описание флага',status:'Статус',characters:'ID персонажей (через запятую)',chapters:'Главы',episodes:'Эпизоды',ongoing:'Арка продолжается',filler:'Филлер / аниме-оригинал',movie:'Полнометражный фильм',character_id:'ID персонажа',reward:'Награда',ka:'КА',rank:'Место в топе',rank_total:'Всего в топе',reward_image:'Ссылка на изображение для карточки награды',appearance:'Глава появления',appearance_chapter:'Глава появления',appearance_episode:'Эпизод появления',image:'Ссылка на изображение',image_position:'Кадрирование фото в карточке',image_position_x:'Горизонтальное смещение фото',image_zoom:'Приближение фото',owner:'Владелец(ы)',type:'Тип',arc_anime:'Арка (аниме)',saga_anime:'Сага (аниме)'};
     const types = Object.keys(collections);
     let activeType = 'character';
     let editingId = null;
@@ -10656,7 +10656,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
             const rangeCountNote=(activeType==='story'&&k==='chapters')?`<small class="wiki-editor-hint wiki-story-range-count" data-story-range-count="chapters"></small>`:(activeType==='story'&&k==='episodes')?`<small class="wiki-editor-hint wiki-story-range-count" data-story-range-count="episodes"></small>`:'';
             const autoNote=(activeType==='reward'&&k==='ka')?'<small class="wiki-editor-hint">Автоматически: награда ÷ 20 000 000</small>':(activeType==='reward'&&k==='rank')?'<small class="wiki-editor-hint">Позиция этой награды в рейтинге, например 14.</small>':(activeType==='reward'&&k==='rank_total')?'<small class="wiki-editor-hint">Общее количество позиций в соответствующем топе, например 120. Укажи вместе с местом.</small>':'';
             let legacyFruitPanel='';
-            const imageFields=['person_link','person2_link','ts_ship_link','ts_flag_link','fruit_link','fruit2_link','ship_link','ship2_link','flag_link','image','reward_image'];
+            const imageFields=['person_link','poster_link','person2_link','ts_ship_link','ts_flag_link','fruit_link','fruit2_link','ship_link','ship2_link','flag_link','image','reward_image'];
             const imagePreviewToggle=imageFields.includes(k)?`<button type="button" class="wiki-image-preview-toggle" data-image-preview="${k}" aria-label="Предпросмотр изображения" title="Предпросмотр изображения" aria-expanded="false">🖼</button>`:'';
             const imagePreview=imageFields.includes(k)?`<div class="wiki-image-preview-box" data-image-preview-box="${k}" hidden><img alt="Предпросмотр изображения" loading="lazy"><div class="wiki-image-preview-error" hidden>Не удалось загрузить изображение. Проверь ссылку.</div></div>`:'';
             const optionalGroup = activeType==='character' && k==='fruit2_article_id' ? 'fruit2' : (activeType==='character' && ['ship2','ship2_link','ship2_description'].includes(k) ? 'ship2' : '');
@@ -10667,8 +10667,8 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         }).join('');
         const sectionLayouts = {
             character: [
-                {title:'Основная информация',icon:'🧭',desc:'Идентификатор, имя и главное изображение.',keys:['id','name','nickname','movie_id','person_link','person_image_position']},
-                {title:'Когда наступает таймскип',icon:'⏳',group:'ts',keys:['person2_from_chapter','person2_from_episode']},
+                {title:'Основная информация',icon:'🧭',desc:'Идентификатор, имя и главное изображение.',keys:['id','name','nickname','movie_id','person_link','person_image_position','poster_link']},
+                {title:'Начало таймскипа',icon:'⏳',group:'ts',keys:['person2_from_chapter','person2_from_episode']},
                 {title:'Новый облик',icon:'🖼️',group:'ts',keys:['person2_link','person2_image_position','person2_image_position_x','person2_image_zoom']},
                 {title:'Новое описание и статусы',icon:'📝',group:'ts',keys:['timeskip_description','nickname2','status2']},
                 {title:'Новый плод',icon:'🍎',group:'ts',keys:['ts_fruit_article_id']},
@@ -25212,7 +25212,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
           var colorRow = type === 'neon' ? '<div class="wk-ts-row"><span>Цвет</span><div class="wk-cs-colors"><input type="color" data-p="ring.c" value="' + esc(r.c || '#4ff0ff') + '">' + sw('ring.c') + '</div></div>'
             : type === 'custom' ? '<div class="wk-ts-row"><span>Цвета</span><div class="wk-cs-colors"><input type="color" data-p="ring.c" value="' + esc(r.c || '#ff3d7f') + '"><input type="color" data-p="ring.c2" value="' + esc(r.c2 || '#4fb8ff') + '"><label><input type="checkbox" data-ring-c3' + (r.c3 ? ' checked' : '') + '> третий</label>' + (r.c3 ? '<input type="color" data-p="ring.c3" value="' + esc(r.c3) + '">' : '') + '</div></div>' : '';
           return '<div class="wk-ts-row"><span>Вид</span>' + seg('data-seg="ring.mode"', [['art', 'На арте, полупрозрачно'], ['solid', 'Сплошная рамка']], mode) + '</div>'
-            + '<div class="wk-ts-row"><span>Покрытие</span>' + seg('data-seg="ring.type"', [['holo', 'Голограмма'], ['irid', 'Иридисцент'], ['pearl', 'Перламутр'], ['refractor', 'Рефрактор'], ['gold', 'Золото'], ['silver', 'Серебро'], ['rose', 'Розовое золото'], ['fire', 'Пламя'], ['neon', 'Неон'], ['custom', 'Свои цвета']], type) + '</div>'
+            + '<div class="wk-ts-row"><span>Покрытие</span>' + seg('data-seg="ring.type"', [['holo', 'Голограмма'], ['irid', 'Радужный отлив'], ['pearl', 'Перламутр'], ['refractor', 'Преломление'], ['gold', 'Золото'], ['silver', 'Серебро'], ['rose', 'Розовое золото'], ['fire', 'Пламя'], ['neon', 'Неон'], ['custom', 'Свои цвета']], type) + '</div>'
             + colorRow
             + '<div class="wk-ts-row"><span>Ширина</span>' + range('ring.w', 1, 40, 1, Number(r.w) || (mode === 'art' ? 14 : 4), 'px', mode === 'art' ? 14 : 4) + '</div>'
             + '<div class="wk-ts-row"><span>Видимость</span>' + range('ring.o', 10, 100, 5, r.o == null ? (mode === 'art' ? 70 : 100) : Number(r.o), '%', mode === 'art' ? 70 : 100) + '</div>'
@@ -25416,7 +25416,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
       ['💡 Свечение', ['neon', 'thunder', 'haki', 'yami', 'gear5', 'mist', 'glitch']],
       ['🔥 Стихии', ['fire', 'phoenix', 'magma', 'ice', 'sea', 'toxic', 'blood']],
       ['💎 Камни и цвета', ['emerald', 'ruby', 'sapphire', 'amber', 'mint', 'peach', 'lilac', 'sakura', 'devilfruit']],
-      ['📜 Плакаты · капс', ['wanted', 'rainbowcaps', 'marine', 'yonko', 'jollyroger', 'scroll', 'redline', 'dressrosa', 'samurai', 'comic', 'poneglyph']]
+      ['📜 Плакатные, заглавные', ['wanted', 'rainbowcaps', 'marine', 'yonko', 'jollyroger', 'scroll', 'redline', 'dressrosa', 'samurai', 'comic', 'poneglyph']]
     ]
   };
   function short(label) { return label.replace(/^\S+\s/, ''); }
@@ -29748,7 +29748,7 @@ html.ios-app .wk-totop{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
     var box = ed.parentNode.querySelector(':scope > .wk-crop-sizes');
     if (!box) {
       box = document.createElement('div'); box.className = 'wk-crop-sizes';
-      box.innerHTML = '<div class="wk-cs-head"><b>Как фото выглядит в разных карточках</b><small>Витрину можно кадрировать отдельно: тяни фото в ней, колесо — масштаб.</small><em class="wk-cs-alt" hidden></em></div><div class="wk-cs-row">' +
+      box.innerHTML = '<div class="wk-cs-head"><b>Кадр в разных карточках</b><small>Витрину можно кадрировать отдельно: тяни фото в ней, колесо — масштаб.</small><em class="wk-cs-alt" hidden></em></div><div class="wk-cs-row">' +
         SIZES.map(function (s) { return '<figure class="wk-csz is-' + s[0] + '" data-sz="' + s[0] + '"><div class="wk-csz-frame"><img alt=""></div><figcaption>' + s[1] + (s[2] ? '<small>' + s[2] + '</small>' : '') + (s[0] === 'hero' ? '<button type="button" class="wk-csz-reset" data-hero-reset title="Как в обычной карточке">⟲ как обычно</button>' : '') + '</figcaption></figure>'; }).join('') + '</div>';
       ed.after(box);
       wireHero(box);
@@ -31829,7 +31829,7 @@ html body .catalog-item-shell:has(>.wk-flip-btn,>.wk-flip2) .character-item>.wk-
   var pend = 0;
   function schedule() { clearTimeout(pend); pend = setTimeout(update, 120); }
   function cropStyle(f, place) {
-    // для персонажей берём кадры из блока «Как фото выглядит в разных карточках» — он всегда актуален
+    // для персонажей берём кадры из блока «Кадр в разных карточках» — он всегда актуален
     if (place === 'map') {
       var mc = window.__wkMapEditorCrop ? window.__wkMapEditorCrop() : null, ms = val(f, q(f, 'person_link') ? 'person_link' : 'image');
       if (mc) return { src: ms, pos: mc.x + '% ' + mc.y + '%', tr: 'scale(' + mc.z / 100 + ')', org: mc.x + '% ' + mc.y + '%' };
@@ -32985,7 +32985,9 @@ html.wk-ed-hints .wk-hint-i{display:none}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd .wiki-editor-head{min-height:0!important;height:auto!important;padding:6px 12px!important;gap:10px!important;border-bottom:1px solid var(--rd-line)!important}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd .wiki-editor-head h2{font-size:14.5px!important;line-height:1.2!important;margin:0!important}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd .wiki-editor-head .wiki-editor-actions{gap:5px!important}
-#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd .wiki-editor-head .wiki-editor-btn{height:28px!important;min-height:28px!important;padding:0 10px!important;font-size:12.5px!important;border-radius:8px!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd .wiki-editor-head .wiki-editor-btn:not(#wikiEditorClose){height:28px!important;min-height:28px!important;padding:0 10px!important;font-size:12.5px!important;border-radius:8px!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd #wikiEditorClose{width:30px!important;min-width:30px!important;height:28px!important;min-height:28px!important;padding:0!important;font-size:0!important;line-height:0!important;color:transparent!important;display:inline-grid!important;place-items:center!important;border-radius:8px!important;overflow:hidden!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd #wikiEditorClose::before{font-size:14px!important;line-height:1!important;margin:0!important}
 /* боковая колонка */
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd .wiki-editor-body{grid-template-columns:300px minmax(0,1fr)!important}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd .wiki-editor-sidebar{padding:8px!important;gap:6px!important}
@@ -33046,10 +33048,10 @@ html.wk-ed-hints .wk-hint-i{display:none}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd #wikiEditorForm:has(>.wk-view-bar[hidden])>.wiki-editor-form-title>.wiki-editor-form-title-actions{grid-column:1 / 5}
 /* разделы: цветная метка, плотные заголовки */
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd .wiki-editor-layout{gap:8px!important}
-#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd .wiki-editor-section{--sec:#94a3b8;position:relative;margin:0!important;border-radius:10px!important;border:1px solid color-mix(in srgb,var(--sec) 22%,var(--rd-line))!important;background:linear-gradient(180deg,color-mix(in srgb,var(--sec) 5%,var(--rd-panel)) 0,var(--rd-panel) 60px)!important;box-shadow:none!important;overflow:visible!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd .wiki-editor-section{--sec:#94a3b8;position:relative;margin:0!important;border-radius:10px!important;border:1px solid var(--rd-line)!important;background:var(--rd-panel)!important;box-shadow:none!important;overflow:visible!important}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd .wiki-editor-section::before{content:"";position:absolute;left:-1px;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:var(--sec);opacity:.9}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd .wiki-editor-section-head{min-height:0!important;padding:6px 10px 6px 12px!important;gap:8px!important;border:0!important;background:none!important;cursor:pointer}
-#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd .wiki-editor-section-icon{width:22px!important;height:22px!important;min-width:22px!important;font-size:13px!important;border-radius:6px!important;background:color-mix(in srgb,var(--sec) 18%,transparent)!important;border:1px solid color-mix(in srgb,var(--sec) 35%,transparent)!important;display:grid!important;place-items:center!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd .wiki-editor-section-icon{width:20px!important;height:20px!important;min-width:20px!important;font-size:13px!important;border:0!important;background:none!important;color:var(--rd-dim)!important;display:grid!important;place-items:center!important}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd .wiki-editor-section-heading h4{font-size:13.5px!important;font-weight:700!important;color:var(--rd-text)!important;letter-spacing:0!important;margin:0!important}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd .wiki-editor-section-chevron{width:22px!important;height:22px!important;font-size:12px!important;border-radius:6px!important}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd .wiki-editor-section-body{padding:2px 12px 10px!important}
@@ -33118,6 +33120,17 @@ html.wk-ed-hints .wk-hint-i{display:none}
   #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd .wk-look-sec .wk-cs-wrap{grid-template-columns:minmax(0,1fr)!important}
     #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd .wiki-editor-footer{margin:8px -10px 0!important;padding:6px 10px!important}
 }
+
+/* нарисованные иконки вместо эмодзи */
+.wk-ei{display:inline-grid;place-items:center;width:1.1em;height:1.1em;margin-right:.38em;vertical-align:-.17em;flex:0 0 auto;color:inherit;opacity:.88}
+.wk-ei.is-only{margin-right:0}
+.wk-ei>svg{width:100%;height:100%;display:block}
+.wiki-editor-section-icon .wk-ei{width:16px;height:16px;margin:0;opacity:1}
+.wk-wpn-img.is-empty .wk-ei{width:20px;height:20px;margin:0}
+html body .berry-symbol{-webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%20100%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M8%2014H36C49%2014%2055%2021%2055%2030C55%2038%2050%2044%2043%2047C53%2049%2059%2057%2059%2066C59%2078%2051%2086%2036%2086H8ZM18%2022V43H33C40%2043%2043%2038%2043%2032.5C43%2026%2039.5%2022%2033%2022ZM18%2051V78H35C42.5%2078%2046.5%2073%2046.5%2064.5C46.5%2056%2042.5%2051%2035%2051Z%22/%3E%3Cpath%20d%3D%22M23%203h4.5v94h-4.5zM31.5%203h4.5v94h-4.5z%22/%3E%3C/svg%3E")!important;mask-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%20100%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M8%2014H36C49%2014%2055%2021%2055%2030C55%2038%2050%2044%2043%2047C53%2049%2059%2057%2059%2066C59%2078%2051%2086%2036%2086H8ZM18%2022V43H33C40%2043%2043%2038%2043%2032.5C43%2026%2039.5%2022%2033%2022ZM18%2051V78H35C42.5%2078%2046.5%2073%2046.5%2064.5C46.5%2056%2042.5%2051%2035%2051Z%22/%3E%3Cpath%20d%3D%22M23%203h4.5v94h-4.5zM31.5%203h4.5v94h-4.5z%22/%3E%3C/svg%3E")!important;-webkit-mask-size:contain!important;mask-size:contain!important;-webkit-mask-position:center!important;mask-position:center!important;-webkit-mask-repeat:no-repeat!important;mask-repeat:no-repeat!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wiki-editor-tab[data-achievements-tab]::before{content:""!important;display:inline-block;width:1.1em;height:1.1em;margin-right:.38em;vertical-align:-.17em;background:currentColor;opacity:.88;-webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2215%22%20r%3D%225%22/%3E%3Cpath%20d%3D%22M8.6%2011%206%203h4l2%204%202-4h4l-2.6%208%22/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2215%22%20r%3D%225%22/%3E%3Cpath%20d%3D%22M8.6%2011%206%203h4l2%204%202-4h4l-2.6%208%22/%3E%3C/svg%3E") center/contain no-repeat}
+.wk-edp-list button .wk-edp-sum{display:inline-flex;align-items:baseline;white-space:nowrap}
+.wk-edp-ctl label.wk-rl-f,.wk-rl-ed label.wk-rl-f{text-transform:none!important;letter-spacing:0!important;font-size:12px!important;font-weight:600!important}
 </style>
 <script id="wk-v22-js">
 /* ===================================================================
@@ -33217,17 +33230,18 @@ html.wk-ed-hints .wk-hint-i{display:none}
     var cr = raw(c), mode = a.photo || 'auto';
     var main = { src: goodUrl(cr.person_link), x: cr.person_image_position_x, y: cr.person_image_position, z: cr.person_image_zoom, ts: false };
     var two = { src: goodUrl(cr.person2_link), x: cr.person2_image_position_x, y: cr.person2_image_position, z: cr.person2_image_zoom, ts: true };
-    var p = main;
+    var p = main, own = goodUrl(cr.poster_link);
     if (mode === 'url' && goodUrl(a.url)) p = { src: goodUrl(a.url), x: 50, y: 30, z: 100, own: true };
+    else if (own && mode !== 'ts' && mode !== 'main') p = { src: own, x: 50, y: 30, z: 100, pl: true };
     else if (mode === 'ts' && two.src) p = two;
-    else if (mode === 'auto' && two.src) {
+    else if (mode === 'auto' && two.src && !p.pl) {
       var from = num(cr.person2_from_chapter), at = rewardChapter(r);
       if (from && at && at >= from) p = two;
     }
     var n = function (v, d) { v = Number(v); return v === v && String(v) !== '' && v !== 0 ? v : d; };
-    var cc = (!p.own && c && (pcfg().chr || {})[String(c.id) + (p.ts ? '~ts' : '')]) || {};
+    var cc = (!p.own && c && (pcfg().chr || {})[String(c.id) + (p.pl ? '~p' : p.ts ? '~ts' : '')]) || {};
     var pick = function (k, d) { return a[k] != null ? a[k] : cc[k] != null ? cc[k] : d; };
-    return { src: p.src, x: pick('x', n(p.x, 50)), y: pick('y', Math.min(n(p.y, 30), 45)), z: pick('z', 100), fit: a.fit || cc.fit || '', ts: p.ts, own: p.own };
+    return { src: p.src, x: pick('x', n(p.x, 50)), y: pick('y', Math.min(n(p.y, 30), 45)), z: pick('z', 100), fit: a.fit || cc.fit || '', ts: p.ts, own: p.own, pl: p.pl };
   }
   function isCut(src) { return /\.png(\?|#|$)|removebg|remove-bg|cutout|no-?bg|transparent/i.test(src || ''); }
   function money(n) { return Math.round(Number(n) || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + '-'; }
@@ -33376,6 +33390,7 @@ html.wk-ed-hints .wk-hint-i{display:none}
     modal.querySelectorAll('.wk-rl-tabs [data-tab]').forEach(function (b) { var on = b.getAttribute('data-tab') === tab; b.classList.toggle('active', on); b.setAttribute('aria-selected', String(on)); });
     var body = modal.querySelector('.wk-rl-body');
     if (tab === 'look') renderLook(body); else if (editRid) renderEdit(body); else renderPosters(body);
+    try { iconPass(); } catch (e) {}
   }
 
   function chip(v, n, cur, attr) { return '<button type="button" ' + attr + '="' + esc(v) + '"' + (v === cur ? ' class="active"' : '') + '>' + esc(n) + '</button>'; }
@@ -33487,7 +33502,7 @@ html.wk-ed-hints .wk-hint-i{display:none}
     var has2 = !!goodUrl(cr.person2_link), mode = a.photo || 'auto';
     var seg = function (attr, items, cur) { return '<div class="wk-rl-seg" data-seg="' + attr + '">' + items.map(function (x) { return '<button type="button" data-v="' + x[0] + '"' + (x[0] === cur ? ' class="active"' : '') + '>' + x[1] + '</button>'; }).join('') + '</div>'; };
     body.innerHTML = '<div class="wk-rl-nav" style="margin-bottom:12px"><button type="button" class="wk-rl-btn" data-back>← Все плакаты</button><button type="button" class="wk-rl-btn" data-step="-1"' + (i > 0 ? '' : ' disabled') + '>‹</button><button type="button" class="wk-rl-btn" data-step="1"' + (i < list.length - 1 ? '' : ' disabled') + '>›</button>'
-      + '<b>' + esc((c && c.name) || r.character_id) + '</b><span>' + esc(money(r.reward).replace(/-$/, '')) + ' ฿ · ' + esc(r.arc || 'арка не указана') + (p.ts ? ' · фото после таймскипа' : '') + '</span></div>'
+      + '<b>' + esc((c && c.name) || r.character_id) + '</b><span>' + '<span class="berry-symbol" aria-hidden="true"></span>' + esc(money(r.reward).replace(/-$/, '')) + ' · ' + esc(r.arc || 'арка не указана') + (p.pl ? ' · фото для плаката' : p.ts ? ' · фото после таймскипа' : '') + '</span></div>'
       + '<div class="wk-rl-ed"><div class="wk-rl-big" data-big>' + posterHTML(r, { eager: true }) + '</div><div class="wk-rl-ctl">'
       + '<label class="wk-rl-f">Фото' + seg('photo', [['auto', 'Авто'], ['main', 'Основное']].concat(has2 ? [['ts', 'После таймскипа']] : []).concat([['url', 'Своя ссылка']]), mode) + '</label>'
       + '<div class="wk-rl-line"' + (mode === 'url' ? '' : ' hidden') + ' data-url-row><input type="url" data-url placeholder="https://… прямая ссылка на картинку" value="' + esc(a.url || '') + '" style="flex:1 1 260px"></div>'
@@ -33574,7 +33589,7 @@ html.wk-ed-hints .wk-hint-i{display:none}
     var box = document.createElement('div'); box.className = 'article-section article-info-block wk-weapons'; box.setAttribute('data-sig', sig);
     box.innerHTML = '<h2>' + (ws.length > 1 ? 'Оружие' : 'Оружие') + '</h2><div class="wk-wpn-list">' + ws.map(function (w) {
       var img = goodUrl(w.image);
-      return '<a href="#" class="wk-wpn" data-wk-open="useful" data-wk-id="' + esc(w.id) + '" title="Открыть статью «' + esc(w.name) + '»"><span class="wk-wpn-img' + (img ? '' : ' is-empty') + '">' + (img ? '<img src="' + esc(img) + '" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add(\'is-empty\');this.parentNode.textContent=\'⚔️\'">' : '⚔️') + '</span><span class="wk-wpn-name">' + esc(String(w.name || '').trim()) + '</span></a>';
+      return '<a href="#" class="wk-wpn" data-wk-open="useful" data-wk-id="' + esc(w.id) + '" title="Открыть статью «' + esc(w.name) + '»"><span class="wk-wpn-img' + (img ? '' : ' is-empty') + '">' + (img ? '<img src="' + esc(img) + '" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add(\'is-empty\');this.parentNode.innerHTML=window.__wkEdIcon(\'swords\')">' : window.__wkEdIcon('swords')) + '</span><span class="wk-wpn-name">' + esc(String(w.name || '').trim()) + '</span></a>';
     }).join('') + '</div>';
     if (old) old.replaceWith(box);
     else {
@@ -33642,6 +33657,11 @@ html.wk-ed-hints .wk-hint-i{display:none}
       if (h && lab && !lab.querySelector('.wk-hint-i')) { var i = document.createElement('i'); i.className = 'wk-hint-i'; i.textContent = 'i'; i.title = h.textContent.trim(); lab.appendChild(i); }
     });
     form.querySelectorAll('textarea').forEach(function (ta) { if (!ta.__wkGrow) { ta.__wkGrow = true; growArea(ta); } });
+    var plf = form.querySelector('.wiki-editor-field[data-editor-field="poster_link"]');
+    if (plf && !plf.querySelector('.wk-pl-hint')) {
+      var inp = plf.querySelector('[data-field="poster_link"]'); if (inp && !inp.placeholder) inp.placeholder = 'https://… пусто — на плакате основное фото';
+      var hn = document.createElement('small'); hn.className = 'wiki-editor-hint wk-pl-hint'; hn.textContent = 'Если ссылка указана, на всех плакатах WANTED этого персонажа будет это фото, а не основное.'; plf.appendChild(hn);
+    }
     try { charPosterBlock(form); } catch (e) { console.warn('v22 poster preview', e); }
     // кнопка «Подсказки» в шапке формы
     var title = form.querySelector('.wiki-editor-form-title');
@@ -33670,12 +33690,12 @@ html.wk-ed-hints .wk-hint-i{display:none}
     var id = formVal(f, 'id'); if (!id) return null;
     var base = arr('characters').find(function (x) { return String(x.id) === id; }) || { id: id };
     var c = Object.assign({}, raw(base), { id: id });
-    ['name', 'person_link', 'person2_link', 'person2_from_chapter', 'person_image_position', 'person_image_position_x', 'person2_image_position', 'person2_image_position_x'].forEach(function (k) { if (f.querySelector('[data-field="' + k + '"]')) c[k] = formVal(f, k); });
+    ['name', 'person_link', 'poster_link', 'person2_link', 'person2_from_chapter', 'person_image_position', 'person_image_position_x', 'person2_image_position', 'person2_image_position_x'].forEach(function (k) { if (f.querySelector('[data-field="' + k + '"]')) c[k] = formVal(f, k); });
     return c;
   }
   var edPv = { cid: '', rid: '', ts: false };
   function charPosterBlock(f) {
-    var holder = f.querySelector('.wiki-editor-field[data-editor-field="person_image_position"]');
+    var holder = f.querySelector('.wiki-editor-field[data-editor-field="poster_link"]') || f.querySelector('.wiki-editor-field[data-editor-field="person_image_position"]');
     var old = f.querySelector('.wk-ed-poster');
     var c = holder ? edChar(f) : null;
     var rws = c ? arr('rewards').filter(function (r) { return String(r.character_id) === String(c.id); }).sort(function (a, b) { return rewardChapter(a) - rewardChapter(b) || (Number(a.reward) || 0) - (Number(b.reward) || 0); }) : [];
@@ -33685,7 +33705,7 @@ html.wk-ed-hints .wk-hint-i{display:none}
     var has2 = !!goodUrl(c.person2_link);
     // показываем облик, который выбран на этой награде (авто: после таймскипа — второй)
     var p = photoFor(r, c, pcfg().adj[r.id] || {}); edPv.ts = !!p.ts;
-    var key = String(c.id) + (p.ts ? '~ts' : ''), cc = (pcfg().chr || {})[key] || {};
+    var key = String(c.id) + (p.pl ? '~p' : p.ts ? '~ts' : ''), cc = (pcfg().chr || {})[key] || {};
     var cut = p.fit ? p.fit === 'contain' : isCut(p.src), fit = p.fit || (cut ? 'contain' : 'cover');
     function mkSig() { var cf = pcfg(); return [c.id, r.id, p.src, c.name, JSON.stringify((cf.chr || {})[key] || {}), JSON.stringify(cf.adj[r.id] || {}), cf.font, cf.upper].join('|'); }
     var sig = mkSig();
@@ -33694,8 +33714,8 @@ html.wk-ed-hints .wk-hint-i{display:none}
     var seg = function (attr, items, cur) { return '<div class="wk-rl-seg" data-pseg="' + attr + '">' + items.map(function (x) { return '<button type="button" data-v="' + x[0] + '"' + (x[0] === cur ? ' class="active"' : '') + '>' + x[1] + '</button>'; }).join('') + '</div>'; };
     box.innerHTML = '<div class="wiki-editor-field-topline"><label>Фото на плакате награды</label></div>'
       + '<div class="wk-edp"><div class="wk-edp-big" data-edp-big>' + posterHTML(r, { char: c, eager: true }) + '</div><div class="wk-edp-ctl">'
-      + (rws.length > 1 ? '<div class="wk-edp-list">' + rws.map(function (x) { return '<button type="button" data-edp-r="' + esc(x.id) + '"' + (String(x.id) === String(r.id) ? ' class="active"' : '') + '>' + esc(money(x.reward).replace(/-$/, '')) + ' ฿<small>' + esc(x.arc || '') + '</small></button>'; }).join('') + '</div>' : '')
-      + '<div class="wk-edp-who">' + (p.ts ? '🕰 Облик после таймскипа' : '🖼 Основное фото') + (has2 ? ' · у каждого облика свой кадр' : '') + '</div>'
+      + (rws.length > 1 ? '<div class="wk-edp-list">' + rws.map(function (x) { return '<button type="button" data-edp-r="' + esc(x.id) + '"' + (String(x.id) === String(r.id) ? ' class="active"' : '') + '>' + '<span class="wk-edp-sum"><span class="berry-symbol" aria-hidden="true"></span>' + esc(money(x.reward).replace(/-$/, '')) + '</span><small>' + esc(x.arc || '') + '</small></button>'; }).join('') + '</div>' : '')
+      + '<div class="wk-edp-who">' + (p.pl ? '🖼 Фото для плаката' : p.ts ? '🕰 Облик после таймскипа' : '🖼 Основное фото') + (has2 ? ' · у каждого облика свой кадр' : '') + '</div>'
       + '<label class="wk-rl-f">Как вписать' + seg('fit', [['cover', 'Заполнить рамку'], ['contain', 'Целиком (PNG без фона)']], fit) + '</label>'
       + '<label class="wk-rl-f">Масштаб <output data-po="z">' + Math.round(p.z) + '%</output><input type="range" min="30" max="300" step="1" data-pr="z" value="' + Math.round(p.z) + '"></label>'
       + '<label class="wk-rl-f">По горизонтали <output data-po="x">' + Math.round(p.x) + '%</output><input type="range" min="0" max="100" step="1" data-pr="x" value="' + Math.round(p.x) + '"></label>'
@@ -33732,7 +33752,7 @@ html.wk-ed-hints .wk-hint-i{display:none}
     bindDrag();
   }
   document.addEventListener('input', function (e) {
-    var t = e.target; if (!t || !t.matches || !t.matches('#wikiEditorForm [data-field="person_link"], #wikiEditorForm [data-field="person2_link"], #wikiEditorForm [data-field="name"], #wikiEditorForm [data-field="person2_from_chapter"]')) return;
+    var t = e.target; if (!t || !t.matches || !t.matches('#wikiEditorForm [data-field="person_link"], #wikiEditorForm [data-field="poster_link"], #wikiEditorForm [data-field="person2_link"], #wikiEditorForm [data-field="name"], #wikiEditorForm [data-field="person2_from_chapter"]')) return;
     clearTimeout(charPosterBlock.t); charPosterBlock.t = setTimeout(function () { var f = document.getElementById('wikiEditorForm'); if (f) charPosterBlock(f); }, 300);
   }, true);
   document.addEventListener('input', function (e) {
@@ -34030,6 +34050,137 @@ html.wk-ed-hints .wk-hint-i{display:none}
     var sizes = form.querySelector('.wk-crop-sizes'); if (sizes) foldable(sizes, sizes.querySelector('.wk-cs-head'), 'sizes', true);
     var poster = form.querySelector('.wk-ed-poster'); if (poster) { foldable(poster, poster.querySelector('.wiki-editor-field-topline'), 'poster', true, 'кадр фото на постере WANTED'); }
   }
+
+  /* =========================================================
+     9. ИКОНКИ ВМЕСТО ЭМОДЗИ В РЕДАКТОРЕ И ЗНАЧОК БЕЛЛИ ВМЕСТО «฿»
+     ========================================================= */
+  var IP = {
+    pencil: '<path d="M16.5 3.5a2.6 2.6 0 0 1 3.7 3.7L7.5 19.9 3 21l1.1-4.5z"/>',
+    flag: '<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+    image: '<rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><circle cx="9" cy="9" r="1.8"/><path d="m20.5 15-5-5L5 20.5"/>',
+    save: '<path d="M5 3.5h11l3.5 3.5v13.5h-15z"/><path d="M8 3.5v5h7v-5M8 20.5v-6h8v6"/>',
+    arrows: '<path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4"/>',
+    updown: '<path d="M12 3v18M8 7l4-4 4 4M8 17l4 4 4-4"/>',
+    user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',
+    book: '<path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/>',
+    coins: '<circle cx="9" cy="9" r="6"/><path d="M18.1 10.4A6 6 0 1 1 10.4 18.1"/><path d="M9 6.5v5M7 8h3.5a1 1 0 0 1 0 2H7"/>',
+    fruit: '<path d="M12 7.5c-2.2-1.8-6.3-1.3-7.3 2.2-1 3.7.4 8 3.3 9.8 1.5.9 2.6.5 4 0 1.4.5 2.5.9 4 0 2.9-1.8 4.3-6.1 3.3-9.8-1-3.5-5.1-4-7.3-2.2z"/><path d="M12 7.5c0-2.2 1.2-4 3.5-4.5"/>',
+    bulb: '<path d="M9 18h6M10 21.5h4"/><path d="M12 2.5a6.5 6.5 0 0 0-3.8 11.8c.5.4.8 1.1.8 1.7V16h6c0-.6.3-1.3.8-1.7A6.5 6.5 0 0 0 12 2.5z"/>',
+    lock: '<rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>',
+    eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    alert: '<path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5M12 17.2h.01"/>',
+    film: '<rect x="3" y="3.5" width="18" height="17" rx="2.5"/><path d="M7 3.5v17M17 3.5v17M3 9h4M17 9h4M3 15h4M17 15h4"/>',
+    help: '<circle cx="12" cy="12" r="9"/><path d="M9.6 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1.1.8-1.1 1.5v.4"/><path d="M12 17h.01"/>',
+    broom: '<path d="M15 3 10.5 10.5"/><path d="M8 10l5.5 3-1 2.6C11.7 17.8 9.6 20.5 7 20.5H4c.3-2.6 1.2-5.6 2.7-7.8z"/><path d="M8 20.3c.8-1.2 1.5-2.7 1.9-4.2"/>',
+    sparkles: '<path d="M11 3.5l1.6 4.4L17 9.5l-4.4 1.6L11 15.5l-1.6-4.4L5 9.5l4.4-1.6z"/><path d="M18.5 14.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>',
+    clipboard: '<rect x="5" y="4.5" width="14" height="16.5" rx="2"/><path d="M9 4.5V3h6v1.5M9 10h6M9 14h6"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    compass: '<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',
+    scissors: '<circle cx="6" cy="6.5" r="2.6"/><circle cx="6" cy="17.5" r="2.6"/><path d="M8.2 8 20 18M8.2 16 20 6"/>',
+    folder: '<path d="M3 6.5a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+    network: '<circle cx="6" cy="7" r="2.2"/><circle cx="18" cy="6" r="2.2"/><circle cx="12" cy="13" r="2.6"/><circle cx="6" cy="19" r="2"/><circle cx="18.5" cy="18" r="2"/><path d="M7.8 8.3 10 11.3M16.3 7.4 13.9 11.2M10.3 14.8 7.4 17.6M14.2 14.6l2.8 2.2"/>',
+    rainbow: '<path d="M3 17a9 9 0 0 1 18 0"/><path d="M6.5 17a5.5 5.5 0 0 1 11 0"/><path d="M10 17a2 2 0 0 1 4 0"/>',
+    sliders: '<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>',
+    left: '<path d="m15 5-7 7 7 7"/>',
+    right: '<path d="m9 5 7 7-7 7"/>',
+    burst: '<path d="M12 2.5l1.8 5 4.7-2.3-2.3 4.7 5 1.8-5 1.8 2.3 4.7-4.7-2.3-1.8 5-1.8-5-4.7 2.3 2.3-4.7-5-1.8 5-1.8-2.3-4.7 4.7 2.3z"/>',
+    bolt: '<path d="M13 2.5 4.5 13.5H11l-1 8 8.5-11H12z"/>',
+    crosshair: '<circle cx="12" cy="12" r="7.5"/><path d="M12 2.5v5M12 16.5v5M2.5 12h5M16.5 12h5"/>',
+    spiral: '<path d="M12 12a1.5 1.5 0 1 1 1.5 1.5 3 3 0 0 1-3-3 4.5 4.5 0 0 1 4.5-4.5 6 6 0 0 1 6 6 7.5 7.5 0 0 1-7.5 7.5A9 9 0 0 1 4.5 10.5"/>',
+    pulse: '<path d="M2.5 12h4l2.5-6 4 12 2.5-6h6"/>',
+    ghost: '<path d="M5 20.5V10a7 7 0 0 1 14 0v10.5l-2.3-1.8-2.3 1.8-2.4-1.8-2.4 1.8-2.3-1.8z"/><path d="M9.5 10.5h.01M14.5 10.5h.01"/>',
+    flower: '<circle cx="12" cy="12" r="2.5"/><path d="M12 9.5C10 6 10.5 3 12 3s2 3 0 6.5M14.5 12c3.5-2 6.5-1.5 6.5 0s-3 2-6.5 0M12 14.5c2 3.5 1.5 6.5 0 6.5s-2-3 0-6.5M9.5 12C6 14 3 13.5 3 12s3-2 6.5 0"/>',
+    moon: '<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/>',
+    paw: '<circle cx="7" cy="9" r="1.8"/><circle cx="11" cy="6" r="1.8"/><circle cx="15.5" cy="7" r="1.8"/><circle cx="18" cy="11" r="1.8"/><path d="M8 16.5c0-2.5 2-5 4.5-5s4.5 2.5 4.5 5c0 1.8-1.5 3-3 3-.7 0-1-.4-1.5-.4s-.8.4-1.5.4c-1.5 0-3-1.2-3-3z"/>',
+    swords: '<path d="M4 4l11 11M4 4h3.5l9 9M4 4v3.5l9 9"/><path d="M20 4l-6.5 6.5M20 4h-3.5l-4 4M20 4v3.5l-4 4"/><path d="M14 17l3 3M17 14l3 3M10 17l-3 3M7 14l-3 3"/>',
+    type: '<path d="M4 7V4.5h16V7M12 4.5v15M9 19.5h6"/>',
+    palette: '<path d="M12 3a9 9 0 1 0 0 18c1.2 0 1.8-.8 1.8-1.7 0-1.4-1.3-1.8-1.3-3 0-1 .8-1.8 1.8-1.8H17a4 4 0 0 0 4-4C21 6.2 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+    ship: '<path d="M3 15h18l-2.5 5h-13z"/><path d="M12 3v12M12 4l6 8h-6M12 6l-5 6h5"/>',
+    link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+    undo: '<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
+    tag: '<path d="M3.5 12.5V4.5a1 1 0 0 1 1-1h8l8 8-9 9z"/><circle cx="8" cy="8" r="1.4"/>',
+    anchor: '<circle cx="12" cy="5" r="2"/><path d="M12 7v14M8 10h8M5 13H3a9 9 0 0 0 18 0h-2"/>',
+    map: '<path d="M9 4 3.5 6v14L9 18l6 2 5.5-2V4L15 6z"/><path d="M9 4v14M15 6v14"/>',
+    skull: '<path d="M12 3a8 8 0 0 0-8 8c0 2.5 1.2 4.4 3 5.6V20h10v-3.4c1.8-1.2 3-3.1 3-5.6a8 8 0 0 0-8-8z"/><circle cx="9" cy="11" r="1.6"/><circle cx="15" cy="11" r="1.6"/>',
+    medal: '<circle cx="12" cy="15" r="5"/><path d="M8.6 11 6 3h4l2 4 2-4h4l-2.6 8"/>',
+    star: '<path d="m12 3.2 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17.2l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
+    users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 3-5.5 6.5-5.5s6.5 1.9 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.6c2.2.5 3.5 2.3 3.5 5.4"/>',
+    flame: '<path d="M12 21.5c4 0 7-2.8 7-6.8 0-4.4-4.5-6.6-4.5-11.2-3 1.6-5 4.5-4.5 8-1-.7-1.8-2-2-3.5C6.3 9.7 5 12 5 14.7c0 4 3 6.8 7 6.8z"/>',
+    heart: '<path d="M12 20s-7.5-4.6-7.5-10A4.5 4.5 0 0 1 12 7.3 4.5 4.5 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/>',
+    check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+    trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+    globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/>'
+  };
+  var EMAP = {
+    '✎': 'pencil', '✏': 'pencil', '📝': 'pencil', '⚑': 'flag', '🚩': 'flag', '🖼': 'image', '📷': 'image', '📸': 'image', '💾': 'save', '↔': 'arrows', '↕': 'updown',
+    '👤': 'user', '👥': 'users', '📖': 'book', '📚': 'book', '💰': 'coins', '🪙': 'coins', '🍎': 'fruit', '🍏': 'fruit', '💡': 'bulb', '🔒': 'lock', '🔓': 'lock', '👁': 'eye', '👀': 'eye',
+    '＋': 'plus', '➕': 'plus', '⚠': 'alert', '❗': 'alert', '🎬': 'film', '🎞': 'film', '🤔': 'help', '❓': 'help', '🧹': 'broom', '✨': 'sparkles', '💫': 'sparkles', '🎇': 'sparkles', '🌟': 'sparkles',
+    '📋': 'clipboard', '⏳': 'clock', '⌛': 'clock', '🕰': 'clock', '⏱': 'clock', '🧭': 'compass', '✂': 'scissors', '📁': 'folder', '📂': 'folder', '🕸': 'network', '🌈': 'rainbow', '🎛': 'sliders', '⚙': 'sliders',
+    '◀': 'left', '▶': 'right', '💥': 'burst', '⚡': 'bolt', '🔫': 'crosshair', '🎯': 'crosshair', '🌀': 'spiral', '💓': 'pulse', '💗': 'pulse', '👻': 'ghost', '🌸': 'flower', '🌑': 'moon', '🌙': 'moon', '🐾': 'paw',
+    '⚔': 'swords', '🗡': 'swords', '🔤': 'type', '🔠': 'type', '🎨': 'palette', '🔍': 'search', '🔎': 'search', '⛵': 'ship', '🚢': 'ship', '🔗': 'link', '↩': 'undo', '🏷': 'tag', '⚓': 'anchor', '🗺': 'map',
+    '🏴': 'skull', '☠': 'skull', '💀': 'skull', '🏅': 'medal', '🎖': 'medal', '⭐': 'star', '🔥': 'flame', '❤': 'heart', '💖': 'heart', '✅': 'check', '🗑': 'trash', '🌍': 'globe', '🌐': 'globe'
+  };
+  var ERE = /(?:\p{Extended_Pictographic}|[＋↔↕◀▶⚑✎])️?(?:‍\p{Extended_Pictographic}️?)*/u;
+  function iconFor(e) { var base = e.replace(/️/g, '').split('‍')[0]; return IP[EMAP[base]] ? EMAP[base] : null; }
+  function svgIcon(name) { return '<svg class="wk-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IP[name] + '</svg>'; }
+  window.__wkEdIcon = function (name) { return IP[name] ? '<span class="wk-ei" aria-hidden="true">' + svgIcon(name) + '</span>' : ''; };
+  var ICO_SKIP = 'script,style,textarea,input,svg,.wk-lk-stage,.wk-wp,.wk-rl-card,.wk-rl-row,.wk-cs-side,.wk-tfx-samples,.wk-cut-opt img,[contenteditable="true"]';
+  function iconize(root) {
+    if (!root) return;
+    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: function (n) { return ERE.test(n.data) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT; } });
+    var list = [], n; while ((n = w.nextNode())) list.push(n);
+    list.forEach(function (node) {
+      var p = node.parentElement; if (!p || p.closest(ICO_SKIP)) return;
+      var re = new RegExp(ERE.source + '\\s?', 'gu');
+      if (p.closest('option,select')) { var t0 = node.data.replace(re, ''); if (t0 !== node.data) node.data = t0; return; }
+      var frag = document.createDocumentFragment(), last = 0, m, txt = node.data, only = txt.replace(re, '').trim() === '';
+      while ((m = re.exec(txt))) {
+        if (m.index > last) frag.appendChild(document.createTextNode(txt.slice(last, m.index)));
+        var nm = iconFor(m[0].trim());
+        if (nm) { var s = document.createElement('span'); s.className = 'wk-ei' + (only ? ' is-only' : ''); s.setAttribute('aria-hidden', 'true'); s.innerHTML = svgIcon(nm); frag.appendChild(s); }
+        last = m.index + m[0].length;
+      }
+      if (last < txt.length) frag.appendChild(document.createTextNode(txt.slice(last)));
+      node.parentNode.replaceChild(frag, node);
+    });
+  }
+
+  // «฿» → значок белли перед суммой (во всей вики); в подсказках и пунктах списков — слово «белли».
+  var BERRY = '<span class="berry-symbol" aria-hidden="true" title="Белли"></span>';
+  var BSKIP = 'script,style,textarea,input,option,select,[contenteditable="true"]';
+  function berryize(root) {
+    if (!root || root.nodeType !== 1 && root.nodeType !== 3) return;
+    if (root.nodeType === 3) { root = root.parentElement; if (!root) return; }
+    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: function (n) { return n.data.indexOf('฿') >= 0 ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT; } });
+    var list = [], n; while ((n = w.nextNode())) list.push(n);
+    if (root.nodeType === 3 && root.data.indexOf('฿') >= 0) list.push(root);
+    list.forEach(function (node) {
+      var p = node.parentElement; if (!p) return;
+      if (p.closest(BSKIP)) { if (p.closest('option')) node.data = node.data.replace(/\s?฿/g, ' белли').replace(/^ белли\s?/, ''); return; }
+      var html = String(node.data).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; })
+        .replace(/(\d[\d\s .,]*(?:\s?(?:млн|млрд|тыс\.?))?)\s?฿/g, BERRY + '$1').replace(/฿\s?/g, BERRY);
+      var t = document.createElement('template'); t.innerHTML = html; node.parentNode.replaceChild(t.content, node);
+    });
+    var els = root.querySelectorAll ? root.querySelectorAll('[title*="฿"],[aria-label*="฿"]') : [];
+    [].forEach.call(els, function (el) { ['title', 'aria-label'].forEach(function (a) { var v = el.getAttribute(a); if (v && v.indexOf('฿') >= 0) el.setAttribute(a, v.replace(/\s?฿/g, ' белли')); }); });
+  }
+  var bq = [], bpend = 0;
+  function bflush() { bpend = 0; var q = bq; bq = []; q.forEach(function (n) { if (n.isConnected) berryize(n); }); }
+  new MutationObserver(function (ms) {
+    for (var i = 0; i < ms.length; i++) {
+      var m = ms[i];
+      if (m.type === 'characterData') { if (m.target.data && m.target.data.indexOf('฿') >= 0) bq.push(m.target); continue; }
+      for (var j = 0; j < m.addedNodes.length; j++) { var a = m.addedNodes[j]; if ((a.nodeType === 3 && a.data.indexOf('฿') >= 0) || (a.nodeType === 1 && a.textContent.indexOf('฿') >= 0) || (a.nodeType === 1 && a.querySelector && a.querySelector('[title*="฿"]'))) bq.push(a.nodeType === 3 ? a : a); }
+    }
+    if (bq.length && !bpend) bpend = requestAnimationFrame(bflush);
+  }).observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+  berryize(document.body);
+  function iconPass() {
+    var ov = document.getElementById('wikiEditorOverlay'); if (ov) iconize(ov);
+    document.querySelectorAll('.wk-rl-back').forEach(iconize);
+  }
   /* ---------- Общий запуск: наблюдатели только за своими участками ---------- */
   var pend = 0;
   function run() {
@@ -34039,10 +34190,11 @@ html.wk-ed-hints .wk-hint-i{display:none}
     try { usefulFruitBlock(); } catch (e) { console.warn('v22 useful fruit', e); }
     try { editorPass(); } catch (e) { console.warn('v22 editor', e); }
     try { redesignPass(); } catch (e) { console.warn('v22 redesign', e); }
+    try { iconPass(); } catch (e) { console.warn('v22 icons', e); }
     try { sortState(); } catch (e) {}
     try { cabWatch(); cabSchedule(); } catch (e) {}
   }
-  function own(n) { return n && n.nodeType === 1 && (n.classList.contains('wk-weapons') || n.classList.contains('wk-useful-fruit') || n.classList.contains('wk-rl-open') || n.classList.contains('wk-hint-i') || n.classList.contains('wk-hints-tg') || n.classList.contains('wk-rw-look-note') || n.classList.contains('wk-ed-poster')); }
+  function own(n) { return n && n.nodeType === 1 && (n.classList.contains('wk-weapons') || n.classList.contains('wk-useful-fruit') || n.classList.contains('wk-rl-open') || n.classList.contains('wk-hint-i') || n.classList.contains('wk-hints-tg') || n.classList.contains('wk-rw-look-note') || n.classList.contains('wk-ed-poster') || n.classList.contains('wk-ei')); }
   var mo = new MutationObserver(function (ms) {
     for (var i = 0; i < ms.length; i++) {
       var m = ms[i], only = m.addedNodes.length + m.removedNodes.length > 0, j;
