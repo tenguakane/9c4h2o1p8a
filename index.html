@@ -1285,7 +1285,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "06.11.2026 · 96";
+const WIKI_VERSION = "07.11.2026 · 97";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -29519,7 +29519,9 @@ html.ios-app .wk-totop{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
   function chipRow(id, before, items, active, onPick) {
     var row = document.getElementById(id);
     if (!before) return;
-    if (!row) { row = document.createElement('div'); row.id = id; row.className = 'wk-chips'; row.setAttribute('role', 'toolbar'); before.parentNode.insertBefore(row, before); row.addEventListener('click', function (e) { var b = e.target.closest('[data-chip]'); if (b) onPick(b.getAttribute('data-chip')); }); }
+    if (!row) { row = document.createElement('div'); row.id = id; row.className = 'wk-chips'; row.setAttribute('role', 'toolbar'); before.parentNode.insertBefore(row, before); }
+    row.__wkPick = onPick;
+    if (!row.__wkBound) { row.__wkBound = true; row.addEventListener('click', function (e) { var b = e.target.closest('[data-chip]'); if (b && row.__wkPick) row.__wkPick(b.getAttribute('data-chip')); }); }
     var key = JSON.stringify([items, active]); if (row.getAttribute('data-k') === key) return; row.setAttribute('data-k', key);
     row.innerHTML = items.map(function (it) {
       var on = it.v === active, col = CHIP_COLORS[String(it.v).toLocaleLowerCase('ru')] || it.c || '';
@@ -32746,14 +32748,17 @@ html body .story-saga-item.has-story-image .story-card-thumb::after{content:"";p
       else { usefulCurrentPage = 1; renderUsefulList(); if (typeof syncUrl === 'function') syncUrl(); }
     } catch (e) { console.warn('v21', e); }
   }
+  function bindSort(t, sel) {
+    var c = CFG[t]; if (sel.__wkSortBound) return; sel.__wkSortBound = true; sel.value = mode[t];
+    sel.addEventListener('change', function () { mode[t] = sel.value; try { localStorage.setItem(c.key, sel.value); } catch (e) {} rerender(t); });
+  }
   function mount(t) {
-    var c = CFG[t]; if (document.getElementById(c.id)) return;
+    var c = CFG[t], ex = document.getElementById(c.id); if (ex) { bindSort(t, ex); return; }
     var host = document.querySelector(c.host); if (!host) return;
     var box = document.createElement('label'); box.className = 'wk-sortbox'; box.setAttribute('for', c.id);
     box.innerHTML = '<span>Сортировка</span><select id="' + c.id + '" aria-label="Сортировка">' + c.modes.map(function (m) { return '<option value="' + m[0] + '">' + m[1] + '</option>'; }).join('') + '</select>';
     var anchor = host.querySelector(c.before); if (anchor) host.insertBefore(box, anchor); else host.appendChild(box);
-    var sel = box.querySelector('select'); sel.value = mode[t];
-    sel.addEventListener('change', function () { mode[t] = sel.value; try { localStorage.setItem(c.key, sel.value); } catch (e) {} rerender(t); });
+    bindSort(t, box.querySelector('select'));
   }
   mode.fruit = load('fruit'); mode.useful = load('useful');
   var origUseful = window.getFilteredUsefulArticles;
@@ -32785,9 +32790,22 @@ html body .story-saga-item.has-story-image .story-card-thumb::after{content:"";p
 .wk-wp-name{top:71.8%;height:11.6%;font-size:var(--wp-size,13.5cqw);letter-spacing:var(--wp-ls,.01em)}
 .wk-wp-name.is-two{font-size:calc(var(--wp-size,13.5cqw) * .64);gap:.06em;line-height:.98}
 .wk-wp-name>span,.wk-wp-bounty>span{display:block;transform:scaleX(var(--sx,1));transform-origin:center}
-.wk-wp-bounty{top:83.4%;height:5.8%;font-size:6.4cqw;letter-spacing:.2em;font-weight:var(--wp-fw,900)}
+.wk-wp-bounty{top:83.4%;height:5.8%;font-size:var(--wp-bsize,6.4cqw);letter-spacing:.2em}
+.wk-wp .wk-wp-bounty,.wk-wp .wk-wp-bounty span{font-family:var(--wp-bfont,var(--wp-font,'Playfair Display SC')),'Times New Roman',serif!important;font-weight:var(--wp-bfw,var(--wp-fw,900))!important}
 .wk-wp .wk-wp-bounty .berry-symbol{display:inline-block!important;width:.7em!important;height:1.2em!important;margin-right:.16em!important;vertical-align:-.14em!important;background-color:currentColor!important;-webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%20100%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M8%2014H36C49%2014%2055%2021%2055%2030C55%2038%2050%2044%2043%2047C53%2049%2059%2057%2059%2066C59%2078%2051%2086%2036%2086H8ZM18%2022V43H33C40%2043%2043%2038%2043%2032.5C43%2026%2039.5%2022%2033%2022ZM18%2051V78H35C42.5%2078%2046.5%2073%2046.5%2064.5C46.5%2056%2042.5%2051%2035%2051Z%22/%3E%3Cpath%20d%3D%22M23%203h4.5v94h-4.5zM31.5%203h4.5v94h-4.5z%22/%3E%3C/svg%3E") center/contain no-repeat!important;mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%20100%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M8%2014H36C49%2014%2055%2021%2055%2030C55%2038%2050%2044%2043%2047C53%2049%2059%2057%2059%2066C59%2078%2051%2086%2036%2086H8ZM18%2022V43H33C40%2043%2043%2038%2043%2032.5C43%2026%2039.5%2022%2033%2022ZM18%2051V78H35C42.5%2078%2046.5%2073%2046.5%2064.5C46.5%2056%2042.5%2051%2035%2051Z%22/%3E%3Cpath%20d%3D%22M23%203h4.5v94h-4.5zM31.5%203h4.5v94h-4.5z%22/%3E%3C/svg%3E") center/contain no-repeat!important}
 .wk-wp.is-nophoto .wk-wp-ph::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,rgba(255,255,255,.18),transparent 70%)}
+
+/* ---------- Окно «Оформление наград»: шрифты имени и суммы ---------- */
+.wk-rl-type{display:grid;grid-template-columns:170px minmax(0,1fr);gap:14px;align-items:start}
+.wk-rl-type-pv{position:sticky;top:0;display:grid;gap:6px;justify-items:center}
+.wk-rl-type-pv .wk-wp{width:170px;border-radius:4px;box-shadow:0 12px 26px -12px rgba(0,0,0,.85)}
+.wk-rl-type-pv small{font-size:11px;color:#64748b}
+.wk-rl-type-boxes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;min-width:0}
+.wk-rl-size{display:flex;align-items:center;gap:10px;font-size:12.5px;color:#94a3b8}
+.wk-rl-size input[type=range]{flex:1;accent-color:#d8b45a}
+.wk-rl-size output{min-width:42px;color:#e2e8f0;font-variant-numeric:tabular-nums;text-align:right}
+.wk-rl-mini{height:28px;padding:0 9px}
+@media (max-width:760px){.wk-rl-type{grid-template-columns:minmax(0,1fr)}.wk-rl-type-pv{position:static}}
 
 /* ---------- Окно «Оформление наград» ---------- */
 .wk-rl-open{display:inline-flex;align-items:center;gap:6px}
@@ -32933,6 +32951,18 @@ html.wk-ed-hints .wk-hint-i{display:none}
   #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-fields>.wiki-editor-field.wk-fit{flex:1 1 100%!important}
   #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-field.wk-fit :is(input,select){width:100%!important}
 }
+
+/* ---------- Кнопка сортировки: компактная, с иконкой и стрелкой ---------- */
+.wk-sortbox{position:relative;display:inline-flex;align-items:center;gap:0;width:auto;justify-self:end;flex:0 0 auto;height:44px;padding:0;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:rgba(255,255,255,.035);color:#d7dde9;cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s}
+.wk-sortbox::before{content:"";flex:0 0 auto;width:16px;height:16px;margin-left:15px;background:currentColor;opacity:.75;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 4v16M3.5 7.5 7 4l3.5 3.5M17 20V4M13.5 16.5 17 20l3.5-3.5'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 4v16M3.5 7.5 7 4l3.5 3.5M17 20V4M13.5 16.5 17 20l3.5-3.5'/%3E%3C/svg%3E") center/contain no-repeat}
+.wk-sortbox>span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wk-sortbox select{appearance:none;-webkit-appearance:none;height:100%;max-width:240px;margin:0;padding:0 36px 0 10px;border:0;border-radius:999px;background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") right 14px center/14px no-repeat;color:inherit;font:inherit;font-size:13.5px;font-weight:600;outline:none;cursor:pointer;text-overflow:ellipsis}
+.wk-sortbox select option{background:#0f1520;color:#e8ecf4}
+.wk-sortbox:hover{border-color:rgba(255,255,255,.26);background:rgba(255,255,255,.06)}
+.wk-sortbox:focus-within{border-color:rgba(255,206,110,.6);box-shadow:0 0 0 3px rgba(255,206,110,.12)}
+.wk-sortbox.is-set{border-color:rgba(216,180,90,.65);background:rgba(216,180,90,.12);color:#fde68a}
+.wk-sortbox.is-set::before{opacity:1}
+@media (max-width:760px){.wk-sortbox{justify-self:stretch;height:42px}.wk-sortbox select{flex:1;max-width:none}}
 </style>
 <script id="wk-v22-js">
 /* ===================================================================
@@ -33060,9 +33090,14 @@ html.wk-ed-hints .wk-hint-i{display:none}
     return w > 0 ? Math.min(1, avail / w) : 1;
   }
   var NAME_SIZE = 13.5, NAME_AVAIL = 75, B_SIZE = 6.4, B_LS = 0.2, B_AVAIL = 72;
-  function nameBlock(name, F, upper) {
+  function clampPct(v) { v = Number(v); return v >= 50 && v <= 160 ? v / 100 : 1; }
+  function nameFont(cfg) { return fontOf(cfg.font || DEF_FONT); }
+  function bountyFont(cfg) { return cfg.bfont ? fontOf(cfg.bfont) : nameFont(cfg); }
+  // Когда шрифт догрузился, пересчитываем ширину строк под настоящие метрики.
+  function fontReady(F) { ensureFont(F).then(function () { if (!F.__ready) { F.__ready = true; Object.keys(fitCache).forEach(function (k) { if (k.indexOf(F.v + '|') === 0) delete fitCache[k]; }); refitAll(); } }); }
+  function nameBlock(name, F, upper, scale) {
     var t = String(name || '').replace(/\s+/g, ' ').trim(); if (upper) t = t.toLocaleUpperCase('ru');
-    var size = NAME_SIZE * (F.size || 1), s1 = scaleFor(t, F, size, NAME_AVAIL, 0.01);
+    var size = NAME_SIZE * (F.size || 1) * (scale || 1), s1 = scaleFor(t, F, size, NAME_AVAIL, 0.01);
     if (s1 >= 0.6 || t.indexOf(' ') < 0) return '<div class="wk-wp-name" style="--wp-size:' + size.toFixed(2) + 'cqw"><span style="--sx:' + s1.toFixed(3) + '">' + esc(t) + '</span></div>';
     // длинное имя — в две строки, разрыв ближе к середине
     var words = t.split(' '), best = 1, bestD = 1e9;
@@ -33070,10 +33105,14 @@ html.wk-ed-hints .wk-hint-i{display:none}
     var l1 = words.slice(0, best).join(' '), l2 = words.slice(best).join(' '), s2 = size * 0.64;
     return '<div class="wk-wp-name is-two" style="--wp-size:' + size.toFixed(2) + 'cqw"><span style="--sx:' + scaleFor(l1, F, s2, NAME_AVAIL, 0.01).toFixed(3) + '">' + esc(l1) + '</span><span style="--sx:' + scaleFor(l2, F, s2, NAME_AVAIL, 0.01).toFixed(3) + '">' + esc(l2) + '</span></div>';
   }
-  function bountyBlock(value, F) {
-    var t = money(value), s = scaleFor('B' + t, F, B_SIZE, B_AVAIL, B_LS);
+  function bountyBlock(value, F, scale) {
+    var size = B_SIZE * (F.size || 1) * (scale || 1), t = money(value), s = scaleFor('B' + t, F, size, B_AVAIL, B_LS);
     var berry = typeof window.berrySymbolHTML === 'function' ? window.berrySymbolHTML() : '<span class="berry-symbol" aria-hidden="true"></span>';
-    return '<div class="wk-wp-bounty"><span style="--sx:' + s.toFixed(3) + '">' + berry + esc(t) + '</span></div>';
+    return '<div class="wk-wp-bounty" style="--wp-bfont:' + esc(F.f) + ';--wp-bfw:' + (F.w || 700) + ';--wp-bsize:' + size.toFixed(2) + 'cqw"><span style="--sx:' + s.toFixed(3) + '">' + berry + esc(t) + '</span></div>';
+  }
+  function textBlocks(name, value, cfg) {
+    var NF = nameFont(cfg), BF = bountyFont(cfg); fontReady(NF); if (BF !== NF) fontReady(BF);
+    return nameBlock(name, NF, cfg.upper !== false, clampPct(cfg.nsize)) + bountyBlock(value, BF, clampPct(cfg.bsize));
   }
   function photoStyle(p, cut, fit) {
     var cover = fit ? fit === 'cover' : !cut;
@@ -33088,10 +33127,9 @@ html.wk-ed-hints .wk-hint-i{display:none}
     var ph = p.src
       ? '<img src="' + esc(p.src) + '" alt="" loading="' + (opt.eager ? 'eager' : 'lazy') + '" decoding="async" draggable="false" style="' + photoStyle(p, cut, p.fit) + '" onerror="this.parentNode.parentNode.classList.add(\'is-nophoto\');this.remove()">'
       : '';
-    ensureFont(F).then(function () { if (!F.__ready) { F.__ready = true; Object.keys(fitCache).forEach(function (k) { if (k.indexOf(F.v + '|') === 0) delete fitCache[k]; }); refitAll(); } });
     return '<div class="wk-wp' + (p.src ? '' : ' is-nophoto') + '" data-wp-rid="' + esc(r.id) + '" style="--wp-font:' + esc(F.f) + ';--wp-fw:' + (F.w || 700) + '" role="img" aria-label="Плакат WANTED: ' + esc(name) + ', ' + esc(money(r.reward)) + ' белли">'
       + '<div class="wk-wp-ph' + (cut && p.src ? ' is-cut' : '') + '">' + (ph || '<span class="wk-wp-none">?</span>') + '</div>'
-      + nameBlock(name, F, cfg.upper !== false) + bountyBlock(r.reward, F) + '</div>';
+      + textBlocks(name, r.reward, cfg) + '</div>';
   }
   var refitPend = 0;
   function refitAll() {
@@ -33101,7 +33139,7 @@ html.wk-ed-hints .wk-hint-i{display:none}
         var rid = el.getAttribute('data-wp-rid'), r = arr('rewards').find(function (x) { return String(x.id) === rid; }); if (!r) return;
         var cfg = pcfg(), a = cfg.adj[rid] || {}, F = fontOf(cfg.font || DEF_FONT), c = charOf(r);
         var name = (a.name && String(a.name).trim()) || (c ? c.name : '') || 'Неизвестный';
-        var tmp = document.createElement('div'); tmp.innerHTML = nameBlock(name, F, cfg.upper !== false) + bountyBlock(r.reward, F);
+        var tmp = document.createElement('div'); tmp.innerHTML = textBlocks(name, r.reward, cfg);
         var on = el.querySelector('.wk-wp-name'), ob = el.querySelector('.wk-wp-bounty');
         if (on) on.replaceWith(tmp.firstChild); if (ob) ob.replaceWith(tmp.lastChild);
         el.style.setProperty('--wp-font', F.f); el.style.setProperty('--wp-fw', String(F.w || 700));
@@ -33225,25 +33263,51 @@ html.wk-ed-hints .wk-hint-i{display:none}
   function renderPosters(body) {
     var cfg = pcfg(), F = fontOf(cfg.font || DEF_FONT), all = rewardsSorted();
     var vis = all.filter(function (r) { return showLocked || !locked(r, 'reward'); }), nLocked = all.filter(function (r) { return locked(r, 'reward'); }).length;
-    var fontsHTML = FONTS.map(function (x) { return '<button type="button" data-font="' + x.v + '"' + (x.v === F.v ? ' class="active"' : '') + ' style="--f:' + esc(x.f) + ';--fw:' + x.w + '"><span>ЗОРО 1 111 000 000</span><small>' + esc(x.n) + '</small></button>'; }).join('');
+    var BFv = cfg.bfont || '', BF = bountyFont(cfg), pv = firstReward();
+    var fontBtns = function (attr, cur, sample, withSame) {
+      return (withSame ? '<button type="button" ' + attr + '=""' + (!cur ? ' class="active"' : '') + ' style="--f:' + esc(F.f) + ';--fw:' + F.w + '"><span>' + sample + '</span><small>Как у имени</small></button>' : '')
+        + FONTS.map(function (x) { return '<button type="button" ' + attr + '="' + x.v + '"' + (x.v === cur ? ' class="active"' : '') + ' style="--f:' + esc(x.f) + ';--fw:' + x.w + '"><span>' + sample + '</span><small>' + esc(x.n) + '</small></button>'; }).join('');
+    };
+    var sizeRow = function (key, val) { var v = Math.round(clampPct(val) * 100); return '<label class="wk-rl-size">Размер <input type="range" min="50" max="160" step="1" data-size="' + key + '" value="' + v + '"><output data-size-o="' + key + '">' + v + '%</output><button type="button" class="wk-rl-btn wk-rl-mini" data-size-reset="' + key + '" title="Вернуть 100%">↺</button></label>'; };
     FONTS.forEach(function (x) { ensureFont(x); });
     body.innerHTML = '<p class="wk-rl-note">Плакат собирается сам: шаблон WANTED, <b>фото персонажа на момент награды</b> (после таймскипа — новый облик), имя из статьи и сумма. Нажми на плакат, чтобы поправить кадр, фото или подпись.</p>'
-      + '<div class="wk-rl-box"><b>Шрифт имени и суммы</b><div class="wk-rl-fonts">' + fontsHTML + '</div>'
-      + '<div class="wk-rl-line"><input type="text" data-gfont placeholder="Другой шрифт из Google Fonts, например «Underdog»" value="' + esc(F.custom ? F.n : '') + '" style="flex:1 1 260px"><button type="button" class="wk-rl-btn" data-gfont-ok>Применить</button></div>'
-      + '<div class="wk-rl-line"><label class="wk-rl-sw"><input type="checkbox" data-upper' + (cfg.upper !== false ? ' checked' : '') + '> Имя заглавными буквами</label>'
-      + '<label class="wk-rl-sw"><input type="checkbox" data-src' + ((cfg.src || 'gen') === 'img' ? ' checked' : '') + '> Где есть загруженный плакат — показывать его</label></div></div>'
+      + '<div class="wk-rl-type">' + (pv ? '<div class="wk-rl-type-pv">' + posterHTML(pv, { eager: true }) + '<small>Превью меняется сразу</small></div>' : '')
+      + '<div class="wk-rl-type-boxes"><div class="wk-rl-box"><b>Имя (заголовок)</b><div class="wk-rl-fonts">' + fontBtns('data-font', F.v, 'ЗОРО', false) + '</div>'
+      + sizeRow('nsize', cfg.nsize)
+      + '<div class="wk-rl-line"><input type="text" data-gfont="font" placeholder="Другой шрифт из Google Fonts, например «Underdog»" value="' + esc(F.custom ? F.n : '') + '" style="flex:1 1 220px"><button type="button" class="wk-rl-btn" data-gfont-ok="font">Применить</button></div>'
+      + '<label class="wk-rl-sw"><input type="checkbox" data-upper' + (cfg.upper !== false ? ' checked' : '') + '> Заглавными буквами</label></div>'
+      + '<div class="wk-rl-box"><b>Сумма награды</b><div class="wk-rl-fonts">' + fontBtns('data-bfont', BFv, '1 111 000 000', true) + '</div>'
+      + sizeRow('bsize', cfg.bsize)
+      + '<div class="wk-rl-line"><input type="text" data-gfont="bfont" placeholder="Другой шрифт из Google Fonts" value="' + esc(BFv && BF.custom ? BF.n : '') + '" style="flex:1 1 220px"><button type="button" class="wk-rl-btn" data-gfont-ok="bfont">Применить</button></div></div></div></div>'
+      + '<div class="wk-rl-line" style="margin-top:12px"><label class="wk-rl-sw"><input type="checkbox" data-src' + ((cfg.src || 'gen') === 'img' ? ' checked' : '') + '> Где есть загруженный плакат — показывать его</label></div>'
       + '<div class="wk-rl-line" style="margin:14px 0 10px"><b style="font-size:13.5px">Все плакаты · ' + vis.length + '</b>'
       + (nLocked ? '<label class="wk-rl-sw" style="margin-left:auto"><input type="checkbox" data-locked' + (showLocked ? ' checked' : '') + '> Показать скрытые спойлером (' + nLocked + ')</label>' : '') + '</div>'
       + '<div class="wk-rl-grid">' + vis.map(function (r) {
         var c = charOf(r), own = !!cfg.adj[r.id] && Object.keys(cfg.adj[r.id]).length > 0, lk = locked(r, 'reward');
         return '<button type="button" class="wk-rl-item' + (own ? ' is-own' : '') + (lk ? ' is-locked' : '') + '" data-rid="' + esc(r.id) + '">' + posterHTML(r) + (lk ? '<span class="wk-rl-lock">🔒</span>' : '') + '<small>' + esc((c && c.name) || r.character_id) + (own ? ' · ✎' : '') + '</small></button>';
       }).join('') + '</div>';
-    body.querySelectorAll('[data-font]').forEach(function (b) { b.addEventListener('click', function () { var c = pcfg(); c.font = b.getAttribute('data-font'); savePcfg(c); saved(); afterPosterChange(); renderPosters(body); }); });
-    var gi = body.querySelector('[data-gfont]');
-    function applyG() { var n = String(gi.value || '').replace(/[^\p{L}\p{N} ]/gu, '').replace(/\s+/g, ' ').trim(); if (!n) return; var c = pcfg(); c.font = 'g:' + n + '|700'; savePcfg(c); saved(); afterPosterChange(); renderPosters(body); }
-    body.querySelector('[data-gfont-ok]').addEventListener('click', applyG);
-    gi.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); applyG(); } });
-    body.querySelector('[data-upper]').addEventListener('change', function (e) { var c = pcfg(); c.upper = e.target.checked; savePcfg(c); saved(); afterPosterChange(); renderPosters(body); });
+    // Шрифт и размер меняются без перерисовки окна: плакаты пересобирают только подписи.
+    function setKey(k, v) { var c = pcfg(); if (v === '' || v == null) delete c[k]; else c[k] = v; savePcfg(c); saved(); refitAll(); clearTimeout(setKey.t); setKey.t = setTimeout(afterPosterChange, 350); }
+    ['font', 'bfont'].forEach(function (k) {
+      var attr = k === 'font' ? 'data-font' : 'data-bfont';
+      body.querySelectorAll('[' + attr + ']').forEach(function (b) { b.addEventListener('click', function () {
+        setKey(k, b.getAttribute(attr) || (k === 'font' ? DEF_FONT : ''));
+        body.querySelectorAll('[' + attr + ']').forEach(function (x) { x.classList.toggle('active', x === b); });
+        if (k === 'font') { var nf = nameFont(pcfg()); var same = body.querySelector('[data-bfont=""]'); if (same) { same.style.setProperty('--f', nf.f); same.style.setProperty('--fw', String(nf.w)); } }
+      }); });
+    });
+    body.querySelectorAll('[data-gfont]').forEach(function (gi) {
+      var k = gi.getAttribute('data-gfont');
+      function applyG() { var n = String(gi.value || '').replace(/[^\p{L}\p{N} ]/gu, '').replace(/\s+/g, ' ').trim(); if (!n) return; setKey(k, 'g:' + n + '|700'); body.querySelectorAll(k === 'font' ? '[data-font]' : '[data-bfont]').forEach(function (x) { x.classList.remove('active'); }); }
+      body.querySelector('[data-gfont-ok="' + k + '"]').addEventListener('click', applyG);
+      gi.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); applyG(); } });
+    });
+    body.querySelectorAll('[data-size]').forEach(function (rg) {
+      var k = rg.getAttribute('data-size'), out = body.querySelector('[data-size-o="' + k + '"]');
+      rg.addEventListener('input', function () { out.textContent = rg.value + '%'; setKey(k, Number(rg.value) === 100 ? '' : Number(rg.value)); });
+      body.querySelector('[data-size-reset="' + k + '"]').addEventListener('click', function () { rg.value = 100; out.textContent = '100%'; setKey(k, ''); });
+    });
+    body.querySelector('[data-upper]').addEventListener('change', function (e) { setKey('upper', e.target.checked ? '' : false); });
     body.querySelector('[data-src]').addEventListener('change', function (e) { var c = pcfg(); c.src = e.target.checked ? 'img' : 'gen'; savePcfg(c); saved(); afterPosterChange(); });
     var lk = body.querySelector('[data-locked]'); if (lk) lk.addEventListener('change', function (e) { showLocked = e.target.checked; renderPosters(body); });
     body.querySelector('.wk-rl-grid').addEventListener('click', function (e) { var it = e.target.closest('[data-rid]'); if (!it) return; editRid = it.getAttribute('data-rid'); render(); body.scrollTop = 0; });
@@ -33511,6 +33575,44 @@ html.wk-ed-hints .wk-hint-i{display:none}
     if (t.tagName === 'TEXTAREA') growArea(t); else if (t.tagName === 'INPUT') fitInput(t);
   }, true);
 
+
+  /* =========================================================
+     6. ПЛАВНОЕ ПОЯВЛЕНИЕ КАРТОЧЕК ПРИ СМЕНЕ ВКЛАДКИ
+     ========================================================= */
+  var CARD_SEL = '.catalog-item-shell, .character-item, .reward-poster-card, .wk-sc-hero, .wk-sc-grid > *, .wk-shelf-row > *, .stat, .story-item, .wk-cab-ov > *, .cabin-tab-panel > *';
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var appearToken = 0;
+  function appear(token, seen, startIdx) {
+    if (token !== appearToken) return startIdx;
+    var sec = document.querySelector('section.section.active') || document.querySelector('main'); if (!sec) return startIdx;
+    var vh = window.innerHeight + 200, idx = startIdx;
+    sec.querySelectorAll(CARD_SEL).forEach(function (el) {
+      if (seen.has(el) || idx - startIdx > 60) return;
+      var p = el.parentElement, nested = false;
+      while (p && p !== sec) { if (seen.has(p)) { nested = true; break; } p = p.parentElement; }
+      seen.add(el); if (nested) return;
+      var r = el.getBoundingClientRect(); if (!r.width || r.top > vh || r.bottom < -50) return;
+      try { el.animate([{ opacity: 0, translate: '0 14px' }, { opacity: 1, translate: '0 0' }], { duration: 420, delay: Math.min(idx, 24) * 28, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' }); } catch (e) {}
+      idx++;
+    });
+    return idx;
+  }
+  function onTab() {
+    if (reduce || !Element.prototype.animate) return;
+    var token = ++appearToken, seen = new WeakSet(), n = 0;
+    requestAnimationFrame(function () { n = appear(token, seen, 0); setTimeout(function () { n = appear(token, seen, n); }, 140); setTimeout(function () { appear(token, seen, n); }, 380); });
+  }
+  var lastTab = document.body.getAttribute('data-active-tab');
+  new MutationObserver(function () { var t = document.body.getAttribute('data-active-tab'); if (t !== lastTab) { lastTab = t; onTab(); } }).observe(document.body, { attributes: true, attributeFilter: ['data-active-tab'] });
+
+  /* ---------- Кнопка сортировки: подсветка, когда выбрана не «по умолчанию» ---------- */
+  function sortState() {
+    document.querySelectorAll('.wk-sortbox select').forEach(function (s) {
+      var box = s.closest('.wk-sortbox'), def = s.options[0] ? s.options[0].value : '';
+      box.classList.toggle('is-set', s.value !== def);
+      if (!s.__wkSort) { s.__wkSort = true; s.addEventListener('change', sortState); }
+    });
+  }
   /* ---------- Общий запуск: наблюдатели только за своими участками ---------- */
   var pend = 0;
   function run() {
@@ -33519,6 +33621,7 @@ html.wk-ed-hints .wk-hint-i{display:none}
     try { weaponsBlock(); } catch (e) { console.warn('v22 weapons', e); }
     try { usefulFruitBlock(); } catch (e) { console.warn('v22 useful fruit', e); }
     try { editorPass(); } catch (e) { console.warn('v22 editor', e); }
+    try { sortState(); } catch (e) {}
   }
   function own(n) { return n && n.nodeType === 1 && (n.classList.contains('wk-weapons') || n.classList.contains('wk-useful-fruit') || n.classList.contains('wk-rl-open') || n.classList.contains('wk-hint-i') || n.classList.contains('wk-hints-tg') || n.classList.contains('wk-rw-look-note') || n.classList.contains('wk-ed-poster')); }
   var mo = new MutationObserver(function (ms) {
