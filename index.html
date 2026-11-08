@@ -1285,7 +1285,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "08.11.2026 · 112";
+const WIKI_VERSION = "08.11.2026 · 113";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -33098,6 +33098,11 @@ body.wk-pe-on [data-fruit-id]:active,body.wk-pe-on [data-useful-id]:active,body.
 body.wk-pe-on .wk-pe-active{outline:2px solid #e3b341!important;outline-offset:2px;z-index:5}
 body.wk-pe-on .wk-pe-active img{will-change:transform,object-position}
 @media (max-width:700px){#wkPeBar{bottom:8px;padding:8px 10px;gap:8px 10px}.wk-pe-zoom input{width:100px}.wk-pe-hint{display:none}#wkPeFab span{display:none}#wkPeFab{padding:0 11px}}
+</style>
+<style id="wk-footer-fix">
+/* Нижняя панель редактора («Сохранить» и другие): не сжимается и всегда закреплена внизу окна */
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay #wikiEditorForm>.wiki-editor-footer{position:sticky!important;bottom:0!important;flex:0 0 auto!important;min-height:max-content!important;height:auto!important;overflow:visible!important;z-index:1000!important}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay #wikiEditorForm>.wiki-editor-footer .wiki-editor-footer-actions{flex:0 0 auto!important;min-height:32px!important}
 </style>
 <script id="wk-v22-js">
 /* ===================================================================
