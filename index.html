@@ -1285,7 +1285,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "08.11.2026 · 114";
+const WIKI_VERSION = "08.11.2026 · 115";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -33104,6 +33104,7 @@ body.wk-pe-on .wk-pe-active img{will-change:transform,object-position}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay #wikiEditorForm>.wiki-editor-footer{position:sticky!important;bottom:0!important;flex:0 0 auto!important;min-height:max-content!important;height:auto!important;overflow:visible!important;z-index:1000!important}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay #wikiEditorForm>.wiki-editor-footer .wiki-editor-footer-actions{flex:0 0 auto!important;min-height:32px!important}
 </style>
+<style id="wk-wp-op">.wk-wp .wk-wp-name{opacity:var(--wp-nop,1)}.wk-wp .wk-wp-bounty{opacity:var(--wp-bop,1)}</style>
 <script id="wk-v22-js">
 /* ===================================================================
    Обновление v22 (06.11.2026 · 96):
@@ -33233,7 +33234,8 @@ body.wk-pe-on .wk-pe-active img{will-change:transform,object-position}
   var NAME_SIZE = 13.5, NAME_AVAIL = 75, B_SIZE = 6.4, B_LS = 0.2, B_AVAIL = 72;
   var POS_DEF = { ny: 1.2, by: 0 };
   function posOf(cfg, k) { var v = Number(cfg[k]); return cfg[k] !== undefined && cfg[k] !== '' && v === v ? Math.max(-8, Math.min(10, v)) : POS_DEF[k]; }
-  function posVars(cfg) { return '--wp-ny:' + posOf(cfg, 'ny') + '%;--wp-by:' + posOf(cfg, 'by') + '%'; }
+  function opOf(cfg, k) { var v = Number(cfg[k]); return cfg[k] !== undefined && cfg[k] !== '' && v >= 10 && v <= 100 ? v / 100 : 1; }
+  function posVars(cfg) { return '--wp-ny:' + posOf(cfg, 'ny') + '%;--wp-by:' + posOf(cfg, 'by') + '%;--wp-nop:' + opOf(cfg, 'nop') + ';--wp-bop:' + opOf(cfg, 'bop'); }
   function clampPct(v) { v = Number(v); return v >= 50 && v <= 160 ? v / 100 : 1; }
   function nameFont(cfg) { return fontOf(cfg.font || DEF_FONT); }
   function bountyFont(cfg) { return cfg.bfont ? fontOf(cfg.bfont) : nameFont(cfg); }
@@ -33294,7 +33296,7 @@ body.wk-pe-on .wk-pe-active img{will-change:transform,object-position}
         var on = el.querySelector('.wk-wp-name'), ob = el.querySelector('.wk-wp-bounty');
         if (on) on.replaceWith(tmp.firstChild); if (ob) ob.replaceWith(tmp.lastChild);
         el.style.setProperty('--wp-font', F.f); el.style.setProperty('--wp-fw', String(F.w || 700));
-        el.style.setProperty('--wp-ny', posOf(cfg, 'ny') + '%'); el.style.setProperty('--wp-by', posOf(cfg, 'by') + '%');
+        el.style.setProperty('--wp-ny', posOf(cfg, 'ny') + '%'); el.style.setProperty('--wp-by', posOf(cfg, 'by') + '%'); el.style.setProperty('--wp-nop', String(opOf(cfg, 'nop'))); el.style.setProperty('--wp-bop', String(opOf(cfg, 'bop')));
       });
     });
   }
@@ -33422,16 +33424,17 @@ body.wk-pe-on .wk-pe-active img{will-change:transform,object-position}
         + FONTS.map(function (x) { return '<button type="button" ' + attr + '="' + x.v + '"' + (x.v === cur ? ' class="active"' : '') + ' style="--f:' + esc(x.f) + ';--fw:' + x.w + '"><span>' + sample + '</span><small>' + esc(x.n) + '</small></button>'; }).join('');
     };
     var posRow = function (key) { var v = posOf(cfg, key); return '<label class="wk-rl-size">Выше ↕ ниже <input type="range" min="-8" max="10" step="0.1" data-pos="' + key + '" value="' + v + '"><output data-pos-o="' + key + '">' + v.toFixed(1) + '</output><button type="button" class="wk-rl-btn wk-rl-mini" data-pos-reset="' + key + '" title="Вернуть как было">↺</button></label>'; };
+    var opRow = function (key) { var v = Math.round(opOf(cfg, key) * 100); return '<label class="wk-rl-size">Прозрачность <input type="range" min="10" max="100" step="1" data-op="' + key + '" value="' + v + '"><output data-op-o="' + key + '">' + v + '%</output><button type="button" class="wk-rl-btn wk-rl-mini" data-op-reset="' + key + '" title="Вернуть 100%">↺</button></label>'; };
     var sizeRow = function (key, val) { var v = Math.round(clampPct(val) * 100); return '<label class="wk-rl-size">Размер <input type="range" min="50" max="160" step="1" data-size="' + key + '" value="' + v + '"><output data-size-o="' + key + '">' + v + '%</output><button type="button" class="wk-rl-btn wk-rl-mini" data-size-reset="' + key + '" title="Вернуть 100%">↺</button></label>'; };
     FONTS.forEach(function (x) { ensureFont(x); });
     body.innerHTML = '<p class="wk-rl-note">Плакат собирается сам: шаблон WANTED, <b>фото персонажа на момент награды</b> (после таймскипа — новый облик), имя из статьи и сумма. Нажми на плакат, чтобы поправить кадр, фото или подпись.</p>'
       + '<div class="wk-rl-type">' + (pv ? '<div class="wk-rl-type-pv">' + posterHTML(pv, { eager: true }) + '<small>Превью меняется сразу</small></div>' : '')
       + '<div class="wk-rl-type-boxes"><div class="wk-rl-box"><b>Имя (заголовок)</b><div class="wk-rl-fonts">' + fontBtns('data-font', F.v, 'ЗОРО', false) + '</div>'
-      + sizeRow('nsize', cfg.nsize) + posRow('ny')
+      + sizeRow('nsize', cfg.nsize) + opRow('nop') + posRow('ny')
       + '<div class="wk-rl-line"><input type="text" data-gfont="font" placeholder="Другой шрифт из Google Fonts, например «Underdog»" value="' + esc(F.custom ? F.n : '') + '" style="flex:1 1 220px"><button type="button" class="wk-rl-btn" data-gfont-ok="font">Применить</button></div>'
       + '<label class="wk-rl-sw"><input type="checkbox" data-upper' + (cfg.upper !== false ? ' checked' : '') + '> Заглавными буквами</label></div>'
       + '<div class="wk-rl-box"><b>Сумма награды</b><div class="wk-rl-fonts">' + fontBtns('data-bfont', BFv, '1 111 000 000', true) + '</div>'
-      + sizeRow('bsize', cfg.bsize) + posRow('by')
+      + sizeRow('bsize', cfg.bsize) + opRow('bop') + posRow('by')
       + '<div class="wk-rl-line"><input type="text" data-gfont="bfont" placeholder="Другой шрифт из Google Fonts" value="' + esc(BFv && BF.custom ? BF.n : '') + '" style="flex:1 1 220px"><button type="button" class="wk-rl-btn" data-gfont-ok="bfont">Применить</button></div></div></div></div>'
       + '<div class="wk-rl-line" style="margin:14px 0 10px"><b style="font-size:13.5px">Все плакаты · ' + vis.length + '</b>'
       + (nLocked ? '<label class="wk-rl-sw" style="margin-left:auto"><input type="checkbox" data-locked' + (showLocked ? ' checked' : '') + '> Показать скрытые спойлером (' + nLocked + ')</label>' : '') + '</div>'
@@ -33459,6 +33462,11 @@ body.wk-pe-on .wk-pe-active img{will-change:transform,object-position}
       var k = rg.getAttribute('data-size'), out = body.querySelector('[data-size-o="' + k + '"]');
       rg.addEventListener('input', function () { out.textContent = rg.value + '%'; setKey(k, Number(rg.value) === 100 ? '' : Number(rg.value)); });
       body.querySelector('[data-size-reset="' + k + '"]').addEventListener('click', function () { rg.value = 100; out.textContent = '100%'; setKey(k, ''); });
+    });
+    body.querySelectorAll('[data-op]').forEach(function (rg) {
+      var k = rg.getAttribute('data-op'), out = body.querySelector('[data-op-o="' + k + '"]');
+      rg.addEventListener('input', function () { out.textContent = rg.value + '%'; setKey(k, Number(rg.value) === 100 ? '' : Number(rg.value)); });
+      body.querySelector('[data-op-reset="' + k + '"]').addEventListener('click', function () { rg.value = 100; out.textContent = '100%'; setKey(k, ''); });
     });
     body.querySelectorAll('[data-pos]').forEach(function (rg) {
       var k = rg.getAttribute('data-pos'), out = body.querySelector('[data-pos-o="' + k + '"]');
