@@ -1285,7 +1285,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "08.11.2026 · 115";
+const WIKI_VERSION = "08.11.2026 · 118";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -33105,6 +33105,23 @@ body.wk-pe-on .wk-pe-active img{will-change:transform,object-position}
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay #wikiEditorForm>.wiki-editor-footer .wiki-editor-footer-actions{flex:0 0 auto!important;min-height:32px!important}
 </style>
 <style id="wk-wp-op">.wk-wp .wk-wp-name{opacity:var(--wp-nop,1)}.wk-wp .wk-wp-bounty{opacity:var(--wp-bop,1)}</style>
+<style id="wk-crew-flag">
+/* «Команды»: картинка — горизонтальный прямоугольник, по ширине помещается целиком */
+.wk-crew-top-item{grid-template-columns:36px 92px minmax(0,1fr) auto!important}
+.wk-crew-flag{width:92px!important;height:64px!important;border-radius:8px!important}
+.wk-crew-flag img{object-fit:contain!important;object-position:center!important}
+@media (max-width:560px){.wk-crew-top-item{grid-template-columns:28px 68px minmax(0,1fr)!important}.wk-crew-flag{width:68px!important;height:48px!important}}
+</style>
+<style id="wk-viewbtn-align">
+/* Кнопки переключения вида: иконка и подпись на одной линии, одинаковый зазор */
+body .character-view-mode-button{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;line-height:1.2!important}
+body .character-view-mode-button .wk-ic,body .character-view-mode-button>span[aria-hidden="true"]{display:inline-flex!important;align-items:center!important;justify-content:center!important;margin:0!important;padding:0!important;gap:0!important;flex:0 0 auto}
+body .character-view-mode-button .wk-ic svg{display:block;margin:0!important}
+</style>
+<style id="wk-maintab-align">
+body .main-tab{align-items:center!important}
+body .main-tab .wk-ic{margin-top:0!important;margin-bottom:0!important;align-self:center!important;vertical-align:middle!important}
+</style>
 <script id="wk-v22-js">
 /* ===================================================================
    Обновление v22 (06.11.2026 · 96):
