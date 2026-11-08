@@ -1285,7 +1285,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "08.11.2026 · 110";
+const WIKI_VERSION = "08.11.2026 · 112";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -33253,12 +33253,16 @@ body.wk-pe-on .wk-pe-active img{will-change:transform,object-position}
     var NF = nameFont(cfg), BF = bountyFont(cfg); fontReady(NF); if (BF !== NF) fontReady(BF);
     return nameBlock(name, NF, cfg.upper !== false, clampPct(cfg.nsize)) + bountyBlock(value, BF, clampPct(cfg.bsize));
   }
+  function liveFrame(img, nx, ny, z, contain) {
+    if (contain) { img.style.objectPosition = nx + '% 100%'; img.style.transformOrigin = nx + '% 100%'; img.style.transform = 'translateY(' + ((50 - ny) * 4).toFixed(2) + '%) scale(' + (z / 100) + ')'; }
+    else { img.style.objectPosition = nx + '% ' + ny + '%'; img.style.transformOrigin = nx + '% ' + ny + '%'; }
+  }
   function photoStyle(p, cut, fit) {
     var cover = fit ? fit === 'cover' : !cut;
     var x = Number(p.x), z = Math.max(30, Math.min(300, Number(p.z) || 100)) / 100;
     if (cover) { var y = Number(p.y); return 'object-fit:cover;object-position:' + x + '% ' + y + '%;transform:scale(' + z + ');transform-origin:' + x + '% ' + y + '%'; }
     // вырезанное фото: по умолчанию стоит на нижнем краю; если вертикаль задана — сдвигаем вверх/вниз (50% — как по умолчанию)
-    var ty = p.yset ? (50 - Number(p.y)) * 0.8 : 0;
+    var ty = p.yset ? (50 - Number(p.y)) * 4 : 0;   // ±200% высоты: хватает и при сильном приближении
     return 'object-fit:contain;object-position:' + x + '% 100%;transform:translateY(' + ty.toFixed(2) + '%) scale(' + z + ');transform-origin:' + x + '% 100%';
   }
   function posterHTML(r, opt) {
@@ -33477,7 +33481,7 @@ body.wk-pe-on .wk-pe-active img{will-change:transform,object-position}
       + '<label class="wk-rl-f">Как вписать' + seg('fit', [['cover', 'Заполнить рамку'], ['contain', 'Целиком (PNG без фона)']], fit) + '</label>'
       + '<label class="wk-rl-f">Масштаб <output data-o="z">' + Math.round(p.z) + '%</output><input type="range" min="30" max="300" step="1" data-r="z" value="' + Math.round(p.z) + '"></label>'
       + '<label class="wk-rl-f">По горизонтали <output data-o="x">' + Math.round(p.x) + '%</output><input type="range" min="0" max="100" step="1" data-r="x" value="' + Math.round(p.x) + '"></label>'
-      + '<label class="wk-rl-f">По вертикали <output data-o="y">' + Math.round(p.y) + '%</output><input type="range" min="0" max="100" step="1" data-r="y" value="' + Math.round(p.y) + '"></label>'
+      + '<label class="wk-rl-f">По вертикали <output data-o="y">' + Math.round(cut && !p.yset ? 50 : p.y) + '%</output><input type="range" min="0" max="100" step="1" data-r="y" value="' + Math.round(cut && !p.yset ? 50 : p.y) + '"></label>'
       + '<label class="wk-rl-f">Имя на плакате<input type="text" data-name placeholder="' + esc((c && c.name) || '') + '" value="' + esc(a.name || '') + '"></label>'
       + '<small style="font-size:11.5px;color:#64748b;line-height:1.4">Фото можно двигать мышью или пальцем прямо на плакате, колесо — масштаб. Пустое имя — берётся из статьи. «Авто» само выбирает облик после таймскипа, если награда назначена позже.</small>'
       + '<div class="wk-rl-line"><button type="button" class="wk-rl-btn" data-reset>Сбросить настройки этого плаката</button></div>'
@@ -33505,11 +33509,11 @@ body.wk-pe-on .wk-pe-active img{will-change:transform,object-position}
     function bindDrag() {
       var ph = body.querySelector('[data-big] .wk-wp-ph'); if (!ph) return;
       var start = null;
-      ph.addEventListener('pointerdown', function (e) { var cur = photoFor(r, c, pcfg().adj[r.id] || {}); start = { x: e.clientX, y: e.clientY, px: Number(cur.x), py: Number(cur.y) }; ph.setPointerCapture(e.pointerId); e.preventDefault(); });
+      ph.addEventListener('pointerdown', function (e) { var cur = photoFor(r, c, pcfg().adj[r.id] || {}); start = { x: e.clientX, y: e.clientY, px: Number(cur.x), py: Number(ph.classList.contains('is-cut') && !cur.yset ? 50 : cur.y) }; ph.setPointerCapture(e.pointerId); e.preventDefault(); });
       ph.addEventListener('pointermove', function (e) {
         if (!start) return; var rc = ph.getBoundingClientRect();
-        var nx = Math.max(0, Math.min(100, Math.round(start.px - (e.clientX - start.x) / rc.width * 100))), ny = Math.max(0, Math.min(100, Math.round(start.py - (e.clientY - start.y) / rc.height * 100)));
-        var img = ph.querySelector('img'); if (img) { img.style.objectPosition = nx + '% ' + ny + '%'; img.style.transformOrigin = nx + '% ' + ny + '%'; }
+        var nx = Math.max(0, Math.min(100, Math.round(start.px - (e.clientX - start.x) / rc.width * 100))), ny = Math.max(0, Math.min(100, Math.round(start.py - (e.clientY - start.y) / rc.height * (ph.classList.contains('is-cut') ? 25 : 100))));
+        var img = ph.querySelector('img'); if (img) liveFrame(img, nx, ny, Number((body.querySelector('[data-r="z"]') || {}).value) || 100, ph.classList.contains('is-cut'));
         start.nx = nx; start.ny = ny;
       });
       function end() { if (!start) return; var s = start; start = null; if (s.nx != null) { ['x', 'y'].forEach(function (k) { var v = k === 'x' ? s.nx : s.ny; var rg = body.querySelector('[data-r="' + k + '"]'); if (rg) { rg.value = v; body.querySelector('[data-o="' + k + '"]').textContent = v + '%'; } }); store({ x: s.nx, y: s.ny }); } }
@@ -33687,15 +33691,15 @@ body.wk-pe-on .wk-pe-active img{will-change:transform,object-position}
       + '<label class="wk-rl-f">Как вписать' + seg('fit', [['cover', 'Заполнить рамку'], ['contain', 'Целиком (PNG без фона)']], fit) + '</label>'
       + '<label class="wk-rl-f">Масштаб <output data-po="z">' + Math.round(p.z) + '%</output><input type="range" min="30" max="300" step="1" data-pr="z" value="' + Math.round(p.z) + '"></label>'
       + '<label class="wk-rl-f">По горизонтали <output data-po="x">' + Math.round(p.x) + '%</output><input type="range" min="0" max="100" step="1" data-pr="x" value="' + Math.round(p.x) + '"></label>'
-      + '<label class="wk-rl-f">По вертикали <output data-po="y">' + Math.round(p.y) + '%</output><input type="range" min="0" max="100" step="1" data-pr="y" value="' + Math.round(p.y) + '"></label>'
-      + '<div class="wk-rl-line"><button type="button" class="wk-rl-btn" data-edp-reset>Сбросить кадр</button><span class="wk-edp-saved"></span></div>'
-      + '<small class="wk-edp-note">Тяни фото прямо на плакате, колесо — масштаб. Кадр общий для всех плакатов персонажа и сохраняется сразу, отдельно от статьи. Шрифт и отдельные плакаты — в «Награды» → «Оформление».</small>'
+      + '<label class="wk-rl-f">По вертикали <output data-po="y">' + Math.round(cut && !p.yset ? 50 : p.y) + '%</output><input type="range" min="0" max="100" step="1" data-pr="y" value="' + Math.round(cut && !p.yset ? 50 : p.y) + '"></label>'
+      + '<div class="wk-rl-line"><button type="button" class="wk-rl-btn" data-edp-reset>Сбросить кадр этой награды</button><span class="wk-edp-saved"></span></div>'
+      + '<small class="wk-edp-note">Тяни фото прямо на плакате, колесо — масштаб. Кадр у каждой награды свой: меняется только выбранный плакат. Сохраняется сразу, отдельно от статьи. Шрифт и отдельные плакаты — в «Награды» → «Оформление».</small>'
       + '</div></div>';
     if (old) old.replaceWith(box); else holder.parentNode.insertBefore(box, holder.nextSibling);
     function store(patch, full) {
-      var cfg = pcfg(); cfg.chr = cfg.chr || {}; var cur = Object.assign({}, cfg.chr[key] || {}, patch);
+      var cfg = pcfg(); var cur = Object.assign({}, cfg.adj[r.id] || {}, patch);   // кадр — у каждой награды свой
       Object.keys(cur).forEach(function (k) { if (cur[k] === '' || cur[k] == null) delete cur[k]; });
-      if (Object.keys(cur).length) cfg.chr[key] = cur; else delete cfg.chr[key];
+      if (Object.keys(cur).length) cfg.adj[r.id] = cur; else delete cfg.adj[r.id];
       savePcfg(cfg); var sv = box.querySelector('.wk-edp-saved'); if (sv) { sv.textContent = '✓ Сохранено'; clearTimeout(sv.t); sv.t = setTimeout(function () { sv.textContent = ''; }, 1400); }
       clearTimeout(store.t); store.t = setTimeout(afterPosterChange, 500);
       if (full) charPosterBlock(f); else { var big = box.querySelector('[data-edp-big]'); var t = document.createElement('div'); t.innerHTML = posterHTML(r, { char: c, eager: true }); big.replaceChild(t.firstChild, big.firstChild); box.setAttribute('data-sig', mkSig()); bindDrag(); }
@@ -33703,15 +33707,15 @@ body.wk-pe-on .wk-pe-active img{will-change:transform,object-position}
     box.querySelectorAll('[data-edp-r]').forEach(function (b) { b.addEventListener('click', function () { edPv.rid = b.getAttribute('data-edp-r'); charPosterBlock(f); }); });
     box.querySelectorAll('[data-pseg]').forEach(function (sg) { sg.addEventListener('click', function (e) { var b = e.target.closest('[data-v]'); if (!b) return; store({ fit: b.getAttribute('data-v') }, true); }); });
     box.querySelectorAll('[data-pr]').forEach(function (rg) { rg.addEventListener('input', function () { var k = rg.getAttribute('data-pr'), o = {}; o[k] = Number(rg.value); box.querySelector('[data-po="' + k + '"]').textContent = rg.value + '%'; store(o); }); });
-    box.querySelector('[data-edp-reset]').addEventListener('click', function () { var cfg = pcfg(); if (cfg.chr) delete cfg.chr[key]; savePcfg(cfg); afterPosterChange(); charPosterBlock(f); });
+    box.querySelector('[data-edp-reset]').addEventListener('click', function () { var cfg = pcfg(); var cur = Object.assign({}, cfg.adj[r.id] || {}); ['x', 'y', 'z', 'fit'].forEach(function (k) { delete cur[k]; }); if (Object.keys(cur).length) cfg.adj[r.id] = cur; else delete cfg.adj[r.id]; if (cfg.chr) delete cfg.chr[key]; savePcfg(cfg); afterPosterChange(); charPosterBlock(f); });
     function bindDrag() {
       var ph = box.querySelector('[data-edp-big] .wk-wp-ph'); if (!ph) return;
       var st = null;
-      ph.addEventListener('pointerdown', function (e) { var cur = photoFor(r, c, pcfg().adj[r.id] || {}); st = { x: e.clientX, y: e.clientY, px: Number(cur.x), py: Number(cur.y) }; ph.setPointerCapture(e.pointerId); e.preventDefault(); });
+      ph.addEventListener('pointerdown', function (e) { var cur = photoFor(r, c, pcfg().adj[r.id] || {}); st = { x: e.clientX, y: e.clientY, px: Number(cur.x), py: Number(ph.classList.contains('is-cut') && !cur.yset ? 50 : cur.y) }; ph.setPointerCapture(e.pointerId); e.preventDefault(); });
       ph.addEventListener('pointermove', function (e) {
         if (!st) return; var rc = ph.getBoundingClientRect();
-        st.nx = Math.max(0, Math.min(100, Math.round(st.px - (e.clientX - st.x) / rc.width * 100))); st.ny = Math.max(0, Math.min(100, Math.round(st.py - (e.clientY - st.y) / rc.height * 100)));
-        var img = ph.querySelector('img'); if (img) { img.style.objectPosition = st.nx + '% ' + st.ny + '%'; img.style.transformOrigin = st.nx + '% ' + st.ny + '%'; }
+        st.nx = Math.max(0, Math.min(100, Math.round(st.px - (e.clientX - st.x) / rc.width * 100))); st.ny = Math.max(0, Math.min(100, Math.round(st.py - (e.clientY - st.y) / rc.height * (ph.classList.contains('is-cut') ? 25 : 100))));
+        var img = ph.querySelector('img'); if (img) liveFrame(img, st.nx, st.ny, Number((box.querySelector('[data-pr="z"]') || {}).value) || 100, ph.classList.contains('is-cut'));
       });
       function end() { if (!st) return; var s = st; st = null; if (s.nx == null) return; ['x', 'y'].forEach(function (k) { var v = k === 'x' ? s.nx : s.ny, rg = box.querySelector('[data-pr="' + k + '"]'); if (rg) { rg.value = v; box.querySelector('[data-po="' + k + '"]').textContent = v + '%'; } }); store({ x: s.nx, y: s.ny }); }
       ph.addEventListener('pointerup', end); ph.addEventListener('pointercancel', end);
@@ -34232,7 +34236,7 @@ body.wk-pe-on .wk-pe-active img{will-change:transform,object-position}
     var img = it.img; if (!img || !img.isConnected) img = it.img = it.card.querySelector(PE_MAIN); if (!img) return;
     if (it.poster && getComputedStyle(img).objectFit === 'contain') {
       img.style.setProperty('object-position', v.x + '% 100%', 'important'); img.style.setProperty('transform-origin', v.x + '% 100%', 'important');
-      img.style.setProperty('transform', 'translateY(' + ((50 - v.y) * 0.8).toFixed(2) + '%) scale(' + (v.z / 100) + ')', 'important'); return;
+      img.style.setProperty('transform', 'translateY(' + ((50 - v.y) * 4).toFixed(2) + '%) scale(' + (v.z / 100) + ')', 'important'); return;
     }
     var py = v.y;
     img.style.setProperty('object-position', v.x + '% ' + py + '%', 'important');
@@ -34361,7 +34365,7 @@ body.wk-pe-on .wk-pe-active img{will-change:transform,object-position}
     if (d.pinch || !d.m) return;
     var m = d.m, z = d.v0.z / 100, dx = e.clientX - d.x0, dy = e.clientY - d.y0;
     v.x = d.v0.x + peDelta(m.cw, m.W, z, dx, m.k);
-    if (it.poster && m.contain) v.y = d.v0.y - 125 * (dy / m.k) / m.ch;
+    if (it.poster && m.contain) v.y = d.v0.y - 25 * (dy / m.k) / m.ch;
     else v.y = d.v0.y + peDelta(m.ch, m.H, z, dy, m.k);
     peSetCur(it, peClampV(it, v));
   }
