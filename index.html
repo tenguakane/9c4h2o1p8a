@@ -1285,7 +1285,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "07.11.2026 · 104";
+const WIKI_VERSION = "08.11.2026 · 107";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -8943,7 +8943,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         Object.keys(next).forEach(k=>{obj[k]=next[k];});
         if(Object.prototype.hasOwnProperty.call(next,'connect'))syncBackLinks(String(id),String(id),oldConnect,next.connect);
         const ok=persist(false);
-        try{refreshWiki();}catch(e){}
+        if(!(arguments[3]&&arguments[3].noRefresh)){try{refreshWiki();}catch(e){}}
         return ok;
     };
     // Пакетная правка (данные-патчи, подбор фото): одна запись в хранилище и одна отправка в облако на всё.
@@ -10211,42 +10211,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         if(Array.isArray(value))return value.map(v=>String(v??'').trim()).filter(Boolean);
         return String(value??'').split(/[,;\n\r]+/).map(v=>v.trim()).filter(Boolean);
     }
-    // Индекс ID и названий строится один раз за проход (а не заново для каждой статьи): проверка всех статей
-    // раньше была квадратичной и подвешивала редактор на секунду при каждом открытии и переключении.
-    let issueIndexCache=null;
-    function issueIndex(){
-        if(issueIndexCache)return issueIndexCache;
-        const byType={},all=new Map(),names={};
-        types.forEach(t=>{const ids=new Map(),nm=new Map();allRecords(t).forEach(x=>{const id=String(rawValue(x,'id')||'').trim();if(id){ids.set(id,(ids.get(id)||0)+1);all.set(id,(all.get(id)||0)+1);}const n=String(rawValue(x,'name')||'').trim().toLocaleLowerCase('ru');if(n)nm.set(n,(nm.get(n)||0)+1);});byType[t]=ids;names[t]=nm;});
-        issueIndexCache={byType,all,names};
-        setTimeout(()=>{issueIndexCache=null;},0);
-        return issueIndexCache;
-    }
-    function dataIssuesFast(type,record){
-        const issues=[];const ix=issueIndex();
-        const add=(code,field,message,severity='error')=>issues.push({code,type,id:String(rawValue(record,'id')||''),title:getTitle(type,record),field,message,severity});
-        const id=String(rawValue(record,'id')||'').trim();
-        if(!id)add('empty-id','id','Не заполнен ID.');
-        if(id&&(ix.byType[type].get(id)||0)>1)add('duplicate-id','id','ID уже используется другой статьёй этого раздела.');
-        if(id){const other=types.find(t=>t!==type&&ix.byType[t].has(id));if(other)add('duplicate-id-global','id',`ID совпадает с ID в разделе «${collections[other].label}».`);}
-        const title=String(rawValue(record,'name')||'').trim();
-        if(type!=='reward'&&!title&&!record.__wikiDraft)add('empty-title','name','Не заполнено название статьи.','warning');
-        if(title&&(ix.names[type].get(title.toLocaleLowerCase('ru'))||0)>1)add('duplicate-title','name','В этом разделе есть статья с таким же названием без учёта регистра.','warning');
-        const checkRefs=(field,values,expectedType=null)=>{
-            splitReferenceValues(values).forEach(ref=>{if(!(expectedType?ix.byType[expectedType].has(ref):ix.all.has(ref)))add('broken-reference',field,`Связанная запись «${ref}» не найдена${expectedType?` в разделе «${collections[expectedType].label}»`:''}.`);});
-        };
-        if(type==='character'){checkRefs('fruit_article_id',rawValue(record,'fruit_article_id'),'fruit');checkRefs('fruit2_article_id',rawValue(record,'fruit2_article_id'),'fruit');}
-        if(type==='useful')checkRefs('fruit_article_id',rawValue(record,'fruit_article_id'),'fruit');
-        if(type==='reward')checkRefs('character_id',rawValue(record,'character_id'),'character');
-        if(type==='story')checkRefs('characters',rawValue(record,'characters'),'character');
-        if(type==='fruit')checkRefs('owner',rawValue(record,'owner'),'character');
-        checkRefs('connect',rawValue(record,'connect'));
-        const imageField={character:'person_link',reward:'reward_image',fruit:'image',useful:'image'}[type];
-        if(imageField){const url=String(rawValue(record,imageField)||'').trim();if(url&&!/^(https?:\/\/|data:image\/|blob:|file:|\/|\.\.?\/)/i.test(url))add('invalid-image-url',imageField,'Ссылка на изображение не похожа на URL или локальный путь.','warning');}
-        return issues;
-    }
     function dataIssuesForRecord(type,record,excludeRecord=record){
-        if(excludeRecord===record&&allRecords(type).includes(record))return dataIssuesFast(type,record);
         const issues=[];
         const add=(code,field,message,severity='error')=>issues.push({code,type,id:String(rawValue(record,'id')||''),title:getTitle(type,record),field,message,severity});
         const id=String(rawValue(record,'id')||'').trim();
@@ -28821,19 +28786,8 @@ html body #charactersSection#charactersSection #characterList#characterList.char
      ========================================================= */
   function backHTML(c) {
     var st = String(c.status || '').split(',').map(function (x) { return x.trim(); }).filter(function (x) { return x && x !== 'Анимация'; });
-    var fr = visibleFruits(c), b = bountyOf(c.id);
-    var team = ''; try { var t = window.__wkUsefulById ? window.__wkUsefulById(c.team_article_id) : byId(arr('usefulArticles'), c.team_article_id); if (t && !hidden(t, 'useful')) team = t.name; } catch (e) {}
-    var rows = [];
-    if (b) rows.push(['Награда', Number(b).toLocaleString('ru-RU') + ' ฿']);
-    if (fr.length) rows.push(['Плод', fr.map(function (f) { return f.name; }).join(', ')]);
-    if (team) rows.push(['Команда', team]);
-    var ch = num(c.chapter), ep = num(c.episode);
-    if (ch || ep) rows.push(['Появление', [ch ? 'гл. ' + ch : '', ep ? 'сер. ' + ep : ''].filter(Boolean).join(' · ')]);
-    if (c.arc) rows.push(['Арка', c.arc]);
-    var nick = c.nickname && c.nickname !== 'Нет' ? c.nickname : '';
-    return '<div class="wk-back-in"><b class="wk-back-name">' + esc(c.name) + '</b>' + (nick ? '<span class="wk-back-nick">«' + esc(nick) + '»</span>' : '') +
+    return '<div class="wk-back-in"><b class="wk-back-name">' + esc(c.name) + '</b>' +
       (st.length ? '<span class="wk-back-st">' + esc(st.join(' · ')) + '</span>' : '') +
-      '<dl>' + rows.map(function (r) { return '<dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd>'; }).join('') + '</dl>' +
       (function () { var d = ''; try { d = (window.__wikiCharacterTimeskip && window.__wikiCharacterTimeskip(c)) || c.description || ''; } catch (e) { d = c.description || ''; } d = String(d).replace(/\s+/g, ' ').trim(); return d && d !== 'Нет' ? '<div class="wk-b2-desc wk-fit">' + esc(d) + '</div>' : ''; })() +
       '<button type="button" class="wk-back-open" data-wk-open-char="' + esc(c.id) + '">Открыть статью →</button></div>';
   }
@@ -29729,7 +29683,7 @@ html.ios-app .wk-totop{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
       var want = String(second ? r.person2_link : r.person_link || '').trim();
       if (want && /^(https?:\/\/|data:image\/)/i.test(want) && src !== want) img.setAttribute('src', want);
       var isHero = !!el.closest('.wk-hero-card');
-      var c = (isHero && heroOf(rec, second)) || baseOf(r, second);
+      var c = (isHero && heroOf(rec, second)) || (!isHero && typeof window.__wkHzCrop === 'function' && window.__wkHzCrop('character', r, second, el)) || baseOf(r, second);
       var key = c.x + '% ' + c.y + '%|' + c.z;
       if (img.__wkHero !== key || img.style.getPropertyValue('object-position') !== c.x + '% ' + c.y + '%') { img.__wkHero = key; styleImg(img, c); }
       // Если другой код перепишет кадр (например, после загрузки фото) — вернуть правильный.
@@ -33132,6 +33086,34 @@ html body .berry-symbol{-webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmln
 .wk-edp-list button .wk-edp-sum{display:inline-flex;align-items:baseline;white-space:nowrap}
 .wk-edp-ctl label.wk-rl-f,.wk-rl-ed label.wk-rl-f{text-transform:none!important;letter-spacing:0!important;font-size:12px!important;font-weight:600!important}
 </style>
+<style id="wk-pe-css">
+#wkPeFab{position:fixed;left:16px;bottom:16px;z-index:9000;display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:999px;border:1px solid rgba(227,179,65,.45);background:rgba(11,18,32,.92);color:#e3b341;font:600 13px/1 inherit;font-family:inherit;cursor:pointer;box-shadow:0 6px 22px rgba(0,0,0,.45);backdrop-filter:blur(8px)}
+#wkPeFab:hover{background:rgba(227,179,65,.14)}
+#wkPeFab[hidden]{display:none!important}
+#wkPeBar{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:9500;display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;width:min(960px,calc(100vw - 24px));box-sizing:border-box;padding:10px 14px;border-radius:16px;border:1px solid rgba(227,179,65,.5);background:rgba(8,13,24,.96);color:#e5e7eb;box-shadow:0 14px 40px rgba(0,0,0,.6);backdrop-filter:blur(10px);font-size:13px}
+.wk-pe-ttl{display:inline-flex;align-items:center;gap:7px;font-weight:700;color:#e3b341;white-space:nowrap}
+.wk-pe-name{flex:1 1 140px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:#f1f5f9}
+.wk-pe-zoom{display:inline-flex;align-items:center;gap:8px;color:#94a3b8;white-space:nowrap}
+.wk-pe-zoom input{width:140px;accent-color:#e3b341}
+.wk-pe-zoom output{min-width:42px;text-align:right;color:#e5e7eb;font-variant-numeric:tabular-nums}
+.wk-pe-b{height:32px;padding:0 13px;border-radius:10px;border:1px solid rgba(148,163,184,.35);background:rgba(255,255,255,.05);color:#e5e7eb;font:600 12.5px/1 inherit;font-family:inherit;cursor:pointer}
+.wk-pe-b:hover:not(:disabled){background:rgba(255,255,255,.12)}
+.wk-pe-b:disabled{opacity:.4;cursor:default}
+.wk-pe-b.is-main{border-color:#e3b341;background:#e3b341;color:#1a1305}
+.wk-pe-b.is-main:hover{background:#f0c555}
+.wk-pe-st{display:inline-flex;align-items:center;gap:7px;color:#94a3b8;white-space:nowrap;font-variant-numeric:tabular-nums}
+.wk-pe-st i{width:8px;height:8px;border-radius:50%;background:#34d399}
+.wk-pe-st.is-pend i{background:#e3b341;animation:wkPePulse 1s ease-in-out infinite}
+.wk-pe-st.is-err{color:#fca5a5}.wk-pe-st.is-err i{background:#ef4444}
+@keyframes wkPePulse{50%{opacity:.3}}
+.wk-pe-hint{flex:1 1 100%;margin:0;color:#64748b;font-size:11.5px;line-height:1.4}
+body.wk-pe-on .character-grid-image-wrap,body.wk-pe-on .fruit-grid-image-wrap,body.wk-pe-on .useful-catalog-image-wrap,body.wk-pe-on .story-card-thumb,body.wk-pe-on .story-saga-cover,body.wk-pe-on .wk-wp-ph{touch-action:none}
+body.wk-pe-on [data-fruit-id],body.wk-pe-on [data-useful-id],body.wk-pe-on [data-story-arc-id],body.wk-pe-on .story-saga-folder,body.wk-pe-on .character-item[onclick*="openCharacterArticle"],body.wk-pe-on .wk-wp[data-wp-rid]{cursor:grab!important;-webkit-user-select:none;user-select:none}
+body.wk-pe-on [data-fruit-id]:active,body.wk-pe-on [data-useful-id]:active,body.wk-pe-on [data-story-arc-id]:active,body.wk-pe-on .character-item[onclick*="openCharacterArticle"]:active,body.wk-pe-on .wk-wp[data-wp-rid]:active{cursor:grabbing!important}
+body.wk-pe-on .wk-pe-active{outline:2px solid #e3b341!important;outline-offset:2px;z-index:5}
+body.wk-pe-on .wk-pe-active img{will-change:transform,object-position}
+@media (max-width:700px){#wkPeBar{bottom:8px;padding:8px 10px;gap:8px 10px}.wk-pe-zoom input{width:100px}.wk-pe-hint{display:none}#wkPeFab span{display:none}#wkPeFab{padding:0 11px}}
+</style>
 <script id="wk-v22-js">
 /* ===================================================================
    Обновление v22 (06.11.2026 · 96):
@@ -34211,6 +34193,277 @@ html body .berry-symbol{-webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmln
   new MutationObserver(function () { watch(); }).observe(document.body, { childList: true });
   watch(); run(); setTimeout(run, 400);
   window.__wkRewardsLookOpen = openModal;
+
+  /* =========================================================
+     РЕЖИМ ПРАВКИ ПРЕВЬЮ: двигать и масштабировать фото прямо на карточках, сохранение — автоматом.
+     ========================================================= */
+  var PE = { on: false, act: null, cur: {}, timers: {}, items: {}, hist: [], saved: 0, ptr: {}, drag: null, lastWheel: 0, wheelBefore: null, touchedRefresh: null, posters: false };
+  var PE_MAIN = 'img.character-grid-image, img.fruit-grid-image, .useful-catalog-image-wrap img, .story-card-thumb img, .story-saga-cover img, .wk-wp-ph img';
+  var PE_CARD = '.wk-wp[data-wp-rid], [data-fruit-id], [data-useful-id], [data-story-arc-id], .story-saga-folder, .character-item[onclick*="openCharacterArticle"]';
+  var PE_ICON = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></svg>';
+  function peNum(v, d, lo, hi) { v = Number(v); return v === v && String(v).trim() !== '' ? Math.max(lo, Math.min(hi, v)) : d; }
+  function peDec(s) { try { return decodeURIComponent(s); } catch (e) { return s; } }
+  function peFind(list, id) { return arr(list).find(function (x) { return String(x.id) === String(id); }) || null; }
+  function peIdent(card, img) {
+    var rid = card.getAttribute('data-wp-rid');
+    if (rid) { var rw = peFind('rewards', rid); return rw ? { poster: true, type: 'reward', id: rw.id, rec: rw, key: 'reward:' + rw.id } : null; }
+    var m, type = '', rec = null, id = '', oc = card.getAttribute('onclick') || '';
+    if ((m = oc.match(/openCharacterArticle\('([^']+)'/))) { type = 'character'; id = m[1]; rec = peFind('characters', id); }
+    else if (card.getAttribute('data-fruit-id')) { type = 'fruit'; id = peDec(card.getAttribute('data-fruit-id')); rec = peFind('fruits', id); }
+    else if (card.getAttribute('data-useful-id')) { type = 'useful'; id = peDec(card.getAttribute('data-useful-id')); rec = peFind('usefulArticles', id); }
+    else if (card.getAttribute('data-story-arc-id')) { type = 'story'; id = card.getAttribute('data-story-arc-id'); rec = peFind('storyArcs', id); }
+    else if (card.classList.contains('story-saga-folder')) {
+      // обложка саги — это фото одной из её арок: правим именно её
+      var saga = card.getAttribute('data-story-saga'), src = img.getAttribute('src');
+      rec = arr('storyArcs').find(function (a) { var r = raw(a); return String(r.saga || a.saga) === saga && String(r.image || '').trim() === src; }) || arr('storyArcs').find(function (a) { return String(raw(a).image || '').trim() === src; }) || null;
+      type = 'story'; id = rec && rec.id;
+    }
+    if (!rec || !type) return null;
+    var r = raw(rec), k = { y: 'image_position', x: 'image_position_x', z: 'image_zoom' }, second = false;
+    if (type === 'character') {
+      k = { y: 'person_image_position', x: 'person_image_position_x', z: 'person_image_zoom' };
+      var p2 = String(r.person2_link || '').trim();
+      if (p2 && p2 !== String(r.person_link || '').trim() && p2 === (img.getAttribute('src') || '').trim()) { k = { y: 'person2_image_position', x: 'person2_image_position_x', z: 'person2_image_zoom' }; second = true; }
+    }
+    var hz = hzOn(type);
+    return { poster: false, type: type, id: rec.id, rec: rec, k: k, hz: hz, second: second, key: type + ':' + rec.id + ':' + k.x + (hz ? ':hz' : '') };
+  }
+  function peRange(it) { return it.poster ? [30, 300] : [100, 250]; }
+  function peRead(it) {
+    if (PE.cur[it.key]) return Object.assign({}, PE.cur[it.key]);
+    var rg = peRange(it), v;
+    if (it.poster) {
+      var c = charOf(it.rec), p = c ? photoFor(it.rec, c, pcfg().adj[it.rec.id] || {}) : { x: 50, y: 30, z: 100 };
+      v = { x: peNum(p.x, 50, 0, 100), y: peNum(p.y, 30, 0, 100), z: peNum(p.z, 100, rg[0], rg[1]) };
+    } else {
+      var r = freshRec(it.type, it.rec), hc = it.hz ? hzParse(r[it.second ? 'hz2_crop' : 'hz_crop']) : null;
+      v = hc ? { x: peNum(hc.x, 50, 0, 100), y: peNum(hc.y, 50, 0, 100), z: peNum(hc.z, 100, rg[0], rg[1]) } : { x: peNum(r[it.k.x], 50, 0, 100), y: peNum(r[it.k.y], 50, 0, 100), z: peNum(r[it.k.z], 100, rg[0], rg[1]) };
+    }
+    return v;
+  }
+  function peApply(it, v) {
+    var img = it.img; if (!img || !img.isConnected) img = it.img = it.card.querySelector(PE_MAIN); if (!img) return;
+    var fixY = it.poster && getComputedStyle(img).objectFit === 'contain', py = fixY ? 100 : v.y;
+    img.style.setProperty('object-position', v.x + '% ' + py + '%', 'important');
+    img.style.setProperty('transform-origin', v.x + '% ' + py + '%', 'important');
+    img.style.setProperty('transform', 'scale(' + (v.z / 100) + ')', 'important');
+  }
+  function peSetCur(it, v) { PE.cur[it.key] = v; PE.items[it.key] = it; peApply(it, v); peHud(); }
+  function peMetrics(img, z) {
+    var cw = img.clientWidth, ch = img.clientHeight, nw = img.naturalWidth, nh = img.naturalHeight; if (!cw || !ch || !nw || !nh) return null;
+    var fit = getComputedStyle(img).objectFit, s = fit === 'contain' ? Math.min(cw / nw, ch / nh) : Math.max(cw / nw, ch / nh);
+    var rc = img.getBoundingClientRect(), k = rc.width / (cw * z) || 1;
+    return { cw: cw, ch: ch, W: nw * s, H: nh * s, k: k, contain: fit === 'contain' };
+  }
+  function peDelta(span, W, z, dpx, k) {   // сдвиг в % для сдвига содержимого на dpx пикселей
+    var d = span - z * W, min = span * 0.35; if (Math.abs(d) < min) d = -min;
+    return 100 * (dpx / k) / d;
+  }
+  function peClampV(it, v) { var rg = peRange(it); return { x: Math.round(Math.max(0, Math.min(100, v.x)) * 10) / 10, y: Math.round(Math.max(0, Math.min(100, v.y)) * 10) / 10, z: Math.round(Math.max(rg[0], Math.min(rg[1], v.z))) }; }
+  function peSchedule(it) { clearTimeout(PE.timers[it.key]); PE.timers[it.key] = setTimeout(function () { peFlush(it.key); }, 900); peHud(); }
+  function peFlush(key) {
+    clearTimeout(PE.timers[key]); delete PE.timers[key];
+    var it = PE.items[key], v = PE.cur[key]; if (!it || !v) return peHud();
+    var ok = true;
+    try {
+      if (it.poster) { var c2 = pcfg(), cur = Object.assign({}, c2.adj[it.id] || {}, { x: v.x, y: v.y, z: v.z }); c2.adj[it.id] = cur; savePcfg(c2); cfgCache = null; PE.posters = true; }
+      else {
+        var ch = {};
+        if (it.hz) ch[it.second ? 'hz2_crop' : 'hz_crop'] = [v.x, v.y, v.z].join(',');
+        else { ch[it.k.x] = v.x; ch[it.k.y] = v.y; ch[it.k.z] = v.z; }
+        ok = typeof window.__wikiQuickSave === 'function' ? window.__wikiQuickSave(it.type, it.id, ch, { noRefresh: true }) !== false : false;
+        PE.touchedRefresh = { type: it.type, id: it.id };
+      }
+    } catch (e) { ok = false; }
+    if (ok) PE.saved++; else PE.err = true;
+    delete PE.items[key].dirty; peHud();
+  }
+  function peFlushAll() { Object.keys(PE.timers).forEach(peFlush); }
+  function peBegin() { PE.gesture = PE.act ? { it: PE.act, before: peRead(PE.act) } : null; }
+  function peEnd() {
+    var g = PE.gesture; PE.gesture = null; if (!g) return;
+    var now = peRead(g.it); if (now.x === g.before.x && now.y === g.before.y && now.z === g.before.z) return;
+    PE.hist.push({ it: g.it, before: g.before }); if (PE.hist.length > 80) PE.hist.shift(); peSchedule(g.it);
+  }
+  function peSelect(it, card, img) {
+    if (PE.act && PE.act.card && PE.act.card !== card) PE.act.card.classList.remove('wk-pe-active');
+    it.card = card; it.img = img; PE.act = it; card.classList.add('wk-pe-active'); PE.items[it.key] = it; peHud();
+  }
+  function peUndo() {
+    var h = PE.hist.pop(); if (!h) return;
+    PE.items[h.it.key] = h.it; peSetCur(h.it, h.before); peSchedule(h.it);
+  }
+  function peHud() {
+    var bar = document.getElementById('wkPeBar'); if (!bar) return;
+    var it = PE.act, v = it ? peRead(it) : null, rg = it ? peRange(it) : [100, 250];
+    var sl = bar.querySelector('[data-pe-z]'), out = bar.querySelector('[data-pe-zo]');
+    sl.min = rg[0]; sl.max = rg[1]; sl.disabled = !it; if (v) { sl.value = v.z; out.textContent = Math.round(v.z) + '%'; } else out.textContent = '—';
+    var pend = Object.keys(PE.timers).length, st = bar.querySelector('[data-pe-st]');
+    st.className = 'wk-pe-st' + (PE.err ? ' is-err' : pend ? ' is-pend' : ''); st.querySelector('span').textContent = PE.err ? 'Не сохранилось' : pend ? 'Сохраняю…' : 'Сохранено: ' + PE.saved;
+    bar.querySelector('[data-pe-undo]').disabled = !PE.hist.length;
+    bar.querySelector('[data-pe-name]').textContent = it ? String((it.rec && (it.rec.name || (charOf(it.rec) || {}).name)) || it.id) + (it.hz ? ' · горизонтальная' : (it.poster ? '' : ' · вертикальная')) : 'Выбери карточку — просто потяни фото';
+  }
+  function peBar() {
+    var bar = document.getElementById('wkPeBar'); if (bar) return bar;
+    bar = document.createElement('div'); bar.id = 'wkPeBar'; bar.setAttribute('role', 'toolbar'); bar.setAttribute('aria-label', 'Правка превью');
+    bar.innerHTML = '<span class="wk-pe-ttl">' + PE_ICON + 'Правка превью</span><b class="wk-pe-name" data-pe-name></b>'
+      + '<label class="wk-pe-zoom">Масштаб<input type="range" min="100" max="250" step="1" data-pe-z><output data-pe-zo>—</output></label>'
+      + '<button type="button" class="wk-pe-b" data-pe-undo title="Отменить последнее движение (Ctrl+Z)">Отменить</button>'
+      + '<span class="wk-pe-st" data-pe-st><i></i><span></span></span>'
+      + '<button type="button" class="wk-pe-b is-main" data-pe-off title="Esc">Готово</button>'
+      + '<small class="wk-pe-hint">Тяни фото — двигать · колесо или ползунок — масштаб · стрелки — точная подстройка · двойной клик — сбросить. Сохраняется само.</small>';
+    document.body.appendChild(bar);
+    var sl = bar.querySelector('[data-pe-z]');
+    sl.addEventListener('pointerdown', function () { peBegin(); });
+    sl.addEventListener('input', function () { if (!PE.act) return; var v = peRead(PE.act); v.z = Number(sl.value); peSetCur(PE.act, peClampV(PE.act, v)); });
+    sl.addEventListener('change', peEnd);
+    bar.querySelector('[data-pe-undo]').addEventListener('click', peUndo);
+    bar.querySelector('[data-pe-off]').addEventListener('click', function () { peToggle(false); });
+    return bar;
+  }
+  function peFab() {
+    var f = document.getElementById('wkPeFab'); if (f) return f;
+    f = document.createElement('button'); f.type = 'button'; f.id = 'wkPeFab'; f.innerHTML = PE_ICON + '<span>Правка превью</span>'; f.title = 'Двигать и масштабировать фото прямо на карточках, с автосохранением';
+    f.addEventListener('click', function () { peToggle(true); }); document.body.appendChild(f); return f;
+  }
+  function peToggle(on) {
+    if (on === PE.on) return;
+    if (on && !canEdit()) { try { if (typeof window.__wikiNoEditNotice === 'function') window.__wikiNoEditNotice(); } catch (e) {} return; }
+    if (!on) {
+      peEnd(); peFlushAll();
+      if (PE.act && PE.act.card) PE.act.card.classList.remove('wk-pe-active');
+      var t = PE.touchedRefresh, ps = PE.posters; PE.touchedRefresh = null; PE.posters = false;
+      PE.on = false; document.body.classList.remove('wk-pe-on'); PE.act = null; PE.hist = []; PE.cur = {}; PE.items = {};
+      // одно обновление в конце, чтобы остальные виды (списки, каюта, статья) увидели новые кадры
+      if (t && typeof window.__wikiQuickSave === 'function') { try { window.__wikiQuickSave(t.type, t.id, {}); } catch (e) {} }
+      if (ps) { try { afterPosterChange(); } catch (e) {} }
+      toast(PE.saved ? 'Правка превью выключена · сохранено карточек: ' + PE.saved : 'Правка превью выключена'); PE.saved = 0; PE.err = false;
+      return;
+    }
+    PE.on = true; PE.saved = 0; PE.err = false; document.body.classList.add('wk-pe-on'); peBar(); peHud();
+  }
+  function peOnDown(e) {
+    if (!PE.on || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    var t = e.target; if (!t.closest) return; if (t.closest('#wkPeBar, #wkPeFab')) return;
+    var card = t.closest(PE_CARD); if (!card) return;
+    var img = card.querySelector(PE_MAIN); if (!img) return;
+    var it = peIdent(card, img); if (!it) return;
+    e.preventDefault(); e.stopPropagation();
+    if (PE.act && PE.act.key !== it.key) { peEnd(); }
+    var fresh = !PE.act || PE.act.key !== it.key; peSelect(it, card, img);
+    PE.ptr[e.pointerId] = { x: e.clientX, y: e.clientY }; PE.moved = false; PE.down = { x: e.clientX, y: e.clientY };
+    var ids = Object.keys(PE.ptr);
+    if (fresh || !PE.gesture) peBegin();
+    var v = peRead(it), z = v.z, m = peMetrics(img, z / 100);
+    if (ids.length >= 2) {
+      var a = PE.ptr[ids[0]], b = PE.ptr[ids[1]];
+      PE.drag = { pinch: true, d0: Math.hypot(a.x - b.x, a.y - b.y) || 1, z0: v.z };
+    } else PE.drag = { x0: e.clientX, y0: e.clientY, v0: v, m: m, id: e.pointerId };
+    try { card.setPointerCapture(e.pointerId); } catch (er) {}
+  }
+  function peOnMove(e) {
+    if (!PE.on || !PE.drag || !PE.ptr[e.pointerId]) return;
+    var it = PE.act; if (!it) return; e.preventDefault();
+    PE.ptr[e.pointerId] = { x: e.clientX, y: e.clientY }; if (PE.down && Math.hypot(e.clientX - PE.down.x, e.clientY - PE.down.y) > 4) PE.moved = true;
+    var d = PE.drag, v = peRead(it), ids = Object.keys(PE.ptr);
+    if (d.pinch && ids.length >= 2) { var a = PE.ptr[ids[0]], b = PE.ptr[ids[1]]; v.z = d.z0 * (Math.hypot(a.x - b.x, a.y - b.y) / d.d0); return peSetCur(it, peClampV(it, v)); }
+    if (d.pinch || !d.m) return;
+    var m = d.m, z = d.v0.z / 100, dx = e.clientX - d.x0, dy = e.clientY - d.y0;
+    v.x = d.v0.x + peDelta(m.cw, m.W, z, dx, m.k);
+    if (!(it.poster && m.contain)) v.y = d.v0.y + peDelta(m.ch, m.H, z, dy, m.k);
+    peSetCur(it, peClampV(it, v));
+  }
+  function peOnUp(e) {
+    if (!PE.ptr[e.pointerId]) return; delete PE.ptr[e.pointerId];
+    if (Object.keys(PE.ptr).length === 0) { PE.drag = null; peEnd(); } else if (PE.drag && PE.drag.pinch) { PE.drag = null; }
+  }
+  function peOnWheel(e) {
+    if (!PE.on || !PE.act || !e.target.closest) return;
+    var card = e.target.closest(PE_CARD); if (!card || card !== PE.act.card) return;
+    e.preventDefault();
+    var now = Date.now(); if (now - PE.lastWheel > 700) { peEnd(); peBegin(); } PE.lastWheel = now;
+    var v = peRead(PE.act); v.z += (e.deltaY < 0 ? 1 : -1) * (e.shiftKey ? 1 : 5); peSetCur(PE.act, peClampV(PE.act, v));
+    clearTimeout(PE.wt); PE.wt = setTimeout(peEnd, 720);
+  }
+  function peOnKey(e) {
+    if (!PE.on) return; var t = e.target; if (t && t.matches && t.matches('input:not([data-pe-z]), textarea, select, [contenteditable]')) return;
+    if (e.key === 'Escape') { e.preventDefault(); return peToggle(false); }
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'я')) { e.preventDefault(); return peUndo(); }
+    if (!PE.act) return;
+    var st = e.shiftKey ? 5 : 1, v = peRead(PE.act), ch = true;
+    if (e.key === 'ArrowLeft') v.x -= st; else if (e.key === 'ArrowRight') v.x += st; else if (e.key === 'ArrowUp') v.y -= st; else if (e.key === 'ArrowDown') v.y += st;
+    else if (e.key === '+' || e.key === '=') v.z += st; else if (e.key === '-' || e.key === '_') v.z -= st; else ch = false;
+    if (!ch) return; e.preventDefault(); peBegin(); peSetCur(PE.act, peClampV(PE.act, v)); clearTimeout(PE.kt); PE.kt = setTimeout(peEnd, 500);
+  }
+  function peOnDbl(e) {
+    if (!PE.on || !e.target.closest || e.target.closest('#wkPeBar, #wkPeFab')) return;
+    var card = e.target.closest(PE_CARD); if (!card) return; var img = card.querySelector(PE_MAIN); if (!img) return;
+    var it = peIdent(card, img); if (!it) return; e.preventDefault(); e.stopPropagation();
+    peSelect(it, card, img); peBegin(); peSetCur(it, { x: 50, y: it.poster ? 30 : 50, z: 100 }); peEnd();
+  }
+  function peBlock(e) {
+    if (!PE.on || !e.target.closest) return;
+    if (e.target.closest('#wkPeBar, #wkPeFab')) return;
+    var cd = e.target.closest(PE_CARD);
+    if (cd && cd.classList.contains('story-saga-folder') && !PE.moved) return;   // обычный клик по папке саги раскрывает её
+    if (cd && cd.querySelector(PE_MAIN)) { e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); }
+  }
+
+  /* ---------- отдельный кадр для горизонтальных карточек (hz_crop = «x,y,z»), вертикальный не трогаем ---------- */
+  var HZ_KEY = { character: 'c', story: 's', fruit: 'f', useful: 'u' };
+  function hzOn(type) { return !!HZ_KEY[type] && document.documentElement.classList.contains('wk-hz-' + HZ_KEY[type]); }
+  function hzParse(v) { var m = String(v || '').split(','); if (m.length < 3 || m[0] === '') return null; var c = { x: +m[0], y: +m[1], z: +m[2] }; return isFinite(c.x) && isFinite(c.y) && isFinite(c.z) ? c : null; }
+  function freshRec(type, rec) { var r = null; try { if (rec && rec.id && window.__wikiRawRecord) r = window.__wikiRawRecord(type, rec.id); } catch (e) {} return r || raw(rec); }
+  // Для списка персонажей кадр берёт модуль витрины (heroCrops) — отдаём ему горизонтальный кадр.
+  window.__wkHzCrop = function (type, r, second, el) {
+    if (type !== 'character' || !hzOn('character') || !el || !el.closest('#characterList') || el.closest('.wk-sc, .wk-hero-card')) return null;
+    return hzParse(r && r[second ? 'hz2_crop' : 'hz_crop']);
+  };
+  var HZ_LISTS = [['#storyList', 'story'], ['#fruitsList', 'fruit'], ['#usefulList', 'useful']], hzPend = 0;
+  function hzPass() {
+    hzPend = 0;
+    HZ_LISTS.forEach(function (l) {
+      var host = document.querySelector(l[0]); if (!host) return; var on = hzOn(l[1]);
+      host.querySelectorAll(PE_CARD).forEach(function (card) {
+        if (card.closest('.wk-sc')) return;
+        var img = card.querySelector(PE_MAIN); if (!img) return;
+        var hc = null, it = null;
+        if (on || img.__wkHzSig) {
+          it = peIdent(card, img); if (!it) return;
+          var r = freshRec(l[1], it.rec); hc = on ? hzParse(r[it.second ? 'hz2_crop' : 'hz_crop']) : null;
+          if (hc) { var sig = 'h' + hc.x + ',' + hc.y + ',' + hc.z; if (img.__wkHzSig !== sig || img.style.getPropertyValue('object-position') !== hc.x + '% ' + hc.y + '%') { img.__wkHzSig = sig; peStyle(img, hc); } }
+          else if (img.__wkHzSig) {   // горизонтального кадра нет или режим выключен — вернуть обычный
+            img.__wkHzSig = ''; var rg = peRange(it);
+            peStyle(img, { x: peNum(r[it.k.x], 50, 0, 100), y: peNum(r[it.k.y], 50, 0, 100), z: peNum(r[it.k.z], 100, rg[0], rg[1]) });
+          }
+        }
+      });
+    });
+    try { if (typeof window.__wkHeroCrops === 'function') window.__wkHeroCrops(); } catch (e) {}
+  }
+  function peStyle(img, c) { img.style.setProperty('object-position', c.x + '% ' + c.y + '%', 'important'); img.style.setProperty('transform-origin', c.x + '% ' + c.y + '%', 'important'); img.style.setProperty('transform', 'scale(' + (c.z / 100) + ')', 'important'); }
+  function hzSoon() { if (!hzPend) hzPend = requestAnimationFrame(hzPass); }
+  new MutationObserver(hzSoon).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  (function hzWatch() {
+    HZ_LISTS.forEach(function (l) { var h = document.querySelector(l[0]); if (h && !h.__wkHz) { h.__wkHz = true; new MutationObserver(hzSoon).observe(h, { childList: true, subtree: true }); } });
+    var ch = document.querySelector('#characterList'); if (ch && !ch.__wkHz) { ch.__wkHz = true; new MutationObserver(function () { try { if (hzOn('character') && typeof window.__wkHeroCrops === 'function') window.__wkHeroCrops(); } catch (e) {} }).observe(ch, { childList: true, subtree: true }); }
+    setTimeout(hzWatch, 1500);
+  })();
+  setTimeout(hzPass, 600);
+  document.addEventListener('pointerdown', peOnDown, true);
+  document.addEventListener('pointermove', peOnMove, true);
+  document.addEventListener('pointerup', peOnUp, true);
+  document.addEventListener('pointercancel', peOnUp, true);
+  document.addEventListener('wheel', peOnWheel, { capture: true, passive: false });
+  document.addEventListener('keydown', peOnKey, true);
+  document.addEventListener('dblclick', peOnDbl, true);
+  document.addEventListener('click', peBlock, true);
+  document.addEventListener('keydown', function (e) { if (PE.on && (e.key === 'Enter' || e.key === ' ') && e.target.closest && e.target.closest(PE_CARD)) { e.preventDefault(); e.stopPropagation(); } }, true);
+  window.addEventListener('beforeunload', function () { if (PE.on) { try { peEnd(); peFlushAll(); } catch (e) {} } });
+  function peSync() { var f = peFab(); f.hidden = PE.on || !canEdit() || !!document.querySelector('#wikiEditorOverlay.open'); }
+  setInterval(peSync, 1200); peSync();
+  window.__wkPreviewEdit = peToggle;
+
 })();
 </script>
 <button type="button" class="wk-totop" aria-label="Наверх">↑</button></body></html>
