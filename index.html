@@ -1285,7 +1285,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "08.11.2026 · 113";
+const WIKI_VERSION = "08.11.2026 · 114";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -33697,7 +33697,7 @@ body.wk-pe-on .wk-pe-active img{will-change:transform,object-position}
       + '<label class="wk-rl-f">Масштаб <output data-po="z">' + Math.round(p.z) + '%</output><input type="range" min="30" max="300" step="1" data-pr="z" value="' + Math.round(p.z) + '"></label>'
       + '<label class="wk-rl-f">По горизонтали <output data-po="x">' + Math.round(p.x) + '%</output><input type="range" min="0" max="100" step="1" data-pr="x" value="' + Math.round(p.x) + '"></label>'
       + '<label class="wk-rl-f">По вертикали <output data-po="y">' + Math.round(cut && !p.yset ? 50 : p.y) + '%</output><input type="range" min="0" max="100" step="1" data-pr="y" value="' + Math.round(cut && !p.yset ? 50 : p.y) + '"></label>'
-      + '<div class="wk-rl-line"><button type="button" class="wk-rl-btn" data-edp-reset>Сбросить кадр этой награды</button><span class="wk-edp-saved"></span></div>'
+      + '<div class="wk-rl-line"><button type="button" class="wk-rl-btn" data-edp-reset>Сбросить кадр этой награды</button>' + (rws.length > 1 ? '<button type="button" class="wk-rl-btn" data-edp-all title="Скопировать этот кадр на остальные плакаты персонажа с тем же фото">Применить ко всем плакатам персонажа</button>' : '') + '<span class="wk-edp-saved"></span></div>'
       + '<small class="wk-edp-note">Тяни фото прямо на плакате, колесо — масштаб. Кадр у каждой награды свой: меняется только выбранный плакат. Сохраняется сразу, отдельно от статьи. Шрифт и отдельные плакаты — в «Награды» → «Оформление».</small>'
       + '</div></div>';
     if (old) old.replaceWith(box); else holder.parentNode.insertBefore(box, holder.nextSibling);
@@ -33712,6 +33712,14 @@ body.wk-pe-on .wk-pe-active img{will-change:transform,object-position}
     box.querySelectorAll('[data-edp-r]').forEach(function (b) { b.addEventListener('click', function () { edPv.rid = b.getAttribute('data-edp-r'); charPosterBlock(f); }); });
     box.querySelectorAll('[data-pseg]').forEach(function (sg) { sg.addEventListener('click', function (e) { var b = e.target.closest('[data-v]'); if (!b) return; store({ fit: b.getAttribute('data-v') }, true); }); });
     box.querySelectorAll('[data-pr]').forEach(function (rg) { rg.addEventListener('input', function () { var k = rg.getAttribute('data-pr'), o = {}; o[k] = Number(rg.value); box.querySelector('[data-po="' + k + '"]').textContent = rg.value + '%'; store(o); }); });
+    var allBtn = box.querySelector('[data-edp-all]');
+    if (allBtn) allBtn.addEventListener('click', function () {
+      var cfg = pcfg(), now = photoFor(r, c, cfg.adj[r.id] || {}), n = 0;
+      var v = { x: Math.round(now.x * 10) / 10, y: cut && !now.yset ? 50 : now.y, z: now.z, fit: fit };
+      rws.forEach(function (x) { var pp = photoFor(x, c, cfg.adj[x.id] || {}); if (!!pp.ts !== !!p.ts || !!pp.pl !== !!p.pl) return; cfg.adj[x.id] = Object.assign({}, cfg.adj[x.id] || {}, v); n++; });
+      savePcfg(cfg); afterPosterChange(); charPosterBlock(f);
+      var sv = f.querySelector('.wk-ed-poster .wk-edp-saved'); if (sv) { sv.textContent = '✓ Применено к плакатам: ' + n; setTimeout(function () { sv.textContent = ''; }, 2200); }
+    });
     box.querySelector('[data-edp-reset]').addEventListener('click', function () { var cfg = pcfg(); var cur = Object.assign({}, cfg.adj[r.id] || {}); ['x', 'y', 'z', 'fit'].forEach(function (k) { delete cur[k]; }); if (Object.keys(cur).length) cfg.adj[r.id] = cur; else delete cfg.adj[r.id]; if (cfg.chr) delete cfg.chr[key]; savePcfg(cfg); afterPosterChange(); charPosterBlock(f); });
     function bindDrag() {
       var ph = box.querySelector('[data-edp-big] .wk-wp-ph'); if (!ph) return;
