@@ -1285,7 +1285,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "09.11.2026 · 135";
+const WIKI_VERSION = "09.11.2026 · 136";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -33412,6 +33412,37 @@ html body .wk-sortbox:focus-within{border-color:rgba(255,206,110,.7)!important;b
 .wk-hue-row input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid #0b1120}
 .wk-hue-row output{min-width:42px;font-size:12px;color:#e8ecf4;text-align:right}
 .wk-hue-row button{min-height:28px;padding:0 10px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:transparent;color:#cbd5e1;font:inherit;font-size:12px;cursor:pointer}
+</style><style id="wk-saga-css">@layer wk-redesign{
+html body #storyList{--sg-lc:280px minmax(0,1fr);--sg-ac:repeat(auto-fill,minmax(176px,1fr));--sg-gc:2;--sg-gr:2;--sg-hc:2;--sg-nr:1 / span 2}
+html body #storyList.sg-on{display:grid!important;grid-template-columns:280px minmax(0,1fr);grid-auto-rows:auto;gap:14px 26px;align-items:start}
+html body #storyList.sg-on>.story-saga-group{display:contents}
+html body #storyList.sg-on .story-saga-folder{display:none!important}
+html body #storyList.sg-on .story-saga-arcs{display:none!important}
+html body #storyList.sg-on .story-saga-group.sg-sel>.story-saga-arcs{display:grid!important;grid-column:2;grid-row:2;margin:0!important;padding:0!important;grid-template-columns:repeat(auto-fill,minmax(176px,1fr))!important;gap:16px!important}
+html body #storyList.sg-on>.sg-nav{grid-column:1;grid-row:1 / span 2;position:sticky;top:84px;max-height:calc(100vh - 104px);overflow:auto;display:flex;flex-direction:column;gap:3px;padding:8px;border:1px solid rgba(148,163,184,.16);border-radius:16px;background:rgba(15,23,42,.55);scrollbar-width:thin}
+.sg-nav-t{font:700 11px/1 inherit;letter-spacing:.12em;text-transform:uppercase;color:#64748b;padding:8px 10px 6px}
+.sg-item{--c:#94a3b8;display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px 10px 10px;border-radius:11px;border:1px solid transparent;background:transparent;color:#aeb9cb;cursor:pointer;font:600 14.5px/1.25 inherit;transition:background .15s,color .15s,border-color .15s}
+.sg-item:hover{background:rgba(148,163,184,.09);color:#e8edf6}
+.sg-item:focus-visible{outline:2px solid var(--c);outline-offset:1px}
+.sg-dot{flex:none;width:9px;height:9px;border-radius:50%;background:var(--c);opacity:.55;box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 14%,transparent)}
+.sg-name{flex:1;min-width:0;overflow-wrap:break-word;word-break:normal}
+.sg-cnt{flex:none;font:700 12px/1 inherit;color:#7c8aa0;font-variant-numeric:tabular-nums}
+.sg-ok{flex:none;font-size:11px;color:#6ee7a8}
+.sg-item.on{background:color-mix(in srgb,var(--c) 17%,#0b1220);border-color:color-mix(in srgb,var(--c) 45%,transparent);color:#fff}
+.sg-item.on .sg-dot{opacity:1;box-shadow:0 0 10px var(--c)}
+.sg-item.on .sg-cnt{color:#e2e8f0}
+html body #storyList.sg-on>.sg-head{grid-column:2;grid-row:1;display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 14px;padding:2px 2px 12px;border-bottom:2px solid var(--c,#64748b);margin-bottom:2px}
+.sg-head h2{margin:0;font-size:26px;line-height:1.15;color:#fff}
+.sg-head span{font-size:13px;color:#94a3b8;font-weight:600}
+@media (max-width:860px){
+  html body #storyList{--sg-lc:minmax(0,1fr);--sg-ac:repeat(auto-fill,minmax(150px,1fr));--sg-gc:1;--sg-gr:3;--sg-hc:1;--sg-nr:1}
+  html body #storyList.sg-on>.sg-nav{grid-column:1;grid-row:1;position:sticky;top:58px;z-index:20;flex-direction:row;overflow-x:auto;overflow-y:hidden;max-height:none;padding:6px;gap:6px;border-radius:14px;background:#0b1220;box-shadow:0 8px 18px rgba(0,0,0,.45)}
+  .sg-nav-t{display:none}.sg-item{width:auto;flex:none;white-space:nowrap;padding:9px 12px}
+  html body #storyList.sg-on>.sg-head{grid-column:1;grid-row:2}
+  html body #storyList.sg-on .story-saga-group.sg-sel>.story-saga-arcs{grid-column:1;grid-row:3;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))!important;gap:12px!important}
+}
+
+}
 </style><script id="wk-v22-js">
 /* ===================================================================
    Обновление v22 (06.11.2026 · 96):
@@ -35514,6 +35545,79 @@ html body .article.wk-art-in{animation:wkArtIn .44s cubic-bezier(.2,.8,.2,1) bot
     f.__wk = 1; window.__wikiNativeParts = f; return true;
   }
   if (!wrap()) { var t = setInterval(function () { if (wrap()) clearInterval(t); }, 300); }
+})();
+</script>
+<script id="wk-saga-js">
+(function () {
+  'use strict';
+  var KEY = 'onePieceWikiSagaSelV1', busy = false, tm = 0;
+  function $(s, r) { return (r || document).querySelector(s); }
+  function lsGet() { try { return localStorage.getItem(KEY) || ''; } catch (e) { return ''; } }
+  function lsSet(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
+  function plural(n, a) { var m = n % 100, d = n % 10; return a[(m > 10 && m < 20) ? 2 : d === 1 ? 0 : (d >= 2 && d <= 4) ? 1 : 2]; }
+  function sel(name) {
+    try {
+      if (typeof storyExpandedSagas === 'undefined') return;
+      storyExpandedSagas.clear(); storyExpandedSagas.add(name);
+      try { storySelectedSaga = name; } catch (e) {}
+      lsSet(name);
+      if (typeof renderStoryAccordionFinal === 'function') renderStoryAccordionFinal();
+      if (typeof syncUrl === 'function') syncUrl();
+    } catch (e) { console.warn(e); }
+  }
+  function sync() {
+    var list = document.getElementById('storyList'); if (!list) return;
+    var groups = [].slice.call(list.querySelectorAll(':scope > .story-saga-group'));
+    if (!groups.length) { list.classList.remove('sg-on'); return; }
+    var names = groups.map(function (g) { var f = $('.story-saga-folder', g); return f ? f.getAttribute('data-story-saga') : ''; });
+    var open = groups.filter(function (g) { return g.classList.contains('is-open'); }).map(function (g) { return names[groups.indexOf(g)]; });
+    var cur = '';
+    try { cur = (typeof storySelectedSaga === 'string' && names.indexOf(storySelectedSaga) >= 0 && open.indexOf(storySelectedSaga) >= 0) ? storySelectedSaga : ''; } catch (e) {}
+    if (!cur && open.length) cur = open[0];
+    if (!cur) { var saved = lsGet(); cur = names.indexOf(saved) >= 0 ? saved : names[0]; }
+    if (open.length !== 1 || open[0] !== cur) { if (!busy) { busy = true; sel(cur); setTimeout(function () { busy = false; }, 60); return; } }
+    list.classList.add('sg-on');
+    list.style.setProperty('grid-template-columns', 'var(--sg-lc)', 'important');
+    [].forEach.call(list.querySelectorAll(':scope > .sg-nav,:scope > .sg-head'), function (e) { var nv = e.classList.contains('sg-nav'); e.style.setProperty('grid-column', nv ? '1' : 'var(--sg-hc)', 'important'); e.style.setProperty('grid-row', nv ? 'var(--sg-nr)' : '1', 'important'); });
+    groups.forEach(function (g, i) { g.classList.toggle('sg-sel', names[i] === cur); g.style.setProperty('display', 'contents', 'important'); var fo = $('.story-saga-folder', g); if (fo) fo.style.setProperty('display', 'none', 'important'); });
+    var sig = names.join('|') + '#' + groups.map(function (g) { var f = $('.story-saga-folder', g), m = f && $('.character-meta', f); return (m ? m.textContent.trim() : '') + (f && $('.wk-saga-tag.is-done', f) ? '+' : ''); }).join(',');
+    var nav = $(':scope > .sg-nav', list), head = $(':scope > .sg-head', list);
+    if (!nav || nav.getAttribute('data-sig') !== sig) {
+      if (nav) nav.remove();
+      nav = document.createElement('nav'); nav.className = 'sg-nav'; nav.setAttribute('data-sig', sig); nav.setAttribute('aria-label', 'Саги');
+      var h = '<div class="sg-nav-t">Саги</div>';
+      groups.forEach(function (g, i) {
+        var f = $('.story-saga-folder', g), cs = f ? getComputedStyle(f) : null;
+        var c = (cs && cs.getPropertyValue('--story-accent').trim()) || '#94a3b8';
+        var nm = f ? ($('.character-name', f) || {}).textContent : names[i];
+        var meta = f ? (($('.character-meta', f) || {}).textContent || '').trim() : '';
+        var cnt = (meta.match(/\d+/) || [''])[0];
+        var done = f && $('.wk-saga-tag.is-done', f) ? '<span class="sg-ok" title="Пройдена">✓</span>' : '';
+        h += '<button type="button" class="sg-item" data-sg="' + String(names[i]).replace(/"/g, '&quot;') + '" style="--c:' + c + '" title="' + meta.replace(/"/g, '&quot;') + '"><span class="sg-dot"></span><span class="sg-name">' + String(nm || '').trim() + '</span>' + done + '<span class="sg-cnt">' + cnt + '</span></button>';
+      });
+      nav.innerHTML = h;
+      nav.addEventListener('click', function (e) { var b = e.target.closest('.sg-item'); if (!b) return; var n = b.getAttribute('data-sg'); if (n !== cur2()) { sel(n); try { var r = list.getBoundingClientRect(); if (r.top < 0) window.scrollTo({ top: window.scrollY + r.top - 80, behavior: 'smooth' }); } catch (e2) {} } });
+      list.insertBefore(nav, list.firstChild);
+    }
+    function cur2() { var o = $('.sg-item.on', nav); return o ? o.getAttribute('data-sg') : ''; }
+    [].forEach.call(nav.querySelectorAll('.sg-item'), function (b) { var on = b.getAttribute('data-sg') === cur; b.classList.toggle('on', on); if (on) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current'); });
+    var gi = names.indexOf(cur), g = groups[gi], arcs = g && $('.story-saga-arcs', g), f = g && $('.story-saga-folder', g);
+    groups.forEach(function (gg) { var a = $('.story-saga-arcs', gg); if (a) { if (gg !== g) a.style.setProperty('display', 'none', 'important'); else a.style.setProperty('display', 'grid', 'important'); if (gg === g) { a.style.setProperty('grid-template-columns', 'var(--sg-ac)', 'important'); a.style.setProperty('grid-column', 'var(--sg-gc)', 'important'); a.style.setProperty('grid-row', 'var(--sg-gr)', 'important'); } else { a.style.removeProperty('grid-template-columns'); a.style.removeProperty('grid-column'); a.style.removeProperty('grid-row'); } } });
+    if (!head) { head = document.createElement('div'); head.className = 'sg-head'; list.insertBefore(head, nav.nextSibling); }
+    var n = arcs ? arcs.children.length : 0, movie = /фильм/i.test((f && ($('.character-meta', f) || {}).textContent) || '');
+    head.style.setProperty('--c', (f && getComputedStyle(f).getPropertyValue('--story-accent').trim()) || '#64748b');
+    head.innerHTML = '<h2></h2><span>' + n + ' ' + (movie ? plural(n, ['фильм', 'фильма', 'фильмов']) : plural(n, ['арка', 'арки', 'арок'])) + '</span>';
+    head.firstChild.textContent = (f && ($('.character-name', f) || {}).textContent || cur).trim();
+  }
+  function later() { clearTimeout(tm); tm = setTimeout(sync, 60); }
+  function boot() {
+    var list = document.getElementById('storyList'); if (!list) return false;
+    new MutationObserver(function (m) { if (m.some(function (x) { return x.type === 'childList' || (x.type === 'attributes' && x.target.classList && x.target.classList.contains('story-saga-group')); })) later(); })
+      .observe(list, { childList: true, subtree: false });
+    new MutationObserver(later).observe(list, { attributes: true, attributeFilter: ['class'], subtree: true, attributeOldValue: false });
+    sync(); return true;
+  }
+  var t = setInterval(function () { if (boot()) clearInterval(t); }, 300);
 })();
 </script>
 <button type="button" class="wk-totop" aria-label="Наверх">↑</button></body></html>
