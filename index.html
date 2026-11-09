@@ -1285,7 +1285,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "09.11.2026 · 129";
+const WIKI_VERSION = "09.11.2026 · 133";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -9887,31 +9887,31 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
             : `linear-gradient(108deg, ${rgba(color,.42)} 0%, ${rgba(color,.17)} 38%, ${rgba(color,.035)} 86%)`;
         el.style.setProperty('background',baseBg,'important');
         el.style.setProperty('background-image',baseBg,'important');
-        el.style.setProperty('border-color',rgba(color,.58),'important');
-        el.style.setProperty('border-left-color',color,'important');
+        el.style.setProperty('border-color','transparent','important');
+        el.style.setProperty('border-left-color','transparent','important');
         el.style.setProperty('box-shadow',
-          `0 0 0 1px ${rgba(color,.15)}, 0 7px 22px ${rgba(color,.13)}`,
+          `0 7px 22px ${rgba(color,.13)}`,
           'important');
         if(el.__wikiAccentHoverEnter) el.removeEventListener('pointerenter',el.__wikiAccentHoverEnter);
         if(el.__wikiAccentHoverLeave) el.removeEventListener('pointerleave',el.__wikiAccentHoverLeave);
-        const baseShadow=`0 0 0 1px ${rgba(color,.15)}, 0 7px 22px ${rgba(color,.13)}`;
+        const baseShadow=`0 7px 22px ${rgba(color,.13)}`;
         const hoverBg = isMovieAccent
           ? `linear-gradient(108deg, rgba(var(--story-movie-accent-rgb, ${rgb}), .64) 0%, rgba(var(--story-movie-accent-rgb, ${rgb}), .34) 42%, rgba(var(--story-movie-accent-rgb, ${rgb}), .10) 88%)`
           : isFruitGridCard
             ? fruitGridGradient(true)
             : `linear-gradient(108deg, ${rgba(color,.58)} 0%, ${rgba(color,.27)} 42%, ${rgba(color,.07)} 88%)`;
-        const hoverShadow=`0 0 0 1px ${rgba(color,.28)}, 0 9px 26px ${rgba(color,.24)}`;
+        const hoverShadow=`0 9px 26px ${rgba(color,.24)}`;
         el.__wikiAccentHoverEnter=()=>{
           el.style.setProperty('background',hoverBg,'important');
           el.style.setProperty('background-image',hoverBg,'important');
           el.style.setProperty('box-shadow',hoverShadow,'important');
-          el.style.setProperty('border-color',rgba(color,.78),'important');
+          el.style.setProperty('border-color','transparent','important');
         };
         el.__wikiAccentHoverLeave=()=>{
           el.style.setProperty('background',baseBg,'important');
           el.style.setProperty('background-image',baseBg,'important');
           el.style.setProperty('box-shadow',baseShadow,'important');
-          el.style.setProperty('border-color',rgba(color,.58),'important');
+          el.style.setProperty('border-color','transparent','important');
         };
         el.addEventListener('pointerenter',el.__wikiAccentHoverEnter);
         el.addEventListener('pointerleave',el.__wikiAccentHoverLeave);
@@ -10062,7 +10062,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         const badgeBorder = rgba(color,.92);
         const badgeBg = rgba(color,.16);
         const glow = rgba(color,.66);
-        const shadow = `0 0 0 1px ${rgba(color,.15)}, 0 7px 22px ${rgba(color,.13)}`;
+        const shadow = `0 7px 22px ${rgba(color,.13)}`;
         categoryRules.push(`.fruit-item.fruit-border-${className},.fruit-favorite-item.fruit-border-${className}{${variable}:${color}!important;--fruit-accent:var(${variable})!important;--user-accent:var(${variable})!important;--catalog-accent:var(${variable})!important;--glow-color:${glow}!important;border-color:${border}!important;border-left-color:var(${variable})!important;background-image:${bg}!important;box-shadow:${shadow}!important}`);
         categoryRules.push(`#fruitsSection #fruitsList .fruit-grid-card.fruit-border-${className}{${variable}:${color}!important;--fruit-card-accent:${color}!important;--fruit-card-rgb:${colorRGB(color).join(', ')}!important;--fruit-accent:var(${variable})!important;--user-accent:var(${variable})!important;--catalog-accent:var(${variable})!important;--catalog-accent-rgb:${colorRGB(color).join(', ')}!important;--glow-color:${glow}!important;border-color:${border}!important;border-left-color:var(${variable})!important;background:${fruitGridBg}!important;background-image:${fruitGridBg}!important;box-shadow:${shadow}!important}`);
         categoryRules.push(`.fruit-type-badge.fruit-type-${className}{${variable}:${color}!important;--fruit-accent:var(${variable})!important;--user-accent:var(${variable})!important;color:var(${variable})!important;border-color:${badgeBorder}!important;background-color:${badgeBg}!important;box-shadow:0 0 10px ${rgba(color,.13)}!important}`);
@@ -10078,7 +10078,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         const badgeBorder = rgba(color,.92);
         const badgeBg = rgba(color,.16);
         const glow = rgba(color,.66);
-        const shadow = `0 0 0 1px ${rgba(color,.15)}, 0 7px 22px ${rgba(color,.13)}`;
+        const shadow = `0 7px 22px ${rgba(color,.13)}`;
         categoryRules.push(`.useful-item.${className},.useful-favorite-item.${className}{${variable}:${color}!important;--useful-accent:var(${variable})!important;--user-accent:var(${variable})!important;--catalog-accent:var(${variable})!important;--glow-color:${glow}!important;border-color:${border}!important;border-left-color:var(${variable})!important;background-image:${bg}!important;box-shadow:${shadow}!important}`);
         categoryRules.push(`.useful-type-badge.${className}{${variable}:${color}!important;--useful-accent:var(${variable})!important;--user-accent:var(${variable})!important;color:var(${variable})!important;border-color:${badgeBorder}!important;background-color:${badgeBg}!important;box-shadow:0 0 10px ${rgba(color,.13)}!important}`);
         categoryRules.push(`#usefulSection .useful-stat-button.${className},.useful-stat-button.${className}{${variable}:${color}!important;--useful-accent:var(${variable})!important;--user-accent:var(${variable})!important;--catalog-accent:var(${variable})!important;color:var(${variable})!important;border-color:${badgeBorder}!important;background-color:${badgeBg}!important;box-shadow:0 0 10px ${rgba(color,.13)}!important}`);
@@ -22169,7 +22169,7 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
   window.__wikiCardAmbList = AMB;
   // Эффекты, которые состоят только из частиц: теперь они в редакторе частиц конструктора.
   // Из списка выбора убраны, но у статей, где они уже стоят, продолжают работать.
-  window.__wikiCardAmbHidden = ['twinkle', 'smoke', 'dark', 'light', 'souls', 'claws', 'swords', 'ghosts', 'flowers'];
+  window.__wikiCardAmbHidden = ['twinkle', 'smoke', 'dark', 'light', 'souls', 'claws', 'swords', 'ghosts', 'flowers', 'fireflies', 'stardust', 'comets', 'confetti', 'runes', 'aurora', 'ripples', 'rays', 'leaves'];
   function isAmb(v) { return AMB.some(function (x) { return x.v === v && v !== 'none'; }); }
   var MUGIWARA = ['char_luffy', 'char_zoro', 'char_nami', 'char_usopp', 'char_sanji', 'char_chopper', 'char_robin', 'char_franky', 'char_brook', 'char_jinbe'];
   window.__wikiCardFxList = FX;
@@ -25100,7 +25100,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
   var SW = ['#ffd36b', '#ff5a5a', '#ff8ac6', '#b18cff', '#4fb8ff', '#4fe3c1', '#7cf06a', '#ffffff', '#ff9d3d', '#1e1e2e'];
   var SHAPE_LIST = [['sparkle', 'Искры-звёзды'], ['star', 'Звёзды'], ['flame', 'Огоньки'], ['firefly', 'Светлячки'], ['heart', 'Сердца'], ['petal', 'Лепестки сакуры'], ['leaf', 'Листья'], ['snow', 'Снежинки'], ['bubble', 'Пузыри'], ['rainline', 'Дождь'], ['drop', 'Капли воды'], ['blood', 'Капли крови'], ['sand', 'Песок'], ['smoke', 'Дым'], ['coin', 'Монеты Белли'], ['berry', 'Знак Белли'], ['note', 'Ноты'], ['diamond', 'Кристаллы'], ['skull', 'Черепа'], ['ember', 'Угли и пепел'], ['shard', 'Осколки'], ['meat', 'Мясо'], ['plaster', 'Пластыри (лечение)']];
   // Частицы бывших постоянных эффектов — со своим движением
-  var NATIVE_LIST = [['souls', '👻 Души (Йоми Йоми)'], ['ghosts', '👻 Призраки (Хоро Хоро)'], ['flowers', '🌸 Цветы (Хана Хана)'], ['dark', '🌑 Тьма'], ['light', '✨ Свет (Пика Пика)'], ['claws', '🐾 Следы когтей'], ['swords', '⚔️ Удары мечей'], ['twinkle', '✦ Мерцающие искры']];
+  var NATIVE_LIST = [['souls', '👻 Души (Йоми Йоми)'], ['ghosts', '👻 Призраки (Хоро Хоро)'], ['flowers', '🌸 Цветы (Хана Хана)'], ['dark', '🌑 Тьма'], ['light', '✨ Свет (Пика Пика)'], ['claws', '🐾 Следы когтей'], ['swords', '⚔️ Удары мечей'], ['twinkle', '✦ Мерцающие искры'], ['fireflies', '🪲 Светлячки'], ['stardust', '✨ Звёздная пыль'], ['comets', '☄️ Падающие звёзды'], ['confetti', '🎉 Конфетти'], ['runes', '🔮 Парящие руны'], ['aurora', '🌌 Северное сияние'], ['ripples', '💧 Круги на воде'], ['rays', '🌤️ Лучи света'], ['leaves', '🍂 Листопад']];
   var MOTIONS = [['pop', 'Появляются'], ['up', 'Вверх'], ['down', 'Вниз'], ['float', 'Парят'], ['burst', 'Разлёт'], ['twinkle', 'Мерцают'], ['wind', 'Ветер'], ['trickle', 'Стекают'], ['glass', 'На стекле']];
   var SP = [['slow', 'Медленно'], ['', 'Обычно'], ['fast', 'Быстро']];
   function seg(attr, items, cur) { return '<div class="wk-ts-seg" ' + attr + '>' + items.map(function (it) { return '<button type="button" data-v="' + it[0] + '"' + (String(cur || '') === it[0] ? ' class="is-on"' : '') + '>' + it[1] + '</button>'; }).join('') + '</div>'; }
@@ -25409,8 +25409,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
       ['🔥 Стихии', ['fire', 'phoenix', 'magma', 'smoke', 'dark', 'thunder', 'light', 'frost', 'ice', 'sand', 'sea', 'rain', 'poison']],
       ['👑 Воля и бой', ['haki', 'haoclash', 'drums', 'swords', 'claws', 'fangs', 'explosion', 'quake']],
       ['🍎 Дьявольские плоды', ['room', 'souls', 'barrier', 'ghosts', 'love', 'diamond', 'mochi', 'flowers', 'time', 'rust', 'sweets', 'devil']],
-      ['🌸 Атмосфера и фактура', ['sakura', 'bubbles', 'poneglyph', 'wanted']],
-      ['🎆 Новые частицы', ['fireflies', 'stardust', 'comets', 'confetti', 'runes', 'aurora', 'ripples', 'rays', 'leaves']]
+      ['🌸 Атмосфера и фактура', ['sakura', 'bubbles', 'poneglyph', 'wanted']]
     ],
     title_fx: [
       ['🎨 Свой', ['custom']],
@@ -33339,6 +33338,14 @@ html body .catalog-item-shell .character-item>.wk-gem.wk-gem.wk-gem.wk-gem{botto
 html body :is(#characterList,#fruitsList,#usefulList,#storyList,#rewardsList) :is(.character-item,.ch-row,.fruit-item,.useful-item,.story-saga-folder):is(:hover,:focus-visible){box-shadow:0 0 30px -2px color-mix(in srgb,var(--card,#94a3b8) 55%,transparent),0 16px 34px rgba(0,0,0,.32)!important;border-color:rgba(148,163,184,.22)!important;outline:none!important}
 html body .catalog-item-shell:hover::after{opacity:.35}
 html body .catalog-item-shell::after{transition:opacity .2s}
+html body .catalog-item-shell.catalog-item-shell:not(.wk-r-rare):not(.wk-r-legendary)::after{border-radius:var(--wk-rr,16px)}
+html body .catalog-item-shell.catalog-item-shell:not(.wk-r-rare):not(.wk-r-legendary):has(>[data-amb])::after{border-radius:var(--wk-rr,18px)}
+html body .catalog-item-shell.catalog-item-shell::after{display:none!important;content:none!important}
+html body :is(#characterList,#fruitsList,#usefulList,#storyList,#rewardsList) .catalog-item-shell>*:not(:hover):not(.wk-gem){border-color:transparent!important;box-shadow:0 10px 24px -12px rgba(0,0,0,.55)!important;outline:none!important}
+html body :is(#characterList,#fruitsList,#usefulList,#storyList,#rewardsList) .catalog-item-shell:not(:hover){border-color:transparent!important;box-shadow:none!important}
+html body :is(#wkShowcase,#wkShowcase_fruit,#wkShowcase_useful,#wkShowcase_story,#wkShowcase_reward,#wkShowcase_rewards) .catalog-item-shell>*:not(:hover):not(.wk-gem){border-color:transparent!important;box-shadow:0 10px 24px -12px rgba(0,0,0,.55)!important;outline:none!important}
+html body :is(.wk-sc,.wk-shelf) .catalog-item-shell>*:not(:hover):not(.wk-gem){border-color:transparent!important;box-shadow:0 10px 24px -12px rgba(0,0,0,.55)!important;outline:none!important}
+html body :is(.wk-sc,.wk-shelf,#wkShowcase,#wkShowcase_fruit) .catalog-item-shell:not(:hover){box-shadow:none!important;border-color:transparent!important}
 html body .wk-sc :is(.wk-sc-small,.wk-shelf-card) .wk-gem.wk-gem.wk-gem.wk-gem.wk-gem{display:none!important}
 /* сортировка: кольцо фокуса рисует сама пилюля, а не select внутри неё */
 html body .wk-sortbox select:is(:focus,:focus-visible){outline:none!important;box-shadow:none!important}
@@ -35232,12 +35239,13 @@ html body .wk-sortbox:focus-within{border-color:rgba(255,206,110,.7)!important;b
   function ring() {
     document.querySelectorAll('.catalog-item-shell.character-grid-shell').forEach(function (sh) {
       var it = sh.querySelector(':scope > .character-item'); if (!it) return;
-      var c = getComputedStyle(it).getPropertyValue('--card').trim(); if (!c) return;
+      var cs = getComputedStyle(it), rr = cs.borderTopLeftRadius; if (rr && sh.style.getPropertyValue('--wk-rr') !== rr) sh.style.setProperty('--wk-rr', rr);
+      var c = cs.getPropertyValue('--card').trim(); if (!c) return;
       var v = 'color-mix(in srgb,' + c + ' 70%,transparent)';
       if (sh.style.getPropertyValue('--wk-ring') !== v) sh.style.setProperty('--wk-ring', v);
     });
   }
-  setInterval(ring, 1500); setTimeout(ring, 600);
+  setInterval(ring, 1500); setTimeout(ring, 600); setTimeout(ring, 1800); new MutationObserver(function(){ clearTimeout(ring._t); ring._t = setTimeout(ring, 80); }).observe(document.body, { childList: true, subtree: true });
 })();
 
 /* ===== Убрали блок «Связанные статьи»: возвращаем обычные «предыдущая / следующая» ===== */
@@ -35485,6 +35493,25 @@ html body .article.wk-art-in{animation:wkArtIn .44s cubic-bezier(.2,.8,.2,1) bot
     });
   }
   setInterval(ensure, 600);
+})();
+
+/* Новые частицы в блоке «Частицы» конструктора: слой-подложка для «n:»-частиц */
+(function () {
+  var NEW = ['fireflies','stardust','comets','confetti','runes','aurora','ripples','rays','leaves'];
+  function wrap() {
+    var o = window.__wikiNativeParts; if (typeof o !== 'function' || o.__wk) return false;
+    var f = function (host, amb, id, mult) {
+      try { var old = host.querySelector(':scope > .wk-amb-a'); if (old) old.remove(); var ob = host.querySelector(':scope > .wk-amb-b'); if (ob) ob.remove(); } catch (e) {}
+      if (NEW.indexOf(amb) >= 0) {
+        var a = document.createElement('span'); a.className = 'wk-amb-a'; a.setAttribute('aria-hidden', 'true'); a.style.cssText = 'position:absolute;inset:0;overflow:hidden;pointer-events:none';
+        var d = (Math.abs(String(id || '').split('').reduce(function (h, c) { return (h * 31 + c.charCodeAt(0)) | 0; }, 7)) % 800) / 100; a.style.animationDelay = '-' + d.toFixed(2) + 's';
+        host.appendChild(a); return;
+      }
+      return o.apply(this, arguments);
+    };
+    f.__wk = 1; window.__wikiNativeParts = f; return true;
+  }
+  if (!wrap()) { var t = setInterval(function () { if (wrap()) clearInterval(t); }, 300); }
 })();
 </script>
 <button type="button" class="wk-totop" aria-label="Наверх">↑</button></body></html>
