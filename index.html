@@ -1285,7 +1285,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "09.11.2026 · 137";
+const WIKI_VERSION = "09.11.2026 · 140";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -23072,7 +23072,7 @@ html.wk-tilt-off.wk-gyro-on:not(.wk-cardfx-off) .character-item:not(.story-saga-
   'use strict';
   var root = document.documentElement;
   var K = { text: 'onePieceWikiTextAnimV1', card: 'onePieceWikiCardAnimV1', tilt: 'onePieceWikiTiltV1', sc: 'onePieceWikiShowcaseV1', scv: 'onePieceWikiHorizV1_' };
-  var SCV = [['c', 'Персонажи'], ['s', 'Сюжет'], ['r', 'Награды'], ['f', 'Плоды'], ['u', 'Полезное'], ['v', 'Избранное'], ['h', 'История']];
+  var SCV = [['c', 'Персонажи'], ['s', 'Сюжет'], ['f', 'Плоды'], ['u', 'Полезное'], ['v', 'Избранное'], ['h', 'История']];
   function vget(k) { try { return localStorage.getItem(K.scv + k) === 'on'; } catch (e) { return false; } }
   function get(k) { try { return localStorage.getItem(k) !== 'off'; } catch (e) { return true; } }
   function put(k, on) { try { localStorage.setItem(k, on ? 'on' : 'off'); } catch (e) {} }
@@ -32528,7 +32528,7 @@ html.wk-hz-c body #charactersSection#charactersSection#charactersSection #charac
 @media (max-width:760px){
 html.wk-hz-c body #charactersSection#charactersSection#charactersSection #characterList#characterList#characterList[data-wk-size="s"]{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
 html.wk-hz-c body #charactersSection#charactersSection#charactersSection #characterList#characterList#characterList[data-wk-size="m"],html.wk-hz-c body #charactersSection#charactersSection#charactersSection #characterList#characterList#characterList[data-wk-size="l"]{grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
-html.wk-hz-c body #charactersSection#charactersSection#charactersSection #characterList#characterList#characterList[data-wk-size="m"] :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.character-item,html.wk-hz-c body #charactersSection#charactersSection#charactersSection #characterList#characterList#characterList[data-wk-size="m"] :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.story-saga-folder{aspect-ratio:2/1!important}
+html.wk-hz-c body #charactersSection#charactersSection#charactersSection #characterList#characterList#characterList[data-wk-size="m"] :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.character-item,html.wk-hz-c body #charactersSection#charactersSection#charactersSection #characterList#characterList#characterList[data-wk-size="m"] :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.story-saga-folder{aspect-ratio:4/3!important}
 }
 html.wk-hz-s body #storySection#storySection#storySection #storyList#storyList#storyList[data-wk-size="s"]{grid-template-columns:repeat(auto-fill,minmax(192px,1fr))!important;gap:12px!important}
 html.wk-hz-s body #storySection#storySection#storySection #storyList#storyList#storyList[data-wk-size="m"]{grid-template-columns:repeat(auto-fill,minmax(262px,1fr))!important;gap:12px!important}
@@ -32538,7 +32538,7 @@ html.wk-hz-s body #storySection#storySection#storySection #storyList#storyList#s
 @media (max-width:760px){
 html.wk-hz-s body #storySection#storySection#storySection #storyList#storyList#storyList[data-wk-size="s"]{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
 html.wk-hz-s body #storySection#storySection#storySection #storyList#storyList#storyList[data-wk-size="m"],html.wk-hz-s body #storySection#storySection#storySection #storyList#storyList#storyList[data-wk-size="l"]{grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
-html.wk-hz-s body #storySection#storySection#storySection #storyList#storyList#storyList[data-wk-size="m"] :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.character-item,html.wk-hz-s body #storySection#storySection#storySection #storyList#storyList#storyList[data-wk-size="m"] :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.story-saga-folder{aspect-ratio:2/1!important}
+html.wk-hz-s body #storySection#storySection#storySection #storyList#storyList#storyList[data-wk-size="m"] :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.character-item,html.wk-hz-s body #storySection#storySection#storySection #storyList#storyList#storyList[data-wk-size="m"] :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.story-saga-folder{aspect-ratio:4/3!important}
 }
 html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList[data-wk-size="s"]{grid-template-columns:repeat(auto-fill,minmax(192px,1fr))!important;gap:12px!important}
 html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList[data-wk-size="m"]{grid-template-columns:repeat(auto-fill,minmax(262px,1fr))!important;gap:12px!important}
@@ -32548,7 +32548,7 @@ html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsL
 @media (max-width:760px){
 html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList[data-wk-size="s"]{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
 html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList[data-wk-size="m"],html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList[data-wk-size="l"]{grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
-html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList[data-wk-size="m"] :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.character-item,html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList[data-wk-size="m"] :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.story-saga-folder{aspect-ratio:2/1!important}
+html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList[data-wk-size="m"] :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.character-item,html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList[data-wk-size="m"] :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.story-saga-folder{aspect-ratio:4/3!important}
 }
 html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList[data-wk-size="s"]{grid-template-columns:repeat(auto-fill,minmax(192px,1fr))!important;gap:12px!important}
 html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList[data-wk-size="m"]{grid-template-columns:repeat(auto-fill,minmax(262px,1fr))!important;gap:12px!important}
@@ -32558,7 +32558,7 @@ html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulL
 @media (max-width:760px){
 html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList[data-wk-size="s"]{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
 html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList[data-wk-size="m"],html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList[data-wk-size="l"]{grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
-html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList[data-wk-size="m"] :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.character-item,html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList[data-wk-size="m"] :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.story-saga-folder{aspect-ratio:2/1!important}
+html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList[data-wk-size="m"] :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.character-item,html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList[data-wk-size="m"] :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.story-saga-folder{aspect-ratio:4/3!important}
 }
 html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList .fruit-grid-image-wrap{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;flex:none!important;aspect-ratio:auto!important;--fruit-img-h:100%}
 html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList .fruit-grid-content{position:relative!important;z-index:2;margin-top:auto!important;flex:none!important}
@@ -33434,6 +33434,8 @@ html body #storyList.sg-on>.sg-nav{grid-column:1;grid-row:1 / span 2;position:st
 html body #storyList.sg-on>.sg-head{grid-column:2;grid-row:1;display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 14px;padding:2px 2px 12px;border-bottom:2px solid var(--c,#64748b);margin-bottom:2px}
 .sg-head h2{margin:0;font-size:26px;line-height:1.15;color:#fff}
 .sg-head span{font-size:13px;color:#94a3b8;font-weight:600}
+html body #storyList[data-wk-size="s"]{--sg-ac:repeat(auto-fill,minmax(136px,1fr))}
+html body #storyList[data-wk-size="l"]{--sg-ac:repeat(auto-fill,minmax(300px,1fr))}
 @media (max-width:860px){
   html body #storyList{--sg-lc:minmax(0,1fr);--sg-ac:repeat(auto-fill,minmax(150px,1fr));--sg-gc:1;--sg-gr:3;--sg-hc:1;--sg-nr:1;--sg-rows:auto auto minmax(0,1fr)}
   html body #storyList.sg-on>.sg-nav{grid-column:1;grid-row:1;position:sticky;top:58px;z-index:20;flex-direction:row;overflow-x:auto;overflow-y:hidden;max-height:none;padding:6px;gap:6px;border-radius:14px;background:#0b1220;box-shadow:0 8px 18px rgba(0,0,0,.45)}
@@ -33442,6 +33444,10 @@ html body #storyList.sg-on>.sg-head{grid-column:2;grid-row:1;display:flex;align-
   html body #storyList.sg-on .story-saga-group.sg-sel>.story-saga-arcs{grid-column:1;grid-row:3;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))!important;gap:12px!important}
 }
 
+@media (max-width:860px){
+  html body #storyList[data-wk-size="s"]{--sg-ac:repeat(auto-fill,minmax(104px,1fr))}
+  html body #storyList[data-wk-size="l"]{--sg-ac:minmax(0,1fr)}
+}
 }
 </style><script id="wk-v22-js">
 /* ===================================================================
@@ -34888,7 +34894,7 @@ html body #storyList.sg-on>.sg-head{grid-column:2;grid-row:1;display:flex;align-
     var sizes = [].slice.call(row.querySelectorAll('[data-size],[data-ssize]')).map(function (b) { return reg(b, txt(b) || b.textContent, b.classList.contains('active'), false); });
     var fx = [].slice.call(row.querySelectorAll('[data-fxmode]')).map(function (b) { var on = b.classList.contains('active'); return reg(b, '✨ Эффекты: ' + (on ? 'всегда' : 'при наведении'), on, false); });
     var sc = [].slice.call(sec.querySelectorAll('.wk-sc-toggle')).slice(0, 1).map(function (b) { var hide = /Скрыть/i.test(b.textContent); return reg(b, hide ? 'Скрыть витрину' : 'Показать витрину', !hide, false); });
-    var HK = { charactersSection: 'c', storySection: 's', rewardsSection: 'r', fruitsSection: 'f', usefulSection: 'u' }[cur], form = [];
+    var HK = { charactersSection: 'c', storySection: 's', fruitsSection: 'f', usefulSection: 'u' }[cur], form = [];
     if (HK) {
       var hzNow = document.documentElement.classList.contains('wk-hz-' + HK);
       var setHz = function (on) { try { localStorage.setItem('onePieceWikiHorizV1_' + HK, on ? 'on' : 'off'); } catch (e) {} document.documentElement.classList.toggle('wk-hz-' + HK, on); try { window.dispatchEvent(new Event('wk-settings')); } catch (e) {} };
