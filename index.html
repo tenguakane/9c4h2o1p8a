@@ -1,5 +1,37 @@
 <!doctype html>
-<html data-wiki-portable-baked="true" data-wiki-portable-id="2026-11-06T19:45:20.101Z" lang="ru" style="--reward-rank-first: #ffda75; --reward-rank-second: #d9d9d9; --reward-rank-third: #ffd285; --reward-rank-other: #4f4860; --wiki-progress-manga: #efc66b; --wiki-progress-anime: #60d9ff; --fruit-type-param-color: #bb9eff !important; --fruit-type-param-rgb: 187, 158, 255 !important; --fruit-type-logia-color: #f967ae !important; --fruit-type-logia-rgb: 249, 103, 174 !important; --fruit-type-zoan-color: #65f6b7 !important; --fruit-type-zoan-rgb: 101, 246, 183 !important; --wk-title-font: 'Days One'; --wk-title-fw: 400; --wk-tz-card: 1.3;" class="wk-sc-off wk-hz-c wk-hz-s wk-hz-f wk-hz-u wk-hz-v wk-hz-h wk-calm" data-wk-role="admin" data-wk-title-font="g:Days One|"><head><style id="wk-layer-order">@layer wk-redesign, ios-app;</style><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link id="wk-redesign-font" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&amp;display=swap"><style id="wk-boot-css">
+<html data-wiki-portable-baked="true" data-wiki-portable-id="2026-11-06T19:45:20.101Z" lang="ru" style="--reward-rank-first: #ffda75; --reward-rank-second: #d9d9d9; --reward-rank-third: #ffd285; --reward-rank-other: #4f4860; --wiki-progress-manga: #efc66b; --wiki-progress-anime: #60d9ff; --fruit-type-param-color: #bb9eff !important; --fruit-type-param-rgb: 187, 158, 255 !important; --fruit-type-logia-color: #f967ae !important; --fruit-type-logia-rgb: 249, 103, 174 !important; --fruit-type-zoan-color: #65f6b7 !important; --fruit-type-zoan-rgb: 101, 246, 183 !important; --wk-title-font: 'Days One'; --wk-title-fw: 400; --wk-tz-card: 1.3;" class="wk-sc-off wk-hz-c wk-hz-s wk-hz-f wk-hz-u wk-hz-v wk-hz-h wk-calm" data-wk-role="admin" data-wk-title-font="g:Days One|"><head><style id="wk-layer-order">@layer wk-redesign, ios-app;</style><link rel="preconnect" href="https://i.pinimg.com" crossorigin><script id="wk-perf-pre">
+(function () {
+  'use strict';
+  /* 2. Таймеры не работают в фоновой вкладке (короткие интервалы). */
+  var si = window.setInterval;
+  window.setInterval = function (f, t) {
+    if (typeof f !== 'function' || (t || 0) >= 30000) return si.apply(window, arguments);
+    var a = [].slice.call(arguments, 2);
+    return si.call(window, function () { if (document.hidden) return; return f.apply(this, a); }, t);
+  };
+  /* 4. Миниатюры pinimg в списках: 474x вместо 736x (крупные карточки и горизонтальные не трогаем). Если размера нет — возврат на 736x. */
+  window.__wkThumbOf = function (u) { return typeof u === 'string' ? u.replace('i.pinimg.com/736x/', 'i.pinimg.com/474x/') : u; };
+  var LISTS = { characterList: 'c', fruitsList: 'f', usefulList: 'u', rewardsList: 'r' };
+  function hzOff(k) { try { return localStorage.getItem('onePieceWikiHorizV1_' + k) === 'on'; } catch (e) { return false; } }
+  try {
+    if (localStorage.getItem('onePieceWikiThumbsV1') === 'off') throw 0;
+    var d = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+    Object.defineProperty(Element.prototype, 'innerHTML', {
+      configurable: true, enumerable: d.enumerable, get: d.get,
+      set: function (v) {
+        if (typeof v === 'string' && LISTS[this.id] && v.indexOf('i.pinimg.com/736x/') >= 0 && this.getAttribute('data-wk-size') !== 'l' && !hzOff(LISTS[this.id])) v = v.replace(/(i\.pinimg\.com)\/736x\//g, '$1/474x/');
+        return d.set.call(this, v);
+      }
+    });
+    document.addEventListener('error', function (e) {
+      var im = e.target; if (!im || im.tagName !== 'IMG' || im.__wkF) return;
+      var s = im.getAttribute('src') || ''; if (s.indexOf('i.pinimg.com/474x/') < 0) return;
+      im.__wkF = 1; e.stopImmediatePropagation(); im.src = s.replace('/474x/', '/736x/');
+    }, true);
+  } catch (e) {}
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link id="wk-redesign-font" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&amp;display=swap"><style id="wk-boot-css">
 /* Пока страница собирается, показываем ровный фон и индикатор вместо промежуточных стилей. */
 html.wk-boot{background:#000!important}
 @media (min-width:761px){html.wk-boot{background:#07090d!important}}
@@ -1285,7 +1317,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "09.11.2026 · 140";
+const WIKI_VERSION = "09.11.2026 · 142";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -11365,15 +11397,16 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
             return target && (target.id==='wikiEditorOverlay' || target.closest?.('#wikiEditorOverlay'));
         });
         if(onlyEditorMutations)return;
+        if(records.every(r=>{const t=r.target;return t&&t.closest&&t.closest('#wikiStoryHere,.sg-head,.sg-nav,.wk-pg,.wk-ci-row,.wk-amb-p');}))return;
         // Пока страница собирается за заставкой, модули дорисовывают списки один за другим, и каждый раз
         // перекрашивалось всё. Теперь копим и перекрашиваем один раз — прямо перед показом страницы.
         if(document.documentElement.classList.contains('wk-boot')){accentBootPending=true;return;}
         if(accentRefreshQueued)return;
         accentRefreshQueued=true;
-        requestAnimationFrame(()=>{
-            accentRefreshQueued=false;
+        setTimeout(()=>requestAnimationFrame(()=>{
+            accentRefreshQueued=false;window.__wkAccLast=performance.now();
             if(typeof applyAccentSettings==='function')applyAccentSettings();
-        });
+        }),Math.max(0,350-(performance.now()-(window.__wkAccLast||0))));
     });
     accentObserver.observe(document.body,{childList:true,subtree:true});
 
@@ -13468,9 +13501,9 @@ if(si)si.addEventListener('input',function(){var v=si.value,m=v.match(/^\s*(гл
 var raf=0,pSig='';
 function refresh(){raf=0;try{compute();hereEl.innerHTML=here();stats();decorate();applyFilter();nav();if(panel==='nofill')runNofill();
   // Не раскрываем сагу автоматически при открытии вкладки «Сюжет».
-  }catch(e){console.warn('story-tools',e);}}
+  }catch(e){console.warn('story-tools',e);}try{lsMo&&lsMo.takeRecords();}catch(e){}}
 function sched(){if(!raf)raf=requestAnimationFrame(refresh);}
-var ls=$('#storyList');if(ls)new MutationObserver(function(){sched();}).observe(ls,{childList:true,subtree:true});
+var ls=$('#storyList');var lsMo=null;if(ls){lsMo=new MutationObserver(function(rs){if(rs.every(function(r){return r.target.closest&&r.target.closest('.sg-nav,.sg-head');}))return;sched();});lsMo.observe(ls,{childList:true,subtree:true});}
 var st0=$('#storyStats');if(st0)new MutationObserver(sched).observe(st0,{childList:true,subtree:true,characterData:true});
 function chk(){var p=prog('chapter')+'|'+prog('episode');if(p!==pSig){pSig=p;tlSig='';sched();}}
 document.addEventListener('click',function(){setTimeout(chk,350);},true);document.addEventListener('visibilitychange',chk);window.addEventListener('storage',chk);
@@ -13614,6 +13647,7 @@ setInterval(function(){if(overlayOpen())exportInfo();},60000);
         card.classList.remove('has-story-image');
         return;
       }
+      if (!thumb && card.dataset.wkImgBad === url) { card.classList.remove('has-story-image'); return; }
       if (!thumb) {
         thumb = document.createElement('div');
         thumb.className = 'story-card-thumb';
@@ -13622,7 +13656,7 @@ setInterval(function(){if(overlayOpen())exportInfo();},60000);
         img.loading = 'lazy';
         img.decoding = 'async';
         img.alt = '';
-        img.onerror = () => { thumb.remove(); card.classList.remove('has-story-image'); };
+        img.onerror = () => { card.dataset.wkImgBad = url; thumb.remove(); card.classList.remove('has-story-image'); };
         thumb.appendChild(img);
         card.insertBefore(thumb, card.firstChild);
       }
@@ -29725,7 +29759,7 @@ html.ios-app .wk-totop{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
       var r = fresh(rec), src = img.getAttribute('src') || '';
       var second = altActive(rec) && !!String(r.person2_link || '').trim();
       var want = String(second ? r.person2_link : r.person_link || '').trim();
-      if (want && /^(https?:\/\/|data:image\/)/i.test(want) && src !== want) img.setAttribute('src', want);
+      if (want && /^(https?:\/\/|data:image\/)/i.test(want) && src !== want && src !== window.__wkThumbOf(want)) img.setAttribute('src', want);
       var isHero = !!el.closest('.wk-hero-card');
       var c = (isHero && heroOf(rec, second)) || (!isHero && typeof window.__wkHzCrop === 'function' && window.__wkHzCrop('character', r, second, el)) || baseOf(r, second);
       var key = c.x + '% ' + c.y + '%|' + c.z;
@@ -33412,6 +33446,14 @@ html body .wk-sortbox:focus-within{border-color:rgba(255,206,110,.7)!important;b
 .wk-hue-row input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid #0b1120}
 .wk-hue-row output{min-width:42px;font-size:12px;color:#e8ecf4;text-align:right}
 .wk-hue-row button{min-height:28px;padding:0 10px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:transparent;color:#cbd5e1;font:inherit;font-size:12px;cursor:pointer}
+</style><style id="wk-perf-css">/* 1. Карточки далеко за экраном не рисуем (IO ставит data-wk-off). Рядом с экраном всё как обычно — свечение не обрезается. */
+.catalog-item-shell[data-wk-off]{content-visibility:hidden;contain-intrinsic-size:auto 300px}
+/* 3. (экспериментально) лёгкие слои эффектов: свои слои + изоляция перерисовки */
+html.wk-gpu .catalog-item-shell:not([data-wk-off]) :is(.wk-fx-a,.wk-fx-b,.wk-amb-a,.wk-amb-b,.wk-cs-ring,.wk-cs-pulse,.wk-cs-move){will-change:transform,opacity;contain:paint}
+html.wk-gpu body>header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background-color:rgba(9,13,22,.95)!important}
+/* 6. Упрощённый режим для слабых устройств: эффекты замирают (оживают при наведении), частицы выключены */
+html.wk-lite .catalog-item-shell:not(:hover) *,html.wk-lite .catalog-item-shell:not(:hover) *::before,html.wk-lite .catalog-item-shell:not(:hover) *::after{animation-play-state:paused!important}
+html.wk-lite :is(.wk-amb-p,.wk-cs-native){display:none!important}
 </style><style id="wk-saga-css">@layer wk-redesign{
 html body #storyList{--sg-lc:280px minmax(0,1fr);--sg-ac:repeat(auto-fill,minmax(176px,1fr));--sg-gc:2;--sg-gr:2;--sg-hc:2;--sg-nr:1 / span 2;--sg-rows:auto minmax(0,1fr)}
 html body #storyList.sg-on{display:grid!important;grid-template-columns:280px minmax(0,1fr);grid-auto-rows:auto;gap:14px 26px;align-items:start}
@@ -34906,7 +34948,15 @@ html body #storyList[data-wk-size="l"]{--sg-ac:repeat(auto-fill,minmax(300px,1fr
     if (!mq.matches && fab && !fab.hidden) ed.push(reg(fab, '✥ Правка превью', false, true));
     var okEd = false; try { okEd = typeof window.__wikiCanEdit === 'function' ? !!window.__wikiCanEdit() : false; } catch (e) {}
     if (okEd && window.__wkCompleteness) ed.push(reg({ click: function () { window.__wkCompleteness(); } }, '✔ Панель полноты', false, true));
-    sheet.innerHTML = '<div class="wk-mv-grip"></div>' + group('Режим', modes) + group('Размер карточек', sizes) + group('Форма карточек', form) + group('Дополнительно', fx.concat(sc)) + group('Редактор', ed) + '<button type="button" class="wk-mv-done">Готово</button>';
+    var perf = [], P = window.__wkPerf;
+    if (P) {
+      var pm = P.mode();
+      perf.push(reg({ click: function () { P.setMode('auto'); } }, '⚙ Упрощение эффектов: авто' + (P.weak() ? ' (сейчас вкл.)' : ''), pm === 'auto', false));
+      perf.push(reg({ click: function () { P.setMode('on'); } }, '🍃 Упрощение эффектов: всегда', pm === 'on', false));
+      perf.push(reg({ click: function () { P.setMode('off'); } }, '✨ Упрощение эффектов: выкл.', pm === 'off', false));
+      perf.push(reg({ click: function () { P.setGpu(!P.gpu()); } }, '🧪 Лёгкие слои эффектов (эксперимент): ' + (P.gpu() ? 'вкл.' : 'выкл.'), P.gpu(), false));
+    }
+    sheet.innerHTML = '<div class="wk-mv-grip"></div>' + group('Режим', modes) + group('Размер карточек', sizes) + group('Форма карточек', form) + group('Дополнительно', fx.concat(sc)) + group('Производительность', perf) + group('Редактор', ed) + '<button type="button" class="wk-mv-done">Готово</button>';
   }
   function place() {
     if (mq.matches || !curBtn) { sheet.style.left = sheet.style.top = ''; return; }
@@ -35611,6 +35661,9 @@ html body .article.wk-art-in{animation:wkArtIn .44s cubic-bezier(.2,.8,.2,1) bot
     groups.forEach(function (gg) { var a = $('.story-saga-arcs', gg); if (a) { if (gg !== g) a.style.setProperty('display', 'none', 'important'); else a.style.setProperty('display', 'grid', 'important'); if (gg === g) { a.style.setProperty('grid-template-columns', 'var(--sg-ac)', 'important'); a.style.setProperty('grid-column', 'var(--sg-gc)', 'important'); a.style.setProperty('grid-row', 'var(--sg-gr)', 'important'); } else { a.style.removeProperty('grid-template-columns'); a.style.removeProperty('grid-column'); a.style.removeProperty('grid-row'); } } });
     if (!head) { head = document.createElement('div'); head.className = 'sg-head'; list.insertBefore(head, nav.nextSibling); }
     var n = arcs ? arcs.children.length : 0, movie = /фильм/i.test((f && ($('.character-meta', f) || {}).textContent) || '');
+    var hsig = cur + '|' + n; var hcol = (f && getComputedStyle(f).getPropertyValue('--story-accent').trim()) || '#64748b';
+    if (head.getAttribute('data-sig') === hsig + hcol) return;
+    head.setAttribute('data-sig', hsig + hcol);
     head.style.setProperty('--c', (f && getComputedStyle(f).getPropertyValue('--story-accent').trim()) || '#64748b');
     head.innerHTML = '<h2></h2><span>' + n + ' ' + (movie ? plural(n, ['фильм', 'фильма', 'фильмов']) : plural(n, ['арка', 'арки', 'арок'])) + '</span>';
     head.firstChild.textContent = (f && ($('.character-name', f) || {}).textContent || cur).trim();
@@ -35620,10 +35673,82 @@ html body .article.wk-art-in{animation:wkArtIn .44s cubic-bezier(.2,.8,.2,1) bot
     var list = document.getElementById('storyList'); if (!list) return false;
     new MutationObserver(function (m) { if (m.some(function (x) { return x.type === 'childList' || (x.type === 'attributes' && x.target.classList && x.target.classList.contains('story-saga-group')); })) later(); })
       .observe(list, { childList: true, subtree: false });
-    new MutationObserver(later).observe(list, { attributes: true, attributeFilter: ['class'], subtree: true, attributeOldValue: false });
+    new MutationObserver(function (m) { if (m.some(function (x) { return x.target.classList && x.target.classList.contains('story-saga-group'); })) later(); }).observe(list, { attributes: true, attributeFilter: ['class'], subtree: true, attributeOldValue: false });
     sync(); return true;
   }
   var t = setInterval(function () { if (boot()) clearInterval(t); }, 300);
+})();
+</script>
+<script id="wk-perf-js">
+(function () {
+  'use strict';
+  var K_MODE = 'onePieceWikiPerfModeV1', K_GPU = 'onePieceWikiGpuLayersV1', root = document.documentElement;
+  function get(k, d) { try { return localStorage.getItem(k) || d; } catch (e) { return d; } }
+  function put(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function weak() {
+    var m = navigator.deviceMemory, c = navigator.hardwareConcurrency, con = navigator.connection || {};
+    return !!((m && m <= 4) || (c && c <= 4) || con.saveData);
+  }
+  function apply() {
+    var mode = get(K_MODE, 'auto');
+    root.classList.toggle('wk-lite', mode === 'on' || (mode === 'auto' && weak()));
+    root.classList.toggle('wk-gpu', get(K_GPU, 'on') !== 'off');
+  }
+  window.__wkPerf = {
+    mode: function () { return get(K_MODE, 'auto'); },
+    setMode: function (v) { put(K_MODE, v); apply(); },
+    gpu: function () { return get(K_GPU, 'on') !== 'off'; },
+    setGpu: function (on) { put(K_GPU, on ? 'on' : 'off'); apply(); },
+    weak: weak
+  };
+  apply();
+
+  /* 1. IntersectionObserver: карточки дальше ~1,5 экрана выключаются из отрисовки */
+  var io = 'IntersectionObserver' in window ? new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) e.target.removeAttribute('data-wk-off'); else e.target.setAttribute('data-wk-off', '1'); });
+  }, { rootMargin: '1500px 0px' }) : null;
+  var tm = 0;
+  function scan() {
+    tm = 0; if (!io) return;
+    var n = document.querySelectorAll('.catalog-item-shell:not([data-wk-io])');
+    for (var i = 0; i < n.length; i++) { n[i].setAttribute('data-wk-io', '1'); io.observe(n[i]); }
+  }
+  function later() { if (!tm) tm = setTimeout(scan, 250); }
+  function boot() {
+    if (!document.body) return false;
+    new MutationObserver(function (m) { for (var i = 0; i < m.length; i++) if (m[i].addedNodes.length) { later(); return; } }).observe(document.body, { childList: true, subtree: true });
+    scan(); return true;
+  }
+  if (!boot()) document.addEventListener('DOMContentLoaded', boot);
+
+  /* 5. Поиск не перерисовывает список на каждую букву: события input склеиваются на 140 мс */
+  var IDS = { search: 1, storySearch: 1, fruitsSearch: 1, usefulSearch: 1, rewardsSearch: 1, fruitSearch: 1, rewardSearch: 1 }, pend = new WeakMap(), re = false;
+  document.addEventListener('input', function (e) {
+    var t = e.target; if (re || !t || !IDS[t.id] || e.isComposing) return;
+    e.stopImmediatePropagation();
+    clearTimeout(pend.get(t));
+    pend.set(t, setTimeout(function () { re = true; try { t.dispatchEvent(new Event('input', { bubbles: true })); } finally { re = false; } }, 140));
+  }, true);
+
+  /* 4. Миниатюры pinimg 736x -> 474x в списках (если innerHTML-хук не успел). Крупные и горизонтальные карточки не трогаем. */
+  (function () {
+    var L = { characterList: 'c', fruitsList: 'f', usefulList: 'u', rewardsList: 'r' };
+    try { if (localStorage.getItem('onePieceWikiThumbsV1') === 'off') return; } catch (e) {}
+    function hz(k) { try { return localStorage.getItem('onePieceWikiHorizV1_' + k) === 'on'; } catch (e) { return false; } }
+    Object.keys(L).forEach(function (id) {
+      var el = document.getElementById(id); if (!el) return;
+      new MutationObserver(function (ms) {
+        if (el.getAttribute('data-wk-size') === 'l' || hz(L[id])) return;
+        ms.forEach(function (m) {
+          [].forEach.call(m.addedNodes, function (n) {
+            if (n.nodeType !== 1) return;
+            var imgs = n.tagName === 'IMG' ? [n] : n.querySelectorAll('img');
+            [].forEach.call(imgs, function (im) { var s = im.getAttribute('src') || ''; if (s.indexOf('i.pinimg.com/736x/') >= 0) im.setAttribute('src', s.replace('/736x/', '/474x/')); });
+          });
+        });
+      }).observe(el, { childList: true, subtree: true });
+    });
+  })();
 })();
 </script>
 <button type="button" class="wk-totop" aria-label="Наверх">↑</button></body></html>
