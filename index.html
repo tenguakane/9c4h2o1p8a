@@ -1285,7 +1285,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "09.11.2026 · 134";
+const WIKI_VERSION = "09.11.2026 · 135";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -33347,6 +33347,7 @@ html body :is(#wkShowcase,#wkShowcase_fruit,#wkShowcase_useful,#wkShowcase_story
 html body :is(.wk-sc,.wk-shelf) .catalog-item-shell>*:not(:hover):not(.wk-gem){border-color:transparent!important;box-shadow:0 10px 24px -12px rgba(0,0,0,.55)!important;outline:none!important}
 html body :is(.wk-sc,.wk-shelf,#wkShowcase,#wkShowcase_fruit) .catalog-item-shell:not(:hover){box-shadow:none!important;border-color:transparent!important}
 html body .wk-cs>.wk-cs-ring{z-index:12!important}
+html body :is(.character-item,.fruit-item,.useful-item,.story-saga-item,.reward)>.wk-cs.wk-cs{z-index:auto!important;isolation:auto!important}
 html body .wk-sc :is(.wk-sc-small,.wk-shelf-card) .wk-gem.wk-gem.wk-gem.wk-gem.wk-gem{display:none!important}
 /* сортировка: кольцо фокуса рисует сама пилюля, а не select внутри неё */
 html body .wk-sortbox select:is(:focus,:focus-visible){outline:none!important;box-shadow:none!important}
