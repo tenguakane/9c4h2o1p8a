@@ -1285,7 +1285,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "09.11.2026 · 136";
+const WIKI_VERSION = "09.11.2026 · 137";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -33413,7 +33413,7 @@ html body .wk-sortbox:focus-within{border-color:rgba(255,206,110,.7)!important;b
 .wk-hue-row output{min-width:42px;font-size:12px;color:#e8ecf4;text-align:right}
 .wk-hue-row button{min-height:28px;padding:0 10px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:transparent;color:#cbd5e1;font:inherit;font-size:12px;cursor:pointer}
 </style><style id="wk-saga-css">@layer wk-redesign{
-html body #storyList{--sg-lc:280px minmax(0,1fr);--sg-ac:repeat(auto-fill,minmax(176px,1fr));--sg-gc:2;--sg-gr:2;--sg-hc:2;--sg-nr:1 / span 2}
+html body #storyList{--sg-lc:280px minmax(0,1fr);--sg-ac:repeat(auto-fill,minmax(176px,1fr));--sg-gc:2;--sg-gr:2;--sg-hc:2;--sg-nr:1 / span 2;--sg-rows:auto minmax(0,1fr)}
 html body #storyList.sg-on{display:grid!important;grid-template-columns:280px minmax(0,1fr);grid-auto-rows:auto;gap:14px 26px;align-items:start}
 html body #storyList.sg-on>.story-saga-group{display:contents}
 html body #storyList.sg-on .story-saga-folder{display:none!important}
@@ -33435,7 +33435,7 @@ html body #storyList.sg-on>.sg-head{grid-column:2;grid-row:1;display:flex;align-
 .sg-head h2{margin:0;font-size:26px;line-height:1.15;color:#fff}
 .sg-head span{font-size:13px;color:#94a3b8;font-weight:600}
 @media (max-width:860px){
-  html body #storyList{--sg-lc:minmax(0,1fr);--sg-ac:repeat(auto-fill,minmax(150px,1fr));--sg-gc:1;--sg-gr:3;--sg-hc:1;--sg-nr:1}
+  html body #storyList{--sg-lc:minmax(0,1fr);--sg-ac:repeat(auto-fill,minmax(150px,1fr));--sg-gc:1;--sg-gr:3;--sg-hc:1;--sg-nr:1;--sg-rows:auto auto minmax(0,1fr)}
   html body #storyList.sg-on>.sg-nav{grid-column:1;grid-row:1;position:sticky;top:58px;z-index:20;flex-direction:row;overflow-x:auto;overflow-y:hidden;max-height:none;padding:6px;gap:6px;border-radius:14px;background:#0b1220;box-shadow:0 8px 18px rgba(0,0,0,.45)}
   .sg-nav-t{display:none}.sg-item{width:auto;flex:none;white-space:nowrap;padding:9px 12px}
   html body #storyList.sg-on>.sg-head{grid-column:1;grid-row:2}
@@ -35577,7 +35577,7 @@ html body .article.wk-art-in{animation:wkArtIn .44s cubic-bezier(.2,.8,.2,1) bot
     if (!cur) { var saved = lsGet(); cur = names.indexOf(saved) >= 0 ? saved : names[0]; }
     if (open.length !== 1 || open[0] !== cur) { if (!busy) { busy = true; sel(cur); setTimeout(function () { busy = false; }, 60); return; } }
     list.classList.add('sg-on');
-    list.style.setProperty('grid-template-columns', 'var(--sg-lc)', 'important');
+    list.style.setProperty('grid-template-columns', 'var(--sg-lc)', 'important'); list.style.setProperty('grid-template-rows', 'var(--sg-rows)', 'important'); list.style.setProperty('align-content', 'start', 'important');
     [].forEach.call(list.querySelectorAll(':scope > .sg-nav,:scope > .sg-head'), function (e) { var nv = e.classList.contains('sg-nav'); e.style.setProperty('grid-column', nv ? '1' : 'var(--sg-hc)', 'important'); e.style.setProperty('grid-row', nv ? 'var(--sg-nr)' : '1', 'important'); });
     groups.forEach(function (g, i) { g.classList.toggle('sg-sel', names[i] === cur); g.style.setProperty('display', 'contents', 'important'); var fo = $('.story-saga-folder', g); if (fo) fo.style.setProperty('display', 'none', 'important'); });
     var sig = names.join('|') + '#' + groups.map(function (g) { var f = $('.story-saga-folder', g), m = f && $('.character-meta', f); return (m ? m.textContent.trim() : '') + (f && $('.wk-saga-tag.is-done', f) ? '+' : ''); }).join(',');
