@@ -1285,7 +1285,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "09.11.2026 · 126";
+const WIKI_VERSION = "09.11.2026 · 127";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -33131,6 +33131,7 @@ body.wk-pe-on .character-grid-image-wrap,body.wk-pe-on .fruit-grid-image-wrap,bo
 body.wk-pe-on [data-fruit-id],body.wk-pe-on [data-useful-id],body.wk-pe-on [data-story-arc-id],body.wk-pe-on .story-saga-folder,body.wk-pe-on .character-item[onclick*="openCharacterArticle"],body.wk-pe-on .wk-wp[data-wp-rid]{cursor:grab!important;-webkit-user-select:none;user-select:none}
 body.wk-pe-on [data-fruit-id]:active,body.wk-pe-on [data-useful-id]:active,body.wk-pe-on [data-story-arc-id]:active,body.wk-pe-on .character-item[onclick*="openCharacterArticle"]:active,body.wk-pe-on .wk-wp[data-wp-rid]:active{cursor:grabbing!important}
 body.wk-pe-on .wk-pe-active{outline:2px solid #e3b341!important;outline-offset:2px;z-index:5}
+html body.wk-pe-on :is(.character-grid-image,.fruit-grid-image,.useful-catalog-image-wrap img,.story-card-thumb img,.story-saga-cover img,.wk-wp-ph img){transition:none!important;animation:none!important}
 body.wk-pe-on .wk-pe-active img{will-change:transform,object-position}
 @media (max-width:700px){#wkPeBar{bottom:8px;padding:8px 10px;gap:8px 10px}.wk-pe-zoom input{width:100px}.wk-pe-hint{display:none}#wkPeFab span{display:none}#wkPeFab{padding:0 11px}}
 </style>
@@ -33292,6 +33293,40 @@ html.wk-cp-lock{overflow:hidden}
 #wkCabinPaneEdits .wk-ed-list{max-height:none;overflow:visible}
 #wkCabinPaneEdits .wk-ed-meta button{min-height:36px;padding:0 10px;font-size:12px}
 @media (max-width:640px){#wkCabinPaneEdits .wk-ed-refresh{align-items:stretch;width:100%}#wkCabinPaneEdits .wk-ed-refresh .wk-btn{width:100%}}
+
+@layer wk-redesign{
+/* ===== Редкость: заметный бейдж + рамка поверх затемнения ===== */
+html body .wk-gem{right:10px!important;top:10px!important;bottom:auto!important;left:auto!important;gap:5px!important;display:inline-flex!important;align-items:center;gap:4px;padding:4px 9px 4px 7px;border-radius:999px;font-size:12px!important;font-weight:800;letter-spacing:.04em!important;line-height:1;text-transform:uppercase;white-space:nowrap;background:rgba(8,11,18,.88);border:1.5px solid currentColor;filter:none!important;z-index:30!important;box-shadow:0 2px 8px rgba(0,0,0,.55)}
+html body .wk-gem.is-rare{color:#e2e8f0;background:rgba(30,41,59,.92)}
+html body .wk-gem.is-rare::after{content:"Редкая"}
+html body .wk-gem.is-legendary{color:#fde047;background:linear-gradient(135deg,rgba(66,44,4,.95),rgba(30,20,2,.95));box-shadow:0 0 12px rgba(250,204,21,.55),0 2px 8px rgba(0,0,0,.55);text-shadow:none}
+html body .wk-gem.is-legendary::after{content:"Легенда"}
+html body .wk-gem{font-size:0!important}
+html body .wk-gem::before{content:"◆";font-size:12px}
+html body .wk-gem.is-legendary::before{content:"◆◆"}
+html body .wk-gem::after{font-size:11px}
+/* рамка карточки поверх всех затемнений */
+html body .catalog-item-shell.character-grid-shell::after,html body .catalog-item-shell.wk-r-rare::after,html body .catalog-item-shell.wk-r-legendary::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:25;border:2px solid var(--wk-ring,rgba(255,255,255,.35))}
+html body .catalog-item-shell.wk-r-rare{--wk-ring:rgba(226,232,240,.7)}
+html body .catalog-item-shell.wk-r-legendary{--wk-ring:rgba(250,204,21,.9)}
+html body .catalog-item-shell:has(>.wk-flip-btn,>.wk-flip2) .character-item>.wk-gem.wk-gem.wk-gem{left:auto!important;right:10px!important;top:10px!important;bottom:auto!important}
+html body .catalog-item-shell .character-item>.wk-gem.wk-gem.wk-gem.wk-gem{bottom:auto!important;top:10px!important;right:10px!important;left:auto!important;height:auto!important;min-height:0!important;max-height:none!important;width:auto!important;inset-block-end:auto!important;transition:none!important;animation:none!important}
+/* наведение: свечение позади, без обводки цветом статьи */
+html body :is(#characterList,#fruitsList,#usefulList,#storyList,#rewardsList) :is(.character-item,.ch-row,.fruit-item,.useful-item,.story-saga-folder):is(:hover,:focus-visible){box-shadow:0 0 30px -2px color-mix(in srgb,var(--card,#94a3b8) 55%,transparent),0 16px 34px rgba(0,0,0,.32)!important;border-color:rgba(148,163,184,.22)!important;outline:none!important}
+html body .catalog-item-shell:hover::after{opacity:.35}
+html body .catalog-item-shell::after{transition:opacity .2s}
+html body .wk-sc :is(.wk-sc-small,.wk-shelf-card) .wk-gem.wk-gem.wk-gem.wk-gem.wk-gem{display:none!important}
+/* сортировка: кольцо фокуса рисует сама пилюля, а не select внутри неё */
+html body .wk-sortbox select:is(:focus,:focus-visible){outline:none!important;box-shadow:none!important}
+html body .wk-sortbox:focus-within{border-color:rgba(255,206,110,.7)!important;box-shadow:0 0 0 3px rgba(255,206,110,.14)!important}
+}
+.wk-al-ov{position:fixed;inset:0;z-index:99990;background:rgba(3,6,12,.66);display:flex;align-items:center;justify-content:center;padding:16px}
+.wk-al-box{width:min(460px,100%);background:#0e1626;border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:18px;color:#e8ecf4;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.wk-al-box h3{margin:0 0 6px;font-size:17px}.wk-al-box p{margin:0 0 10px;font-size:13px;line-height:1.5;color:#9fb0c6}
+.wk-al-box textarea{width:100%;box-sizing:border-box;min-height:130px;resize:vertical;background:#0a111d;color:#e8ecf4;border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:10px;font:inherit;font-size:14px}
+.wk-al-act{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+.wk-al-act button{min-height:40px;padding:0 16px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:transparent;color:#e8ecf4;font:inherit;cursor:pointer}
+.wk-al-act .wk-al-save{background:#d4a84f;border-color:#d4a84f;color:#1a1204;font-weight:700}
 </style>
 <script id="wk-v22-js">
 /* ===================================================================
@@ -34452,7 +34487,7 @@ html.wk-cp-lock{overflow:hidden}
     img.style.setProperty('transform-origin', v.x + '% ' + py + '%', 'important');
     img.style.setProperty('transform', 'scale(' + (v.z / 100) + ')', 'important');
   }
-  function peSetCur(it, v) { PE.cur[it.key] = v; PE.items[it.key] = it; peApply(it, v); peHud(); }
+  function peSetCur(it, v) { PE.cur[it.key] = v; PE.items[it.key] = it; PE.pv = [it, v]; if (!PE.raf) PE.raf = requestAnimationFrame(function () { PE.raf = 0; var q = PE.pv; if (q) { peApply(q[0], q[1]); peHud(); } }); }
   function peMetrics(img, z) {
     var cw = img.clientWidth, ch = img.clientHeight, nw = img.naturalWidth, nh = img.naturalHeight; if (!cw || !ch || !nw || !nh) return null;
     var fit = getComputedStyle(img).objectFit, s = fit === 'contain' ? Math.min(cw / nw, ch / nh) : Math.max(cw / nw, ch / nh);
@@ -34463,7 +34498,7 @@ html.wk-cp-lock{overflow:hidden}
     var d = span - z * W, min = span * 0.35; if (Math.abs(d) < min) d = -min;
     return 100 * (dpx / k) / d;
   }
-  function peClampV(it, v) { var rg = peRange(it); return { x: Math.round(Math.max(0, Math.min(100, v.x)) * 10) / 10, y: Math.round(Math.max(0, Math.min(100, v.y)) * 10) / 10, z: Math.round(Math.max(rg[0], Math.min(rg[1], v.z))) }; }
+  function peClampV(it, v) { var rg = peRange(it); return { x: Math.round(Math.max(0, Math.min(100, v.x)) * 100) / 100, y: Math.round(Math.max(0, Math.min(100, v.y)) * 100) / 100, z: Math.round(Math.max(rg[0], Math.min(rg[1], v.z)) * 10) / 10 }; }
   function peSchedule(it) { clearTimeout(PE.timers[it.key]); PE.timers[it.key] = setTimeout(function () { peFlush(it.key); }, 900); peHud(); }
   function peFlush(key) {
     clearTimeout(PE.timers[key]); delete PE.timers[key];
@@ -34738,12 +34773,19 @@ html.wk-cp-lock{overflow:hidden}
     var sizes = [].slice.call(row.querySelectorAll('[data-size],[data-ssize]')).map(function (b) { return reg(b, txt(b) || b.textContent, b.classList.contains('active'), false); });
     var fx = [].slice.call(row.querySelectorAll('[data-fxmode]')).map(function (b) { var on = b.classList.contains('active'); return reg(b, '✨ Эффекты: ' + (on ? 'всегда' : 'при наведении'), on, false); });
     var sc = [].slice.call(sec.querySelectorAll('.wk-sc-toggle')).slice(0, 1).map(function (b) { var hide = /Скрыть/i.test(b.textContent); return reg(b, hide ? 'Скрыть витрину' : 'Показать витрину', !hide, false); });
+    var HK = { charactersSection: 'c', storySection: 's', rewardsSection: 'r', fruitsSection: 'f', usefulSection: 'u' }[cur], form = [];
+    if (HK) {
+      var hzNow = document.documentElement.classList.contains('wk-hz-' + HK);
+      var setHz = function (on) { try { localStorage.setItem('onePieceWikiHorizV1_' + HK, on ? 'on' : 'off'); } catch (e) {} document.documentElement.classList.toggle('wk-hz-' + HK, on); try { window.dispatchEvent(new Event('wk-settings')); } catch (e) {} };
+      form.push(reg({ click: function () { setHz(false); } }, '▮ Вертикальные', !hzNow, false));
+      form.push(reg({ click: function () { setHz(true); } }, '▭ Горизонтальные', hzNow, false));
+    }
     var ed = [];
     var fab = document.getElementById('wkPeFab');
     if (!mq.matches && fab && !fab.hidden) ed.push(reg(fab, '✥ Правка превью', false, true));
     var okEd = false; try { okEd = typeof window.__wikiCanEdit === 'function' ? !!window.__wikiCanEdit() : false; } catch (e) {}
     if (okEd && window.__wkCompleteness) ed.push(reg({ click: function () { window.__wkCompleteness(); } }, '✔ Панель полноты', false, true));
-    sheet.innerHTML = '<div class="wk-mv-grip"></div>' + group('Режим', modes) + group('Размер карточек', sizes) + group('Дополнительно', fx.concat(sc)) + group('Редактор', ed) + '<button type="button" class="wk-mv-done">Готово</button>';
+    sheet.innerHTML = '<div class="wk-mv-grip"></div>' + group('Режим', modes) + group('Размер карточек', sizes) + group('Форма карточек', form) + group('Дополнительно', fx.concat(sc)) + group('Редактор', ed) + '<button type="button" class="wk-mv-done">Готово</button>';
   }
   function place() {
     if (mq.matches || !curBtn) { sheet.style.left = sheet.style.top = ''; return; }
@@ -34930,9 +34972,10 @@ html.wk-cp-lock{overflow:hidden}
 
   /* ================= Автоссылки ================= */
   var idxKey = '', idx = null, idxRe = null;
+  function alOf(r) { var v = r && (r.__wikiRaw || r).autolinks; return String(v || '').split(/[\n;,]+/).map(function (x) { return x.trim(); }).filter(function (x) { return x.length >= 3; }); }
   function words(n) { return String(n || '').replace(/[«»"()]/g, ' ').split(/\s+/).filter(function (w) { return w.length >= 4 && !/^[А-ЯЁ]\.$/.test(w); }); }
   function build() {
-    var key = ['character', 'story', 'fruit', 'useful'].map(function (t) { return all(t).length; }).join('|') + '|' + (window.__wkProgKey ? window.__wkProgKey() : '');
+    var key = ['character', 'story', 'fruit', 'useful'].map(function (t) { return all(t).length + ':' + all(t).reduce(function (s, r) { return s + String(r && (r.__wikiRaw || r).autolinks || '').length; }, 0); }).join('|') + '|' + (window.__wkProgKey ? window.__wkProgKey() : '');
     if (idx && key === idxKey) return;
     idxKey = key; var map = {}, wc = {};
     function cand(t, r, al) { if (hid(r, t)) return; al.forEach(function (a) { a = a.trim(); if (a.length < 4) return; var k = a.toLowerCase(); (map[k] = map[k] || []).push({ t: t, r: r, a: a }); }); }
@@ -34947,6 +34990,7 @@ html.wk-cp-lock{overflow:hidden}
       var l = map[k], u = {}; l.forEach(function (x) { u[x.t + ':' + x.r.id] = x; });
       var ks = Object.keys(u); if (ks.length === 1) idx[k] = u[ks[0]];
     });
+    ['character', 'story', 'fruit', 'useful'].forEach(function (tt) { all(tt).forEach(function (r) { if (hid(r, tt)) return; alOf(r).forEach(function (a) { idx[a.toLowerCase()] = { t: tt, r: r, a: a }; }); }); });
     var keys = Object.keys(idx).sort(function (a, b) { return b.length - a.length; });
     idxRe = keys.length ? new RegExp('(?<![\\p{L}\\p{N}])(' + keys.map(function (k) { return k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')([а-яё]{0,3})(?![\\p{L}\\p{N}])', 'giu') : null;
   }
@@ -35105,6 +35149,222 @@ html.wk-cp-lock{overflow:hidden}
   }
   new MutationObserver(function () { clearTimeout(timer); timer = setTimeout(run, 220); }).observe(document.documentElement, { childList: true, subtree: true });
   setInterval(run, 2500);
+})();
+
+
+/* ===== кольцо рамки карточки: цвет статуса берём у самой карточки ===== */
+(function () {
+  function ring() {
+    document.querySelectorAll('.catalog-item-shell.character-grid-shell').forEach(function (sh) {
+      if (sh.classList.contains('wk-r-rare') || sh.classList.contains('wk-r-legendary')) { sh.style.removeProperty('--wk-ring'); return; }
+      var it = sh.querySelector(':scope > .character-item'); if (!it) return;
+      var c = getComputedStyle(it).getPropertyValue('--card').trim(); if (!c) return;
+      var v = 'color-mix(in srgb,' + c + ' 70%,transparent)';
+      if (sh.style.getPropertyValue('--wk-ring') !== v) sh.style.setProperty('--wk-ring', v);
+    });
+  }
+  setInterval(ring, 1500); setTimeout(ring, 600);
+})();
+
+/* ===== Убрали блок «Связанные статьи»: возвращаем обычные «предыдущая / следующая» ===== */
+(function () {
+  window.__wkRelatedNav = function () { return false; };
+})();
+
+/* ===== Свои автоссылки: слова, которые в других статьях превращаются в ссылку на эту ===== */
+(function () {
+  function curA() { var st = null; try { st = window.eval('appArticleState'); } catch (e) {} return st && st.type && st.id ? { type: st.type, id: String(st.id) } : null; }
+  function raw(type, id) { try { return window.__wikiRawRecord(type, id) || {}; } catch (e) { return {}; } }
+  function can() { try { if (typeof window.__wikiCanEdit === 'function') return !!window.__wikiCanEdit(); } catch (e) {} return !window.WIKI_CLOUD_ENABLED; }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  var ov = null;
+  function close() { if (ov) { ov.remove(); ov = null; } }
+  function open() {
+    var a = curA(); if (!a) return; close();
+    var rec = raw(a.type, a.id), cur = String(rec.autolinks || '').split(/[\n;,]+/).map(function (x) { return x.trim(); }).filter(Boolean).join('\n');
+    ov = document.createElement('div'); ov.className = 'wk-al-ov';
+    ov.innerHTML = '<div class="wk-al-box" role="dialog" aria-label="Автоссылки"><h3>🔗 Автоссылки на эту статью</h3><p>Слова и имена, которые в текстах других статей станут ссылкой сюда. По одному в строке. Окончания (-а, -у, -ом…) подхватываются сами. Название и уникальные слова из имени работают и без этого.</p><textarea rows="6" placeholder="Например:&#10;Мугивара&#10;Король пиратов">' + esc(cur) + '</textarea><div class="wk-al-act"><button type="button" class="wk-al-cancel">Отмена</button><button type="button" class="wk-al-save">Сохранить</button></div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click', function (e) {
+      if (e.target === ov || e.target.closest('.wk-al-cancel')) return close();
+      if (e.target.closest('.wk-al-save')) {
+        var v = ov.querySelector('textarea').value.split(/\n+/).map(function (x) { return x.trim(); }).filter(Boolean).join('\n'), ok = false;
+        try { ok = window.__wikiQuickSave(a.type, a.id, { autolinks: v }) !== false; } catch (er) { ok = false; }
+        close();
+        try { document.querySelectorAll('[data-wk-auto]').forEach(function (p) { p.removeAttribute('data-wk-auto'); }); } catch (er) {}
+        var n = document.createElement('div'); n.className = 'wk-qe-toast'; n.setAttribute('role', 'status'); n.textContent = ok ? 'Автоссылки сохранены' : 'Не удалось сохранить'; document.body.appendChild(n); setTimeout(function () { n.remove(); }, 2200);
+      }
+    });
+    setTimeout(function () { var ta = ov && ov.querySelector('textarea'); if (ta) ta.focus(); }, 30);
+  }
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && ov) close(); });
+  function ensure() {
+    var arts = document.querySelectorAll('.article'), shown = null;
+    for (var i = 0; i < arts.length; i++) if (getComputedStyle(arts[i]).display !== 'none') { shown = arts[i]; break; }
+    document.querySelectorAll('.wk-al-btn').forEach(function (b) { if (!shown || !shown.contains(b) || !can()) b.remove(); });
+    if (!shown || !can() || shown.querySelector('.wk-al-btn')) return;
+    var edit = null; shown.querySelectorAll('button').forEach(function (b) { if (!edit && /Редактировать/.test(b.textContent) && !b.closest('.wk-rn-grid')) edit = b; });
+    if (!edit) return;
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'wk-al-btn ' + edit.className.replace(/\bwk-al-btn\b/, ''); b.textContent = '🔗 Автоссылки'; b.title = 'Свои слова, которые в других статьях ведут сюда';
+    b.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); open(); });
+    edit.insertAdjacentElement('afterend', b);
+  }
+  setInterval(ensure, 1000);
+})();
+</script>
+<style id="wk-morph-css">
+@keyframes wkArtIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+html body .article.wk-art-in{animation:wkArtIn .44s cubic-bezier(.2,.8,.2,1) both}
+.wk-morph{position:fixed;z-index:9990;margin:0;overflow:hidden;pointer-events:none;will-change:left,top,width,height;box-shadow:0 18px 50px rgba(0,0,0,.55);background:#0b111b}
+.wk-morph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+@media (prefers-reduced-motion:reduce){html body .article.wk-art-in{animation:none}.wk-morph{display:none}}
+</style>
+<script id="wk-morph-js">
+(function () {
+  'use strict';
+  var CARD = '.character-item, [data-fruit-id], [data-useful-id], [data-story-arc-id], .story-saga-folder, .wk-wp[data-wp-rid], .catalog-item-shell';
+  var IMG = 'img.character-grid-image, img.fruit-grid-image, .useful-catalog-image-wrap img, .story-card-thumb img, .story-saga-cover img, .wk-wp-ph img, img';
+  var last = null, busy = false;
+  var reduce = false; try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  function off() { return reduce || document.documentElement.classList.contains('wk-cardfx-off') && false; }
+  document.addEventListener('click', function (e) {
+    try {
+      if (document.body.classList.contains('wk-pe-on')) return;
+      var c = e.target.closest && e.target.closest(CARD); if (!c) return;
+      if (c.closest('#wkShowcase') && false) return;
+      var img = c.querySelector(IMG); if (!img || !(img.currentSrc || img.src)) { last = null; return; }
+      var r = img.closest('.character-grid-image-wrap,.fruit-grid-image-wrap,.useful-catalog-image-wrap,.story-card-thumb,.story-saga-cover') || img;
+      var rr = r.getBoundingClientRect(), cr = c.getBoundingClientRect();
+      if (rr.width < 20 || rr.height < 20) rr = cr;
+      var cs = getComputedStyle(c);
+      last = { t: Date.now(), x: rr.left, y: rr.top, w: rr.width, h: rr.height, src: img.currentSrc || img.src, rad: parseFloat(cs.borderTopLeftRadius) || 14,
+               pos: getComputedStyle(img).objectPosition, tr: img.style.transform || '', to: img.style.transformOrigin || '' };
+    } catch (er) { last = null; }
+  }, true);
+  function shown() { var a = document.querySelectorAll('.article'); for (var i = 0; i < a.length; i++) { if (a[i].offsetParent !== null || getComputedStyle(a[i]).display !== 'none') { if (getComputedStyle(a[i]).display !== 'none') return a[i]; } } return null; }
+  function heroOf(a) { return a && (a.querySelector('.article-hero-media .article-inline-image-wrap') || a.querySelector('.article-hero-media')); }
+  function ease(t) { return 1 - Math.pow(1 - t, 4); }
+  function run() {
+    var art = shown(), m = last, tries = (run.n = (run.n || 0) + 1);
+    if (!art || (m && !heroOf(art) && !run.stop)) { if (!run.t0) run.t0 = Date.now(); if (Date.now() - run.t0 < 900) { setTimeout(run, 30); return; } }
+    run.t0 = 0; run.n = 0; if (!art) return;
+    if (!reduce) { art.classList.add('wk-art-in'); setTimeout(function () { art.classList.remove('wk-art-in'); }, 700); }
+    last = null;
+    if (reduce || !m || Date.now() - m.t > 2500 || busy) return;
+    var hero = heroOf(art); if (!hero) return;
+    try { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); } catch (e) { window.scrollTo(0, 0); }
+    busy = true;
+    var prevOp = hero.style.opacity, prevTr = hero.style.transition;
+    hero.style.transition = 'none'; hero.style.opacity = '0';
+    var box = document.createElement('div'); box.className = 'wk-morph';
+    var im = document.createElement('img'); im.src = m.src; im.alt = ''; im.style.objectPosition = m.pos; if (m.tr) { im.style.transform = m.tr; im.style.transformOrigin = m.to; }
+    box.appendChild(im); document.body.appendChild(box);
+    var t0 = performance.now(), D = 520, done = false;
+    function finish() {
+      if (done) return; done = true;
+      hero.style.transition = 'opacity .18s ease'; hero.style.opacity = prevOp || '';
+      box.style.transition = 'opacity .18s ease'; box.style.opacity = '0';
+      setTimeout(function () { box.remove(); hero.style.transition = prevTr || ''; busy = false; }, 220);
+    }
+    function frame(now) {
+      if (done) return;
+      var k = Math.min(1, (now - t0) / D), e = ease(k);
+      var tr = hero.getBoundingClientRect();
+      if (tr.width < 10) { finish(); return; }
+      var rad = 14; try { rad = parseFloat(getComputedStyle(hero).borderTopLeftRadius) || 14; } catch (er) {}
+      box.style.left = (m.x + (tr.left - m.x) * e) + 'px'; box.style.top = (m.y + (tr.top - m.y) * e) + 'px';
+      box.style.width = (m.w + (tr.width - m.w) * e) + 'px'; box.style.height = (m.h + (tr.height - m.h) * e) + 'px';
+      box.style.borderRadius = (m.rad + (rad - m.rad) * e) + 'px';
+      if (k < 1) requestAnimationFrame(frame); else finish();
+    }
+    requestAnimationFrame(frame);
+    setTimeout(finish, 1400);
+  }
+  var was = document.body.classList.contains('article-view-open');
+  new MutationObserver(function () {
+    var now = document.body.classList.contains('article-view-open');
+    if (now && !was) { try { run(); } catch (e) {} }
+    was = now;
+  }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+})();
+</script>
+<style id="wk-avatars-css">
+.wk-ava[data-wk-av]:not([data-wk-av=""]){background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;color:transparent!important;text-shadow:none!important;overflow:hidden;box-shadow:0 0 0 2px var(--wk-av-c,transparent)}
+.wk-avs-ov{position:fixed;inset:0;z-index:99995;background:rgba(3,6,12,.7);display:flex;align-items:center;justify-content:center;padding:16px}
+.wk-avs-box{width:min(520px,100%);max-height:calc(100vh - 32px);overflow:auto;background:#0e1626;border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:18px;color:#e8ecf4;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.wk-avs-box h3{margin:0 0 4px;font-size:17px}.wk-avs-box>p{margin:0 0 14px;font-size:13px;line-height:1.5;color:#9fb0c6}
+.wk-avs-row{display:grid;grid-template-columns:48px minmax(0,1fr);gap:4px 12px;align-items:center;margin-bottom:12px}
+.wk-avs-pic{grid-row:span 2;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:20px;color:#0b1120;background-size:cover;background-position:center}
+.wk-avs-name{font-weight:700;font-size:14px}
+.wk-avs-row input{width:100%;box-sizing:border-box;min-height:38px;border-radius:9px;border:1px solid rgba(255,255,255,.18);background:#0a111d;color:#e8ecf4;font:inherit;font-size:13.5px;padding:0 10px}
+.wk-avs-row small{grid-column:2;color:#9fb0c6;font-size:12px;min-height:14px}.wk-avs-row small.bad{color:#fca5a5}
+.wk-avs-act{display:flex;justify-content:flex-end;margin-top:6px}
+.wk-avs-act button{min-height:40px;padding:0 18px;border-radius:10px;border:0;background:#d4a84f;color:#1a1204;font:inherit;font-weight:700;cursor:pointer}
+</style>
+<script id="wk-avatars-js">
+(function () {
+  'use strict';
+  var KEY = 'onePieceWikiMedalArtV1', STORAGE_KEY = 'onePieceWikiLocalContentV1';
+  function readMap() { try { var v = JSON.parse(localStorage.getItem(KEY) || '{}'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
+  function writeMap(map) {
+    try { localStorage.setItem(KEY, JSON.stringify(map)); } catch (e) {}
+    try { var raw = localStorage.getItem(STORAGE_KEY); if (raw) { var d = JSON.parse(raw); d.medalArt = map; d.updatedAt = new Date().toISOString(); localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } } catch (e) {}
+  }
+  function accounts() { return (window.__wikiAccounts || ((window.WIKI_CLOUD_CONFIG || {}).accounts) || []).filter(function (a) { return a && a.login; }); }
+  function urlOf(login) { var u = String(readMap()['avatar:' + login] || '').trim(); return /^(https?:|data:image\/)/i.test(u) ? u : ''; }
+  window.__wkAvatar = urlOf;
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  var rgbCache = {};
+  function rgbOf(c) { if (rgbCache[c]) return rgbCache[c]; var d = document.createElement('i'); d.style.color = c; document.body.appendChild(d); var v = getComputedStyle(d).color; d.remove(); return (rgbCache[c] = v); }
+  function apply() {
+    var accs = accounts(); if (!accs.length) return;
+    var by = {}; accs.forEach(function (a) { if (a.color) by[rgbOf(a.color)] = a; });
+    document.querySelectorAll('.wk-ava:not([data-wk-av])').forEach(function (el) {
+      var bg = getComputedStyle(el).backgroundColor, a = by[bg];
+      if (!a) { var m = (el.getAttribute('style') || '').match(/(?:--c|background(?:-color)?)\s*:\s*([^;]+)/); if (m) a = by[rgbOf(m[1].trim())]; }
+      if (!a) return;
+      var u = urlOf(a.login); el.setAttribute('data-wk-av', u ? a.login : '');
+      if (!u) return;
+      el.style.setProperty('--wk-av-c', a.color);
+      var im = new Image(); im.onload = function () { el.style.setProperty('background-image', 'url("' + u.replace(/"/g, '%22') + '")', 'important'); }; im.onerror = function () { el.setAttribute('data-wk-av', ''); }; im.src = u;
+    });
+  }
+  function reset() { document.querySelectorAll('.wk-ava[data-wk-av]').forEach(function (el) { el.removeAttribute('data-wk-av'); el.style.removeProperty('background-image'); }); apply(); }
+  var pend = 0; function soon() { if (!pend) pend = setTimeout(function () { pend = 0; try { apply(); } catch (e) {} }, 120); }
+  new MutationObserver(soon).observe(document.documentElement, { childList: true, subtree: true });
+  setInterval(apply, 2500); setTimeout(apply, 800);
+
+  var ov = null;
+  function close() { if (ov) { ov.remove(); ov = null; } }
+  function open() {
+    close(); var accs = accounts();
+    ov = document.createElement('div'); ov.className = 'wk-avs-ov';
+    ov.innerHTML = '<div class="wk-avs-box" role="dialog" aria-label="Аватарки участников"><h3>👤 Аватарки участников</h3><p>Вставь ссылку на фото для каждого участника. Аватарка появится у всех — в входе, истории правок и статистике. Пустое поле — буква на цветном фоне.</p>' +
+      accs.map(function (a) { var u = urlOf(a.login); return '<div class="wk-avs-row" data-l="' + esc(a.login) + '"><span class="wk-avs-pic" style="background-color:' + esc(a.color || '#64748b') + ';' + (u ? 'background-image:url(&quot;' + esc(u) + '&quot;);color:transparent' : '') + '">' + esc((a.name || '?')[0]) + '</span><span class="wk-avs-name" style="color:' + esc(a.color || '#fff') + '">' + esc(a.name || a.login) + '</span><input type="url" inputmode="url" placeholder="https://…" value="' + esc(u) + '" aria-label="Ссылка на фото: ' + esc(a.name || a.login) + '"><small></small></div>'; }).join('') +
+      '<div class="wk-avs-act"><button type="button" class="wk-avs-done">Готово</button></div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click', function (e) { if (e.target === ov || e.target.closest('.wk-avs-done')) close(); });
+    ov.querySelectorAll('.wk-avs-row').forEach(function (row) {
+      var inp = row.querySelector('input'), pic = row.querySelector('.wk-avs-pic'), msg = row.querySelector('small'), t = 0, login = row.getAttribute('data-l');
+      inp.addEventListener('input', function () {
+        clearTimeout(t); t = setTimeout(function () {
+          var v = inp.value.trim(), m = readMap();
+          if (!v) { delete m['avatar:' + login]; writeMap(m); pic.style.backgroundImage = ''; pic.style.color = ''; msg.className = ''; msg.textContent = 'Убрано'; reset(); return; }
+          if (!/^(https?:\/\/|data:image\/)/i.test(v)) { msg.className = 'bad'; msg.textContent = 'Нужна ссылка, начинающаяся с https://'; return; }
+          var im = new Image(); im.onload = function () { m = readMap(); m['avatar:' + login] = v; writeMap(m); pic.style.backgroundImage = 'url("' + v.replace(/"/g, '%22') + '")'; pic.style.color = 'transparent'; msg.className = ''; msg.textContent = 'Сохранено'; reset(); };
+          im.onerror = function () { msg.className = 'bad'; msg.textContent = 'Картинка по ссылке не открылась'; }; im.src = v;
+        }, 450);
+      });
+    });
+  }
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && ov) close(); });
+  function ensure() {
+    var bar = document.querySelector('#wikiEditorOverlay .wiki-editor-actions'); if (!bar || bar.querySelector('#wkAvatarsBtn')) return;
+    var b = document.createElement('button'); b.className = 'wiki-editor-btn'; b.id = 'wkAvatarsBtn'; b.type = 'button'; b.textContent = '👤 Аватарки';
+    b.addEventListener('click', open);
+    var anchor = bar.querySelector('#wikiEditorSettings'); if (anchor) anchor.insertAdjacentElement('afterend', b); else bar.appendChild(b);
+  }
+  setInterval(ensure, 800);
 })();
 </script>
 <button type="button" class="wk-totop" aria-label="Наверх">↑</button></body></html>
