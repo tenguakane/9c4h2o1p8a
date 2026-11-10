@@ -2451,7 +2451,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 183";
+const WIKI_VERSION = "11.11.2026 · 189";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -27090,6 +27090,7 @@ html body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSectio
 <script id="wk-progress-colors">
 (function(){
   function pick(src,key,d){var v=String(src&&src[key]||'');return /^#[\da-f]{6}$/i.test(v)?v.toLowerCase():d;}
+  function fg(h){var n=parseInt(h.slice(1),16),r=n>>16&255,g=n>>8&255,b=n&255;function f(c){c/=255;return c<=.03928?c/12.92:Math.pow((c+.055)/1.055,2.4);}var L=.2126*f(r)+.7152*f(g)+.0722*f(b);return L>.32?'#0b0f17':'#ffffff';}
   function apply(){
     try{
       var saved={};try{saved=JSON.parse(localStorage.getItem('onePieceWikiAccentSettingsV1')||'{}')||{};}catch(e){}
@@ -27098,6 +27099,7 @@ html body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSectio
       var st=document.documentElement.style,m=pick(saved,'progress::Манга','#efc66b'),a=pick(saved,'progress::Аниме','#60d9ff');
       if(st.getPropertyValue('--wiki-progress-manga')!==m)st.setProperty('--wiki-progress-manga',m);
       if(st.getPropertyValue('--wiki-progress-anime')!==a)st.setProperty('--wiki-progress-anime',a);
+      st.setProperty('--wk-fg-manga',fg(m));st.setProperty('--wk-fg-anime',fg(a));
     }catch(e){}
   }
   apply();setInterval(apply,700);window.addEventListener('storage',apply);document.addEventListener('DOMContentLoaded',apply);
@@ -27188,7 +27190,9 @@ html body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSectio
   html.wk-hdr-min.wk-hdr-min.wk-hdr-min body > header .wk-edit-site{font-size:0!important;gap:0!important;padding:6px 10px!important}
   html.wk-hdr-min.wk-hdr-min.wk-hdr-min body > header .wk-edit-site .wk-ic{font-size:16px}
   html.wk-hdr-min.wk-hdr-min.wk-hdr-min body > header .wk-edit-site>:not(.wk-ic){display:none!important}
-  html.wk-hdr-min.wk-hdr-min.wk-hdr-min body > header .wk-edit-site{top:5px!important;bottom:auto!important;transform:none!important;height:34px!important}
+  html.wk-hdr-min.wk-hdr-min.wk-hdr-min body > header .wk-edit-site{top:6px!important;bottom:auto!important;transform:none!important;height:34px!important;width:36px!important;min-width:0!important;padding:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}
+  html.wk-hdr-min.wk-hdr-min.wk-hdr-min body > header .wk-edit-site .wk-ic{margin:0!important}
+  html.wk-hdr-min.wk-hdr-min.wk-hdr-min body > header #wkMe :is(.wk-me-name,.wk-sync){display:none!important}
 }}
 </style>
 <script id="wk-hdr-min">
@@ -27200,7 +27204,8 @@ html body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSectio
   function sync(){if(btn){var v=get();btn.setAttribute('aria-pressed',String(v));btn.title=v?'Развернуть шапку':'Свернуть шапку до иконок';btn.setAttribute('aria-label',btn.title);}
     [].forEach.call(document.querySelectorAll('body > header .main-tab'),function(t){if(!t.getAttribute('data-wk-t0'))t.setAttribute('data-wk-t0',(t.textContent||'').replace(/\s+/g,' ').trim());t.title=get()?t.getAttribute('data-wk-t0'):'';});
     var se=document.querySelector('body > header .global-search-trigger');if(se&&get())se.title='Глобальный поиск (Ctrl+K)';
-    var ed=document.querySelector('body > header .wk-edit-site');if(ed){if(get()){ed.style.setProperty('top','6px','important');ed.style.setProperty('height','34px','important');}else{ed.style.removeProperty('top');ed.style.removeProperty('height');}if(!ed.getAttribute('data-wk-t0'))ed.setAttribute('data-wk-t0',(ed.textContent||'').replace(/\s+/g,' ').trim());ed.title=get()?ed.getAttribute('data-wk-t0'):'';}}
+    var me=document.getElementById('wkMe');if(me&&matchMedia('(min-width:761px)').matches){if(get()){me.style.setProperty('top','6px','important');me.style.setProperty('height','34px','important');}else{me.style.removeProperty('top');me.style.removeProperty('height');}}
+    var ed=document.querySelector('body > header .wk-edit-site');if(ed){if(get()){ed.style.setProperty('top','6px','important');ed.style.setProperty('height','34px','important');ed.style.setProperty('width','36px','important');ed.style.setProperty('padding','0','important');ed.style.setProperty('justify-content','center','important');}else{['top','height','width','padding','justify-content'].forEach(function(k){ed.style.removeProperty(k);});}if(!ed.getAttribute('data-wk-t0'))ed.setAttribute('data-wk-t0',(ed.textContent||'').replace(/\s+/g,' ').trim());ed.title=get()?ed.getAttribute('data-wk-t0'):'';}}
   function mount(){
     var host=document.querySelector('.wiki-header-top');if(!host||host.querySelector('.wk-hdr-toggle'))return;
     btn=document.createElement('button');btn.type='button';btn.className='wk-hdr-toggle';
@@ -27228,6 +27233,12 @@ html body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSectio
       var r1=Math.round(hr.right-left+8);
       if(tg){tg.style.setProperty('right',r1+'px','important');tg.style.setProperty('left','auto','important');}
       if(acc){acc.style.setProperty('right',(r1+(tg?44:0))+'px','important');acc.style.setProperty('left','auto','important');}
+      var se=h.querySelector('.global-search-trigger'),sr=se?se.getBoundingClientRect():null,need=acc?(hr.right-(r1+(tg?44:0))-36):0;
+      var tight=!!(sr&&sr.width>0&&sr.right+6>need-0&&need>0&&(hr.right-(r1+(tg?44:0))-36)<sr.right+6);
+      [acc,tg].forEach(function(b,i){if(!b)return;
+        if(tight){b.style.setProperty('position','fixed','important');b.style.setProperty('top',Math.round(hr.bottom+8)+'px','important');b.style.setProperty('transform','none','important');b.style.setProperty('right',(14+(b===acc&&tg?44:0))+'px','important');b.style.setProperty('background','var(--panel,#0f1623)','important');b.style.setProperty('z-index','9000','important');}
+        else{b.style.removeProperty('position');b.style.removeProperty('top');b.style.removeProperty('transform');b.style.removeProperty('background');b.style.removeProperty('z-index');}
+      });
     }catch(e){}
   }
   window.__wkHdrLayout=layout;
@@ -27235,6 +27246,14 @@ html body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSectio
 })();
 </script>
 <style id="wk-ov-stats-css">
+#favoritesSection .wk-bar:not(.is-medal):not(.is-anime) em{color:var(--wk-fg-manga,#0b0f17)!important;text-shadow:none!important;font-weight:800}
+#favoritesSection .wk-bar.is-anime em{color:var(--wk-fg-anime,#0b0f17)!important;text-shadow:none!important;font-weight:800}
+#favoritesSection .wk-where-bars .wk-bar:not(.is-medal){display:flex!important;align-items:center;height:24px!important}
+#favoritesSection .wk-where-bars .wk-bar:not(.is-medal) em{display:block;margin:0 0 0 3px;padding:0 10px;height:18px;line-height:18px!important;border-radius:99px}
+#favoritesSection .wk-where-bars .wk-bar:not(.is-anime):not(.is-medal) em{background:var(--wiki-progress-manga,#efc66b)}
+#favoritesSection .wk-where-bars .wk-bar.is-anime em{background:var(--wiki-progress-anime,#3fb9e6)}
+
+#favoritesSection .wk-ov-tilesbox{display:flex!important;flex-direction:column!important;gap:26px!important}#favoritesSection .wk-ov-tilesbox>.wk-ov-group{margin:0!important}#favoritesSection .wk-ov-tilesbox .wk-ov-group h3{margin:0 0 12px!important}#favoritesSection #wkCabOverview>.wk-pane,#favoritesSection #wkCabOverview>.cabin-tab-panel{margin-top:10px}
 #favoritesSection .wk-bar:not(.is-anime):not(.is-medal) i{background:linear-gradient(90deg,var(--wiki-progress-manga,#efc66b),color-mix(in srgb,var(--wiki-progress-manga,#efc66b) 65%,#fff))}
 #favoritesSection .wk-bar.is-anime i{background:linear-gradient(90deg,var(--wiki-progress-anime,#3fb9e6),color-mix(in srgb,var(--wiki-progress-anime,#3fb9e6) 65%,#fff))}
 #favoritesSection .wk-ov-cells i.on{background:var(--wiki-progress-anime,#34d399)}
