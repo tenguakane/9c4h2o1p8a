@@ -2451,7 +2451,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 182";
+const WIKI_VERSION = "11.11.2026 · 183";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -27210,6 +27210,28 @@ html body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSectio
   document.documentElement.classList.toggle('wk-hdr-min',get());
   function init(){mount();sync();setTimeout(sync,1500);}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+<script id="wk-hdr-btn-pos">
+(function(){
+  function layout(){
+    try{
+      var h=document.querySelector('body > header');if(!h)return;
+      var hr=h.getBoundingClientRect(),left=hr.right-14;
+      [].forEach.call(h.children,function(c){
+        if(c.matches&&(c.matches('.wiki-header-top,.main-tabs,.mobile-swipe-hint')))return;
+        var cs=getComputedStyle(c);if(cs.display==='none'||cs.visibility==='hidden')return;
+        if(cs.position!=='absolute'&&cs.position!=='fixed')return;
+        var r=c.getBoundingClientRect();if(r.width<4||r.left<hr.width/2)return;if(r.left<left)left=r.left;
+      });
+      var acc=h.querySelector('.wk-acc-btn'),tg=h.querySelector('.wk-hdr-toggle');
+      var r1=Math.round(hr.right-left+8);
+      if(tg){tg.style.setProperty('right',r1+'px','important');tg.style.setProperty('left','auto','important');}
+      if(acc){acc.style.setProperty('right',(r1+(tg?44:0))+'px','important');acc.style.setProperty('left','auto','important');}
+    }catch(e){}
+  }
+  window.__wkHdrLayout=layout;
+  setInterval(layout,800);window.addEventListener('resize',layout);document.addEventListener('DOMContentLoaded',layout);
 })();
 </script>
 <style id="wk-ov-stats-css">
