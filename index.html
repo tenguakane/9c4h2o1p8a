@@ -2451,7 +2451,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 200";
+const WIKI_VERSION = "11.11.2026 · 202";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -31061,7 +31061,7 @@ html body #charactersSection#charactersSection #characterList#characterList.char
     rows.push(mk('🎞️', 'Филлеры', fill, 'story'));
     rows.push(mk('🎬', 'Фильмы', films, 'story'));
     rows.push(mk('📚', 'Полезное', ovArr('usefulArticles'), 'useful'));
-    rows.push(mk('💰', 'Награды (плакаты)', ovArr('rewards'), 'reward'));
+    (function () { var rw = ovArr('rewards'), cs = ovArr('characters'); var ok = rw.filter(function (r) { if (spo(r, 'reward')) return false; var c = cs.find(function (x) { return String(x.id) === String(r.character_id); }); return !(c && spo(c, 'character')); }).length; rows.push({ ico: '💰', name: 'Награды (плакаты)', t: rw.length, a: ok }); })();
     return rows.filter(function (r) { return r.t; });
   }
   function statsSig() { try { return ovStats().map(function (r) { return r.a + '/' + r.t; }).join(','); } catch (e) { return ''; } }
@@ -31319,8 +31319,8 @@ html.ios-app .wk-totop{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
   function rewardStats() {
     var list = document.getElementById('rewardsList'); if (!list) return;
     var box = document.getElementById('wkRewardStats');
-    var vis = arr('rewards').filter(function (r) { return !hidden(r, 'reward'); });
     var chars = arr('characters'), best = {}, sum = 0;
+    var vis = arr('rewards').filter(function (r) { if (hidden(r, 'reward')) return false; var c = byId(chars, r.character_id); return !(c && hidden(c, 'character')); });
     vis.forEach(function (r) { var cid = String(r.character_id || ''); var v = Number(r.reward) || 0; if (!best[cid] || v > best[cid].v) best[cid] = { v: v, r: r }; });
     Object.keys(best).forEach(function (k) { sum += best[k].v; });
     var top = Object.keys(best).map(function (k) { return best[k]; }).sort(function (a, b) { return b.v - a.v; })[0];
@@ -34314,7 +34314,7 @@ html.wk-hz-s body #storySection#storySection#storySection #storyList#storyList#s
 }
 html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList[data-wk-size="s"]{grid-template-columns:repeat(auto-fill,minmax(192px,1fr))!important;gap:12px!important}
 html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList[data-wk-size="m"]{grid-template-columns:repeat(auto-fill,minmax(262px,1fr))!important;gap:12px!important}
-html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList[data-wk-size="l"]{grid-template-columns:repeat(auto-fill,minmax(402px,1fr))!important;gap:12px!important}
+html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList[data-wk-size="l"]{grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))!important;gap:12px!important}
 html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.character-item,html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.story-saga-folder{aspect-ratio:4/3!important;height:auto!important;min-height:0!important;width:100%!important}
 html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsList#fruitsList .catalog-item-shell{height:auto!important;min-height:0!important}
 @media (max-width:760px){
@@ -34324,7 +34324,7 @@ html.wk-hz-f body #fruitsSection#fruitsSection#fruitsSection #fruitsList#fruitsL
 }
 html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList[data-wk-size="s"]{grid-template-columns:repeat(auto-fill,minmax(192px,1fr))!important;gap:12px!important}
 html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList[data-wk-size="m"]{grid-template-columns:repeat(auto-fill,minmax(262px,1fr))!important;gap:12px!important}
-html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList[data-wk-size="l"]{grid-template-columns:repeat(auto-fill,minmax(402px,1fr))!important;gap:12px!important}
+html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList[data-wk-size="l"]{grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))!important;gap:12px!important}
 html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.character-item,html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList :is(.catalog-item-shell,.story-saga-group:not(.is-open))>.story-saga-folder{aspect-ratio:4/3!important;height:auto!important;min-height:0!important;width:100%!important}
 html.wk-hz-u body #usefulSection#usefulSection#usefulSection #usefulList#usefulList#usefulList .catalog-item-shell{height:auto!important;min-height:0!important}
 @media (max-width:760px){
