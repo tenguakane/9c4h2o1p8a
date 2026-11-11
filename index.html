@@ -2451,7 +2451,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 222";
+const WIKI_VERSION = "11.11.2026 · 223";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -23708,7 +23708,7 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     // burst — частицы вылетают вместе со вспышкой эффекта; burst0 — у всех карточек одновременно (землетрясение).
     claws: [{ c: 'cw', n: 5, pos: 'any', t: [4.2, 6.8], s: [0.7, 1.2], v: 3 }],
     // Кинжалы: много коротких быстрых порезов в разных местах и в разное время, каждый небольшой.
-    daggers: [{ c: 'dg', n: 10, pos: 'any', t: [2.2, 4.2], s: [0.7, 1.3], v: 2 }],
+    daggers: [{ c: 'dg', n: 10, pos: 'any', t: [1.2, 2.4], s: [0.7, 1.3], v: 2 }],
     swords: [{ c: 'sw', n: 3, pos: 'any', t: [4.4, 4.4], s: [0.7, 1.2], v: 2, sync: 'burst', jit: 0.55 }],
     explosion: [{ c: 'xd', n: 16, pos: 'any', t: [5.6, 5.6], s: [0.6, 1.4], sync: 'burst', jit: 0.05 }],
     quake: [{ c: 'qd', n: 12, pos: 'top', t: [5, 5], s: [0.6, 1.4], sync: 'burst0', jit: 0.9 }],
@@ -23771,10 +23771,10 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     if (host.getAttribute('data-fx') !== amb) host.setAttribute('data-fx', amb);
   }
   // Частицы постоянных эффектов для конструктора: те же формы и движение, количество можно умножить.
-  window.__wikiNativeParts = function (host, amb, id, mult) {
+  window.__wikiNativeParts = function (host, amb, id, mult, speed) {
     var old = host.querySelector(':scope > .wk-amb-p'); if (old) old.remove();
     var spec = PARTS[amb]; if (!spec) return;
-    PARTS[amb] = spec.map(function (g) { var c = {}; for (var k in g) c[k] = g[k]; c.n = Math.max(1, Math.round(g.n * (mult || 1))); return c; });
+    PARTS[amb] = spec.map(function (g) { var c = {}; for (var k in g) c[k] = g[k]; c.n = Math.max(1, Math.round(g.n * (mult || 1))); if (speed && speed !== 1) { var t0 = g.t || [6.5, 6.5]; c.t = [t0[0] / speed, t0[1] / speed]; } return c; });
     try { buildParts(host, amb, id, 0); } finally { PARTS[amb] = spec; }
   };
   function applyAmb(el, amb, id) {
@@ -26348,7 +26348,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
     host.innerHTML = h;
     if (window.__wikiBoltScan) window.__wikiBoltScan();
     if (window.__wikiFx5Scan) window.__wikiFx5Scan();
-    host.querySelectorAll('.wk-cs-native').forEach(function (nh, ni) { if (window.__wikiNativeParts) window.__wikiNativeParts(nh, natives[ni], 'cs:' + seed + ':' + ni, (Number(st.parts.nm) || 100) / 100); });
+    host.querySelectorAll('.wk-cs-native').forEach(function (nh, ni) { if (window.__wikiNativeParts) window.__wikiNativeParts(nh, natives[ni], 'cs:' + seed + ':' + ni, (Number(st.parts.nm) || 100) / 100, (Number(st.parts.nsp) || 100) / 100); });
   }
   // Эффект на обводке: кольцо заданной ширины, внутри — выбранное покрытие
   // Эффект на обводке. Цвета-«остановки» для перелива или вращения.
@@ -26619,9 +26619,10 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
           if (isN) return html
             + '<div class="wk-ts-row"><span>Оттенок</span>' + range('parts.hue', -180, 180, 5, Number(p.hue) || 0, '°', 0) + '</div>'
             + '<div class="wk-ts-row"><span>Количество</span>' + range('parts.nm', 50, 300, 10, Number(p.nm) || 100, '%', 100) + '</div>'
+            + '<div class="wk-ts-row"><span>Скорость</span>' + range('parts.nsp', 50, 400, 10, Number(p.nsp) || 100, '%', 100) + '</div>'
             + '<div class="wk-ts-row"><span></span><span class="wk-cs-libnote">Цвет частиц меняет ползунок «Оттенок».</span></div>';
           var cm = p.c === 'rainbow' || p.c === 'accent', fixedCol = /^(meat|plaster)$/.test(sh);
-          if (hasN) html += '<div class="wk-ts-row"><span>Оттенок «из эффектов»</span>' + range('parts.hue', -180, 180, 5, Number(p.hue) || 0, '°', 0) + '</div><div class="wk-ts-row"><span>Их количество</span>' + range('parts.nm', 50, 300, 10, Number(p.nm) || 100, '%', 100) + '</div>';
+          if (hasN) html += '<div class="wk-ts-row"><span>Оттенок «из эффектов»</span>' + range('parts.hue', -180, 180, 5, Number(p.hue) || 0, '°', 0) + '</div><div class="wk-ts-row"><span>Их количество</span>' + range('parts.nm', 50, 300, 10, Number(p.nm) || 100, '%', 100) + '</div><div class="wk-ts-row"><span>Их скорость</span>' + range('parts.nsp', 50, 400, 10, Number(p.nsp) || 100, '%', 100) + '</div>';
           return html
             + (fixedCol ? '<div class="wk-ts-row"><span>Цвет</span><span class="wk-cs-libnote">У этой частицы свои цвета.</span></div>' : '<div class="wk-ts-row"><span>Цвет</span><div class="wk-cs-colors">' + seg('data-seg="parts.cmode"', [['', 'Свой'], ['rainbow', 'Радужные'], ['accent', 'Цвет статьи']], cm ? p.c : '') + (cm ? '' : '<input type="color" data-p="parts.c" value="' + esc(p.c || SHAPE_COLOR[sh] || '#ffd36b') + '">') + '<label><input type="checkbox" data-p="parts.glow"' + (p.glow ? ' checked' : '') + '> свечение</label></div></div>')
             + (fixedCol || cm ? '' : '<div class="wk-ts-row"><span></span>' + sw('parts.c') + '</div>')
