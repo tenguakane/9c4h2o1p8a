@@ -3630,7 +3630,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 253";
+const WIKI_VERSION = "11.11.2026 · 255";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -27507,8 +27507,8 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
   function hashNum(s) { var h = 2166136261; s = String(s || ''); for (var i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619); return h >>> 0; }
   function rng(seed) { var a = seed >>> 0; return function () { a = (a + 0x6D2B79F5) >>> 0; var t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
   var SPEED = { slow: 1.8, '': 1, fast: 0.55 };
-  var MOTION_T = { up: 5.5, down: 7, float: 6, burst: 2.8, twinkle: 2.8, wind: 3.6, trickle: 6, glass: 5.5, pop: 4.6 };
-  var SHAPE_COLOR = { bubble: '#9fdcff', ember: '#ff6a1a', shard: '#cfe9ff', diamond: '#7fe7ff', sand: '#e3b973', smoke: '#9aa3b2', drop: '#dff1ff', blood: '#8e0012', rainline: '#cfe8ff', petal: '#ff9cc4', leaf: '#6fcf4f', coin: '#ffcf4a', berry: '#ffd36b', flame: '#ff8a1f', dot: '#ff8a1f', firefly: '#d9ff6b' };
+  var MOTION_T = { up: 5.5, down: 7, float: 6, burst: 2.8, twinkle: 2.8, wind: 3.6, trickle: 6, glass: 5.5, pop: 4.6, eye: 6 };
+  var SHAPE_COLOR = { bubble: '#9fdcff', ember: '#ff6a1a', shard: '#cfe9ff', diamond: '#7fe7ff', sand: '#e3b973', smoke: '#9aa3b2', drop: '#dff1ff', blood: '#8e0012', rainline: '#cfe8ff', petal: '#ff9cc4', leaf: '#6fcf4f', coin: '#ffcf4a', berry: '#ffd36b', flame: '#ff8a1f', dot: '#ff8a1f', firefly: '#d9ff6b', eye: '#ff1a2a' };
   var LIB = ['wk-fx-a', 'wk-fx-b', 'wk-amb-a', 'wk-amb-b', 'wk-amb-p', 'wk-amb-fx'];
   function libLayers(el) { return Array.prototype.filter.call(el.children, function (c) { return LIB.some(function (k) { return c.classList.contains(k); }); }); }
   function animatesFilter(n) { try { return n.getAnimations().some(function (a) { return a.effect && a.effect.getKeyframes().some(function (k) { return 'filter' in k; }); }); } catch (e) { return false; } }
@@ -27569,9 +27569,11 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
     if ((p.shape || '') === 'sand') return sandHTML(p, seed);
     var R = rng(hashNum('cs:' + seed + ':' + JSON.stringify(p)));
     var n = Math.max(3, Math.min(40, Number(p.n) || 14)), shape = p.shape || 'sparkle', mo = p.mo || 'up';
+    if (shape === 'eye') mo = 'eye';
     var base = (MOTION_T[mo] || 5) * (SPEED[p.sp || ''] || 1) * (shape === 'rainline' && mo === 'down' ? .22 : shape === 'smoke' ? 1.5 : 1), out = '';
     for (var i = 0; i < n; i++) {
-      var x = 4 + R() * 92, y = 4 + R() * 92, dx = 0, dy = 0;
+      var x = 4 + R() * 92, y = 4 + R() * 92, dx = 0, dy = 0, ex = '';
+      if (shape === 'eye') { var x2 = 6 + R() * 88, y2 = 6 + R() * 88, x3 = 6 + R() * 88, y3 = 6 + R() * 88; ex = ';--bx:' + (x2 - x).toFixed(1) + '%;--by:' + (y2 - y).toFixed(1) + '%;--cx:' + (x3 - x).toFixed(1) + '%;--cy:' + (y3 - y).toFixed(1) + '%'; }
       if (mo === 'up') { y = 104; dx = (R() * 2 - 1) * 14; }
       else if (mo === 'down') { y = -6; dx = (R() * 2 - 1) * 14; }
       else if (mo === 'float') { dx = (R() * 2 - 1) * 10; dy = (R() * 2 - 1) * 8; }
@@ -27579,14 +27581,15 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
       if (slide) { y = 3 + R() * 60; dx = (R() * 2 - 1) * 1.2; dy = 18 + R() * 30; }
       else if (mo === 'wind') { x = -6; y = 4 + R() * 92; dy = (R() * 2 - 1) * 12; }
       else if (mo === 'burst') { x = 50 + (R() * 2 - 1) * 6; y = 50 + (R() * 2 - 1) * 6; var a = R() * Math.PI * 2, d = 38 + R() * 30; dx = Math.cos(a) * d; dy = Math.sin(a) * d; }
-      var t = base * (0.75 + R() * 0.55), del = -R() * t;
+      var t = base * (0.75 + R() * 0.55), del = -R() * t * (shape === 'eye' ? 3 : 1);
       var col = p.c === 'rainbow' ? 'hsl(' + Math.round(R() * 360) + ',95%,66%)' : p.c === 'accent' ? 'var(--wk-acc,#ffd36b)' : (p.c || SHAPE_COLOR[shape] || '#ffd36b');
       if (shape === 'sand' && !p.c) col = 'hsl(' + (36 + R() * 10).toFixed(0) + ',' + (55 + R() * 20).toFixed(0) + '%,' + (60 + R() * 18).toFixed(0) + '%)';
       var sz = mo === 'glass' ? (slide ? 0.9 + R() * 0.6 : 0.35 + R() * 0.75) : (0.6 + R() * 0.75);
       if (mo === 'glass' && !slide) t = base * (1.6 + R() * 1.2);
       if (shape === 'sand') sz = 0.3 + R() * 0.95;
+      if (shape === 'eye') sz = 0.7 + R() * 0.9;
       var cls = shape === 'ember' ? (R() < 0.6 ? 'ember' : 'ash') : shape;
-      var vars = '--x:' + x.toFixed(1) + '%;--y:' + y.toFixed(1) + '%;--dx:' + dx.toFixed(1) + '%;--dy:' + dy.toFixed(1) + '%;--t:' + t.toFixed(2) + 's;--d:' + (-R() * t).toFixed(2) + 's;--s:' + sz.toFixed(2) + ';--r:' + Math.round(R() * 360) + 'deg;--pc:' + col;
+      var vars = '--x:' + x.toFixed(1) + '%;--y:' + y.toFixed(1) + '%;--dx:' + dx.toFixed(1) + '%;--dy:' + dy.toFixed(1) + '%;--t:' + t.toFixed(2) + 's;--d:' + (-R() * t).toFixed(2) + 's;--s:' + sz.toFixed(2) + ';--r:' + (shape === 'eye' ? Math.round(R() * 50 - 25) : Math.round(R() * 360)) + 'deg;--pc:' + col + ex;
       if (slide && (shape === 'drop' || shape === 'blood')) out += '<i class="m-trail" style="' + vars + ';--tc:' + (shape === 'blood' ? 'color-mix(in srgb,' + col + ' 75%,transparent)' : 'rgba(255,255,255,.16)') + '"><s></s></i>';
       out += '<i class="m-' + mo + (slide && mo === 'glass' ? ' is-slide' : '') + '" style="' + vars + '"><b class="sh-' + cls + '"></b></i>';
     }
@@ -27775,7 +27778,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
 
   /* ---------- Панель в редакторе ---------- */
   var SW = ['#ffd36b', '#ff5a5a', '#ff8ac6', '#b18cff', '#4fb8ff', '#4fe3c1', '#7cf06a', '#ffffff', '#ff9d3d', '#1e1e2e'];
-  var SHAPE_LIST = [['sparkle', 'Искры-звёзды'], ['star', 'Звёзды'], ['petal', 'Лепестки сакуры'], ['leaf', 'Листья'], ['snow', 'Снежинки'], ['bubble', 'Пузыри'], ['rainline', 'Дождь'], ['drop', 'Капли воды'], ['blood', 'Капли крови'], ['sand', 'Песок'], ['smoke', 'Дым'], ['coin', 'Монеты Белли'], ['berry', 'Знак Белли'], ['note', 'Ноты'], ['ember', 'Угли и пепел'], ['shard', 'Осколки'], ['meat', 'Мясо'], ['plaster', 'Пластыри (лечение)']];
+  var SHAPE_LIST = [['sparkle', 'Искры-звёзды'], ['star', 'Звёзды'], ['petal', 'Лепестки сакуры'], ['leaf', 'Листья'], ['snow', 'Снежинки'], ['bubble', 'Пузыри'], ['rainline', 'Дождь'], ['drop', 'Капли воды'], ['blood', 'Капли крови'], ['sand', 'Песок'], ['smoke', 'Дым'], ['coin', 'Монеты Белли'], ['berry', 'Знак Белли'], ['note', 'Ноты'], ['ember', 'Угли и пепел'], ['shard', 'Осколки'], ['meat', 'Мясо'], ['plaster', 'Пластыри (лечение)'], ['eye', 'Красные глаза']];
   // Частицы бывших постоянных эффектов — со своим движением
   var NATIVE_LIST = [['souls', '👻 Души (Йоми Йоми)'], ['flowers', '🌸 Цветы (Хана Хана)'], ['dark', '🌑 Тьма'], ['light', '✨ Свет (Пика Пика)'], ['claws', '🐾 Следы когтей'], ['swords', '⚔️ Удары мечей'], ['daggers', '🗡️ Удары кинжалами'], ['twinkle', '✦ Мерцающие искры'], ['stardust', '✨ Звёздная пыль'], ['confetti', '🎉 Конфетти'], ['runes', '🔮 Парящие руны'], ['aurora', '🌌 Северное сияние'], ['ripples', '💧 Круги на воде'], ['rays', '🌤️ Лучи света']];
   var MOTIONS = [['pop', 'Появляются'], ['up', 'Вверх'], ['down', 'Вниз'], ['float', 'Парят'], ['burst', 'Разлёт'], ['twinkle', 'Мерцают'], ['wind', 'Ветер'], ['trickle', 'Стекают'], ['glass', 'На стекле']];
@@ -39819,5 +39822,19 @@ html body [data-amb="mud"]>.wk-amb-p{display:none!important}
 <style id="wk-real9">
 html body [data-fx="foil-ruby"]>.wk-fx-a{opacity:calc(.1 + var(--o,0)*.14)!important}
 html body [data-fx="foil-ruby"]>.wk-fx-b{background:linear-gradient(105deg,transparent calc(var(--pos,50%) - 18%),rgba(255,255,255,calc(.12 + .3*var(--o,0))) var(--pos,50%),transparent calc(var(--pos,50%) + 18%)),linear-gradient(rgba(230,60,80,.3),rgba(230,60,80,.3))!important;opacity:.55!important}
+</style>
+<style id="wk-eyes">
+/* Красные глаза: открываются, моргают, закрываются и каждый цикл появляются в новом месте */
+@keyframes wkEyeHop{0%,33.3%{transform:translate(0,0)}33.4%,66.6%{transform:translate(var(--bx,0%),var(--by,0%))}66.7%,100%{transform:translate(var(--cx,0%),var(--cy,0%))}}
+@keyframes wkEyeOpen{0%,5%{opacity:0;transform:rotate(var(--r)) scale(.9,.02)}15%{opacity:1;transform:rotate(var(--r)) scale(1,1.08)}19%{transform:rotate(var(--r)) scale(1,1)}58%{opacity:1;transform:rotate(var(--r)) scale(1,1)}62%{transform:rotate(var(--r)) scale(1,.06)}67%{transform:rotate(var(--r)) scale(1,1)}84%{opacity:1;transform:rotate(var(--r)) scale(1,1)}93%{opacity:0;transform:rotate(var(--r)) scale(.95,.04)}100%{opacity:0;transform:rotate(var(--r)) scale(.95,.04)}}
+.wk-cs-parts .m-eye{animation:wkEyeHop calc(var(--t) * 3) linear var(--d) infinite}
+.wk-cs-parts .sh-eye{width:calc(var(--cs-ps,10px) * var(--s) * 2.6);height:calc(var(--cs-ps,10px) * var(--s) * 1.3);margin:calc(var(--cs-ps,10px) * var(--s) * -.65) 0 0 calc(var(--cs-ps,10px) * var(--s) * -1.3);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 40' preserveAspectRatio='none'%3E%3Cpath d='M0 20Q50 -16 100 20Q50 56 0 20Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 40' preserveAspectRatio='none'%3E%3Cpath d='M0 20Q50 -16 100 20Q50 56 0 20Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;background:linear-gradient(#0a0004,transparent 17%,transparent 83%,#0a0004),radial-gradient(circle closest-side at 50% 50%,#12000a 0 12%,var(--pc,#ff1a2a) 12% 26%,#2a0008 26% 33%,color-mix(in srgb,var(--pc,#ff1a2a) 45%,#fff) 33% 52%,#2a0008 52% 60%,var(--pc,#ff1a2a) 60% 80%,#14000a 80% 93%,transparent 94%),radial-gradient(ellipse at 50% 50%,#4a1420 30%,#1a0409 100%);opacity:0;filter:drop-shadow(0 0 calc(var(--cs-ps,10px) * var(--s) * .45) var(--pc,#ff1a2a));animation:wkEyeOpen var(--t) ease-in-out var(--d) infinite}
+.wk-cs-parts.is-glow .sh-eye{filter:drop-shadow(0 0 calc(var(--cs-ps,10px) * var(--s) * .9) var(--pc,#ff1a2a))}
+.wk-cs-shape i.sh-eye{-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 40' preserveAspectRatio='none'%3E%3Cpath d='M0 20Q50 -16 100 20Q50 56 0 20Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 40' preserveAspectRatio='none'%3E%3Cpath d='M0 20Q50 -16 100 20Q50 56 0 20Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;background:linear-gradient(#0a0004,transparent 17%,transparent 83%,#0a0004),radial-gradient(circle closest-side at 50% 50%,#12000a 0 12%,#ff1a2a 12% 26%,#2a0008 26% 33%,#ff9aa6 33% 52%,#2a0008 52% 60%,#ff1a2a 60% 80%,#14000a 80% 93%,transparent 94%),radial-gradient(ellipse at 50% 50%,#4a1420 30%,#1a0409 100%);width:26px!important;height:13px!important;--pc:#ff1a2a}
+@media (prefers-reduced-motion:reduce){.wk-cs-parts .sh-eye{animation:none;opacity:1}.wk-cs-parts .m-eye{animation:none}}
+</style>
+<style id="wk-eyes2">
+.wk-cs-parts .sh-eye{width:calc(var(--cs-ps,10px) * var(--s) * 2.3);height:calc(var(--cs-ps,10px) * var(--s) * 1.35);margin:calc(var(--cs-ps,10px) * var(--s) * -.675) 0 0 calc(var(--cs-ps,10px) * var(--s) * -1.15);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 40' preserveAspectRatio='none'%3E%3Cpath d='M0 25C20 0 62 -8 100 13C72 50 22 53 0 25Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 40' preserveAspectRatio='none'%3E%3Cpath d='M0 25C20 0 62 -8 100 13C72 50 22 53 0 25Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;background:linear-gradient(#08000a,transparent 11%,transparent 86%,#16000f),radial-gradient(circle closest-side at 50% 52%,color-mix(in srgb,var(--pc,#ff1a2a) 50%,#2a0006) 0 12%,color-mix(in srgb,var(--pc,#ff1a2a) 75%,#ff9a50) 13% 15%,color-mix(in srgb,var(--pc,#ff1a2a) 45%,#fff) 16%,color-mix(in srgb,var(--pc,#ff1a2a) 55%,#ffe0e4) 24%,color-mix(in srgb,var(--pc,#ff1a2a) 60%,#ff9aa4) 34%,color-mix(in srgb,var(--pc,#ff1a2a) 82%,#400008) 42%,color-mix(in srgb,var(--pc,#ff1a2a) 70%,#300008) 50%,var(--pc,#ff1a2a) 60%,color-mix(in srgb,var(--pc,#ff1a2a) 100%,#f04040) 68%,color-mix(in srgb,var(--pc,#ff1a2a) 80%,#300008) 82%,color-mix(in srgb,var(--pc,#ff1a2a) 40%,#140008) 90%,transparent 92%),radial-gradient(ellipse at 50% 38%,#fff3f5 25%,#ecc9d1 70%,#b88894 100%)}
+.wk-cs-shape i.sh-eye{-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 40' preserveAspectRatio='none'%3E%3Cpath d='M0 25C20 0 62 -8 100 13C72 50 22 53 0 25Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 40' preserveAspectRatio='none'%3E%3Cpath d='M0 25C20 0 62 -8 100 13C72 50 22 53 0 25Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;background:linear-gradient(#08000a,transparent 11%,transparent 86%,#16000f),radial-gradient(circle closest-side at 50% 52%,color-mix(in srgb,#ff1a2a 50%,#2a0006) 0 12%,color-mix(in srgb,#ff1a2a 75%,#ff9a50) 13% 15%,color-mix(in srgb,#ff1a2a 45%,#fff) 16%,color-mix(in srgb,#ff1a2a 55%,#ffe0e4) 24%,color-mix(in srgb,#ff1a2a 60%,#ff9aa4) 34%,color-mix(in srgb,#ff1a2a 82%,#400008) 42%,color-mix(in srgb,#ff1a2a 70%,#300008) 50%,#ff1a2a 60%,color-mix(in srgb,#ff1a2a 100%,#f04040) 68%,color-mix(in srgb,#ff1a2a 80%,#300008) 82%,color-mix(in srgb,#ff1a2a 40%,#140008) 90%,transparent 92%),radial-gradient(ellipse at 50% 38%,#fff3f5 25%,#ecc9d1 70%,#b88894 100%)}
 </style>
 </body></html>
