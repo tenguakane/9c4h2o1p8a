@@ -2451,7 +2451,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 199";
+const WIKI_VERSION = "11.11.2026 · 200";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -19660,6 +19660,8 @@ img.wk-fade.wk-loaded{opacity:1}
 .wk-tops-col{padding:12px;border:1px solid color-mix(in srgb,var(--who) 40%,transparent);border-radius:14px;background:linear-gradient(180deg,color-mix(in srgb,var(--who) 9%,transparent),transparent 120px),color-mix(in srgb,var(--panel,#0f1623) 70%,transparent);min-width:0}
 .wk-tops-col h3{display:flex;align-items:center;gap:9px;margin:0 0 10px!important;font-size:16px!important}
 .wk-tops-col h3 i{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--who);color:#0b1120;font-style:normal;font-weight:900}
+.wk-tops-col h3 i.has-img{position:relative;overflow:hidden;background:#0b1120}
+.wk-tops-col h3 i.has-img>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;max-width:none;pointer-events:none}
 .wk-tops-col h3 small{margin-left:auto;font-size:11.5px;font-weight:600;color:color-mix(in srgb,var(--text,#e5e7eb) 55%,transparent)}
 .wk-top-row{position:relative;display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:8px;padding:5px 6px;border-radius:10px}
 .wk-top-row+.wk-top-row{margin-top:3px}
@@ -20053,6 +20055,7 @@ img.wk-fade.wk-loaded{opacity:1}
   function thumb(info) {
     return '<span class="wk-top-thumb"' + (info && info.t && info.id ? ' data-wk-who="' + info.t + ':' + esc(info.id) + '"' : '') + (info && info.img ? ' data-src="' + esc(info.img) + '" data-pos="' + esc(info.pos || '50% 30%') + '"' : '') + '>' + (info && info.img ? '<img alt="" loading="lazy" src="' + esc(info.img) + '" style="object-position:' + esc(info.pos || '50% 30%') + '" onerror="this.replaceWith(document.createTextNode(\'' + (info.icon || '👤') + '\'))">' : (info ? info.icon : '＋')) + '</span>';
   }
+  document.addEventListener('wk-avatars-changed', function () { var pn = document.getElementById('wkCabinPaneTops'); if (pn && pn.children.length && !pn.hidden) { try { renderTops(pn); } catch (e) {} } });
   var openPicker = null;
   function renderTops(pane) {
     var st = store();
@@ -20079,7 +20082,7 @@ img.wk-fade.wk-loaded{opacity:1}
     people.forEach(function (p) {
       var editable = st.editable(p.key);
       var filled = lists[p.key].filter(Boolean).length;
-      html += '<div class="wk-tops-col' + (editable ? ' is-mine' : '') + '" data-who="' + esc(p.key) + '" style="--who:' + p.color + '"><h3><i>' + esc(p.name[0]) + '</i>' + esc(p.name) + (p.key === meKey ? ' <span class="wk-top-you">это вы</span>' : '') + '<small>' + filled + ' из ' + size + '</small></h3>';
+      html += '<div class="wk-tops-col' + (editable ? ' is-mine' : '') + '" data-who="' + esc(p.key) + '" style="--who:' + p.color + '"><h3>' + (function () { var h = window.__wkAvHTML && window.__wkAvHTML(p.key); return h ? '<i class="has-img">' + h + '</i>' : '<i>' + esc(p.name[0]) + '</i>'; })() + esc(p.name) + (p.key === meKey ? ' <span class="wk-top-you">это вы</span>' : '') + '<small>' + filled + ' из ' + size + '</small></h3>';
       lists[p.key].forEach(function (id, i) {
         var info = recordInfo(cat, id);
         var others = id && !(info && info.locked) ? people.filter(function (o) { return o.key !== p.key && lists[o.key].indexOf(id) >= 0; }) : [];
@@ -20418,18 +20421,21 @@ img.wk-fade.wk-loaded{opacity:1}
       fb.fs.getDoc(fb.fs.doc(db, 'content', 'avatars')).then(function (snap) {
         if (!snap.exists()) return; var d = snap.data() || {}, m = {};
         Object.keys(d).forEach(function (k) { if (k.indexOf('a_') !== 0) return; try { var v = JSON.parse(d[k] || 'null'); if (v) m[k.slice(2)] = v; } catch (e) {} });
-        var prev = lsGet(SH_KEY), nxt = JSON.stringify(m); if (prev !== nxt) { try { localStorage.setItem(SH_KEY, nxt); } catch (e) {} renderMe(); }
+        var prev = lsGet(SH_KEY), nxt = JSON.stringify(m); if (prev !== nxt) { try { localStorage.setItem(SH_KEY, nxt); } catch (e) {} renderMe(); avChanged(); }
       }).catch(function () {});
     } catch (e) {}
   }
   function saveShared(login, av) {
     var m = readJSON(SH_KEY, {}) || {}; if (av) m[login] = av; else delete m[login];
     try { localStorage.setItem(SH_KEY, JSON.stringify(m)); } catch (e) {}
+    avChanged();
     if (myCloud() && fb) { var o = {}; o['a_' + login] = av ? JSON.stringify(av) : ''; o.updatedBy = me.login; return fb.fs.setDoc(fb.fs.doc(db, 'content', 'avatars'), o, { merge: true }); }
     return Promise.resolve();
   }
   function canSetFor(login) { var s0 = session(); if (!s0 || s0.role === 'guest') return false; if (login === s0.login) return true; return canEditRole(s0.role) && login !== 'dima'; }
   function avImg(av) { return '<img alt="" draggable="false" src="' + esc(av.u) + '" style="object-position:' + av.x + '% ' + av.y + '%;transform:scale(' + (av.z / 100) + ');transform-origin:' + av.x + '% ' + av.y + '%">'; }
+  window.__wkAvHTML = function (login) { var a = avGet(login); return a ? avImg(a) : ''; };
+  function avChanged() { try { document.dispatchEvent(new Event('wk-avatars-changed')); } catch (e) {} }
   function avInner(s) { var av = s.role === 'guest' ? null : avGet(s.login); return av ? avImg(av) : esc(s.role === 'guest' ? '👀' : s.name[0]); }
   function avatarDialog(target) {
     var s = session(); if (!s || s.role === 'guest') return;
@@ -21445,7 +21451,7 @@ img.wk-fade.wk-loaded{opacity:1}
         try { var fv = JSON.parse(u.keys.onePieceWikiFavorites || '[]'); fav = Array.isArray(fv) ? fv.length : Object.keys(fv || {}).length; } catch (e) {}
       }
       if (tops[p.login]) { var t = tops[p.login], n = 0; Object.keys(t).forEach(function (k) { n += (t[k] || []).filter(Boolean).length; }); topFilled = n; }
-      html += '<tr><td><span class="wk-st-who"><span class="wk-ava" style="background:' + p.color + '">' + esc(p.role === 'guest' ? '👀' : p.name[0]) + '</span>' + esc(p.name) + '</span></td><td class="wk-num">' + x.visits + '</td><td class="wk-num">' + Object.keys(x.days).length + '</td><td class="wk-num">' + x.views + '</td><td class="wk-num">' + fmtDur(x.sec) + '</td><td>' + (x.last ? ago(x.last) : (p.gender === 'f' ? 'не заходила' : p.gender === 'm' ? 'не заходил' : 'не заходил(а)')) + '</td><td>' + prog + '</td><td class="wk-num">' + topFilled + '</td><td class="wk-num">' + fav + '</td></tr>';
+      html += '<tr><td><span class="wk-st-who"><span class="wk-ava' + (avGet(p.login) && p.role !== 'guest' ? ' has-img' : '') + '" style="background:' + p.color + '">' + (p.role === 'guest' ? '👀' : (avGet(p.login) ? avImg(avGet(p.login)) : esc(p.name[0]))) + '</span>' + esc(p.name) + '</span></td><td class="wk-num">' + x.visits + '</td><td class="wk-num">' + Object.keys(x.days).length + '</td><td class="wk-num">' + x.views + '</td><td class="wk-num">' + fmtDur(x.sec) + '</td><td>' + (x.last ? ago(x.last) : (p.gender === 'f' ? 'не заходила' : p.gender === 'm' ? 'не заходил' : 'не заходил(а)')) + '</td><td>' + prog + '</td><td class="wk-num">' + topFilled + '</td><td class="wk-num">' + fav + '</td></tr>';
     });
     html += '</tbody></table></div></div>';
 
@@ -21499,7 +21505,7 @@ img.wk-fade.wk-loaded{opacity:1}
       var p = people.find(function (x) { return x.login === e.login; }) || { name: nameOf(e.login), color: '#94a3b8', role: '' };
       var g = p.gender === 'f' ? 1 : p.gender === 'm' ? 0 : 2;
       var what = e.kind === 'view' ? ['открыл', 'открыла', 'открыл(а)'][g] + ' ' + (TYPE_ICON[e.targetType] || '') + ' «' + esc(e.targetName) + '»' : ['перешёл', 'перешла', 'перешёл(ла)'][g] + ' в раздел «' + esc(TAB_NAMES[e.targetId] || e.targetId) + '»';
-      return '<div><span class="wk-ava" style="background:' + p.color + '">' + esc(p.role === 'guest' ? '👀' : (p.name || '?')[0]) + '</span><span><b>' + esc(p.name) + '</b> ' + what + '</span><em>' + ago(e.ts) + '</em></div>';
+      return '<div><span class="wk-ava' + (avGet(p.login) && p.role !== 'guest' ? ' has-img' : '') + '" style="background:' + p.color + '">' + (p.role === 'guest' ? '👀' : (avGet(p.login) ? avImg(avGet(p.login)) : esc((p.name || '?')[0]))) + '</span><span><b>' + esc(p.name) + '</b> ' + what + '</span><em>' + ago(e.ts) + '</em></div>';
     }).join('') + '</div>' : '<div class="wk-st-empty">Пока пусто.</div>') + '</div>';
 
     // Опросы: как участники знают вики
