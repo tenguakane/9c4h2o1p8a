@@ -2451,7 +2451,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 211";
+const WIKI_VERSION = "11.11.2026 · 213";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -9820,9 +9820,11 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     };
     window.__wkUsefulById=wkUsefulById;
     function wkArcStart(id){const ar=(typeof storyArcs!=='undefined'&&Array.isArray(storyArcs))?storyArcs.find(x=>x&&x.id===id):null;const n=v=>{const m=String(v||'').match(/\d+/);return m?Number(m[0]):0;};return ar?{ch:n(ar.chapters),ep:n(ar.episodes)}:{ch:0,ep:0};}
+    // описание арки открывается, когда читатель прошёл арку целиком (по последней главе/серии диапазона), а не с её начала
+    function wkArcEnd(id){const ar=(typeof storyArcs!=='undefined'&&Array.isArray(storyArcs))?storyArcs.find(x=>x&&x.id===id):null;if(!ar)return {ch:0,ep:0,open:false};const mx=v=>{const m=String(v||'').match(/\d+/g);return m?Math.max.apply(null,m.map(Number)):0;};return {ch:mx(ar.chapters),ep:mx(ar.episodes),open:ar.ongoing===true||ar.ongoing==='true'||ar.ongoing===1};}
     function wkArcsOf(raw,all){
         if(!raw)return [];
-        return WK_ARC_LIST.map(a=>({a,t:String(raw[a.key]==null?'':raw[a.key]).trim()})).filter(x=>x.t).filter(x=>{if(all||spoilerAuditMode)return true;const st=wkArcStart(x.a.id);return wkReachedAt(st.ch,st.ep);}).map(x=>({id:x.a.id,name:x.a.name,kind:x.a.kind,text:x.t}));
+        return WK_ARC_LIST.map(a=>({a,t:String(raw[a.key]==null?'':raw[a.key]).trim()})).filter(x=>x.t).filter(x=>{if(all||spoilerAuditMode)return true;const en=wkArcEnd(x.a.id);if(en.open)return false;return wkReachedAt(en.ch,en.ep);}).map(x=>({id:x.a.id,name:x.a.name,kind:x.a.kind,text:x.t}));
     }
     /* ---------- Фото по аркам: на карточке и в наградах — самое свежее из уже открытых ---------- */
     const WK_PH_KEYS={person_link:'u',person_image_position:'y',person_image_position_x:'x',person_image_zoom:'z'};
@@ -27591,6 +27593,7 @@ html body .wk-ov-chart{grid-column:1/-1}
   window.addEventListener('scroll', function () { if (openP && !window.matchMedia('(max-width:760px)').matches) closeAll(true); }, { passive: true });
 })();
 </script>
+<style id="wk-ad-css">#wikiEditorForm .wiki-editor-section[data-wk-ad-hide]{display:none!important}</style>
 <style id="wk-ov-stats-css">
 @layer wk-redesign{@media (min-width:761px){html.wk-hdr-tight body > header .main-tab{padding-left:8px!important;padding-right:8px!important}}}
 @layer wk-redesign{html body #characterPagination#characterPagination#characterPagination#characterPagination .pagination-button,
@@ -30443,14 +30446,21 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 
   // --- редактор персонажа: «Биография по аркам» одним списком: «＋ Добавить описание» и выбор арки
   var ADK = { main: 'Основные арки', filler: 'Филлеры', film: 'Фильмы', cover: 'Обложки' };
+  function adHide(form, first) {
+    form.querySelectorAll('.wiki-editor-section').forEach(function (sec) {
+      if (sec === first || sec.querySelector('.wk-ad-ed')) return;
+      var hasAt = sec.querySelector('textarea[data-field^="at_"]'), t = (sec.querySelector('h4') || {}).textContent || '';
+      if ((hasAt && !sec.querySelector('[data-field]:not([data-field^="at_"])')) || /^Биография:/.test(t)) sec.setAttribute('data-wk-ad-hide', '1');
+    });
+  }
   function adMount(form) {
     if (form.querySelector('.wk-ad-ed')) return;
     var arcs = window.__wkArcList || [], tas = {};
     form.querySelectorAll('textarea[data-field^="at_"]').forEach(function (t) { tas[t.getAttribute('data-field')] = t; });
     var keys = arcs.filter(function (a) { return tas[a.key]; }); if (!keys.length) return;
-    var first = tas[keys[0].key].closest('.wiki-editor-section'); if (!first) return;
+    var first = [].slice.call(form.querySelectorAll('.wiki-editor-section')).filter(function (x) { return /^Биография по аркам/.test((x.querySelector('h4') || {}).textContent || ''); })[0] || tas[keys[0].key].closest('.wiki-editor-section'); if (!first) return;
     var body = first.querySelector('.wiki-editor-section-body'); if (!body) return;
-    form.querySelectorAll('.wiki-editor-section').forEach(function (sec) { if (sec !== first && sec.querySelector('textarea[data-field^="at_"]') && !sec.querySelector('[data-field]:not([data-field^="at_"])')) sec.style.display = 'none'; });
+    adHide(form, first);
     var flds = body.querySelector('.wiki-editor-fields'); if (flds) flds.style.display = 'none';
     var box = document.createElement('div'); box.className = 'wk-ad-ed'; box.style.cssText = 'display:grid;gap:10px'; body.appendChild(box);
     var rows = keys.filter(function (a) { return String(tas[a.key].value || '').trim(); }).map(function (a) { return a.key; });
@@ -30494,7 +30504,8 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     render();
   }
   new MutationObserver(function () {
-    var f = document.getElementById('wikiEditorForm'); if (f && !f.querySelector('.wk-ad-ed') && f.querySelector('textarea[data-field^="at_"]')) adMount(f);
+    var f = document.getElementById('wikiEditorForm'); if (!f) return; var ed = f.querySelector('.wk-ad-ed');
+    if (ed) adHide(f, ed.closest('.wiki-editor-section')); else if (f.querySelector('textarea[data-field^="at_"]')) adMount(f);
   }).observe(document.documentElement, { childList: true, subtree: true });
 
   // --- статья персонажа: блок «Дополнительные фото» в самом низу
