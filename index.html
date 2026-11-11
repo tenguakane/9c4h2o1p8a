@@ -3622,7 +3622,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 228";
+const WIKI_VERSION = "11.11.2026 · 231";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -24311,6 +24311,16 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
 [data-fx="gear5"]>.wk-fx-b{background:repeating-conic-gradient(from var(--wk-ang) at var(--mx) var(--my),rgba(255,255,255,.28) 0 3deg,transparent 4.5deg 15deg);-webkit-mask:radial-gradient(circle at var(--mx) var(--my),transparent 8%,#000 22%,transparent 70%);mask:radial-gradient(circle at var(--mx) var(--my),transparent 8%,#000 22%,transparent 70%);mix-blend-mode:screen;opacity:calc(.15 + var(--o)*.6)}
 [data-fx="gear5"].wk-fx-on>.wk-fx-b,.wk-fx-preview[data-fx="gear5"]>.wk-fx-b{animation:wkFxSpin 16s linear infinite}
 
+
+/* ===== Подпалённая бумага: внизу карточка обугливается как лист, без огня ===== */
+[data-amb="scorch"]>.wk-amb-a,[data-amb="scorch"]>.wk-amb-b{mix-blend-mode:normal;animation:none;box-shadow:none;opacity:1}
+[data-amb="scorch"]>.wk-amb-a{background:linear-gradient(0deg,#ff8a2a,#e0561a 60%,#a2320c);-webkit-mask:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'><polygon points='0.0,75.4 1.8,74.4 5.2,73.2 6.4,72.4 9.8,71.7 11.6,73.0 15.0,77.6 18.4,81.0 20.2,80.0 22.0,84.0 25.4,82.7 26.6,80.3 27.8,80.8 29.0,82.7 31.6,82.1 35.0,83.1 38.4,80.7 41.8,84.2 43.6,84.7 44.8,81.2 48.2,83.1 51.6,85.9 54.2,82.8 57.6,82.0 61.0,82.4 63.6,83.2 64.8,83.2 66.6,82.5 69.2,84.1 70.4,82.2 72.2,82.5 74.8,80.2 76.0,81.3 79.4,80.0 80.6,80.8 82.4,77.0 85.8,78.6 87.0,74.1 88.2,75.5 90.8,73.1 93.4,73.5 94.6,73.7 95.8,73.1 97.0,78.8 100.0,81.1 100,101 0,101'/></svg>") center/100% 100% no-repeat;mask:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'><polygon points='0.0,75.4 1.8,74.4 5.2,73.2 6.4,72.4 9.8,71.7 11.6,73.0 15.0,77.6 18.4,81.0 20.2,80.0 22.0,84.0 25.4,82.7 26.6,80.3 27.8,80.8 29.0,82.7 31.6,82.1 35.0,83.1 38.4,80.7 41.8,84.2 43.6,84.7 44.8,81.2 48.2,83.1 51.6,85.9 54.2,82.8 57.6,82.0 61.0,82.4 63.6,83.2 64.8,83.2 66.6,82.5 69.2,84.1 70.4,82.2 72.2,82.5 74.8,80.2 76.0,81.3 79.4,80.0 80.6,80.8 82.4,77.0 85.8,78.6 87.0,74.1 88.2,75.5 90.8,73.1 93.4,73.5 94.6,73.7 95.8,73.1 97.0,78.8 100.0,81.1 100,101 0,101'/></svg>") center/100% 100% no-repeat}
+[data-amb="scorch"]>.wk-amb-b{background:radial-gradient(ellipse at 15% 100%,#4a2e18 0,transparent 55%),radial-gradient(ellipse at 85% 100%,#3a2412 0,transparent 50%),linear-gradient(0deg,#050302,#120a06 55%,#24160c);-webkit-mask:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'><polygon points='0.0,78.1 1.8,77.1 5.2,75.3 6.4,74.1 9.8,74.3 11.6,75.6 15.0,80.5 18.4,82.9 20.2,82.6 22.0,85.9 25.4,85.3 26.6,82.2 27.8,83.0 29.0,85.7 31.6,83.9 35.0,85.1 38.4,83.5 41.8,86.4 43.6,86.8 44.8,83.0 48.2,85.6 51.6,88.7 54.2,85.5 57.6,84.6 61.0,84.4 63.6,84.9 64.8,85.9 66.6,85.0 69.2,86.4 70.4,85.1 72.2,84.7 74.8,82.9 76.0,83.9 79.4,81.9 80.6,83.1 82.4,79.7 85.8,81.0 87.0,76.4 88.2,77.2 90.8,76.2 93.4,76.1 94.6,76.0 95.8,75.8 97.0,81.1 100.0,84.0 100,101 0,101'/></svg>") center/100% 100% no-repeat;mask:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'><polygon points='0.0,78.1 1.8,77.1 5.2,75.3 6.4,74.1 9.8,74.3 11.6,75.6 15.0,80.5 18.4,82.9 20.2,82.6 22.0,85.9 25.4,85.3 26.6,82.2 27.8,83.0 29.0,85.7 31.6,83.9 35.0,85.1 38.4,83.5 41.8,86.4 43.6,86.8 44.8,83.0 48.2,85.6 51.6,88.7 54.2,85.5 57.6,84.6 61.0,84.4 63.6,84.9 64.8,85.9 66.6,85.0 69.2,86.4 70.4,85.1 72.2,84.7 74.8,82.9 76.0,83.9 79.4,81.9 80.6,83.1 82.4,79.7 85.8,81.0 87.0,76.4 88.2,77.2 90.8,76.2 93.4,76.1 94.6,76.0 95.8,75.8 97.0,81.1 100.0,84.0 100,101 0,101'/></svg>") center/100% 100% no-repeat}
+[data-amb="scorch"]>.wk-amb-a::before{content:"";position:absolute;left:0;right:0;bottom:0;height:62%;background:linear-gradient(0deg,rgba(60,22,4,.75),rgba(135,72,24,.45) 35%,rgba(170,115,55,.18) 70%,transparent);-webkit-mask:none;mask:none}
+@keyframes wkScorchGlow{0%,100%{filter:brightness(.85)}50%{filter:brightness(1.2)}}
+.wk-live[data-amb="scorch"]>.wk-amb-a,.wk-fx-on[data-amb="scorch"]>.wk-amb-a{animation:wkScorchGlow 3.4s ease-in-out infinite}
+html.wk-calm body :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell>.character-item[data-amb="scorch"]:not(.wk-live)>.wk-amb-a,
+html.wk-calm body :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell>.character-item[data-amb="scorch"]:not(.wk-live)>.wk-amb-b{opacity:1!important}
 /* ===== Неон: светящаяся рамка цвета статьи (в каталоге, в статье и на открытом фото) ===== */
 [data-amb="neon"]{--neon:var(--wk-acc)}
 [data-amb="neon"]>.wk-amb-a{box-shadow:inset 0 0 0 2px var(--neon),inset 0 0 16px color-mix(in srgb,var(--neon) 55%,transparent),0 0 14px color-mix(in srgb,var(--neon) 60%,transparent);animation:wkFxPulse 2.4s ease-in-out infinite}
@@ -24732,6 +24742,7 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     { v: 'twinkle', n: 'Мерцающие искры' },
     { v: 'holodrift', n: 'Плывущая голограмма' },
     { v: 'neon', n: 'Неон' },
+    { v: 'scorch', n: 'Подпалённая бумага' },
     { v: 'fire', n: 'Пламя' },
     { v: 'phoenix', n: 'Синее пламя Феникса' },
     { v: 'smoke', n: 'Дым' },
@@ -27772,7 +27783,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
     }
     function current() { return { fx: fxSel ? fxSel.value : '', amb: shSel ? shSel.value : '', cs: clean(st) }; }
     var AMB_CATS = [
-      ['✨', 'Блики и покрытия', ['prism', 'accentprism', 'shine', 'goldshine', 'rainbowshine', 'holodrift', 'neon', 'twinkle']],
+      ['✨', 'Блики и покрытия', ['prism', 'accentprism', 'shine', 'goldshine', 'rainbowshine', 'holodrift', 'neon', 'scorch', 'twinkle']],
       ['🔥', 'Стихии', ['fire', 'phoenix', 'magma', 'smoke', 'ice', 'frost', 'sand', 'sea', 'rain', 'poison', 'thunder', 'dark', 'light']],
       ['👑', 'Воля и силы', ['haki', 'haoclash', 'drums', 'devil', 'explosion', 'quake', 'time', 'rust', 'room', 'barrier']],
       ['🍈', 'Силы Дьявольских плодов', ['ghosts', 'souls', 'love', 'diamond', 'mochi', 'flowers', 'sweets']],
@@ -28061,7 +28072,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
       ['🧪 Новые покрытия', ['liquid-metal', 'prism-shards', 'scan']]
     ],
     card_shine: [
-      ['🌈 Рамки и блики', ['prism', 'accentprism', 'shine', 'goldshine', 'rainbowshine', 'twinkle', 'holodrift', 'neon']],
+      ['🌈 Рамки и блики', ['prism', 'accentprism', 'shine', 'goldshine', 'rainbowshine', 'twinkle', 'holodrift', 'neon', 'scorch']],
       ['🔥 Стихии', ['fire', 'phoenix', 'magma', 'smoke', 'dark', 'thunder', 'light', 'frost', 'ice', 'sand', 'sea', 'rain', 'poison']],
       ['👑 Воля и бой', ['haki', 'haoclash', 'drums', 'swords', 'daggers', 'claws', 'fangs', 'explosion', 'quake']],
       ['🍎 Дьявольские плоды', ['room', 'souls', 'barrier', 'ghosts', 'love', 'diamond', 'mochi', 'flowers', 'time', 'rust', 'sweets', 'devil']],
@@ -28619,6 +28630,18 @@ html body :is(#charactersSection,#favoritesSection,#fruitsSection,#rewardsSectio
         if(ed){var mr=me&&me.getBoundingClientRect(),hr=h.getBoundingClientRect(),off=(meOn&&mr&&mr.width>0&&window.innerWidth>700)?Math.round(hr.right-mr.left+8):14;ed.style.setProperty('right',Math.max(14,Math.min(off,Math.max(14,hr.width-140)))+'px');}
       }
       var hr=h.getBoundingClientRect(),sr=se.getBoundingClientRect();
+      if(window.innerWidth<761){   // телефон: кнопка акцента — в верхней строке, слева от аватара (и от кнопки поиска, если она рядом)
+        var tl=window.innerWidth-12,cy=hr.top+Math.min(hr.height,64)/2;
+        ['#wkMe','.global-search-mobile-trigger'].forEach(function(sel){var e=h.querySelector(sel);if(!e)return;var cs=getComputedStyle(e);if(cs.display==='none'||cs.visibility==='hidden')return;var r=e.getBoundingClientRect();if(r.width<10||r.top>hr.top+hr.height)return;tl=Math.min(tl,r.left);if(sel==='#wkMe')cy=r.top+r.height/2;});
+        acc.style.setProperty('position','absolute','important');
+        ['right','bottom'].forEach(function(k){acc.style.setProperty(k,'auto','important');});
+        acc.style.setProperty('transform','none','important');acc.style.setProperty('margin','0','important');acc.style.setProperty('z-index','29','important');
+        acc.style.removeProperty('background');
+        var pr=(acc.offsetParent||h).getBoundingClientRect(),aw=acc.offsetWidth||36,ah=acc.offsetHeight||36;
+        acc.style.setProperty('left',Math.round(tl-4-aw-pr.left)+'px','important');
+        acc.style.setProperty('top',Math.round(cy-ah/2-pr.top)+'px','important');
+        return;
+      }
       var tabs=h.querySelectorAll('.main-tab'),last=tabs.length?tabs[tabs.length-1].getBoundingClientRect():null;
       var bw=min?34:36,r1=Math.round(hr.right-sr.left+8),r2=r1+bw+8,accLeft=hr.right-r2-bw;
       var over=last?(last.right+4-accLeft):0,hc=document.documentElement.classList;
@@ -32004,8 +32027,8 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 .wk-back dt{color:#94a3b8}
 .wk-back dd{margin:0;color:#f1f5f9;font-weight:600;overflow-wrap:anywhere}
 .wk-back-open{justify-self:start;margin-top:6px;padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:#fff;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
-.catalog-item-shell.wk-flipping{animation:wkFlip .36s ease-in-out}
-@keyframes wkFlip{0%{transform:perspective(900px) rotateY(0)}50%{transform:perspective(900px) rotateY(90deg)}100%{transform:perspective(900px) rotateY(0)}}
+.catalog-item-shell.wk-flipping{animation:wkFlip .9s linear both;will-change:transform;z-index:6}
+@keyframes wkFlip{0%{transform:perspective(1100px) rotateY(0) scale(1);animation-timing-function:cubic-bezier(.45,.05,.8,.5)}50%{transform:perspective(1100px) rotateY(90deg) scale(1.07);animation-timing-function:step-end}50.01%{transform:perspective(1100px) rotateY(-90deg) scale(1.07);animation-timing-function:cubic-bezier(.2,.5,.55,.95)}100%{transform:perspective(1100px) rotateY(0) scale(1)}}
 .wk-reduced .catalog-item-shell.wk-flipping{animation:none}
 
 /* --- Размер карточек --- */
@@ -32191,8 +32214,8 @@ html body #charactersSection#charactersSection #characterList#characterList.char
       shell.classList.toggle('wk-flipped');
       try { if (window.__wkFitBack) window.__wkFitBack(shell); } catch (e) {}
       var b = shell.querySelector(':scope > .wk-flip-btn'); if (b) b.setAttribute('aria-pressed', String(shell.classList.contains('wk-flipped')));
-    }, 170);
-    setTimeout(function () { shell.classList.remove('wk-flipping'); }, 360);
+    }, 450);
+    setTimeout(function () { shell.classList.remove('wk-flipping'); }, 910);
     try { if (window.__wkHaptic) window.__wkHaptic('tap'); } catch (e) {}
   }
   function decorateFlip(el) {
@@ -33416,8 +33439,8 @@ html body #fruitsSection#fruitsSection#fruitsSection #fruitsFiltersButton#fruits
       back.innerHTML = backHTML(type, r);
     }
     shell.classList.add('wk-flipping');
-    setTimeout(function () { shell.classList.toggle('wk-flipped'); try { if (window.__wkFitBack) window.__wkFitBack(shell); } catch (e) {} }, 170);
-    setTimeout(function () { shell.classList.remove('wk-flipping'); }, 360);
+    setTimeout(function () { shell.classList.toggle('wk-flipped'); try { if (window.__wkFitBack) window.__wkFitBack(shell); } catch (e) {} }, 450);
+    setTimeout(function () { shell.classList.remove('wk-flipping'); }, 910);
     try { if (window.__wkHaptic) window.__wkHaptic('tap'); } catch (e) {}
   }
   function decorateFlip(card) {
