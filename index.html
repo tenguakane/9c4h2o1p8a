@@ -3630,7 +3630,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 281";
+const WIKI_VERSION = "11.11.2026 · 283";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -33381,7 +33381,7 @@ html.ios-app .wk-totop{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
      ========================================================= */
   function cropOf(rec) { var r = rec && (rec.__wikiRaw || rec) || {}; return { x: Math.max(0, Math.min(100, Number(r.person_image_position_x) || 50)), y: Math.max(0, Math.min(100, Number(r.person_image_position) || 50)), z: Math.max(100, Math.min(250, Number(r.person_image_zoom) || 100)) }; }
   // Свежая запись (после быстрого сохранения __wikiRaw может быть устаревшим).
-  function fresh(rec) { var r = null; try { if (rec && rec.id && window.__wikiRawRecord) r = window.__wikiRawRecord('character', rec.id); } catch (e) {} return r || (rec && (rec.__wikiRaw || rec)) || {}; }
+  function fresh(rec) { var r = null; try { if (rec && rec.id && window.__wikiRawRecord) r = window.__wikiRawRecord('character', rec.id); } catch (e) {} r = r || (rec && (rec.__wikiRaw || rec)) || {}; try { var ap = window.__wikiLatestArcPhoto && window.__wikiLatestArcPhoto(r); if (ap) { r = Object.assign({}, r, { person_link: ap.u, person_image_position: ap.y, person_image_position_x: ap.x, person_image_zoom: ap.z }); if (ap.fx) r.card_fx = ap.fx; if (ap.amb) r.card_shine = ap.amb; if (ap.cs) r.card_style = ap.cs; r.hero_crop = ''; r.hero_crop_x = ''; } } catch (e) {} return r; }
   function parseCrop(v) { var m = String(v || '').split(','); if (m.length < 3 || m[0] === '') return null; return { x: +m[0], y: +m[1], z: +m[2] }; }
   // Какое фото сейчас видит читатель: первое или второе (после таймскипа).
   function altActive(rec) { try { var a = window.__wikiCharacterAltPhoto ? window.__wikiCharacterAltPhoto(rec) : null; return !!(a && a.active); } catch (e) { return false; } }
@@ -40362,11 +40362,13 @@ body.wk-ie-on .wk-ie-btn{display:none}
 })();
 </script>
 <style id="wk-add-article-css">
-.wk-add-btn{position:fixed;top:12px;right:18px;z-index:1200;display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;border:1px solid rgba(233,196,106,.7);background:rgba(233,196,106,.14);color:#f3d98b;font:inherit;font-size:14px;font-weight:600;cursor:pointer;min-height:40px;backdrop-filter:blur(6px)}
-.wk-add-btn:hover{background:rgba(233,196,106,.26)}
-.wk-add-btn:focus-visible{outline:2px solid #fff;outline-offset:2px}
-.wk-add-btn b{font-size:18px;line-height:1;font-weight:500}
-@media (max-width:900px){.wk-add-btn{right:112px;top:14px;width:42px;height:42px;min-height:0;padding:0;justify-content:center;border-radius:12px}.wk-add-btn span{display:none}}
+.wk-add-btn{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:0;height:36px;min-width:36px;padding:0 9px;box-sizing:border-box;border-radius:999px;border:1px solid color-mix(in srgb,var(--wk-accent,#d8b45a) 70%,transparent);background:color-mix(in srgb,var(--wk-accent,#d8b45a) 16%,transparent);color:var(--wk-accent,#d8b45a);font:inherit;font-size:13.5px;font-weight:650;cursor:pointer;white-space:nowrap;overflow:hidden;position:relative;transition:background .18s,border-color .18s,padding .22s}
+.wk-add-btn b{font-size:20px;line-height:1;font-weight:500;width:16px;text-align:center}
+.wk-add-btn span{display:inline-block;max-width:0;opacity:0;overflow:hidden;transition:max-width .25s ease,opacity .18s,margin .25s}
+.wk-add-btn:hover,.wk-add-btn:focus-visible{background:color-mix(in srgb,var(--wk-accent,#d8b45a) 28%,transparent);border-color:var(--wk-accent,#d8b45a);padding:0 14px 0 9px}
+.wk-add-btn:hover span,.wk-add-btn:focus-visible span{max-width:150px;opacity:1;margin-left:7px}
+.wk-add-btn:focus-visible{outline:2px solid var(--wk-accent,#d8b45a);outline-offset:2px}
+@media (max-width:760px){.wk-add-btn{margin-left:auto}.wk-add-btn+.wk-acc-btn{margin-left:8px}}
 body.wiki-editor-open .wk-add-btn{display:none}
 </style>
 <script id="wk-add-article">
@@ -40374,20 +40376,36 @@ body.wiki-editor-open .wk-add-btn{display:none}
   'use strict';
   var MAP = { characters: ['character', 'персонажа'], story: ['story', 'арку'], rewards: ['reward', 'награду'], fruits: ['fruit', 'плод'], useful: ['useful', 'полезную статью'] };
   function canEdit() { try { return typeof window.__wikiCanEdit === 'function' ? !!window.__wikiCanEdit() : false; } catch (e) { return false; } }
+  function mount(b) {
+    var acc = document.querySelector('.wk-acc-btn'), host = document.querySelector('.wiki-header-top');
+    if (acc && acc.parentNode) acc.parentNode.insertBefore(b, acc); else if (host) host.appendChild(b); else document.body.appendChild(b);
+    place(b);
+  }
+  function place(b) {
+    var acc = b.nextElementSibling && b.nextElementSibling.classList.contains('wk-acc-btn') ? b.nextElementSibling : null;
+    var cs = acc && getComputedStyle(acc);
+    if (cs && (cs.position === 'absolute' || cs.position === 'fixed')) {
+      var r = parseFloat(cs.right);
+      if (r === r) { b.style.position = cs.position; b.style.left = 'auto'; b.style.top = cs.top; b.style.transform = cs.transform === 'none' ? '' : cs.transform; b.style.margin = '0'; b.style.zIndex = cs.zIndex === 'auto' ? '' : cs.zIndex; b.style.right = (r + 44) + 'px'; return; }
+    }
+    ['position', 'left', 'top', 'transform', 'margin', 'right', 'zIndex'].forEach(function (k) { b.style[k] = ''; });
+  }
+
   function upd() {
     var tab = document.body.dataset.activeTab, m = MAP[tab], b = document.getElementById('wkAddArticle');
+    if (b && b.parentNode === document.body && document.querySelector('.wk-acc-btn, .wiki-header-top')) mount(b); else if (b) place(b);
     var inArt = ['characterArticle', 'storyArticle', 'fruitArticle', 'usefulArticle'].some(function (id) { var e = document.getElementById(id); return e && getComputedStyle(e).display !== 'none'; });
-    if (!m || !canEdit() || (inArt && window.innerWidth <= 900)) { if (b) b.remove(); return; }
+    if (!m || !canEdit()) { if (b) b.remove(); return; }
     if (!b) {
       b = document.createElement('button'); b.type = 'button'; b.id = 'wkAddArticle'; b.className = 'wk-add-btn'; b.innerHTML = '<b aria-hidden="true">＋</b><span>Добавить статью</span>';
       b.addEventListener('click', function () { var mm = MAP[document.body.dataset.activeTab]; if (mm && window.__wkNewArticle) window.__wkNewArticle(mm[0]); });
-      document.body.appendChild(b);
+      mount(b);
     }
     var t = 'Добавить статью в раздел «' + (document.querySelector('.main-tab.active') ? document.querySelector('.main-tab.active').textContent.trim() : '') + '»';
     b.title = t; b.setAttribute('aria-label', t);
   }
   new MutationObserver(upd).observe(document.body, { attributes: true, attributeFilter: ['data-active-tab'] });
-  setInterval(upd, 1200); upd();
+  setInterval(function () { upd(); var bb = document.getElementById('wkAddArticle'); if (bb) place(bb); }, 1200); window.addEventListener('resize', function () { var bb = document.getElementById('wkAddArticle'); if (bb) place(bb); }); upd();
 })();
 </script>
 </body></html>
