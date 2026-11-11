@@ -2451,7 +2451,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 223";
+const WIKI_VERSION = "11.11.2026 · 224";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -30324,7 +30324,7 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   // Разовая правка: у персонажей со статусом «Анимация» снимаем «ЗАГЛАВНЫЕ» в заголовке (ставилось массово).
   function runCapsFix() {
     if (!canEdit() || typeof window.__wikiBulkSave !== 'function') return 0;
-    if (lsGet('wkCapsFixV217')) return 0;
+    if (lsGet('wkCapsFixV223')) return 0;
     var ops = [];
     arr(LISTS.character).forEach(function (rec) {
       var st = String(rv(rec, 'status') || ''); if (st.indexOf('Анимация') < 0) return;
@@ -30335,14 +30335,16 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
       ops.push({ type: 'character', id: rv(rec, 'id'), changes: { title_style: Object.keys(c).length ? JSON.stringify(c) : '' } });
     });
     var n = ops.length ? window.__wikiBulkSave(ops) : 0;
-    lsSet('wkCapsFixV217', new Date().toISOString());
+    // Флаг ставим, только когда реально что-то исправили: облачные данные могут приехать позже встроенных.
+    if (n) lsSet('wkCapsFixV223', new Date().toISOString());
     if (n) { console.info('Заглавные сняты у ' + n + ' персонажей'); try { toast('Сняты заглавные буквы у ' + n + ' персонажей.'); } catch (e) {} }
     return n;
   }
   window.__wkRunCapsFix = runCapsFix;
   function autoCaps() { if (!canEdit()) return; try { runCapsFix(); } catch (e) { console.warn('Заглавные:', e); } }
-  if (window.WIKI_CLOUD_ENABLED) window.addEventListener('wiki:cloud-ready', function () { setTimeout(autoCaps, 4000); });
-  else window.addEventListener('load', function () { setTimeout(autoCaps, 4000); });
+  function autoCapsRetry() { [4000, 10000, 20000, 40000].forEach(function (ms) { setTimeout(autoCaps, ms); }); }
+  if (window.WIKI_CLOUD_ENABLED) window.addEventListener('wiki:cloud-ready', autoCapsRetry);
+  else window.addEventListener('load', autoCapsRetry);
 
 
   /* ---------- Тактильный отклик на телефоне ----------
