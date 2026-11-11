@@ -2451,7 +2451,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 215";
+const WIKI_VERSION = "11.11.2026 · 216";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -22409,10 +22409,11 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
   function arr(type) { try { return { character: characters, story: storyArcs, reward: rewards, fruit: fruits, useful: usefulArticles }[type] || []; } catch (e) { return []; } }
   function filled(v) { if (Array.isArray(v)) return v.length > 0; if (typeof v === 'number') return v > 0; return v != null && String(v).trim() !== '' && String(v).trim() !== 'Нет'; }
   function list(v) { return Array.isArray(v) ? v : String(v || '').split(/[,;\n]+/).map(function (x) { return x.trim(); }).filter(Boolean); }
+  function arcPh(v) { if (Array.isArray(v)) return v.some(function (x) { return x && x.u; }); try { var j = JSON.parse(String(v || '[]')); return Array.isArray(j) && j.some(function (x) { return x && x.u; }); } catch (e) { return false; } }
   var inArc = null;
   function arcSet() { if (inArc) return inArc; inArc = {}; arr('story').forEach(function (a) { list((a.__wikiRaw || a).characters).forEach(function (id) { inArc[id] = 1; }); }); setTimeout(function () { inArc = null; }, 3000); return inArc; }
   var RULES = {
-    character: [['Фото', ['person_link']], ['Описание', ['description']], ['Глава или эпизод', ['chapter', 'episode']], ['Статус', ['status']], ['Связи или арки', ['connect'], function (g, id) { return filled(list(g('connect'))) || !!arcSet()[id]; }]],
+    character: [['Фото', ['person_link'], function (g) { return filled(g('person_link')) || arcPh(g('arc_photos')); }], ['Описание', ['description'], function (g) { return filled(g('description')) || filled(g('__at')); }], ['Глава или эпизод', ['chapter', 'episode']], ['Статус', ['status']], ['Связи или арки', ['connect'], function (g, id) { return filled(list(g('connect'))) || !!arcSet()[id]; }]],
     story: [['Картинка', ['image']], ['Описание', ['description']], ['Главы или эпизоды', ['chapters', 'episodes']], ['Персонажи', ['characters'], function (g) { return list(g('characters')).length > 0; }], ['Ключевые события', ['key']]],
     fruit: [['Картинка', ['image']], ['Описание', ['description']], ['Тип', ['type']], ['Владелец', ['owner']], ['Глава или эпизод', ['appearance', 'episode']]],
     useful: [['Картинка', ['image']], ['Описание', ['description']], ['Категория', ['type']], ['Связи', ['connect'], function (g) { return list(g('connect')).length > 0; }]],
@@ -22442,7 +22443,7 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     return (SOFT[type] || []).filter(function (r) { return skip.indexOf(r[1]) < 0 && !r[2].some(function (k) { return filled(get(k)); }); }).map(function (r) { return { label: r[0], key: r[1], strong: !!(r[3] && r[3].test(st)) }; });
   }
   window.__wikiMaybeForgot = function (type, rec) { var raw = rec && (rec.__wikiRaw || rec); return soft(type, function (k) { return raw ? raw[k] : ''; }, rec && rec.not_needed, filmOf(type, rec)); };
-  window.__wikiCompleteness = function (type, rec) { var raw = rec && (rec.__wikiRaw || rec); return check(type, function (k) { return raw ? raw[k] : ''; }, rec && rec.id, filmOf(type, rec)); };
+  window.__wikiCompleteness = function (type, rec) { var raw = rec && (rec.__wikiRaw || rec); return check(type, function (k) { if (k === '__at') return raw ? Object.keys(raw).filter(function (x) { return /^at_/.test(x) && filled(raw[x]); }).join() : ''; return raw ? raw[k] : ''; }, rec && rec.id, filmOf(type, rec)); };
   function level(c) { return c.done === c.total ? 'ok' : c.done >= c.total - 1 ? 'mid' : 'low'; }
   function activeType() { var t = document.querySelector('#wikiEditorTabs .wiki-editor-tab.active[data-type]'); return t ? t.getAttribute('data-type') : ''; }
   var onlyIncomplete = false;
@@ -22486,7 +22487,7 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
   function formChip() {
     var f = document.getElementById('wikiEditorForm'); if (!f || !f.querySelector('[data-field="id"]')) return;
     var type = activeType(); if (!RULES[type]) return;
-    var get = function (k) { var el = f.querySelector('[data-field="' + k + '"]'); if (!el) return ''; if (el.type === 'checkbox') return el.checked; if (el.multiple) return [].slice.call(el.selectedOptions).map(function (o) { return o.value; }); return el.value; };
+    var get = function (k) { if (k === '__at') return [].slice.call(f.querySelectorAll('[data-field^="at_"]')).map(function (x) { return x.value; }).join('').trim(); var el = f.querySelector('[data-field="' + k + '"]'); if (!el) return ''; if (el.type === 'checkbox') return el.checked; if (el.multiple) return [].slice.call(el.selectedOptions).map(function (o) { return o.value; }); return el.value; };
     var film = formFilm(f, type);
     var c = check(type, get, (f.querySelector('[data-field="id"]') || {}).value, film);
     var chip = f.querySelector('.wk-fill-chip');
