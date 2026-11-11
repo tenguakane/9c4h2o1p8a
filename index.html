@@ -3622,7 +3622,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 227";
+const WIKI_VERSION = "11.11.2026 · 228";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -39463,8 +39463,14 @@ html body.article-view-open #storySection#storySection#storySection#storySection
 <button type="button" class="wk-totop" aria-label="Наверх">↑</button><button type="button" class="wk-totop" aria-label="Наверх">↑</button><button type="button" class="wk-totop" aria-label="Наверх">↑</button><style id="wk-hover-fx">
 /* ===== 11.11.2026 · 225: рамка и частицы карточки — только при наведении (ПК) / когда карточка в центре экрана (телефон) ===== */
 /* Рамка/обводка из «Эффектов» (ring, frame) и частицы (parts, в т.ч. нативные), а также частицы атмосферы (card_shine). */
-.wk-calm :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell>.character-item :is(.wk-cs-ring,.wk-cs-frame,.wk-cs-parts,.wk-cs-native,.wk-amb-p){transition:opacity .35s ease}
+.wk-calm :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell>.character-item :is(.wk-cs-ring,.wk-cs-frame,.wk-cs-pulse,.wk-cs-parts,.wk-cs-native,.wk-amb-p,.wk-amb-a,.wk-amb-b,.wk-fx-b){transition:opacity .35s ease}
 .wk-calm :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell>.character-item:not(.wk-live) :is(.wk-cs-ring,.wk-cs-frame,.wk-cs-parts,.wk-cs-native,.wk-amb-p){opacity:0!important}
+/* Рамки, которые рисуют сами эффекты карточки (фольга, золото/серебро, призма, пульс, неон) — тоже только по наведению */
+.wk-calm :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell>.character-item:not(.wk-live):is([data-fx="gold"],[data-fx="silver"],[data-fx^="foil-"])>.wk-fx-b,
+.wk-calm :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell>.character-item:not(.wk-live):is([data-fx="prism"],[data-fx="accentprism"])>.wk-fx-a,
+.wk-calm :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell>.character-item:not(.wk-live) >.wk-cs>:is(.wk-cs-pulse,.wk-cs-frame),
+.wk-calm :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell>.character-item:not(.wk-live) >.wk-amb-a,
+.wk-calm :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) .catalog-item-shell>.character-item:not(.wk-live)>.wk-amb-b{opacity:0!important}
 /* Значок редкости убран с лицевой стороны — редкость показана на обороте карточки */
 html body .wk-gem.wk-gem.wk-gem.wk-gem.wk-gem{display:none!important}
 </style>
