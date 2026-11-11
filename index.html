@@ -3630,7 +3630,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 261";
+const WIKI_VERSION = "11.11.2026 · 264";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -27735,12 +27735,48 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
     var on = FRAME_FX.test(fx) || FRAME_AMB.test(amb) || !!(st.frame && st.frame.on) || !!(st.pulse && st.pulse.on) || !!(st.ring && st.ring.on);
     if (on) el.setAttribute('data-wk-frame', ''); else el.removeAttribute('data-wk-frame');
   }
+  // Ч/Б, кроме выбранного цвета: SVG-фильтр оставляет цвет только там, где оттенок близок к выбранному
+  function monoDefs() {
+    var d = document.getElementById('wkMonoDefs');
+    if (!d) { d = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); d.id = 'wkMonoDefs'; d.setAttribute('width', '0'); d.setAttribute('height', '0'); d.setAttribute('aria-hidden', 'true'); d.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden'; document.body.appendChild(d); }
+    return d;
+  }
+  function monoFilter(hex, tol) {
+    hex = String(hex || '#ff3b3b').replace('#', ''); if (hex.length === 3) hex = hex.replace(/./g, '$&$&');
+    var r = parseInt(hex.slice(0, 2), 16) / 255, g = parseInt(hex.slice(2, 4), 16) / 255, b = parseInt(hex.slice(4, 6), 16) / 255;
+    if (isNaN(r + g + b)) { r = 1; g = .23; b = .23; }
+    var m = (r + g + b) / 3, dr = r - m, dg = g - m, db = b - m, len = Math.sqrt(dr * dr + dg * dg + db * db);
+    if (len < .02) return '';
+    dr /= len; dg /= len; db /= len;
+    var k = .5 / .8165, t = Math.max(20, Math.min(100, Number(tol) || 50)) / 100, thr = .75 - t * .55;
+    var vals = [], N = 65;
+    for (var i = 0; i < N; i++) { var s = (i / (N - 1)) * 2 - 1, x = Math.max(0, Math.min(1, (s - (thr - .12)) / .24)); vals.push((x * x * (3 - 2 * x)).toFixed(3)); }
+    var id = 'wkMono_' + [dr, dg, db].map(function (v) { return Math.round(v * 100); }).join('_').replace(/-/g, 'n') + '_' + Math.round(t * 100);
+    if (!document.getElementById(id)) {
+      var NS = 'http://www.w3.org/2000/svg', f = document.createElementNS(NS, 'filter');
+      f.id = id; f.setAttribute('color-interpolation-filters', 'sRGB'); f.setAttribute('x', '0'); f.setAttribute('y', '0'); f.setAttribute('width', '100%'); f.setAttribute('height', '100%');
+      f.innerHTML = '<feColorMatrix in="SourceGraphic" type="saturate" values="0" result="g"/>'
+        + '<feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  ' + (dr * k).toFixed(4) + ' ' + (dg * k).toFixed(4) + ' ' + (db * k).toFixed(4) + ' 0 .5" result="s"/>'
+        + '<feComponentTransfer in="s" result="m"><feFuncA type="table" tableValues="' + vals.join(' ') + '"/></feComponentTransfer>'
+        + '<feGaussianBlur in="m" stdDeviation=".7" result="mb"/>'
+        + '<feComposite in="SourceGraphic" in2="mb" operator="in" result="c"/>'
+        + '<feMerge><feMergeNode in="g"/><feMergeNode in="c"/></feMerge>';
+      monoDefs().appendChild(f);
+    }
+    return id;
+  }
+  function applyMono(el, st) {
+    var mo = st && st.mono, id = (mo && mo.on) ? monoFilter(mo.c, mo.t) : '';
+    if (id) { el.setAttribute('data-wk-mono', ''); el.style.setProperty('--wk-mono-f', 'url(#' + id + ')'); }
+    else { el.removeAttribute('data-wk-mono'); el.style.removeProperty('--wk-mono-f'); }
+  }
   function applyCardStyle(el, value, seed) {
     if (!el) return;
     var st = parse(value);
     markFrame(el, st);
     var sig = JSON.stringify(st) + '|' + (el.getAttribute('data-fx') || '') + '|' + (el.getAttribute('data-amb') || '') + '|' + libLayers(el).length + '|' + seed;
     if (el.__csSig === sig) return; el.__csSig = sig;
+    applyMono(el, st);
     tuneLibrary(el, st);
     buildLayers(el, st, seed || '');
     // Открыли статью — один удар по главному фото (слой ищем заново: он мог пересоздаться).
@@ -27885,6 +27921,9 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
           + '<div class="wk-ts-row"><span>Как часто</span>' + seg('data-seg="split.every"', [['3', 'Часто'], ['', 'Обычно'], ['10', 'Редко']], get('split.every')) + '</div>'
           + '<div class="wk-ts-row"><span>Разлёт</span>' + seg('data-seg="split.far"', [['near', 'Слабый'], ['', 'Обычный'], ['far', 'Сильный']], get('split.far')) + '<button type="button" class="wk-ts-reset" data-split-test style="margin-left:8px">▶ Разделить</button></div>'
           + '<div class="wk-ts-row"><span></span><span class="wk-cs-libnote">Картинка разрезается на куски, они разлетаются, парят и собираются обратно — как у Багги.</span></div>')
+        + group('mono', '◐ Чёрно-белое, кроме цвета', '<div class="wk-ts-row"><span>Оставить цвет</span><div class="wk-cs-colors"><input type="color" data-p="mono.c" value="' + esc(get('mono.c') || '#ff3b3b') + '">' + sw('mono.c') + '</div></div>'
+          + '<div class="wk-ts-row"><span>Захват оттенка</span>' + range('mono.t', 20, 100, 5, get('mono.t') == null ? 50 : Number(get('mono.t')), '%', 50) + '</div>'
+          + '<div class="wk-ts-row"><span></span><span class="wk-cs-libnote">Вся картинка становится чёрно-белой, кроме выбранного цвета. Чем больше захват, тем больше близких оттенков остаётся цветными.</span></div>')
         + group('pulse', '💓 Пульсация по краю', '<div class="wk-ts-row"><span>Цвет</span><div class="wk-cs-colors"><input type="color" data-p="pulse.c" value="' + esc(get('pulse.c') || '#ff5a5a') + '">' + sw('pulse.c') + '</div></div><div class="wk-ts-row"><span>Скорость</span>' + seg('data-seg="pulse.sp"', SP, get('pulse.sp')) + '</div>')
         + group('shine', '✨ Свой блик', '<div class="wk-ts-row"><span>Цвет</span><div class="wk-cs-colors"><input type="color" data-p="shine.c" value="' + esc(get('shine.c') || '#ffffff') + '">' + sw('shine.c') + '</div></div><div class="wk-ts-row"><span>Яркость</span>' + range('shine.o', 10, 100, 5, get('shine.o') == null ? 55 : Number(get('shine.o')), '%', 55) + '</div>'
           + '<div class="wk-ts-row"><span>Ширина</span>' + seg('data-seg="shine.w"', [['thin', 'Узкий'], ['', 'Обычный'], ['wide', 'Широкий']], get('shine.w')) + '</div>'
@@ -39879,5 +39918,20 @@ html body [data-fx="oilslick"]:is(.wk-fx-on,:not(.wk-fx-on))>.wk-fx-b{background
 html body [data-fx="foil-rose"]>.wk-fx-a{background:linear-gradient(115deg,transparent calc(var(--pos,50%) - 32%),rgba(255,206,196,.5) calc(var(--pos,50%) - 12%),rgba(255,240,232,.78) var(--pos,50%),rgba(236,150,150,.5) calc(var(--pos,50%) + 12%),transparent calc(var(--pos,50%) + 34%)),linear-gradient(135deg,rgba(196,112,104,.28),rgba(255,214,198,.2) 50%,rgba(176,92,92,.28))!important;background-size:100% 100%!important;background-position:0 0!important;mix-blend-mode:overlay!important;opacity:calc(.5 + var(--o,0)*.4)!important;filter:none!important;transform:none!important;animation:none!important}
 html body [data-fx="foil-rose"]>.wk-fx-a::before,html body [data-fx="foil-rose"]>.wk-fx-a::after,html body [data-fx="foil-rose"]>.wk-fx-b::before,html body [data-fx="foil-rose"]>.wk-fx-b::after{content:none!important;background:none!important}
 html body [data-fx="foil-rose"]>.wk-fx-b{background:linear-gradient(105deg,transparent calc(var(--pos,50%) - 18%),rgba(255,255,255,calc(.14 + .3*var(--o,0))) var(--pos,50%),transparent calc(var(--pos,50%) + 18%)),linear-gradient(rgba(242,170,184,.4),rgba(242,170,184,.4))!important;opacity:.8!important}
+</style>
+<style id="wk-copper">
+/* Медь: гладкий металлический отлив без текстуры */
+html body [data-fx="foil-copper"]>.wk-fx-a{background:linear-gradient(115deg,transparent calc(var(--pos,50%) - 32%),rgba(240,160,100,.5) calc(var(--pos,50%) - 12%),rgba(255,226,196,.78) var(--pos,50%),rgba(214,116,60,.5) calc(var(--pos,50%) + 12%),transparent calc(var(--pos,50%) + 34%)),linear-gradient(135deg,rgba(160,80,36,.3),rgba(240,170,110,.2) 50%,rgba(140,66,28,.3))!important;background-size:100% 100%!important;background-position:0 0!important;mix-blend-mode:overlay!important;opacity:calc(.5 + var(--o,0)*.4)!important;filter:none!important;transform:none!important;animation:none!important}
+html body [data-fx="foil-copper"]>.wk-fx-a::before,html body [data-fx="foil-copper"]>.wk-fx-a::after,html body [data-fx="foil-copper"]>.wk-fx-b::before,html body [data-fx="foil-copper"]>.wk-fx-b::after{content:none!important;background:none!important}
+html body [data-fx="foil-copper"]>.wk-fx-b{background:linear-gradient(105deg,transparent calc(var(--pos,50%) - 18%),rgba(255,255,255,calc(.14 + .3*var(--o,0))) var(--pos,50%),transparent calc(var(--pos,50%) + 18%)),linear-gradient(rgba(214,120,66,.4),rgba(214,120,66,.4))!important;opacity:.8!important}
+</style>
+<style id="wk-foil-smooth">
+/* Цветные фольги: без текстуры — гладкий металлический отлив в цвете самой фольги */
+html body [data-fx="foil-ruby"]>.wk-fx-a,html body [data-fx="foil-emerald"]>.wk-fx-a,html body [data-fx="foil-sapphire"]>.wk-fx-a,html body [data-fx="foil-violet"]>.wk-fx-a,html body [data-fx="foil-black"]>.wk-fx-a,html body [data-fx="foil-black-grain"]>.wk-fx-a,html body [data-fx="foil-accent"]>.wk-fx-a{background:linear-gradient(115deg,transparent calc(var(--pos,50%) - 32%),var(--foil2) calc(var(--pos,50%) - 12%),var(--foil1) var(--pos,50%),var(--foil2) calc(var(--pos,50%) + 12%),transparent calc(var(--pos,50%) + 34%)),linear-gradient(135deg,color-mix(in srgb,var(--foil2) 45%,transparent),color-mix(in srgb,var(--foil1) 25%,transparent) 50%,color-mix(in srgb,var(--foil2) 45%,transparent))!important;background-size:100% 100%!important;background-position:0 0!important;mix-blend-mode:overlay!important;opacity:calc(.45 + var(--o,0)*.4)!important;filter:none!important;transform:none!important;animation:none!important}
+html body [data-fx="foil-ruby"]>.wk-fx-a::before,html body [data-fx="foil-emerald"]>.wk-fx-a::before,html body [data-fx="foil-sapphire"]>.wk-fx-a::before,html body [data-fx="foil-violet"]>.wk-fx-a::before,html body [data-fx="foil-black"]>.wk-fx-a::before,html body [data-fx="foil-black-grain"]>.wk-fx-a::before,html body [data-fx="foil-accent"]>.wk-fx-a::before,html body [data-fx="foil-ruby"]>.wk-fx-a::after,html body [data-fx="foil-emerald"]>.wk-fx-a::after,html body [data-fx="foil-sapphire"]>.wk-fx-a::after,html body [data-fx="foil-violet"]>.wk-fx-a::after,html body [data-fx="foil-black"]>.wk-fx-a::after,html body [data-fx="foil-black-grain"]>.wk-fx-a::after,html body [data-fx="foil-accent"]>.wk-fx-a::after,html body [data-fx="foil-ruby"]>.wk-fx-b::before,html body [data-fx="foil-emerald"]>.wk-fx-b::before,html body [data-fx="foil-sapphire"]>.wk-fx-b::before,html body [data-fx="foil-violet"]>.wk-fx-b::before,html body [data-fx="foil-black"]>.wk-fx-b::before,html body [data-fx="foil-black-grain"]>.wk-fx-b::before,html body [data-fx="foil-accent"]>.wk-fx-b::before,html body [data-fx="foil-ruby"]>.wk-fx-b::after,html body [data-fx="foil-emerald"]>.wk-fx-b::after,html body [data-fx="foil-sapphire"]>.wk-fx-b::after,html body [data-fx="foil-violet"]>.wk-fx-b::after,html body [data-fx="foil-black"]>.wk-fx-b::after,html body [data-fx="foil-black-grain"]>.wk-fx-b::after,html body [data-fx="foil-accent"]>.wk-fx-b::after{content:none!important;background:none!important}
+html body [data-fx="foil-ruby"]>.wk-fx-b,html body [data-fx="foil-emerald"]>.wk-fx-b,html body [data-fx="foil-sapphire"]>.wk-fx-b,html body [data-fx="foil-violet"]>.wk-fx-b,html body [data-fx="foil-black"]>.wk-fx-b,html body [data-fx="foil-black-grain"]>.wk-fx-b,html body [data-fx="foil-accent"]>.wk-fx-b{background:linear-gradient(105deg,transparent calc(var(--pos,50%) - 18%),rgba(255,255,255,calc(.14 + .3*var(--o,0))) var(--pos,50%),transparent calc(var(--pos,50%) + 18%)),linear-gradient(color-mix(in srgb,var(--foil2) 55%,transparent),color-mix(in srgb,var(--foil2) 55%,transparent))!important;mix-blend-mode:soft-light!important;opacity:.8!important}
+</style>
+<style id="wk-mono-css">
+[data-wk-mono] img:not(.wk-cs img){filter:var(--wk-mono-f)!important}
 </style>
 </body></html>
