@@ -3630,7 +3630,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 264";
+const WIKI_VERSION = "11.11.2026 · 265";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -27748,7 +27748,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
     var m = (r + g + b) / 3, dr = r - m, dg = g - m, db = b - m, len = Math.sqrt(dr * dr + dg * dg + db * db);
     if (len < .02) return '';
     dr /= len; dg /= len; db /= len;
-    var k = .5 / .8165, t = Math.max(20, Math.min(100, Number(tol) || 50)) / 100, thr = .75 - t * .55;
+    var k = .5 / .8165, t = Math.max(20, Math.min(100, Number(tol) || 50)) / 100, thr = .62 - t * .5;
     var vals = [], N = 65;
     for (var i = 0; i < N; i++) { var s = (i / (N - 1)) * 2 - 1, x = Math.max(0, Math.min(1, (s - (thr - .12)) / .24)); vals.push((x * x * (3 - 2 * x)).toFixed(3)); }
     var id = 'wkMono_' + [dr, dg, db].map(function (v) { return Math.round(v * 100); }).join('_').replace(/-/g, 'n') + '_' + Math.round(t * 100);
@@ -27756,7 +27756,8 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
       var NS = 'http://www.w3.org/2000/svg', f = document.createElementNS(NS, 'filter');
       f.id = id; f.setAttribute('color-interpolation-filters', 'sRGB'); f.setAttribute('x', '0'); f.setAttribute('y', '0'); f.setAttribute('width', '100%'); f.setAttribute('height', '100%');
       f.innerHTML = '<feColorMatrix in="SourceGraphic" type="saturate" values="0" result="g"/>'
-        + '<feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  ' + (dr * k).toFixed(4) + ' ' + (dg * k).toFixed(4) + ' ' + (db * k).toFixed(4) + ' 0 .5" result="s"/>'
+        + '<feColorMatrix in="SourceGraphic" type="saturate" values="2.2" result="bs"/>'
+        + '<feColorMatrix in="bs" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  ' + (dr * k).toFixed(4) + ' ' + (dg * k).toFixed(4) + ' ' + (db * k).toFixed(4) + ' 0 .5" result="s"/>'
         + '<feComponentTransfer in="s" result="m"><feFuncA type="table" tableValues="' + vals.join(' ') + '"/></feComponentTransfer>'
         + '<feGaussianBlur in="m" stdDeviation=".7" result="mb"/>'
         + '<feComposite in="SourceGraphic" in2="mb" operator="in" result="c"/>'
@@ -27765,10 +27766,28 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
     }
     return id;
   }
+  function monoBgSync(el) {
+    var l = el.querySelector(':scope > .wk-mono-bg'); if (!l) return;
+    var cs = getComputedStyle(el);
+    l.style.backgroundImage = el.style.backgroundImage || cs.backgroundImage;
+    l.style.backgroundSize = el.style.backgroundSize || cs.backgroundSize;
+    l.style.backgroundPosition = el.style.backgroundPosition || cs.backgroundPosition;
+  }
   function applyMono(el, st) {
     var mo = st && st.mono, id = (mo && mo.on) ? monoFilter(mo.c, mo.t) : '';
-    if (id) { el.setAttribute('data-wk-mono', ''); el.style.setProperty('--wk-mono-f', 'url(#' + id + ')'); }
-    else { el.removeAttribute('data-wk-mono'); el.style.removeProperty('--wk-mono-f'); }
+    var pv = el.classList.contains('wk-fx-preview');
+    if (id) {
+      el.setAttribute('data-wk-mono', ''); el.style.setProperty('--wk-mono-f', 'url(#' + id + ')');
+      if (pv) {
+        if (!el.querySelector(':scope > .wk-mono-bg')) { var l = document.createElement('span'); l.className = 'wk-mono-bg'; el.insertBefore(l, el.firstChild); }
+        monoBgSync(el);
+        if (!el.__monoObs && window.MutationObserver) { el.__monoObs = new MutationObserver(function () { monoBgSync(el); }); el.__monoObs.observe(el, { attributes: true, attributeFilter: ['style'] }); }
+      }
+    } else {
+      el.removeAttribute('data-wk-mono'); el.style.removeProperty('--wk-mono-f');
+      var o = el.querySelector(':scope > .wk-mono-bg'); if (o) o.remove();
+      if (el.__monoObs) { el.__monoObs.disconnect(); el.__monoObs = null; }
+    }
   }
   function applyCardStyle(el, value, seed) {
     if (!el) return;
@@ -39933,5 +39952,6 @@ html body [data-fx="foil-ruby"]>.wk-fx-b,html body [data-fx="foil-emerald"]>.wk-
 </style>
 <style id="wk-mono-css">
 [data-wk-mono] img:not(.wk-cs img){filter:var(--wk-mono-f)!important}
+.wk-mono-bg{position:absolute;inset:0;z-index:1;pointer-events:none;border-radius:inherit;background-repeat:no-repeat;background-size:cover;background-position:center;filter:var(--wk-mono-f)}
 </style>
 </body></html>
