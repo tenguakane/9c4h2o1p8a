@@ -2451,7 +2451,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 217";
+const WIKI_VERSION = "11.11.2026 · 219";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -23226,6 +23226,14 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
 @keyframes wkSlashR{0%{opacity:1;clip-path:inset(-24px 0 -24px 100%)}3.5%{clip-path:inset(-24px 0 -24px 0)}48%{opacity:1}62%,100%{opacity:0;clip-path:inset(-24px 0 -24px 0)}}
 @keyframes wkSlashLight{0%,3.5%{opacity:1}13%,100%{opacity:0}}
 @keyframes wkSlashCut{0%,3%{opacity:0}8%{opacity:.95}45%{opacity:.7}100%{opacity:0}}
+/* ----- Удары кинжалами: короткие быстрые порезы, много и в разных местах ----- */
+.wk-amb-p .dg{left:var(--x);top:var(--y);width:calc(15% + var(--s) * 9%);height:calc(1.4px + var(--s) * .9px);transform:translate(-50%,-50%) rotate(calc(32deg + var(--r) * 48deg));clip-path:inset(-14px 100% -14px 0);opacity:0;animation:wkDagger var(--t) cubic-bezier(.2,.9,.2,1) infinite;animation-delay:var(--d)}
+.wk-amb-p .dg.v1{animation-name:wkDaggerR}
+.wk-amb-p .dg::before,.wk-amb-p .dg::after{content:"";position:absolute;inset:0;border-radius:50%}
+.wk-amb-p .dg::before{background:linear-gradient(90deg,transparent,rgba(200,230,255,.8) 12%,#fff 55%,rgba(200,230,255,.6) 88%,transparent);box-shadow:0 0 4px 1px rgba(170,215,255,.95),0 0 12px 3px rgba(100,165,255,.45);animation:wkSlashLight var(--t) linear infinite;animation-delay:var(--d)}
+.wk-amb-p .dg::after{top:20%;bottom:20%;background:linear-gradient(90deg,transparent,rgba(8,12,22,.9) 16%,rgba(8,12,22,.95) 55%,rgba(8,12,22,.85) 86%,transparent);box-shadow:0 1px 0 rgba(200,225,255,.3);opacity:0;animation:wkSlashCut var(--t) linear infinite;animation-delay:var(--d)}
+@keyframes wkDagger{0%{opacity:1;clip-path:inset(-14px 100% -14px 0)}4%{clip-path:inset(-14px 0 -14px 0)}22%{opacity:1}34%,100%{opacity:0;clip-path:inset(-14px 0 -14px 0)}}
+@keyframes wkDaggerR{0%{opacity:1;clip-path:inset(-14px 0 -14px 100%)}4%{clip-path:inset(-14px 0 -14px 0)}22%{opacity:1}34%,100%{opacity:0;clip-path:inset(-14px 0 -14px 0)}}
 /* ----- Взрыв: вспышка, огненный шар, ударная волна, обломки и дым ----- */
 [data-amb="explosion"]>.wk-amb-a{mix-blend-mode:screen;animation:wkBoomFlash 5.6s linear infinite}
 [data-amb="explosion"]>.wk-amb-a::before,[data-amb="explosion"]>.wk-amb-a::after,[data-amb="explosion"]>.wk-amb-b::after{content:"";position:absolute;left:50%;top:58%;aspect-ratio:1;border-radius:50%;opacity:0;animation-delay:inherit}
@@ -23360,10 +23368,10 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
 :is([data-amb="fire"],[data-amb="phoenix"])>.wk-amb-b::before{content:"";position:absolute;left:0;right:0;bottom:30%;height:30%;background:linear-gradient(0deg,var(--fh2),transparent);filter:blur(6px);animation:wkHeat 2.2s ease-in-out infinite alternate}
 @keyframes wkHeat{from{transform:translateY(0) scaleY(1);opacity:.6}to{transform:translateY(-6%) scaleY(1.15);opacity:1}}
 /* ===================== Постоянные эффекты без заливки: картинка не темнеет и не светлеет, поверх идут только частицы и детали ===================== */
-[data-amb="smoke"]>.wk-amb-a,[data-amb="sea"]>.wk-amb-a,[data-amb="sakura"]>.wk-amb-a,[data-amb="poison"]>.wk-amb-a,[data-amb="rain"]>.wk-amb-a,[data-amb="dark"]>.wk-amb-a,[data-amb="magma"]>.wk-amb-a,[data-amb="sand"]>.wk-amb-a,[data-amb="light"]>.wk-amb-a,[data-amb="souls"]>.wk-amb-a,[data-amb="twinkle"]>.wk-amb-a,[data-amb="goldshine"]>.wk-amb-a,[data-amb="fire"]>.wk-amb-a,[data-amb="phoenix"]>.wk-amb-a,[data-amb="devil"]>.wk-amb-a,[data-amb="ghosts"]>.wk-amb-a,[data-amb="love"]>.wk-amb-a,[data-amb="flowers"]>.wk-amb-a,[data-amb="sweets"]>.wk-amb-a,[data-amb="time"]>.wk-amb-a,[data-amb="swords"]>.wk-amb-a,[data-amb="claws"]>.wk-amb-a,[data-amb="thunder"]>.wk-amb-a{background:none!important;box-shadow:none!important}
+[data-amb="smoke"]>.wk-amb-a,[data-amb="sea"]>.wk-amb-a,[data-amb="sakura"]>.wk-amb-a,[data-amb="poison"]>.wk-amb-a,[data-amb="rain"]>.wk-amb-a,[data-amb="dark"]>.wk-amb-a,[data-amb="magma"]>.wk-amb-a,[data-amb="sand"]>.wk-amb-a,[data-amb="light"]>.wk-amb-a,[data-amb="souls"]>.wk-amb-a,[data-amb="twinkle"]>.wk-amb-a,[data-amb="goldshine"]>.wk-amb-a,[data-amb="fire"]>.wk-amb-a,[data-amb="phoenix"]>.wk-amb-a,[data-amb="devil"]>.wk-amb-a,[data-amb="ghosts"]>.wk-amb-a,[data-amb="love"]>.wk-amb-a,[data-amb="flowers"]>.wk-amb-a,[data-amb="sweets"]>.wk-amb-a,[data-amb="time"]>.wk-amb-a,[data-amb="swords"]>.wk-amb-a,[data-amb="daggers"]>.wk-amb-a,[data-amb="claws"]>.wk-amb-a,[data-amb="thunder"]>.wk-amb-a{background:none!important;box-shadow:none!important}
 [data-amb="smoke"]>.wk-amb-b,[data-amb="sea"]>.wk-amb-b,[data-amb="sakura"]>.wk-amb-b,[data-amb="poison"]>.wk-amb-b,[data-amb="rain"]>.wk-amb-b,[data-amb="dark"]>.wk-amb-b,[data-amb="magma"]>.wk-amb-b,[data-amb="souls"]>.wk-amb-b,[data-amb="haoclash"]>.wk-amb-b,[data-amb="fire"]>.wk-amb-b,[data-amb="phoenix"]>.wk-amb-b,[data-amb="devil"]>.wk-amb-b,[data-amb="ghosts"]>.wk-amb-b,[data-amb="diamond"]>.wk-amb-b,[data-amb="neon"]>.wk-amb-b,[data-amb="bubbles"]>.wk-amb-b{background:none!important}
 :is([data-amb="devil"],[data-amb="light"],[data-amb="fire"],[data-amb="phoenix"],[data-amb="explosion"])>.wk-amb-a{animation-name:none!important;background-color:transparent!important}
-[data-amb="thunder"]>.wk-amb-b,[data-amb="fangs"]>.wk-amb-b,[data-amb="swords"]>.wk-amb-b,[data-amb="drums"]>.wk-amb-a::after,[data-amb="fire"]>.wk-amb-b::before,[data-amb="phoenix"]>.wk-amb-b::before{display:none!important}
+[data-amb="thunder"]>.wk-amb-b,[data-amb="fangs"]>.wk-amb-b,[data-amb="swords"]>.wk-amb-b,[data-amb="daggers"]>.wk-amb-b,[data-amb="drums"]>.wk-amb-a::after,[data-amb="fire"]>.wk-amb-b::before,[data-amb="phoenix"]>.wk-amb-b::before{display:none!important}
 [data-amb="barrier"]>.wk-amb-a{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 17.32'%3E%3Cpath d='M10 0 L5 8.66 L-5 8.66 L-10 0 L-5 -8.66 L5 -8.66Z M40 0 L35 8.66 L25 8.66 L20 0 L25 -8.66 L35 -8.66Z M10 17.32 L5 25.98 L-5 25.98 L-10 17.32 L-5 8.66 L5 8.66Z M40 17.32 L35 25.98 L25 25.98 L20 17.32 L25 8.66 L35 8.66Z M25 8.66 L20 17.32 L10 17.32 L5 8.66 L10 0 L20 -0Z' fill='none' stroke='%23cdeeff' stroke-width='0.7' opacity='0.42'/%3E%3C/svg%3E") 0 0/30px 17.32px!important;box-shadow:inset 0 0 0 1.5px rgba(210,240,255,.6)!important}
 [data-amb="quake"]>.wk-amb-b::before{background:radial-gradient(circle at 42% 42%,rgba(235,248,255,.8),rgba(150,210,255,.25) 7%,transparent 16%)!important}
 [data-amb="frost"]>.wk-amb-b{display:none!important}
@@ -23501,6 +23509,7 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     { v: 'claws', n: 'Следы когтей' },
     { v: 'fangs', n: 'Укус (следы зубов)' },
     { v: 'swords', n: 'Удары мечей' },
+    { v: 'daggers', n: 'Удары кинжалами' },
     { v: 'explosion', n: 'Взрыв' },
     { v: 'quake', n: 'Землетрясение (Гура Гура)' },
     { v: 'sweets', n: 'Сладости' },
@@ -23526,7 +23535,7 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
   window.__wikiCardAmbList = AMB;
   // Эффекты, которые состоят только из частиц: теперь они в редакторе частиц конструктора.
   // Из списка выбора убраны, но у статей, где они уже стоят, продолжают работать.
-  window.__wikiCardAmbHidden = ['twinkle', 'smoke', 'dark', 'light', 'souls', 'claws', 'swords', 'ghosts', 'flowers', 'fireflies', 'stardust', 'comets', 'confetti', 'runes', 'aurora', 'ripples', 'rays', 'leaves'];
+  window.__wikiCardAmbHidden = ['twinkle', 'smoke', 'dark', 'light', 'souls', 'claws', 'swords', 'daggers', 'ghosts', 'flowers', 'fireflies', 'stardust', 'comets', 'confetti', 'runes', 'aurora', 'ripples', 'rays', 'leaves'];
   function isAmb(v) { return AMB.some(function (x) { return x.v === v && v !== 'none'; }); }
   var MUGIWARA = ['char_luffy', 'char_zoro', 'char_nami', 'char_usopp', 'char_sanji', 'char_chopper', 'char_robin', 'char_franky', 'char_brook', 'char_jinbe'];
   window.__wikiCardFxList = FX;
@@ -23686,6 +23695,8 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     sand: [{ c: 'gu', n: 3, pos: 'any', t: [2.8, 4.6], s: [0.8, 1.3] }],
     // burst — частицы вылетают вместе со вспышкой эффекта; burst0 — у всех карточек одновременно (землетрясение).
     claws: [{ c: 'cw', n: 5, pos: 'any', t: [4.2, 6.8], s: [0.7, 1.2], v: 3 }],
+    // Кинжалы: много коротких быстрых порезов в разных местах и в разное время, каждый небольшой.
+    daggers: [{ c: 'dg', n: 10, pos: 'any', t: [2.2, 4.2], s: [0.7, 1.3], v: 2 }],
     swords: [{ c: 'sw', n: 3, pos: 'any', t: [4.4, 4.4], s: [0.7, 1.2], v: 2, sync: 'burst', jit: 0.55 }],
     explosion: [{ c: 'xd', n: 16, pos: 'any', t: [5.6, 5.6], s: [0.6, 1.4], sync: 'burst', jit: 0.05 }],
     quake: [{ c: 'qd', n: 12, pos: 'top', t: [5, 5], s: [0.6, 1.4], sync: 'burst0', jit: 0.9 }],
@@ -26477,7 +26488,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
   var SW = ['#ffd36b', '#ff5a5a', '#ff8ac6', '#b18cff', '#4fb8ff', '#4fe3c1', '#7cf06a', '#ffffff', '#ff9d3d', '#1e1e2e'];
   var SHAPE_LIST = [['sparkle', 'Искры-звёзды'], ['star', 'Звёзды'], ['flame', 'Огоньки'], ['firefly', 'Светлячки'], ['heart', 'Сердца'], ['petal', 'Лепестки сакуры'], ['leaf', 'Листья'], ['snow', 'Снежинки'], ['bubble', 'Пузыри'], ['rainline', 'Дождь'], ['drop', 'Капли воды'], ['blood', 'Капли крови'], ['sand', 'Песок'], ['smoke', 'Дым'], ['coin', 'Монеты Белли'], ['berry', 'Знак Белли'], ['note', 'Ноты'], ['diamond', 'Кристаллы'], ['skull', 'Черепа'], ['ember', 'Угли и пепел'], ['shard', 'Осколки'], ['meat', 'Мясо'], ['plaster', 'Пластыри (лечение)']];
   // Частицы бывших постоянных эффектов — со своим движением
-  var NATIVE_LIST = [['souls', '👻 Души (Йоми Йоми)'], ['ghosts', '👻 Призраки (Хоро Хоро)'], ['flowers', '🌸 Цветы (Хана Хана)'], ['dark', '🌑 Тьма'], ['light', '✨ Свет (Пика Пика)'], ['claws', '🐾 Следы когтей'], ['swords', '⚔️ Удары мечей'], ['twinkle', '✦ Мерцающие искры'], ['fireflies', '🪲 Светлячки'], ['stardust', '✨ Звёздная пыль'], ['comets', '☄️ Падающие звёзды'], ['confetti', '🎉 Конфетти'], ['runes', '🔮 Парящие руны'], ['aurora', '🌌 Северное сияние'], ['ripples', '💧 Круги на воде'], ['rays', '🌤️ Лучи света'], ['leaves', '🍂 Листопад']];
+  var NATIVE_LIST = [['souls', '👻 Души (Йоми Йоми)'], ['ghosts', '👻 Призраки (Хоро Хоро)'], ['flowers', '🌸 Цветы (Хана Хана)'], ['dark', '🌑 Тьма'], ['light', '✨ Свет (Пика Пика)'], ['claws', '🐾 Следы когтей'], ['swords', '⚔️ Удары мечей'], ['daggers', '🗡️ Удары кинжалами'], ['twinkle', '✦ Мерцающие искры'], ['fireflies', '🪲 Светлячки'], ['stardust', '✨ Звёздная пыль'], ['comets', '☄️ Падающие звёзды'], ['confetti', '🎉 Конфетти'], ['runes', '🔮 Парящие руны'], ['aurora', '🌌 Северное сияние'], ['ripples', '💧 Круги на воде'], ['rays', '🌤️ Лучи света'], ['leaves', '🍂 Листопад']];
   var MOTIONS = [['pop', 'Появляются'], ['up', 'Вверх'], ['down', 'Вниз'], ['float', 'Парят'], ['burst', 'Разлёт'], ['twinkle', 'Мерцают'], ['wind', 'Ветер'], ['trickle', 'Стекают'], ['glass', 'На стекле']];
   var SP = [['slow', 'Медленно'], ['', 'Обычно'], ['fast', 'Быстро']];
   function seg(attr, items, cur) { return '<div class="wk-ts-seg" ' + attr + '>' + items.map(function (it) { return '<button type="button" data-v="' + it[0] + '"' + (String(cur || '') === it[0] ? ' class="is-on"' : '') + '>' + it[1] + '</button>'; }).join('') + '</div>'; }
@@ -26522,7 +26533,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
       ['🔥', 'Стихии', ['fire', 'phoenix', 'magma', 'smoke', 'ice', 'frost', 'sand', 'sea', 'rain', 'poison', 'thunder', 'dark', 'light']],
       ['👑', 'Воля и силы', ['haki', 'haoclash', 'drums', 'devil', 'explosion', 'quake', 'time', 'rust', 'room', 'barrier']],
       ['🍈', 'Силы Дьявольских плодов', ['ghosts', 'souls', 'love', 'diamond', 'mochi', 'flowers', 'sweets']],
-      ['🐾', 'Следы и удары', ['claws', 'fangs', 'swords']],
+      ['🐾', 'Следы и удары', ['claws', 'fangs', 'swords', 'daggers']],
       ['🌸', 'Атмосфера', ['sakura', 'bubbles', 'fireflies', 'stardust', 'comets', 'confetti', 'runes', 'aurora', 'ripples', 'rays', 'leaves', 'poneglyph', 'wanted']]
     ];
     var ambOpen = {};
@@ -26808,7 +26819,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
     card_shine: [
       ['🌈 Рамки и блики', ['prism', 'accentprism', 'shine', 'goldshine', 'rainbowshine', 'twinkle', 'holodrift', 'neon']],
       ['🔥 Стихии', ['fire', 'phoenix', 'magma', 'smoke', 'dark', 'thunder', 'light', 'frost', 'ice', 'sand', 'sea', 'rain', 'poison']],
-      ['👑 Воля и бой', ['haki', 'haoclash', 'drums', 'swords', 'claws', 'fangs', 'explosion', 'quake']],
+      ['👑 Воля и бой', ['haki', 'haoclash', 'drums', 'swords', 'daggers', 'claws', 'fangs', 'explosion', 'quake']],
       ['🍎 Дьявольские плоды', ['room', 'souls', 'barrier', 'ghosts', 'love', 'diamond', 'mochi', 'flowers', 'time', 'rust', 'sweets', 'devil']],
       ['🌸 Атмосфера и фактура', ['sakura', 'bubbles', 'poneglyph', 'wanted']]
     ],
@@ -27533,11 +27544,13 @@ html body :is(#charactersSection,#storySection,#rewardsSection,#fruitsSection,#u
 /* фильтры: всплывающее окно, как у «Вид» */
 html body .section-filters-panel.wk-fpop{position:fixed!important;z-index:99991;box-sizing:border-box;margin:0!important;padding:14px 16px 16px!important;border-radius:16px!important;border:1px solid rgba(148,163,184,.3)!important;background:#0e1626!important;color:var(--text,#e5e7eb);box-shadow:0 18px 50px rgba(0,0,0,.55)!important;width:min(560px,calc(100vw - 24px))!important;max-width:none!important;max-height:80vh;overflow:auto!important}
 .wk-fp-back{position:fixed;inset:0;z-index:99990;background:transparent;display:none}
-.wk-fp-back.on{display:block}
-@media (max-width:760px){.wk-fp-back.on{background:rgba(0,0,0,.5)}html body .section-filters-panel.wk-fpop{left:0!important;right:0!important;top:auto!important;bottom:0!important;width:auto!important;max-height:82vh;border-radius:20px 20px 0 0!important;border-bottom:0!important;padding-bottom:calc(18px + env(safe-area-inset-bottom))!important}}
+.wk-fp-back.on{display:block;pointer-events:none!important}
+@media (max-width:760px){html body .section-filters-panel.wk-fpop{left:0!important;right:0!important;top:auto!important;bottom:0!important;width:auto!important;max-height:82vh;border-radius:20px 20px 0 0!important;border-bottom:0!important;padding-bottom:calc(18px + env(safe-area-inset-bottom))!important}}
 html body #charactersFiltersButton#charactersFiltersButton#charactersFiltersButton,html body #storyFiltersButton#storyFiltersButton#storyFiltersButton,html body #rewardsFiltersButton#rewardsFiltersButton#rewardsFiltersButton,html body #fruitsFiltersButton#fruitsFiltersButton#fruitsFiltersButton,html body #usefulFiltersButton#usefulFiltersButton#usefulFiltersButton{height:var(--wk-ctl-h)!important;min-height:var(--wk-ctl-h)!important;border-radius:10px!important;box-shadow:none!important;padding-top:0!important;padding-bottom:0!important;border:1px solid rgba(148,163,184,.28)!important;box-sizing:border-box!important}
 /* оболочка кнопки «Вид» не рисует вторую рамку */
 html body .wk-mv-row.wk-mv-row{border:0!important;background:none!important;padding:0!important;box-shadow:none!important;border-radius:0!important;min-height:0!important;height:auto!important}
+html body :is(#charactersSection,#storySection,#rewardsSection,#fruitsSection,#usefulSection) .wk-mv-row.wk-mv-row.wk-mv-row{height:var(--wk-ctl-h,40px)!important;min-height:var(--wk-ctl-h,40px)!important;margin:0!important;align-self:center!important;align-items:center!important}
+@media (max-width:700px){html body :is(#charactersSection,#storySection,#rewardsSection,#fruitsSection,#usefulSection) .wk-mv-row.wk-mv-row.wk-mv-row{height:48px!important;min-height:48px!important}html body :is(#charactersSection,#storySection,#rewardsSection,#fruitsSection,#usefulSection) .wk-mv-row.wk-mv-row.wk-mv-row .wk-mv-btn.wk-mv-btn{height:48px!important;min-height:48px!important;margin:0!important}}
 /* 7. вложенные радиусы: внешний 15 − рамка 1 − отступ 5 = 9 */
 html body #favoritesSection#favoritesSection .cabin-subnav .cabin-subtab{border-radius:9px!important}
 html body .wk-ov-tile .wk-ov-body strong.wk-ov-sm{font-size:18px!important;line-height:1.3!important;font-weight:500!important}
@@ -27609,6 +27622,8 @@ html body .wk-ov-chart{grid-column:1/-1}
   }
   new MutationObserver(sync).observe(document.body, { attributes: true, attributeFilter: ['hidden', 'style', 'aria-expanded'], subtree: true });
   document.addEventListener('click', function () { setTimeout(sync, 30); }, true);
+  // Подложка не ловит клики (панель оказывалась под ней): закрываем по клику вне панели и кнопки.
+  document.addEventListener('pointerdown', function (e) { if (!openP) return; var t = e.target; if (openP.contains(t)) return; var bt = btnOf(openP); if (bt && bt.contains(t)) return; closeAll(true); }, true);
   window.addEventListener('keydown', function (e) { if (e.key === 'Escape' && openP) closeAll(true); });
   window.addEventListener('resize', function () { if (openP) place(openP); });
   window.addEventListener('scroll', function () { if (openP && !window.matchMedia('(max-width:760px)').matches) closeAll(true); }, { passive: true });
@@ -30289,6 +30304,29 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   function autoRun() { if (!canEdit()) return; try { runPatch(false); } catch (e) { console.warn('Данные-патч:', e); } }
   if (window.WIKI_CLOUD_ENABLED) window.addEventListener('wiki:cloud-ready', function () { setTimeout(autoRun, 2500); });
   else window.addEventListener('load', function () { setTimeout(autoRun, 2500); });
+
+  // Разовая правка: у персонажей со статусом «Анимация» снимаем «ЗАГЛАВНЫЕ» в заголовке (ставилось массово).
+  function runCapsFix() {
+    if (!canEdit() || typeof window.__wikiBulkSave !== 'function') return 0;
+    if (lsGet('wkCapsFixV217')) return 0;
+    var ops = [];
+    arr(LISTS.character).forEach(function (rec) {
+      var st = String(rv(rec, 'status') || ''); if (st.indexOf('Анимация') < 0) return;
+      var ts = rv(rec, 'title_style'); if (!ts) return;
+      var d; try { d = typeof ts === 'string' ? JSON.parse(ts) : ts; } catch (e) { return; }
+      if (!d || d.caps !== 'up') return;
+      var c = {}; Object.keys(d).forEach(function (k) { if (k !== 'caps') c[k] = d[k]; });
+      ops.push({ type: 'character', id: rv(rec, 'id'), changes: { title_style: Object.keys(c).length ? JSON.stringify(c) : '' } });
+    });
+    var n = ops.length ? window.__wikiBulkSave(ops) : 0;
+    lsSet('wkCapsFixV217', new Date().toISOString());
+    if (n) { console.info('Заглавные сняты у ' + n + ' персонажей'); try { toast('Сняты заглавные буквы у ' + n + ' персонажей.'); } catch (e) {} }
+    return n;
+  }
+  window.__wkRunCapsFix = runCapsFix;
+  function autoCaps() { if (!canEdit()) return; try { runCapsFix(); } catch (e) { console.warn('Заглавные:', e); } }
+  if (window.WIKI_CLOUD_ENABLED) window.addEventListener('wiki:cloud-ready', function () { setTimeout(autoCaps, 4000); });
+  else window.addEventListener('load', function () { setTimeout(autoCaps, 4000); });
 
 
   /* ---------- Тактильный отклик на телефоне ----------
