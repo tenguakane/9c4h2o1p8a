@@ -2451,7 +2451,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 208";
+const WIKI_VERSION = "11.11.2026 · 211";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -27498,10 +27498,13 @@ html body :is(.wk-shelf-row,.wk-sc-small) .card-title{font-size:14px!important;l
 @media (max-width:700px){:root{--wk-ctl-h:44px}}
 html body :is(.section-filters-button,.wk-mv-btn,.wk-sortbox,.wk-sc-toggle,.wk-edit-site){height:var(--wk-ctl-h)!important;min-height:var(--wk-ctl-h)!important;box-sizing:border-box!important;border-radius:10px!important;box-shadow:none!important;padding-top:0!important;padding-bottom:0!important;border:1px solid rgba(148,163,184,.28)!important}
 html body :is(.section-filters-button,.wk-mv-btn,.wk-sortbox,.wk-sc-toggle,.wk-edit-site):hover{border-color:rgba(148,163,184,.5)!important}
-html body :is(.section-filters-button,.wk-mv-btn,.wk-sc-toggle,.wk-edit-site):focus-visible,html body .wk-sortbox:focus-within{outline:2px solid var(--wk-accent,#d8b45a)!important;outline-offset:2px!important;box-shadow:none!important}
+html body :is(.section-filters-button,.wk-mv-btn,.wk-sc-toggle,.wk-edit-site):focus-visible{outline:2px solid var(--wk-accent,#d8b45a)!important;outline-offset:2px!important;box-shadow:none!important}
 html body .wk-sortbox select{border:0!important;box-shadow:none!important;outline:none!important;background:transparent!important}
 html body .wk-sc-toggle{padding-left:14px!important;padding-right:14px!important}
 html body .wiki-continue{display:none!important}
+/* поля ввода в фокусе: одна рамка цвета акцента + мягкое свечение, без второго кольца */
+html body :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),textarea,select):is(:focus,:focus-visible){outline:none!important;border-color:var(--wk-accent,#d8b45a)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--wk-accent,#d8b45a) 16%,transparent),0 0 18px color-mix(in srgb,var(--wk-accent,#d8b45a) 28%,transparent)!important}
+html body .wk-sortbox:focus-within{outline:none!important;border-color:var(--wk-accent,#d8b45a)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--wk-accent,#d8b45a) 16%,transparent),0 0 18px color-mix(in srgb,var(--wk-accent,#d8b45a) 28%,transparent)!important}
 html body #favoritesSection .cabin-new-shell{grid-template-columns:minmax(0,1fr)!important}
 html body :is(#charactersSection,#storySection,#rewardsSection,#fruitsSection,#usefulSection) .section-search-row{align-items:center!important}
 /* фильтры: всплывающее окно, как у «Вид» */
@@ -30386,13 +30389,11 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     function render() {
       box.innerHTML = list.map(function (x, i) {
         var opts = '<option value="">— выбери арку —</option>' + arcs.map(function (a) { return '<option value="' + esc(a.id) + '"' + (a.id === x.arc ? ' selected' : '') + '>' + esc(a.name) + '</option>'; }).join('');
-        return '<div class="wk-ap-row" data-i="' + i + '" style="display:grid;grid-template-columns:96px 1fr auto;gap:10px;align-items:start;padding:10px;border:1px solid rgba(255,255,255,.14);border-radius:12px">'
-          + '<div class="wk-ap-prev" style="width:96px;height:120px;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center">' + prev(x) + '</div>'
+        return '<div class="wk-ap-row" data-i="' + i + '" style="display:grid;grid-template-columns:168px 1fr auto;gap:12px;align-items:start;padding:10px;border:1px solid rgba(255,255,255,.14);border-radius:12px">'
+          + '<div class="wk-ap-prev" title="Тяни, чтобы сдвинуть; колесо мыши — приблизить" style="width:168px;height:210px;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;cursor:grab;touch-action:none;user-select:none">' + prev(x) + '</div>'
           + '<div style="display:grid;gap:6px;min-width:0"><label>Арка<select data-k="arc" style="width:100%">' + opts + '</select></label>'
           + '<label>Ссылка на фото<input type="url" data-k="u" placeholder="https://…" value="' + esc(x.u) + '" style="width:100%"></label>'
-          + '<label>Приближение <output>' + Math.round(Number(x.z) || 100) + '%</output><input type="range" min="100" max="250" step="1" data-k="z" value="' + (Number(x.z) || 100) + '"></label>'
-          + '<label>По горизонтали <output>' + Math.round(Number(x.x) || 50) + '%</output><input type="range" min="0" max="100" step="1" data-k="x" value="' + (Number(x.x) || 50) + '"></label>'
-          + '<label>По вертикали <output>' + Math.round(Number(x.y) || 50) + '%</output><input type="range" min="0" max="100" step="1" data-k="y" value="' + (Number(x.y) || 50) + '"></label></div>'
+          + '<div class="wk-ap-hint" style="font-size:12.5px;opacity:.75;display:flex;gap:8px;align-items:center;flex-wrap:wrap">Тяни фото мышью или пальцем, колесо — приблизить. <output>' + Math.round(Number(x.z) || 100) + '%</output><button type="button" data-reset>Сбросить кадр</button></div></div>'
           + '<button type="button" data-del title="Убрать фото" style="align-self:start">✕</button></div>';
       }).join('') + '<button type="button" class="wk-gal-add" data-add>＋ Добавить фото для арки</button>'
         + '<div class="wk-gal-note">Фото появляется на карточке и в наградах, когда читатель дошёл до выбранной арки; показывается самое свежее из открытых. Кадр у каждого фото свой: в плакатах WANTED приближение тоже настраивается отдельно для каждого фото.</div>';
@@ -30400,6 +30401,7 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     box.addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return; e.preventDefault();
       if (b.hasAttribute('data-add')) { list.push({ arc: '', u: '', y: '50', x: '50', z: '100' }); render(); return; }
+      if (b.hasAttribute('data-reset')) { var rw = b.closest('.wk-ap-row'), rx = list[Number(rw.getAttribute('data-i'))]; rx.x = '50'; rx.y = '50'; rx.z = '100'; rw.querySelector('.wk-ap-prev').innerHTML = prev(rx); rw.querySelector('.wk-ap-hint output').textContent = '100%'; save(); return; }
       if (b.hasAttribute('data-del')) { list.splice(Number(b.closest('.wk-ap-row').getAttribute('data-i')), 1); save(); render(); }
     });
     function onEdit(e) {
@@ -30409,10 +30411,90 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
       save();
     }
     box.addEventListener('input', onEdit); box.addEventListener('change', onEdit);
+    var apd = null;
+    function apApply(row, x) {
+      var im = row.querySelector('.wk-ap-prev img'); if (im) { var px = (Number(x.x) || 50) + '% ' + (Number(x.y) || 50) + '%'; im.style.objectPosition = px; im.style.transformOrigin = px; im.style.transform = 'scale(' + Math.max(100, Number(x.z) || 100) / 100 + ')'; }
+      var o = row.querySelector('.wk-ap-hint output'); if (o) o.textContent = Math.round(Number(x.z) || 100) + '%';
+    }
+    box.addEventListener('pointerdown', function (e) {
+      var pv = e.target.closest('.wk-ap-prev'); if (!pv || !pv.querySelector('img')) return;
+      var row = pv.closest('.wk-ap-row'), x = list[Number(row.getAttribute('data-i'))]; e.preventDefault();
+      apd = { row: row, x: x, sx: e.clientX, sy: e.clientY, x0: Number(x.x) || 50, y0: Number(x.y) || 50, w: pv.clientWidth, h: pv.clientHeight };
+      try { pv.setPointerCapture(e.pointerId); } catch (er) {} pv.style.cursor = 'grabbing';
+    });
+    box.addEventListener('pointermove', function (e) {
+      if (!apd) return; var k = 1.6 / (Math.max(100, Number(apd.x.z) || 100) / 100);
+      apd.x.x = String(Math.round(Math.max(0, Math.min(100, apd.x0 - (e.clientX - apd.sx) / apd.w * 100 * k))));
+      apd.x.y = String(Math.round(Math.max(0, Math.min(100, apd.y0 - (e.clientY - apd.sy) / apd.h * 100 * k))));
+      apApply(apd.row, apd.x);
+    });
+    function apEnd() { if (!apd) return; var pv = apd.row.querySelector('.wk-ap-prev'); if (pv) pv.style.cursor = 'grab'; apd = null; save(); }
+    box.addEventListener('pointerup', apEnd); box.addEventListener('pointercancel', apEnd);
+    box.addEventListener('wheel', function (e) {
+      var pv = e.target.closest('.wk-ap-prev'); if (!pv || !pv.querySelector('img')) return; e.preventDefault();
+      var row = pv.closest('.wk-ap-row'), x = list[Number(row.getAttribute('data-i'))];
+      x.z = String(Math.max(100, Math.min(250, (Number(x.z) || 100) + (e.deltaY < 0 ? 10 : -10)))); apApply(row, x); save();
+    }, { passive: false });
     render();
   }
   new MutationObserver(function () {
     document.querySelectorAll('#wikiEditorForm input[data-field="arc_photos"]').forEach(apMount);
+  }).observe(document.documentElement, { childList: true, subtree: true });
+
+  // --- редактор персонажа: «Биография по аркам» одним списком: «＋ Добавить описание» и выбор арки
+  var ADK = { main: 'Основные арки', filler: 'Филлеры', film: 'Фильмы', cover: 'Обложки' };
+  function adMount(form) {
+    if (form.querySelector('.wk-ad-ed')) return;
+    var arcs = window.__wkArcList || [], tas = {};
+    form.querySelectorAll('textarea[data-field^="at_"]').forEach(function (t) { tas[t.getAttribute('data-field')] = t; });
+    var keys = arcs.filter(function (a) { return tas[a.key]; }); if (!keys.length) return;
+    var first = tas[keys[0].key].closest('.wiki-editor-section'); if (!first) return;
+    var body = first.querySelector('.wiki-editor-section-body'); if (!body) return;
+    form.querySelectorAll('.wiki-editor-section').forEach(function (sec) { if (sec !== first && sec.querySelector('textarea[data-field^="at_"]') && !sec.querySelector('[data-field]:not([data-field^="at_"])')) sec.style.display = 'none'; });
+    var flds = body.querySelector('.wiki-editor-fields'); if (flds) flds.style.display = 'none';
+    var box = document.createElement('div'); box.className = 'wk-ad-ed'; box.style.cssText = 'display:grid;gap:10px'; body.appendChild(box);
+    var rows = keys.filter(function (a) { return String(tas[a.key].value || '').trim(); }).map(function (a) { return a.key; });
+    function setReal(k, v) { var t = tas[k]; if (!t || t.value === v) return; t.value = v; ['input', 'change'].forEach(function (n) { t.dispatchEvent(new Event(n, { bubbles: true })); }); }
+    function opts(cur) {
+      var used = {}; rows.forEach(function (k) { if (k && k !== cur) used[k] = 1; });
+      var html = '<option value="">— выбери арку —</option>';
+      Object.keys(ADK).forEach(function (kind) {
+        var g = arcs.filter(function (a) { return a.kind === kind && tas[a.key] && !used[a.key]; });
+        if (g.length) html += '<optgroup label="' + ADK[kind] + '">' + g.map(function (a) { return '<option value="' + esc(a.key) + '"' + (a.key === cur ? ' selected' : '') + '>' + esc(a.name) + '</option>'; }).join('') + '</optgroup>';
+      });
+      return html;
+    }
+    function render() {
+      box.innerHTML = rows.map(function (k, i) {
+        return '<div class="wk-ad-row" data-i="' + i + '" style="display:grid;gap:8px;padding:10px;border:1px solid rgba(255,255,255,.14);border-radius:12px"><div style="display:flex;gap:8px;align-items:center"><select data-ad="arc" style="flex:1;min-width:0">' + opts(k) + '</select><button type="button" data-ad-del title="Убрать описание">✕</button></div>'
+          + (k ? '<textarea data-ad="text" rows="4" placeholder="Что персонаж делает в этой арке" style="width:100%;min-height:90px;resize:vertical">' + esc(tas[k].value) + '</textarea>' : '<small style="opacity:.7">Выбери арку, и появится поле для описания.</small>') + '</div>';
+      }).join('') + '<button type="button" class="wk-gal-add" data-ad-add>＋ Добавить описание</button>'
+        + '<div class="wk-gal-note">Описание показывается в статье в блоке арки. Пустые не показываются.</div>';
+    }
+    box.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return; e.preventDefault();
+      if (b.hasAttribute('data-ad-add')) { if (rows.indexOf('') < 0) rows.push(''); render(); var sel = box.querySelector('.wk-ad-row:last-of-type select'); if (sel) sel.focus(); return; }
+      if (b.hasAttribute('data-ad-del')) {
+        var i = Number(b.closest('.wk-ad-row').getAttribute('data-i')), k = rows[i];
+        if (k && String(tas[k].value || '').trim() && !window.confirm('Убрать это описание арки?')) return;
+        if (k) setReal(k, ''); rows.splice(i, 1); render();
+      }
+    });
+    box.addEventListener('change', function (e) {
+      var t = e.target; if (t.getAttribute('data-ad') !== 'arc') return;
+      var row = t.closest('.wk-ad-row'), i = Number(row.getAttribute('data-i')), old = rows[i], nk = t.value;
+      if (old && nk) { var v = tas[old].value; setReal(old, ''); setReal(nk, v); }
+      rows[i] = nk; render();
+      if (nk) { var ta = box.querySelector('.wk-ad-row[data-i="' + i + '"] textarea'); if (ta) ta.focus(); }
+    });
+    box.addEventListener('input', function (e) {
+      var t = e.target; if (t.getAttribute('data-ad') !== 'text') return;
+      var i = Number(t.closest('.wk-ad-row').getAttribute('data-i')); if (rows[i]) setReal(rows[i], t.value);
+    });
+    render();
+  }
+  new MutationObserver(function () {
+    var f = document.getElementById('wikiEditorForm'); if (f && !f.querySelector('.wk-ad-ed') && f.querySelector('textarea[data-field^="at_"]')) adMount(f);
   }).observe(document.documentElement, { childList: true, subtree: true });
 
   // --- статья персонажа: блок «Дополнительные фото» в самом низу
