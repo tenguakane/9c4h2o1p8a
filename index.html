@@ -2451,7 +2451,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 219";
+const WIKI_VERSION = "11.11.2026 · 222";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -9602,7 +9602,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         useful: {label:'Полезное', plural:'Полезные статьи', array:usefulArticles, icon:'💡'}
     };
     const schemas = {
-        character: {id:'char_new',name:'',nickname:'',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',person_link:'',person_image_position:50,person_image_position_x:50,person_image_zoom:100,person2_link:'',person2_from_chapter:'',person2_from_episode:'',person2_image_position:50,person2_image_position_x:50,person2_image_zoom:100,poster_link:'',nickname2:'',status2:'',future_status:'',gallery:'',ts_fruit_article_id:'',ts_ship:'',ts_ship_link:'',ts_ship_description:'',ts_flag:'',ts_flag_link:'',ts_flag_description:'',chapter:'',episode:'',description:'',filler:false,fruit_article_id:'',fruit2_article_id:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],map_hide:[],ship:'',ship_link:'',ship_description:'',ship2:'',ship2_link:'',ship2_description:'',flag:'',flag_link:'',flag_description:'',ship_article_id:'',ship2_article_id:'',team_article_id:'',status:''},
+        character: {id:'char_new',name:'',nickname:'',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',person_link:'',person_image_position:50,person_image_position_x:50,person_image_zoom:100,person2_link:'',person2_from_chapter:'',person2_from_episode:'',person2_image_position:50,person2_image_position_x:50,person2_image_zoom:100,poster_link:'',nickname2:'',status2:'',future_status:'',gallery:'',ts_fruit_article_id:'',ts_fruit_from_chapter:'',ts_fruit_from_episode:'',ts_ship:'',ts_ship_link:'',ts_ship_description:'',ts_flag:'',ts_flag_link:'',ts_flag_description:'',chapter:'',episode:'',description:'',filler:false,fruit_article_id:'',fruit2_article_id:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],map_hide:[],ship:'',ship_link:'',ship_description:'',ship2:'',ship2_link:'',ship2_description:'',flag:'',flag_link:'',flag_description:'',ship_article_id:'',ship2_article_id:'',team_article_id:'',status:''},
         story: {id:'arc_new',movie_id:'',name:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',image:'',image_position:50,image_position_x:50,image_zoom:100,chapters:'',episodes:'',ongoing:false,filler:false,movie:false,saga:'',description:'',key:'',characters:[],connect:[],map_hide:[]},
         reward: {id:'reward_new',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',character_id:'',reward:0,ka:0,rank:'',rank_total:'',reward_image:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',appearance_chapter:'',appearance_episode:'',connect:[]},
         fruit: {id:'fruit_new',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',name:'',appearance:'',episode:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,owner:'',type:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],map_hide:[]},
@@ -9617,7 +9617,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     const fieldLabels = {
         ship_article_id:'Корабль',ship2_article_id:'Второй корабль',team_article_id:'Команда или организация',crew:'Экипаж и должности',team:'Команда корабля',
         map_hide:'Скрыто на карте связей',
-        arc_photos:'Фото по аркам',id:'ID',name:'Название / имя',nickname:'Прозвище',person_link:'Ссылка на изображение',person_image_position:'Кадрирование фото в карточке',person_image_position_x:'Горизонтальное смещение фото в карточке',person_image_zoom:'Приближение фото в карточке',movie_id:'🎬 Из фильма',card_fx:'✨ Эффект при наклоне',card_shine:'💫 Постоянный эффект',title_fx:'🔤 Эффект шрифта',title_style:'🔤 Настройка шрифта заголовка',card_style:'🎛 Конструктор эффектов карточки',person2_link:'Второе фото (новый облик)',poster_link:'Фото для плаката награды',person2_from_chapter:'С какой главы (фото и «Таймскип»)',person2_from_episode:'С какого эпизода (фото и «Таймскип»)',timeskip_description:'Чем персонаж занят спустя два года',nickname2:'Новое прозвище',status2:'Статусы после таймскипа',future_status:'Будущие статусы',gallery:'Дополнительные фото',ts_fruit_article_id:'Новый дьявольский плод',ts_ship:'Новый корабль',ts_ship_link:'Ссылка на новый корабль',ts_ship_description:'Описание нового корабля',ts_flag:'Новый флаг / команда',ts_flag_link:'Ссылка на новый флаг',ts_flag_description:'Описание нового флага',person2_image_position:'Кадрирование второго фото',person2_image_position_x:'Горизонталь второго фото, %',person2_image_zoom:'Приближение второго фото, %',chapter:'Глава появления',episode:'Эпизод появления',description:'Описание',fruit:'Дьявольский плод (старое поле)',fruit_link:'Ссылка на плод (старое поле)',fruit_article_id:'Дьявольский плод — статья из раздела «Плоды»',fruit2:'Второй плод (старое поле)',fruit2_link:'Ссылка на второй плод (старое поле)',fruit2_article_id:'Второй дьявольский плод — статья из раздела «Плоды»',arc:'Арка (манга)',saga:'Сага (манга)',connect:'Связанные ID (через запятую)',ship:'Корабль',ship_link:'Ссылка на корабль',ship_description:'Описание корабля',ship2:'Второй корабль',ship2_link:'Ссылка на второй корабль',ship2_description:'Описание второго корабля',flag:'Флаг',flag_link:'Ссылка на флаг',flag_description:'Описание флага',status:'Статус',characters:'ID персонажей (через запятую)',chapters:'Главы',episodes:'Эпизоды',ongoing:'Арка продолжается',filler:'Филлер / аниме-оригинал',movie:'Полнометражный фильм',character_id:'ID персонажа',reward:'Награда',ka:'КА',rank:'Место в топе',rank_total:'Всего в топе',reward_image:'Ссылка на изображение для карточки награды',appearance:'Глава появления',appearance_chapter:'Глава появления',appearance_episode:'Эпизод появления',image:'Ссылка на изображение',image_position:'Кадрирование фото в карточке',image_position_x:'Горизонтальное смещение фото',image_zoom:'Приближение фото',owner:'Владелец(ы)',type:'Тип',arc_anime:'Арка (аниме)',saga_anime:'Сага (аниме)'};
+        arc_photos:'Фото по аркам',id:'ID',name:'Название / имя',nickname:'Прозвище',person_link:'Ссылка на изображение',person_image_position:'Кадрирование фото в карточке',person_image_position_x:'Горизонтальное смещение фото в карточке',person_image_zoom:'Приближение фото в карточке',movie_id:'🎬 Из фильма',card_fx:'✨ Эффект при наклоне',card_shine:'💫 Постоянный эффект',title_fx:'🔤 Эффект шрифта',title_style:'🔤 Настройка шрифта заголовка',card_style:'🎛 Конструктор эффектов карточки',person2_link:'Второе фото (новый облик)',poster_link:'Фото для плаката награды',person2_from_chapter:'С какой главы (фото и «Таймскип»)',person2_from_episode:'С какого эпизода (фото и «Таймскип»)',timeskip_description:'Чем персонаж занят спустя два года',nickname2:'Новое прозвище',status2:'Статусы после таймскипа',future_status:'Будущие статусы',gallery:'Дополнительные фото',ts_fruit_article_id:'Плод, который появится позже',ts_fruit_from_chapter:'Показать с главы (пусто — как таймскип)',ts_fruit_from_episode:'Показать с эпизода (пусто — как таймскип)',ts_ship:'Новый корабль',ts_ship_link:'Ссылка на новый корабль',ts_ship_description:'Описание нового корабля',ts_flag:'Новый флаг / команда',ts_flag_link:'Ссылка на новый флаг',ts_flag_description:'Описание нового флага',person2_image_position:'Кадрирование второго фото',person2_image_position_x:'Горизонталь второго фото, %',person2_image_zoom:'Приближение второго фото, %',chapter:'Глава появления',episode:'Эпизод появления',description:'Описание',fruit:'Дьявольский плод (старое поле)',fruit_link:'Ссылка на плод (старое поле)',fruit_article_id:'Дьявольский плод — статья из раздела «Плоды»',fruit2:'Второй плод (старое поле)',fruit2_link:'Ссылка на второй плод (старое поле)',fruit2_article_id:'Второй дьявольский плод — статья из раздела «Плоды»',arc:'Арка (манга)',saga:'Сага (манга)',connect:'Связанные ID (через запятую)',ship:'Корабль',ship_link:'Ссылка на корабль',ship_description:'Описание корабля',ship2:'Второй корабль',ship2_link:'Ссылка на второй корабль',ship2_description:'Описание второго корабля',flag:'Флаг',flag_link:'Ссылка на флаг',flag_description:'Описание флага',status:'Статус',characters:'ID персонажей (через запятую)',chapters:'Главы',episodes:'Эпизоды',ongoing:'Арка продолжается',filler:'Филлер / аниме-оригинал',movie:'Полнометражный фильм',character_id:'ID персонажа',reward:'Награда',ka:'КА',rank:'Место в топе',rank_total:'Всего в топе',reward_image:'Ссылка на изображение для карточки награды',appearance:'Глава появления',appearance_chapter:'Глава появления',appearance_episode:'Эпизод появления',image:'Ссылка на изображение',image_position:'Кадрирование фото в карточке',image_position_x:'Горизонтальное смещение фото',image_zoom:'Приближение фото',owner:'Владелец(ы)',type:'Тип',arc_anime:'Арка (аниме)',saga_anime:'Сага (аниме)'};
     const types = Object.keys(collections);
     let activeType = 'character';
     let editingId = null;
@@ -9782,6 +9782,14 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         const t=altPhotoTargets(raw);
         return !!((t.chapter&&spoilerProgress.chapter>=t.chapter)||(t.episode&&spoilerProgress.episode>=t.episode));
     }
+    // Поздний плод: свои порог главы/эпизода; если пусто — как у таймскипа.
+    function fruitReached(raw){
+        if(!raw)return false;
+        if(spoilerAuditMode)return true;
+        const c=numericThreshold(raw.ts_fruit_from_chapter),e=numericThreshold(raw.ts_fruit_from_episode);
+        if(!c&&!e)return tsReached(raw);
+        return !!((c&&spoilerProgress.chapter>=c)||(e&&spoilerProgress.episode>=e));
+    }
     function altPhotoActive(raw){return !!(raw&&tsFilled(raw.person2_link)&&tsReached(raw));}
     // Что подменяется после таймскипа (возвращает undefined — оставить старое значение).
     const tsShip=(raw,k)=>({ship:raw.ts_ship,ship_link:raw.ts_ship_link,ship_description:raw.ts_ship_description})[k];
@@ -9907,7 +9915,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         return id;
     }
     function wkCharById(id){id=String(id||'').trim();if(!id)return null;const a=allRecords('character');for(let i=0;i<a.length;i++){if(String(rawValue(a[i],'id'))===id)return a[i].__wikiRaw||a[i];}return null;}
-    function wkVisibleFruits(cr){const v=[cr.fruit_article_id,cr.fruit2_article_id].map(x=>String(x||'').trim()).filter(Boolean);const ts=String(cr.ts_fruit_article_id||'').trim();if(ts&&tsReached(cr))v.push(ts);return v;}
+    function wkVisibleFruits(cr){const v=[cr.fruit_article_id,cr.fruit2_article_id].map(x=>String(x||'').trim()).filter(Boolean);const ts=String(cr.ts_fruit_article_id||'').trim();if(ts&&fruitReached(cr))v.push(ts);return v;}
     // Плод связан с персонажем, но связь ещё скрыта порогом
     function wkFruitGated(cr,fid){if(!cr||!fid)return false;const all=[cr.fruit_article_id,cr.fruit2_article_id,cr.ts_fruit_article_id].map(x=>String(x||'').trim());return all.includes(fid)&&!wkVisibleFruits(cr).includes(fid);}
     function wkList(v){return Array.isArray(v)?v.map(x=>String(x).trim()).filter(Boolean):String(v||'').split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean);}
@@ -10031,7 +10039,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
             const swap=type==='character'?TS_SWAP[k]:null;
             const derive=type==='character'?WK_DERIVE[k]:type==='fruit'?(WK_FRUIT_DERIVE[k]||null):type==='useful'?(WK_USEFUL_DERIVE[k]||null):null;
             const isStatus=type==='character'&&k==='status';
-            try { Object.defineProperty(obj,k,{enumerable:true,configurable:true,get(){let v;if(type==='character'&&WK_PH_KEYS[k]){const ph=wkLatestArcPhoto(raw);if(ph)v=ph[WK_PH_KEYS[k]];}if(v===undefined&&swap&&tsReached(raw)){v=swap(raw);}if(v===undefined&&derive){v=derive(raw);}if(v===undefined)v=raw[k];return isStatus?applyFruitStatus(obj,applyFutureStatus(raw,v)):v;},set(v){raw[k]=v;}}); } catch(e){}
+            try { Object.defineProperty(obj,k,{enumerable:true,configurable:true,get(){let v;if(type==='character'&&WK_PH_KEYS[k]){const ph=wkLatestArcPhoto(raw);if(ph)v=ph[WK_PH_KEYS[k]];}if(v===undefined&&swap&&((k==='fruit_article_id'||k==='fruit2_article_id')?fruitReached(raw):tsReached(raw))){v=swap(raw);}if(v===undefined&&derive){v=derive(raw);}if(v===undefined)v=raw[k];return isStatus?applyFruitStatus(obj,applyFutureStatus(raw,v)):v;},set(v){raw[k]=v;}}); } catch(e){}
         });
         return obj;
     }
@@ -10275,6 +10283,8 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         const contentMismatch = !!(embeddedData && embeddedData.collections && storedData && storedData.collections &&
             payloadSignature(embeddedData) !== payloadSignature(storedData));
         const isBakedPortable = document.documentElement.getAttribute('data-wiki-portable-baked') === 'true';
+        // Правки, сделанные в этом браузере ПОСЛЕ времени выгрузки файла, переживают замену файла на новую версию
+        // (раньше новая версия файла затирала их данными из встроенной копии).
         // Prefer the embedded data on first open, or if localStorage belongs to a
         // different HTML snapshot. But when this exact snapshot was previously
         // opened here and localStorage is newer, preserve edits made since that open.
@@ -10282,15 +10292,15 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         const embeddedUpdatedAt = embeddedData ? Date.parse(String(embeddedData.updatedAt || '')) : NaN;
         const newerLocalEditsForThisSnapshot = !!(
             embeddedData && embeddedData.collections && storedData && storedData.collections &&
-            marker === portableSnapshotId && contentMismatch &&
+            contentMismatch &&
             Number.isFinite(storedUpdatedAt) && Number.isFinite(embeddedUpdatedAt) &&
             storedUpdatedAt > embeddedUpdatedAt
         );
         let cloudPending = false;
         try { cloudPending = !!(window.WIKI_CLOUD_ENABLED && localStorage.getItem('wkCloudPendingV1') && storedData && storedData.collections); } catch (e) {}
         const useEmbedded = !cloudPending && !!(embeddedData && embeddedData.collections &&
-            (!storageAvailable || !embeddedStamp || !storedRaw || !storedData || marker !== portableSnapshotId ||
-             ((isBakedPortable || contentMismatch) && !newerLocalEditsForThisSnapshot)));
+            (!storageAvailable || !embeddedStamp || !storedRaw || !storedData ||
+             (!newerLocalEditsForThisSnapshot && (marker !== portableSnapshotId || isBakedPortable || contentMismatch))));
         const raw = embeddedData && embeddedData.collections
             ? (useEmbedded ? embeddedRaw : (storageAvailable ? storedRaw : embeddedRaw))
             : (isBakedPortable ? null : (storageAvailable ? storedRaw : null));
@@ -11841,12 +11851,11 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
                 {title:'Начало таймскипа',icon:'⏳',group:'ts',keys:['person2_from_chapter','person2_from_episode']},
                 {title:'Новый облик',icon:'🖼️',group:'ts',keys:['person2_link','person2_image_position','person2_image_position_x','person2_image_zoom']},
                 {title:'Новое прозвище и статусы',icon:'📝',group:'ts',keys:['nickname2','status2']},
-                {title:'Новый плод',icon:'🍎',group:'ts',keys:['ts_fruit_article_id']},
                 {title:'Биография по аркам',icon:'📖',desc:'Что персонаж сделал в каждой арке. Пустое поле на странице не показывается.',keys:WK_ARC_LIST.filter(a=>a.kind==='main').map(a=>a.key)},
                 {title:'Биография: филлеры',icon:'🎞️',desc:'Только для филлерных арок.',keys:WK_ARC_LIST.filter(a=>a.kind==='filler').map(a=>a.key)},
                 {title:'Биография: фильмы',icon:'🎬',desc:'Только для полнометражных фильмов.',keys:WK_ARC_LIST.filter(a=>a.kind==='film').map(a=>a.key)},
                 {title:'Биография: обложки',icon:'🖼️',desc:'Только для обложечных историй.',keys:WK_ARC_LIST.filter(a=>a.kind==='cover').map(a=>a.key)},
-                {title:'Плоды',icon:'🍎',desc:'Ссылки на статьи плодов. Имя, изображение и описание подтягиваются автоматически.',keys:['fruit_article_id','fruit2_article_id']},
+                {title:'Плоды',icon:'🍎',desc:'Ссылки на статьи плодов. Имя, изображение и описание подтягиваются автоматически. Третий плод (поздний) откроется только с указанной главы или эпизода.',keys:['fruit_article_id','fruit2_article_id','ts_fruit_article_id','ts_fruit_from_chapter','ts_fruit_from_episode']},
                 {title:'Эффекты карточки и заголовка',icon:'✨',desc:'Эффекты при наклоне и постоянные, конструктор слоёв и частиц, шрифт и эффект заголовка. Раздел можно свернуть.',fx:true,keys:['card_fx','card_shine','title_fx']},
                 {title:'Корабль и команда',icon:'⛵',desc:'Выбери статьи из «Полезного». Фото, название и описание корабля и команды подтянутся из них автоматически.',keys:['ship_article_id','ship2_article_id','team_article_id']},
                 {title:'Фото по аркам',icon:'🖼️',desc:'Своё фото для каждой арки. На карточке и в наградах показывается самое свежее из уже пройденных арок; кадр у каждого фото свой.',keys:['arc_photos']},
@@ -22148,7 +22157,7 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
   function syncAlt(host) {
     var ed = host.querySelector('[data-alt-crop]'); if (!ed) return;
     var url = q(host, 'person2_link');
-    [['person2_from_chapter', '598 (таймскип)'], ['person2_from_episode', '517 (таймскип)'], ['person2_link', 'https://… — фото нового облика']].forEach(function (p) { var el = q(host, p[0]); if (el && !el.placeholder) el.placeholder = p[1]; });
+    [['ts_fruit_from_chapter', 'напр. 925'], ['ts_fruit_from_episode', 'напр. 917'], ['person2_from_chapter', '598 (таймскип)'], ['person2_from_episode', '517 (таймскип)'], ['person2_link', 'https://… — фото нового облика']].forEach(function (p) { var el = q(host, p[0]); if (el && !el.placeholder) el.placeholder = p[1]; });
     var y = q(host, 'person2_image_position'), x = q(host, 'person2_image_position_x'), z = q(host, 'person2_image_zoom');
     var vy = Number(y.value) || 0, vx = Number(x.value) || 0, vz = Number(z.value) || 100;
     ed.querySelector('[data-alt-out="y"]').textContent = vy + '%';
@@ -22296,7 +22305,10 @@ html body #wikiEditorOverlay#wikiEditorOverlay .wiki-editor-global-spoiler,html 
     f.querySelectorAll('.wk-ed-tabs button').forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-tab') === t); });
   }
   function tabsBar(f) {
-    if (!q(f, 'person2_link') || f.querySelector('.wk-ed-tabs')) return;
+    // Вкладка «Таймскип» убрана: форма всегда в режиме «Основное», разделы таймскипа скрыты (данные не трогаем).
+    if (!q(f, 'person2_link')) return;
+    var old = f.querySelector('.wk-ed-tabs'); if (old) old.remove();
+    tab = 'main'; f.setAttribute('data-wk-tab', 'main'); return;
     var bar = document.createElement('div'); bar.className = 'wk-ed-tabs';
     bar.innerHTML = '<button type="button" data-tab="main">📋 Основное</button><button type="button" data-tab="ts">⏳ Таймскип <span class="wk-ts-count"></span></button><small>Во вкладке «Таймскип» — только то, что меняется спустя два года. В статье всё объединится, когда человек дойдёт до порога.</small>';
     var anchor = f.querySelector('.wiki-editor-form-title') || f.firstChild;
@@ -27630,6 +27642,9 @@ html body .wk-ov-chart{grid-column:1/-1}
 })();
 </script>
 <style id="wk-ad-css">#wikiEditorForm [data-wk-ad-hide]{display:none!important}
+#wikiEditorForm .wiki-editor-field:has([data-field="ts_fruit_article_id"]){grid-column-start:1}
+/* Цветная линия раздела поверх шапки раздела (шапка с фоном закрывала её верхнюю часть). */
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay.wk-rd .wiki-editor-section::before{z-index:30!important;pointer-events:none}
 .wk-arcpick{position:relative}.wk-arcpick-in{width:100%;box-sizing:border-box}
 .wk-arcpick-list{position:absolute;z-index:50;left:0;right:0;top:calc(100% + 4px);max-height:260px;overflow:auto;background:#0e1626;border:1px solid rgba(148,163,184,.3);border-radius:12px;box-shadow:0 14px 40px rgba(0,0,0,.55);padding:4px}
 .wk-arcpick-list[hidden]{display:none}
@@ -29771,7 +29786,7 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
       else if (f1 || f2) add('ok', '🍎 «Фруктовик» добавится сам: ' + esc([f1, f2].filter(Boolean).map(fruitLabel).join(', ')) + '.');
       if (f2 && f2 === f1) add('warn', '🍎 Второй плод совпадает с первым.');
       if (f2 && !f1) add('warn', '🍎 Выбран второй плод, а основной пуст — лучше перенести его в основной.');
-      if (ts) { var tch = String(raw.person2_from_chapter || '').trim(), tep = String(raw.person2_from_episode || '').trim(); add('info', '⏳ Плод «' + esc(fruitLabel(ts)) + '» откроется ' + (tch || tep ? 'с ' + [tch ? 'гл. ' + tch : '', tep ? 'сер. ' + tep : ''].filter(Boolean).join(' или ') : 'после таймскипа') + ' (вкладка «Таймскип» в редакторе статей).'); }
+      if (ts) { var tch = String(raw.ts_fruit_from_chapter || raw.person2_from_chapter || '').trim(), tep = String(raw.ts_fruit_from_episode || raw.person2_from_episode || '').trim(); add('info', '⏳ Плод «' + esc(fruitLabel(ts)) + '» откроется ' + (tch || tep ? 'с ' + [tch ? 'гл. ' + tch : '', tep ? 'сер. ' + tep : ''].filter(Boolean).join(' или ') : 'после таймскипа') + '.'); }
       var s1 = val('ship_article_id'), s2 = val('ship2_article_id');
       if (s2 && s2 === s1) add('warn', '⚓ Второй корабль совпадает с первым.');
       if (s2 && !s1) add('warn', '⚓ Выбран второй корабль, а основной пуст.');
