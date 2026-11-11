@@ -3630,7 +3630,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 272";
+const WIKI_VERSION = "11.11.2026 · 281";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -11029,7 +11029,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         return WK_ARC_LIST.map(a=>({a,t:String(raw[a.key]==null?'':raw[a.key]).trim()})).filter(x=>x.t).filter(x=>{if(all||spoilerAuditMode)return true;const en=wkArcEnd(x.a.id);return wkReachedAt(en.ch,en.ep);}).map(x=>({id:x.a.id,name:x.a.name,kind:x.a.kind,text:x.t}));
     }
     /* ---------- Фото по аркам: на карточке и в наградах — самое свежее из уже открытых ---------- */
-    const WK_PH_KEYS={person_link:'u',person_image_position:'y',person_image_position_x:'x',person_image_zoom:'z',card_fx:'fx',card_shine:'amb'};
+    const WK_PH_KEYS={person_link:'u',person_image_position:'y',person_image_position_x:'x',person_image_zoom:'z',card_fx:'fx',card_shine:'amb',card_style:'cs'};
     function wkLatestArcPhoto(raw){
         if(!raw)return null;let l=raw.arc_photos;if(!l)return null;
         if(typeof l==='string'){try{l=JSON.parse(l);}catch(e){return null;}}
@@ -11039,7 +11039,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
             const u=String(x&&x.u||'').trim();if(!x||!x.arc||!/^(https?:\/\/|data:image\/)/i.test(u))return;
             const st=wkArcEnd(String(x.arc));if(!wkReachedAt(st.ch,st.ep))return;
             const sc=st.ch||(st.ep?st.ep*0.7:0);
-            if(sc>=bs){bs=sc;best={arc:String(x.arc),u:u,y:x.y==null||x.y===''?'50':String(x.y),x:x.x==null||x.x===''?'50':String(x.x),z:x.z==null||x.z===''?'100':String(x.z),fx:String(x.fx||''),amb:String(x.amb||'')};}
+            if(sc>=bs){bs=sc;best={arc:String(x.arc),u:u,y:x.y==null||x.y===''?'50':String(x.y),x:x.x==null||x.x===''?'50':String(x.x),z:x.z==null||x.z===''?'100':String(x.z),fx:String(x.fx||''),amb:String(x.amb||''),cs:String(x.cs||'')};}
         });
         return best;
     }
@@ -13535,6 +13535,22 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         document.getElementById('wikiEditorSave').addEventListener('click',saveEditorForm);
         document.getElementById('wikiEditorDelete').addEventListener('click',deleteCurrentRecord);
     }
+    // Правка прямо в статье: чтение и сохранение через тот же конвейер, что и у редактора
+    window.__wkInlineRead=function(type,id){
+        const o=allRecords(type).find(x=>String(rawValue(x,'id'))===String(id));if(!o)return null;
+        const r={};Object.keys(schemas[type]).forEach(k=>{r[k]=fieldText(rawValue(o,k));});return r;
+    };
+    window.__wkInlineOptions=function(type,key){const set={};allRecords(type).forEach(r=>{const v=String(fieldText(rawValue(r,key))||'').trim();if(v)set[v]=1;});return Object.keys(set).sort((x,y)=>x.localeCompare(y,'ru'));};
+    window.__wkInlineList=function(){const o=[];types.forEach(t=>{allRecords(t).forEach(r=>{o.push({id:String(rawValue(r,'id')||''),name:String(getTitle(t,r)||''),type:t});});});return o;};
+    window.__wkNewArticle=function(type){ if(!collections[type])return false; openManager(type); if(!document.getElementById('wikiEditorOverlay')||!document.getElementById('wikiEditorOverlay').classList.contains('open'))return false; newRecord(type); return true; };
+    window.__wkInlineSave=function(type,id,vals){
+        if(!document.getElementById('wikiEditorOverlay')) buildModal();
+        activeType=type;editingId=String(id);managerSpoilerMode=false;settingsMode=false;
+        renderEditorForm();
+        const host=document.getElementById('wikiEditorForm');if(!host)return false;
+        Object.keys(vals).forEach(k=>{const el=host.querySelector(`[data-field="${k}"]`);if(el)el.value=vals[k];});
+        return saveEditorForm();
+    };
     function saveEditorForm(){
         const obj=allRecords(activeType).find(x=>String(rawValue(x,'id'))===String(editingId));if(!obj)return false;
         const host=document.getElementById('wikiEditorForm');
@@ -24837,11 +24853,12 @@ html.wk-calm body :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) 
   function raw(rec) { return rec && (rec.__wikiRaw || rec); }
   function ownAmb(r) { var v = r && r.card_shine; if (v === true || v === 'true' || v === 1) return 'shine'; v = typeof v === 'string' ? v.trim() : ''; return v && v !== 'none' && isAmb(v) ? v : ''; }
   // Эффекты, заданные для фото по арке: действуют, пока на карточке именно это фото
-  function arcOv(type, rec) { if (type !== 'character' || !rec || !window.__wikiLatestArcPhoto) return null; try { var ph = window.__wikiLatestArcPhoto(rec); return ph && (ph.fx || ph.amb) ? ph : null; } catch (e) { return null; } }
+  function arcOv(type, rec) { if (type !== 'character' || !rec || !window.__wikiLatestArcPhoto) return null; try { var ph = window.__wikiLatestArcPhoto(rec); return ph && (ph.fx || ph.amb || ph.cs) ? ph : null; } catch (e) { return null; } }
   // Удалённые эффекты из старых записей и импортов → ближайшая замена (или без эффекта)
   var LEGACY_FX = { 'foil-black-grain': 'foil-black', 'foil-silver-plate': 'silver', 'foil-silver-brushed': 'silver', 'foil-silver-hammered': 'silver', 'foil-gold-brushed': 'gold', 'foil-gold-grain': 'gold', 'foil-copper-hammered': 'foil-copper', 'foil-rose-sparkle': 'foil-rose', 'gear5': '', 'prism-shards': '', 'scan': '', 'pearl': '' };
   function fxOf(type, rec) { if (type === 'reward') { var lf = rwLook().fx; return lf && lf !== 'none' ? lf : ''; } var r = raw(rec), ov = arcOv(type, rec); var v = ov && ov.fx ? String(ov.fx).trim() : r ? String(r.card_fx || '').trim() : ''; if (isMoved(v)) return ownAmb(r) && ownAmb(r) !== v ? v : ''; if (Object.prototype.hasOwnProperty.call(LEGACY_FX, v)) v = LEGACY_FX[v]; if (isAmb(v) || REMOVED_FX.indexOf(v) >= 0) v = ''; return v || defaultFx(type, rec) || ''; }
   function defaultAmb(type) { return ''; }
+  function csOf(type, rec) { var o = arcOv(type, rec); if (o && o.cs) return o.cs; return (raw(rec) || {}).card_style; }
   window.__wikiCardAmbDefault = defaultAmb;
   function ambOf(type, rec) {
     if (type === 'reward') { var la = rwLook().amb; return la && la !== 'none' ? la : ''; }
@@ -25084,7 +25101,7 @@ html.wk-calm body :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) 
       el.__wkFxSeen = 1;
       var id = identify(el); if (!id || !id.rec) { var ct0 = el.querySelector('.card-title'); if (ct0 && window.__wikiApplyTitleStyle) window.__wikiApplyTitleStyle(ct0, '', ct0.getAttribute('data-tfx') || ''); return; }
       apply(el, fxOf(id.type, id.rec)); applyAmb(el, ambOf(id.type, id.rec), id.rec.id); try { window.__wkSetHue && window.__wkSetHue(el, id.rec, id.type); } catch (e) {}
-      if (window.__wikiApplyCardStyle) window.__wikiApplyCardStyle(el, id.type === 'reward' ? (rwLook().cs || '') : (raw(id.rec) || {}).card_style, id.rec.id);
+      if (window.__wikiApplyCardStyle) window.__wikiApplyCardStyle(el, id.type === 'reward' ? (rwLook().cs || '') : csOf(id.type, id.rec), id.rec.id);
       var ct = el.querySelector('.card-title'), ctv = tfxOf(id.type, id.rec, el);
       applyTfx(ct, ctv); try { window.__wkTitleHue && window.__wkTitleHue(ct, id.rec, id.type); } catch (e) {}
       if (ct && window.__wikiApplyTitleStyle) window.__wikiApplyTitleStyle(ct, (raw(id.rec) || {}).title_style, ctv);
@@ -25102,7 +25119,7 @@ html.wk-calm body :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) 
       setAcc(h1, acc);
       var w = c.querySelector('.article-inline-image-wrap'); if (!w) return;
       if (hrec) { apply(w, fxOf(ARTICLES[cid], hrec)); applyAmb(w, ambOf(ARTICLES[cid], hrec), hrec.id); setAcc(w, acc); try { window.__wkSetHue && window.__wkSetHue(w, hrec, ARTICLES[cid]); } catch (e) {} }
-      if (window.__wikiApplyCardStyle) window.__wikiApplyCardStyle(w, hrec ? (raw(hrec) || {}).card_style : '', hrec ? hrec.id : '');
+      if (window.__wikiApplyCardStyle) window.__wikiApplyCardStyle(w, hrec ? csOf(ARTICLES[cid], hrec) : '', hrec ? hrec.id : '');
     });
   }
   var pend = 0;
@@ -25129,7 +25146,7 @@ html.wk-calm body :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) 
   function fieldVal(f, k) { var el = f.querySelector('[data-field="' + k + '"]'); if (!el) return ''; if (el.multiple) return Array.prototype.filter.call(el.options, function (o) { return o.selected; }).map(function (o) { return o.value; }).join(', '); return String(el.value || '').trim(); }
   function preview() {
     var f = document.getElementById('wikiEditorForm'); if (!f) return;
-    var sel = f.querySelector('[data-field="card_fx"]'); if (!sel) return;
+    var sel = f.querySelector('[data-field="card_fx"],[data-wk-hold="card_fx"]'); if (!sel) return;
     var box = sel.closest('[data-editor-field], .wiki-editor-field'); if (!box) return;
     var row = box.querySelector('.wk-fx-row');
     if (!row) {
@@ -25153,6 +25170,7 @@ html.wk-calm body :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) 
         if (apBest) { img = String(apBest.u).trim(); apPos = (apBest.x == null || apBest.x === '' ? 50 : apBest.x) + '% ' + (apBest.y == null || apBest.y === '' ? 50 : apBest.y) + '%'; }
       } catch (e) {}
     }
+    try { var LK = f.__wkLook; if (LK && LK.id != null) { var pj = JSON.parse(fieldVal(f, 'arc_photos') || '[]').filter(function (q) { return q && String(q.arc) === LK.id; })[0]; if (pj && /^(https?:|data:image)/.test(String(pj.u || '').trim())) { img = String(pj.u).trim(); apPos = (pj.x == null || pj.x === '' ? 50 : pj.x) + '% ' + (pj.y == null || pj.y === '' ? 50 : pj.y) + '%'; } } } catch (e) {}
     var pv = row.querySelector('.wk-fx-preview');
     var hasImg = /^(https?:|data:image)/.test(img);
     pv.style.backgroundImage = hasImg ? 'url("' + img.replace(/"/g, '%22') + '")' : PV_EMPTY;
@@ -25163,11 +25181,11 @@ html.wk-calm body :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) 
     var type = editorType();
     var idv = fieldVal(f, 'id');
     var rec = byId(type, idv) || { id: idv };
-    var fx = sel.value; if (REMOVED_FX.indexOf(fx) >= 0) fx = ''; var shv = f.querySelector('[data-field="card_shine"]'); if (isMoved(fx) && !(shv && shv.value && shv.value !== 'none' && shv.value !== fx)) fx = 'none'; fx = fx || defaultFx(type, { id: idv });
+    var fx = sel.value; if (REMOVED_FX.indexOf(fx) >= 0) fx = ''; var shv = f.querySelector('[data-field="card_shine"],[data-wk-hold="card_shine"]'); if (isMoved(fx) && !(shv && shv.value && shv.value !== 'none' && shv.value !== fx)) fx = 'none'; fx = fx || defaultFx(type, { id: idv });
     if (fx && fx !== 'none') pv.setAttribute('data-fx', fx); else pv.removeAttribute('data-fx');
-    var sh = f.querySelector('[data-field="card_shine"]'); var amb = sh ? String(sh.value || '') : ''; if (!amb) amb = defaultAmb(type); if (amb === 'none') amb = '';
+    var sh = f.querySelector('[data-field="card_shine"],[data-wk-hold="card_shine"]'); var amb = sh ? String(sh.value || '') : ''; if (!amb) amb = defaultAmb(type); if (amb === 'none') amb = '';
     applyAmb(pv, amb, 'preview'); try { window.__wkPvHue && window.__wkPvHue(pv, f); } catch (e) {}
-    var cse = f.querySelector('[data-field="card_style"]'); if (window.__wikiApplyCardStyle) window.__wikiApplyCardStyle(pv, cse ? cse.value : '', 'preview');
+    var cse = f.querySelector('[data-field="card_style"],[data-wk-hold="card_style"]'); if (window.__wikiApplyCardStyle) window.__wikiApplyCardStyle(pv, cse ? cse.value : '', 'preview');
     // Цвет статьи берём из того, что сейчас выбрано в форме (статус, сага, тип).
     var live = { status: fieldVal(f, 'status') || (raw(rec) || {}).status, saga: fieldVal(f, 'saga') || (raw(rec) || {}).saga, type: fieldVal(f, 'type') || (raw(rec) || {}).type, character_id: fieldVal(f, 'character_id') || (raw(rec) || {}).character_id };
     setAcc(pv, accentFor(type, live) || '');
@@ -27861,6 +27879,7 @@ html:not(.wk-tfx-off) .wk-fx-preview .wk-pv-name[data-tfx]{filter:drop-shadow(0 
     var st = parse(hidden.value);
     if (st.frame && st.frame.on && !(st.ring && st.ring.on)) { st.ring = frameToRing(st.frame); delete st.frame; }
     else if (st.frame) delete st.frame;
+    field.__wkReload = function () { st = parse(hidden.value); if (st.frame && st.frame.on && !(st.ring && st.ring.on)) { st.ring = frameToRing(st.frame); delete st.frame; } else if (st.frame) delete st.frame; saving = false; render(); };
     var saving = false, flash = '';
     var wrapEl = document.createElement('div'); wrapEl.className = 'wk-cs-wrap';
     var panel = document.createElement('div'); panel.className = 'wk-cs-panel';
@@ -31874,10 +31893,10 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   });
   function apParse(v) {
     var a = []; try { a = JSON.parse(v || '[]'); } catch (e) { a = []; }
-    return (Array.isArray(a) ? a : []).filter(function (x) { return x && typeof x === 'object'; }).map(function (x) { return { arc: String(x.arc || ''), u: String(x.u || ''), y: x.y == null ? '50' : String(x.y), x: x.x == null ? '50' : String(x.x), z: x.z == null ? '100' : String(x.z), fx: String(x.fx || ''), amb: String(x.amb || '') }; });
+    return (Array.isArray(a) ? a : []).filter(function (x) { return x && typeof x === 'object'; }).map(function (x) { return { arc: String(x.arc || ''), u: String(x.u || ''), y: x.y == null ? '50' : String(x.y), x: x.x == null ? '50' : String(x.x), z: x.z == null ? '100' : String(x.z), fx: String(x.fx || ''), amb: String(x.amb || ''), cs: String(x.cs || '') }; });
   }
   function apDump(list) {
-    var out = list.filter(function (x) { return x.arc && goodUrl(x.u); }).map(function (x) { var o = { arc: x.arc, u: x.u.trim(), y: String(x.y), x: String(x.x), z: String(x.z) }; if (x.fx) o.fx = x.fx; if (x.amb) o.amb = x.amb; return o; });
+    var out = list.filter(function (x) { return x.arc && goodUrl(x.u); }).map(function (x) { var o = { arc: x.arc, u: x.u.trim(), y: String(x.y), x: String(x.x), z: String(x.z) }; if (x.fx) o.fx = x.fx; if (x.amb) o.amb = x.amb; if (x.cs) o.cs = x.cs; return o; });
     return out.length ? JSON.stringify(out) : '';
   }
   function apOpts(list, cur, first) {
@@ -31888,7 +31907,10 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     var arcs = window.__wkArcList || [];
     var list = apParse(hidden.value);
     var box = document.createElement('div'); box.className = 'wk-ap-ed'; box.style.cssText = 'display:grid;gap:10px'; hidden.after(box);
-    function save() { var v = apDump(list); if (hidden.value === v) return; hidden.value = v; ['input', 'change'].forEach(function (t) { hidden.dispatchEvent(new Event(t, { bubbles: true })); }); }
+    var lastDump = hidden.value;
+    function save() {
+      if (hidden.value !== lastDump) { var cur = apParse(hidden.value); list.forEach(function (x) { var c = cur.filter(function (q) { return q.arc === x.arc; })[0]; if (c) { x.fx = c.fx; x.amb = c.amb; x.cs = c.cs; } }); }
+      var v = apDump(list); lastDump = v; if (hidden.value === v) return; hidden.value = v; ['input', 'change'].forEach(function (t) { hidden.dispatchEvent(new Event(t, { bubbles: true })); }); }
     function prev(x) {
       var z = Math.max(100, Number(x.z) || 100);
       return goodUrl(x.u) ? '<img src="' + esc(x.u.trim()) + '" alt="" style="width:100%;height:100%;object-fit:cover;object-position:' + (Number(x.x) || 50) + '% ' + (Number(x.y) || 50) + '%;transform:scale(' + z / 100 + ');transform-origin:' + (Number(x.x) || 50) + '% ' + (Number(x.y) || 50) + '%" onerror="this.replaceWith(document.createTextNode(\'⚠\'))">' : '🖼';
@@ -31899,11 +31921,10 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
           + '<div class="wk-ap-prev" title="Тяни, чтобы сдвинуть; колесо мыши — приблизить" style="width:168px;height:210px;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;cursor:grab;touch-action:none;user-select:none">' + prev(x) + '</div>'
           + '<div style="display:grid;gap:6px;min-width:0"><div><small style="opacity:.7">Арка</small>' + arcPickHTML((arcs.filter(function (a) { return a.id === x.arc; })[0] || {}).name) + '</div>'
           + '<label>Ссылка на фото<input type="url" data-k="u" placeholder="https://…" value="' + esc(x.u) + '" style="width:100%"></label>'
-          + '<div class="wk-ap-fx" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><label><small style="opacity:.7">Эффект при наклоне</small><select data-k="fx" style="width:100%">' + apOpts(window.__wikiCardFxList, x.fx, 'Как у персонажа') + '</select></label><label><small style="opacity:.7">Постоянный эффект</small><select data-k="amb" style="width:100%">' + apOpts(window.__wikiCardAmbList, x.amb, 'Как у персонажа') + '</select></label></div>'
-          + '<div class="wk-ap-hint" style="font-size:12.5px;opacity:.75;display:flex;gap:8px;align-items:center;flex-wrap:wrap">Тяни фото мышью или пальцем, колесо — приблизить. <output>' + Math.round(Number(x.z) || 100) + '%</output><button type="button" data-reset>Сбросить кадр</button></div></div>'
+                    + '<div class="wk-ap-hint" style="font-size:12.5px;opacity:.75;display:flex;gap:8px;align-items:center;flex-wrap:wrap">Тяни фото мышью или пальцем, колесо — приблизить. <output>' + Math.round(Number(x.z) || 100) + '%</output><button type="button" data-reset>Сбросить кадр</button></div></div>'
           + '<button type="button" data-del title="Убрать фото" style="align-self:start">✕</button></div>';
       }).join('') + '<button type="button" class="wk-gal-add" data-add>＋ Добавить фото для арки</button>'
-        + '<div class="wk-gal-note">Фото появляется на карточке и в наградах, когда читатель прошёл выбранную арку целиком; показывается самое свежее из открытых. Кадр и эффекты у каждого фото свои: выбери «Как у персонажа», чтобы оставить общие. В плакатах WANTED приближение настраивается отдельно для каждого фото.</div>';
+        + '<div class="wk-gal-note">Фото появляется на карточке и в наградах, когда читатель прошёл выбранную арку целиком; показывается самое свежее из открытых. Кадр у каждого фото свой. Эффекты и частицы для фото настраиваются на вкладке «Оформление»: сверху выбери нужную арку. В плакатах WANTED приближение настраивается отдельно для каждого фото.</div>';
     }
     function attachPick() {
       [].forEach.call(box.querySelectorAll('.wk-ap-row'), function (row) {
@@ -35444,7 +35465,7 @@ html body .catalog-item-shell:has(>.wk-flip-btn,>.wk-flip2) .character-item>.wk-
   var view = 'main';
   try { view = sessionStorage.getItem('wkEdView') === 'look' ? 'look' : 'main'; } catch (e) {}
   function $(s, r) { return (r || document).querySelector(s); }
-  function q(f, k) { return f.querySelector('[data-field="' + k + '"]'); }
+  function q(f, k) { return f.querySelector('[data-field="' + k + '"],[data-wk-hold="' + k + '"]'); }
   function val(f, k) { var el = q(f, k); return el ? String(el.value || '').trim() : ''; }
   function fxSection(f) { var el = q(f, 'card_fx') || q(f, 'title_fx'); return el ? el.closest('.wiki-editor-section') : null; }
 
@@ -35492,6 +35513,7 @@ html body .catalog-item-shell:has(>.wk-flip-btn,>.wk-flip2) .character-item>.wk-
   var pend = 0;
   function schedule() { clearTimeout(pend); pend = setTimeout(update, 120); }
   function cropStyle(f, place) {
+    var LK = f.__wkLook; if (LK && LK.id != null) { try { var pj = JSON.parse(val(f, 'arc_photos') || '[]').filter(function (x) { return x && String(x.arc) === LK.id; })[0]; if (pj && /^(https?:|data:image)/.test(String(pj.u || '').trim())) { var px = pj.x == null || pj.x === '' ? 50 : Number(pj.x), py = pj.y == null || pj.y === '' ? 50 : Number(pj.y), pz = Math.max(100, Number(pj.z) || 100); return { src: String(pj.u).trim(), pos: px + '% ' + py + '%', tr: 'scale(' + pz / 100 + ')', org: px + '% ' + py + '%' }; } } catch (e) {} }
     // для персонажей берём кадры из блока «Кадр в разных карточках» — он всегда актуален
     if (place === 'map') {
       var mc = window.__wkMapEditorCrop ? window.__wkMapEditorCrop() : null, ms = val(f, q(f, 'person_link') ? 'person_link' : 'image');
@@ -40046,4 +40068,326 @@ window.__wkFxSelfTest = function () {
   [data-fx="parallax"] img,[data-fx="parallax"] .wk-cbg{scale:1!important;translate:none!important}
 }
 </style>
+<style id="wk-photo-look-css">
+.wk-pho-bar{order:-3;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 12px;padding:10px 12px;border:1px solid rgba(148,163,184,.25);border-radius:14px;background:rgba(255,255,255,.03)}
+.wk-pho-bar>small{flex:1 0 100%;opacity:.72;font-size:12.5px;line-height:1.35}
+.wk-pho-b{display:inline-flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;border-radius:999px;border:1px solid rgba(148,163,184,.3);background:rgba(255,255,255,.04);color:inherit;font:inherit;font-size:13px;cursor:pointer;min-height:36px}
+.wk-pho-b.is-gen{padding-left:12px}
+.wk-pho-b:hover{border-color:rgba(255,255,255,.6)}
+.wk-pho-b:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.wk-pho-b.is-on{border-color:#c4a5ff;background:rgba(160,120,255,.22);box-shadow:0 0 0 1px #c4a5ff}
+.wk-pho-b i{width:28px;height:28px;border-radius:50%;background:center/cover #222;flex:none}
+.wk-pho-b em{width:7px;height:7px;border-radius:50%;background:#7ee0a0;flex:none}
+</style>
+<script id="wk-photo-look">
+(function () {
+  'use strict';
+  var PAIRS = [['cs', 'card_style'], ['fx', 'card_fx'], ['amb', 'card_shine']];
+  function esc(v) { return String(v == null ? '' : v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function trio(form) {
+    var o = {};
+    PAIRS.forEach(function (p) { o[p[0]] = form.querySelector('[data-field="' + p[1] + '"],[data-wk-hold="' + p[1] + '"]'); });
+    return o;
+  }
+  function hold(t, on) {
+    PAIRS.forEach(function (p) { var el = t[p[0]]; if (!el) return; if (on) { el.removeAttribute('data-field'); el.setAttribute('data-wk-hold', p[1]); } else { el.removeAttribute('data-wk-hold'); el.setAttribute('data-field', p[1]); } });
+  }
+  function setVal(el, v) {
+    if (!el) return; v = v || '';
+    if (el.tagName === 'SELECT' && v && ![].some.call(el.options, function (o) { return o.value === v; })) { var o = document.createElement('option'); o.value = v; o.textContent = v; el.appendChild(o); }
+    el.value = v;
+  }
+  function fire(el) { if (!el) return; el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); }
+  function photos(form) {
+    var h = form.querySelector('[data-field="arc_photos"]'), a = [];
+    try { a = JSON.parse(h && h.value || '[]'); } catch (e) { a = []; }
+    return (Array.isArray(a) ? a : []).filter(function (x) { return x && x.arc && /^(https?:|data:image)/.test(String(x.u || '').trim()); });
+  }
+  function arcName(id) { var l = window.__wkArcList || []; var a = l.filter(function (x) { return String(x.id) === String(id); })[0]; return a ? a.name : String(id); }
+  function commit(form) {
+    var L = form.__wkLook; if (!L || L.id == null) return;
+    var h = form.querySelector('[data-field="arc_photos"]'); if (!h) return;
+    var arr; try { arr = JSON.parse(h.value || '[]'); } catch (e) { arr = []; }
+    var e = (Array.isArray(arr) ? arr : []).filter(function (x) { return x && String(x.arc) === L.id; })[0]; if (!e) return;
+    var t = trio(form), fx = t.fx ? t.fx.value : '', am = t.amb ? t.amb.value : '', cs = t.cs ? t.cs.value : '';
+    if (fx) e.fx = fx; else delete e.fx;
+    if (am) e.amb = am; else delete e.amb;
+    if (cs && cs !== '{}') e.cs = cs; else delete e.cs;
+    var v = JSON.stringify(arr); if (h.value !== v) { h.value = v; fire(h); }
+  }
+  function refresh(form) {
+    var field = form.querySelector('.wk-cs-panel'); field = field && field.closest('.wiki-editor-field');
+    if (field && field.__wkReload) field.__wkReload();
+    try { window.__wikiFxPreview && window.__wikiFxPreview(); } catch (e) {}
+    drawBar(form, true);
+  }
+  function switchTo(form, id) {
+    var L = form.__wkLook || (form.__wkLook = { id: null, main: null }), t = trio(form); if (!t.cs || !t.fx || !t.amb) return;
+    if (L.id != null) commit(form);
+    if (id === L.id) return;
+    if (L.id == null) { L.main = { cs: t.cs.value, fx: t.fx.value, amb: t.amb.value }; hold(t, true); }
+    var vals;
+    if (id == null) vals = L.main || { cs: '', fx: '', amb: '' };
+    else { var e = photos(form).filter(function (x) { return String(x.arc) === id; })[0] || {}; vals = { cs: e.cs || '', fx: e.fx || '', amb: e.amb || '' }; }
+    L.id = id;
+    setVal(t.cs, vals.cs); setVal(t.fx, vals.fx); setVal(t.amb, vals.amb);
+    if (id == null) { hold(t, false); L.main = null; }
+    fire(t.fx); fire(t.amb);
+    refresh(form);
+  }
+  function drawBar(form, force) {
+    var tr = trio(form); if (!tr.cs) return;
+    var field = tr.cs.closest('.wiki-editor-field'); if (!field || !field.querySelector('.wk-cs-panel')) return;
+    var L = form.__wkLook || (form.__wkLook = { id: null, main: null }), list = photos(form);
+    if (L.id != null && !list.some(function (x) { return String(x.arc) === L.id; })) { switchTo(form, null); return; }
+    var bar = field.querySelector(':scope > .wk-pho-bar');
+    var sig = JSON.stringify([L.id, list.map(function (x) { return [x.arc, x.u, !!(x.cs || x.fx || x.amb)]; })]);
+    if (!list.length) { if (bar) bar.remove(); return; }
+    if (bar && bar.__sig === sig && !force) return;
+    if (!bar) { bar = document.createElement('div'); bar.className = 'wk-pho-bar'; field.insertBefore(bar, field.firstChild); bar.addEventListener('click', function (e) { var b = e.target.closest('.wk-pho-b'); if (!b) return; e.preventDefault(); var v = b.getAttribute('data-arc'); switchTo(form, v === '' ? null : v); }); }
+    bar.__sig = sig;
+    bar.innerHTML = '<small>Оформление для фото: выбери «Общее» или арку, и эффекты, частицы и слои ниже будут относиться только к этому фото. Если у фото ничего не задано, на карточке работает общее оформление.</small>'
+      + '<button type="button" class="wk-pho-b is-gen' + (L.id == null ? ' is-on' : '') + '" data-arc="" aria-pressed="' + (L.id == null) + '">Общее</button>'
+      + list.map(function (x) { var on = L.id === String(x.arc); return '<button type="button" class="wk-pho-b' + (on ? ' is-on' : '') + '" data-arc="' + esc(x.arc) + '" aria-pressed="' + on + '" title="Оформление для фото этой арки"><i style="background-image:url(&quot;' + esc(String(x.u).trim()) + '&quot;)"></i>' + esc(arcName(x.arc)) + ((x.cs || x.fx || x.amb) ? '<em title="Свои эффекты заданы"></em>' : '') + '</button>'; }).join('');
+  }
+  function bind(form) {
+    if (form.__wkLookBound) return; form.__wkLookBound = true;
+    var h = function (e) {
+      var L = form.__wkLook; if (!L || L.id == null) return;
+      var t = trio(form);
+      if (e.target !== t.cs && e.target !== t.fx && e.target !== t.amb) return;
+      commit(form);
+      try { window.__wikiFxPreview && window.__wikiFxPreview(); } catch (er) {}
+      drawBar(form, false);
+    };
+    form.addEventListener('input', h); form.addEventListener('change', h);
+  }
+  var tick = 0;
+  function run() {
+    tick = 0;
+    var form = document.getElementById('wikiEditorForm'); if (!form) return;
+    if (!form.querySelector('[data-field="arc_photos"]')) return;
+    bind(form); drawBar(form, false);
+  }
+  new MutationObserver(function () { if (!tick) tick = requestAnimationFrame(run); }).observe(document.documentElement, { childList: true, subtree: true });
+  setInterval(run, 900);
+})();
+</script>
+<style id="wk-inline-edit-css">
+.wk-ie-btn{margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.06);color:inherit;font:inherit;font-size:13.5px;cursor:pointer}
+.wk-ie-btn:hover{border-color:#fff}
+.wk-ie-btn:focus-visible,.wk-ie-act:focus-visible{outline:2px solid #fff;outline-offset:2px}
+body.wk-ie-on{padding-bottom:110px}
+.wk-ie-on [contenteditable]{outline:2px dashed rgba(196,165,255,.8);outline-offset:4px;border-radius:6px;cursor:text;min-width:2ch}
+.wk-ie-on [contenteditable]:focus{outline-style:solid;background:rgba(196,165,255,.08)}
+.wk-ie-ta{display:block;width:100%;box-sizing:border-box;min-height:5em;resize:none;overflow:hidden;font:inherit;line-height:inherit;color:inherit;background:rgba(196,165,255,.07);border:2px dashed rgba(196,165,255,.8);border-radius:8px;padding:8px 10px}
+.wk-ie-ta:focus{outline:none;border-style:solid}
+.wk-ie-bar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:9000;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;padding:10px 14px;border-radius:16px;background:#12162a;border:1px solid rgba(196,165,255,.6);box-shadow:0 10px 40px rgba(0,0,0,.55);color:#eee;max-width:calc(100vw - 24px)}
+.wk-ie-bar span{font-size:13.5px;opacity:.85}
+.wk-ie-act{padding:8px 18px;border-radius:10px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.06);color:inherit;font:inherit;font-weight:600;cursor:pointer}
+.wk-ie-act.is-save{background:#e9c46a;color:#1a1405;border-color:#e9c46a}
+.wk-ie-act[disabled]{opacity:.45;cursor:default}
+.wk-ie-panel{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0;padding:12px;border:2px dashed rgba(196,165,255,.7);border-radius:12px;background:rgba(196,165,255,.06)}
+.wk-ie-f{display:grid;gap:4px;font-size:12.5px;opacity:.95;min-width:0}
+.wk-ie-f.is-wide{grid-column:1/-1}
+.wk-ie-f input{font:inherit;font-size:14px;color:inherit;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:7px 10px;min-width:0}
+.wk-ie-f input:focus{outline:2px solid #c4a5ff;outline-offset:1px}
+@media (max-width:760px){.wk-ie-panel{grid-template-columns:1fr 1fr}}
+.wk-ie-chips{display:flex;flex-wrap:wrap;gap:6px}
+.wk-ie-chip{display:inline-flex;align-items:center;gap:6px;padding:3px 4px 3px 10px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);font-size:13px}
+.wk-ie-chip button{border:0;background:transparent;color:inherit;cursor:pointer;width:22px;height:22px;border-radius:50%}
+.wk-ie-chip button:hover{background:rgba(255,255,255,.18)}
+.wk-ie-ph{display:grid;gap:6px}
+.wk-ie-phr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr) auto;gap:8px}
+.wk-ie-phr select{font:inherit;font-size:14px;color:inherit;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:7px 10px;min-width:0}
+.wk-ie-phr button,.wk-ie-addph{font:inherit;color:inherit;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:6px 12px;cursor:pointer}
+.wk-ie-addph{justify-self:start}
+.wk-ie-on h1 .wk-qe-pen{display:none}
+.wk-ie-f select{font:inherit;font-size:14px;color:inherit;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:7px 10px;min-width:0}
+@media (max-width:900px){
+.wk-ie-btn{position:fixed;right:14px;bottom:calc(92px + env(safe-area-inset-bottom));z-index:8990;margin:0;width:52px;height:52px;padding:0;justify-content:center;border-radius:50%;background:#e9c46a;color:#1a1405;border-color:#e9c46a;font-size:0;box-shadow:0 6px 22px rgba(0,0,0,.5)}
+.wk-ie-btn::before{content:"✎";font-size:24px;line-height:1}
+.wk-ie-btn[aria-pressed="true"]::before{content:"✕";font-size:20px}
+.wk-ie-bar{left:10px;right:10px;transform:none;bottom:calc(90px + env(safe-area-inset-bottom));flex-wrap:nowrap;max-width:none;padding:10px;gap:8px}
+.wk-ie-bar span{flex:1;min-width:0;font-size:12.5px}
+.wk-ie-act{padding:10px 12px;font-size:14px;min-height:44px}
+body.wk-ie-on{padding-bottom:190px}
+body.wk-ie-on .wk-ie-btn{display:none}
+}
+</style>
+<script id="wk-inline-edit">
+(function () {
+  'use strict';
+  function AS() { try { return typeof appArticleState !== 'undefined' ? appArticleState : null; } catch (e) { return null; } }
+  var CFG = {
+    character: { root: 'characterArticleContent', wrap: 'characterArticle', arcs: true, photos: true, img: 'person_link', chips: [['connect', 'Связанные статьи']],
+      fields: [['nickname', 'Прозвище'], ['status', 'Статус (через запятую)'], ['chapter', 'Глава появления'], ['episode', 'Эпизод появления'], ['person_link', 'Ссылка на фото', 'wide']] },
+    story: { root: 'storyArticleContent', wrap: 'storyArticle', desc: true, img: 'image', chips: [['characters', 'Участники'], ['connect', 'Связанные статьи']],
+      fields: [['chapters', 'Главы'], ['episodes', 'Эпизоды'], ['saga', 'Сага', 'sel'], ['image', 'Ссылка на изображение', 'wide']] },
+    fruit: { root: 'fruitArticleContent', wrap: 'fruitArticle', desc: true, img: 'image', chips: [['connect', 'Связанные статьи']],
+      fields: [['type', 'Тип плода', 'sel'], ['appearance', 'Глава появления'], ['episode', 'Эпизод появления'], ['image', 'Ссылка на изображение', 'wide']] },
+    useful: { root: 'usefulArticleContent', wrap: 'usefulArticle', desc: true, img: 'image', chips: [['connect', 'Связанные статьи']],
+      fields: [['type', 'Категория', 'sel'], ['appearance_chapter', 'Глава появления'], ['appearance_episode', 'Эпизод появления'], ['image', 'Ссылка на изображение', 'wide']] }
+  };
+  var S = null;
+  function canEdit() { try { return typeof window.__wikiCanEdit === 'function' ? !!window.__wikiCanEdit() : false; } catch (e) { return false; } }
+  function cur() { var st = AS(); return st && CFG[st.type] ? { t: st.type, c: CFG[st.type], id: String(st.id) } : null; }
+  function root() { var c = cur(); return c ? document.getElementById(c.c.root) : null; }
+  function arcKey(name) { var l = window.__wkArcList || []; var a = l.filter(function (x) { return x.name === name; })[0]; return a ? a.key : ''; }
+  function eh(v) { return String(v == null ? '' : v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function changed() { if (!S) return 0; return Object.keys(S.vals).filter(function (k) { return S.vals[k] !== S.orig[k]; }).length; }
+  function bar() {
+    var b = document.querySelector('.wk-ie-bar');
+    if (!S) { if (b) b.remove(); return; }
+    if (!b) {
+      b = document.createElement('div'); b.className = 'wk-ie-bar'; b.setAttribute('role', 'region'); b.setAttribute('aria-label', 'Правка статьи');
+      b.innerHTML = '<span class="wk-ie-msg"></span><button type="button" class="wk-ie-act is-save" data-a="save">Сохранить</button><button type="button" class="wk-ie-act" data-a="reset">Сбросить</button>';
+      b.addEventListener('click', function (e) { var t = e.target.closest('[data-a]'); if (!t) return; if (t.dataset.a === 'save') save(); else stop(true); });
+      document.body.appendChild(b);
+    }
+    var n = changed();
+    b.querySelector('.wk-ie-msg').textContent = n ? 'Изменено полей: ' + n : 'Правь заголовок и текст прямо здесь';
+    b.querySelector('.is-save').disabled = !n;
+  }
+  function fit(ta) { ta.style.height = 'auto'; ta.style.height = (ta.scrollHeight + 4) + 'px'; }
+  function tok(t) { return String(t).replace(/[\[\]'"]/g, '').trim(); }
+  function chipsWidget(key, label, all, nameOf) {
+    var list = String(S.orig[key] || '').split(/[,;\n\r]+/).map(tok).filter(Boolean); S.vals[key] = list.join(', '); S.orig[key] = S.vals[key];
+    var w = document.createElement('div'); w.className = 'wk-ie-f is-wide';
+    var dl = 'wkIeList_' + key;
+    w.innerHTML = '<span>' + label + '</span><div class="wk-ie-chips"></div><input type="text" list="' + dl + '" placeholder="Начни вводить название статьи и выбери из списка" class="wk-ie-add"><datalist id="' + dl + '">' + all.map(function (x) { return '<option value="' + eh(x.name) + '" label="' + eh(x.id) + '"></option>'; }).join('') + '</datalist>';
+    var chips = w.querySelector('.wk-ie-chips'), addIn = w.querySelector('.wk-ie-add');
+    function draw() {
+      S.vals[key] = list.join(', ');
+      chips.innerHTML = list.map(function (t, i) { var id = t.split(/\s*@/)[0].trim(); return '<span class="wk-ie-chip">' + eh(nameOf[id] || id) + (t.indexOf('@') >= 0 ? ' <small>' + eh(t.slice(t.indexOf('@'))) + '</small>' : '') + '<button type="button" data-rm="' + i + '" aria-label="Убрать">✕</button></span>'; }).join('') || '<small style="opacity:.6">Пока пусто</small>';
+      bar();
+    }
+    chips.addEventListener('click', function (e) { var bt = e.target.closest('[data-rm]'); if (!bt) return; list.splice(Number(bt.getAttribute('data-rm')), 1); draw(); });
+    addIn.addEventListener('change', function () { var v = addIn.value.trim(), hit = all.filter(function (x) { return x.name === v || x.id === v; })[0]; if (hit && hit.id !== S.id && !list.some(function (t) { return t.split(/\s*@/)[0].trim() === hit.id; })) { list.push(hit.id); draw(); } addIn.value = ''; });
+    draw(); return w;
+  }
+  function photosWidget(orig) {
+    var ph = []; try { ph = JSON.parse(orig.arc_photos || '[]'); } catch (e) { ph = []; } if (!Array.isArray(ph)) ph = [];
+    S.vals.arc_photos = orig.arc_photos || '';
+    var pw = document.createElement('div'); pw.className = 'wk-ie-f is-wide'; pw.innerHTML = '<span>Фото по аркам</span><div class="wk-ie-ph"></div><button type="button" class="wk-ie-addph">＋ Добавить фото для арки</button>';
+    var phl = pw.querySelector('.wk-ie-ph');
+    function dump() { var out = ph.filter(function (x) { return x.arc && /^(https?:|data:image)/.test(String(x.u || '').trim()); }); S.vals.arc_photos = out.length ? JSON.stringify(out) : ''; bar(); }
+    function draw() {
+      var arcs = window.__wkArcList || [];
+      phl.innerHTML = ph.map(function (x, i) { return '<div class="wk-ie-phr" data-i="' + i + '"><select aria-label="Арка"><option value="">— арка —</option>' + arcs.map(function (a) { return '<option value="' + eh(a.id) + '"' + (a.id === x.arc ? ' selected' : '') + '>' + eh(a.name) + '</option>'; }).join('') + '</select><input type="url" placeholder="Ссылка на фото" value="' + eh(x.u || '') + '"><button type="button" data-rmp aria-label="Убрать фото">✕</button></div>'; }).join('');
+    }
+    phl.addEventListener('input', function (e) { var r2 = e.target.closest('.wk-ie-phr'); if (!r2) return; var x = ph[Number(r2.getAttribute('data-i'))]; if (e.target.tagName === 'SELECT') x.arc = e.target.value; else x.u = e.target.value.trim(); dump(); });
+    phl.addEventListener('click', function (e) { var bt = e.target.closest('[data-rmp]'); if (!bt) return; ph.splice(Number(bt.closest('.wk-ie-phr').getAttribute('data-i')), 1); draw(); dump(); });
+    pw.querySelector('.wk-ie-addph').addEventListener('click', function () { ph.push({ arc: '', u: '', y: '50', x: '50', z: '100' }); draw(); });
+    draw(); return pw;
+  }
+  function start() {
+    var c = cur(), r = root(); if (!c || !r || S) return;
+    var orig = window.__wkInlineRead && window.__wkInlineRead(c.t, c.id); if (!orig) return;
+    S = { type: c.t, id: c.id, orig: orig, vals: {}, tas: [] };
+    var h1 = r.querySelector('h1');
+    if (h1) {
+      S.vals.name = orig.name; h1.__wkIeHTML = h1.innerHTML;
+      var h0 = h1.textContent.replace(/\s+/g, ' ').trim(), pre = h0.length > orig.name.length && h0.slice(-orig.name.length) === orig.name ? h0.slice(0, h0.length - orig.name.length) : '';
+      h1.setAttribute('contenteditable', 'plaintext-only'); h1.setAttribute('spellcheck', 'false');
+      if (h1.contentEditable !== 'plaintext-only') h1.setAttribute('contenteditable', 'true');
+      h1.addEventListener('input', S.h1in = function () { var tx = h1.textContent.replace(/\s+/g, ' ').trim(); S.vals.name = pre && tx.indexOf(pre) === 0 ? tx.slice(pre.length).trim() : tx; bar(); });
+      h1.addEventListener('keydown', function (e) { if (e.key === 'Enter') e.preventDefault(); });
+    }
+    function addTa(tx, key, label) {
+      var ta = document.createElement('textarea'); ta.className = 'wk-ie-ta'; ta.value = orig[key] || ''; ta.setAttribute('aria-label', label);
+      tx.hidden = true; tx.after(ta); S.vals[key] = orig[key] || ''; S.tas.push({ ta: ta, tx: tx });
+      ta.addEventListener('input', function () { S.vals[key] = ta.value; fit(ta); bar(); }); fit(ta);
+    }
+    if (c.c.arcs) {
+      [].forEach.call(r.querySelectorAll('.wk-arc-item'), function (it) {
+        var h3 = it.querySelector('h3'), tx = it.querySelector('.article-text'); if (!h3 || !tx) return;
+        var key = arcKey(h3.textContent.trim()); if (!key || !(key in orig)) return; addTa(tx, key, 'Текст арки: ' + h3.textContent.trim());
+      });
+    }
+    if (c.c.desc) { var tx0 = r.querySelector('.description-section .article-text'); if (tx0) addTa(tx0, 'description', 'Описание'); }
+    var pn = document.createElement('div'); pn.className = 'wk-ie-panel';
+    pn.innerHTML = c.c.fields.map(function (f) {
+      var ctl;
+      if (f[2] === 'sel') { var opts = (window.__wkInlineOptions && window.__wkInlineOptions(c.t, f[0])) || [], cv = String(orig[f[0]] || ''); if (cv && opts.indexOf(cv) < 0) opts.unshift(cv); ctl = '<select data-k="' + f[0] + '"><option value=""></option>' + opts.map(function (o) { return '<option value="' + eh(o) + '">' + eh(o) + '</option>'; }).join('') + '</select>'; }
+      else ctl = '<input type="text" data-k="' + f[0] + '">';
+      return '<label class="wk-ie-f' + (f[2] === 'wide' ? ' is-wide' : '') + '"><span>' + eh(f[1]) + '</span>' + ctl + '</label>';
+    }).join('');
+    [].forEach.call(pn.querySelectorAll('input[data-k],select[data-k]'), function (inp) {
+      var k = inp.getAttribute('data-k'); inp.value = orig[k] || ''; S.vals[k] = orig[k] || '';
+      inp.addEventListener(inp.tagName === 'SELECT' ? 'change' : 'input', function () {
+        S.vals[k] = inp.value.trim(); bar();
+        if (k === c.c.img) { var im = r.querySelector('.article-inline-image'); if (im && /^(https?:|data:image)/.test(S.vals[k])) { im.src = S.vals[k]; var w = im.closest('.image-load-error'); if (w) w.classList.remove('image-load-error'); im.classList.remove('wiki-img-failed'); } }
+      });
+    });
+    var all = (window.__wkInlineList && window.__wkInlineList()) || [], nameOf = {}; all.forEach(function (x) { nameOf[x.id] = x.name; });
+    c.c.chips.forEach(function (ch) { pn.appendChild(chipsWidget(ch[0], ch[1], all, nameOf)); });
+    if (c.c.photos) pn.appendChild(photosWidget(orig));
+    S.panel = pn; var anchor = r.querySelector('.article-hero-layout'); if (anchor) anchor.before(pn); else if (h1) h1.after(pn);
+    var im0 = r.querySelector('.article-inline-image'); S.img0 = im0 ? im0.getAttribute('src') : null;
+    document.body.classList.add('wk-ie-on'); r.classList.add('wk-ie-on');
+    bar(); updBtn();
+    if (h1) h1.focus();
+  }
+  function stop(discard) {
+    var r = root();
+    if (S && r) {
+      var h1 = r.querySelector('h1'); if (h1) { h1.removeAttribute('contenteditable'); if (discard && h1.__wkIeHTML != null) h1.innerHTML = h1.__wkIeHTML; if (S.h1in) h1.removeEventListener('input', S.h1in); }
+      S.tas.forEach(function (o) { o.ta.remove(); o.tx.hidden = false; });
+      if (S.panel) S.panel.remove(); if (discard && S.img0) { var im = r.querySelector('.article-inline-image'); if (im) im.setAttribute('src', S.img0); }
+      r.classList.remove('wk-ie-on');
+    }
+    document.body.classList.remove('wk-ie-on'); S = null; bar(); updBtn();
+  }
+  function save() {
+    if (!S || !changed()) return;
+    var vals = {}; Object.keys(S.vals).forEach(function (k) { if (S.vals[k] !== S.orig[k]) vals[k] = S.vals[k]; });
+    if ('name' in vals && !vals.name) { alert('Название не может быть пустым.'); return; }
+    var ok = false; try { ok = window.__wkInlineSave && window.__wkInlineSave(S.type, S.id, vals); } catch (e) { ok = false; }
+    if (ok) stop(false);
+  }
+  function updBtn() {
+    var c = cur(), wrap = c && document.getElementById(c.c.wrap), top = wrap && wrap.querySelector('.article-topbar'), b = document.querySelector('.wk-ie-btn');
+    var mob = window.innerWidth <= 900, host = mob ? document.body : top, vis = host && canEdit() && wrap && getComputedStyle(wrap).display !== 'none';
+    if (!vis) { if (b) b.remove(); if (S) { S = null; document.body.classList.remove('wk-ie-on'); bar(); } return; }
+    if (b && b.parentNode !== host) { b.remove(); b = null; }
+    if (!b) { b = document.createElement('button'); b.type = 'button'; b.className = 'wk-ie-btn'; host.appendChild(b); b.addEventListener('click', function () { if (S) stop(true); else start(); }); }
+    b.textContent = S ? '✕ Закрыть правку' : '✎ Править в статье';
+    b.setAttribute('aria-pressed', S ? 'true' : 'false'); b.setAttribute('aria-label', S ? 'Закрыть правку' : 'Править в статье');
+  }
+  var t = 0;
+  new MutationObserver(function () { if (!t) t = requestAnimationFrame(function () { t = 0; var c = cur(); if (S && (!c || c.id !== S.id || c.t !== S.type)) { stop(true); } else if (S && root() && !root().classList.contains('wk-ie-on')) { S = null; document.body.classList.remove('wk-ie-on'); bar(); } updBtn(); }); }).observe(document.documentElement, { childList: true, subtree: true });
+  document.addEventListener('keydown', function (e) { if (S && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); } else if (S && e.key === 'Escape' && !changed()) stop(true); });
+  setInterval(updBtn, 1500);
+})();
+</script>
+<style id="wk-add-article-css">
+.wk-add-btn{position:fixed;top:12px;right:18px;z-index:1200;display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;border:1px solid rgba(233,196,106,.7);background:rgba(233,196,106,.14);color:#f3d98b;font:inherit;font-size:14px;font-weight:600;cursor:pointer;min-height:40px;backdrop-filter:blur(6px)}
+.wk-add-btn:hover{background:rgba(233,196,106,.26)}
+.wk-add-btn:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.wk-add-btn b{font-size:18px;line-height:1;font-weight:500}
+@media (max-width:900px){.wk-add-btn{right:112px;top:14px;width:42px;height:42px;min-height:0;padding:0;justify-content:center;border-radius:12px}.wk-add-btn span{display:none}}
+body.wiki-editor-open .wk-add-btn{display:none}
+</style>
+<script id="wk-add-article">
+(function () {
+  'use strict';
+  var MAP = { characters: ['character', 'персонажа'], story: ['story', 'арку'], rewards: ['reward', 'награду'], fruits: ['fruit', 'плод'], useful: ['useful', 'полезную статью'] };
+  function canEdit() { try { return typeof window.__wikiCanEdit === 'function' ? !!window.__wikiCanEdit() : false; } catch (e) { return false; } }
+  function upd() {
+    var tab = document.body.dataset.activeTab, m = MAP[tab], b = document.getElementById('wkAddArticle');
+    var inArt = ['characterArticle', 'storyArticle', 'fruitArticle', 'usefulArticle'].some(function (id) { var e = document.getElementById(id); return e && getComputedStyle(e).display !== 'none'; });
+    if (!m || !canEdit() || (inArt && window.innerWidth <= 900)) { if (b) b.remove(); return; }
+    if (!b) {
+      b = document.createElement('button'); b.type = 'button'; b.id = 'wkAddArticle'; b.className = 'wk-add-btn'; b.innerHTML = '<b aria-hidden="true">＋</b><span>Добавить статью</span>';
+      b.addEventListener('click', function () { var mm = MAP[document.body.dataset.activeTab]; if (mm && window.__wkNewArticle) window.__wkNewArticle(mm[0]); });
+      document.body.appendChild(b);
+    }
+    var t = 'Добавить статью в раздел «' + (document.querySelector('.main-tab.active') ? document.querySelector('.main-tab.active').textContent.trim() : '') + '»';
+    b.title = t; b.setAttribute('aria-label', t);
+  }
+  new MutationObserver(upd).observe(document.body, { attributes: true, attributeFilter: ['data-active-tab'] });
+  setInterval(upd, 1200); upd();
+})();
+</script>
 </body></html>
