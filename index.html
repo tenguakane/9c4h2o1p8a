@@ -2451,7 +2451,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 207";
+const WIKI_VERSION = "11.11.2026 · 208";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -20130,20 +20130,20 @@ img.wk-fade.wk-loaded{opacity:1}
 
     function showPicker(row, who, i) {
       if (openPicker) openPicker.remove();
-      var pool = cat.pool();
+      var pool = cat.pool(), allPool = cat.key === 'villains' ? list('characters').filter(function (c) { return !hidden(c, 'character'); }).sort(function (a, b) { return (isAntagonist(b) ? 1 : 0) - (isAntagonist(a) ? 1 : 0) || String(a.name).localeCompare(String(b.name), 'ru'); }) : pool;
       var pop = document.createElement('div');
       pop.className = 'wk-top-popover';
-      pop.innerHTML = '<input type="search" placeholder="Поиск ' + (cat.type === 'arc' ? 'арки' : cat.key === 'villains' ? 'антагониста' : 'персонажа') + '…" autocomplete="off" aria-label="Поиск"><div class="wk-top-options" role="listbox"></div>';
+      pop.innerHTML = '<input type="search" placeholder="Поиск ' + (cat.type === 'arc' ? 'арки' : cat.key === 'villains' ? 'любого персонажа' : 'персонажа') + '…" autocomplete="off" aria-label="Поиск"><div class="wk-top-options" role="listbox"></div>';
       row.appendChild(pop); openPicker = pop;
       var input = pop.querySelector('input'), box = pop.querySelector('.wk-top-options'), active = 0, items = [];
       function draw() {
         var q = input.value.trim().toLocaleLowerCase('ru');
-        items = pool.filter(function (r) { return !q || [r.name, r.nickname, r.saga].filter(Boolean).join(' ').toLocaleLowerCase('ru').indexOf(q) >= 0; }).slice(0, 40);
+        items = (q ? allPool : pool).filter(function (r) { return !q || [r.name, r.nickname, r.saga].filter(Boolean).join(' ').toLocaleLowerCase('ru').indexOf(q) >= 0; }).slice(0, 40);
         active = Math.min(active, Math.max(0, items.length - 1));
         box.innerHTML = items.length ? items.map(function (r, k) {
           var info = recordInfo(cat, r.id), pos = lists[who].indexOf(r.id);
-          return '<button type="button" role="option" data-k="' + k + '" class="' + (k === active ? 'is-active' : '') + '">' + thumb(info) + '<span class="wk-top-name"><b>' + esc(info.name) + '</b><small>' + esc(info.sub) + '</small></span>' + (pos >= 0 ? '<em>уже #' + (pos + 1) + ' — поменяются</em>' : '') + '</button>';
-        }).join('') : '<div class="wk-top-noresult">' + (cat.key === 'villains' ? 'Ничего не найдено. Здесь только персонажи со статусом «Антагонист» — добавь его в редакторе.' : 'Ничего не найдено') + '</div>';
+          return '<button type="button" role="option" data-k="' + k + '" class="' + (k === active ? 'is-active' : '') + '">' + thumb(info) + '<span class="wk-top-name"><b>' + esc(info.name) + '</b><small>' + esc(info.sub) + '</small></span>' + (cat.key === 'villains' && !isAntagonist(r) ? '<em>не антагонист</em>' : '') + (pos >= 0 ? '<em>уже #' + (pos + 1) + ' — поменяются</em>' : '') + '</button>';
+        }).join('') : '<div class="wk-top-noresult">' + 'Ничего не найдено' + '</div>';
       }
       function choose(r) {
         var arr = lists[who].slice(), prev = arr.indexOf(r.id);
