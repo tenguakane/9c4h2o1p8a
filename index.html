@@ -2451,7 +2451,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 213";
+const WIKI_VERSION = "11.11.2026 · 215";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -9824,7 +9824,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     function wkArcEnd(id){const ar=(typeof storyArcs!=='undefined'&&Array.isArray(storyArcs))?storyArcs.find(x=>x&&x.id===id):null;if(!ar)return {ch:0,ep:0,open:false};const mx=v=>{const m=String(v||'').match(/\d+/g);return m?Math.max.apply(null,m.map(Number)):0;};return {ch:mx(ar.chapters),ep:mx(ar.episodes),open:ar.ongoing===true||ar.ongoing==='true'||ar.ongoing===1};}
     function wkArcsOf(raw,all){
         if(!raw)return [];
-        return WK_ARC_LIST.map(a=>({a,t:String(raw[a.key]==null?'':raw[a.key]).trim()})).filter(x=>x.t).filter(x=>{if(all||spoilerAuditMode)return true;const en=wkArcEnd(x.a.id);if(en.open)return false;return wkReachedAt(en.ch,en.ep);}).map(x=>({id:x.a.id,name:x.a.name,kind:x.a.kind,text:x.t}));
+        return WK_ARC_LIST.map(a=>({a,t:String(raw[a.key]==null?'':raw[a.key]).trim()})).filter(x=>x.t).filter(x=>{if(all||spoilerAuditMode)return true;const en=wkArcEnd(x.a.id);return wkReachedAt(en.ch,en.ep);}).map(x=>({id:x.a.id,name:x.a.name,kind:x.a.kind,text:x.t}));
     }
     /* ---------- Фото по аркам: на карточке и в наградах — самое свежее из уже открытых ---------- */
     const WK_PH_KEYS={person_link:'u',person_image_position:'y',person_image_position_x:'x',person_image_zoom:'z'};
@@ -9835,12 +9835,14 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         let best=null,bs=-1;
         l.forEach(x=>{
             const u=String(x&&x.u||'').trim();if(!x||!x.arc||!/^(https?:\/\/|data:image\/)/i.test(u))return;
-            const st=wkArcStart(String(x.arc));if(!wkReachedAt(st.ch,st.ep))return;
+            const st=wkArcEnd(String(x.arc));if(!wkReachedAt(st.ch,st.ep))return;
             const sc=st.ch||(st.ep?st.ep*0.7:0);
             if(sc>=bs){bs=sc;best={arc:String(x.arc),u:u,y:x.y==null||x.y===''?'50':String(x.y),x:x.x==null||x.x===''?'50':String(x.x),z:x.z==null||x.z===''?'100':String(x.z)};}
         });
         return best;
     }
+    // Идущая арка (Эльбаф) открывается, когда читатель дошёл до нынешнего максимума её диапазона; временное правило
+    window.__wikiArcDone=function(id){const e=wkArcEnd(String(id));return wkReachedAt(e.ch,e.ep);};
     window.__wikiLatestArcPhoto=function(rec){return wkLatestArcPhoto(rec&&(rec.__wikiRaw||rec));};
     window.__wikiCharacterArcs=function(rec){const raw=rec&&(rec.__wikiRaw||rec);return wkArcsOf(raw,false);};
     WK_DERIVE.description=raw=>{const l=wkArcsOf(raw,false);return l.length?l[0].text:'';};
@@ -11847,7 +11849,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
                 {title:'Плоды',icon:'🍎',desc:'Ссылки на статьи плодов. Имя, изображение и описание подтягиваются автоматически.',keys:['fruit_article_id','fruit2_article_id']},
                 {title:'Эффекты карточки и заголовка',icon:'✨',desc:'Эффекты при наклоне и постоянные, конструктор слоёв и частиц, шрифт и эффект заголовка. Раздел можно свернуть.',fx:true,keys:['card_fx','card_shine','title_fx']},
                 {title:'Корабль и команда',icon:'⛵',desc:'Выбери статьи из «Полезного». Фото, название и описание корабля и команды подтянутся из них автоматически.',keys:['ship_article_id','ship2_article_id','team_article_id']},
-                {title:'Фото по аркам',icon:'🖼️',desc:'Своё фото для каждой арки. На карточке и в наградах показывается самое свежее из уже открытых; кадр у каждого фото свой.',keys:['arc_photos']},
+                {title:'Фото по аркам',icon:'🖼️',desc:'Своё фото для каждой арки. На карточке и в наградах показывается самое свежее из уже пройденных арок; кадр у каждого фото свой.',keys:['arc_photos']},
                 {title:'Дополнительные фото',icon:'🖼',desc:'Фото в самом низу статьи: детство, другой облик, важный момент. Только ссылка и короткая подпись; можно скрыть фото до нужной главы или серии.',keys:['gallery']},
                 {title:'Связанные статьи',icon:'🔗',desc:'Отметь материалы, которые должны быть связаны с этой статьёй.',keys:['connect','map_hide']}
             ],
@@ -27593,7 +27595,14 @@ html body .wk-ov-chart{grid-column:1/-1}
   window.addEventListener('scroll', function () { if (openP && !window.matchMedia('(max-width:760px)').matches) closeAll(true); }, { passive: true });
 })();
 </script>
-<style id="wk-ad-css">#wikiEditorForm .wiki-editor-section[data-wk-ad-hide]{display:none!important}</style>
+<style id="wk-ad-css">#wikiEditorForm [data-wk-ad-hide]{display:none!important}
+.wk-arcpick{position:relative}.wk-arcpick-in{width:100%;box-sizing:border-box}
+.wk-arcpick-list{position:absolute;z-index:50;left:0;right:0;top:calc(100% + 4px);max-height:260px;overflow:auto;background:#0e1626;border:1px solid rgba(148,163,184,.3);border-radius:12px;box-shadow:0 14px 40px rgba(0,0,0,.55);padding:4px}
+.wk-arcpick-list[hidden]{display:none}
+.wk-arcpick-list button{display:flex;justify-content:space-between;gap:10px;width:100%;text-align:left;background:none;border:0;border-radius:8px;padding:8px 10px;color:inherit;cursor:pointer}
+.wk-arcpick-list button:hover{background:rgba(148,163,184,.16)}
+.wk-arcpick-list small{opacity:.6;white-space:nowrap}
+.wk-arcpick-none{padding:10px;opacity:.7}</style>
 <style id="wk-ov-stats-css">
 @layer wk-redesign{@media (min-width:761px){html.wk-hdr-tight body > header .main-tab{padding-left:8px!important;padding-right:8px!important}}}
 @layer wk-redesign{html body #characterPagination#characterPagination#characterPagination#characterPagination .pagination-button,
@@ -27837,10 +27846,11 @@ html.wk-hdr-min.wk-hdr-min.wk-hdr-min body > header :is(.wk-edit-site,.wk-acc-bt
     o.opts.forEach(function (op) { var r = P.byId[op.id]; op.img = url(r, 'person_link'); op.pos = pos(r, 'person_'); });
     return { rec: c, type: 'character', q: 'Где здесь ' + c.name + '?', pics: true, opts: o.opts, ans: o.ans };
   });
+  function arcDone(id) { try { return window.__wikiArcDone ? !!window.__wikiArcDone(id) : false; } catch (e) { return false; } }
   def('char_arc_look', 'character', 'Арка по облику', 4, function (P, t) {
     var photos = function (c) {
       var a = []; try { a = JSON.parse(c.arc_photos || '[]'); } catch (e) { a = []; }
-      return (Array.isArray(a) ? a : []).filter(function (x) { return x && x.arc && /^(https?:\/\/|data:image\/)/i.test(String(x.u || '').trim()) && P.arcs.some(function (r) { return r.id === x.arc; }); });
+      return (Array.isArray(a) ? a : []).filter(function (x) { return x && x.arc && /^(https?:\/\/|data:image\/)/i.test(String(x.u || '').trim()) && P.arcs.some(function (r) { return r.id === x.arc; }) && arcDone(x.arc); });
     };
     var c = t || pick(P.chars.filter(function (x) { return photos(x).length; })); if (!c) return null;
     var list = photos(c); if (!list.length) return null;
@@ -27947,13 +27957,13 @@ html.wk-hdr-min.wk-hdr-min.wk-hdr-min body > header :is(.wk-edit-site,.wk-acc-bt
   // Арки
   function arcOpts(P, a) { return P.arcs.filter(function (x) { return x !== a; }).sort(function (x, y) { return (x.saga === a.saga ? 0 : 1) - (y.saga === a.saga ? 0 : 1) + (R() - .5); }).slice(0, 9).map(function (x) { return { t: x.name }; }); }
   def('arc_events', 'story', 'События арки', 5, function (P, t) {
-    var a = t || pick(P.arcs.filter(function (x) { return val(x, 'key').length > 40; })); if (!a || val(a, 'key').length < 40) return null;
+    var a = t || pick(P.arcs.filter(function (x) { return val(x, 'key').length > 40 && arcDone(x.id); })); if (!a || val(a, 'key').length < 40 || !arcDone(a.id)) return null;
     var h = masked(val(a, 'key'), [a.name]); if (!h || quoteHidesAnswer(h, a.name)) return null;
     var o = options({ t: a.name }, arcOpts(P, a)); if (!o) return null;
     return { rec: a, type: 'story', q: 'В какой арке происходили эти события?', quote: h, opts: o.opts, ans: o.ans };
   });
   def('arc_desc', 'story', 'Описание арки', 4, function (P, t) {
-    var a = t || pick(P.arcs.filter(function (x) { return val(x, 'description').length > 50; })); if (!a || val(a, 'description').length < 50) return null;
+    var a = t || pick(P.arcs.filter(function (x) { return val(x, 'description').length > 50 && arcDone(x.id); })); if (!a || val(a, 'description').length < 50 || !arcDone(a.id)) return null;
     var h = masked(val(a, 'description'), [a.name]); if (!h || quoteHidesAnswer(h, a.name)) return null;
     var o = options({ t: a.name }, arcOpts(P, a)); if (!o) return null;
     return { rec: a, type: 'story', q: 'Как называется эта арка?', quote: h, opts: o.opts, ans: o.ans };
@@ -30371,6 +30381,25 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   }).observe(document.documentElement, { childList: true, subtree: true });
 
   // --- редактор персонажа: «Фото по аркам» поверх скрытого поля arc_photos
+  // --- поиск арки вместо длинного списка (фото и описания по аркам)
+  function arcPickHTML(name) { return '<div class="wk-arcpick"><input type="text" class="wk-arcpick-in" placeholder="Найти арку…" value="' + esc(name || '') + '" autocomplete="off" aria-label="Арка"><div class="wk-arcpick-list" hidden></div></div>'; }
+  function arcPickDraw(pk, q) {
+    var list = pk.querySelector('.wk-arcpick-list'), items = (pk.__opts ? pk.__opts() : []).filter(function (o) { return !q || o.name.toLocaleLowerCase('ru').indexOf(q) >= 0; }).slice(0, 60);
+    list.innerHTML = items.length ? items.map(function (o) { return '<button type="button" data-v="' + esc(o.v) + '">' + esc(o.name) + (o.kind ? '<small>' + esc(o.kind) + '</small>' : '') + '</button>'; }).join('') : '<div class="wk-arcpick-none">Ничего не найдено</div>';
+    list.hidden = false;
+  }
+  function arcPickClose(pk) { var l = pk.querySelector('.wk-arcpick-list'); if (l) l.hidden = true; var i = pk.querySelector('input'); if (i && pk.__cur) i.value = pk.__cur(); }
+  document.addEventListener('focusin', function (e) { var i = e.target.closest && e.target.closest('.wk-arcpick-in'); if (!i) return; var pk = i.closest('.wk-arcpick'); i.select(); arcPickDraw(pk, ''); });
+  document.addEventListener('input', function (e) { var i = e.target.closest && e.target.closest('.wk-arcpick-in'); if (!i) return; e.stopPropagation(); arcPickDraw(i.closest('.wk-arcpick'), i.value.trim().toLocaleLowerCase('ru')); }, true);
+  document.addEventListener('mousedown', function (e) {
+    var b = e.target.closest && e.target.closest('.wk-arcpick-list button'); var open = document.querySelectorAll('.wk-arcpick-list:not([hidden])');
+    if (b) { e.preventDefault(); var pk = b.closest('.wk-arcpick'); var v = b.getAttribute('data-v'); arcPickClose(pk); if (pk.__pick) pk.__pick(v); return; }
+    [].forEach.call(open, function (l) { if (!l.parentNode.contains(e.target)) arcPickClose(l.parentNode); });
+  });
+  document.addEventListener('keydown', function (e) {
+    var i = e.target.closest && e.target.closest('.wk-arcpick-in'); if (!i) return; var pk = i.closest('.wk-arcpick');
+    if (e.key === 'Escape') { arcPickClose(pk); i.blur(); } else if (e.key === 'Enter') { e.preventDefault(); var b = pk.querySelector('.wk-arcpick-list button'); if (b) { var v = b.getAttribute('data-v'); arcPickClose(pk); if (pk.__pick) pk.__pick(v); } }
+  });
   function apParse(v) {
     var a = []; try { a = JSON.parse(v || '[]'); } catch (e) { a = []; }
     return (Array.isArray(a) ? a : []).filter(function (x) { return x && typeof x === 'object'; }).map(function (x) { return { arc: String(x.arc || ''), u: String(x.u || ''), y: x.y == null ? '50' : String(x.y), x: x.x == null ? '50' : String(x.x), z: x.z == null ? '100' : String(x.z) }; });
@@ -30391,16 +30420,25 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     }
     function render() {
       box.innerHTML = list.map(function (x, i) {
-        var opts = '<option value="">— выбери арку —</option>' + arcs.map(function (a) { return '<option value="' + esc(a.id) + '"' + (a.id === x.arc ? ' selected' : '') + '>' + esc(a.name) + '</option>'; }).join('');
         return '<div class="wk-ap-row" data-i="' + i + '" style="display:grid;grid-template-columns:168px 1fr auto;gap:12px;align-items:start;padding:10px;border:1px solid rgba(255,255,255,.14);border-radius:12px">'
           + '<div class="wk-ap-prev" title="Тяни, чтобы сдвинуть; колесо мыши — приблизить" style="width:168px;height:210px;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;cursor:grab;touch-action:none;user-select:none">' + prev(x) + '</div>'
-          + '<div style="display:grid;gap:6px;min-width:0"><label>Арка<select data-k="arc" style="width:100%">' + opts + '</select></label>'
+          + '<div style="display:grid;gap:6px;min-width:0"><div><small style="opacity:.7">Арка</small>' + arcPickHTML((arcs.filter(function (a) { return a.id === x.arc; })[0] || {}).name) + '</div>'
           + '<label>Ссылка на фото<input type="url" data-k="u" placeholder="https://…" value="' + esc(x.u) + '" style="width:100%"></label>'
           + '<div class="wk-ap-hint" style="font-size:12.5px;opacity:.75;display:flex;gap:8px;align-items:center;flex-wrap:wrap">Тяни фото мышью или пальцем, колесо — приблизить. <output>' + Math.round(Number(x.z) || 100) + '%</output><button type="button" data-reset>Сбросить кадр</button></div></div>'
           + '<button type="button" data-del title="Убрать фото" style="align-self:start">✕</button></div>';
       }).join('') + '<button type="button" class="wk-gal-add" data-add>＋ Добавить фото для арки</button>'
-        + '<div class="wk-gal-note">Фото появляется на карточке и в наградах, когда читатель дошёл до выбранной арки; показывается самое свежее из открытых. Кадр у каждого фото свой: в плакатах WANTED приближение тоже настраивается отдельно для каждого фото.</div>';
+        + '<div class="wk-gal-note">Фото появляется на карточке и в наградах, когда читатель прошёл выбранную арку целиком; показывается самое свежее из открытых. Кадр у каждого фото свой: в плакатах WANTED приближение тоже настраивается отдельно для каждого фото.</div>';
     }
+    function attachPick() {
+      [].forEach.call(box.querySelectorAll('.wk-ap-row'), function (row) {
+        var x = list[Number(row.getAttribute('data-i'))], pk = row.querySelector('.wk-arcpick'); if (!pk || !x) return;
+        var nm = function (id) { return (arcs.filter(function (a) { return a.id === id; })[0] || {}).name || ''; };
+        pk.__opts = function () { return arcs.map(function (a) { return { v: a.id, name: a.name, kind: ADK[a.kind] || '' }; }); };
+        pk.__cur = function () { return nm(x.arc); };
+        pk.__pick = function (v) { x.arc = v; pk.querySelector('input').value = nm(v); save(); };
+      });
+    }
+    var render0 = render; render = function () { render0(); attachPick(); };
     box.addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return; e.preventDefault();
       if (b.hasAttribute('data-add')) { list.push({ arc: '', u: '', y: '50', x: '50', z: '100' }); render(); return; }
@@ -30447,6 +30485,7 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   // --- редактор персонажа: «Биография по аркам» одним списком: «＋ Добавить описание» и выбор арки
   var ADK = { main: 'Основные арки', filler: 'Филлеры', film: 'Фильмы', cover: 'Обложки' };
   function adHide(form, first) {
+    form.querySelectorAll('textarea[data-field^="at_"]').forEach(function (t) { var w = t.closest('.wiki-editor-field') || t.parentElement; if (w && !w.hasAttribute('data-wk-ad-hide')) w.setAttribute('data-wk-ad-hide', '1'); });
     form.querySelectorAll('.wiki-editor-section').forEach(function (sec) {
       if (sec === first || sec.querySelector('.wk-ad-ed')) return;
       var hasAt = sec.querySelector('textarea[data-field^="at_"]'), t = (sec.querySelector('h4') || {}).textContent || '';
@@ -30465,37 +30504,32 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     var box = document.createElement('div'); box.className = 'wk-ad-ed'; box.style.cssText = 'display:grid;gap:10px'; body.appendChild(box);
     var rows = keys.filter(function (a) { return String(tas[a.key].value || '').trim(); }).map(function (a) { return a.key; });
     function setReal(k, v) { var t = tas[k]; if (!t || t.value === v) return; t.value = v; ['input', 'change'].forEach(function (n) { t.dispatchEvent(new Event(n, { bubbles: true })); }); }
-    function opts(cur) {
-      var used = {}; rows.forEach(function (k) { if (k && k !== cur) used[k] = 1; });
-      var html = '<option value="">— выбери арку —</option>';
-      Object.keys(ADK).forEach(function (kind) {
-        var g = arcs.filter(function (a) { return a.kind === kind && tas[a.key] && !used[a.key]; });
-        if (g.length) html += '<optgroup label="' + ADK[kind] + '">' + g.map(function (a) { return '<option value="' + esc(a.key) + '"' + (a.key === cur ? ' selected' : '') + '>' + esc(a.name) + '</option>'; }).join('') + '</optgroup>';
-      });
-      return html;
-    }
     function render() {
       box.innerHTML = rows.map(function (k, i) {
-        return '<div class="wk-ad-row" data-i="' + i + '" style="display:grid;gap:8px;padding:10px;border:1px solid rgba(255,255,255,.14);border-radius:12px"><div style="display:flex;gap:8px;align-items:center"><select data-ad="arc" style="flex:1;min-width:0">' + opts(k) + '</select><button type="button" data-ad-del title="Убрать описание">✕</button></div>'
-          + (k ? '<textarea data-ad="text" rows="4" placeholder="Что персонаж делает в этой арке" style="width:100%;min-height:90px;resize:vertical">' + esc(tas[k].value) + '</textarea>' : '<small style="opacity:.7">Выбери арку, и появится поле для описания.</small>') + '</div>';
+        return '<div class="wk-ad-row" data-i="' + i + '" style="display:grid;gap:8px;padding:10px;border:1px solid rgba(255,255,255,.14);border-radius:12px"><div style="display:flex;gap:8px;align-items:center"><div style="flex:1;min-width:0">' + arcPickHTML(k ? ((arcs.filter(function (a) { return a.key === k; })[0] || {}).name) : '') + '</div><button type="button" data-ad-del title="Убрать описание">✕</button></div>'
+          + (k ? '<textarea data-ad="text" rows="4" placeholder="Что персонаж делает в этой арке" style="width:100%;min-height:90px;resize:vertical">' + esc(tas[k].value) + '</textarea>' : '<small style="opacity:.7">Найди арку по названию, и появится поле для описания.</small>') + '</div>';
       }).join('') + '<button type="button" class="wk-gal-add" data-ad-add>＋ Добавить описание</button>'
-        + '<div class="wk-gal-note">Описание показывается в статье в блоке арки. Пустые не показываются.</div>';
+        + '<div class="wk-gal-note">Описание открывается читателю, когда он прошёл арку целиком. Пустые не показываются.</div>';
+      [].forEach.call(box.querySelectorAll('.wk-ad-row'), function (row) {
+        var i = Number(row.getAttribute('data-i')), pk = row.querySelector('.wk-arcpick'); if (!pk) return;
+        var nm = function (k) { return (arcs.filter(function (a) { return a.key === k; })[0] || {}).name || ''; };
+        pk.__opts = function () { var used = {}; rows.forEach(function (k) { if (k && k !== rows[i]) used[k] = 1; }); return arcs.filter(function (a) { return tas[a.key] && !used[a.key]; }).map(function (a) { return { v: a.key, name: a.name, kind: ADK[a.kind] || '' }; }); };
+        pk.__cur = function () { return nm(rows[i]); };
+        pk.__pick = function (nk) {
+          var old = rows[i]; if (old && nk) { var v = tas[old].value; setReal(old, ''); setReal(nk, v); }
+          rows[i] = nk; render();
+          var ta = box.querySelector('.wk-ad-row[data-i="' + i + '"] textarea'); if (ta) ta.focus();
+        };
+      });
     }
     box.addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return; e.preventDefault();
-      if (b.hasAttribute('data-ad-add')) { if (rows.indexOf('') < 0) rows.push(''); render(); var sel = box.querySelector('.wk-ad-row:last-of-type select'); if (sel) sel.focus(); return; }
+      if (b.hasAttribute('data-ad-add')) { if (rows.indexOf('') < 0) rows.push(''); render(); var ins = box.querySelectorAll('.wk-arcpick-in'); if (ins.length) ins[ins.length - 1].focus(); return; }
       if (b.hasAttribute('data-ad-del')) {
         var i = Number(b.closest('.wk-ad-row').getAttribute('data-i')), k = rows[i];
         if (k && String(tas[k].value || '').trim() && !window.confirm('Убрать это описание арки?')) return;
         if (k) setReal(k, ''); rows.splice(i, 1); render();
       }
-    });
-    box.addEventListener('change', function (e) {
-      var t = e.target; if (t.getAttribute('data-ad') !== 'arc') return;
-      var row = t.closest('.wk-ad-row'), i = Number(row.getAttribute('data-i')), old = rows[i], nk = t.value;
-      if (old && nk) { var v = tas[old].value; setReal(old, ''); setReal(nk, v); }
-      rows[i] = nk; render();
-      if (nk) { var ta = box.querySelector('.wk-ad-row[data-i="' + i + '"] textarea'); if (ta) ta.focus(); }
     });
     box.addEventListener('input', function (e) {
       var t = e.target; if (t.getAttribute('data-ad') !== 'text') return;
