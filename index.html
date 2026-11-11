@@ -3630,7 +3630,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 283";
+const WIKI_VERSION = "11.11.2026 · 285";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -24537,6 +24537,10 @@ html.wk-calm body :is(#characterList,#fruitsList,#usefulList,#storyList,.wk-sc) 
 @keyframes wkDagger{0%{opacity:1;clip-path:inset(-14px 100% -14px 0)}4%{clip-path:inset(-14px 0 -14px 0)}22%{opacity:1}34%,100%{opacity:0;clip-path:inset(-14px 0 -14px 0)}}
 @keyframes wkDaggerR{0%{opacity:1;clip-path:inset(-14px 0 -14px 100%)}4%{clip-path:inset(-14px 0 -14px 0)}22%{opacity:1}34%,100%{opacity:0;clip-path:inset(-14px 0 -14px 0)}}
 /* ----- Взрыв: вспышка, огненный шар, ударная волна, обломки и дым ----- */
+[data-amb="explosion"]{animation:wkBoomShake 5.6s linear infinite}
+[data-amb="explosion"]>:is(.wk-amb-a,.wk-amb-b){animation-delay:0s!important}
+@keyframes wkBoomShake{0%,100%{translate:0 0}1.4%{translate:-6px 3px}2.6%{translate:6px -4px}3.8%{translate:-5px 4px}5%{translate:5px -2px}6.4%{translate:-4px 3px}7.8%{translate:3px -2px}9.4%{translate:-2px 2px}11%{translate:1px -1px}13%{translate:0 0}}
+@media (prefers-reduced-motion:reduce){[data-amb="explosion"]{animation:none}}
 [data-amb="explosion"]>.wk-amb-a{mix-blend-mode:screen;animation:wkBoomFlash 5.6s linear infinite}
 [data-amb="explosion"]>.wk-amb-a::before,[data-amb="explosion"]>.wk-amb-a::after,[data-amb="explosion"]>.wk-amb-b::after{content:"";position:absolute;left:50%;top:58%;aspect-ratio:1;border-radius:50%;opacity:0;animation-delay:inherit}
 [data-amb="explosion"]>.wk-amb-a::before{width:125%;background:radial-gradient(circle,#fff 0 5%,#fff4c0 11%,#ffc04a 22%,#ff6a14 36%,rgba(200,40,0,.65) 50%,rgba(120,20,0,.25) 60%,transparent 68%);animation:wkBoom 5.6s cubic-bezier(.15,.7,.3,1) infinite;animation-delay:inherit}
@@ -40363,13 +40367,17 @@ body.wk-ie-on .wk-ie-btn{display:none}
 </script>
 <style id="wk-add-article-css">
 .wk-add-btn{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:0;height:36px;min-width:36px;padding:0 9px;box-sizing:border-box;border-radius:999px;border:1px solid color-mix(in srgb,var(--wk-accent,#d8b45a) 70%,transparent);background:color-mix(in srgb,var(--wk-accent,#d8b45a) 16%,transparent);color:var(--wk-accent,#d8b45a);font:inherit;font-size:13.5px;font-weight:650;cursor:pointer;white-space:nowrap;overflow:hidden;position:relative;transition:background .18s,border-color .18s,padding .22s}
-.wk-add-btn b{font-size:20px;line-height:1;font-weight:500;width:16px;text-align:center}
+.wk-add-btn .wk-add-ic{display:grid;place-items:center;width:18px;height:18px;font-style:normal}.wk-add-btn .wk-add-ic svg{display:block}
 .wk-add-btn span{display:inline-block;max-width:0;opacity:0;overflow:hidden;transition:max-width .25s ease,opacity .18s,margin .25s}
 .wk-add-btn:hover,.wk-add-btn:focus-visible{background:color-mix(in srgb,var(--wk-accent,#d8b45a) 28%,transparent);border-color:var(--wk-accent,#d8b45a);padding:0 14px 0 9px}
 .wk-add-btn:hover span,.wk-add-btn:focus-visible span{max-width:150px;opacity:1;margin-left:7px}
 .wk-add-btn:focus-visible{outline:2px solid var(--wk-accent,#d8b45a);outline-offset:2px}
 @media (max-width:760px){.wk-add-btn{margin-left:auto}.wk-add-btn+.wk-acc-btn{margin-left:8px}}
 body.wiki-editor-open .wk-add-btn{display:none}
+</style>
+<style id="wk-search-center">
+.global-search-trigger .global-search-icon{display:flex!important;align-items:center;justify-content:center;height:100%}
+.global-search-trigger .global-search-icon .wk-ic{margin:0!important}
 </style>
 <script id="wk-add-article">
 (function () {
@@ -40397,7 +40405,7 @@ body.wiki-editor-open .wk-add-btn{display:none}
     var inArt = ['characterArticle', 'storyArticle', 'fruitArticle', 'usefulArticle'].some(function (id) { var e = document.getElementById(id); return e && getComputedStyle(e).display !== 'none'; });
     if (!m || !canEdit()) { if (b) b.remove(); return; }
     if (!b) {
-      b = document.createElement('button'); b.type = 'button'; b.id = 'wkAddArticle'; b.className = 'wk-add-btn'; b.innerHTML = '<b aria-hidden="true">＋</b><span>Добавить статью</span>';
+      b = document.createElement('button'); b.type = 'button'; b.id = 'wkAddArticle'; b.className = 'wk-add-btn'; b.innerHTML = '<i class="wk-add-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></i><span>Добавить статью</span>';
       b.addEventListener('click', function () { var mm = MAP[document.body.dataset.activeTab]; if (mm && window.__wkNewArticle) window.__wkNewArticle(mm[0]); });
       mount(b);
     }
