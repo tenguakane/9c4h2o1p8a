@@ -2603,6 +2603,19 @@ html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-grid-content,html.
  mask:radial-gradient(circle at 50% 50%,#000 0 .7px,transparent 1.2px) 0 0/6px 6px,radial-gradient(circle at 50% 50%,#000 0 .7px,transparent 1.2px) 3px 3px/6px 6px;
  animation:wkHoloDots2 7s ease-in-out infinite alternate!important}
 @keyframes wkHoloDots2{0%{background-position:0 0}100%{background-position:100% 60%}}
+</style><style id="wk-dk-modal-mobile">
+@media (max-width:760px){
+ .wk-dk-modal,html.ios-app .wk-dk-modal{align-items:center!important;box-sizing:border-box;padding:calc(76px + env(safe-area-inset-top,0px)) 12px calc(96px + env(safe-area-inset-bottom,0px))!important}
+ .wk-dk-modal .wk-dk-mbox,html.ios-app .wk-dk-modal .wk-dk-mbox{max-height:100%!important;width:100%;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden!important;padding:16px 14px 0!important}
+ .wk-dk-modal .wk-dk-mbox>.wk-dk-mscroll{flex:1 1 auto;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch}
+ .wk-dk-modal .wk-dk-mbox>.wk-dk-open{position:static!important;flex:0 0 auto;margin:10px 0 12px!important;box-shadow:none!important}
+}
+</style><style id="wk-holo-dots3">
+/* Радуга видна на всей рубашке сразу и плавно течёт по точкам; сетка та же, что у эпической */
+.wk-pk.v-holo .wk-bkt{opacity:.34!important;
+ background:linear-gradient(120deg,#ff5fa2 0%,#ffd86b 14%,#6bff9e 28%,#62c4ff 42%,#b58cff 56%,#ff5fa2 70%,#ffd86b 84%,#6bff9e 100%) 0 0/220% 220%!important;
+ animation:wkHoloDots3 9s linear infinite!important}
+@keyframes wkHoloDots3{0%{background-position:0% 0%}100%{background-position:100% 100%}}
 </style></head>
 <body data-theme="mugiwara" data-active-tab="characters">
 <script id="wiki-cloud-config">
@@ -3781,7 +3794,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 325";
+const WIKI_VERSION = "11.11.2026 · 327";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -32100,7 +32113,7 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   function apOpts(list, cur, first) {
     return '<option value="">' + first + '</option>' + (list || []).filter(function (o) { return o && o.v; }).map(function (o) { return '<option value="' + esc(o.v) + '"' + (String(cur || '') === String(o.v) ? ' selected' : '') + '>' + esc(o.n || o.v) + '</option>'; }).join('');
   }
-  var RAR_N = { common: 'Обычная', rare: 'Редкая', epic: 'Эпическая', legendary: 'Легендарная' };
+  var RAR_N = { common: 'Обычная', rare: 'Редкая', epic: 'Эпик', legendary: 'Легенда' };
   function apRarOpts(hidden, x) {
     var f = hidden.closest('form') || document, idEl = f.querySelector('[data-field="id"]'), cid = idEl ? String(idEl.value || '').trim() : '';
     var d = window.__wkDeckDefaultRarity && cid && x.arc ? window.__wkDeckDefaultRarity(cid, x.arc) : '';
@@ -33750,7 +33763,7 @@ html body :is(#fruitsSection#fruitsSection#fruitsSection,#usefulSection#usefulSe
 .wk-r-legendary>.wk-back .wk-back-open{border-color:rgba(250,204,21,.6);color:#fde68a}
 .wk-back .wk-back-in::before{display:block;font:800 10px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;letter-spacing:.14em;text-transform:none;color:#64748b;content:"Обычная"}
 .wk-r-rare>.wk-back .wk-back-in::before{content:"◆ Редкая";color:#e2e8f0}
-.wk-r-legendary>.wk-back .wk-back-in::before{content:"◆◆ Легендарная";color:#facc15}
+.wk-r-legendary>.wk-back .wk-back-in::before{content:"◆◆ Легенда";color:#facc15}
 .wk-reduced .wk-r-legendary>.wk-back::before{animation:none}
 /* Ручная редкость в редакторе */
 #wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wk-rar-ed{grid-column:1 / -1;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:0 0 12px;padding:10px 12px;border-radius:10px;border:1px solid rgba(250,204,21,.35);background:rgba(250,204,21,.05)}
@@ -33952,7 +33965,7 @@ html body #fruitsSection#fruitsSection#fruitsSection #fruitsFiltersButton#fruits
 (function () {
   'use strict';
   var TYPES = { character: 'person_link', fruit: 'image', useful: 'image', story: 'image' };
-  var OPTS = [['', 'Авто — по правилам'], ['common', 'Обычная'], ['rare', '◆ Редкая'], ['epic', '◆◆ Эпическая'], ['legendary', '◆◆◆ Легендарная']];
+  var OPTS = [['', 'Авто — по правилам'], ['common', 'Обычная'], ['rare', '◆ Редкая'], ['epic', '◆◆ Эпик'], ['legendary', '◆◆◆ Легенда']];
   function raw(type, id) { try { return window.__wikiRawRecord ? window.__wikiRawRecord(type, id) : null; } catch (e) { return null; } }
   function editorType(form) {
     var id = form.querySelector('[data-field="id"]'); id = id ? String(id.value || '').trim() : '';
@@ -40490,7 +40503,7 @@ body.wk-ie-on .wk-ie-btn{display:none}
     function dump() { var out = ph.filter(function (x) { return x.arc && /^(https?:|data:image)/.test(String(x.u || '').trim()); }); S.vals.arc_photos = out.length ? JSON.stringify(out) : ''; if (faId) { var r0 = out.filter(function (q) { return q.arc === faId; })[0]; S.vals.person_link = r0 ? String(r0.u).trim() : ''; if (r0) { S.vals.person_image_position = r0.y; S.vals.person_image_position_x = r0.x; S.vals.person_image_zoom = r0.z; } } bar(); }
     function draw() {
       var arcs = window.__wkArcList || [];
-      phl.innerHTML = ph.map(function (x, i) { return '<div class="wk-ie-phr" data-i="' + i + '"><select aria-label="Арка"><option value="">— арка —</option>' + arcs.map(function (a) { return '<option value="' + eh(a.id) + '"' + (a.id === x.arc ? ' selected' : '') + '>' + eh(a.name) + '</option>'; }).join('') + '</select><input type="url" placeholder="Ссылка на фото" value="' + eh(x.u || '') + '"><select data-rar aria-label="Редкость карточки"><option value="">Редкость: авто</option>' + [['common', 'Обычная'], ['rare', 'Редкая'], ['epic', 'Эпическая'], ['legendary', 'Легендарная']].map(function (q) { return '<option value="' + q[0] + '"' + (x.r === q[0] ? ' selected' : '') + '>' + q[1] + '</option>'; }).join('') + '</select><button type="button" data-rmp aria-label="Убрать фото">✕</button></div>'; }).join('');
+      phl.innerHTML = ph.map(function (x, i) { return '<div class="wk-ie-phr" data-i="' + i + '"><select aria-label="Арка"><option value="">— арка —</option>' + arcs.map(function (a) { return '<option value="' + eh(a.id) + '"' + (a.id === x.arc ? ' selected' : '') + '>' + eh(a.name) + '</option>'; }).join('') + '</select><input type="url" placeholder="Ссылка на фото" value="' + eh(x.u || '') + '"><select data-rar aria-label="Редкость карточки"><option value="">Редкость: авто</option>' + [['common', 'Обычная'], ['rare', 'Редкая'], ['epic', 'Эпик'], ['legendary', 'Легенда']].map(function (q) { return '<option value="' + q[0] + '"' + (x.r === q[0] ? ' selected' : '') + '>' + q[1] + '</option>'; }).join('') + '</select><button type="button" data-rmp aria-label="Убрать фото">✕</button></div>'; }).join('');
     }
     phl.addEventListener('input', function (e) { var r2 = e.target.closest('.wk-ie-phr'); if (!r2) return; var x = ph[Number(r2.getAttribute('data-i'))]; if (e.target.hasAttribute('data-rar')) { if (e.target.value) x.r = e.target.value; else delete x.r; } else if (e.target.tagName === 'SELECT') x.arc = e.target.value; else x.u = e.target.value.trim(); dump(); });
     phl.addEventListener('click', function (e) { var bt = e.target.closest('[data-rmp]'); if (!bt) return; ph.splice(Number(bt.closest('.wk-ie-phr').getAttribute('data-i')), 1); draw(); dump(); });
@@ -40922,15 +40935,15 @@ html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-name,html.ios-app 
 .wk-gem.is-epic{color:#d8b4fe;text-shadow:0 0 8px rgba(192,132,252,.7)}
 html body .wk-gem.is-epic{color:#e9d5ff;background:linear-gradient(135deg,rgba(59,24,98,.95),rgba(26,10,46,.95));box-shadow:0 0 12px rgba(168,85,247,.55),0 2px 8px rgba(0,0,0,.55);text-shadow:none}
 html body .wk-gem.is-epic::before{content:"◆◆"}
-html body .wk-sc-hero .wk-gem.is-epic::after{content:"Эпическая"}
+html body .wk-sc-hero .wk-gem.is-epic::after{content:"Эпик"}
 html body .wk-gem.is-legendary::before{content:"◆◆◆"}
 .catalog-item-shell.wk-r-epic{border-radius:18px;box-shadow:0 0 0 1px rgba(192,132,252,.22),0 0 16px -6px rgba(168,85,247,.55)}
 .wk-r-epic>.wk-back{background:radial-gradient(120% 70% at 50% 0%,rgba(168,85,247,.26),transparent 60%),linear-gradient(160deg,#241046,#0f0820 55%,#09051a);border:1px solid rgba(192,132,252,.8);box-shadow:inset 0 0 0 3px #0f0820,inset 0 0 0 4px rgba(192,132,252,.4),0 0 22px -6px rgba(168,85,247,.6)}
 .wk-r-epic>.wk-back .wk-back-name{color:#e9d5ff;text-shadow:0 0 14px rgba(168,85,247,.55)}
 .wk-r-epic>.wk-back dt{color:#b78cf0}
 .wk-r-epic>.wk-back .wk-back-open{border-color:rgba(192,132,252,.6);color:#e9d5ff}
-.wk-r-epic>.wk-back .wk-back-in::before{content:"◆◆ Эпическая";color:#c084fc}
-.wk-r-legendary>.wk-back .wk-back-in::before{content:"◆◆◆ Легендарная"}
+.wk-r-epic>.wk-back .wk-back-in::before{content:"◆◆ Эпик";color:#c084fc}
+.wk-r-legendary>.wk-back .wk-back-in::before{content:"◆◆◆ Легенда"}
 html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:25;border:2px solid var(--wk-ring,rgba(192,132,252,.5))}
 .wk-tl-chip.r-epic .wk-tl-ava{box-shadow:0 0 0 2px #c084fc,0 0 10px rgba(168,85,247,.5)}
 .wk-dk-bar.r-epic i{background:#c084fc}
@@ -41041,7 +41054,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
 (function () {
   'use strict';
   var KEY = 'onePieceWikiDeckV1';
-  var RN = { common: 'Обычная', rare: 'Редкая', epic: 'Эпическая', legendary: 'Легендарная' };
+  var RN = { common: 'Обычная', rare: 'Редкая', epic: 'Эпик', legendary: 'Легенда' };
     function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function url(u) { u = String(u || '').trim(); return u && u !== 'Нет' && /^(https?:\/\/|data:image\/)/i.test(u) ? u : ''; }
   function num(v) { var m = String(v == null ? '' : v).match(/\d+/); return m ? parseInt(m[0], 10) : 0; }
@@ -41134,7 +41147,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
   window.__wkTimelineRender = renderTimeline;
 
   /* ================= КОЛОДА: карточка = персонаж + арка ================= */
-  var RN4 = { common: 'Обычная', rare: 'Редкая', epic: 'Эпическая', legendary: 'Легендарная' };
+  var RN4 = { common: 'Обычная', rare: 'Редкая', epic: 'Эпик', legendary: 'Легенда' };
   var RORD = ['legendary', 'epic', 'rare', 'common'];
   var RPROB = { legendary: 0.04, epic: 0.10, rare: 0.24 };
   var COOL = 3600000;
@@ -41447,7 +41460,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     var l = base.slice().sort(function (a, b) { var oa = st.owned[a.key] ? 0 : 1, ob = st.owned[b.key] ? 0 : 1; return oa - ob || (a.arc.start || 9e9) - (b.arc.start || 9e9) || (num(a.c.chapter) || 9e9) - (num(b.c.chapter) || 9e9); });
     if (DK.v && (DK.r === 'rare' || DK.r === 'common')) DK.r = '';
     l = l.filter(function (k) { var o = !!st.owned[k.key]; return (DK.f === 'all' || (DK.f === 'have' ? o : !o)) && (!DK.r || k.r === DK.r); });
-    var rbtn = [['', 'Любая'], ['legendary', 'Легендарные'], ['epic', 'Эпические'], ['rare', 'Редкие'], ['common', 'Обычные']].filter(function (x) { return !DK.v || !x[0] || x[0] === 'legendary' || x[0] === 'epic'; });
+    var rbtn = [['', 'Любая'], ['legendary', 'Легенды'], ['epic', 'Эпики'], ['rare', 'Редкие'], ['common', 'Обычные']].filter(function (x) { return !DK.v || !x[0] || x[0] === 'legendary' || x[0] === 'epic'; });
     var chips = '<div class="wk-dk-filters wk-dk-vf"><div>' + [['', 'Основные'], ['holo', 'Голографическая'], ['gold', 'Пламенная'], ['neg', 'Негативная']].map(function (x) { return '<button type="button" data-v="' + x[0] + '" class="' + (DK.v === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div>';
     chips += '<div class="wk-dk-filters"><div>' + [['all', 'Все'], ['have', 'Есть'], ['miss', 'Нет']].map(function (x) { return '<button type="button" data-f="' + x[0] + '" class="' + (DK.f === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div><div>' + rbtn.map(function (x) { return '<button type="button" data-r="' + x[0] + '" class="' + (DK.r === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div>';
     chips = '<div class="wk-dk-sticky">' + chips.replace('<div class="wk-dk-filters">', '<div class="wk-dk-filters wk-dk-kf"><div>' + [['', 'Все типы'], ['char', 'Персонажи'], ['fruit', 'Плоды'], ['useful', 'Статьи']].map(function (x) { return '<button type="button" data-kind="' + x[0] + '" class="' + (DK.k === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div><div class="wk-dk-filters">') + '<span class="wk-dk-cnt">' + l.length + ' ' + plural(l.length, 'карточка', 'карточки', 'карточек') + '</span></div>';
@@ -41527,7 +41540,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
   function pct(x) { return Math.round(x * 100); }
   function rulesHTML() {
     var P = RPROB, vs = function (v) { return pct(VAR[v].w / 100); };
-    return '<div class="wk-dk-modal" id="wkDkRules" role="dialog" aria-modal="true" aria-label="Правила колоды"><div class="wk-dk-mbox">' +
+    return '<div class="wk-dk-modal" id="wkDkRules" role="dialog" aria-modal="true" aria-label="Правила колоды"><div class="wk-dk-mbox"><div class="wk-dk-mscroll">' +
       '<h3>Как работает колода</h3>' +
       '<ol>' +
       '<li><b>Набор — раз в час.</b> В нём ' + PACKN + ' карточек. Это персонаж в определённой арке (у Луффи столько карточек, сколько у него фото по аркам), дьявольский плод или полезная статья.</li>' +
@@ -41538,7 +41551,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
       '</ol>' +
       '<div class="wk-dk-mcol">' + VKEYS.map(function (v) { return '<div class="v-' + v + '"><b>' + VAR[v].n + '</b><span>' + (v === 'holo' ? 'эффект «радужная фольга, яркая»' : v === 'gold' ? 'пламя на фото: красно-оранжевый жар и летящие искры' : 'негатив с лёгким переливом и звёздами') + '. Шанс среди особых версий: ' + vs(v) + '%.</span></div>'; }).join('') + '</div>' +
       '<p class="wk-dk-mnote">Особые версии собираются отдельно: в коллекции есть вкладки «Голографическая», «Пламенная» и «Негативная».</p>' +
-      '<button type="button" class="wk-dk-open" data-act="rules-ok">Понятно</button></div></div>';
+      '</div><button type="button" class="wk-dk-open" data-act="rules-ok">Понятно</button></div></div>';
   }
   function showRules(pane) { var o = pane.querySelector('#wkDkRules'); if (o) o.remove(); pane.insertAdjacentHTML('beforeend', rulesHTML()); }
   function leftMs(st) { return Math.max(0, st.last + COOL - Date.now()); }
