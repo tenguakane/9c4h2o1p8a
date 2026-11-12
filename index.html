@@ -3794,7 +3794,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 335";
+const WIKI_VERSION = "11.11.2026 · 336";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -41085,7 +41085,8 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
   function rarity(c) { try { var r = window.__wkRarity ? window.__wkRarity('character', c) : 'common'; return RN[r] ? r : 'common'; } catch (e) { return 'common'; } }
   function openArt(spec) {
     var sp = String(spec || ''), i = sp.indexOf(':'), kind = i > 0 ? sp.slice(0, i) : 'char', id = i > 0 ? sp.slice(i + 1) : sp;
-    try { if (kind === 'fruit') window.openFruitArticle(id); else if (kind === 'useful') window.openUsefulArticle(id); else if (typeof openCharacterArticle === 'function') openCharacterArticle(id); } catch (e) {}
+    try { if (kind === 'wanted') { var rr = listOf('rewards').filter(function (x) { return x && x.id === id; })[0], cid = rr && (rr.__wikiRaw || rr).character_id; if (cid) { if (typeof openCharacterFromRewards === 'function') openCharacterFromRewards(cid); else openCharacterArticle(cid); } return; }
+      if (kind === 'fruit') window.openFruitArticle(id); else if (kind === 'useful') window.openUsefulArticle(id); else if (typeof openCharacterArticle === 'function') openCharacterArticle(id); } catch (e) {}
   }
   function visibleChars() { return chars().filter(function (c) { return c && c.id && !hiddenRec(c, 'character') && String(c.__wikiDraft) !== 'true'; }); }
   function crop(c) {
@@ -41176,7 +41177,8 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
   var NEWW = 3, PITY = 10, PACKN = 7;                     // новая карта в 3 раза вероятнее; легендарная гарантирована раз в 10 наборов
   function rollVar() { var r = Math.random() * 100, a = 0; for (var i = 0; i < VKEYS.length; i++) { a += VAR[VKEYS[i]].w; if (r < a) return VKEYS[i]; } return 'holo'; }
   function mkVar(k, v) { return Object.assign({}, k, { key: k.key + '#' + v, v: v, fx: VAR[v].fx, amb: '', cs: '', base: k }); }
-  function varCards(cards) { var o = []; cards.forEach(function (k) { if (!k.kind && (k.r === 'epic' || k.r === 'legendary')) VKEYS.forEach(function (v) { o.push(mkVar(k, v)); }); }); return o; }
+  function canVar(k) { return (!k.kind || k.kind === 'wanted') && (k.r === 'epic' || k.r === 'legendary'); }
+  function varCards(cards) { var o = []; cards.forEach(function (k) { if (canVar(k)) VKEYS.forEach(function (v) { o.push(mkVar(k, v)); }); }); return o; }
   var DK = { k: '', fr: '', frLoading: false, frData: null, frAt: 0, frLim: 60, f: 'all', r: '', v: '', pack: null, flipped: 0, lim: 60, pg: 0, timer: 0 };
   function load() {
     var v; try { v = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { v = {}; }
@@ -41184,7 +41186,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     v.owned = v.owned && typeof v.owned === 'object' ? v.owned : {}; v.packs = +v.packs || 0; v.pity = +v.pity || 0; v.last = +v.last || 0;
     if (DK.fillAll && isDima()) {
       var fo = {}; Object.keys(v.owned).forEach(function (q) { fo[q] = v.owned[q]; });
-      try { allCards().forEach(function (k) { if (!fo[k.key]) fo[k.key] = 1; if (!k.kind && (k.r === 'epic' || k.r === 'legendary')) VKEYS.forEach(function (x) { if (!fo[k.key + '#' + x]) fo[k.key + '#' + x] = 1; }); }); } catch (e) {}
+      try { allCards().forEach(function (k) { if (!fo[k.key]) fo[k.key] = 1; if (canVar(k)) VKEYS.forEach(function (x) { if (!fo[k.key + '#' + x]) fo[k.key + '#' + x] = 1; }); }); } catch (e) {}
       v.owned = fo; v.__fake = true;
     }
     return v;
@@ -41254,7 +41256,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
   var KRAR = ['common', 'rare', 'epic', 'legendary'];
   var FRUIT_T = { 'Логия': 'epic', 'Зоан': 'rare', 'Парамеция': 'common' };
   var USEFUL_T = { 'Артефакты': 'legendary', 'Оружие, Артефакты': 'legendary', 'Организации': 'epic', 'Способности': 'epic', 'Расы': 'rare', 'Оружие': 'rare', 'Команды': 'rare', 'Корабли': 'common', 'География': 'common', 'Дэн Дэн Муши': 'common', 'Инструменты': 'common', 'Материалы': 'common' };
-  var KIND_NAME = { char: 'Персонажи', fruit: 'Плоды', useful: 'Статьи' };
+  var KIND_NAME = { char: 'Персонажи', fruit: 'Плоды', useful: 'Статьи', wanted: 'Розыск' };
   function listOf(name) { try { var v = window.eval(name); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
   function bumpR(r) { var i = KRAR.indexOf(r); return KRAR[Math.min(KRAR.length - 1, i + 1)]; }
   function kindCards() {
@@ -41277,6 +41279,15 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
       var r = String(raw.rarity || ''), base = USEFUL_T[String(raw.type || '').trim()] || 'common';
       if (KRAR.indexOf(r) < 0) r = conn(raw).some(function (id) { return legSet[id]; }) ? bumpR(base) : base;
       out.push({ key: 'useful:' + f.id, kind: 'useful', c: { id: f.id, name: raw.name || f.name || '', status: '' }, arc: arcOf(raw), sub: String(raw.type || '').trim(), u: u, x: raw.image_position_x, y: raw.image_position, z: raw.image_zoom, fx: '', amb: '', cs: '', r: r, first: true });
+    });
+    var rw = listOf('rewards'), cmap = {}; chars().forEach(function (c) { cmap[c.id] = c; });
+    rw.forEach(function (f) {
+      if (!f || !f.id || String(f.__wikiDraft) === 'true') return;
+      try { if (window.__wikiIsSpoilerActive ? window.__wikiIsSpoilerActive(f, 'reward') : f.__wikiSpoiler) return; } catch (e) { return; }
+      var raw = f.__wikiRaw || f, u = url(raw.reward_image); if (!u) return;
+      var ch = cmap[raw.character_id]; if (!ch || hiddenRec(ch, 'character')) return;
+      var b = Number(raw.reward) || 0, bt = b ? String(Math.round(b)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0') + '\u00a0белли' : '';
+      out.push({ key: 'wanted:' + f.id, kind: 'wanted', c: { id: f.id, name: ch.name || '', status: '' }, ch: raw.character_id, arc: arcOf(raw), sub: String(raw.arc || '').trim() || (arcOf(raw).name || ''), bounty: bt, u: u, x: 50, y: 40, z: 100, fx: '', amb: '', cs: '', r: charR[raw.character_id] || 'common', first: true });
     });
     return out;
   }
@@ -41452,7 +41463,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     try { ps = getPrimaryCharacterStatus(c.status); cls = ps ? getCharacterStatusClass(ps) : ''; badge = characterStatusBadge(c.status, ps); } catch (e) {}
     var id = esc(c.id), pin = encodeURIComponent(JSON.stringify({ id: k.key, fx: k.fx || '', amb: k.amb || '', cs: k.cs || '', r: k.r }));
     var img = '<img class="character-grid-image" src="' + esc(u) + '" alt="' + esc(c.name) + '" style="object-position:' + X + '% ' + Y + '% !important;transform:scale(' + (Z / 100) + ') !important;transform-origin:' + X + '% ' + Y + '% !important" loading="lazy" decoding="async" data-wiki-fallbacks="[]" onerror="if(!window.__wikiTryPortraitImage||!window.__wikiTryPortraitImage(this)){this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';}"><div class="character-grid-image-fallback" style="display:none" aria-hidden="true">👤</div>';
-    return '<div class="catalog-item-shell character-grid-shell' + (k.r !== 'common' ? ' wk-r-' + k.r : '') + '"><div class="character-item character-status-item character-grid-card ' + cls + '" data-wk-pin="' + pin + '" data-wk-rarity="' + k.r + '"' + (k.v ? ' data-wk-var="' + k.v + '"' : '') + '  data-wk-rarity-label="' + RN4[k.r] + ' карточка" role="button" tabindex="0" aria-label="Показать карточку: ' + esc(c.name) + '" onclick="window.__wkDeckZoom&&window.__wkDeckZoom(this)"><div class="character-grid-image-wrap">' + img + '</div>' + fxHTML(k.v) + '<div class="character-grid-content"><div class="character-name card-title" title="' + esc(c.name) + '">' + esc(c.name) + '</div><div class="wk-dk-arc">' + esc(k.sub || k.arc.name) + '</div><div class="character-grid-status"><span class="wk-dk-rarp r-' + k.r + '">' + RN4[k.r] + '</span>' + (k.v ? '<span class="wk-dk-rarp wk-dk-vp vp-' + k.v + '">' + ({ holo: 'Голограф', gold: 'Пламя', neg: 'Негатив' }[k.v] || '') + '</span>' : '') + '</div></div></div></div>';
+    return '<div class="catalog-item-shell character-grid-shell' + (k.r !== 'common' ? ' wk-r-' + k.r : '') + '"><div class="character-item character-status-item character-grid-card ' + cls + (k.kind === 'wanted' ? ' wk-dk-wanted' : '') + '" data-wk-pin="' + pin + '" data-wk-rarity="' + k.r + '"' + (k.v ? ' data-wk-var="' + k.v + '"' : '') + '  data-wk-rarity-label="' + RN4[k.r] + ' карточка" role="button" tabindex="0" aria-label="Показать карточку: ' + esc(c.name) + '" onclick="window.__wkDeckZoom&&window.__wkDeckZoom(this)"><div class="character-grid-image-wrap">' + img + '</div>' + fxHTML(k.v) + '<div class="character-grid-content"><div class="character-name card-title" title="' + esc(c.name) + '">' + esc(c.name) + '</div><div class="wk-dk-arc">' + esc(k.sub || k.arc.name) + '</div><div class="character-grid-status"><span class="wk-dk-rarp r-' + k.r + '">' + RN4[k.r] + '</span>' + (k.v ? '<span class="wk-dk-rarp wk-dk-vp vp-' + k.v + '">' + ({ holo: 'Голограф', gold: 'Пламя', neg: 'Негатив' }[k.v] || '') + '</span>' : '') + '</div></div></div></div>';
   }
   function bar(h, n, cls) { return '<span class="wk-dk-bar ' + (cls || '') + '"><i style="width:' + (n ? Math.round(h / n * 100) : 0) + '%"></i></span>'; }
   function statsHTML(cards, st) {
@@ -41462,11 +41473,11 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
       var s = k.arc.saga || 'Без саги'; if (!sg[s]) sg[s] = { n: 0, h: 0, ch: 9e9 }; sg[s].n++; if (n) sg[s].h++; sg[s].ch = Math.min(sg[s].ch, k.arc.start || 9e9);
     });
     var pc = tot ? Math.round(have / tot * 100) : 0;
-    var kn = { char: [0, 0], fruit: [0, 0], useful: [0, 0] };
+    var kn = { char: [0, 0], fruit: [0, 0], useful: [0, 0], wanted: [0, 0] };
     cards.forEach(function (k) { var kk = kn[k.kind || 'char']; kk[1]++; if (st.owned[k.key]) kk[0]++; });
-    var kindsH = '<div class="wk-dk-kinds">' + ['char', 'fruit', 'useful'].map(function (x) { return '<span><b>' + kn[x][0] + ' / ' + kn[x][1] + '</b> ' + KIND_NAME[x].toLowerCase() + '</span>'; }).join('') + '</div>';
-    var vt = cards.filter(function (k) { return !k.kind && (k.r === 'epic' || k.r === 'legendary'); }).length, vh = { holo: 0, gold: 0, neg: 0 };
-    cards.forEach(function (k) { if (!k.kind && (k.r === 'epic' || k.r === 'legendary')) VKEYS.forEach(function (v) { if (st.owned[k.key + '#' + v]) vh[v]++; }); });
+    var kindsH = '<div class="wk-dk-kinds">' + ['char', 'fruit', 'useful', 'wanted'].map(function (x) { return '<span><b>' + kn[x][0] + ' / ' + kn[x][1] + '</b> ' + KIND_NAME[x].toLowerCase() + '</span>'; }).join('') + '</div>';
+    var vt = cards.filter(function (k) { return canVar(k); }).length, vh = { holo: 0, gold: 0, neg: 0 };
+    cards.forEach(function (k) { if (canVar(k)) VKEYS.forEach(function (v) { if (st.owned[k.key + '#' + v]) vh[v]++; }); });
     var left = Math.max(0, PITY - 1 - (st.pity || 0));
     var pityTxt = left > 0 ? 'Гарантированная легендарная — не позже чем через ' + left + ' ' + plural(left, 'набор', 'набора', 'наборов') : 'Следующий набор — с гарантированной легендарной';
     var rows = Object.keys(sg).sort(function (a, b) { return sg[a].ch - sg[b].ch; }).map(function (k) { var g = sg[k]; return '<tr><td>' + esc(k) + '</td><td class="n">' + g.h + ' / ' + g.n + '</td><td>' + bar(g.h, g.n) + '</td></tr>'; }).join('');
@@ -41490,7 +41501,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     var rbtn = [['', 'Любая'], ['legendary', 'Легенды'], ['epic', 'Эпики'], ['rare', 'Редкие'], ['common', 'Обычные']].filter(function (x) { return !DK.v || !x[0] || x[0] === 'legendary' || x[0] === 'epic'; });
     var chips = '<div class="wk-dk-filters wk-dk-vf"><div>' + [['', 'Основные'], ['holo', 'Голографическая'], ['gold', 'Пламенная'], ['neg', 'Негативная']].map(function (x) { return '<button type="button" data-v="' + x[0] + '" class="' + (DK.v === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div>';
     chips += '<div class="wk-dk-filters"><div>' + [['all', 'Все'], ['have', 'Есть'], ['miss', 'Нет']].map(function (x) { return '<button type="button" data-f="' + x[0] + '" class="' + (DK.f === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div><div>' + rbtn.map(function (x) { return '<button type="button" data-r="' + x[0] + '" class="' + (DK.r === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div>';
-    chips = '<div class="wk-dk-sticky">' + chips.replace('<div class="wk-dk-filters">', '<div class="wk-dk-filters wk-dk-kf"><div>' + [['', 'Все типы'], ['char', 'Персонажи'], ['fruit', 'Плоды'], ['useful', 'Статьи']].map(function (x) { return '<button type="button" data-kind="' + x[0] + '" class="' + (DK.k === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div><div class="wk-dk-filters">') + '<div class="wk-dk-sortw" role="group" aria-label="Сортировка">' + [['', 'По сюжету'], ['new', 'Сначала новые'], ['rar', 'По редкости']].map(function (x) { return '<button type="button" data-dks="' + x[0] + '" class="' + ((DK.sort || '') === x[0] ? 'on' : '') + '" aria-pressed="' + ((DK.sort || '') === x[0]) + '">' + x[1] + '</button>'; }).join('') + '</div><span class="wk-dk-cnt">' + l.length + ' ' + plural(l.length, 'карточка', 'карточки', 'карточек') + '</span></div>';
+    chips = '<div class="wk-dk-sticky">' + chips.replace('<div class="wk-dk-filters">', '<div class="wk-dk-filters wk-dk-kf"><div>' + [['', 'Все типы'], ['char', 'Персонажи'], ['fruit', 'Плоды'], ['useful', 'Статьи'], ['wanted', 'Розыск']].map(function (x) { return '<button type="button" data-kind="' + x[0] + '" class="' + (DK.k === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div><div class="wk-dk-filters">') + '<div class="wk-dk-sortw" role="group" aria-label="Сортировка">' + [['', 'По сюжету'], ['new', 'Сначала новые'], ['rar', 'По редкости']].map(function (x) { return '<button type="button" data-dks="' + x[0] + '" class="' + ((DK.sort || '') === x[0] ? 'on' : '') + '" aria-pressed="' + ((DK.sort || '') === x[0]) + '">' + x[1] + '</button>'; }).join('') + '</div><span class="wk-dk-cnt">' + l.length + ' ' + plural(l.length, 'карточка', 'карточки', 'карточек') + '</span></div>';
     var PS = 60, pages = Math.max(1, Math.ceil(l.length / PS)); DK.pg = Math.max(0, Math.min(pages - 1, DK.pg | 0));
     var cards2 = l.slice(DK.pg * PS, DK.pg * PS + PS).map(function (k) {
       var n = st.owned[k.key] || 0;
@@ -41595,7 +41606,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     return left > 0 ? '<button type="button" class="wk-dk-open" data-act="open" disabled aria-disabled="true">Следующий набор через <b class="wk-dk-left">' + fmt(left) + '</b></button>' : '<button type="button" class="wk-dk-open" data-act="open">Открыть набор</button>';
   }
   function packHTML(cards, st) {
-    if (!DK.pack) return '<div class="wk-dk-stage idle"><div class="wk-dk-back big">' + backInner('common', '', true) + '</div><div class="wk-dk-ct"><b>Набор карточек</b><p>' + PACKN + ' карточек: персонажи в арках, плоды и полезные статьи. Набор можно открывать раз в час. В каждом есть хотя бы одна редкая или лучше.</p></div><div class="wk-dk-cta" id="wkDkCta">' + ctaHTML(st) + '</div></div>';
+    if (!DK.pack) return '<div class="wk-dk-stage idle"><div class="wk-dk-back big">' + backInner('common', '', true) + '</div><div class="wk-dk-ct"><b>Набор карточек</b><p>' + PACKN + ' карточек: персонажи в арках, плоды, полезные статьи и плакаты розыска. Набор можно открывать раз в час. В каждом есть хотя бы одна редкая или лучше.</p></div><div class="wk-dk-cta" id="wkDkCta">' + ctaHTML(st) + '</div></div>';
     return '<div class="wk-dk-stage"><div class="wk-dk-row">' + DK.pack.map(function (x, i) {
       var k = cardByKey(cards, x.key); if (!k) return '';
       var vv = x.v && VAR[x.v] ? x.v : '', kk = vv ? mkVar(k, vv) : k, fresh = vv ? x.vNew : x.isNew;
@@ -41696,7 +41707,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
   function varTargets(C, st) {
     var all = [], fresh = [];
     C.forEach(function (k) {
-      if (k.kind || !st.owned[k.key] || !(k.r === 'epic' || k.r === 'legendary')) return;
+      if (!canVar(k) || !st.owned[k.key]) return;
       VKEYS.forEach(function (v) { var vk = mkVar(k, v); all.push(vk); if (!st.owned[vk.key]) fresh.push(vk); });
     });
     return fresh.length ? fresh : all;
@@ -41993,7 +42004,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     var gotL = false;
     pk.forEach(function (x) {
       var bk = cardByKey(C, x.key); if (bk && bk.r === 'legendary') gotL = true;
-      if (!shop && !x.isNew && bk && !bk.kind && VCH[bk.r] && Math.random() < VCH[bk.r]) { var v = rollVar(), vk = x.key + '#' + v; x.v = v; x.vNew = !S.owned[vk]; S.owned[vk] = (S.owned[vk] || 0) + 1; }
+      if (!shop && !x.isNew && bk && canVar(bk) && VCH[bk.r] && Math.random() < VCH[bk.r]) { var v = rollVar(), vk = x.key + '#' + v; x.v = v; x.vNew = !S.owned[vk]; S.owned[vk] = (S.owned[vk] || 0) + 1; }
       else S.owned[x.key] = (S.owned[x.key] || 0) + 1;
     });
     if (!shop) { S.pity = gotL ? 0 : (S.pity || 0) + 1; S.last = Date.now(); }
@@ -42173,7 +42184,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     pane.classList.toggle('wk-dk-editing', !!(DK.editPrev && isDima()));
     var cards = allCards(), st = load(); migrate(st, cards);
     if (!DK.pack && st.open && st.open.pk && st.open.pk.length) { DK.pack = st.open.pk; DK.flipped = (st.open.fl || []).length; DK.restored = 1; }
-    pane.innerHTML = '<div class="wk-pane-head"><div><h2>Колода</h2><p>Карточки персонажей (по одной на каждое фото в арке), дьявольских плодов и полезных статей. Новые появляются по мере прохождения.</p></div><div class="wk-dk-hbtn"><button type="button" class="wk-dk-reset" data-act="rules" title="Правила и шансы">Правила</button><button type="button" class="wk-dk-reset" data-act="reset" title="Обнулить коллекцию">Сбросить</button></div></div>' +
+    pane.innerHTML = '<div class="wk-pane-head"><div><h2>Колода</h2><p>Карточки персонажей (по одной на каждое фото в арке), дьявольских плодов, полезных статей и плакатов розыска. Новые появляются по мере прохождения.</p></div><div class="wk-dk-hbtn"><button type="button" class="wk-dk-reset" data-act="rules" title="Правила и шансы">Правила</button><button type="button" class="wk-dk-reset" data-act="reset" title="Обнулить коллекцию">Сбросить</button></div></div>' +
       tabsHTML() + (DK.tab === 'me' ? adminHTML() + '<div id="wkDkPack">' + packHTML(cards, st) + '</div>' + (st.__fake ? '' : showcaseHTML(cards, st.show, true)) + '<div id="wkDkStats">' + statsHTML(cards, st) + '</div><h3 class="wk-dk-h">Коллекция</h3><div id="wkDkColl">' + collHTML(cards, st) + '</div>' : '<div id="wkTxBody" class="wk-tx-body">' + (DK.tab === 'craft' ? craftHTML(cards, st) : DK.tab === 'shop' ? shopHTML(cards, st) : DK.tab === 'people' ? peopleHTML() : tradeHTML()) + '</div>');
     if (DK.tab === 'me' && DK.pack && st.open && st.open.fl) st.open.fl.forEach(function (i) { var el = pane.querySelector('.wk-pk[data-i="' + i + '"]'); if (el) el.classList.add('on'); cvShow(pane, i); });
     if (DK.restored && DK.tab === 'me' && st.open) { var rn = pane.querySelector('#wkDkPack .wk-dk-row'); if (rn) rn.insertAdjacentHTML('beforebegin', '<p class="wk-dk-convnote">Набор не был досмотрен — карточки ждут тебя.</p>'); }
@@ -42632,4 +42643,7 @@ html body .wk-cut.cs-neg .cs-t span{color:#b9c8e6!important}
 html body .wk-cut.cs-neg .cs-skip{color:rgba(185,200,230,.6)!important}
 @media (max-width:760px){.wk-cut.cs-neg .cs-film{height:56px}.wk-cut.cs-neg .cs-film.t{top:5%!important}.wk-cut.cs-neg .cs-film.b{bottom:12%!important}}
 @media (prefers-reduced-motion:reduce){.wk-cut.cs-neg .cs-beam,.wk-cut.cs-neg .cs-noise{display:none}}
+</style><style id="wk-dk-wanted-css">
+/* Розыск: имя уже на постере — прячем только его, арка и редкость как на всех карточках */
+html body .character-item.wk-dk-wanted .character-name{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;margin:0!important;padding:0!important}
 </style></body></html>
