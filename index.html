@@ -2519,7 +2519,32 @@ details.wk-dk-admin .wk-dk-admrow{display:flex;flex-wrap:wrap;gap:8px;margin-top
   .wk-dk-sticky{position:sticky;top:var(--wk-dk-top,0px);z-index:30;background:color-mix(in srgb,var(--bg,#0b0f17) 95%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line,rgba(148,163,184,.18))}
   .wk-dk-grid{max-width:none!important;width:100%!important;margin:0!important;grid-template-columns:repeat(auto-fill,minmax(176px,1fr))!important}
 }
-</style></head>
+</style><style id="wk-dk-flip-css">
+.wk-dk-slot{perspective:900px}
+.wk-dk-slot>.catalog-item-shell{transition:transform .26s ease-in;backface-visibility:hidden}
+.wk-dk-slot.fl-out>.catalog-item-shell{transform:rotateY(90deg)}
+.wk-dk-slot.flipped>.catalog-item-shell{visibility:hidden;pointer-events:none}
+.wk-dk-slot.fl-in>.catalog-item-shell{animation:wkSlFrIn .26s ease-out}
+.wk-dk-sbwrap{position:absolute;inset:0;display:none;z-index:8;border-radius:14px;cursor:zoom-in;outline-offset:2px}
+.wk-dk-slot.flipped>.wk-dk-sbwrap,.wk-dk-slot.fl-back>.wk-dk-sbwrap{display:block}
+.wk-dk-slot.flipped>.wk-dk-sbwrap{animation:wkSlBkIn .26s ease-out}
+.wk-dk-slot.fl-back>.wk-dk-sbwrap{animation:wkSlBkOut .26s ease-in forwards}
+.wk-dk-sbin{position:absolute!important;inset:0;width:auto!important;height:auto!important;aspect-ratio:auto!important;animation:none!important;perspective:none!important;cursor:inherit}
+.wk-dk-sbin .wk-pk-bk{pointer-events:none}
+.wk-dk-zoombox>.wk-dk-sbin{cursor:grab}
+.wk-dk-bkopen{position:absolute;left:50%;bottom:11%;transform:translateX(-50%);z-index:4;padding:7px 14px;border-radius:12px;border:1px solid var(--c,rgba(255,255,255,.4));background:rgba(8,11,20,.82);color:#f8fafc;font:inherit;font-size:12.5px;font-weight:700;white-space:nowrap;cursor:pointer;pointer-events:auto}
+.wk-dk-bkopen:hover{background:rgba(8,11,20,.95);border-color:var(--wk-accent,#d8b45a);color:var(--wk-accent,#d8b45a)}
+.wk-dk-zoombox .wk-dk-bkopen{font-size:14px;padding:9px 18px;bottom:9%}
+.wk-dk-fb{position:absolute;top:8px;left:8px;z-index:9;width:32px;height:32px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(8,11,16,.72);color:#f8fafc;font-size:16px;line-height:1;cursor:pointer;opacity:0;transition:opacity .15s,transform .15s}
+.wk-dk-fb:hover{transform:rotate(-40deg);border-color:var(--wk-accent,#d8b45a)}
+.wk-dk-slot:hover>.wk-dk-fb,.wk-dk-fb:focus-visible,.wk-dk-slot.flipped>.wk-dk-fb{opacity:1}
+@media (hover:none){.wk-dk-fb{opacity:.9}}
+.wk-dk-slot.flipped>.wk-dk-x{display:none}
+@keyframes wkSlFrIn{from{transform:rotateY(-90deg)}to{transform:none}}
+@keyframes wkSlBkIn{from{transform:rotateY(-90deg)}to{transform:none}}
+@keyframes wkSlBkOut{from{transform:none}to{transform:rotateY(90deg)}}
+@media (prefers-reduced-motion:reduce){.wk-dk-slot>.catalog-item-shell,.wk-dk-slot .wk-dk-sbwrap{transition:none!important;animation:none!important}}
+</style><style id="wk-dk-kinds-css">.wk-dk-kinds{display:grid;gap:3px;margin-top:10px;font-size:12.5px;color:var(--muted,#aeb7c3)}.wk-dk-kinds b{color:var(--text,#e5e7eb);font-variant-numeric:tabular-nums}.wk-dk-kf>div{padding:3px;border:1px solid var(--line,rgba(148,163,184,.3));border-radius:13px;background:color-mix(in srgb,var(--text,#e5e7eb) 4%,transparent);gap:2px}.wk-dk-kf button{border-color:transparent;min-height:34px}.wk-dk-kf button.active{background:color-mix(in srgb,var(--wk-accent,#d8b45a) 24%,#0b0f17);border-color:color-mix(in srgb,var(--wk-accent,#d8b45a) 60%,transparent)}</style></head>
 <body data-theme="mugiwara" data-active-tab="characters">
 <script id="wiki-cloud-config">
 /* ============================================================
@@ -3697,7 +3722,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 314";
+const WIKI_VERSION = "11.11.2026 · 318";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -40967,7 +40992,10 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
   function hiddenRec(r, t) { try { return window.__wikiIsSpoilerActive ? !!window.__wikiIsSpoilerActive(r, t) : !!r.__wikiSpoiler; } catch (e) { return false; } }
   function segs(v) { try { return typeof parseStoryRangeSegments === 'function' ? parseStoryRangeSegments(v) : []; } catch (e) { return []; } }
   function rarity(c) { try { var r = window.__wkRarity ? window.__wkRarity('character', c) : 'common'; return RN[r] ? r : 'common'; } catch (e) { return 'common'; } }
-  function openArt(id) { try { if (typeof openCharacterArticle === 'function') openCharacterArticle(id); } catch (e) {} }
+  function openArt(spec) {
+    var sp = String(spec || ''), i = sp.indexOf(':'), kind = i > 0 ? sp.slice(0, i) : 'char', id = i > 0 ? sp.slice(i + 1) : sp;
+    try { if (kind === 'fruit') window.openFruitArticle(id); else if (kind === 'useful') window.openUsefulArticle(id); else if (typeof openCharacterArticle === 'function') openCharacterArticle(id); } catch (e) {}
+  }
   function visibleChars() { return chars().filter(function (c) { return c && c.id && !hiddenRec(c, 'character') && String(c.__wikiDraft) !== 'true'; }); }
   function crop(c) {
     var x = Number(c.person_image_position_x), y = Number(c.person_image_position), z = Number(c.person_image_zoom);
@@ -41054,18 +41082,18 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
   var VAR = { holo: { n: 'Голографическая', fx: 'rainbow-foil', w: 55 }, gold: { n: 'Пламенная', fx: '', w: 30 }, neg: { n: 'Негативная', fx: '', w: 15 } };
   var VKEYS = ['holo', 'gold', 'neg'];
   var VCH = { epic: 0.25, legendary: 0.40 };   // шанс, что повторка станет особой версией
-  var NEWW = 3, PITY = 10;                     // новая карта в 3 раза вероятнее; легендарная гарантирована раз в 10 наборов
+  var NEWW = 3, PITY = 10, PACKN = 7;                     // новая карта в 3 раза вероятнее; легендарная гарантирована раз в 10 наборов
   function rollVar() { var r = Math.random() * 100, a = 0; for (var i = 0; i < VKEYS.length; i++) { a += VAR[VKEYS[i]].w; if (r < a) return VKEYS[i]; } return 'holo'; }
   function mkVar(k, v) { return Object.assign({}, k, { key: k.key + '#' + v, v: v, fx: VAR[v].fx, amb: '', cs: '', base: k }); }
-  function varCards(cards) { var o = []; cards.forEach(function (k) { if (k.r === 'epic' || k.r === 'legendary') VKEYS.forEach(function (v) { o.push(mkVar(k, v)); }); }); return o; }
-  var DK = { fr: '', frLoading: false, frData: null, frAt: 0, frLim: 60, f: 'all', r: '', v: '', pack: null, flipped: 0, lim: 60, timer: 0 };
+  function varCards(cards) { var o = []; cards.forEach(function (k) { if (!k.kind && (k.r === 'epic' || k.r === 'legendary')) VKEYS.forEach(function (v) { o.push(mkVar(k, v)); }); }); return o; }
+  var DK = { k: '', fr: '', frLoading: false, frData: null, frAt: 0, frLim: 60, f: 'all', r: '', v: '', pack: null, flipped: 0, lim: 60, timer: 0 };
   function load() {
     var v; try { v = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { v = {}; }
     if (!v || typeof v !== 'object') v = {};
     v.owned = v.owned && typeof v.owned === 'object' ? v.owned : {}; v.packs = +v.packs || 0; v.pity = +v.pity || 0; v.last = +v.last || 0;
     if (DK.fillAll && isDima()) {
       var fo = {}; Object.keys(v.owned).forEach(function (q) { fo[q] = v.owned[q]; });
-      try { allCards().forEach(function (k) { if (!fo[k.key]) fo[k.key] = 1; if (k.r === 'epic' || k.r === 'legendary') VKEYS.forEach(function (x) { if (!fo[k.key + '#' + x]) fo[k.key + '#' + x] = 1; }); }); } catch (e) {}
+      try { allCards().forEach(function (k) { if (!fo[k.key]) fo[k.key] = 1; if (!k.kind && (k.r === 'epic' || k.r === 'legendary')) VKEYS.forEach(function (x) { if (!fo[k.key + '#' + x]) fo[k.key + '#' + x] = 1; }); }); } catch (e) {}
       v.owned = fo; v.__fake = true;
     }
     return v;
@@ -41131,14 +41159,45 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
       return window.__wkRarityRule(raw, { ch: ai.end || num(raw.chapter), ep: ai.epEnd || num(raw.episode) }).r;
     } catch (e) { return ''; }
   };
+  /* ---- Карточки плодов и полезных статей ---- */
+  var KRAR = ['common', 'rare', 'epic', 'legendary'];
+  var FRUIT_T = { 'Логия': 'epic', 'Зоан': 'rare', 'Парамеция': 'common' };
+  var USEFUL_T = { 'Артефакты': 'legendary', 'Оружие, Артефакты': 'legendary', 'Организации': 'epic', 'Способности': 'epic', 'Расы': 'rare', 'Оружие': 'rare', 'Команды': 'rare', 'Корабли': 'common', 'География': 'common', 'Дэн Дэн Муши': 'common', 'Инструменты': 'common', 'Материалы': 'common' };
+  var KIND_NAME = { char: 'Персонажи', fruit: 'Плоды', useful: 'Статьи' };
+  function listOf(name) { try { var v = window.eval(name); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+  function bumpR(r) { var i = KRAR.indexOf(r); return KRAR[Math.min(KRAR.length - 1, i + 1)]; }
+  function kindCards() {
+    var out = [], info = arcInfo(), byName = {}, charR = {}, legSet = {};
+    Object.keys(info).forEach(function (id) { var n = String(info[id].name || '').trim().toLowerCase(); if (n && !byName[n]) byName[n] = info[id]; });
+    chars().forEach(function (c) { try { var r = window.__wkRarityRule ? window.__wkRarityRule(rawRec(c)).r : 'common'; charR[c.id] = r; if (r === 'legendary') legSet[c.id] = 1; } catch (e) {} });
+    function arcOf(raw) { var n = String(raw.arc || '').trim(); return byName[n.toLowerCase()] || { id: '', name: n, saga: String(raw.saga || ''), start: 9e9, end: 9e9 }; }
+    function conn(raw) { return String(raw.connect || '').replace(/[\[\]'"]/g, '').split(',').map(function (t) { return t.trim(); }).filter(Boolean); }
+    listOf('fruits').forEach(function (f) {
+      if (!f || !f.id || hiddenRec(f, 'fruit') || String(f.__wikiDraft) === 'true') return;
+      var raw = f.__wikiRaw || f, u = url(raw.image); if (!u) return;
+      var r = String(raw.rarity || '');
+      if (KRAR.indexOf(r) < 0) r = charR[raw.owner] || 'common';   // плод наследует редкость владельца
+      var a = arcOf(raw);
+      out.push({ key: 'fruit:' + f.id, kind: 'fruit', c: { id: f.id, name: raw.name || f.name || '', status: '' }, arc: a, sub: [String(raw.type || '').trim(), a.name].filter(Boolean).join(' · '), u: u, x: raw.image_position_x, y: raw.image_position, z: raw.image_zoom, fx: '', amb: '', cs: '', r: r, first: true });
+    });
+    listOf('usefulArticles').forEach(function (f) {
+      if (!f || !f.id || hiddenRec(f, 'useful') || String(f.__wikiDraft) === 'true') return;
+      var raw = f.__wikiRaw || f, u = url(raw.image); if (!u) return;
+      var r = String(raw.rarity || ''), base = USEFUL_T[String(raw.type || '').trim()] || 'common';
+      if (KRAR.indexOf(r) < 0) r = conn(raw).some(function (id) { return legSet[id]; }) ? bumpR(base) : base;
+      out.push({ key: 'useful:' + f.id, kind: 'useful', c: { id: f.id, name: raw.name || f.name || '', status: '' }, arc: arcOf(raw), sub: String(raw.type || '').trim(), u: u, x: raw.image_position_x, y: raw.image_position, z: raw.image_zoom, fx: '', amb: '', cs: '', r: r, first: true });
+    });
+    return out;
+  }
   function allCards() {
     var out = []; visibleChars().forEach(function (c) { cardsOf(c).forEach(function (k) { out.push(k); }); });
+    try { kindCards().forEach(function (k) { out.push(k); }); } catch (e) {}
     return out;
   }
   function migrate(st, cards) {
     var changed = false, first = {};
     cards.forEach(function (k) { if (k.first) first[k.c.id] = k.key; });
-    Object.keys(st.owned).forEach(function (id) { if (id.indexOf('@') < 0) { var t = first[id]; if (t) st.owned[t] = (st.owned[t] || 0) + st.owned[id]; delete st.owned[id]; changed = true; } });
+    Object.keys(st.owned).forEach(function (id) { if (id.indexOf('@') < 0 && id.indexOf('fruit:') !== 0 && id.indexOf('useful:') !== 0) { var t = first[id]; if (t) st.owned[t] = (st.owned[t] || 0) + st.owned[id]; delete st.owned[id]; changed = true; } });
     if (changed) save(st);
   }
   function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
@@ -41155,7 +41214,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
       for (var i = 0; i < order.length; i++) { var l = by[order[i]].filter(function (k) { return !used[k.key]; }); if (l.length) { var k = wpick(l, st); used[k.key] = 1; return k; } }
       return null;
     }
-    for (var i = 0; i < 5; i++) {
+    for (var i = 0; i < PACKN; i++) {
       var r = Math.random(), cls = r < RPROB.legendary ? 'legendary' : r < RPROB.legendary + RPROB.epic ? 'epic' : r < RPROB.legendary + RPROB.epic + RPROB.rare ? 'rare' : 'common';
       var k = one(cls); if (k) out.push(k);
     }
@@ -41234,7 +41293,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     show();
   }
   window.__wkDeckZoom = function (el) {
-    if (DK.editPrev && isDima()) { var pn0 = ''; try { pn0 = JSON.parse(decodeURIComponent(el.getAttribute('data-wk-pin'))).id; } catch (e) {} if (pn0) { peOpen(pn0); return; } }
+    if (DK.editPrev && isDima()) { var pn0 = ''; try { pn0 = JSON.parse(decodeURIComponent(el.getAttribute('data-wk-pin'))).id; } catch (e) {} if (pn0 && pn0.indexOf('@') > 0) { peOpen(pn0); return; } }
     var sh = el.closest('.catalog-item-shell'); if (!sh) return;
     var old = document.getElementById('wkDkZoom'); if (old) old.remove();
     var ov = document.createElement('div'); ov.id = 'wkDkZoom'; ov.className = 'wk-dk-zoom';
@@ -41283,7 +41342,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     try { ps = getPrimaryCharacterStatus(c.status); cls = ps ? getCharacterStatusClass(ps) : ''; badge = characterStatusBadge(c.status, ps); } catch (e) {}
     var id = esc(c.id), pin = encodeURIComponent(JSON.stringify({ id: k.key, fx: k.fx || '', amb: k.amb || '', cs: k.cs || '', r: k.r }));
     var img = '<img class="character-grid-image" src="' + esc(u) + '" alt="' + esc(c.name) + '" style="object-position:' + X + '% ' + Y + '% !important;transform:scale(' + (Z / 100) + ') !important;transform-origin:' + X + '% ' + Y + '% !important" loading="lazy" decoding="async" data-wiki-fallbacks="[]" onerror="if(!window.__wikiTryPortraitImage||!window.__wikiTryPortraitImage(this)){this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';}"><div class="character-grid-image-fallback" style="display:none" aria-hidden="true">👤</div>';
-    return '<div class="catalog-item-shell character-grid-shell' + (k.r !== 'common' ? ' wk-r-' + k.r : '') + '"><div class="character-item character-status-item character-grid-card ' + cls + '" data-wk-pin="' + pin + '" data-wk-rarity="' + k.r + '"' + (k.v ? ' data-wk-var="' + k.v + '"' : '') + '  data-wk-rarity-label="' + RN4[k.r] + ' карточка" role="button" tabindex="0" aria-label="Показать карточку: ' + esc(c.name) + '" onclick="window.__wkDeckZoom&&window.__wkDeckZoom(this)"><div class="character-grid-image-wrap">' + img + '</div>' + fxHTML(k.v) + '<div class="character-grid-content"><div class="character-name card-title" title="' + esc(c.name) + '">' + esc(c.name) + '</div><div class="wk-dk-arc">' + esc(k.arc.name) + '</div><div class="character-grid-status"><span class="wk-dk-rarp r-' + k.r + '">' + RN4[k.r] + '</span>' + (k.v ? '<span class="wk-dk-rarp wk-dk-vp vp-' + k.v + '">' + ({ holo: 'Голограф', gold: 'Пламя', neg: 'Негатив' }[k.v] || '') + '</span>' : '') + '</div></div></div></div>';
+    return '<div class="catalog-item-shell character-grid-shell' + (k.r !== 'common' ? ' wk-r-' + k.r : '') + '"><div class="character-item character-status-item character-grid-card ' + cls + '" data-wk-pin="' + pin + '" data-wk-rarity="' + k.r + '"' + (k.v ? ' data-wk-var="' + k.v + '"' : '') + '  data-wk-rarity-label="' + RN4[k.r] + ' карточка" role="button" tabindex="0" aria-label="Показать карточку: ' + esc(c.name) + '" onclick="window.__wkDeckZoom&&window.__wkDeckZoom(this)"><div class="character-grid-image-wrap">' + img + '</div>' + fxHTML(k.v) + '<div class="character-grid-content"><div class="character-name card-title" title="' + esc(c.name) + '">' + esc(c.name) + '</div><div class="wk-dk-arc">' + esc(k.sub || k.arc.name) + '</div><div class="character-grid-status"><span class="wk-dk-rarp r-' + k.r + '">' + RN4[k.r] + '</span>' + (k.v ? '<span class="wk-dk-rarp wk-dk-vp vp-' + k.v + '">' + ({ holo: 'Голограф', gold: 'Пламя', neg: 'Негатив' }[k.v] || '') + '</span>' : '') + '</div></div></div></div>';
   }
   function bar(h, n, cls) { return '<span class="wk-dk-bar ' + (cls || '') + '"><i style="width:' + (n ? Math.round(h / n * 100) : 0) + '%"></i></span>'; }
   function statsHTML(cards, st) {
@@ -41293,8 +41352,11 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
       var s = k.arc.saga || 'Без саги'; if (!sg[s]) sg[s] = { n: 0, h: 0, ch: 9e9 }; sg[s].n++; if (n) sg[s].h++; sg[s].ch = Math.min(sg[s].ch, k.arc.start || 9e9);
     });
     var pc = tot ? Math.round(have / tot * 100) : 0;
-    var vt = cards.filter(function (k) { return k.r === 'epic' || k.r === 'legendary'; }).length, vh = { holo: 0, gold: 0, neg: 0 };
-    cards.forEach(function (k) { if (k.r === 'epic' || k.r === 'legendary') VKEYS.forEach(function (v) { if (st.owned[k.key + '#' + v]) vh[v]++; }); });
+    var kn = { char: [0, 0], fruit: [0, 0], useful: [0, 0] };
+    cards.forEach(function (k) { var kk = kn[k.kind || 'char']; kk[1]++; if (st.owned[k.key]) kk[0]++; });
+    var kindsH = '<div class="wk-dk-kinds">' + ['char', 'fruit', 'useful'].map(function (x) { return '<span><b>' + kn[x][0] + ' / ' + kn[x][1] + '</b> ' + KIND_NAME[x].toLowerCase() + '</span>'; }).join('') + '</div>';
+    var vt = cards.filter(function (k) { return !k.kind && (k.r === 'epic' || k.r === 'legendary'); }).length, vh = { holo: 0, gold: 0, neg: 0 };
+    cards.forEach(function (k) { if (!k.kind && (k.r === 'epic' || k.r === 'legendary')) VKEYS.forEach(function (v) { if (st.owned[k.key + '#' + v]) vh[v]++; }); });
     var left = Math.max(0, PITY - 1 - (st.pity || 0));
     var pityTxt = left > 0 ? 'Гарантированная легендарная — не позже чем через ' + left + ' ' + plural(left, 'набор', 'набора', 'наборов') : 'Следующий набор — с гарантированной легендарной';
     var rows = Object.keys(sg).sort(function (a, b) { return sg[a].ch - sg[b].ch; }).map(function (k) { var g = sg[k]; return '<tr><td>' + esc(k) + '</td><td class="n">' + g.h + ' / ' + g.n + '</td><td>' + bar(g.h, g.n) + '</td></tr>'; }).join('');
@@ -41302,7 +41364,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     var colsH = cols.map(function (x) { var p2 = x[3] ? Math.round(x[2] / x[3] * 100) : 0; return '<button type="button" class="wk-dk-col' + (x[2] >= x[3] && x[3] ? ' done' : '') + '" data-v="' + x[0] + '" data-scroll="1" title="Показать коллекцию"><span class="wk-dk-cn">' + x[1] + '</span>' + bar(x[2], x[3], x[0] ? 'v-' + x[0] : 'v-base') + '<em>' + x[2] + ' / ' + x[3] + '<i>' + p2 + '%</i></em></button>'; }).join('');
     var rarH = RORD.map(function (r) { return '<div class="r-' + r + '"><span>' + RN4[r] + '</span>' + bar(rr[r][0], rr[r][1], 'r-' + r) + '<em>' + rr[r][0] + ' / ' + rr[r][1] + '</em></div>'; }).join('');
     return '<section class="wk-dk-panel"><div class="wk-dk-tot"><b>' + have + '<small> / ' + tot + '</small></b><span>карточек собрано · ' + pc + '%</span>' + bar(have, tot, 'v-base') +
-      '<div class="wk-dk-mini"><span><b>' + st.packs + '</b> ' + plural(st.packs, 'набор открыт', 'набора открыто', 'наборов открыто') + '</span><span><b>' + dup + '</b> ' + plural(dup, 'повтор', 'повтора', 'повторов') + '</span></div></div>' +
+      '<div class="wk-dk-mini"><span><b>' + st.packs + '</b> ' + plural(st.packs, 'набор открыт', 'набора открыто', 'наборов открыто') + '</span><span><b>' + dup + '</b> ' + plural(dup, 'повтор', 'повтора', 'повторов') + '</span></div>' + kindsH + '</div>' +
       '<div class="wk-dk-cols"><div class="wk-dk-cap">Коллекции</div>' + colsH + '</div>' +
       '<div class="wk-dk-rars"><div class="wk-dk-cap">По редкости</div>' + rarH + '</div>' +
       '<p class="wk-dk-pity">' + pityTxt + '</p></section>' +
@@ -41310,18 +41372,19 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
   }
   function collHTML(cards, st) {
     var base = DK.v && VAR[DK.v] ? varCards(cards).filter(function (k) { return k.v === DK.v; }) : cards;
+    if (DK.k) base = base.filter(function (k) { return (k.kind || 'char') === DK.k; });
     var l = base.slice().sort(function (a, b) { var oa = st.owned[a.key] ? 0 : 1, ob = st.owned[b.key] ? 0 : 1; return oa - ob || (a.arc.start || 9e9) - (b.arc.start || 9e9) || (num(a.c.chapter) || 9e9) - (num(b.c.chapter) || 9e9); });
     if (DK.v && (DK.r === 'rare' || DK.r === 'common')) DK.r = '';
     l = l.filter(function (k) { var o = !!st.owned[k.key]; return (DK.f === 'all' || (DK.f === 'have' ? o : !o)) && (!DK.r || k.r === DK.r); });
     var rbtn = [['', 'Любая'], ['legendary', 'Легендарные'], ['epic', 'Эпические'], ['rare', 'Редкие'], ['common', 'Обычные']].filter(function (x) { return !DK.v || !x[0] || x[0] === 'legendary' || x[0] === 'epic'; });
     var chips = '<div class="wk-dk-filters wk-dk-vf"><div>' + [['', 'Основные'], ['holo', 'Голографическая'], ['gold', 'Пламенная'], ['neg', 'Негативная']].map(function (x) { return '<button type="button" data-v="' + x[0] + '" class="' + (DK.v === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div>';
     chips += '<div class="wk-dk-filters"><div>' + [['all', 'Все'], ['have', 'Есть'], ['miss', 'Нет']].map(function (x) { return '<button type="button" data-f="' + x[0] + '" class="' + (DK.f === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div><div>' + rbtn.map(function (x) { return '<button type="button" data-r="' + x[0] + '" class="' + (DK.r === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div>';
-    chips = '<div class="wk-dk-sticky">' + chips + '<span class="wk-dk-cnt">' + l.length + ' ' + plural(l.length, 'карточка', 'карточки', 'карточек') + '</span></div>';
+    chips = '<div class="wk-dk-sticky">' + chips.replace('<div class="wk-dk-filters">', '<div class="wk-dk-filters wk-dk-kf"><div>' + [['', 'Все типы'], ['char', 'Персонажи'], ['fruit', 'Плоды'], ['useful', 'Статьи']].map(function (x) { return '<button type="button" data-kind="' + x[0] + '" class="' + (DK.k === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div><div class="wk-dk-filters">') + '<span class="wk-dk-cnt">' + l.length + ' ' + plural(l.length, 'карточка', 'карточки', 'карточек') + '</span></div>';
     var cap = DK.lim;
     var cards2 = l.slice(0, cap).map(function (k) {
       var n = st.owned[k.key] || 0;
-      if (!n) return '<div class="wk-dk-slot"><div class="wk-dk-empty r-' + k.r + '"><b>?</b><span>' + esc(k.arc.name) + '</span></div></div>';
-      return '<div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + (n > 1 ? '<em class="wk-dk-x">×' + n + '</em>' : '') + '</div>';
+      if (!n) return '<div class="wk-dk-slot"><div class="wk-dk-empty r-' + k.r + '"><b>?</b><span>' + esc(k.kind ? KIND_NAME[k.kind] : k.arc.name) + '</span></div></div>';
+      return '<div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + (n > 1 ? '<em class="wk-dk-x">×' + n + '</em>' : '') + '<button type="button" class="wk-dk-fb" data-act="slotflip" title="Повернуть: посмотреть рубашку" aria-label="Повернуть карточку и посмотреть рубашку" aria-pressed="false">⟲</button></div>';
     }).join('');
     return chips + '<div class="character-list character-display-grid wk-dk-grid">' + (cards2 || '<div class="wk-tl-none">Здесь пока пусто.</div>') + '</div>' + (l.length > cap ? '<div class="wk-dk-morewrap"><button type="button" class="wk-dk-ghost" data-act="more">Показать ещё ' + Math.min(60, l.length - cap) + ' (всего ' + l.length + ')</button></div>' : '');
   }
@@ -41330,7 +41393,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     return isDima() ? '<details class="wk-dk-admin"' + (DK.admOpen ? ' open' : '') + '><summary>Инструменты Димы</summary><div class="wk-dk-admrow"><button type="button" class="wk-dk-ghost" data-act="adm-timer">Сбросить таймер</button><button type="button" class="wk-dk-ghost" data-act="adm-test">Тестовый набор</button><button type="button" class="wk-dk-ghost' + (DK.fillAll ? ' on' : '') + '" data-act="adm-fill" aria-pressed="' + (DK.fillAll ? 'true' : 'false') + '">' + (DK.fillAll ? 'Показаны все карточки. Вернуть мою коллекцию' : 'Заполнить все коллекции') + '</button><button type="button" class="wk-dk-ghost' + (DK.editPrev ? ' on' : '') + '" data-act="adm-edit" aria-pressed="' + (DK.editPrev ? 'true' : 'false') + '">' + (DK.editPrev ? 'Правка превью включена. Выключить' : 'Править превью') + '</button></div></details>' : '';
   }
   function testPack(cards) {
-    var ep = cards.filter(function (k) { return k.r === 'epic'; }), lg = cards.filter(function (k) { return k.r === 'legendary'; }), hi = ep.concat(lg), o = [];
+    var ep = cards.filter(function (k) { return !k.kind && k.r === 'epic'; }), lg = cards.filter(function (k) { return !k.kind && k.r === 'legendary'; }), hi = ep.concat(lg), o = [];
     if (ep.length) o.push({ key: pick(ep).key, isNew: true, test: true });
     if (lg.length) o.push({ key: pick(lg).key, isNew: true, test: true });
     if (hi.length) VKEYS.forEach(function (v) { o.push({ key: pick(hi).key, isNew: false, v: v, vNew: true, test: true }); });
@@ -41386,11 +41449,11 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     return '<div class="wk-dk-modal" id="wkDkRules" role="dialog" aria-modal="true" aria-label="Правила колоды"><div class="wk-dk-mbox">' +
       '<h3>Как работает колода</h3>' +
       '<ol>' +
-      '<li><b>Набор — раз в час.</b> В нём 5 карточек. Каждая — персонаж в определённой арке: у Луффи столько карточек, сколько у него фото по аркам.</li>' +
+      '<li><b>Набор — раз в час.</b> В нём ' + PACKN + ' карточек. Это персонаж в определённой арке (у Луффи столько карточек, сколько у него фото по аркам), дьявольский плод или полезная статья.</li>' +
       '<li><b>Шансы на одну карточку:</b> легендарная ' + pct(P.legendary) + '%, эпическая ' + pct(P.epic) + '%, редкая ' + pct(P.rare) + '%, обычная ' + pct(1 - P.legendary - P.epic - P.rare) + '%. В каждом наборе есть хотя бы одна редкая или лучше.</li>' +
       '<li><b>Новые карточки выпадают в ' + NEWW + ' раза чаще,</b> чем те, что у тебя уже есть.</li>' +
       '<li><b>Гарантия:</b> если ' + (PITY - 1) + ' наборов подряд без легендарной, следующий набор содержит её.</li>' +
-      '<li><b>Повторки эпических и легендарных</b> могут превратиться в особую версию: у эпической шанс ' + pct(VCH.epic) + '%, у легендарной ' + pct(VCH.legendary) + '%. Иначе повторка просто остаётся в счётчике повторов.</li>' +
+      '<li><b>Повторки эпических и легендарных карточек персонажей</b> могут превратиться в особую версию (плоды и статьи не меняются): у эпической шанс ' + pct(VCH.epic) + '%, у легендарной ' + pct(VCH.legendary) + '%. Иначе повторка просто остаётся в счётчике повторов.</li>' +
       '</ol>' +
       '<div class="wk-dk-mcol">' + VKEYS.map(function (v) { return '<div class="v-' + v + '"><b>' + VAR[v].n + '</b><span>' + (v === 'holo' ? 'эффект «радужная фольга, яркая»' : v === 'gold' ? 'пламя на фото: красно-оранжевый жар и летящие искры' : 'негатив с лёгким переливом и звёздами') + '. Шанс среди особых версий: ' + vs(v) + '%.</span></div>'; }).join('') + '</div>' +
       '<p class="wk-dk-mnote">Особые версии собираются отдельно: в коллекции есть вкладки «Голографическая», «Пламенная» и «Негативная».</p>' +
@@ -41404,7 +41467,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     return left > 0 ? '<button type="button" class="wk-dk-open" data-act="open" disabled aria-disabled="true">Следующий набор через <b class="wk-dk-left">' + fmt(left) + '</b></button>' : '<button type="button" class="wk-dk-open" data-act="open">Открыть набор</button>';
   }
   function packHTML(cards, st) {
-    if (!DK.pack) return '<div class="wk-dk-stage idle"><div class="wk-dk-back big">' + backInner('common', '', true) + '</div><div class="wk-dk-ct"><b>Набор карточек</b><p>5 карточек: персонаж и арка, в которой он на фото. Набор можно открывать раз в час. В каждом есть хотя бы одна редкая или лучше.</p></div><div class="wk-dk-cta" id="wkDkCta">' + ctaHTML(st) + '</div></div>';
+    if (!DK.pack) return '<div class="wk-dk-stage idle"><div class="wk-dk-back big">' + backInner('common', '', true) + '</div><div class="wk-dk-ct"><b>Набор карточек</b><p>' + PACKN + ' карточек: персонажи в арках, плоды и полезные статьи. Набор можно открывать раз в час. В каждом есть хотя бы одна редкая или лучше.</p></div><div class="wk-dk-cta" id="wkDkCta">' + ctaHTML(st) + '</div></div>';
     return '<div class="wk-dk-stage"><div class="wk-dk-row">' + DK.pack.map(function (x, i) {
       var k = cardByKey(cards, x.key); if (!k) return '';
       var vv = x.v && VAR[x.v] ? x.v : '', kk = vv ? mkVar(k, vv) : k, fresh = vv ? x.vNew : x.isNew;
@@ -41419,10 +41482,58 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     if (left > 0) { var s = b.querySelector('.wk-dk-left'); if (s) s.textContent = fmt(left); }
     else if (b.disabled) { cta.querySelector('.wk-dk-open').outerHTML = '<button type="button" class="wk-dk-open" data-act="open">Открыть набор</button>'; }
   }
+  function slotKind(sl) {
+    var r = ['legendary', 'epic', 'rare', 'common'].filter(function (x) { return sl.classList.contains('r-' + x); })[0] || 'common';
+    var v = VKEYS.filter(function (x) { return sl.classList.contains('v-' + x); })[0] || '';
+    return { r: r, v: v };
+  }
+  function backWrapHTML(r, v, cid) {
+    return '<div class="wk-dk-sbwrap" data-bkr="' + r + '" data-bkv="' + v + '" data-bkc="' + esc(cid) + '" role="group" tabindex="0" aria-label="Рубашка карточки. Нажми, чтобы рассмотреть крупнее"><div class="wk-pk r-' + r + (v ? ' is-var v-' + v : '') + ' wk-dk-sbin"><div class="wk-pk-bk">' + backInner(r, v) + '</div></div>' + (cid ? '<button type="button" class="wk-dk-bkopen" ' + (cid.indexOf(':') > 0 ? 'data-dk-open="' : 'data-wk-open-char="') + esc(cid) + '">Открыть статью →</button>' : '') + '</div>';
+  }
+  function cardCid(sl) { try { var cd = sl.querySelector('.character-item'); return String(JSON.parse(decodeURIComponent(cd.getAttribute('data-wk-pin'))).id).split('@')[0].split('#')[0]; } catch (e) { return ''; } }
+  function slotFlip(sl, btn) {
+    if (sl.__fl) return; sl.__fl = 1;
+    var back = sl.classList.contains('flipped'), still = false;
+    try { still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    var T = still ? 0 : 260;
+    function done() { sl.__fl = 0; if (btn) btn.setAttribute('aria-pressed', String(sl.classList.contains('flipped'))); }
+    if (!back) {
+      if (!sl.querySelector(':scope > .wk-dk-sbwrap')) { var k = slotKind(sl); sl.insertAdjacentHTML('beforeend', backWrapHTML(k.r, k.v, cardCid(sl))); }
+      sl.classList.add('fl-out');
+      setTimeout(function () { sl.classList.remove('fl-out'); sl.classList.add('flipped'); setTimeout(done, T); }, T);
+    } else {
+      sl.classList.add('fl-back');
+      setTimeout(function () { sl.classList.remove('fl-back', 'flipped'); sl.classList.add('fl-in'); setTimeout(function () { sl.classList.remove('fl-in'); done(); }, T); }, T);
+    }
+  }
+  function backZoom(r, v, cid) {
+    var old = document.getElementById('wkDkZoom'); if (old) old.remove();
+    var ov = document.createElement('div'); ov.id = 'wkDkZoom'; ov.className = 'wk-dk-zoom';
+    var box = document.createElement('div'); box.className = 'wk-dk-zoombox'; box.innerHTML = '<div class="wk-pk r-' + r + (v ? ' is-var v-' + v : '') + ' wk-dk-sbin"><div class="wk-pk-bk">' + backInner(r, v) + '</div></div>' + '';
+    var hint = document.createElement('div'); hint.className = 'wk-dk-zoomhint'; hint.textContent = 'Рубашка: ' + (RN4[r] || '') + (v && VAR[v] ? ' · ' + VAR[v].n : '') + '. Тяни, чтобы наклонять. Нажми рядом, чтобы закрыть';
+    ov.appendChild(box); ov.appendChild(hint);
+    function close() { ov.remove(); document.removeEventListener('keydown', onk); }
+    function onk(e) { if (e.key === 'Escape') close(); }
+    var moved = 0, sx = 0, sy = 0, down = false;
+    function tilt(e) { var q = box.getBoundingClientRect(); if (!q.width) return; var nx = Math.max(-1, Math.min(1, (e.clientX - q.left - q.width / 2) / (q.width / 2))), ny = Math.max(-1, Math.min(1, (e.clientY - q.top - q.height / 2) / (q.height / 2))); box.style.transition = 'transform .08s linear'; box.style.transform = 'perspective(900px) rotateX(' + (-ny * 14).toFixed(2) + 'deg) rotateY(' + (nx * 14).toFixed(2) + 'deg) scale(1.02)'; }
+    function untilt() { box.style.transition = 'transform .4s cubic-bezier(.2,.8,.2,1)'; box.style.transform = ''; }
+    box.style.touchAction = 'none'; box.style.pointerEvents = 'auto'; box.style.cursor = 'grab';
+    box.addEventListener('pointerdown', function (e) { if (e.target.closest && e.target.closest('[data-dk-art]')) return; down = true; moved = 0; sx = e.clientX; sy = e.clientY; try { box.setPointerCapture(e.pointerId); } catch (x) {} tilt(e); });
+    box.addEventListener('pointermove', function (e) { if (e.pointerType === 'mouse' || down) { if (Math.abs(e.clientX - sx) + Math.abs(e.clientY - sy) > 6) moved = 1; tilt(e); } });
+    box.addEventListener('pointerup', function (e) { down = false; if (e.pointerType !== 'mouse') untilt(); });
+    box.addEventListener('pointercancel', function () { down = false; untilt(); });
+    box.addEventListener('pointerleave', function () { if (!down) untilt(); });
+    box.addEventListener('click', function (e) {
+      e.stopPropagation(); var ob = e.target.closest && e.target.closest('[data-dk-art]');
+      if (ob) { var id = ob.getAttribute('data-dk-art'); close(); openArt(id); return; }
+      if (!moved && e.pointerType !== 'mouse') close();
+    });
+    ov.addEventListener('click', close); document.addEventListener('keydown', onk); document.body.appendChild(ov);
+  }
   function renderDeck(pane) {
     pane.classList.toggle('wk-dk-editing', !!(DK.editPrev && isDima()));
     var cards = allCards(), st = load(); migrate(st, cards);
-    pane.innerHTML = '<div class="wk-pane-head"><div><h2>Колода</h2><p>Каждая карточка — персонаж в определённой арке: у Луффи их столько, сколько у него фото по аркам. Новые появляются по мере прохождения.</p></div><div class="wk-dk-hbtn"><button type="button" class="wk-dk-reset" data-act="rules" title="Правила и шансы">Правила</button><button type="button" class="wk-dk-reset" data-act="reset" title="Обнулить коллекцию">Сбросить</button></div></div>' +
+    pane.innerHTML = '<div class="wk-pane-head"><div><h2>Колода</h2><p>Карточки персонажей (по одной на каждое фото в арке), дьявольских плодов и полезных статей. Новые появляются по мере прохождения.</p></div><div class="wk-dk-hbtn"><button type="button" class="wk-dk-reset" data-act="rules" title="Правила и шансы">Правила</button><button type="button" class="wk-dk-reset" data-act="reset" title="Обнулить коллекцию">Сбросить</button></div></div>' +
       '' + adminHTML() + '<div id="wkDkPack">' + packHTML(cards, st) + '</div><div id="wkDkStats">' + statsHTML(cards, st) + '</div><h3 class="wk-dk-h">Коллекция</h3><div id="wkDkColl">' + collHTML(cards, st) + '</div>' + friendsHTML();
     function topOff() { var m = 0; try { [].forEach.call(document.querySelectorAll('header, nav, .topbar, .site-header, .app-header'), function (h) { var cs = getComputedStyle(h), r = h.getBoundingClientRect(); if ((cs.position === 'fixed' || cs.position === 'sticky') && r.top <= 2 && r.width > innerWidth * .5 && r.height < 140) m = Math.max(m, r.bottom); }); } catch (e) {} pane.style.setProperty('--wk-dk-top', Math.round(m) + 'px'); }
     topOff(); if (!pane.__dkTop) { pane.__dkTop = 1; window.addEventListener('resize', topOff); }
@@ -41440,11 +41551,15 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     } catch (e) {}
     if (!pane.__dk) {
       pane.__dk = 1;
+      pane.addEventListener('keydown', function (e) { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('wk-dk-sbwrap')) { e.preventDefault(); backZoom(e.target.getAttribute('data-bkr'), e.target.getAttribute('data-bkv'), e.target.getAttribute('data-bkc')); } });
       pane.addEventListener('toggle', function (e) { var t = e.target; if (t && t.classList && t.classList.contains('wk-dk-admin')) DK.admOpen = t.open; }, true);
       pane.addEventListener('click', function (e) {
-        var t = e.target.closest && e.target.closest('[data-act],[data-f],[data-r],[data-v],[data-fr],.wk-pk'); if (!t) return;
+        var oa = e.target.closest && e.target.closest('[data-dk-open]'); if (oa) { openArt(oa.getAttribute('data-dk-open')); return; }
+        var bw = e.target.closest && e.target.closest('.wk-dk-sbwrap'); if (bw) { if (e.target.closest('[data-wk-open-char]')) return; backZoom(bw.getAttribute('data-bkr'), bw.getAttribute('data-bkv'), bw.getAttribute('data-bkc')); return; }
+        var t = e.target.closest && e.target.closest('[data-act],[data-f],[data-r],[data-v],[data-kind],[data-fr],.wk-pk'); if (!t) return;
         var C = allCards(), S = load();
         if (t.classList.contains('wk-pk')) { if (!t.classList.contains('on')) { t.classList.add('on'); DK.flipped++; if (DK.pack && DK.flipped >= DK.pack.length) finish(pane); } return; }
+        if (t.hasAttribute('data-kind')) { DK.k = t.getAttribute('data-kind'); DK.lim = 60; pane.querySelector('#wkDkColl').innerHTML = collHTML(C, S); return; }
         if (t.hasAttribute('data-f')) { DK.f = t.getAttribute('data-f'); DK.lim = 60; pane.querySelector('#wkDkColl').innerHTML = collHTML(C, S); return; }
         if (t.hasAttribute('data-fr')) { DK.fr = t.getAttribute('data-fr'); DK.frLim = 60; [].forEach.call(pane.querySelectorAll('[data-fr]'), function (x) { x.classList.toggle('active', x === t); }); loadFriends(pane, false); return; }
         if (t.hasAttribute('data-v')) { DK.v = t.getAttribute('data-v'); DK.lim = 60; var cc = pane.querySelector('#wkDkColl'); cc.innerHTML = collHTML(C, S); if (t.hasAttribute('data-scroll') && cc.scrollIntoView) cc.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
@@ -41456,13 +41571,14 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
           var pk = drawPack(C, S), gotL = false;
           pk.forEach(function (x) {
             var bk = cardByKey(C, x.key); if (bk && bk.r === 'legendary') gotL = true;
-            if (!x.isNew && bk && VCH[bk.r] && Math.random() < VCH[bk.r]) { var v = rollVar(), vk = x.key + '#' + v; x.v = v; x.vNew = !S.owned[vk]; S.owned[vk] = (S.owned[vk] || 0) + 1; }
+            if (!x.isNew && bk && !bk.kind && VCH[bk.r] && Math.random() < VCH[bk.r]) { var v = rollVar(), vk = x.key + '#' + v; x.v = v; x.vNew = !S.owned[vk]; S.owned[vk] = (S.owned[vk] || 0) + 1; }
             else S.owned[x.key] = (S.owned[x.key] || 0) + 1;
           });
           S.pity = gotL ? 0 : (S.pity || 0) + 1; S.packs++; S.last = Date.now(); save(S);
           DK.pack = pk; DK.flipped = 0; pane.querySelector('#wkDkPack').innerHTML = packHTML(C, S);
           var row = pane.querySelector('.wk-dk-row'); if (row && row.scrollIntoView) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        } else if (a === 'flipall') {
+        } else if (a === 'slotflip') { var sl = t.closest('.wk-dk-slot'); if (sl) slotFlip(sl, t); }
+        else if (a === 'flipall') {
           [].forEach.call(pane.querySelectorAll('.wk-pk:not(.on)'), function (el, i) { setTimeout(function () { el.classList.add('on'); DK.flipped++; if (DK.pack && DK.flipped >= DK.pack.length) finish(pane); }, i * 260); });
         } else if (a === 'more') { DK.lim += 60; pane.querySelector('#wkDkColl').innerHTML = collHTML(C, S); }
         else if (a === 'done') { finish(pane, true); }
