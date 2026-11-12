@@ -2502,7 +2502,7 @@ details.wk-dk-admin .wk-dk-admrow{display:flex;flex-wrap:wrap;gap:8px;margin-top
 .wk-dk-col em{font-style:normal;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted,#aeb7c3)}.wk-dk-col em i{font-style:normal;margin-left:6px;color:var(--text,#e5e7eb)}
 .wk-dk-col.done .wk-dk-cn::after{content:" ✓";color:#4ade80}
 .wk-dk-rars>div:not(.wk-dk-cap){display:grid;grid-template-columns:92px minmax(0,1fr) 62px;align-items:center;gap:10px;font-size:13px;padding:6px 0}
-.wk-dk-rars em{font-style:normal;text-align:right;color:var(--muted,#aeb7c3);font-variant-numeric:tabular-nums}
+.wk-dk-rars em{font-style:normal;text-align:right;color:var(--muted,#aeb7c3);font-variant-numeric:tabular-nums}.wk-dk-rars em{white-space:nowrap}@media(max-width:620px){.wk-dk-rars>div:not(.wk-dk-cap){grid-template-columns:84px minmax(0,1fr) auto}}
 .wk-dk-panel .wk-dk-bar{height:9px}
 .wk-dk-panel .wk-dk-bar.v-base i{background:var(--wk-accent,#d8b45a)}
 .wk-dk-panel .wk-dk-bar.v-holo i{background:linear-gradient(90deg,#f472b6,#facc15,#4ade80,#60a5fa,#c084fc)}
@@ -2544,7 +2544,24 @@ details.wk-dk-admin .wk-dk-admrow{display:flex;flex-wrap:wrap;gap:8px;margin-top
 @keyframes wkSlBkIn{from{transform:rotateY(-90deg)}to{transform:none}}
 @keyframes wkSlBkOut{from{transform:none}to{transform:rotateY(90deg)}}
 @media (prefers-reduced-motion:reduce){.wk-dk-slot>.catalog-item-shell,.wk-dk-slot .wk-dk-sbwrap{transition:none!important;animation:none!important}}
-</style><style id="wk-dk-kinds-css">.wk-dk-kinds{display:grid;gap:3px;margin-top:10px;font-size:12.5px;color:var(--muted,#aeb7c3)}.wk-dk-kinds b{color:var(--text,#e5e7eb);font-variant-numeric:tabular-nums}.wk-dk-kf>div{padding:3px;border:1px solid var(--line,rgba(148,163,184,.3));border-radius:13px;background:color-mix(in srgb,var(--text,#e5e7eb) 4%,transparent);gap:2px}.wk-dk-kf button{border-color:transparent;min-height:34px}.wk-dk-kf button.active{background:color-mix(in srgb,var(--wk-accent,#d8b45a) 24%,#0b0f17);border-color:color-mix(in srgb,var(--wk-accent,#d8b45a) 60%,transparent)}</style></head>
+</style><style id="wk-dk-kinds-css">.wk-dk-kinds{display:grid;gap:3px;margin-top:10px;font-size:12.5px;color:var(--muted,#aeb7c3)}.wk-dk-tot .wk-dk-kinds{display:flex;flex-wrap:wrap;gap:4px 16px}.wk-dk-tot .wk-dk-kinds b{display:inline;font-size:14px;line-height:1.2;letter-spacing:0;font-weight:700;color:var(--text,#e5e7eb);font-variant-numeric:tabular-nums}.wk-dk-kf>div{padding:3px;border:1px solid var(--line,rgba(148,163,184,.3));border-radius:13px;background:color-mix(in srgb,var(--text,#e5e7eb) 4%,transparent);gap:2px}.wk-dk-kf button{border-color:transparent;min-height:34px}.wk-dk-kf button.active{background:color-mix(in srgb,var(--wk-accent,#d8b45a) 24%,#0b0f17);border-color:color-mix(in srgb,var(--wk-accent,#d8b45a) 60%,transparent)}</style><style id="wk-dk-mobile-card-css">
+/* Телефон: фото заполняет всю карточку, подпись лежит поверх низа (как на компьютере), а не отдельной полосой */
+@media (max-width:760px){
+html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-item,html.ios-app body .wk-pane .wk-pk-fr .character-item,.wk-pane .wk-dk-slot .character-item,.wk-pane .wk-pk-fr .character-item{position:relative!important;display:block!important;height:100%!important;aspect-ratio:3/4.3;padding:0!important;overflow:hidden}
+html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-grid-image-wrap,html.ios-app body .wk-pane .wk-pk-fr .character-grid-image-wrap,.wk-pane .wk-dk-slot .character-grid-image-wrap,.wk-pane .wk-pk-fr .character-grid-image-wrap{position:absolute!important;inset:0;width:100%!important;height:100%!important;margin:0!important;border-radius:0!important;overflow:hidden;flex:none!important}
+html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-grid-image,html.ios-app body .wk-pane .wk-pk-fr .character-grid-image,.wk-pane .wk-dk-slot .character-grid-image,.wk-pane .wk-pk-fr .character-grid-image{position:absolute!important;inset:0;width:100%!important;height:100%!important;object-fit:cover}
+html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-grid-content,html.ios-app body .wk-pane .wk-pk-fr .character-grid-content,.wk-pane .wk-dk-slot .character-grid-content,.wk-pane .wk-pk-fr .character-grid-content{position:absolute!important;left:0;right:0;bottom:0;z-index:8;width:auto;padding:26px 8px 8px!important;background:linear-gradient(180deg,transparent,rgba(5,8,16,.86) 55%)}
+}
+</style><style id="wk-dk-zoombox-fix">.wk-dk-zoom .wk-dk-zoombox{position:relative;aspect-ratio:1/1.42;height:auto;width:min(88vw,340px,calc(72vh / 1.42))}
+@supports (height:1dvh){.wk-dk-zoom .wk-dk-zoombox{width:min(88vw,340px,calc(72dvh / 1.42))}}</style><style id="wk-dk-slot-fix">
+/* Все слоты колоды одной жёсткой пропорции; рамка-кольцо и фото всегда одной высоты, что бы ни лежало у соседей в ряду */
+.wk-dk-slot{aspect-ratio:3/4.3;display:grid;min-height:0}
+.wk-dk-slot>.catalog-item-shell{height:100%;min-height:0;display:grid}
+.wk-dk-slot>.catalog-item-shell>.character-item{height:100%!important;min-height:0!important;aspect-ratio:auto!important}
+.wk-dk-slot>.wk-dk-empty{height:100%;min-height:0;aspect-ratio:auto}
+.wk-dk-slot>.wk-dk-sbwrap{display:none}
+.wk-dk-slot.flipped>.wk-dk-sbwrap,.wk-dk-slot.fl-back>.wk-dk-sbwrap{display:block}
+</style></head>
 <body data-theme="mugiwara" data-active-tab="characters">
 <script id="wiki-cloud-config">
 /* ============================================================
@@ -3722,7 +3739,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 318";
+const WIKI_VERSION = "11.11.2026 · 321";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
