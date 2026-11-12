@@ -3630,7 +3630,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 301";
+const WIKI_VERSION = "11.11.2026 · 302";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -34228,6 +34228,7 @@ img.wk-cut-front{z-index:5!important;background:none!important}
   window.__wkCutOf = cutOf;
   function identify(el) {
     var oc = el.getAttribute('onclick') || '', m;
+    var pn = el.getAttribute('data-wk-pin'); if (pn) { try { var pid = String(JSON.parse(decodeURIComponent(pn)).id || '').split('@')[0].split('#')[0]; if (pid) return { type: 'character', id: pid }; } catch (e) {} }
     if ((m = oc.match(/open(?:Recent|Favorite)Article\('(\w+)',\s*'([^']+)'/))) return { type: m[1], id: m[2] };
     if ((m = oc.match(/openCharacterArticle\('([^']+)'/))) return { type: 'character', id: m[1] };
     if ((m = oc.match(/openFruitArticle\('([^']+)'/))) return { type: 'fruit', id: m[1] };
@@ -35790,6 +35791,7 @@ html body .catalog-item-shell:has(>.wk-flip-btn,>.wk-flip2) .character-item>.wk-
   function raw(t, id) { try { return window.__wikiRawRecord ? window.__wikiRawRecord(t, id) : null; } catch (e) { return null; } }
   function identify(el) {
     var oc = el.getAttribute('onclick') || '', m;
+    var pn = el.getAttribute('data-wk-pin'); if (pn) { try { var pid = String(JSON.parse(decodeURIComponent(pn)).id || '').split('@')[0].split('#')[0]; if (pid) return { type: 'character', id: pid }; } catch (e) {} }
     if ((m = oc.match(/open(?:Recent|Favorite)Article\('(\w+)',\s*'([^']+)'/))) return { type: m[1], id: m[2] };
     if ((m = oc.match(/openCharacterArticle\('([^']+)'/))) return { type: 'character', id: m[1] };
     if ((m = oc.match(/openFruitArticle\('([^']+)'/))) return { type: 'fruit', id: m[1] };
@@ -40547,6 +40549,9 @@ html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-name,html.ios-app 
 }
 </style>
 <style id="wk-variants-css">
+/* После переворота рубашка не перехватывает курсор (иначе наклон карточки срабатывает не всегда) */
+.wk-pk.on .wk-pk-bk{pointer-events:none!important;visibility:hidden;transition:visibility 0s .5s}
+.wk-pk:not(.on) .wk-pk-fr{pointer-events:none}
 /* Имена без обрезания, плашка редкости, увеличенная карточка */
 #wkDkColl .character-name,.wk-pk .character-name,.wk-dk-zoom .character-name{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.12!important;word-break:break-word;font-size:clamp(13px,3.6vw,17px)!important;max-height:none!important}
 .wk-dk-rar{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;border:1px solid currentColor;background:rgba(0,0,0,.35);line-height:1.4}
@@ -40560,6 +40565,7 @@ html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-name,html.ios-app 
 .wk-dk-zoombox .character-grid-image-wrap{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important;display:block!important}
 .wk-dk-zoombox .character-grid-image-wrap .character-grid-image{width:100%!important;height:100%!important;object-fit:cover}
 .wk-dk-zoombox .character-grid-content{position:absolute!important;left:0;right:0;bottom:0;padding:44px 16px 16px!important;background:linear-gradient(0deg,rgba(5,8,16,.94),rgba(5,8,16,.7) 55%,transparent);z-index:8;box-sizing:border-box}
+.wk-dk-ghost.on{border-color:#facc15;color:#facc15}
 .wk-dk-zoomhint{color:#8492a8;font-size:13px}
 /* Рубашка карточки: компас на фоне «холст и тиснение», редкость и особые версии */
 .wk-pk-bk,.wk-dk-back{--c:#9aa6bb;--c2:#2a3350;--bg1:#18203a;--glow:0px;--to:.5;overflow:hidden;color:var(--c)!important;background:linear-gradient(160deg,var(--bg1),#0b1020)!important;border:2px solid var(--c)!important;box-shadow:inset 0 0 0 5px #0b1020,inset 0 0 0 6px var(--c2),0 0 var(--glow) var(--c)!important}
@@ -40670,9 +40676,10 @@ html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-name,html.ios-app 
 .character-item[data-wk-var="holo"]::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.55) 48%,transparent 60%);background-size:260% 100%;mix-blend-mode:overlay;animation:wkNegSheen 4s linear infinite}
 @keyframes wkHoloMove{0%{background-position:0% 50%}100%{background-position:300% 50%}}
 .character-item[data-wk-var="gold"] .character-grid-image{filter:saturate(1.25) contrast(1.05) brightness(1.02)}
-.character-item[data-wk-var="gold"]::before{content:"";position:absolute;inset:0;z-index:9;pointer-events:none;background:radial-gradient(circle,#fff0b0 0 1.6px,#ffb347 2px,transparent 3.2px) 0 0/44px 58px,radial-gradient(circle,#ffd27a 0 1.2px,transparent 2.6px) 22px 29px/58px 76px;animation:wkEmber 3.2s linear infinite}
-@keyframes wkEmber{0%{background-position:0 0,22px 29px}100%{background-position:0 -58px,22px -47px}}
-.character-item[data-wk-var="gold"]::after{content:"";position:absolute;inset:0;z-index:9;pointer-events:none;border-radius:inherit;box-shadow:inset 0 0 0 3px rgba(255,138,61,1),inset 0 0 22px rgba(255,90,30,.7);background:radial-gradient(ellipse 85% 48% at 50% 108%,rgba(255,200,80,.8),transparent 74%),radial-gradient(ellipse 36% 44% at 16% 106%,rgba(255,110,30,.75),transparent 74%),radial-gradient(ellipse 36% 50% at 86% 106%,rgba(255,110,30,.75),transparent 74%),linear-gradient(0deg,rgba(255,70,20,.38),rgba(190,40,10,.14) 50%,transparent 80%);animation:wkFlame 2.2s ease-in-out infinite alternate}
+.character-item[data-wk-var="gold"]::before{content:"";position:absolute;inset:0;z-index:7;pointer-events:none;background:radial-gradient(circle,#fff6c8 0 1.8px,#ffb347 2.6px,transparent 4px) 0 0/46px 64px,radial-gradient(circle,#ffd27a 0 1.4px,#ff8a3d 2.2px,transparent 3.4px) 23px 32px/62px 82px,radial-gradient(circle,#fff0b0 0 1px,transparent 2.4px) 11px 14px/34px 48px;-webkit-mask-image:linear-gradient(0deg,#000 15%,rgba(0,0,0,.6) 55%,transparent 92%);mask-image:linear-gradient(0deg,#000 15%,rgba(0,0,0,.6) 55%,transparent 92%);animation:wkEmber 2.8s linear infinite}
+@keyframes wkEmber{0%{background-position:0 0,23px 32px,11px 14px}100%{background-position:0 -64px,23px -50px,11px -34px}}
+.character-item[data-wk-var="gold"] .character-grid-content{background:linear-gradient(0deg,rgba(30,6,2,.55),rgba(30,6,2,.28) 60%,transparent)!important;text-shadow:0 1px 4px rgba(0,0,0,.85)}
+.character-item[data-wk-var="gold"]::after{content:"";position:absolute;inset:0;z-index:7;pointer-events:none;border-radius:inherit;box-shadow:inset 0 0 0 3px rgba(255,138,61,1),inset 0 0 22px rgba(255,90,30,.7);background:radial-gradient(ellipse 85% 48% at 50% 108%,rgba(255,200,80,.8),transparent 74%),radial-gradient(ellipse 36% 44% at 16% 106%,rgba(255,110,30,.75),transparent 74%),radial-gradient(ellipse 36% 50% at 86% 106%,rgba(255,110,30,.75),transparent 74%),linear-gradient(0deg,rgba(255,70,20,.38),rgba(190,40,10,.14) 50%,transparent 80%);animation:wkFlame 2.2s ease-in-out infinite alternate}
 @keyframes wkFlame{0%{filter:brightness(.85)}100%{filter:brightness(1.3)}}
 .character-item[data-wk-var="gold"] .wk-fl-sp{position:absolute;z-index:5;bottom:6px;width:3px;height:3px;border-radius:50%;background:#ffd27a;box-shadow:0 0 5px #ff9a3d;pointer-events:none;animation:wkBkUp 3s linear infinite}
 .wk-pk.is-var.v-holo:not(.on) .wk-pk-bk{border-color:#f0abfc;box-shadow:inset 0 0 0 5px #0b1020,0 0 30px rgba(240,171,252,.6)}
@@ -40934,9 +40941,14 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     var v; try { v = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { v = {}; }
     if (!v || typeof v !== 'object') v = {};
     v.owned = v.owned && typeof v.owned === 'object' ? v.owned : {}; v.packs = +v.packs || 0; v.pity = +v.pity || 0; v.last = +v.last || 0;
+    if (DK.fillAll && isDima()) {
+      var fo = {}; Object.keys(v.owned).forEach(function (q) { fo[q] = v.owned[q]; });
+      try { allCards().forEach(function (k) { if (!fo[k.key]) fo[k.key] = 1; if (k.r === 'epic' || k.r === 'legendary') VKEYS.forEach(function (x) { if (!fo[k.key + '#' + x]) fo[k.key + '#' + x] = 1; }); }); } catch (e) {}
+      v.owned = fo; v.__fake = true;
+    }
     return v;
   }
-  function save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
+  function save(s) { if (s && s.__fake) return; try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
   var AI = null, AIN = -1;
   function arcInfo() {
     var l = arcsAll(); if (AI && AIN === l.length) return AI;
@@ -41067,7 +41079,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
   }
   function isDima() { try { var v = JSON.parse(localStorage.getItem('wkCloudSessionV1') || 'null'); return !!(v && String(v.login) === 'dima'); } catch (e) { return false; } }
   function adminHTML() {
-    return isDima() ? '<div class="wk-dk-admin"><span>Только для Димы</span><button type="button" class="wk-dk-ghost" data-act="adm-timer">⏱ Сбросить таймер</button><button type="button" class="wk-dk-ghost" data-act="adm-test">🧪 Тестовый набор</button></div>' : '';
+    return isDima() ? '<div class="wk-dk-admin"><span>Только для Димы</span><button type="button" class="wk-dk-ghost" data-act="adm-timer">Сбросить таймер</button><button type="button" class="wk-dk-ghost" data-act="adm-test">Тестовый набор</button><button type="button" class="wk-dk-ghost' + (DK.fillAll ? ' on' : '') + '" data-act="adm-fill" aria-pressed="' + (DK.fillAll ? 'true' : 'false') + '">' + (DK.fillAll ? 'Показаны все карточки. Вернуть мою коллекцию' : 'Заполнить все коллекции') + '</button></div>' : '';
   }
   function testPack(cards) {
     var ep = cards.filter(function (k) { return k.r === 'epic'; }), lg = cards.filter(function (k) { return k.r === 'legendary'; }), hi = ep.concat(lg), o = [];
@@ -41204,7 +41216,8 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
         else if (a === 'done') { finish(pane, true); }
         else if (a === 'fr-more') { DK.frLim += 60; var ff = pane.querySelector('#wkDkFriend'); if (ff) ff.innerHTML = friendBody(); }
         else if (a === 'rules') { showRules(pane); }
-        else if (a === 'adm-timer') { if (!isDima()) return; S.last = 0; save(S); var cb = pane.querySelector('#wkDkCta .wk-dk-open'); if (cb) cb.outerHTML = ctaHTML(S); t.textContent = '✓ Таймер сброшен'; setTimeout(function () { t.textContent = '⏱ Сбросить таймер'; }, 1800); }
+        else if (a === 'adm-timer') { if (!isDima()) return; S.last = 0; save(S); var cb = pane.querySelector('#wkDkCta .wk-dk-open'); if (cb) cb.outerHTML = ctaHTML(S); t.textContent = '✓ Таймер сброшен'; setTimeout(function () { t.textContent = 'Сбросить таймер'; }, 1800); }
+        else if (a === 'adm-fill') { if (!isDima()) return; DK.fillAll = !DK.fillAll; renderDeck(pane); }
         else if (a === 'adm-test') { if (!isDima()) return; if (DK.pack) finish(pane, true); DK.pack = testPack(C); DK.flipped = 0; pane.querySelector('#wkDkPack').innerHTML = packHTML(C, S); var rw = pane.querySelector('.wk-dk-row'); if (rw && rw.scrollIntoView) rw.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
         else if (a === 'rules-ok') { try { localStorage.setItem('wkDeckRulesSeen', '1'); } catch (e) {} var m = pane.querySelector('#wkDkRules'); if (m) m.remove(); }
         else if (a === 'reset') { if (confirm('Обнулить всю коллекцию карточек? Это нельзя отменить.')) { save({ owned: {}, packs: 0, pity: 0, last: S.last }); DK.pack = null; renderDeck(pane); } }
