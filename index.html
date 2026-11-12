@@ -3630,7 +3630,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 303";
+const WIKI_VERSION = "11.11.2026 · 306";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -13060,7 +13060,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
                 {title:'Плоды',icon:'🍎',desc:'Ссылки на статьи плодов. Имя, изображение и описание подтягиваются автоматически. Третий плод (поздний) откроется только с указанной главы или эпизода.',keys:['fruit_article_id','fruit2_article_id','ts_fruit_article_id','ts_fruit_from_chapter','ts_fruit_from_episode']},
                 {title:'Эффекты карточки и заголовка',icon:'✨',desc:'Эффекты при наклоне и постоянные, конструктор слоёв и частиц, шрифт и эффект заголовка. Раздел можно свернуть.',fx:true,keys:['card_fx','card_shine','title_fx']},
                 {title:'Корабль и команда',icon:'⛵',desc:'Выбери статьи из «Полезного». Фото, название и описание корабля и команды подтянутся из них автоматически.',keys:['ship_article_id','ship2_article_id','team_article_id']},
-                {title:'Фото по аркам',icon:'🖼️',desc:'Фото первого появления привязано к арке, где персонаж впервые появился (глава и серия в статье). Здесь добавляй отдельные фото для следующих арок: каждое — отдельная карточка в колоде. На карточке и в наградах показывается самое свежее из уже пройденных арок.',keys:['arc_photos']},
+                {title:'Фото по аркам',icon:'🖼️',desc:'Основного фото у персонажа больше нет: любое фото относится к арке. Фото первого появления — верхняя строка списка (арка, где персонаж впервые появился). Каждое фото — отдельная карточка в колоде, редкость можно выставить тут же. На карточке и в наградах показывается самое свежее из уже пройденных арок.',keys:['arc_photos']},
                 {title:'Дополнительные фото',icon:'🖼',desc:'Фото в самом низу статьи: детство, другой облик, важный момент. Только ссылка и короткая подпись; можно скрыть фото до нужной главы или серии.',keys:['gallery']},
                 {title:'Связанные статьи',icon:'🔗',desc:'Отметь материалы, которые должны быть связаны с этой статьёй.',keys:['connect','map_hide']}
             ],
@@ -31176,7 +31176,7 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   /* ---------- П.5. Быстрая правка прямо в статье ---------- */
   var QE = {
     character: { content: 'characterArticleContent', fields: [
-      ['name', 'Имя', 'text'], ['nickname', 'Прозвище', 'text'], ['person_link', 'Фото первого появления (ссылка)', 'url'], ['status', 'Статус (через запятую)', 'status'],
+      ['name', 'Имя', 'text'], ['nickname', 'Прозвище', 'text'], ['status', 'Статус (через запятую)', 'status'],
       ['fruit_article_id', 'Дьявольский плод', 'fruit', 'master:fruit2_article_id'], ['fruit2_article_id', 'Второй плод', 'fruit', 'fold'],
       ['ship_article_id', 'Корабль', 'ship', 'master:ship2_article_id'], ['ship2_article_id', 'Второй корабль', 'ship', 'fold'], ['team_article_id', 'Команда или организация', 'team']] },
     useful: { content: 'usefulArticleContent', fields: [['name', 'Название', 'text'], ['image', 'Главное фото (ссылка)', 'url'], ['fruit_article_id', 'Дьявольский плод', 'fruit'], ['description', 'Описание', 'area']] },
@@ -31929,10 +31929,10 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   });
   function apParse(v) {
     var a = []; try { a = JSON.parse(v || '[]'); } catch (e) { a = []; }
-    return (Array.isArray(a) ? a : []).filter(function (x) { return x && typeof x === 'object'; }).map(function (x) { return { arc: String(x.arc || ''), u: String(x.u || ''), y: x.y == null ? '50' : String(x.y), x: x.x == null ? '50' : String(x.x), z: x.z == null ? '100' : String(x.z), fx: String(x.fx || ''), amb: String(x.amb || ''), cs: String(x.cs || ''), r: String(x.r || '') }; });
+    return (Array.isArray(a) ? a : []).filter(function (x) { return x && typeof x === 'object'; }).map(function (x) { return { arc: String(x.arc || ''), u: String(x.u || ''), y: x.y == null ? '50' : String(x.y), x: x.x == null ? '50' : String(x.x), z: x.z == null ? '100' : String(x.z), fx: String(x.fx || ''), amb: String(x.amb || ''), cs: String(x.cs || ''), r: String(x.r || ''), dx: x.dx == null ? '' : String(x.dx), dy: x.dy == null ? '' : String(x.dy), dz: x.dz == null ? '' : String(x.dz) }; });
   }
   function apDump(list) {
-    var out = list.filter(function (x) { return x.arc && goodUrl(x.u); }).map(function (x) { var o = { arc: x.arc, u: x.u.trim(), y: String(x.y), x: String(x.x), z: String(x.z) }; if (x.fx) o.fx = x.fx; if (x.amb) o.amb = x.amb; if (x.cs) o.cs = x.cs; if (x.r) o.r = x.r; return o; });
+    var out = list.filter(function (x) { return x.arc && goodUrl(x.u); }).map(function (x) { var o = { arc: x.arc, u: x.u.trim(), y: String(x.y), x: String(x.x), z: String(x.z) }; if (x.fx) o.fx = x.fx; if (x.amb) o.amb = x.amb; if (x.cs) o.cs = x.cs; if (x.r) o.r = x.r; if (x.dz !== '' && x.dz != null) { o.dx = x.dx; o.dy = x.dy; o.dz = x.dz; } return o; });
     return out.length ? JSON.stringify(out) : '';
   }
   function apOpts(list, cur, first) {
@@ -31948,10 +31948,16 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     var holder = hidden.parentNode; if (holder.querySelector('.wk-ap-ed')) return;
     var arcs = window.__wkArcList || [];
     var list = apParse(hidden.value);
+    var fform = hidden.closest('form') || document;
+    function fval(k) { var e = fform.querySelector('[data-field="' + k + '"]'); return e ? String(e.value || '') : ''; }
+    function fset(k, v) { var e = fform.querySelector('[data-field="' + k + '"]'); if (!e || e.value === String(v)) return; e.value = String(v); ['input', 'change'].forEach(function (t) { e.dispatchEvent(new Event(t, { bubbles: true })); }); }
+    var cidv = fval('id'), faId = window.__wkDeckFirstArc && cidv ? window.__wkDeckFirstArc(cidv) : '';
+    if (faId && goodUrl(fval('person_link')) && !list.some(function (q) { return q.arc === faId; })) list.unshift({ arc: faId, u: fval('person_link').trim(), y: fval('person_image_position') || '50', x: fval('person_image_position_x') || '50', z: fval('person_image_zoom') || '100', fx: '', amb: '', cs: '', r: '' });
     var box = document.createElement('div'); box.className = 'wk-ap-ed'; box.style.cssText = 'display:grid;gap:10px'; hidden.after(box);
     var lastDump = hidden.value;
     function save() {
-      if (hidden.value !== lastDump) { var cur = apParse(hidden.value); list.forEach(function (x) { var c = cur.filter(function (q) { return q.arc === x.arc; })[0]; if (c) { x.fx = c.fx; x.amb = c.amb; x.cs = c.cs; } }); }
+      if (hidden.value !== lastDump) { var cur = apParse(hidden.value); list.forEach(function (x) { var c = cur.filter(function (q) { return q.arc === x.arc; })[0]; if (c) { x.fx = c.fx; x.amb = c.amb; x.cs = c.cs; x.dx = c.dx; x.dy = c.dy; x.dz = c.dz; } }); }
+      if (faId) { var r0 = list.filter(function (q) { return q.arc === faId && goodUrl(q.u); })[0]; fset('person_link', r0 ? r0.u.trim() : ''); if (r0) { fset('person_image_position', r0.y); fset('person_image_position_x', r0.x); fset('person_image_zoom', r0.z); } }
       var v = apDump(list); lastDump = v; if (hidden.value === v) return; hidden.value = v; ['input', 'change'].forEach(function (t) { hidden.dispatchEvent(new Event(t, { bubbles: true })); }); }
     function prev(x) {
       var z = Math.max(100, Number(x.z) || 100);
@@ -31961,7 +31967,7 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
       box.innerHTML = list.map(function (x, i) {
         return '<div class="wk-ap-row" data-i="' + i + '" style="display:grid;grid-template-columns:168px 1fr auto;gap:12px;align-items:start;padding:10px;border:1px solid rgba(255,255,255,.14);border-radius:12px">'
           + '<div class="wk-ap-prev" title="Тяни, чтобы сдвинуть; колесо мыши — приблизить" style="width:168px;height:210px;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;cursor:grab;touch-action:none;user-select:none">' + prev(x) + '</div>'
-          + '<div style="display:grid;gap:6px;min-width:0"><div><small style="opacity:.7">Арка</small>' + arcPickHTML((arcs.filter(function (a) { return a.id === x.arc; })[0] || {}).name) + '</div>'
+          + '<div style="display:grid;gap:6px;min-width:0"><div><small style="opacity:.7">Арка' + (faId && x.arc === faId ? ' · первое появление персонажа' : '') + '</small>' + arcPickHTML((arcs.filter(function (a) { return a.id === x.arc; })[0] || {}).name) + '</div>'
           + '<label>Ссылка на фото<input type="url" data-k="u" placeholder="https://…" value="' + esc(x.u) + '" style="width:100%"></label>'
           + '<label>Редкость карточки<select data-k="r" style="width:100%">' + apRarOpts(hidden, x) + '</select></label>'
                     + '<div class="wk-ap-hint" style="font-size:12.5px;opacity:.75;display:flex;gap:8px;align-items:center;flex-wrap:wrap">Тяни фото мышью или пальцем, колесо — приблизить. <output>' + Math.round(Number(x.z) || 100) + '%</output><button type="button" data-reset>Сбросить кадр</button></div></div>'
@@ -40315,9 +40321,11 @@ body.wk-ie-on .wk-ie-btn{display:none}
   function photosWidget(orig) {
     var ph = []; try { ph = JSON.parse(orig.arc_photos || '[]'); } catch (e) { ph = []; } if (!Array.isArray(ph)) ph = [];
     S.vals.arc_photos = orig.arc_photos || '';
+    var faId = window.__wkDeckFirstArc && orig.id ? window.__wkDeckFirstArc(orig.id) : '';
+    if (faId && /^(https?:|data:image)/.test(String(orig.person_link || '').trim()) && !ph.some(function (q) { return q && q.arc === faId; })) ph.unshift({ arc: faId, u: String(orig.person_link).trim(), y: orig.person_image_position || '50', x: orig.person_image_position_x || '50', z: orig.person_image_zoom || '100' });
     var pw = document.createElement('div'); pw.className = 'wk-ie-f is-wide'; pw.innerHTML = '<span>Фото по аркам</span><div class="wk-ie-ph"></div><button type="button" class="wk-ie-addph">＋ Добавить фото для арки</button>';
     var phl = pw.querySelector('.wk-ie-ph');
-    function dump() { var out = ph.filter(function (x) { return x.arc && /^(https?:|data:image)/.test(String(x.u || '').trim()); }); S.vals.arc_photos = out.length ? JSON.stringify(out) : ''; bar(); }
+    function dump() { var out = ph.filter(function (x) { return x.arc && /^(https?:|data:image)/.test(String(x.u || '').trim()); }); S.vals.arc_photos = out.length ? JSON.stringify(out) : ''; if (faId) { var r0 = out.filter(function (q) { return q.arc === faId; })[0]; S.vals.person_link = r0 ? String(r0.u).trim() : ''; if (r0) { S.vals.person_image_position = r0.y; S.vals.person_image_position_x = r0.x; S.vals.person_image_zoom = r0.z; } } bar(); }
     function draw() {
       var arcs = window.__wkArcList || [];
       phl.innerHTML = ph.map(function (x, i) { return '<div class="wk-ie-phr" data-i="' + i + '"><select aria-label="Арка"><option value="">— арка —</option>' + arcs.map(function (a) { return '<option value="' + eh(a.id) + '"' + (a.id === x.arc ? ' selected' : '') + '>' + eh(a.name) + '</option>'; }).join('') + '</select><input type="url" placeholder="Ссылка на фото" value="' + eh(x.u || '') + '"><select data-rar aria-label="Редкость карточки"><option value="">Редкость: авто</option>' + [['common', 'Обычная'], ['rare', 'Редкая'], ['epic', 'Эпическая'], ['legendary', 'Легендарная']].map(function (q) { return '<option value="' + q[0] + '"' + (x.r === q[0] ? ' selected' : '') + '>' + q[1] + '</option>'; }).join('') + '</select><button type="button" data-rmp aria-label="Убрать фото">✕</button></div>'; }).join('');
@@ -40556,9 +40564,34 @@ html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-name,html.ios-app 
 }
 </style>
 <style id="wk-variants-css">
+/* Пламенная: марево (дрожание воздуха) и раскалённый металл */
+.character-item[data-wk-var="gold"] .character-grid-image-wrap{filter:url(#wkHeatS)}
+.wk-pk .character-item[data-wk-var="gold"] .character-grid-image-wrap,.wk-dk-zoom .character-item[data-wk-var="gold"] .character-grid-image-wrap,.wk-pe-card .character-item[data-wk-var="gold"] .character-grid-image-wrap{filter:url(#wkHeat)}
+.character-item[data-wk-var="gold"]::before{content:"";position:absolute;inset:0;z-index:6;pointer-events:none;background:linear-gradient(0deg,rgba(255,245,200,.85) 0,rgba(255,170,50,.7) 14%,rgba(220,60,15,.45) 36%,rgba(60,10,5,.35) 62%,rgba(10,4,2,.5));mix-blend-mode:hard-light;animation:wkHot 2.4s ease-in-out infinite alternate}
+@keyframes wkHot{0%{opacity:.6}100%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.character-item[data-wk-var="gold"]::before{animation:none}}
+/* Негатив на двухслойных фото: инвертируем весь снимок целиком (задний слой + передний) */
+.character-item[data-wk-var="neg"][data-wk-cut] .character-grid-image{filter:none;animation:none}
+.character-item[data-wk-var="neg"][data-wk-cut] .wk-cbg,.character-item[data-wk-var="neg"][data-wk-cut] .character-grid-image-wrap{animation:wkNegHue 7s ease-in-out infinite}
+.character-item[data-wk-var="neg"][data-wk-cut]::after{z-index:7!important}
+/* Правка превью (Дима) */
+.wk-dk-editing .character-item[data-wk-pin]{outline:2px dashed #38bdf8;outline-offset:-3px;cursor:crosshair}
+.wk-dk-pe{position:fixed;inset:0;z-index:100001;background:rgba(3,6,14,.9);display:flex;align-items:center;justify-content:center;padding:14px;overflow:auto}
+.wk-pe-win{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;justify-content:center;max-width:760px}
+.wk-pe-cardwrap{touch-action:none}
+.wk-pe-card{cursor:grab;width:min(80vw,300px)!important;height:min(70vh,calc(min(80vw,300px) * 1.42))!important}
+.wk-pe-card .catalog-item-shell,.wk-pe-card .character-item{pointer-events:none}
+.wk-pe-side{display:flex;flex-direction:column;gap:10px;min-width:230px;max-width:300px;color:#e5e7eb}
+.wk-pe-title{font-size:20px;font-weight:500}.wk-pe-sub{color:#9aa6bb;font-size:14px}
+.wk-pe-hint{color:#8492a8;font-size:13px;line-height:1.45;margin:0}
+.wk-pe-zl{display:grid;gap:6px;font-size:14px}.wk-pe-zl input{width:100%}
+.wk-pe-btns,.wk-pe-nav{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.wk-pe-pos{color:#9aa6bb;font-size:13px;flex:1;text-align:center}
+.wk-pe-msg{min-height:18px;font-size:13px;color:#7dd3fc}
 /* После переворота рубашка не перехватывает курсор (иначе наклон карточки срабатывает не всегда) */
 .wk-pk.on .wk-pk-bk{pointer-events:none!important;visibility:hidden;transition:visibility 0s .5s}
 .wk-pk:not(.on) .wk-pk-fr{pointer-events:none}
+/* Основного фото больше нет: оно редактируется в «Фото по аркам» */
+.wiki-editor-field[data-editor-field="person_link"],.wiki-editor-field[data-editor-field="person_image_position"]{display:none!important}
 /* Имена без обрезания, плашка редкости, увеличенная карточка */
 #wkDkColl .character-name,.wk-pk .character-name,.wk-dk-zoom .character-name{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.12!important;word-break:break-word;font-size:clamp(13px,3.6vw,17px)!important;max-height:none!important}
 .wk-dk-rar{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;border:1px solid currentColor;background:rgba(0,0,0,.35);line-height:1.4}
@@ -40689,7 +40722,7 @@ html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-name,html.ios-app 
 @keyframes wkGl{0%,34%,100%{opacity:0;transform:scale(.2) rotate(0)}10%{opacity:1;transform:scale(1) rotate(45deg)}22%{opacity:.9;transform:scale(.7) rotate(90deg)}}
 @media (prefers-reduced-motion:reduce){.wk-em,.wk-gl{animation:none;opacity:.7}}100%{background-position:0 -64px,23px -50px,11px -34px}}
 .character-item[data-wk-var="gold"] .character-grid-content{background:linear-gradient(0deg,rgba(30,6,2,.55),rgba(30,6,2,.28) 60%,transparent)!important;text-shadow:0 1px 4px rgba(0,0,0,.85)}
-.character-item[data-wk-var="gold"]::after{content:"";position:absolute;inset:0;z-index:7;pointer-events:none;border-radius:inherit;box-shadow:inset 0 0 0 3px rgba(255,138,61,1),inset 0 0 22px rgba(255,90,30,.7);background:radial-gradient(ellipse 85% 48% at 50% 108%,rgba(255,200,80,.8),transparent 74%),radial-gradient(ellipse 36% 44% at 16% 106%,rgba(255,110,30,.75),transparent 74%),radial-gradient(ellipse 36% 50% at 86% 106%,rgba(255,110,30,.75),transparent 74%),linear-gradient(0deg,rgba(255,70,20,.38),rgba(190,40,10,.14) 50%,transparent 80%);animation:wkFlame 2.2s ease-in-out infinite alternate}
+.character-item[data-wk-var="gold"]::after{content:"";position:absolute;inset:0;z-index:7;pointer-events:none;border-radius:inherit;box-shadow:inset 0 0 0 3px rgba(255,138,61,1),inset 0 0 22px rgba(255,90,30,.7);background:radial-gradient(ellipse 85% 48% at 50% 108%,rgba(255,200,80,.8),transparent 74%),radial-gradient(ellipse 36% 44% at 16% 106%,rgba(255,110,30,.75),transparent 74%),radial-gradient(ellipse 36% 50% at 86% 106%,rgba(255,110,30,.75),transparent 74%);animation:wkFlame 2.2s ease-in-out infinite alternate}
 @keyframes wkFlame{0%{filter:brightness(.85)}100%{filter:brightness(1.3)}}
 .character-item[data-wk-var="gold"] .wk-fl-sp{position:absolute;z-index:5;bottom:6px;width:3px;height:3px;border-radius:50%;background:#ffd27a;box-shadow:0 0 5px #ff9a3d;pointer-events:none;animation:wkBkUp 3s linear infinite}
 .wk-pk.is-var.v-holo:not(.on) .wk-pk-bk{border-color:#f0abfc;box-shadow:inset 0 0 0 5px #0b1020,0 0 30px rgba(240,171,252,.6)}
@@ -40985,13 +41018,13 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     function push(arcInf, p, isFirst) {
       var rr = window.__wkRarityRule ? window.__wkRarityRule(raw, { ch: arcInf.end || num(raw.chapter), ep: arcInf.epEnd || num(raw.episode) }).r : 'common';
       if (p.r && RORD.indexOf(p.r) >= 0) rr = p.r;
-      out.push({ key: c.id + '@' + arcInf.id, c: c, arc: arcInf, u: p.u, x: p.x, y: p.y, z: p.z, fx: p.fx, amb: p.amb, cs: p.cs, r: rr, first: !!isFirst });
+      out.push({ key: c.id + '@' + arcInf.id, c: c, arc: arcInf, u: p.u, x: p.x, y: p.y, z: p.z, dx: p.dx, dy: p.dy, dz: p.dz, fx: p.fx, amb: p.amb, cs: p.cs, r: rr, first: !!isFirst });
     }
     var extra = parseJSON(raw.arc_photos), baseU = url(raw.person_link);
     var over = null; extra.forEach(function (x) { if (x && x.arc === fa.id && url(x.u)) over = x; });
     if (baseU || over) {
       var o = over || {};
-      push(fa, { u: url(o.u) || baseU, x: o.x != null && o.x !== '' ? o.x : raw.person_image_position_x, y: o.y != null && o.y !== '' ? o.y : raw.person_image_position, z: o.z != null && o.z !== '' ? o.z : raw.person_image_zoom, fx: '', amb: '', cs: '', r: o.r }, true);
+      push(fa, { u: url(o.u) || baseU, x: o.x != null && o.x !== '' ? o.x : raw.person_image_position_x, y: o.y != null && o.y !== '' ? o.y : raw.person_image_position, z: o.z != null && o.z !== '' ? o.z : raw.person_image_zoom, fx: '', amb: '', cs: '', r: o.r, dx: o.dx, dy: o.dy, dz: o.dz }, true);
       seen[fa.id] = 1;
     }
     extra.forEach(function (x) {
@@ -40999,10 +41032,11 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
       var ai = info[x.arc]; if (!ai) return;
       try { if (window.__wikiArcDone && !window.__wikiArcDone(x.arc)) return; } catch (e) {}
       seen[x.arc] = 1;
-      push(ai, { u: url(x.u), x: x.x, y: x.y, z: x.z, fx: '', amb: '', cs: '', r: x.r }, false);
+      push(ai, { u: url(x.u), x: x.x, y: x.y, z: x.z, fx: '', amb: '', cs: '', r: x.r, dx: x.dx, dy: x.dy, dz: x.dz }, false);
     });
     return out;
   }
+  window.__wkDeckFirstArc = function (cid) { try { var fa = firstArc(rawRec({ id: cid })); return fa && fa.id ? fa.id : ''; } catch (e) { return ''; } };
   window.__wkDeckDefaultRarity = function (cid, arcId) {
     try {
       var raw = rawRec({ id: cid }), ai = arcInfo()[arcId]; if (!raw || !ai || !window.__wkRarityRule) return '';
@@ -41042,7 +41076,68 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     return out.map(function (k) { return { key: k.key, isNew: !st.owned[k.key] }; });
   }
   function cardByKey(cards, key) { var vi = String(key).indexOf('#'); if (vi > 0) { var b = cardByKey(cards, key.slice(0, vi)), v = key.slice(vi + 1); return b && VAR[v] ? mkVar(b, v) : null; } for (var i = 0; i < cards.length; i++) if (cards[i].key === key) return cards[i]; return null; }
+  /* ---- Режим правки превью (только Дима): кадр карточки в колоде ---- */
+  var PE = null;
+  function peImgStyle(X, Y, Z) { return 'object-position:' + X + '% ' + Y + '% !important;transform:scale(' + (Z / 100) + ') !important;transform-origin:' + X + '% ' + Y + '% !important'; }
+  function peStart(k) {
+    var X = Number(k.x), Y = Number(k.y), Z = Number(k.z);
+    X = isFinite(X) && String(k.x) !== '' ? X : 50; Y = isFinite(Y) && String(k.y) !== '' ? Y : 50; Z = isFinite(Z) && Z >= 100 ? 100 + Math.min(150, Z - 100) * 0.4 : 100;
+    if (k.dz != null && String(k.dz) !== '') { X = Number(k.dx); Y = Number(k.dy); Z = Number(k.dz); X = isFinite(X) ? X : 50; Y = isFinite(Y) ? Y : 50; Z = isFinite(Z) ? Z : 100; }
+    return { X: Math.max(0, Math.min(100, X)), Y: Math.max(0, Math.min(100, Y)), Z: Math.max(100, Math.min(300, Z)) };
+  }
+  function peOpen(key) {
+    var base = String(key).split('#')[0], seen = {}, list = [];
+    [].forEach.call(document.querySelectorAll('#wkDkColl .character-item[data-wk-pin]'), function (e) { try { var id = String(JSON.parse(decodeURIComponent(e.getAttribute('data-wk-pin'))).id).split('#')[0]; if (!seen[id]) { seen[id] = 1; list.push(id); } } catch (x) {} });
+    if (list.indexOf(base) < 0) list.push(base);
+    PE = { list: list, idx: list.indexOf(base) };
+    var old = document.getElementById('wkDkPE'); if (old) old.remove();
+    var ov = document.createElement('div'); ov.id = 'wkDkPE'; ov.className = 'wk-dk-pe';
+    ov.innerHTML = '<div class="wk-pe-win" role="dialog" aria-label="Правка превью карточки"><div class="wk-pe-cardwrap"><div class="wk-dk-zoombox wk-pe-card"></div></div><div class="wk-pe-side"><div class="wk-pe-title"></div><div class="wk-pe-sub"></div>' +
+      '<p class="wk-pe-hint">Тяни карточку мышью или пальцем, чтобы сдвинуть кадр. Колесо мыши или ползунок меняют приближение. Кадр сохраняется только для колоды.</p>' +
+      '<label class="wk-pe-zl">Приближение <output></output><input type="range" min="100" max="300" step="1"></label>' +
+      '<div class="wk-pe-btns"><button type="button" data-pe="save" class="wk-dk-open">Сохранить</button><button type="button" data-pe="savenext" class="wk-dk-ghost">Сохранить и дальше</button><button type="button" data-pe="reset" class="wk-dk-ghost">Сбросить кадр</button></div>' +
+      '<div class="wk-pe-nav"><button type="button" data-pe="prev" class="wk-dk-ghost">Назад</button><span class="wk-pe-pos"></span><button type="button" data-pe="next" class="wk-dk-ghost">Дальше</button></div>' +
+      '<div class="wk-pe-msg" role="status"></div><button type="button" data-pe="close" class="wk-dk-ghost">Закрыть</button></div></div>';
+    document.body.appendChild(ov);
+    var card = ov.querySelector('.wk-pe-card'), rng = ov.querySelector('input[type=range]'), outp = ov.querySelector('output'), msg = ov.querySelector('.wk-pe-msg');
+    function img() { return card.querySelector('.character-grid-image'); }
+    function apply() { var im = img(); if (im) im.setAttribute('style', peImgStyle(PE.X.toFixed(1), PE.Y.toFixed(1), PE.Z)); rng.value = PE.Z; outp.textContent = Math.round(PE.Z) + '%'; }
+    function show() {
+      var key2 = PE.list[PE.idx], k = cardByKey(allCards(), key2); if (!k) return; PE.k = k;
+      var st = peStart(k); PE.X = st.X; PE.Y = st.Y; PE.Z = st.Z; PE.dirty = false;
+      card.innerHTML = cardHTML(k).replace(/onclick="[^"]*"/, '');
+      ov.querySelector('.wk-pe-title').textContent = k.c.name; ov.querySelector('.wk-pe-sub').textContent = k.arc.name + ' · ' + RN4[k.r];
+      ov.querySelector('.wk-pe-pos').textContent = (PE.idx + 1) + ' из ' + PE.list.length; msg.textContent = ''; apply();
+    }
+    function go(d) { var n = PE.idx + d; if (n < 0 || n >= PE.list.length) return; PE.idx = n; show(); }
+    function save(next) {
+      var k = PE.k; if (!k) return; var raw = rawRec(k.c), rows = parseJSON(raw.arc_photos).filter(function (q) { return q && typeof q === 'object'; });
+      var row = rows.filter(function (q) { return q.arc === k.arc.id; })[0];
+      if (!row) { if (!k.first || !url(raw.person_link)) { msg.textContent = 'Не удалось найти фото этой арки в данных'; return; } row = { arc: k.arc.id, u: String(raw.person_link).trim(), y: String(raw.person_image_position || 50), x: String(raw.person_image_position_x || 50), z: String(raw.person_image_zoom || 100) }; rows.unshift(row); }
+      row.dx = String(Math.round(PE.X * 10) / 10); row.dy = String(Math.round(PE.Y * 10) / 10); row.dz = String(Math.round(PE.Z));
+      msg.textContent = 'Сохраняю…';
+      var res; try { res = window.__wkInlineSave && window.__wkInlineSave('character', k.c.id, { arc_photos: JSON.stringify(rows) }); } catch (e) { res = false; }
+      Promise.resolve(res).then(function (ok) {
+        if (!ok) { msg.textContent = 'Не сохранилось. Проверь, что включён режим редактора'; return; }
+        var pane2 = document.querySelector('#wkDkColl') && document.querySelector('#wkDkColl').closest('.wk-pane'); if (pane2) renderDeck(pane2);
+        if (next) go(1); else show();
+        msg.textContent = 'Сохранено';
+      });
+    }
+    ov.addEventListener('click', function (e) { var b = e.target.closest('[data-pe]'); if (!b) { if (e.target === ov) ov.remove(); return; } var a = b.getAttribute('data-pe');
+      if (a === 'close') ov.remove(); else if (a === 'prev') go(-1); else if (a === 'next') go(1); else if (a === 'save') save(false); else if (a === 'savenext') save(true);
+      else if (a === 'reset') { var st = peStart(Object.assign({}, PE.k, { dz: null })); PE.X = st.X; PE.Y = st.Y; PE.Z = st.Z; apply(); } });
+    rng.addEventListener('input', function () { PE.Z = Number(rng.value) || 100; apply(); });
+    var drag = null;
+    card.addEventListener('pointerdown', function (e) { drag = { x: e.clientX, y: e.clientY, X: PE.X, Y: PE.Y, w: card.getBoundingClientRect() }; try { card.setPointerCapture(e.pointerId); } catch (x) {} e.preventDefault(); });
+    card.addEventListener('pointermove', function (e) { if (!drag) return; PE.X = Math.max(0, Math.min(100, drag.X - (e.clientX - drag.x) / drag.w.width * 100)); PE.Y = Math.max(0, Math.min(100, drag.Y - (e.clientY - drag.y) / drag.w.height * 100)); apply(); });
+    ['pointerup', 'pointercancel'].forEach(function (t) { card.addEventListener(t, function () { drag = null; }); });
+    card.addEventListener('wheel', function (e) { e.preventDefault(); PE.Z = Math.max(100, Math.min(300, PE.Z + (e.deltaY < 0 ? 4 : -4))); apply(); }, { passive: false });
+    ov.addEventListener('keydown', function (e) { if (e.key === 'Escape') ov.remove(); });
+    show();
+  }
   window.__wkDeckZoom = function (el) {
+    if (DK.editPrev && isDima()) { var pn0 = ''; try { pn0 = JSON.parse(decodeURIComponent(el.getAttribute('data-wk-pin'))).id; } catch (e) {} if (pn0) { peOpen(pn0); return; } }
     var sh = el.closest('.catalog-item-shell'); if (!sh) return;
     var old = document.getElementById('wkDkZoom'); if (old) old.remove();
     var ov = document.createElement('div'); ov.id = 'wkDkZoom'; ov.className = 'wk-dk-zoom';
@@ -41053,6 +41148,9 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     function onk(e) { if (e.key === 'Escape') close(); }
     ov.addEventListener('click', close); document.addEventListener('keydown', onk); document.body.appendChild(ov);
   };
+  (function () { if (document.getElementById('wkHeatSvg')) return; var d = document.createElement('div'); d.id = 'wkHeatSvg'; d.setAttribute('aria-hidden', 'true'); d.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
+    d.innerHTML = '<svg width="0" height="0"><filter id="wkHeat" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="turbulence" baseFrequency="0.012 0.05" numOctaves="2" seed="3" result="n"><animate attributeName="baseFrequency" dur="5s" values="0.012 0.05;0.016 0.07;0.012 0.05" repeatCount="indefinite"/></feTurbulence><feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/></filter><filter id="wkHeatS" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="turbulence" baseFrequency="0.014 0.055" numOctaves="2" seed="5" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5" xChannelSelector="R" yChannelSelector="G"/></filter></svg>';
+    (document.body || document.documentElement).appendChild(d); })();
   var EM = [[8, 3.1, 0, 4, 12], [18, 2.4, .8, 3, -8], [29, 3.6, 1.6, 5, 10], [40, 2.8, .3, 3, -12], [51, 3.3, 1.2, 4, 8], [62, 2.5, 2, 3, -10], [73, 3.8, .6, 5, 12], [84, 2.9, 1.9, 4, -9], [34, 3.4, 2.4, 3, 6], [67, 3.0, 2.8, 4, -6]];
   var GL = [[14, 12, 0, 12], [78, 18, 1.1, 9], [52, 30, 2.2, 14], [22, 52, 1.7, 10], [84, 58, .5, 13], [60, 74, 2.8, 9], [10, 76, .9, 11], [44, 12, 3.3, 8]];
   function fxHTML(v) {
@@ -41063,7 +41161,8 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
   }
   function cardHTML(k) {
     var c = k.c, u = k.u, X = Number(k.x), Y = Number(k.y), Z = Number(k.z);
-    X = isFinite(X) && String(k.x) !== '' ? Math.max(0, Math.min(100, X)) : 50; Y = isFinite(Y) && String(k.y) !== '' ? Math.max(0, Math.min(100, Y)) : 50; Z = isFinite(Z) && Z >= 100 ? 100 + Math.min(150, Z - 100) * 0.4 : 100;   // в колоде приближение мягче, чем в каталоге: карточка выше и целиком в кадре
+    X = isFinite(X) && String(k.x) !== '' ? Math.max(0, Math.min(100, X)) : 50; Y = isFinite(Y) && String(k.y) !== '' ? Math.max(0, Math.min(100, Y)) : 50; Z = isFinite(Z) && Z >= 100 ? 100 + Math.min(150, Z - 100) * 0.4 : 100;
+    if (k.dz != null && String(k.dz) !== '') { var dX = Number(k.dx), dY = Number(k.dy), dZ = Number(k.dz); X = isFinite(dX) ? Math.max(0, Math.min(100, dX)) : 50; Y = isFinite(dY) ? Math.max(0, Math.min(100, dY)) : 50; Z = isFinite(dZ) ? Math.max(100, Math.min(300, dZ)) : 100; }   // в колоде приближение мягче, чем в каталоге: карточка выше и целиком в кадре
     var ps = '', cls = '', badge = '';
     try { ps = getPrimaryCharacterStatus(c.status); cls = ps ? getCharacterStatusClass(ps) : ''; badge = characterStatusBadge(c.status, ps); } catch (e) {}
     var id = esc(c.id), pin = encodeURIComponent(JSON.stringify({ id: k.key, fx: k.fx || '', amb: k.amb || '', cs: k.cs || '', r: k.r }));
@@ -41104,7 +41203,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
   }
   function isDima() { try { var v = JSON.parse(localStorage.getItem('wkCloudSessionV1') || 'null'); return !!(v && String(v.login) === 'dima'); } catch (e) { return false; } }
   function adminHTML() {
-    return isDima() ? '<div class="wk-dk-admin"><span>Только для Димы</span><button type="button" class="wk-dk-ghost" data-act="adm-timer">Сбросить таймер</button><button type="button" class="wk-dk-ghost" data-act="adm-test">Тестовый набор</button><button type="button" class="wk-dk-ghost' + (DK.fillAll ? ' on' : '') + '" data-act="adm-fill" aria-pressed="' + (DK.fillAll ? 'true' : 'false') + '">' + (DK.fillAll ? 'Показаны все карточки. Вернуть мою коллекцию' : 'Заполнить все коллекции') + '</button></div>' : '';
+    return isDima() ? '<div class="wk-dk-admin"><span>Только для Димы</span><button type="button" class="wk-dk-ghost" data-act="adm-timer">Сбросить таймер</button><button type="button" class="wk-dk-ghost" data-act="adm-test">Тестовый набор</button><button type="button" class="wk-dk-ghost' + (DK.fillAll ? ' on' : '') + '" data-act="adm-fill" aria-pressed="' + (DK.fillAll ? 'true' : 'false') + '">' + (DK.fillAll ? 'Показаны все карточки. Вернуть мою коллекцию' : 'Заполнить все коллекции') + '</button><button type="button" class="wk-dk-ghost' + (DK.editPrev ? ' on' : '') + '" data-act="adm-edit" aria-pressed="' + (DK.editPrev ? 'true' : 'false') + '">' + (DK.editPrev ? 'Правка превью включена. Выключить' : 'Править превью') + '</button></div>' : '';
   }
   function testPack(cards) {
     var ep = cards.filter(function (k) { return k.r === 'epic'; }), lg = cards.filter(function (k) { return k.r === 'legendary'; }), hi = ep.concat(lg), o = [];
@@ -41197,6 +41296,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     else if (b.disabled) { cta.querySelector('.wk-dk-open').outerHTML = '<button type="button" class="wk-dk-open" data-act="open">Открыть набор</button>'; }
   }
   function renderDeck(pane) {
+    pane.classList.toggle('wk-dk-editing', !!(DK.editPrev && isDima()));
     var cards = allCards(), st = load(); migrate(st, cards);
     pane.innerHTML = '<div class="wk-pane-head"><div><h2>Колода</h2><p>Каждая карточка — персонаж в определённой арке: у Луффи их столько, сколько у него фото по аркам. Новые появляются по мере прохождения.</p></div><div class="wk-dk-hbtn"><button type="button" class="wk-dk-reset" data-act="rules" title="Правила и шансы">ℹ Правила</button><button type="button" class="wk-dk-reset" data-act="reset" title="Обнулить коллекцию">Сбросить</button></div></div>' +
       '' + adminHTML() + '<div id="wkDkStats">' + statsHTML(cards, st) + '</div><div id="wkDkPack">' + packHTML(cards, st) + '</div><h3 class="wk-dk-h">Коллекция</h3><div id="wkDkColl">' + collHTML(cards, st) + '</div>' + friendsHTML();
@@ -41242,6 +41342,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
         else if (a === 'fr-more') { DK.frLim += 60; var ff = pane.querySelector('#wkDkFriend'); if (ff) ff.innerHTML = friendBody(); }
         else if (a === 'rules') { showRules(pane); }
         else if (a === 'adm-timer') { if (!isDima()) return; S.last = 0; save(S); var cb = pane.querySelector('#wkDkCta .wk-dk-open'); if (cb) cb.outerHTML = ctaHTML(S); t.textContent = '✓ Таймер сброшен'; setTimeout(function () { t.textContent = 'Сбросить таймер'; }, 1800); }
+        else if (a === 'adm-edit') { if (!isDima()) return; DK.editPrev = !DK.editPrev; renderDeck(pane); }
         else if (a === 'adm-fill') { if (!isDima()) return; DK.fillAll = !DK.fillAll; renderDeck(pane); }
         else if (a === 'adm-test') { if (!isDima()) return; if (DK.pack) finish(pane, true); DK.pack = testPack(C); DK.flipped = 0; pane.querySelector('#wkDkPack').innerHTML = packHTML(C, S); var rw = pane.querySelector('.wk-dk-row'); if (rw && rw.scrollIntoView) rw.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
         else if (a === 'rules-ok') { try { localStorage.setItem('wkDeckRulesSeen', '1'); } catch (e) {} var m = pane.querySelector('#wkDkRules'); if (m) m.remove(); }
