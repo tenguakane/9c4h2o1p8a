@@ -3794,7 +3794,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 328";
+const WIKI_VERSION = "11.11.2026 · 330";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -32213,6 +32213,8 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
       if ((hasAt && !sec.querySelector('[data-field]:not([data-field^="at_"])')) || /^Биография:/.test(t)) sec.setAttribute('data-wk-ad-hide', '1');
     });
   }
+  function adFit(t) { if (!t) return; t.style.height = 'auto'; t.style.height = (t.scrollHeight + 2) + 'px'; }
+  window.addEventListener('resize', function () { [].forEach.call(document.querySelectorAll('.wk-ad-ed textarea[data-ad="text"]'), adFit); });
   function adMount(form) {
     if (form.querySelector('.wk-ad-ed')) return;
     var arcs = window.__wkArcList || [], tas = {};
@@ -32226,9 +32228,10 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     var rows = keys.filter(function (a) { return String(tas[a.key].value || '').trim(); }).map(function (a) { return a.key; });
     function setReal(k, v) { var t = tas[k]; if (!t || t.value === v) return; t.value = v; ['input', 'change'].forEach(function (n) { t.dispatchEvent(new Event(n, { bubbles: true })); }); }
     function render() {
+      setTimeout(function () { [].forEach.call(box.querySelectorAll('textarea[data-ad="text"]'), adFit); }, 0);
       box.innerHTML = rows.map(function (k, i) {
-        return '<div class="wk-ad-row" data-i="' + i + '" style="display:grid;gap:8px;padding:10px;border:1px solid rgba(255,255,255,.14);border-radius:12px"><div style="display:flex;gap:8px;align-items:center"><div style="flex:1;min-width:0">' + arcPickHTML(k ? ((arcs.filter(function (a) { return a.key === k; })[0] || {}).name) : '') + '</div><button type="button" data-ad-del title="Убрать описание">✕</button></div>'
-          + (k ? '<textarea data-ad="text" rows="4" placeholder="Что персонаж делает в этой арке" style="width:100%;min-height:90px;resize:vertical">' + esc(tas[k].value) + '</textarea>' : '<small style="opacity:.7">Найди арку по названию, и появится поле для описания.</small>') + '</div>';
+        return '<div class="wk-ad-row" data-i="' + i + '" style="display:grid;gap:8px;padding:10px;border:1px solid rgba(255,255,255,.14);border-radius:12px"><div style="display:flex;gap:8px;align-items:center"><div style="flex:1;min-width:0">' + arcPickHTML(k ? ((arcs.filter(function (a) { return a.key === k; })[0] || {}).name) : '') + '</div><button type="button" class="wk-ad-del" data-ad-del title="Убрать описание" aria-label="Убрать описание">✕</button></div>'
+          + (k ? '<textarea data-ad="text" rows="1" placeholder="Что персонаж делает в этой арке" style="width:100%;resize:none;overflow:hidden">' + esc(tas[k].value) + '</textarea>' : '<small style="opacity:.7">Найди арку по названию, и появится поле для описания.</small>') + '</div>';
       }).join('') + '<button type="button" class="wk-gal-add" data-ad-add>＋ Добавить описание</button>'
         + '<div class="wk-gal-note">Описание открывается читателю, когда он прошёл арку целиком. Пустые не показываются.</div>';
       [].forEach.call(box.querySelectorAll('.wk-ad-row'), function (row) {
@@ -32254,7 +32257,7 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     });
     box.addEventListener('input', function (e) {
       var t = e.target; if (t.getAttribute('data-ad') !== 'text') return;
-      var i = Number(t.closest('.wk-ad-row').getAttribute('data-i')); if (rows[i]) setReal(rows[i], t.value);
+      adFit(t); var i = Number(t.closest('.wk-ad-row').getAttribute('data-i')); if (rows[i]) setReal(rows[i], t.value);
     });
     render();
   }
@@ -41702,4 +41705,15 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
  -webkit-mask:radial-gradient(circle at 50% 50%,#000 0 .7px,transparent 1.2px) 0 0/6px 6px,radial-gradient(circle at 50% 50%,#000 0 .7px,transparent 1.2px) 3px 3px/6px 6px!important;
  mask:radial-gradient(circle at 50% 50%,#000 0 .7px,transparent 1.2px) 0 0/6px 6px,radial-gradient(circle at 50% 50%,#000 0 .7px,transparent 1.2px) 3px 3px/6px 6px!important;
  -webkit-mask-composite:source-over!important;mask-composite:add!important}
+</style><style id="wk-ad-compact">
+#wikiEditorOverlay#wikiEditorOverlay .wiki-editor-main .wk-ad-ed textarea[data-ad="text"],.wk-ad-ed textarea[data-ad="text"]{min-height:40px!important;line-height:1.45!important;padding:9px 12px!important;box-sizing:border-box;resize:none!important;overflow:hidden!important}
+.wk-ad-ed .wk-ad-row{padding:8px!important;gap:6px!important}
+.wk-ad-ed .wk-ad-del{flex:0 0 auto;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;padding:0!important;border-radius:10px!important;border:1px solid rgba(148,163,184,.28)!important;background:rgba(15,23,42,.6)!important;color:#94a3b8!important;font-size:14px;line-height:1;cursor:pointer;box-shadow:none!important}
+.wk-ad-ed .wk-ad-del:hover{color:#fca5a5!important;border-color:rgba(248,113,113,.55)!important;background:rgba(127,29,29,.25)!important}
+.wk-ad-ed .wk-ad-del:focus-visible{outline:2px solid var(--wk-accent,#d8b45a);outline-offset:2px}
+</style><style id="wk-dk-sb-mobile">
+html body .wk-dk-sbwrap>.wk-pk.wk-dk-sbin,html body .wk-dk-zoombox>.wk-pk.wk-dk-sbin,html.ios-app body .wk-pane .wk-dk-sbwrap>.wk-pk.wk-dk-sbin{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;min-width:0!important;margin:0!important;flex:none!important;transform:none}
+@media (max-width:760px){
+ html body .wk-dk-sbwrap .wk-dk-bkopen{font-size:11px!important;padding:6px 9px!important;max-width:88%;overflow:hidden;text-overflow:ellipsis;bottom:12%!important}
+}
 </style></body></html>
