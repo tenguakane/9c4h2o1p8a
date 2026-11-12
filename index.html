@@ -3794,7 +3794,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 339";
+const WIKI_VERSION = "11.11.2026 · 340";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -42655,7 +42655,7 @@ html body .wk-cut.cs-neg .cs-skip{color:rgba(185,200,230,.6)!important}
 html body .wk-dk-wpw{position:absolute;inset:0;overflow:hidden;background:#d9c7a3}
 html body .character-item.wk-dk-wanted .character-grid-content{background:linear-gradient(rgba(5,8,16,0),rgba(5,8,16,.38) 60%,rgba(5,8,16,.55))!important;padding-top:10px!important;padding-bottom:6px!important}
 html body .character-item.wk-dk-wanted .wk-dk-arc{text-shadow:0 1px 2px rgba(0,0,0,.95),0 0 6px rgba(0,0,0,.8)!important;color:#f3ead6!important}
-html body .character-item.wk-dk-wanted .wk-dk-rarp{background:rgba(10,12,20,.72)!important}
+html body .character-item.wk-dk-wanted .wk-dk-rarp:not(.wk-dk-vp){background:rgba(10,12,20,.72)!important}
 html body .character-item.wk-dk-wanted .character-grid-content{display:flex!important;flex-direction:row!important;align-items:center!important;gap:6px!important;padding-top:4px!important;padding-bottom:5px!important;background:linear-gradient(rgba(5,8,16,0),rgba(5,8,16,.5))!important}
 html body .character-item.wk-dk-wanted .character-grid-status{order:-1;flex:0 0 auto;margin:0!important}
 html body .character-item.wk-dk-wanted .wk-dk-arc{flex:1 1 auto;min-width:0;margin:0!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -42667,4 +42667,13 @@ html body .character-item.wk-dk-wanted .character-name{position:absolute!importa
 .wk-dk-bkarc.r-common{color:#c9d1de}.wk-dk-bkarc.r-rare{color:#8fbcff}.wk-dk-bkarc.r-epic{color:#d4b0ff}.wk-dk-bkarc.r-legendary{color:#f6d36a}
 @media (max-width:760px){.wk-dk-bkarc{font-size:11px;top:7%;left:27%;right:27%}}
 html body .character-item.wk-dk-wanted .wk-dk-arc{display:none!important}
+</style><style id="wk-dk-wanted-neg">
+.character-item[data-wk-var="neg"] .wk-dk-wpw{filter:invert(1) hue-rotate(170deg) saturate(1.35);animation:wkNegHue 7s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.character-item[data-wk-var="neg"] .wk-dk-wpw{animation:none}}
+</style><style id="wk-rf-seam-fix">
+/* Радужная фольга: позиция фона не выходит за 0–100%, иначе виден стык копий градиента */
+html body [data-fx="rainbow-foil"]>.wk-fx-a{background-position:clamp(0%,var(--pos,50%),100%) clamp(0%,var(--pos,50%),100%)}
+html body [data-fx="rainbow-foil"]>.wk-fx-b{background-position:clamp(0%,calc(var(--pos,50%) * .88),88%) clamp(0%,calc(var(--pos,50%) * .88),88%),0 0}
+html body [data-fx="rainbow-foil"]:not(.wk-fx-on)>.wk-fx-a{animation-name:wkRainbowDrift2}
+@keyframes wkRainbowDrift2{0%,100%{background-position:12% 12%}50%{background-position:88% 88%}}
 </style></body></html>
