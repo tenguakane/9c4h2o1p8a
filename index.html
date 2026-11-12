@@ -3630,7 +3630,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 297";
+const WIKI_VERSION = "11.11.2026 · 301";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -40547,6 +40547,20 @@ html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-name,html.ios-app 
 }
 </style>
 <style id="wk-variants-css">
+/* Имена без обрезания, плашка редкости, увеличенная карточка */
+#wkDkColl .character-name,.wk-pk .character-name,.wk-dk-zoom .character-name{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.12!important;word-break:break-word;font-size:clamp(13px,3.6vw,17px)!important;max-height:none!important}
+.wk-dk-rar{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;border:1px solid currentColor;background:rgba(0,0,0,.35);line-height:1.4}
+.wk-dk-rar.r-common{color:#b6c0d4}.wk-dk-rar.r-rare{color:#7db8ff}.wk-dk-rar.r-epic{color:#d3a6ff}.wk-dk-rar.r-legendary{color:#facc15}
+.wk-dk-zoom{position:fixed;inset:0;z-index:100000;background:rgba(3,6,14,.86);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px;cursor:zoom-out}
+.wk-dk-zoombox{width:min(88vw,340px);height:min(72vh,calc(min(88vw,340px) * 1.42))}
+.wk-dk-zoombox>.catalog-item-shell,.wk-dk-zoombox .character-item{width:100%!important;height:100%!important;margin:0!important;max-width:none!important;aspect-ratio:auto!important;pointer-events:none}
+.wk-dk-zoombox .character-name{font-size:24px!important}
+.wk-dk-zoombox .wk-dk-arc{font-size:14px}
+.wk-dk-zoombox .character-grid-card{position:relative!important;overflow:hidden!important}
+.wk-dk-zoombox .character-grid-image-wrap{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important;display:block!important}
+.wk-dk-zoombox .character-grid-image-wrap .character-grid-image{width:100%!important;height:100%!important;object-fit:cover}
+.wk-dk-zoombox .character-grid-content{position:absolute!important;left:0;right:0;bottom:0;padding:44px 16px 16px!important;background:linear-gradient(0deg,rgba(5,8,16,.94),rgba(5,8,16,.7) 55%,transparent);z-index:8;box-sizing:border-box}
+.wk-dk-zoomhint{color:#8492a8;font-size:13px}
 /* Рубашка карточки: компас на фоне «холст и тиснение», редкость и особые версии */
 .wk-pk-bk,.wk-dk-back{--c:#9aa6bb;--c2:#2a3350;--bg1:#18203a;--glow:0px;--to:.5;overflow:hidden;color:var(--c)!important;background:linear-gradient(160deg,var(--bg1),#0b1020)!important;border:2px solid var(--c)!important;box-shadow:inset 0 0 0 5px #0b1020,inset 0 0 0 6px var(--c2),0 0 var(--glow) var(--c)!important}
 .wk-dk-back{position:relative}
@@ -40567,12 +40581,13 @@ html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-name,html.ios-app 
 @keyframes wkBkRot{to{transform:rotate(360deg)}}
 .wk-dk-back small{z-index:3;color:var(--c)}
 /* Голографическая */
-.wk-pk.v-holo .wk-pk-bk{--c:#f0abfc;border:2px solid transparent!important;background:linear-gradient(#141a33,#0b1020) padding-box,conic-gradient(from 0deg,#ff5fa2,#ffd86b,#6bff9e,#62c4ff,#b58cff,#ff5fa2) border-box!important;box-shadow:inset 0 0 0 5px #0b1020,0 0 26px rgba(192,132,252,.55)!important}
+.wk-pk.v-holo .wk-pk-bk{--c:#f0abfc;border:2px solid transparent!important;background:linear-gradient(#141a33,#0b1020) padding-box,conic-gradient(from 0deg,#ff5fa2,#ffd86b,#6bff9e,#62c4ff,#b58cff,#ff5fa2) border-box!important;box-shadow:inset 0 0 0 5px #0b1020,inset 0 0 0 6px #8b6fd8,0 0 26px rgba(192,132,252,.55)!important}
 .wk-pk.v-holo .wk-bkm{color:transparent;filter:none}
 .wk-pk.v-holo .wk-bkm *{stroke:none}
 .wk-pk.v-holo .wk-bkm path:first-of-type,.wk-pk.v-holo .wk-bkm circle{fill:url(#wkHg);stroke:url(#wkHg)}
 .wk-pk.v-holo .wk-bkm circle:nth-of-type(1),.wk-pk.v-holo .wk-bkm circle:nth-of-type(2){fill:none;stroke-width:1.6}
-.wk-pk.v-holo .wk-bkt{color:#fff;background:none;opacity:.7;background-image:linear-gradient(115deg,#ff5fa2,#ffd86b,#6bff9e,#62c4ff,#b58cff,#ff5fa2);background-size:300% 300%;-webkit-mask:radial-gradient(circle at 50% 50%,#000 0 .7px,transparent 1.2px) 0 0/6px 6px;mask:radial-gradient(circle at 50% 50%,#000 0 .7px,transparent 1.2px) 0 0/6px 6px}
+.wk-pk.v-holo .wk-bkt{color:#fff;opacity:.55;background:linear-gradient(115deg,#c2417f,#c9a227,#2fa86b,#2f8fc9,#7c5cd6,#c2417f) 0 0/300% 300%;-webkit-mask:radial-gradient(circle at 50% 50%,#000 0 .7px,transparent 1.2px) 0 0/6px 6px;mask:radial-gradient(circle at 50% 50%,#000 0 .7px,transparent 1.2px) 0 0/6px 6px;animation:wkHoloDots 8s ease-in-out infinite alternate}
+@keyframes wkHoloDots{0%{background-position:0 0}100%{background-position:100% 100%}}
 .wk-pk.v-holo .wk-pk-bk::after{background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.5) 48%,transparent 66%)!important;background-size:260% 100%!important;mix-blend-mode:overlay;animation:wkBkSw 3.2s linear infinite!important}
 .wk-pk.v-holo.r-legendary .wk-pk-bk::before{background:repeating-conic-gradient(rgba(240,171,252,.28) 0 6deg,transparent 6deg 24deg)}
 /* Пламенная (внутренний ключ gold) */
@@ -40650,14 +40665,15 @@ html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-name,html.ios-app 
 .character-item[data-wk-var="neg"]::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;background:radial-gradient(2.6px 2.6px at 14% 18%,#fff,transparent 65%),radial-gradient(2px 2px at 78% 12%,#fff,transparent 65%),radial-gradient(3px 3px at 62% 38%,#e0f2fe,transparent 65%),radial-gradient(2.4px 2.4px at 40% 8%,#fff,transparent 65%),radial-gradient(2.2px 2.2px at 92% 40%,#fff,transparent 65%),radial-gradient(1.3px 1.3px at 26% 55%,#fff,transparent 60%),radial-gradient(1.8px 1.8px at 88% 62%,#e0f2fe,transparent 60%),radial-gradient(1.2px 1.2px at 46% 80%,#fff,transparent 60%),radial-gradient(1.5px 1.5px at 10% 90%,#fff,transparent 60%),radial-gradient(1.6px 1.6px at 72% 88%,#e0f2fe,transparent 60%);animation:wkNegStars 2.4s ease-in-out infinite alternate}
 @keyframes wkNegStars{0%{opacity:.25}100%{opacity:1}}
 /* Голографическая и пламенная версии: постоянный перелив поверх фото (плюс эффект при наклоне) */
-.character-item[data-wk-var="holo"],.character-item[data-wk-var="gold"]{position:relative;overflow:hidden}
+.character-item[data-wk-var="holo"],.character-item[data-wk-var="gold"]{box-shadow:0 0 18px rgba(255,100,30,.7);position:relative;overflow:hidden}
 .character-item[data-wk-var="holo"]::before{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(115deg,#ff5fa2,#ffd86b,#6bff9e,#62c4ff,#b58cff,#ff5fa2);background-size:300% 300%;mix-blend-mode:color;opacity:.55;animation:wkHoloMove 6s linear infinite}
 .character-item[data-wk-var="holo"]::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.55) 48%,transparent 60%);background-size:260% 100%;mix-blend-mode:overlay;animation:wkNegSheen 4s linear infinite}
 @keyframes wkHoloMove{0%{background-position:0% 50%}100%{background-position:300% 50%}}
 .character-item[data-wk-var="gold"] .character-grid-image{filter:saturate(1.25) contrast(1.05) brightness(1.02)}
-.character-item[data-wk-var="gold"]::before{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(0deg,rgba(255,90,30,.55),rgba(160,30,10,.18) 55%,rgba(255,150,50,.12));mix-blend-mode:soft-light}
-.character-item[data-wk-var="gold"]::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:inherit;box-shadow:inset 0 0 0 2px rgba(255,138,61,.95),inset 0 -26px 30px -8px rgba(255,90,30,.65);background:radial-gradient(ellipse 60% 26% at 50% 104%,rgba(255,215,100,.9),transparent 72%),radial-gradient(ellipse 26% 22% at 20% 102%,rgba(255,150,50,.8),transparent 72%),radial-gradient(ellipse 26% 24% at 82% 102%,rgba(255,150,50,.8),transparent 72%);animation:wkFlame 2.2s ease-in-out infinite alternate}
-@keyframes wkFlame{0%{filter:brightness(.9);background-position:0 3px,0 0,0 4px}100%{filter:brightness(1.25);background-position:0 -4px,0 -3px,0 -2px}}
+.character-item[data-wk-var="gold"]::before{content:"";position:absolute;inset:0;z-index:9;pointer-events:none;background:radial-gradient(circle,#fff0b0 0 1.6px,#ffb347 2px,transparent 3.2px) 0 0/44px 58px,radial-gradient(circle,#ffd27a 0 1.2px,transparent 2.6px) 22px 29px/58px 76px;animation:wkEmber 3.2s linear infinite}
+@keyframes wkEmber{0%{background-position:0 0,22px 29px}100%{background-position:0 -58px,22px -47px}}
+.character-item[data-wk-var="gold"]::after{content:"";position:absolute;inset:0;z-index:9;pointer-events:none;border-radius:inherit;box-shadow:inset 0 0 0 3px rgba(255,138,61,1),inset 0 0 22px rgba(255,90,30,.7);background:radial-gradient(ellipse 85% 48% at 50% 108%,rgba(255,200,80,.8),transparent 74%),radial-gradient(ellipse 36% 44% at 16% 106%,rgba(255,110,30,.75),transparent 74%),radial-gradient(ellipse 36% 50% at 86% 106%,rgba(255,110,30,.75),transparent 74%),linear-gradient(0deg,rgba(255,70,20,.38),rgba(190,40,10,.14) 50%,transparent 80%);animation:wkFlame 2.2s ease-in-out infinite alternate}
+@keyframes wkFlame{0%{filter:brightness(.85)}100%{filter:brightness(1.3)}}
 .character-item[data-wk-var="gold"] .wk-fl-sp{position:absolute;z-index:5;bottom:6px;width:3px;height:3px;border-radius:50%;background:#ffd27a;box-shadow:0 0 5px #ff9a3d;pointer-events:none;animation:wkBkUp 3s linear infinite}
 .wk-pk.is-var.v-holo:not(.on) .wk-pk-bk{border-color:#f0abfc;box-shadow:inset 0 0 0 5px #0b1020,0 0 30px rgba(240,171,252,.6)}
 .wk-pk.is-var.v-neg:not(.on) .wk-pk-bk{border-color:#bae6fd;box-shadow:inset 0 0 0 5px #0b1020,0 0 30px rgba(186,230,253,.6)}
@@ -40906,7 +40922,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
   var RORD = ['legendary', 'epic', 'rare', 'common'];
   var RPROB = { legendary: 0.04, epic: 0.10, rare: 0.24 };
   var COOL = 3600000;
-  var VAR = { holo: { n: 'Голографическая', fx: 'rainbow-foil', w: 55, ic: '🌈' }, gold: { n: 'Пламенная', fx: '', w: 30, ic: '🔥' }, neg: { n: 'Негативная', fx: '', w: 15, ic: '🌌' } };
+  var VAR = { holo: { n: 'Голографическая', fx: 'rainbow-foil', w: 55 }, gold: { n: 'Пламенная', fx: '', w: 30 }, neg: { n: 'Негативная', fx: '', w: 15 } };
   var VKEYS = ['holo', 'gold', 'neg'];
   var VCH = { epic: 0.25, legendary: 0.40 };   // шанс, что повторка станет особой версией
   var NEWW = 3, PITY = 10;                     // новая карта в 3 раза вероятнее; легендарная гарантирована раз в 10 наборов
@@ -40997,6 +41013,17 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     return out.map(function (k) { return { key: k.key, isNew: !st.owned[k.key] }; });
   }
   function cardByKey(cards, key) { var vi = String(key).indexOf('#'); if (vi > 0) { var b = cardByKey(cards, key.slice(0, vi)), v = key.slice(vi + 1); return b && VAR[v] ? mkVar(b, v) : null; } for (var i = 0; i < cards.length; i++) if (cards[i].key === key) return cards[i]; return null; }
+  window.__wkDeckZoom = function (el) {
+    var sh = el.closest('.catalog-item-shell'); if (!sh) return;
+    var old = document.getElementById('wkDkZoom'); if (old) old.remove();
+    var ov = document.createElement('div'); ov.id = 'wkDkZoom'; ov.className = 'wk-dk-zoom';
+    var cl = sh.cloneNode(true); cl.querySelectorAll('[onclick]').forEach(function (n) { n.removeAttribute('onclick'); });
+    var box = document.createElement('div'); box.className = 'wk-dk-zoombox'; box.appendChild(cl);
+    var hint = document.createElement('div'); hint.className = 'wk-dk-zoomhint'; hint.textContent = 'Нажми, чтобы закрыть'; ov.appendChild(box); ov.appendChild(hint);
+    function close() { ov.remove(); document.removeEventListener('keydown', onk); }
+    function onk(e) { if (e.key === 'Escape') close(); }
+    ov.addEventListener('click', close); document.addEventListener('keydown', onk); document.body.appendChild(ov);
+  };
   function cardHTML(k) {
     var c = k.c, u = k.u, X = Number(k.x), Y = Number(k.y), Z = Number(k.z);
     X = isFinite(X) && String(k.x) !== '' ? Math.max(0, Math.min(100, X)) : 50; Y = isFinite(Y) && String(k.y) !== '' ? Math.max(0, Math.min(100, Y)) : 50; Z = isFinite(Z) && Z >= 100 ? 100 + Math.min(150, Z - 100) * 0.4 : 100;   // в колоде приближение мягче, чем в каталоге: карточка выше и целиком в кадре
@@ -41004,7 +41031,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     try { ps = getPrimaryCharacterStatus(c.status); cls = ps ? getCharacterStatusClass(ps) : ''; badge = characterStatusBadge(c.status, ps); } catch (e) {}
     var id = esc(c.id), pin = encodeURIComponent(JSON.stringify({ id: k.key, fx: k.fx || '', amb: k.amb || '', cs: k.cs || '', r: k.r }));
     var img = '<img class="character-grid-image" src="' + esc(u) + '" alt="' + esc(c.name) + '" style="object-position:' + X + '% ' + Y + '% !important;transform:scale(' + (Z / 100) + ') !important;transform-origin:' + X + '% ' + Y + '% !important" loading="lazy" decoding="async" data-wiki-fallbacks="[]" onerror="if(!window.__wikiTryPortraitImage||!window.__wikiTryPortraitImage(this)){this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';}"><div class="character-grid-image-fallback" style="display:none" aria-hidden="true">👤</div>';
-    return '<div class="catalog-item-shell character-grid-shell' + (k.r !== 'common' ? ' wk-r-' + k.r : '') + '"><div class="character-item character-status-item character-grid-card ' + cls + '" data-wk-pin="' + pin + '" data-wk-rarity="' + k.r + '"' + (k.v ? ' data-wk-var="' + k.v + '"' : '') + '  data-wk-rarity-label="' + RN4[k.r] + ' карточка" role="button" tabindex="0" aria-label="Открыть статью: ' + esc(c.name) + '" onclick="openCharacterArticle(\'' + id + '\')"><div class="character-grid-image-wrap">' + img + '</div><div class="character-grid-content"><div class="character-name card-title" title="' + esc(c.name) + '">' + esc(c.name) + '</div><div class="wk-dk-arc">' + esc(k.arc.name) + '</div><div class="character-grid-status">' + (badge || '') + '</div></div></div></div>';
+    return '<div class="catalog-item-shell character-grid-shell' + (k.r !== 'common' ? ' wk-r-' + k.r : '') + '"><div class="character-item character-status-item character-grid-card ' + cls + '" data-wk-pin="' + pin + '" data-wk-rarity="' + k.r + '"' + (k.v ? ' data-wk-var="' + k.v + '"' : '') + '  data-wk-rarity-label="' + RN4[k.r] + ' карточка" role="button" tabindex="0" aria-label="Показать карточку: ' + esc(c.name) + '" onclick="window.__wkDeckZoom&&window.__wkDeckZoom(this)"><div class="character-grid-image-wrap">' + img + '</div><div class="character-grid-content"><div class="character-name card-title" title="' + esc(c.name) + '">' + esc(c.name) + '</div><div class="wk-dk-arc">' + esc(k.arc.name) + '</div><div class="character-grid-status"><span class="wk-dk-rar r-' + k.r + '">' + RN4[k.r] + '</span></div></div></div></div>';
   }
   function bar(h, n, cls) { return '<span class="wk-dk-bar ' + (cls || '') + '"><i style="width:' + (n ? Math.round(h / n * 100) : 0) + '%"></i></span>'; }
   function statsHTML(cards, st) {
@@ -41021,7 +41048,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     var rows = Object.keys(sg).sort(function (a, b) { return sg[a].ch - sg[b].ch; }).map(function (k) { var g = sg[k]; return '<tr><td>' + esc(k) + '</td><td class="n">' + g.h + ' / ' + g.n + '</td><td>' + bar(g.h, g.n) + '</td></tr>'; }).join('');
     return '<div class="wk-dk-sum"><div class="wk-dk-ring" style="--p:' + pc + '"><b>' + pc + '%</b><span>собрано</span></div><div class="wk-dk-nums"><div><b>' + have + ' / ' + tot + '</b><span>карточек в коллекции</span></div><div><b>' + st.packs + '</b><span>' + plural(st.packs, 'набор открыт', 'набора открыто', 'наборов открыто') + '</span></div><div><b>' + dup + '</b><span>' + plural(dup, 'повтор', 'повтора', 'повторов') + '</span></div></div>' +
       '<div class="wk-dk-rar">' + RORD.map(function (r) { return '<div class="r-' + r + '"><span>' + RN4[r] + '</span>' + bar(rr[r][0], rr[r][1], 'r-' + r) + '<em>' + rr[r][0] + '/' + rr[r][1] + '</em></div>'; }).join('') + '</div></div>' +
-      '<div class="wk-dk-vars">' + VKEYS.map(function (v) { return '<div class="v-' + v + '"><span>' + VAR[v].ic + ' ' + VAR[v].n + '</span>' + bar(vh[v], vt, 'v-' + v) + '<em>' + vh[v] + '/' + vt + '</em></div>'; }).join('') + '</div><p class="wk-dk-pity">' + pityTxt + '</p>' +
+      '<div class="wk-dk-vars">' + VKEYS.map(function (v) { return '<div class="v-' + v + '"><span>' + VAR[v].n + '</span>' + bar(vh[v], vt, 'v-' + v) + '<em>' + vh[v] + '/' + vt + '</em></div>'; }).join('') + '</div><p class="wk-dk-pity">' + pityTxt + '</p>' +
       '<details class="wk-dk-sagas"><summary>Прогресс по сагам</summary><table><tbody>' + rows + '</tbody></table></details>';
   }
   function collHTML(cards, st) {
@@ -41029,12 +41056,12 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     var l = base.slice().sort(function (a, b) { var oa = st.owned[a.key] ? 0 : 1, ob = st.owned[b.key] ? 0 : 1; return oa - ob || (a.arc.start || 9e9) - (b.arc.start || 9e9) || (num(a.c.chapter) || 9e9) - (num(b.c.chapter) || 9e9); });
     l = l.filter(function (k) { var o = !!st.owned[k.key]; return (DK.f === 'all' || (DK.f === 'have' ? o : !o)) && (!DK.r || k.r === DK.r); });
     var chips = '<div class="wk-dk-filters"><div>' + [['all', 'Все'], ['have', 'Есть'], ['miss', 'Нет']].map(function (x) { return '<button type="button" data-f="' + x[0] + '" class="' + (DK.f === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div><div>' + [['', 'Любая'], ['legendary', 'Легендарные'], ['epic', 'Эпические'], ['rare', 'Редкие'], ['common', 'Обычные']].map(function (x) { return '<button type="button" data-r="' + x[0] + '" class="' + (DK.r === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div>';
-    chips += '<div class="wk-dk-filters wk-dk-vf"><div>' + [['', 'Основные'], ['holo', '🌈 Голографическая'], ['gold', '🔥 Пламенная'], ['neg', '🌌 Негативная']].map(function (x) { return '<button type="button" data-v="' + x[0] + '" class="' + (DK.v === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div>';
+    chips += '<div class="wk-dk-filters wk-dk-vf"><div>' + [['', 'Основные'], ['holo', 'Голографическая'], ['gold', 'Пламенная'], ['neg', 'Негативная']].map(function (x) { return '<button type="button" data-v="' + x[0] + '" class="' + (DK.v === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div>';
     var cap = DK.lim;
     var cards2 = l.slice(0, cap).map(function (k) {
       var n = st.owned[k.key] || 0;
       if (!n) return '<div class="wk-dk-slot"><div class="wk-dk-empty r-' + k.r + '"><b>?</b><span>' + esc(k.arc.name) + '</span></div></div>';
-      return '<div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + (k.v ? '<em class="wk-dk-vb v-' + k.v + '">' + VAR[k.v].ic + '</em>' : '') + (n > 1 ? '<em class="wk-dk-x">×' + n + '</em>' : '') + '</div>';
+      return '<div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + (n > 1 ? '<em class="wk-dk-x">×' + n + '</em>' : '') + '</div>';
     }).join('');
     return chips + '<div class="character-list character-display-grid wk-dk-grid">' + (cards2 || '<div class="wk-tl-none">Здесь пока пусто.</div>') + '</div>' + (l.length > cap ? '<div class="wk-dk-morewrap"><button type="button" class="wk-dk-ghost" data-act="more">Показать ещё ' + Math.min(60, l.length - cap) + ' (всего ' + l.length + ')</button></div>' : '');
   }
@@ -41072,7 +41099,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     shown.sort(function (a, b) { return RORD.indexOf(a.k.r) - RORD.indexOf(b.k.r) || (a.k.v ? 0 : 1) - (b.k.v ? 0 : 1) || (a.k.arc.start || 9e9) - (b.k.arc.start || 9e9); });
     var lim = DK.frLim, name = (window.__wikiAccounts || []).filter(function (a) { return a.login === DK.fr; }).map(function (a) { return a.name; })[0] || DK.fr;
     var stat = '<div class="wk-dk-fstat"><b>' + esc(name) + '</b><span>наборов: ' + (d.deck.packs || 0) + '</span><span>🟡 ' + rc.legendary + '</span><span>🟣 ' + rc.epic + '</span><span>🔵 ' + rc.rare + '</span><span>⚪ ' + rc.common + '</span><span>особых: ' + vc + '</span>' + (hidden ? '<span>🔒 скрыто: ' + hidden + '</span>' : '') + '</div>';
-    var tiles = shown.slice(0, lim).map(function (x) { var k = x.k; return '<div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + (k.v ? '<em class="wk-dk-vb v-' + k.v + '">' + VAR[k.v].ic + '</em>' : '') + (x.n > 1 ? '<em class="wk-dk-x">×' + x.n + '</em>' : '') + '</div>'; }).join('');
+    var tiles = shown.slice(0, lim).map(function (x) { var k = x.k; return '<div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + (x.n > 1 ? '<em class="wk-dk-x">×' + x.n + '</em>' : '') + '</div>'; }).join('');
     var sp = '';
     for (var i = 0; i < Math.min(hidden, 6); i++) sp += '<div class="wk-dk-slot"><div class="wk-dk-spoil"><b>🔒</b><span>Спойлер</span><small>Карточка скрыта, пока ты не дойдёшь до этой арки</small></div></div>';
     return stat + '<div class="character-list character-display-grid wk-dk-grid">' + tiles + sp + '</div>' + (hidden > 6 ? '<p class="wk-dk-fnote">…и ещё ' + (hidden - 6) + ' скрытых карточек-спойлеров.</p>' : '') + (shown.length > lim ? '<div class="wk-dk-morewrap"><button type="button" class="wk-dk-ghost" data-act="fr-more">Показать ещё ' + Math.min(60, shown.length - lim) + '</button></div>' : '');
@@ -41105,7 +41132,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
       '<li><b>Гарантия:</b> если ' + (PITY - 1) + ' наборов подряд без легендарной, следующий набор содержит её.</li>' +
       '<li><b>Повторки эпических и легендарных</b> могут превратиться в особую версию: у эпической шанс ' + pct(VCH.epic) + '%, у легендарной ' + pct(VCH.legendary) + '%. Иначе повторка просто остаётся в счётчике повторов.</li>' +
       '</ol>' +
-      '<div class="wk-dk-mcol">' + VKEYS.map(function (v) { return '<div class="v-' + v + '"><b>' + VAR[v].ic + ' ' + VAR[v].n + '</b><span>' + (v === 'holo' ? 'эффект «радужная фольга, яркая»' : v === 'gold' ? 'пламя на фото: красно-оранжевый жар и летящие искры' : 'негатив с лёгким переливом и звёздами') + '. Шанс среди особых версий: ' + vs(v) + '%.</span></div>'; }).join('') + '</div>' +
+      '<div class="wk-dk-mcol">' + VKEYS.map(function (v) { return '<div class="v-' + v + '"><b>' + VAR[v].n + '</b><span>' + (v === 'holo' ? 'эффект «радужная фольга, яркая»' : v === 'gold' ? 'пламя на фото: красно-оранжевый жар и летящие искры' : 'негатив с лёгким переливом и звёздами') + '. Шанс среди особых версий: ' + vs(v) + '%.</span></div>'; }).join('') + '</div>' +
       '<p class="wk-dk-mnote">Особые версии собираются отдельно: в коллекции есть вкладки «Голографическая», «Пламенная» и «Негативная».</p>' +
       '<button type="button" class="wk-dk-open" data-act="rules-ok">Понятно</button></div></div>';
   }
@@ -41121,7 +41148,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     return '<div class="wk-dk-stage"><div class="wk-dk-row">' + DK.pack.map(function (x, i) {
       var k = cardByKey(cards, x.key); if (!k) return '';
       var vv = x.v && VAR[x.v] ? x.v : '', kk = vv ? mkVar(k, vv) : k, fresh = vv ? x.vNew : x.isNew;
-      return '<div class="wk-pk r-' + k.r + (vv ? ' is-var v-' + vv : '') + '" data-i="' + i + '" style="--i:' + i + '"><div class="wk-pk-in"><div class="wk-pk-bk">' + backInner(k.r, vv) + '</div><div class="wk-pk-fr">' + cardHTML(kk) + '<em class="wk-dk-new' + (fresh ? '' : ' dup') + '">' + (fresh ? 'НОВАЯ' : 'повтор') + '</em><em class="wk-dk-rn r-' + k.r + '">' + (vv ? VAR[vv].ic + ' ' + VAR[vv].n : RN4[k.r]) + '</em>' + '</div></div></div>';
+      return '<div class="wk-pk r-' + k.r + (vv ? ' is-var v-' + vv : '') + '" data-i="' + i + '" style="--i:' + i + '"><div class="wk-pk-in"><div class="wk-pk-bk">' + backInner(k.r, vv) + '</div><div class="wk-pk-fr">' + cardHTML(kk) + '<em class="wk-dk-new' + (fresh ? '' : ' dup') + '">' + (fresh ? 'НОВАЯ' : 'повтор') + '</em><em class="wk-dk-rn r-' + k.r + '">' + (vv ? VAR[vv].n : RN4[k.r]) + '</em>' + '</div></div></div>';
     }).join('') + '</div>' + (function () { var n = DK.pack.filter(function (x) { return x.v; }); return n.length ? '<p class="wk-dk-convnote">' + n.map(function (x) { var k = cardByKey(cards, x.key); return '✨ Повторка «' + esc(k ? k.c.name : '') + '» стала картой «' + VAR[x.v].n + '»!'; }).join('<br>') + '</p>' : ''; })() + '<div class="wk-dk-cta"><button type="button" class="wk-dk-open" data-act="flipall">Перевернуть все</button><button type="button" class="wk-dk-ghost" data-act="done">В коллекцию</button></div></div>';
   }
   function tick(pane) {
