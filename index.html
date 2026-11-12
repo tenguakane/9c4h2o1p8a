@@ -3630,7 +3630,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 291";
+const WIKI_VERSION = "11.11.2026 · 295";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -22372,6 +22372,7 @@ img.wk-fade.wk-loaded{opacity:1}
   onStorageWrite(function (key) {
     if (key === STORAGE_KEY) { var ss = me || session(); if (ss && canEditRole(ss.role)) { pendingSeq++; quietSet(PENDING_KEY, String(Date.now())); } }
     if (!me) return;
+    if (key === 'onePieceWikiDeckV1') scheduleDeckPush();
     if (PERSONAL_KEYS.indexOf(key) >= 0) {
       if (me.role === 'guest') {
         if (key === PROGRESS_KEY) { var gv = lsGet(PROGRESS_KEY); if (gv) quietSet(GUEST_PROGRESS_KEY, gv); }
@@ -22380,6 +22381,31 @@ img.wk-fade.wk-loaded{opacity:1}
       schedulePersonalPush(key);
     } else if (key === STORAGE_KEY && canEditRole(me.role)) scheduleContentPush();
   });
+
+  /* =========================================================
+     КОЛОДА: копия коллекции лежит в tops/{uid}.deck, чтобы другие участники могли её посмотреть
+     ========================================================= */
+  var deckTimer = 0;
+  function scheduleDeckPush() { if (!me || me.role === 'guest' || !db) return; clearTimeout(deckTimer); deckTimer = setTimeout(pushDeck, 1500); }
+  function pushDeck() {
+    deckTimer = 0; if (!me || me.role === 'guest' || !db) return Promise.resolve();
+    var d; try { d = JSON.parse(lsGet('onePieceWikiDeckV1') || 'null'); } catch (e) { d = null; }
+    if (!d || !d.owned) return Promise.resolve();
+    var slim = { packs: d.packs || 0, pity: d.pity || 0, owned: d.owned };
+    return fb.fs.setDoc(fb.fs.doc(db, 'tops', me.uid), { login: me.login, name: me.name, deck: JSON.stringify(slim), deckAt: new Date().toISOString() }, { merge: true }).catch(function (e) { console.warn('Колода:', e); });
+  }
+  window.__wkDeckCloud = {
+    enabled: function () { return !!(me && db && fb && me.role !== 'guest' || me && db && fb); },
+    load: function () {
+      if (!db || !fb) return Promise.resolve({});
+      return fb.fs.getDocs(fb.fs.collection(db, 'tops')).then(function (qs) {
+        var by = {}; qs.forEach(function (d) { var x = d.data(); if (x && x.login && x.deck) { try { by[x.login] = { name: x.name, deck: JSON.parse(x.deck), at: x.deckAt }; } catch (e) {} } });
+        return by;
+      });
+    },
+    push: pushDeck
+  };
+  setTimeout(scheduleDeckPush, 6000);
 
   /* =========================================================
      ТОПЫ: tops/{uid} = { login, name, lists, updatedAt }
@@ -22405,7 +22431,7 @@ img.wk-fade.wk-loaded{opacity:1}
     clearTimeout(topsTimer); topsTimer = 0;
     if (!topsDirty || !me || me.role === 'guest' || !db) return Promise.resolve();
     var lists = topsDirty; topsDirty = null;
-    return fb.fs.setDoc(fb.fs.doc(db, 'tops', me.uid), { login: me.login, name: me.name, lists: JSON.stringify(lists), updatedAt: new Date().toISOString() })
+    return fb.fs.setDoc(fb.fs.doc(db, 'tops', me.uid), { login: me.login, name: me.name, lists: JSON.stringify(lists), updatedAt: new Date().toISOString() }, { merge: true })
       .then(function () { setSync('ok'); }, function (e) { topsDirty = topsDirty || lists; setSync('error'); console.warn(e); });
   }
   window.__wikiTopsStore = {
@@ -40477,7 +40503,11 @@ body.wiki-editor-open .wk-add-btn{display:none}
 .wk-dk-stage{display:flex;flex-direction:column;align-items:center;gap:16px;margin:18px 0 8px;padding:22px 12px;border-radius:20px;border:1px solid var(--line,rgba(148,163,184,.25));background:radial-gradient(ellipse at 50% 0,color-mix(in srgb,var(--wk-accent,#d8b45a) 14%,transparent),transparent 70%),color-mix(in srgb,var(--text,#e5e7eb) 3%,transparent)}
 .wk-dk-stage.idle{flex-direction:row;flex-wrap:wrap;justify-content:center}
 .wk-dk-back,.wk-pk-bk{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border-radius:16px;color:var(--wk-accent,#d8b45a);background:repeating-linear-gradient(45deg,rgba(255,255,255,.04) 0 6px,transparent 6px 12px),linear-gradient(160deg,#1c2540,#0b1020);border:2px solid var(--wk-accent,#d8b45a);box-shadow:inset 0 0 0 5px #0b1020,inset 0 0 0 6px color-mix(in srgb,var(--wk-accent,#d8b45a) 55%,transparent),0 14px 30px -14px #000}
-.wk-dk-back.big{width:150px;height:210px}.wk-dk-back span,.wk-pk-bk span{font-size:44px}.wk-dk-back small{font-size:10px;letter-spacing:.12em}
+.wk-dk-back.big{width:150px;height:210px}.wk-anc{display:block;width:48px;height:48px;line-height:0}
+.wk-anc svg{display:block;width:100%;height:100%}
+.wk-dk-back,.wk-pk-bk{position:relative}
+.wk-dk-back .wk-anc{width:60px;height:60px}
+.wk-dk-back small{position:absolute;left:0;right:0;bottom:16px;text-align:center;padding-left:.12em}.wk-dk-back small{font-size:10px;letter-spacing:.12em}
 .wk-dk-cta{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;max-width:360px}.wk-dk-cta p{margin:0;font-size:13px;color:var(--muted,#aeb7c3)}
 .wk-dk-stage:not(.idle) .wk-dk-cta{flex-direction:row;flex-wrap:wrap;justify-content:center}
 .wk-dk-open{padding:12px 26px;border-radius:999px;border:1px solid var(--wk-accent,#d8b45a);background:linear-gradient(180deg,color-mix(in srgb,var(--wk-accent,#d8b45a) 40%,transparent),color-mix(in srgb,var(--wk-accent,#d8b45a) 18%,transparent));color:var(--text,#f3f6fb);font:inherit;font-weight:700;font-size:15px;cursor:pointer;min-height:44px}
@@ -40517,6 +40547,22 @@ html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-name,html.ios-app 
 }
 </style>
 <style id="wk-variants-css">
+.wk-dk-fnote{margin:10px 0;font-size:13px;color:var(--muted,#aeb7c3)}
+.wk-dk-fstat{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin:10px 0;padding:10px 14px;border-radius:12px;border:1px solid var(--line,rgba(148,163,184,.3));font-size:13px}
+.wk-dk-fstat b{font-size:15px}
+.wk-dk-spoil{height:100%;min-height:150px;aspect-ratio:3/4.3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:12px;border-radius:16px;border:1px dashed rgba(148,163,184,.5);background:repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0 8px,transparent 8px 16px);color:var(--muted,#aeb7c3)}
+.wk-dk-spoil b{font-size:30px}
+.wk-dk-spoil span{font-weight:800;color:var(--text,#e5e7eb)}
+.wk-dk-spoil small{font-size:11.5px;line-height:1.35}
+.wk-dk-admin{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0 2px;padding:8px 12px;border:1px dashed rgba(96,165,250,.55);border-radius:12px;font-size:12.5px;color:#93c5fd}
+.wk-dk-admin .wk-dk-ghost{padding:8px 14px;min-height:36px;font-size:13px}
+/* Карточки колоды: фото заполняет рамку (как в каталоге), подпись поверх низа */
+@media (min-width:761px){
+.wk-pane .wk-dk-slot .character-item,.wk-pane .wk-pk-fr .character-item{position:relative!important;display:block!important;height:100%!important;aspect-ratio:3/4.3;padding:0!important;overflow:hidden}
+.wk-pane .wk-dk-slot .character-grid-image-wrap,.wk-pane .wk-pk-fr .character-grid-image-wrap{position:absolute!important;inset:0;width:100%!important;height:100%!important;margin:0!important;border-radius:0!important;overflow:hidden}
+.wk-pane .wk-dk-slot .character-grid-image,.wk-pane .wk-pk-fr .character-grid-image{position:absolute!important;inset:0;width:100%!important;height:100%!important;object-fit:cover}
+.wk-pane .wk-dk-slot .character-grid-content,.wk-pane .wk-pk-fr .character-grid-content{position:absolute!important;left:0;right:0;bottom:0;z-index:5;padding:30px 10px 10px!important;background:linear-gradient(180deg,transparent,rgba(5,8,16,.88) 55%)}
+}
 .wk-dk-hbtn{display:flex;gap:8px;flex-shrink:0}
 .wk-dk-vars{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px 16px;margin:10px 0 4px}
 .wk-dk-vars>div{display:grid;grid-template-columns:130px 1fr auto;align-items:center;gap:8px;font-size:12.5px}
@@ -40817,7 +40863,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
   function rollVar() { var r = Math.random() * 100, a = 0; for (var i = 0; i < VKEYS.length; i++) { a += VAR[VKEYS[i]].w; if (r < a) return VKEYS[i]; } return 'holo'; }
   function mkVar(k, v) { return Object.assign({}, k, { key: k.key + '#' + v, v: v, fx: VAR[v].fx, amb: '', cs: '', base: k }); }
   function varCards(cards) { var o = []; cards.forEach(function (k) { if (k.r === 'epic' || k.r === 'legendary') VKEYS.forEach(function (v) { o.push(mkVar(k, v)); }); }); return o; }
-  var DK = { f: 'all', r: '', v: '', pack: null, flipped: 0, lim: 60, timer: 0 };
+  var DK = { fr: '', frLoading: false, frData: null, frAt: 0, frLim: 60, f: 'all', r: '', v: '', pack: null, flipped: 0, lim: 60, timer: 0 };
   function load() {
     var v; try { v = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { v = {}; }
     if (!v || typeof v !== 'object') v = {};
@@ -40856,7 +40902,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     var over = null; extra.forEach(function (x) { if (x && x.arc === fa.id && url(x.u)) over = x; });
     if (baseU || over) {
       var o = over || {};
-      push(fa, { u: url(o.u) || baseU, x: o.x != null && o.x !== '' ? o.x : raw.person_image_position_x, y: o.y != null && o.y !== '' ? o.y : raw.person_image_position, z: o.z != null && o.z !== '' ? o.z : raw.person_image_zoom, fx: o.fx || raw.card_fx, amb: o.amb || raw.card_shine, cs: o.cs || raw.card_style }, true);
+      push(fa, { u: url(o.u) || baseU, x: o.x != null && o.x !== '' ? o.x : raw.person_image_position_x, y: o.y != null && o.y !== '' ? o.y : raw.person_image_position, z: o.z != null && o.z !== '' ? o.z : raw.person_image_zoom, fx: '', amb: '', cs: '' }, true);
       seen[fa.id] = 1;
     }
     extra.forEach(function (x) {
@@ -40864,7 +40910,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
       var ai = info[x.arc]; if (!ai) return;
       try { if (window.__wikiArcDone && !window.__wikiArcDone(x.arc)) return; } catch (e) {}
       seen[x.arc] = 1;
-      push(ai, { u: url(x.u), x: x.x, y: x.y, z: x.z, fx: x.fx || raw.card_fx, amb: x.amb || raw.card_shine, cs: x.cs || raw.card_style }, false);
+      push(ai, { u: url(x.u), x: x.x, y: x.y, z: x.z, fx: '', amb: '', cs: '' }, false);
     });
     return out;
   }
@@ -40903,7 +40949,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
   function cardByKey(cards, key) { var vi = String(key).indexOf('#'); if (vi > 0) { var b = cardByKey(cards, key.slice(0, vi)), v = key.slice(vi + 1); return b && VAR[v] ? mkVar(b, v) : null; } for (var i = 0; i < cards.length; i++) if (cards[i].key === key) return cards[i]; return null; }
   function cardHTML(k) {
     var c = k.c, u = k.u, X = Number(k.x), Y = Number(k.y), Z = Number(k.z);
-    X = isFinite(X) && String(k.x) !== '' ? Math.max(0, Math.min(100, X)) : 50; Y = isFinite(Y) && String(k.y) !== '' ? Math.max(0, Math.min(100, Y)) : 50; Z = isFinite(Z) && Z >= 100 ? Math.min(250, Z) : 100;
+    X = isFinite(X) && String(k.x) !== '' ? Math.max(0, Math.min(100, X)) : 50; Y = isFinite(Y) && String(k.y) !== '' ? Math.max(0, Math.min(100, Y)) : 50; Z = isFinite(Z) && Z >= 100 ? 100 + Math.min(150, Z - 100) * 0.4 : 100;   // в колоде приближение мягче, чем в каталоге: карточка выше и целиком в кадре
     var ps = '', cls = '', badge = '';
     try { ps = getPrimaryCharacterStatus(c.status); cls = ps ? getCharacterStatusClass(ps) : ''; badge = characterStatusBadge(c.status, ps); } catch (e) {}
     var id = esc(c.id), pin = encodeURIComponent(JSON.stringify({ id: k.key, fx: k.fx || '', amb: k.amb || '', cs: k.cs || '', r: k.r }));
@@ -40942,6 +40988,51 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     }).join('');
     return chips + '<div class="character-list character-display-grid wk-dk-grid">' + (cards2 || '<div class="wk-tl-none">Здесь пока пусто.</div>') + '</div>' + (l.length > cap ? '<div class="wk-dk-morewrap"><button type="button" class="wk-dk-ghost" data-act="more">Показать ещё ' + Math.min(60, l.length - cap) + ' (всего ' + l.length + ')</button></div>' : '');
   }
+  function isDima() { try { var v = JSON.parse(localStorage.getItem('wkCloudSessionV1') || 'null'); return !!(v && String(v.login) === 'dima'); } catch (e) { return false; } }
+  function adminHTML() {
+    return isDima() ? '<div class="wk-dk-admin"><span>Только для Димы</span><button type="button" class="wk-dk-ghost" data-act="adm-timer">⏱ Сбросить таймер</button><button type="button" class="wk-dk-ghost" data-act="adm-test">🧪 Тестовый набор</button></div>' : '';
+  }
+  function testPack(cards) {
+    var ep = cards.filter(function (k) { return k.r === 'epic'; }), lg = cards.filter(function (k) { return k.r === 'legendary'; }), hi = ep.concat(lg), o = [];
+    if (ep.length) o.push({ key: pick(ep).key, isNew: true, test: true });
+    if (lg.length) o.push({ key: pick(lg).key, isNew: true, test: true });
+    if (hi.length) VKEYS.forEach(function (v) { o.push({ key: pick(hi).key, isNew: false, v: v, vNew: true, test: true }); });
+    return o;
+  }
+  function myLogin() { try { var v = JSON.parse(localStorage.getItem('wkCloudSessionV1') || 'null'); return v && v.login || ''; } catch (e) { return ''; } }
+  function charKnown(id) { try { return characters.some(function (c) { return c.id === id; }); } catch (e) { return true; } }
+  function friendsHTML() {
+    var cl = window.__wkDeckCloud; if (!cl || !cl.enabled()) return '';
+    var me = myLogin(), acc = (window.__wikiAccounts || []).filter(function (a) { return a.login !== me; });
+    if (!acc.length) return '';
+    return '<h3 class="wk-dk-h">Колоды участников</h3><div class="wk-dk-filters"><div>' + acc.map(function (a) { return '<button type="button" data-fr="' + esc(a.login) + '" class="' + (DK.fr === a.login ? 'active' : '') + '">' + esc(a.name) + '</button>'; }).join('') + '</div></div><div id="wkDkFriend">' + friendBody() + '</div>';
+  }
+  function friendBody() {
+    if (!DK.fr) return '<p class="wk-dk-fnote">Выбери участника, чтобы посмотреть его коллекцию. Карточки с персонажами, до которых ты ещё не дошёл, скрыты.</p>';
+    if (DK.frLoading) return '<p class="wk-dk-fnote">Загружаю колоду…</p>';
+    var d = DK.frData && DK.frData[DK.fr];
+    if (!d || !d.deck) return '<p class="wk-dk-fnote">У этого участника пока нет колоды или она ещё не синхронизировалась.</p>';
+    var C = allCards(), owned = d.deck.owned || {}, shown = [], hidden = 0, rc = { legendary: 0, epic: 0, rare: 0, common: 0 }, vc = 0;
+    Object.keys(owned).forEach(function (key) {
+      if (!owned[key]) return;
+      var k = cardByKey(C, key);
+      if (k) { shown.push({ k: k, n: owned[key] }); if (!k.v) rc[k.r]++; else vc++; }
+      else if (charKnown(String(key).split('@')[0])) hidden++;
+    });
+    shown.sort(function (a, b) { return RORD.indexOf(a.k.r) - RORD.indexOf(b.k.r) || (a.k.v ? 0 : 1) - (b.k.v ? 0 : 1) || (a.k.arc.start || 9e9) - (b.k.arc.start || 9e9); });
+    var lim = DK.frLim, name = (window.__wikiAccounts || []).filter(function (a) { return a.login === DK.fr; }).map(function (a) { return a.name; })[0] || DK.fr;
+    var stat = '<div class="wk-dk-fstat"><b>' + esc(name) + '</b><span>наборов: ' + (d.deck.packs || 0) + '</span><span>🟡 ' + rc.legendary + '</span><span>🟣 ' + rc.epic + '</span><span>🔵 ' + rc.rare + '</span><span>⚪ ' + rc.common + '</span><span>особых: ' + vc + '</span>' + (hidden ? '<span>🔒 скрыто: ' + hidden + '</span>' : '') + '</div>';
+    var tiles = shown.slice(0, lim).map(function (x) { var k = x.k; return '<div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + (k.v ? '<em class="wk-dk-vb v-' + k.v + '">' + VAR[k.v].ic + '</em>' : '') + (x.n > 1 ? '<em class="wk-dk-x">×' + x.n + '</em>' : '') + '</div>'; }).join('');
+    var sp = '';
+    for (var i = 0; i < Math.min(hidden, 6); i++) sp += '<div class="wk-dk-slot"><div class="wk-dk-spoil"><b>🔒</b><span>Спойлер</span><small>Карточка скрыта, пока ты не дойдёшь до этой арки</small></div></div>';
+    return stat + '<div class="character-list character-display-grid wk-dk-grid">' + tiles + sp + '</div>' + (hidden > 6 ? '<p class="wk-dk-fnote">…и ещё ' + (hidden - 6) + ' скрытых карточек-спойлеров.</p>' : '') + (shown.length > lim ? '<div class="wk-dk-morewrap"><button type="button" class="wk-dk-ghost" data-act="fr-more">Показать ещё ' + Math.min(60, shown.length - lim) + '</button></div>' : '');
+  }
+  function loadFriends(pane, force) {
+    var cl = window.__wkDeckCloud; if (!cl) return;
+    if (!force && DK.frData && Date.now() - DK.frAt < 60000) { var f = pane.querySelector('#wkDkFriend'); if (f) f.innerHTML = friendBody(); return; }
+    DK.frLoading = true; var f0 = pane.querySelector('#wkDkFriend'); if (f0) f0.innerHTML = friendBody();
+    cl.load().then(function (by) { DK.frData = by; DK.frAt = Date.now(); }, function () { DK.frData = {}; }).then(function () { DK.frLoading = false; var f = pane.querySelector('#wkDkFriend'); if (f) f.innerHTML = friendBody(); });
+  }
   function pct(x) { return Math.round(x * 100); }
   function rulesHTML() {
     var P = RPROB, vs = function (v) { return pct(VAR[v].w / 100); };
@@ -40966,11 +41057,11 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     return left > 0 ? '<button type="button" class="wk-dk-open" data-act="open" disabled aria-disabled="true">Следующий набор через <b class="wk-dk-left">' + fmt(left) + '</b></button>' : '<button type="button" class="wk-dk-open" data-act="open">Открыть набор</button>';
   }
   function packHTML(cards, st) {
-    if (!DK.pack) return '<div class="wk-dk-stage idle"><div class="wk-dk-back big"><span>⚓</span><small>ONE PIECE WIKI</small></div><div class="wk-dk-cta" id="wkDkCta">' + ctaHTML(st) + '<p>5 карточек: персонаж и арка, в которой он на фото. Набор можно открывать раз в час. В каждом есть хотя бы одна редкая или лучше.</p></div></div>';
+    if (!DK.pack) return '<div class="wk-dk-stage idle"><div class="wk-dk-back big"><span class="wk-anc"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="32" cy="11" r="5.5"/><path d="M32 17v40M21 27h22M10 36c1 14 11 21 22 21s21-7 22-21M4 41l6-7 6 7M48 41l6-7 6 7"/></svg></span><small>ONE PIECE WIKI</small></div><div class="wk-dk-cta" id="wkDkCta">' + ctaHTML(st) + '<p>5 карточек: персонаж и арка, в которой он на фото. Набор можно открывать раз в час. В каждом есть хотя бы одна редкая или лучше.</p></div></div>';
     return '<div class="wk-dk-stage"><div class="wk-dk-row">' + DK.pack.map(function (x, i) {
       var k = cardByKey(cards, x.key); if (!k) return '';
       var vv = x.v && VAR[x.v] ? x.v : '', kk = vv ? mkVar(k, vv) : k, fresh = vv ? x.vNew : x.isNew;
-      return '<div class="wk-pk r-' + k.r + (vv ? ' is-var v-' + vv : '') + '" data-i="' + i + '" style="--i:' + i + '"><div class="wk-pk-in"><div class="wk-pk-bk"><span>⚓</span></div><div class="wk-pk-fr">' + cardHTML(kk) + '<em class="wk-dk-new' + (fresh ? '' : ' dup') + '">' + (fresh ? 'НОВАЯ' : 'повтор') + '</em><em class="wk-dk-rn r-' + k.r + '">' + (vv ? VAR[vv].ic + ' ' + VAR[vv].n : RN4[k.r]) + '</em>' + '</div></div></div>';
+      return '<div class="wk-pk r-' + k.r + (vv ? ' is-var v-' + vv : '') + '" data-i="' + i + '" style="--i:' + i + '"><div class="wk-pk-in"><div class="wk-pk-bk"><span class="wk-anc"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="32" cy="11" r="5.5"/><path d="M32 17v40M21 27h22M10 36c1 14 11 21 22 21s21-7 22-21M4 41l6-7 6 7M48 41l6-7 6 7"/></svg></span></div><div class="wk-pk-fr">' + cardHTML(kk) + '<em class="wk-dk-new' + (fresh ? '' : ' dup') + '">' + (fresh ? 'НОВАЯ' : 'повтор') + '</em><em class="wk-dk-rn r-' + k.r + '">' + (vv ? VAR[vv].ic + ' ' + VAR[vv].n : RN4[k.r]) + '</em>' + '</div></div></div>';
     }).join('') + '</div>' + (function () { var n = DK.pack.filter(function (x) { return x.v; }); return n.length ? '<p class="wk-dk-convnote">' + n.map(function (x) { var k = cardByKey(cards, x.key); return '✨ Повторка «' + esc(k ? k.c.name : '') + '» стала картой «' + VAR[x.v].n + '»!'; }).join('<br>') + '</p>' : ''; })() + '<div class="wk-dk-cta"><button type="button" class="wk-dk-open" data-act="flipall">Перевернуть все</button><button type="button" class="wk-dk-ghost" data-act="done">В коллекцию</button></div></div>';
   }
   function tick(pane) {
@@ -40984,16 +41075,27 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
   function renderDeck(pane) {
     var cards = allCards(), st = load(); migrate(st, cards);
     pane.innerHTML = '<div class="wk-pane-head"><div><h2>Колода</h2><p>Каждая карточка — персонаж в определённой арке: у Луффи их столько, сколько у него фото по аркам. Новые появляются по мере прохождения.</p></div><div class="wk-dk-hbtn"><button type="button" class="wk-dk-reset" data-act="rules" title="Правила и шансы">ℹ Правила</button><button type="button" class="wk-dk-reset" data-act="reset" title="Обнулить коллекцию">Сбросить</button></div></div>' +
-      '<div id="wkDkStats">' + statsHTML(cards, st) + '</div><div id="wkDkPack">' + packHTML(cards, st) + '</div><h3 class="wk-dk-h">Коллекция</h3><div id="wkDkColl">' + collHTML(cards, st) + '</div>';
+      '' + adminHTML() + '<div id="wkDkStats">' + statsHTML(cards, st) + '</div><div id="wkDkPack">' + packHTML(cards, st) + '</div><h3 class="wk-dk-h">Коллекция</h3><div id="wkDkColl">' + collHTML(cards, st) + '</div>' + friendsHTML();
     clearInterval(DK.timer); DK.timer = setInterval(function () { tick(pane); }, 1000);
     try { if (!localStorage.getItem('wkDeckRulesSeen')) showRules(pane); } catch (e) {}
+    try {
+      var cl = window.__wkDeckCloud, ml = myLogin();
+      if (cl && cl.enabled() && ml && !pane.__restored) {
+        pane.__restored = 1;
+        cl.load().then(function (by) {
+          var mine = by[ml], loc = load();
+          if (mine && mine.deck && (mine.deck.packs || 0) > (loc.packs || 0)) { loc.owned = mine.deck.owned || {}; loc.packs = mine.deck.packs || 0; loc.pity = mine.deck.pity || 0; save(loc); renderDeck(pane); }
+        }, function () {});
+      }
+    } catch (e) {}
     if (!pane.__dk) {
       pane.__dk = 1;
       pane.addEventListener('click', function (e) {
-        var t = e.target.closest && e.target.closest('[data-act],[data-f],[data-r],[data-v],.wk-pk'); if (!t) return;
+        var t = e.target.closest && e.target.closest('[data-act],[data-f],[data-r],[data-v],[data-fr],.wk-pk'); if (!t) return;
         var C = allCards(), S = load();
         if (t.classList.contains('wk-pk')) { if (!t.classList.contains('on')) { t.classList.add('on'); DK.flipped++; if (DK.pack && DK.flipped >= DK.pack.length) finish(pane); } return; }
         if (t.hasAttribute('data-f')) { DK.f = t.getAttribute('data-f'); DK.lim = 60; pane.querySelector('#wkDkColl').innerHTML = collHTML(C, S); return; }
+        if (t.hasAttribute('data-fr')) { DK.fr = t.getAttribute('data-fr'); DK.frLim = 60; [].forEach.call(pane.querySelectorAll('[data-fr]'), function (x) { x.classList.toggle('active', x === t); }); loadFriends(pane, false); return; }
         if (t.hasAttribute('data-v')) { DK.v = t.getAttribute('data-v'); DK.lim = 60; pane.querySelector('#wkDkColl').innerHTML = collHTML(C, S); return; }
         if (t.hasAttribute('data-r')) { DK.r = t.getAttribute('data-r'); DK.lim = 60; pane.querySelector('#wkDkColl').innerHTML = collHTML(C, S); return; }
         var a = t.getAttribute('data-act');
@@ -41013,7 +41115,10 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
           [].forEach.call(pane.querySelectorAll('.wk-pk:not(.on)'), function (el, i) { setTimeout(function () { el.classList.add('on'); DK.flipped++; if (DK.pack && DK.flipped >= DK.pack.length) finish(pane); }, i * 260); });
         } else if (a === 'more') { DK.lim += 60; pane.querySelector('#wkDkColl').innerHTML = collHTML(C, S); }
         else if (a === 'done') { finish(pane, true); }
+        else if (a === 'fr-more') { DK.frLim += 60; var ff = pane.querySelector('#wkDkFriend'); if (ff) ff.innerHTML = friendBody(); }
         else if (a === 'rules') { showRules(pane); }
+        else if (a === 'adm-timer') { if (!isDima()) return; S.last = 0; save(S); var cb = pane.querySelector('#wkDkCta .wk-dk-open'); if (cb) cb.outerHTML = ctaHTML(S); t.textContent = '✓ Таймер сброшен'; setTimeout(function () { t.textContent = '⏱ Сбросить таймер'; }, 1800); }
+        else if (a === 'adm-test') { if (!isDima()) return; if (DK.pack) finish(pane, true); DK.pack = testPack(C); DK.flipped = 0; pane.querySelector('#wkDkPack').innerHTML = packHTML(C, S); var rw = pane.querySelector('.wk-dk-row'); if (rw && rw.scrollIntoView) rw.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
         else if (a === 'rules-ok') { try { localStorage.setItem('wkDeckRulesSeen', '1'); } catch (e) {} var m = pane.querySelector('#wkDkRules'); if (m) m.remove(); }
         else if (a === 'reset') { if (confirm('Обнулить всю коллекцию карточек? Это нельзя отменить.')) { save({ owned: {}, packs: 0, pity: 0, last: S.last }); DK.pack = null; renderDeck(pane); } }
       });
