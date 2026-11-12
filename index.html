@@ -3794,7 +3794,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 330";
+const WIKI_VERSION = "11.11.2026 · 331";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -22566,7 +22566,7 @@ img.wk-fade.wk-loaded{opacity:1}
     deckTimer = 0; if (!me || me.role === 'guest' || !db) return Promise.resolve();
     var d; try { d = JSON.parse(lsGet('onePieceWikiDeckV1') || 'null'); } catch (e) { d = null; }
     if (!d || !d.owned) return Promise.resolve();
-    var slim = { packs: d.packs || 0, pity: d.pity || 0, owned: d.owned };
+    var slim = { packs: d.packs || 0, pity: d.pity || 0, owned: d.owned, tr: d.tr || {}, got: d.got || {} };
     return fb.fs.setDoc(fb.fs.doc(db, 'tops', me.uid), { login: me.login, name: me.name, deck: JSON.stringify(slim), deckAt: new Date().toISOString() }, { merge: true }).catch(function (e) { console.warn('Колода:', e); });
   }
   window.__wkDeckCloud = {
@@ -22579,6 +22579,22 @@ img.wk-fade.wk-loaded{opacity:1}
       });
     },
     push: pushDeck
+  };
+  /* ОБМЕН: trades/{id} = { from, to, fromEmail, toEmail, give[], want[], note, status: pending|accepted|declined|cancelled, appliedFrom } */
+  window.__wkTrades = {
+    enabled: function () { return !!(me && db && fb && me.role !== 'guest'); },
+    list: function () {
+      return fb.fs.getDocs(fb.fs.collection(db, 'trades')).then(function (qs) {
+        var out = []; qs.forEach(function (d) { var x = d.data() || {}; x.id = d.id; if (x.from === me.login || x.to === me.login) out.push(x); });
+        out.sort(function (a, b) { return String(b.createdAt || '').localeCompare(String(a.createdAt || '')); }); return out;
+      });
+    },
+    create: function (o) {
+      return fb.fs.addDoc(fb.fs.collection(db, 'trades'), { from: me.login, fromName: me.name, fromUid: me.uid, fromEmail: emailOf(me.login).toLowerCase(), to: o.to, toEmail: emailOf(o.to).toLowerCase(), give: o.give || [], want: o.want || [], note: String(o.note || '').slice(0, 140), status: 'pending', createdAt: new Date().toISOString(), appliedFrom: false });
+    },
+    accept: function (id) { return fb.fs.updateDoc(fb.fs.doc(db, 'trades', id), { status: 'accepted', answeredAt: new Date().toISOString() }); },
+    setStatus: function (id, st) { return fb.fs.updateDoc(fb.fs.doc(db, 'trades', id), { status: st, answeredAt: new Date().toISOString() }); },
+    markApplied: function (id) { return fb.fs.updateDoc(fb.fs.doc(db, 'trades', id), { appliedFrom: true }); }
   };
   setTimeout(scheduleDeckPush, 6000);
 
@@ -41460,13 +41476,14 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
   function collHTML(cards, st) {
     var base = DK.v && VAR[DK.v] ? varCards(cards).filter(function (k) { return k.v === DK.v; }) : cards;
     if (DK.k) base = base.filter(function (k) { return (k.kind || 'char') === DK.k; });
-    var l = base.slice().sort(function (a, b) { var oa = st.owned[a.key] ? 0 : 1, ob = st.owned[b.key] ? 0 : 1; return oa - ob || (a.arc.start || 9e9) - (b.arc.start || 9e9) || (num(a.c.chapter) || 9e9) - (num(b.c.chapter) || 9e9); });
+    var GT = st.got || {};
+    var l = base.slice().sort(function (a, b) { var oa = st.owned[a.key] ? 0 : 1, ob = st.owned[b.key] ? 0 : 1; return oa - ob || (DK.sort === 'new' ? (GT[b.key] || 0) - (GT[a.key] || 0) : 0) || (DK.sort === 'rar' ? RORD.indexOf(a.r) - RORD.indexOf(b.r) : 0) || (a.arc.start || 9e9) - (b.arc.start || 9e9) || (num(a.c.chapter) || 9e9) - (num(b.c.chapter) || 9e9); });
     if (DK.v && (DK.r === 'rare' || DK.r === 'common')) DK.r = '';
     l = l.filter(function (k) { var o = !!st.owned[k.key]; return (DK.f === 'all' || (DK.f === 'have' ? o : !o)) && (!DK.r || k.r === DK.r); });
     var rbtn = [['', 'Любая'], ['legendary', 'Легенды'], ['epic', 'Эпики'], ['rare', 'Редкие'], ['common', 'Обычные']].filter(function (x) { return !DK.v || !x[0] || x[0] === 'legendary' || x[0] === 'epic'; });
     var chips = '<div class="wk-dk-filters wk-dk-vf"><div>' + [['', 'Основные'], ['holo', 'Голографическая'], ['gold', 'Пламенная'], ['neg', 'Негативная']].map(function (x) { return '<button type="button" data-v="' + x[0] + '" class="' + (DK.v === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div>';
     chips += '<div class="wk-dk-filters"><div>' + [['all', 'Все'], ['have', 'Есть'], ['miss', 'Нет']].map(function (x) { return '<button type="button" data-f="' + x[0] + '" class="' + (DK.f === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div><div>' + rbtn.map(function (x) { return '<button type="button" data-r="' + x[0] + '" class="' + (DK.r === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div>';
-    chips = '<div class="wk-dk-sticky">' + chips.replace('<div class="wk-dk-filters">', '<div class="wk-dk-filters wk-dk-kf"><div>' + [['', 'Все типы'], ['char', 'Персонажи'], ['fruit', 'Плоды'], ['useful', 'Статьи']].map(function (x) { return '<button type="button" data-kind="' + x[0] + '" class="' + (DK.k === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div><div class="wk-dk-filters">') + '<span class="wk-dk-cnt">' + l.length + ' ' + plural(l.length, 'карточка', 'карточки', 'карточек') + '</span></div>';
+    chips = '<div class="wk-dk-sticky">' + chips.replace('<div class="wk-dk-filters">', '<div class="wk-dk-filters wk-dk-kf"><div>' + [['', 'Все типы'], ['char', 'Персонажи'], ['fruit', 'Плоды'], ['useful', 'Статьи']].map(function (x) { return '<button type="button" data-kind="' + x[0] + '" class="' + (DK.k === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div><div class="wk-dk-filters">') + '<div class="wk-dk-sortw" role="group" aria-label="Сортировка">' + [['', 'По сюжету'], ['new', 'Сначала новые'], ['rar', 'По редкости']].map(function (x) { return '<button type="button" data-dks="' + x[0] + '" class="' + ((DK.sort || '') === x[0] ? 'on' : '') + '" aria-pressed="' + ((DK.sort || '') === x[0]) + '">' + x[1] + '</button>'; }).join('') + '</div><span class="wk-dk-cnt">' + l.length + ' ' + plural(l.length, 'карточка', 'карточки', 'карточек') + '</span></div>';
     var PS = 60, pages = Math.max(1, Math.ceil(l.length / PS)); DK.pg = Math.max(0, Math.min(pages - 1, DK.pg | 0));
     var cards2 = l.slice(DK.pg * PS, DK.pg * PS + PS).map(function (k) {
       var n = st.owned[k.key] || 0;
@@ -41518,7 +41535,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     });
     shown.sort(function (a, b) { return RORD.indexOf(a.k.r) - RORD.indexOf(b.k.r) || (a.k.v ? 0 : 1) - (b.k.v ? 0 : 1) || (a.k.arc.start || 9e9) - (b.k.arc.start || 9e9); });
     var lim = DK.frLim, name = (window.__wikiAccounts || []).filter(function (a) { return a.login === DK.fr; }).map(function (a) { return a.name; })[0] || DK.fr;
-    var stat = '<div class="wk-dk-fstat"><b>' + esc(name) + '</b><span>наборов: ' + (d.deck.packs || 0) + '</span><span>🟡 ' + rc.legendary + '</span><span>🟣 ' + rc.epic + '</span><span>🔵 ' + rc.rare + '</span><span>⚪ ' + rc.common + '</span><span>особых: ' + vc + '</span>' + (hidden ? '<span>🔒 скрыто: ' + hidden + '</span>' : '') + '</div>';
+    var stat = '<div class="wk-dk-fstat"><b>' + esc(name) + '</b><span>наборов: ' + (d.deck.packs || 0) + '</span><span>🟡 ' + rc.legendary + '</span><span>🟣 ' + rc.epic + '</span><span>🔵 ' + rc.rare + '</span><span>⚪ ' + rc.common + '</span><span>особых: ' + vc + '</span>' + (hidden ? '<span>🔒 скрыто: ' + hidden + '</span>' : '') + (txApi() ? '<button type="button" class="wk-tx-btn pri" data-tx="compose">Предложить обмен</button>' : '') + '</div>';
     var tiles = shown.slice(0, lim).map(function (x) { var k = x.k; return '<div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + (x.n > 1 ? '<em class="wk-dk-x">×' + x.n + '</em>' : '') + '</div>'; }).join('');
     var sp = '';
     for (var i = 0; i < Math.min(hidden, 6); i++) sp += '<div class="wk-dk-slot"><div class="wk-dk-spoil"><b>🔒</b><span>Спойлер</span><small>Карточка скрыта, пока ты не дойдёшь до этой арки</small></div></div>';
@@ -41627,11 +41644,277 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     });
     ov.addEventListener('click', close); document.addEventListener('keydown', onk); document.body.appendChild(ov);
   }
+  /* ======== Разделы колоды: переработка повторок, участники, обмен ======== */
+  DK.tab = DK.tab || 'me';
+  var TX = { trades: [], at: 0, loading: false, err: '', comp: null, last: null, busy: {} };
+  var RECIPE = [
+    { from: 'common', n: 5, to: 'rare', p: 0.75 },
+    { from: 'rare', n: 5, to: 'epic', p: 0.60 },
+    { from: 'epic', n: 5, to: 'legendary', p: 0.45 },
+    { from: 'legendary', n: 3, to: 'var', p: 0.50 }
+  ];
+  var RPL = { common: 'обычных', rare: 'редких', epic: 'эпиков', legendary: 'легенд' };
+  var RC = { common: '#9aa6b8', rare: '#5b9cff', epic: '#b47cff', legendary: '#f2c230' };
+  function txApi() { var a = window.__wkTrades; return a && a.enabled && a.enabled() && myLogin() ? a : null; }
+  function accName(login) { return ((window.__wikiAccounts || []).filter(function (a) { return a.login === login; })[0] || {}).name || login; }
+  function cName(k) { return k && k.c ? (k.c.name || k.c.title || k.c.id) : '—'; }
+  function reservedMap(st) {
+    var me = myLogin(), r = {}, done = (st && st.tr) || {};
+    TX.trades.forEach(function (t) {
+      if (t.from !== me || done[t.id]) return;
+      if (t.status === 'pending' || (t.status === 'accepted' && !t.appliedFrom)) (t.give || []).forEach(function (k) { r[k] = (r[k] || 0) + 1; });
+    });
+    return r;
+  }
+  function freeCnt(st, key, res) { return (st.owned[key] || 0) - ((res || reservedMap(st))[key] || 0); }
+  function addCard(st, key, n) { if (!key || key === 'null' || key === 'undefined') return; var v = (st.owned[key] || 0) + n; if (v > 0) st.owned[key] = v; else delete st.owned[key]; }
+  function pickPref(list, st) {
+    if (!list.length) return null;
+    var fresh = list.filter(function (k) { return !st.owned[k.key]; });
+    var l = fresh.length ? fresh : list; return l[Math.floor(Math.random() * l.length)];
+  }
+  /* ---- переработка ---- */
+  function dupPool(C, st, r, res) {
+    var out = [];
+    C.forEach(function (k) { if (k.r !== r) return; var n = (st.owned[k.key] || 0) - 1 - (res[k.key] || 0); if (n > 0) out.push({ k: k, n: n }); });
+    return out.sort(function (a, b) { return b.n - a.n; });
+  }
+  function varTargets(C, st) {
+    var all = [], fresh = [];
+    C.forEach(function (k) {
+      if (k.kind || !st.owned[k.key] || !(k.r === 'epic' || k.r === 'legendary')) return;
+      VKEYS.forEach(function (v) { var vk = mkVar(k, v); all.push(vk); if (!st.owned[vk.key]) fresh.push(vk); });
+    });
+    return fresh.length ? fresh : all;
+  }
+  function craftHTML(C, st) {
+    if (st.__fake) return '<p class="wk-dk-fnote">Выключи «Заполнить все» в админской плашке: переработка работает только с настоящей колодой.</p>';
+    var res = reservedMap(st);
+    var rows = RECIPE.map(function (rc, i) {
+      var pool = dupPool(C, st, rc.from, res), have = pool.reduce(function (a, x) { return a + x.n; }, 0), times = Math.floor(have / rc.n);
+      var canVar = rc.to !== 'var' || varTargets(C, st).length > 0;
+      var toTxt = rc.to === 'var' ? '1 особая версия' : '1 ' + RN4[rc.to].toLowerCase().replace('обычная', 'обычная');
+      var dis = times < 1 || !canVar;
+      return '<div class="wk-tx-rc" style="--a:' + RC[rc.from] + ';--b:' + (rc.to === 'var' ? '#ff7ab6' : RC[rc.to]) + '">' +
+        '<div class="wk-tx-rcf"><span class="wk-tx-dot" style="background:var(--a)"></span><b>' + rc.n + ' ' + RPL[rc.from] + '</b><i>→</i><span class="wk-tx-dot' + (rc.to === 'var' ? ' rb' : '') + '" style="background:var(--b)"></span><b>' + toTxt + '</b></div>' +
+        '<div class="wk-tx-rcm"><span class="wk-tx-p"><em style="width:' + Math.round(rc.p * 100) + '%"></em></span><span>шанс ' + Math.round(rc.p * 100) + '%</span><span>повторок: <b>' + have + '</b>' + (times ? ' · хватит на ' + times : '') + '</span></div>' +
+        '<button type="button" class="wk-tx-btn' + (dis ? '' : ' pri') + '" data-tx="craft" data-i="' + i + '"' + (dis ? ' disabled' : '') + '>' + (!canVar ? 'Нет подходящих персонажей' : times < 1 ? 'Нужно ещё ' + (rc.n - have) : 'Переработать') + '</button></div>';
+    }).join('');
+    var last = '';
+    if (TX.last) {
+      var L = TX.last, k = cardByKey(C, L.key);
+      last = '<div class="wk-tx-res ' + (L.ok ? 'ok' : 'no') + '"><div class="wk-tx-resc">' + (k ? '<div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + '</div>' : '') + '</div><div class="wk-tx-rest"><b>' + (L.ok ? 'Получилось!' : 'Не повезло') + '</b><p>' + (L.ok ? 'Выпала: ' : 'Утешительная карточка: ') + esc(cName(k)) + (k && k.v ? ' (' + VAR[k.v].n + ')' : '') + (L.fresh ? ' — новая в коллекции' : ' — такая уже была, теперь на копию больше') + '</p><small>Ушло в переработку: ' + esc(L.used.join(', ')) + '</small></div></div>';
+    }
+    return '<div class="wk-tx-intro">Лишние копии можно переплавить в карточку повыше. Если не повезёт, вместо неё придёт утешительная карточка той же редкости, что ты отдавал. Новые карточки выпадают охотнее, чем повторки. Последняя копия и карточки, выставленные на обмен, не тратятся.</div>' + last + '<div class="wk-tx-rcs">' + rows + '</div>';
+  }
+  function doCraft(i) {
+    var C = allCards(), st = load(); if (st.__fake) return;
+    var rc = RECIPE[i], res = reservedMap(st), pool = dupPool(C, st, rc.from, res), need = rc.n, used = {};
+    if (pool.reduce(function (a, x) { return a + x.n; }, 0) < need) return;
+    while (need > 0) { pool.sort(function (a, b) { return b.n - a.n; }); var x = pool[0]; x.n--; need--; used[x.k.key] = (used[x.k.key] || 0) + 1; }
+    var ok = Math.random() < rc.p, out;
+    if (ok) out = rc.to === 'var' ? pickPref(varTargets(C, st), st) : pickPref(C.filter(function (k) { return k.r === rc.to; }), st);
+    if (!out) { ok = false; out = pickPref(C.filter(function (k) { return k.r === rc.from; }), st); }
+    Object.keys(used).forEach(function (q) { addCard(st, q, -used[q]); });
+    var fresh = !st.owned[out.key]; addCard(st, out.key, 1); st.got = st.got || {}; st.got[out.key] = Date.now();
+    st.crafted = (st.crafted || 0) + 1; save(st);
+    TX.last = { ok: ok, key: out.key, fresh: fresh, used: Object.keys(used).map(function (q) { var k = cardByKey(C, q); return cName(k) + (used[q] > 1 ? ' ×' + used[q] : ''); }) };
+  }
+  /* ---- обмен: загрузка и применение ---- */
+  function refreshTrades(pane, force) {
+    var api = txApi(); if (!api || TX.loading) return;
+    if (!force && Date.now() - TX.at < 30000) return;
+    TX.loading = true;
+    api.list().then(function (l) { TX.trades = l; TX.at = Date.now(); TX.err = ''; }, function (e) { TX.err = (e && e.code) === 'permission-denied' ? 'rules' : 'net'; })
+      .then(function () { TX.loading = false; applyAccepted(pane); if (pane && pane.isConnected) paintTabs(pane); });
+  }
+  function applyAccepted(pane) {
+    var me = myLogin(), st = load(); if (st.__fake) return;
+    st.tr = st.tr || {}; var got = [], api = txApi();
+    TX.trades.forEach(function (t) {
+      if (t.from !== me || t.status !== 'accepted' || st.tr[t.id]) return;
+      (t.give || []).forEach(function (k) { if (st.owned[k]) addCard(st, k, -1); });
+      (t.want || []).forEach(function (k) { addCard(st, k, 1); st.got = st.got || {}; st.got[k] = Date.now(); });
+      st.tr[t.id] = 'from'; got.push(t);
+    });
+    if (!got.length) return;
+    save(st);
+    got.forEach(function (t) { if (api) api.markApplied(t.id).catch(function () {}); t.appliedFrom = true; });
+    txToast(got.map(function (t) { return accName(t.to) + ' принял(а) обмен: ты получил(а) ' + (t.want || []).length + ', отдал(а) ' + (t.give || []).length; }).join('<br>'));
+    if (pane && pane.isConnected && DK.tab === 'me') renderDeck(pane);
+  }
+  function txToast(html) {
+    var d = document.createElement('div'); d.className = 'wk-tx-toast'; d.setAttribute('role', 'status'); d.innerHTML = html; document.body.appendChild(d);
+    setTimeout(function () { d.classList.add('out'); }, 4200); setTimeout(function () { d.remove(); }, 4800);
+  }
+  function incoming() { var me = myLogin(); return TX.trades.filter(function (t) { return t.to === me && t.status === 'pending'; }); }
+  function tabsHTML() {
+    var n = incoming().length;
+    var T = [['me', 'Моя колода'], ['craft', 'Переработка'], ['people', 'Участники'], ['trade', 'Обмен']];
+    return '<div class="wk-tx-tabs" role="tablist">' + T.map(function (t) { return '<button type="button" role="tab" aria-selected="' + (DK.tab === t[0]) + '" class="' + (DK.tab === t[0] ? 'on' : '') + '" data-tx="tab" data-t="' + t[0] + '">' + t[1] + (t[0] === 'trade' && n ? '<em class="wk-tx-badge">' + n + '</em>' : '') + '</button>'; }).join('') + '</div>';
+  }
+  function paintTabs(pane) {
+    var tb = pane.querySelector('.wk-tx-tabs'); if (tb) tb.outerHTML = tabsHTML();
+    if (DK.tab === 'trade') { var b = pane.querySelector('#wkTxBody'); if (b) b.innerHTML = tradeHTML(); }
+    if (DK.tab === 'craft') { var c = pane.querySelector('#wkTxBody'); if (c) c.innerHTML = craftHTML(allCards(), load()); }
+  }
+  function noCloud() {
+    if (!myLogin()) return '<p class="wk-dk-fnote">Войди под своим именем, чтобы смотреть колоды участников и меняться.</p>';
+    return '<p class="wk-dk-fnote">Облако ещё не подключилось. Обнови страницу через минуту. Обмен работает только с облаком.</p>';
+  }
+  function miniHTML(C, key) {
+    var k = cardByKey(C, key);
+    if (!k) return '<div class="wk-tx-mini sp"><b>🔒</b><span>Спойлер</span></div>';
+    return '<div class="wk-tx-mini wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '" title="' + esc(cName(k) + ' · ' + RN4[k.r] + (k.v ? ' · ' + VAR[k.v].n : '')) + '">' + cardHTML(k) + '</div>';
+  }
+  function tradeCard(C, t, me) {
+    var inc = t.to === me, who = inc ? accName(t.from) : accName(t.to);
+    var st = { pending: 'Ждёт ответа', accepted: 'Состоялся', declined: 'Отклонён', cancelled: 'Отменён' }[t.status] || t.status;
+    var gT = inc ? 'Ты получишь' : 'Ты отдаёшь', wT = inc ? 'Ты отдашь' : 'Ты получишь';
+    var grid = function (l) { return l && l.length ? '<div class="wk-dk-grid wk-tx-grid">' + l.map(function (k) { return miniHTML(C, k); }).join('') + '</div>' : '<p class="wk-tx-none">ничего</p>'; };
+    var act = '';
+    if (t.status === 'pending') act = inc ? '<button type="button" class="wk-tx-btn pri" data-tx="accept" data-id="' + esc(t.id) + '">Принять обмен</button><button type="button" class="wk-tx-btn" data-tx="decline" data-id="' + esc(t.id) + '">Отказаться</button>' : '<button type="button" class="wk-tx-btn" data-tx="cancel" data-id="' + esc(t.id) + '">Отменить предложение</button>';
+    var d = t.createdAt ? new Date(t.createdAt) : null;
+    return '<article class="wk-tx-card s-' + esc(t.status) + '"><header><b>' + (inc ? 'От: ' : 'Кому: ') + esc(who) + '</b><span class="wk-tx-st">' + st + '</span>' + (d ? '<time>' + d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) + ', ' + d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) + '</time>' : '') + '</header>' +
+      (t.note ? '<p class="wk-tx-note">«' + esc(t.note) + '»</p>' : '') +
+      '<div class="wk-tx-sides"><div><h4>' + gT + '</h4>' + grid(t.give) + '</div><div><h4>' + wT + '</h4>' + grid(t.want) + '</div></div>' +
+      (act ? '<div class="wk-tx-acts">' + act + '<span class="wk-tx-msg" data-msg="' + esc(t.id) + '"></span></div>' : '') + '</article>';
+  }
+  function tradeHTML() {
+    if (!txApi()) return noCloud();
+    if (TX.err === 'rules') return '<p class="wk-dk-fnote">Облако не пускает к обменам: в Firebase ещё не обновлены правила доступа. Нужно вставить новые правила (раздел trades) и нажать Publish.</p>';
+    if (!TX.at && TX.loading) return '<p class="wk-dk-fnote">Загружаю предложения…</p>';
+    var me = myLogin(), C = allCards();
+    var inc = incoming(), out = TX.trades.filter(function (t) { return t.from === me && t.status === 'pending'; });
+    var hist = TX.trades.filter(function (t) { return (t.from === me || t.to === me) && t.status !== 'pending'; }).slice(0, 10);
+    var sec = function (title, l, empty) { return '<h3 class="wk-dk-h">' + title + (l.length ? ' <small>' + l.length + '</small>' : '') + '</h3>' + (l.length ? l.map(function (t) { return tradeCard(C, t, me); }).join('') : '<p class="wk-dk-fnote">' + empty + '</p>'); };
+    return '<div class="wk-tx-top"><p>Выбери участника во вкладке «Участники» и предложи обмен. Когда он согласится, карточки перейдут к вам обоим.</p><button type="button" class="wk-tx-btn" data-tx="reload">Обновить</button></div>' +
+      sec('Входящие', inc, 'Пока никто ничего не предлагал.') + sec('Твои предложения', out, 'Нет предложений, которые ждут ответа.') + (hist.length ? sec('История', hist, '') : '');
+  }
+  function peopleHTML() {
+    if (!txApi() || !window.__wkDeckCloud || !window.__wkDeckCloud.enabled()) return noCloud();
+    var h = friendsHTML(); return h || '<p class="wk-dk-fnote">Других участников пока нет.</p>';
+  }
+  /* ---- окно составления предложения ---- */
+  function compOpen(pane) {
+    var d = DK.frData && DK.frData[DK.fr]; if (!d || !d.deck) return;
+    TX.comp = { to: DK.fr, side: 'give', give: [], want: [], q: '', r: '', dup: false, pg: 0, note: '', pane: pane };
+    var ov = document.createElement('div'); ov.id = 'wkTxComp'; ov.className = 'wk-tx-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', 'Предложение обмена');
+    document.body.appendChild(ov); compPaint();
+    ov.addEventListener('click', compClick); ov.addEventListener('input', function (e) {
+      var t = e.target; if (t.id === 'wkTxQ') { TX.comp.q = t.value; TX.comp.pg = 0; var g = ov.querySelector('#wkTxPool'); if (g) g.innerHTML = poolHTML(); }
+      if (t.id === 'wkTxNote') TX.comp.note = t.value.slice(0, 140);
+    });
+    document.addEventListener('keydown', compKey);
+  }
+  function compKey(e) { if (e.key === 'Escape') compClose(); }
+  function compClose() { var o = document.getElementById('wkTxComp'); if (o) o.remove(); TX.comp = null; document.removeEventListener('keydown', compKey); }
+  function compPool() {
+    var P = TX.comp, C = allCards(), st = load(), res = reservedMap(st), src, out = [];
+    if (P.side === 'give') { src = st.owned; Object.keys(src).forEach(function (key) { var n = src[key] - (res[key] || 0); if (n > 0) out.push({ key: key, n: n }); }); }
+    else { var d = DK.frData[P.to]; src = (d && d.deck && d.deck.owned) || {}; Object.keys(src).forEach(function (key) { if (src[key] > 0) out.push({ key: key, n: src[key] }); }); }
+    var q = P.q.trim().toLowerCase();
+    var l = out.map(function (x) { x.k = cardByKey(C, x.key); return x; }).filter(function (x) {
+      if (!x.k) return false; if (P.r && x.k.r !== P.r) return false; if (P.dup && x.n < 2) return false;
+      if (q && cName(x.k).toLowerCase().indexOf(q) < 0 && String(x.k.sub || (x.k.arc && x.k.arc.name) || '').toLowerCase().indexOf(q) < 0) return false; return true;
+    });
+    l.sort(function (a, b) { return RORD.indexOf(a.k.r) - RORD.indexOf(b.k.r) || (b.k.v ? 1 : 0) - (a.k.v ? 1 : 0) || cName(a.k).localeCompare(cName(b.k), 'ru'); });
+    return l;
+  }
+  function poolHTML() {
+    var P = TX.comp, l = compPool(), PS = 24, pages = Math.max(1, Math.ceil(l.length / PS)); P.pg = Math.min(P.pg, pages - 1);
+    var sel = P[P.side];
+    var tiles = l.slice(P.pg * PS, P.pg * PS + PS).map(function (x) {
+      var on = sel.indexOf(x.key) >= 0, k = x.k;
+      return '<button type="button" class="wk-tx-pick' + (on ? ' on' : '') + '" data-tx="pick" data-key="' + esc(x.key) + '" aria-pressed="' + on + '" aria-label="' + esc(cName(k) + ', ' + RN4[k.r]) + '"><span class="wk-tx-mini wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + '</span>' + (x.n > 1 ? '<em class="wk-dk-x">×' + x.n + '</em>' : '') + '<i class="wk-tx-chk">✓</i></button>';
+    }).join('');
+    var pager = pages > 1 ? '<div class="wk-tx-pgr"><button type="button" class="wk-dk-pg" data-tx="cpg" data-p="' + (P.pg - 1) + '"' + (P.pg ? '' : ' disabled') + ' aria-label="Назад">‹</button><span>' + (P.pg + 1) + ' из ' + pages + '</span><button type="button" class="wk-dk-pg" data-tx="cpg" data-p="' + (P.pg + 1) + '"' + (P.pg < pages - 1 ? '' : ' disabled') + ' aria-label="Дальше">›</button></div>' : '';
+    return (tiles ? '<div class="wk-pane wk-tx-pw"><div class="wk-dk-grid wk-tx-pool">' + tiles + '</div></div>' : '<p class="wk-dk-fnote">Ничего не нашлось.</p>') + pager;
+  }
+  function compPaint() {
+    var ov = document.getElementById('wkTxComp'); if (!ov) return; var P = TX.comp, nm = accName(P.to), C = allCards();
+    var R = [['', 'Любая'], ['legendary', 'Легенды'], ['epic', 'Эпики'], ['rare', 'Редкие'], ['common', 'Обычные']];
+    var chips = function (l) { return l.length ? l.map(function (k) { var c = cardByKey(C, k); return '<button type="button" class="wk-tx-chip" data-tx="unpick" data-key="' + esc(k) + '" title="Убрать"><span class="wk-tx-dot" style="background:' + (c ? RC[c.r] : '#666') + '"></span>' + esc(cName(c)) + (c && c.v ? ' · ' + VAR[c.v].n : '') + ' ✕</button>'; }).join('') : '<span class="wk-tx-none">пока ничего</span>'; };
+    ov.innerHTML = '<div class="wk-tx-box"><header class="wk-tx-bh"><h3>Обмен с ' + esc(nm) + '</h3><button type="button" class="wk-tx-x" data-tx="close" aria-label="Закрыть">✕</button></header>' +
+      '<div class="wk-tx-sum"><div><h4>Ты отдаёшь <small>' + P.give.length + '/6</small></h4><div class="wk-tx-chips">' + chips(P.give) + '</div></div><div><h4>Ты получаешь <small>' + P.want.length + '/6</small></h4><div class="wk-tx-chips">' + chips(P.want) + '</div></div></div>' +
+      '<div class="wk-tx-side" role="tablist"><button type="button" role="tab" class="' + (P.side === 'give' ? 'on' : '') + '" data-tx="side" data-s="give">Мои карточки</button><button type="button" role="tab" class="' + (P.side === 'want' ? 'on' : '') + '" data-tx="side" data-s="want">Карточки: ' + esc(nm) + '</button></div>' +
+      '<div class="wk-tx-flt"><input id="wkTxQ" type="search" placeholder="Поиск по имени или арке" value="' + esc(P.q) + '" autocomplete="off"><div class="wk-tx-rf">' + R.map(function (r) { return '<button type="button" class="' + (P.r === r[0] ? 'on' : '') + '" data-tx="rf" data-rr="' + r[0] + '">' + r[1] + '</button>'; }).join('') + '<button type="button" class="' + (P.dup ? 'on' : '') + '" data-tx="dup">Только повторки</button></div></div>' +
+      '<div id="wkTxPool">' + poolHTML() + '</div>' +
+      '<footer class="wk-tx-bf"><input id="wkTxNote" type="text" maxlength="140" placeholder="Сообщение (необязательно)" value="' + esc(P.note) + '"><span class="wk-tx-msg" id="wkTxMsg"></span><button type="button" class="wk-tx-btn pri" data-tx="send"' + (P.give.length + P.want.length ? '' : ' disabled') + '>Отправить предложение</button></footer></div>';
+  }
+  function compClick(e) {
+    var P = TX.comp; if (!P) return;
+    if (e.target.id === 'wkTxComp') { compClose(); return; }
+    var b = e.target.closest('[data-tx]'); if (!b || b.disabled) return; e.preventDefault(); e.stopPropagation();
+    var a = b.getAttribute('data-tx'), ov = document.getElementById('wkTxComp');
+    if (a === 'close') return compClose();
+    if (a === 'side') { P.side = b.getAttribute('data-s'); P.pg = 0; P.dup = false; return compPaint(); }
+    if (a === 'rf') { P.r = b.getAttribute('data-rr'); P.pg = 0; return compPaint(); }
+    if (a === 'dup') { P.dup = !P.dup; P.pg = 0; return compPaint(); }
+    if (a === 'cpg') { P.pg = Math.max(0, Number(b.getAttribute('data-p')) || 0); ov.querySelector('#wkTxPool').innerHTML = poolHTML(); return; }
+    if (a === 'pick' || a === 'unpick') {
+      var key = b.getAttribute('data-key'), L = a === 'unpick' ? (P.give.indexOf(key) >= 0 ? P.give : P.want) : P[P.side], i = L.indexOf(key);
+      if (i >= 0) L.splice(i, 1); else if (L.length < 6) L.push(key); else { ov.querySelector('#wkTxMsg').textContent = 'Не больше 6 карточек с каждой стороны'; return; }
+      var y = ov.querySelector('#wkTxPool').scrollTop; compPaint(); var np = ov.querySelector('#wkTxPool'); if (np) np.scrollTop = y; return;
+    }
+    if (a === 'send') {
+      var api = txApi(), msg = ov.querySelector('#wkTxMsg'); if (!api) { msg.textContent = 'Нет связи с облаком'; return; }
+      b.disabled = true; msg.textContent = 'Отправляю…';
+      api.create({ to: P.to, give: P.give.slice(), want: P.want.slice(), note: String(P.note || '').trim() }).then(function () {
+        var pane = P.pane; compClose(); txToast('Предложение отправлено: ' + esc(accName(P.to)));
+        DK.tab = 'trade'; refreshTrades(pane, true); if (pane && pane.isConnected) renderDeck(pane);
+      }, function (er) { b.disabled = false; msg.textContent = (er && er.code) === 'permission-denied' ? 'Облако не пускает: обнови правила Firebase' : 'Не отправилось, попробуй ещё раз'; });
+    }
+  }
+  /* ---- ответы на предложения ---- */
+  function txAction(pane, a, id, btn) {
+    var api = txApi(), t = TX.trades.filter(function (x) { return x.id === id; })[0]; if (!api || !t) return;
+    var m = pane.querySelector('[data-msg="' + id + '"]'), say = function (s) { if (m) m.textContent = s; };
+    if (TX.busy[id]) return; TX.busy[id] = 1; btn.disabled = true;
+    var end = function () { delete TX.busy[id]; };
+    if (a === 'accept') {
+      var st = load(); if (st.__fake) { say('Выключи «Заполнить все»: меняться можно только настоящей колодой'); end(); btn.disabled = false; return; }
+      var res = reservedMap(st), miss = (t.want || []).filter(function (k) { return freeCnt(st, k, res) < 1; });
+      if (miss.length) { var C0 = allCards(); say('У тебя уже нет: ' + miss.map(function (k) { return cName(cardByKey(C0, k)); }).join(', ')); end(); btn.disabled = false; return; }
+      say('Обмениваю…');
+      api.accept(id).then(function () {
+        var s2 = load(); s2.tr = s2.tr || {};
+        if (!s2.tr[id]) { (t.want || []).forEach(function (k) { if (s2.owned[k]) addCard(s2, k, -1); }); (t.give || []).forEach(function (k) { addCard(s2, k, 1); s2.got = s2.got || {}; s2.got[k] = Date.now(); }); s2.tr[id] = 'to'; save(s2); }
+        t.status = 'accepted'; end(); txToast('Обмен с ' + esc(accName(t.from)) + ' состоялся'); renderDeck(pane);
+      }, function (er) { end(); btn.disabled = false; say((er && er.code) === 'permission-denied' ? 'Предложение уже отменили или облако не пускает' : 'Не получилось, попробуй ещё раз'); refreshTrades(pane, true); });
+      return;
+    }
+    var ns = a === 'decline' ? 'declined' : 'cancelled';
+    api.setStatus(id, ns).then(function () { t.status = ns; end(); renderDeck(pane); }, function () { end(); btn.disabled = false; say('Не получилось, попробуй ещё раз'); refreshTrades(pane, true); });
+  }
+  function txPaneClick(pane, e) {
+    var b = e.target.closest && e.target.closest('[data-tx]'); if (!b || b.disabled || !pane.contains(b)) return false;
+    var a = b.getAttribute('data-tx');
+    if (a === 'tab') { DK.tab = b.getAttribute('data-t'); if (DK.tab === 'trade' || DK.tab === 'people') refreshTrades(pane, DK.tab === 'trade'); renderDeck(pane); return true; }
+    if (a === 'craft') { doCraft(Number(b.getAttribute('data-i'))); var bd = pane.querySelector('#wkTxBody'); if (bd) { bd.innerHTML = craftHTML(allCards(), load()); var r0 = bd.querySelector('.wk-tx-res'); if (r0) { r0.classList.add('pop'); if (r0.scrollIntoView) r0.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } } return true; }
+    if (a === 'reload') { refreshTrades(pane, true); return true; }
+    if (a === 'compose') { compOpen(pane); return true; }
+    if (a === 'accept' || a === 'decline' || a === 'cancel') { if (a !== 'accept' || window.confirm('Принять обмен? Карточки сразу перейдут.')) txAction(pane, a, b.getAttribute('data-id'), b); return true; }
+    return false;
+  }
+  window.__wkDeckTx = { state: TX, refresh: refreshTrades };
+
+  function markFlip(el) {
+    var S = load(); if (!S.open || S.__fake) return; var i = Number(el.getAttribute('data-i')); S.open.fl = S.open.fl || [];
+    if (S.open.fl.indexOf(i) < 0) S.open.fl.push(i);
+    if (S.open.fl.length >= (S.open.pk || []).length) delete S.open;
+    save(S);
+  }
   function renderDeck(pane) {
     pane.classList.toggle('wk-dk-editing', !!(DK.editPrev && isDima()));
     var cards = allCards(), st = load(); migrate(st, cards);
+    if (!DK.pack && st.open && st.open.pk && st.open.pk.length) { DK.pack = st.open.pk; DK.flipped = (st.open.fl || []).length; DK.restored = 1; }
     pane.innerHTML = '<div class="wk-pane-head"><div><h2>Колода</h2><p>Карточки персонажей (по одной на каждое фото в арке), дьявольских плодов и полезных статей. Новые появляются по мере прохождения.</p></div><div class="wk-dk-hbtn"><button type="button" class="wk-dk-reset" data-act="rules" title="Правила и шансы">Правила</button><button type="button" class="wk-dk-reset" data-act="reset" title="Обнулить коллекцию">Сбросить</button></div></div>' +
-      '' + adminHTML() + '<div id="wkDkPack">' + packHTML(cards, st) + '</div><div id="wkDkStats">' + statsHTML(cards, st) + '</div><h3 class="wk-dk-h">Коллекция</h3><div id="wkDkColl">' + collHTML(cards, st) + '</div>' + friendsHTML();
+      tabsHTML() + (DK.tab === 'me' ? adminHTML() + '<div id="wkDkPack">' + packHTML(cards, st) + '</div><div id="wkDkStats">' + statsHTML(cards, st) + '</div><h3 class="wk-dk-h">Коллекция</h3><div id="wkDkColl">' + collHTML(cards, st) + '</div>' : '<div id="wkTxBody" class="wk-tx-body">' + (DK.tab === 'craft' ? craftHTML(cards, st) : DK.tab === 'people' ? peopleHTML() : tradeHTML()) + '</div>');
+    if (DK.tab === 'me' && DK.pack && st.open && st.open.fl) st.open.fl.forEach(function (i) { var el = pane.querySelector('.wk-pk[data-i="' + i + '"]'); if (el) el.classList.add('on'); });
+    if (DK.restored && DK.tab === 'me' && st.open) { var rn = pane.querySelector('#wkDkPack .wk-dk-row'); if (rn) rn.insertAdjacentHTML('beforebegin', '<p class="wk-dk-convnote">Набор не был досмотрен — карточки ждут тебя.</p>'); }
+    refreshTrades(pane, false);
+    if (!TX.iv) TX.iv = setInterval(function () { var p = document.querySelector('.wk-tx-tabs'); p = p && p.closest('.wk-pane'); if (p && !document.hidden) refreshTrades(p, false); }, 60000);
     function topOff() { var m = 0; try { [].forEach.call(document.querySelectorAll('header, nav, .topbar, .site-header, .app-header'), function (h) { var cs = getComputedStyle(h), r = h.getBoundingClientRect(); if ((cs.position === 'fixed' || cs.position === 'sticky') && r.top <= 2 && r.width > innerWidth * .5 && r.height < 140) m = Math.max(m, r.bottom); }); } catch (e) {} pane.style.setProperty('--wk-dk-top', Math.round(m) + 'px'); }
     topOff(); if (!pane.__dkTop) { pane.__dkTop = 1; window.addEventListener('resize', topOff); }
     clearInterval(DK.timer); DK.timer = setInterval(function () { tick(pane); }, 1000);
@@ -41642,7 +41925,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
         pane.__restored = 1;
         cl.load().then(function (by) {
           var mine = by[ml], loc = load();
-          if (mine && mine.deck && (mine.deck.packs || 0) > (loc.packs || 0)) { loc.owned = mine.deck.owned || {}; loc.packs = mine.deck.packs || 0; loc.pity = mine.deck.pity || 0; save(loc); renderDeck(pane); }
+          if (mine && mine.deck && (mine.deck.packs || 0) > (loc.packs || 0)) { loc.owned = mine.deck.owned || {}; loc.packs = mine.deck.packs || 0; loc.pity = mine.deck.pity || 0; loc.tr = Object.assign({}, mine.deck.tr || {}, loc.tr || {}); loc.got = Object.assign({}, mine.deck.got || {}, loc.got || {}); save(loc); renderDeck(pane); }
         }, function () {});
       }
     } catch (e) {}
@@ -41651,11 +41934,13 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
       pane.addEventListener('keydown', function (e) { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('wk-dk-sbwrap')) { e.preventDefault(); backZoom(e.target.getAttribute('data-bkr'), e.target.getAttribute('data-bkv'), e.target.getAttribute('data-bkc')); } });
       pane.addEventListener('toggle', function (e) { var t = e.target; if (t && t.classList && t.classList.contains('wk-dk-admin')) DK.admOpen = t.open; }, true);
       pane.addEventListener('click', function (e) {
+        if (txPaneClick(pane, e)) return;
+        var sb = e.target.closest && e.target.closest('[data-dks]'); if (sb) { DK.sort = sb.getAttribute('data-dks'); DK.pg = 0; pane.querySelector('#wkDkColl').innerHTML = collHTML(allCards(), load()); return; }
         var oa = e.target.closest && e.target.closest('[data-dk-open]'); if (oa) { openArt(oa.getAttribute('data-dk-open')); return; }
         var bw = e.target.closest && e.target.closest('.wk-dk-sbwrap'); if (bw) { if (e.target.closest('[data-wk-open-char]')) return; backZoom(bw.getAttribute('data-bkr'), bw.getAttribute('data-bkv'), bw.getAttribute('data-bkc')); return; }
         var t = e.target.closest && e.target.closest('[data-act],[data-f],[data-r],[data-v],[data-kind],[data-fr],[data-pg],.wk-pk'); if (!t) return;
         var C = allCards(), S = load();
-        if (t.classList.contains('wk-pk')) { if (!t.classList.contains('on')) { t.classList.add('on'); DK.flipped++; if (DK.pack && DK.flipped >= DK.pack.length) finish(pane); } return; }
+        if (t.classList.contains('wk-pk')) { if (!t.classList.contains('on')) { t.classList.add('on'); DK.flipped++; markFlip(t); if (DK.pack && DK.flipped >= DK.pack.length) finish(pane); } return; }
         if (t.hasAttribute('data-pg') && !t.disabled) { DK.pg = Number(t.getAttribute('data-pg')) || 0; var pc = pane.querySelector('#wkDkColl'); pc.innerHTML = collHTML(C, S); if (pc.scrollIntoView) pc.scrollIntoView({ block: 'start' }); return; }
         if (t.hasAttribute('data-kind')) { DK.k = t.getAttribute('data-kind'); DK.lim = 60; DK.pg = 0; pane.querySelector('#wkDkColl').innerHTML = collHTML(C, S); return; }
         if (t.hasAttribute('data-f')) { DK.f = t.getAttribute('data-f'); DK.lim = 60; DK.pg = 0; pane.querySelector('#wkDkColl').innerHTML = collHTML(C, S); return; }
@@ -41672,12 +41957,14 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
             if (!x.isNew && bk && !bk.kind && VCH[bk.r] && Math.random() < VCH[bk.r]) { var v = rollVar(), vk = x.key + '#' + v; x.v = v; x.vNew = !S.owned[vk]; S.owned[vk] = (S.owned[vk] || 0) + 1; }
             else S.owned[x.key] = (S.owned[x.key] || 0) + 1;
           });
-          S.pity = gotL ? 0 : (S.pity || 0) + 1; S.packs++; S.last = Date.now(); save(S);
+          S.pity = gotL ? 0 : (S.pity || 0) + 1; S.packs++; S.last = Date.now();
+          S.got = S.got || {}; pk.forEach(function (x) { S.got[x.v ? x.key + '#' + x.v : x.key] = S.last; });
+          S.open = { pk: pk.map(function (x) { return { key: x.key, isNew: !!x.isNew, v: x.v || '', vNew: !!x.vNew }; }), fl: [] }; save(S);
           DK.pack = pk; DK.flipped = 0; pane.querySelector('#wkDkPack').innerHTML = packHTML(C, S);
           var row = pane.querySelector('.wk-dk-row'); if (row && row.scrollIntoView) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else if (a === 'slotflip') { var sl = t.closest('.wk-dk-slot'); if (sl) slotFlip(sl, t); }
         else if (a === 'flipall') {
-          [].forEach.call(pane.querySelectorAll('.wk-pk:not(.on)'), function (el, i) { setTimeout(function () { el.classList.add('on'); DK.flipped++; if (DK.pack && DK.flipped >= DK.pack.length) finish(pane); }, i * 260); });
+          [].forEach.call(pane.querySelectorAll('.wk-pk:not(.on)'), function (el, i) { setTimeout(function () { el.classList.add('on'); DK.flipped++; markFlip(el); if (DK.pack && DK.flipped >= DK.pack.length) finish(pane); }, i * 260); });
         }
         else if (a === 'done') { finish(pane, true); }
         else if (a === 'fr-more') { DK.frLim += 60; var ff = pane.querySelector('#wkDkFriend'); if (ff) ff.innerHTML = friendBody(); }
@@ -41694,7 +41981,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
   function finish(pane, close) {
     var C = allCards(), S = load();
     pane.querySelector('#wkDkStats').innerHTML = statsHTML(C, S); pane.querySelector('#wkDkColl').innerHTML = collHTML(C, S);
-    if (close) { DK.pack = null; pane.querySelector('#wkDkPack').innerHTML = packHTML(C, S); }
+    if (close) { DK.pack = null; DK.restored = 0; if (S.open && !S.__fake) { delete S.open; save(S); } pane.querySelector('#wkDkPack').innerHTML = packHTML(C, S); }
   }
   window.__wkDeckRender = renderDeck;
   window.__wkDeckKeys = function () { return allCards().map(function (k) { return k.key; }); };
@@ -41716,4 +42003,114 @@ html body .wk-dk-sbwrap>.wk-pk.wk-dk-sbin,html body .wk-dk-zoombox>.wk-pk.wk-dk-
 @media (max-width:760px){
  html body .wk-dk-sbwrap .wk-dk-bkopen{font-size:11px!important;padding:6px 9px!important;max-width:88%;overflow:hidden;text-overflow:ellipsis;bottom:12%!important}
 }
+</style><style id="wk-tx-css">
+.wk-tx-tabs{display:flex;gap:4px;padding:4px;margin:4px 0 18px;border:1px solid rgba(148,163,184,.22);border-radius:14px;background:rgba(10,14,26,.55);overflow-x:auto;scrollbar-width:none}
+.wk-tx-tabs::-webkit-scrollbar{display:none}
+.wk-tx-tabs button{flex:1 0 auto;position:relative;padding:10px 16px;border:0;border-radius:10px;background:transparent;color:#a9b4c6;font:inherit;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap}
+.wk-tx-tabs button:hover:not(.on){color:#fff;background:rgba(148,163,184,.08)}
+.wk-tx-tabs button.on{background:linear-gradient(180deg,rgba(216,180,90,.22),rgba(216,180,90,.1));color:#f3dc9a;box-shadow:inset 0 0 0 1px rgba(216,180,90,.45)}
+.wk-tx-tabs button:focus-visible,.wk-tx-btn:focus-visible,.wk-tx-pick:focus-visible,.wk-dk-sortw button:focus-visible{outline:2px solid #d8b45a;outline-offset:2px}
+.wk-tx-badge{display:inline-grid;place-items:center;min-width:19px;height:19px;margin-left:7px;padding:0 5px;border-radius:10px;background:#e2564b;color:#fff;font-style:normal;font-size:11.5px;vertical-align:1px}
+.wk-tx-btn{padding:9px 15px;border-radius:11px;border:1px solid rgba(148,163,184,.3);background:rgba(15,23,42,.7);color:#dbe3ee;font:inherit;font-weight:700;font-size:13.5px;cursor:pointer;white-space:nowrap}
+.wk-tx-btn:hover:not(:disabled){border-color:rgba(216,180,90,.6);color:#fff}
+.wk-tx-btn.pri{background:linear-gradient(180deg,#e6c46d,#c99a3a);border-color:transparent;color:#1a1204}
+.wk-tx-btn.pri:hover:not(:disabled){filter:brightness(1.08);color:#1a1204}
+.wk-tx-btn:disabled{opacity:.45;cursor:not-allowed}
+.wk-tx-intro,.wk-tx-top p{color:#a9b4c6;font-size:14px;line-height:1.55;max-width:70ch;margin:0 0 16px}
+.wk-tx-top{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.wk-tx-rcs{display:grid;gap:10px}
+.wk-tx-rc{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto;gap:16px;align-items:center;padding:14px 16px;border-radius:14px;border:1px solid rgba(148,163,184,.18);background:linear-gradient(90deg,color-mix(in srgb,var(--a) 9%,transparent),rgba(10,14,26,.5) 45%,color-mix(in srgb,var(--b) 9%,transparent))}
+.wk-tx-rcf{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:15px;color:#e8edf5}
+.wk-tx-rcf i{font-style:normal;color:#7d8aa0;margin:0 2px}
+.wk-tx-dot{display:inline-block;width:10px;height:10px;border-radius:50%;flex:0 0 auto}
+.wk-tx-dot.rb{background:conic-gradient(#ff5fa2,#ffd86b,#6bff9e,#62c4ff,#b58cff,#ff5fa2)!important}
+.wk-tx-rcm{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-size:13px;color:#93a0b5}
+.wk-tx-rcm b{color:#e8edf5}
+.wk-tx-p{width:64px;height:6px;border-radius:3px;background:rgba(148,163,184,.2);overflow:hidden}
+.wk-tx-p em{display:block;height:100%;background:var(--b);border-radius:inherit}
+.wk-tx-res{display:flex;gap:18px;align-items:center;margin:0 0 16px;padding:14px;border-radius:16px;border:1px solid rgba(148,163,184,.2);background:rgba(10,14,26,.6)}
+.wk-tx-res.ok{border-color:rgba(216,180,90,.55);box-shadow:0 0 0 1px rgba(216,180,90,.15),0 10px 40px -18px rgba(216,180,90,.6)}
+.wk-tx-res.pop .wk-tx-resc{animation:wkTxPop .55s cubic-bezier(.2,.9,.3,1.25)}
+@keyframes wkTxPop{0%{transform:scale(.6) rotateY(90deg);opacity:0}100%{transform:none;opacity:1}}
+.wk-tx-resc{width:130px;flex:0 0 auto}
+.wk-tx-rest b{font-size:18px;color:#fff}.wk-tx-res.ok .wk-tx-rest b{color:#f3dc9a}
+.wk-tx-rest p{margin:6px 0;color:#cbd5e1;font-size:14px}.wk-tx-rest small{color:#7d8aa0;font-size:12.5px;line-height:1.45}
+.wk-tx-card{margin:0 0 12px;padding:14px 16px;border-radius:16px;border:1px solid rgba(148,163,184,.2);background:rgba(10,14,26,.55)}
+.wk-tx-card.s-pending{border-color:rgba(216,180,90,.4)}
+.wk-tx-card.s-declined,.wk-tx-card.s-cancelled{opacity:.7}
+.wk-tx-card>header,html body .wk-pane .wk-tx-card>header,html.ios-app body .wk-tx-card>header{position:static!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;backdrop-filter:none!important}
+.wk-tx-card header{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin-bottom:10px}
+.wk-tx-card header b{color:#fff;font-size:15px}
+.wk-tx-st{padding:2px 9px;border-radius:9px;background:rgba(148,163,184,.14);color:#cbd5e1;font-size:12px;font-weight:700}
+.s-pending .wk-tx-st{background:rgba(216,180,90,.18);color:#f3dc9a}.s-accepted .wk-tx-st{background:rgba(52,211,153,.16);color:#86efc4}
+.wk-tx-card time{margin-left:auto;color:#7d8aa0;font-size:12.5px}
+.wk-tx-note{margin:0 0 10px;color:#cbd5e1;font-style:italic;font-size:14px}
+.wk-tx-sides{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.wk-tx-sides h4,.wk-tx-sum h4{margin:0 0 8px;font-size:12.5px;color:#93a0b5;font-weight:700}
+.wk-tx-sum h4 small{color:#64748b;font-weight:600}
+.wk-tx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+.wk-tx-mini{display:block;position:relative;font-size:8px;pointer-events:none}
+.wk-tx-mini .wk-dk-fb,.wk-tx-mini .wk-dk-x{display:none!important}
+.wk-tx-mini.sp{display:grid;place-items:center;aspect-ratio:3/4.3;border-radius:12px;border:1px dashed rgba(148,163,184,.35);color:#7d8aa0;font-size:12px}
+.wk-tx-mini .character-item h3,.wk-tx-mini .character-item .character-name{font-size:12px!important;line-height:1.15!important}
+.wk-tx-mini .character-item p,.wk-tx-mini .character-item small,.wk-tx-mini .rarity-label,.wk-tx-mini .wk-dk-pills{font-size:9.5px!important}
+.wk-tx-none{color:#64748b;font-size:13px;margin:4px 0}
+.wk-tx-acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.wk-tx-msg{color:#fca5a5;font-size:13px}
+.wk-dk-fstat .wk-tx-btn{margin-left:auto}
+.wk-dk-sortw{display:inline-flex;gap:2px;padding:3px;margin-left:auto;border-radius:11px;border:1px solid rgba(148,163,184,.22);background:rgba(10,14,26,.5)}
+.wk-dk-sortw button{padding:6px 11px;border:0;border-radius:8px;background:transparent;color:#a9b4c6;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap}
+.wk-dk-sortw button.on{background:rgba(216,180,90,.18);color:#f3dc9a}
+.wk-dk-sortw+.wk-dk-cnt{margin-left:12px}
+.wk-tx-ov{position:fixed;inset:0;z-index:100000;display:grid;place-items:center;padding:20px;background:rgba(3,6,14,.72);backdrop-filter:blur(4px)}
+.wk-tx-box{width:min(980px,100%);max-height:calc(100dvh - 40px);display:flex;flex-direction:column;border-radius:18px;border:1px solid rgba(148,163,184,.25);background:#0c1120;box-shadow:0 30px 80px -20px rgba(0,0,0,.8);overflow:hidden}
+.wk-tx-bh{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid rgba(148,163,184,.14)}
+.wk-tx-bh h3{margin:0;font-size:18px;color:#fff}
+.wk-tx-x{width:36px;height:36px;border-radius:10px;border:1px solid rgba(148,163,184,.28);background:rgba(15,23,42,.6);color:#94a3b8;cursor:pointer;font-size:15px}
+.wk-tx-sum{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:12px 18px;border-bottom:1px solid rgba(148,163,184,.1)}
+.wk-tx-chips{display:flex;flex-wrap:wrap;gap:6px;min-height:30px}
+.wk-tx-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:9px;border:1px solid rgba(148,163,184,.26);background:rgba(15,23,42,.7);color:#dbe3ee;font:inherit;font-size:12.5px;cursor:pointer}
+.wk-tx-chip:hover{border-color:rgba(248,113,113,.55)}
+.wk-tx-side{display:flex;gap:4px;padding:10px 18px 0}
+.wk-tx-side button{padding:9px 14px;border:0;border-bottom:2px solid transparent;background:none;color:#a9b4c6;font:inherit;font-weight:700;cursor:pointer}
+.wk-tx-side button.on{color:#f3dc9a;border-bottom-color:#d8b45a}
+.wk-tx-flt{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 18px}
+.wk-tx-flt input{flex:1 1 200px;min-width:0;padding:9px 12px;border-radius:10px;border:1px solid rgba(148,163,184,.28);background:#0a1221;color:#e8edf5;font:inherit;font-size:14px}
+.wk-tx-rf{display:flex;flex-wrap:wrap;gap:4px}
+.wk-tx-rf button{padding:7px 11px;border-radius:9px;border:1px solid rgba(148,163,184,.22);background:transparent;color:#a9b4c6;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.wk-tx-rf button.on{border-color:rgba(216,180,90,.55);color:#f3dc9a;background:rgba(216,180,90,.12)}
+#wkTxPool{flex:1 1 auto;min-height:120px;overflow:auto;padding:4px 18px 12px}
+.wk-tx-pw{display:block;padding:0;margin:0}
+html body .wk-tx-pw .wk-tx-pool{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(112px,1fr))!important;gap:10px!important}
+html body .wk-tx-grid.wk-dk-grid{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(84px,110px))!important;gap:8px!important}
+.wk-tx-pick{position:relative;padding:0;border:2px solid transparent;border-radius:14px;background:none;cursor:pointer;text-align:left}
+.wk-tx-pick.on{border-color:#d8b45a;box-shadow:0 0 0 3px rgba(216,180,90,.25)}
+.wk-tx-pick .wk-dk-x{position:absolute;right:6px;top:6px;z-index:5}
+.wk-tx-chk{position:absolute;left:6px;top:6px;z-index:6;display:none;width:24px;height:24px;border-radius:50%;background:#d8b45a;color:#1a1204;font-style:normal;font-weight:900;place-items:center}
+.wk-tx-pick.on .wk-tx-chk{display:grid}
+.wk-tx-pgr{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:12px;color:#93a0b5;font-size:13px}
+.wk-tx-bf{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 18px;border-top:1px solid rgba(148,163,184,.14);background:rgba(10,14,26,.6)}
+.wk-tx-bf input{flex:1 1 220px;min-width:0;padding:9px 12px;border-radius:10px;border:1px solid rgba(148,163,184,.28);background:#0a1221;color:#e8edf5;font:inherit;font-size:14px}
+.wk-tx-toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:100001;max-width:min(92vw,460px);padding:12px 18px;border-radius:13px;background:#141b2e;border:1px solid rgba(216,180,90,.45);color:#f3dc9a;font-size:14px;line-height:1.45;box-shadow:0 18px 50px -12px rgba(0,0,0,.7);transition:opacity .5s,transform .5s}
+.wk-tx-toast.out{opacity:0;transform:translate(-50%,10px)}
+@media (max-width:760px){
+ .wk-tx-rc{grid-template-columns:1fr;gap:10px}
+ .wk-tx-tabs{gap:2px;padding:3px}
+ html body .wk-tx-tabs button{flex:1 1 auto;min-width:0;padding:9px 4px;font-size:12.5px;letter-spacing:-.01em}
+ .wk-tx-badge{min-width:17px;height:17px;margin-left:4px;font-size:10.5px}
+ .wk-tx-rc .wk-tx-btn{width:100%}
+ .wk-tx-sides,.wk-tx-sum{grid-template-columns:1fr}
+ .wk-tx-ov{padding:calc(64px + env(safe-area-inset-top,0px)) 8px calc(88px + env(safe-area-inset-bottom,0px));align-items:stretch}
+ .wk-tx-box{max-height:100%;display:block!important;overflow-y:auto;-webkit-overflow-scrolling:touch}
+ .wk-tx-bh{position:sticky;top:0;z-index:3;background:#0c1120}
+ #wkTxPool{overflow:visible!important;min-height:0}
+ .wk-tx-bf{position:sticky;bottom:0;z-index:3;background:#0c1120!important}
+ .wk-tx-sum{padding:10px 14px;gap:8px}.wk-tx-side,.wk-tx-flt{padding-left:14px;padding-right:14px}
+ .wk-tx-side button{padding:8px 10px;font-size:14px}
+ html body .wk-tx-pw .wk-tx-pool,html body .wk-tx-grid.wk-dk-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important}
+ .wk-dk-sortw{margin-left:0;width:100%}.wk-dk-sortw button{flex:1}
+ .wk-dk-sortw+.wk-dk-cnt{margin-left:auto}
+ .wk-tx-resc{width:104px}
+}
+@media (prefers-reduced-motion:reduce){.wk-tx-res.pop .wk-tx-resc{animation:none}}
 </style></body></html>
