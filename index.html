@@ -3794,7 +3794,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 336";
+const WIKI_VERSION = "11.11.2026 · 339";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -41284,10 +41284,11 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     rw.forEach(function (f) {
       if (!f || !f.id || String(f.__wikiDraft) === 'true') return;
       try { if (window.__wikiIsSpoilerActive ? window.__wikiIsSpoilerActive(f, 'reward') : f.__wikiSpoiler) return; } catch (e) { return; }
-      var raw = f.__wikiRaw || f, u = url(raw.reward_image); if (!u) return;
+      var raw = f.__wikiRaw || f, u = url(raw.reward_image) || '';
+      if (!u && !window.__wkPosterHTML) return;
       var ch = cmap[raw.character_id]; if (!ch || hiddenRec(ch, 'character')) return;
       var b = Number(raw.reward) || 0, bt = b ? String(Math.round(b)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0') + '\u00a0белли' : '';
-      out.push({ key: 'wanted:' + f.id, kind: 'wanted', c: { id: f.id, name: ch.name || '', status: '' }, ch: raw.character_id, arc: arcOf(raw), sub: String(raw.arc || '').trim() || (arcOf(raw).name || ''), bounty: bt, u: u, x: 50, y: 40, z: 100, fx: '', amb: '', cs: '', r: charR[raw.character_id] || 'common', first: true });
+      out.push({ key: 'wanted:' + f.id, kind: 'wanted', rec: f, c: { id: f.id, name: ch.name || '', status: '' }, ch: raw.character_id, arc: arcOf(raw), sub: String(raw.arc || '').trim() || (arcOf(raw).name || ''), bounty: bt, u: u, x: 50, y: 40, z: 100, fx: '', amb: '', cs: '', r: charR[raw.character_id] || 'common', first: true });
     });
     return out;
   }
@@ -41462,7 +41463,9 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     var ps = '', cls = '', badge = '';
     try { ps = getPrimaryCharacterStatus(c.status); cls = ps ? getCharacterStatusClass(ps) : ''; badge = characterStatusBadge(c.status, ps); } catch (e) {}
     var id = esc(c.id), pin = encodeURIComponent(JSON.stringify({ id: k.key, fx: k.fx || '', amb: k.amb || '', cs: k.cs || '', r: k.r }));
-    var img = '<img class="character-grid-image" src="' + esc(u) + '" alt="' + esc(c.name) + '" style="object-position:' + X + '% ' + Y + '% !important;transform:scale(' + (Z / 100) + ') !important;transform-origin:' + X + '% ' + Y + '% !important" loading="lazy" decoding="async" data-wiki-fallbacks="[]" onerror="if(!window.__wikiTryPortraitImage||!window.__wikiTryPortraitImage(this)){this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';}"><div class="character-grid-image-fallback" style="display:none" aria-hidden="true">👤</div>';
+    var wp = '';
+    if (k.kind === 'wanted' && k.rec && window.__wkPosterHTML) { try { wp = window.__wkPosterHTML(k.rec) || ''; } catch (e) { wp = ''; } }
+    var img = wp ? '<div class="wk-dk-wpw">' + wp + '</div>' : '<img class="character-grid-image" src="' + esc(u) + '" alt="' + esc(c.name) + '" style="object-position:' + X + '% ' + Y + '% !important;transform:scale(' + (Z / 100) + ') !important;transform-origin:' + X + '% ' + Y + '% !important" loading="lazy" decoding="async" data-wiki-fallbacks="[]" onerror="if(!window.__wikiTryPortraitImage||!window.__wikiTryPortraitImage(this)){this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';}"><div class="character-grid-image-fallback" style="display:none" aria-hidden="true">👤</div>';
     return '<div class="catalog-item-shell character-grid-shell' + (k.r !== 'common' ? ' wk-r-' + k.r : '') + '"><div class="character-item character-status-item character-grid-card ' + cls + (k.kind === 'wanted' ? ' wk-dk-wanted' : '') + '" data-wk-pin="' + pin + '" data-wk-rarity="' + k.r + '"' + (k.v ? ' data-wk-var="' + k.v + '"' : '') + '  data-wk-rarity-label="' + RN4[k.r] + ' карточка" role="button" tabindex="0" aria-label="Показать карточку: ' + esc(c.name) + '" onclick="window.__wkDeckZoom&&window.__wkDeckZoom(this)"><div class="character-grid-image-wrap">' + img + '</div>' + fxHTML(k.v) + '<div class="character-grid-content"><div class="character-name card-title" title="' + esc(c.name) + '">' + esc(c.name) + '</div><div class="wk-dk-arc">' + esc(k.sub || k.arc.name) + '</div><div class="character-grid-status"><span class="wk-dk-rarp r-' + k.r + '">' + RN4[k.r] + '</span>' + (k.v ? '<span class="wk-dk-rarp wk-dk-vp vp-' + k.v + '">' + ({ holo: 'Голограф', gold: 'Пламя', neg: 'Негатив' }[k.v] || '') + '</span>' : '') + '</div></div></div></div>';
   }
   function bar(h, n, cls) { return '<span class="wk-dk-bar ' + (cls || '') + '"><i style="width:' + (n ? Math.round(h / n * 100) : 0) + '%"></i></span>'; }
@@ -41626,8 +41629,12 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     var v = VKEYS.filter(function (x) { return sl.classList.contains('v-' + x); })[0] || '';
     return { r: r, v: v };
   }
-  function backWrapHTML(r, v, cid) {
-    return '<div class="wk-dk-sbwrap" data-bkr="' + r + '" data-bkv="' + v + '" data-bkc="' + esc(cid) + '" role="group" tabindex="0" aria-label="Рубашка карточки. Нажми, чтобы рассмотреть крупнее"><div class="wk-pk r-' + r + (v ? ' is-var v-' + v : '') + ' wk-dk-sbin"><div class="wk-pk-bk">' + backInner(r, v) + '</div></div>' + (cid ? '<button type="button" class="wk-dk-bkopen" ' + (cid.indexOf(':') > 0 ? 'data-dk-open="' : 'data-wk-open-char="') + esc(cid) + '">Открыть статью →</button>' : '') + '</div>';
+  function cardArc(sl) {
+    try { var cd = sl.querySelector('.character-item'), key = String(JSON.parse(decodeURIComponent(cd.getAttribute('data-wk-pin'))).id).split('#')[0], k = cardByKey(allCards(), key);
+      return k ? String(k.kind === 'wanted' ? k.sub : (k.arc && k.arc.name) || '').trim() : ''; } catch (e) { return ''; }
+  }
+  function backWrapHTML(r, v, cid, arc) {
+    return '<div class="wk-dk-sbwrap" data-bkr="' + r + '" data-bkv="' + v + '" data-bkc="' + esc(cid) + '" role="group" tabindex="0" aria-label="Рубашка карточки' + (arc ? ', арка ' + esc(arc) : '') + '. Нажми, чтобы рассмотреть крупнее"><div class="wk-pk r-' + r + (v ? ' is-var v-' + v : '') + ' wk-dk-sbin"><div class="wk-pk-bk">' + backInner(r, v) + '</div></div>' + (arc ? '<div class="wk-dk-bkarc r-' + r + '">' + esc(arc) + '</div>' : '') + (cid ? '<button type="button" class="wk-dk-bkopen" ' + (cid.indexOf(':') > 0 ? 'data-dk-open="' : 'data-wk-open-char="') + esc(cid) + '">Открыть статью →</button>' : '') + '</div>';
   }
   function cardCid(sl) { try { var cd = sl.querySelector('.character-item'); return String(JSON.parse(decodeURIComponent(cd.getAttribute('data-wk-pin'))).id).split('@')[0].split('#')[0]; } catch (e) { return ''; } }
   function slotFlip(sl, btn) {
@@ -41637,7 +41644,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     var T = still ? 0 : 260;
     function done() { sl.__fl = 0; if (btn) btn.setAttribute('aria-pressed', String(sl.classList.contains('flipped'))); }
     if (!back) {
-      if (!sl.querySelector(':scope > .wk-dk-sbwrap')) { var k = slotKind(sl); sl.insertAdjacentHTML('beforeend', backWrapHTML(k.r, k.v, cardCid(sl))); }
+      if (!sl.querySelector(':scope > .wk-dk-sbwrap')) { var k = slotKind(sl); sl.insertAdjacentHTML('beforeend', backWrapHTML(k.r, k.v, cardCid(sl), cardArc(sl))); }
       sl.classList.add('fl-out');
       setTimeout(function () { sl.classList.remove('fl-out'); sl.classList.add('flipped'); setTimeout(done, T); }, T);
     } else {
@@ -42645,5 +42652,19 @@ html body .wk-cut.cs-neg .cs-skip{color:rgba(185,200,230,.6)!important}
 @media (prefers-reduced-motion:reduce){.wk-cut.cs-neg .cs-beam,.wk-cut.cs-neg .cs-noise{display:none}}
 </style><style id="wk-dk-wanted-css">
 /* Розыск: имя уже на постере — прячем только его, арка и редкость как на всех карточках */
+html body .wk-dk-wpw{position:absolute;inset:0;overflow:hidden;background:#d9c7a3}
+html body .character-item.wk-dk-wanted .character-grid-content{background:linear-gradient(rgba(5,8,16,0),rgba(5,8,16,.38) 60%,rgba(5,8,16,.55))!important;padding-top:10px!important;padding-bottom:6px!important}
+html body .character-item.wk-dk-wanted .wk-dk-arc{text-shadow:0 1px 2px rgba(0,0,0,.95),0 0 6px rgba(0,0,0,.8)!important;color:#f3ead6!important}
+html body .character-item.wk-dk-wanted .wk-dk-rarp{background:rgba(10,12,20,.72)!important}
+html body .character-item.wk-dk-wanted .character-grid-content{display:flex!important;flex-direction:row!important;align-items:center!important;gap:6px!important;padding-top:4px!important;padding-bottom:5px!important;background:linear-gradient(rgba(5,8,16,0),rgba(5,8,16,.5))!important}
+html body .character-item.wk-dk-wanted .character-grid-status{order:-1;flex:0 0 auto;margin:0!important}
+html body .character-item.wk-dk-wanted .wk-dk-arc{flex:1 1 auto;min-width:0;margin:0!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .wk-dk-wpw>.wk-wp{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;aspect-ratio:auto!important}
+html body .character-item.wk-dk-wanted .character-grid-image-wrap{background:#d9c7a3}
 html body .character-item.wk-dk-wanted .character-name{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;margin:0!important;padding:0!important}
+</style><style id="wk-dk-bkarc-css">
+.wk-dk-bkarc{position:absolute;left:24%;right:24%;top:6.5%;z-index:3;text-align:center;pointer-events:none;font-size:12px;line-height:1.25;font-weight:700;letter-spacing:.02em;color:var(--wk-accent,#d8b45a);text-shadow:0 1px 3px rgba(0,0,0,.85);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.wk-dk-bkarc.r-common{color:#c9d1de}.wk-dk-bkarc.r-rare{color:#8fbcff}.wk-dk-bkarc.r-epic{color:#d4b0ff}.wk-dk-bkarc.r-legendary{color:#f6d36a}
+@media (max-width:760px){.wk-dk-bkarc{font-size:11px;top:7%;left:27%;right:27%}}
+html body .character-item.wk-dk-wanted .wk-dk-arc{display:none!important}
 </style></body></html>
