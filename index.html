@@ -3794,7 +3794,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 331";
+const WIKI_VERSION = "11.11.2026 · 333";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -22566,7 +22566,7 @@ img.wk-fade.wk-loaded{opacity:1}
     deckTimer = 0; if (!me || me.role === 'guest' || !db) return Promise.resolve();
     var d; try { d = JSON.parse(lsGet('onePieceWikiDeckV1') || 'null'); } catch (e) { d = null; }
     if (!d || !d.owned) return Promise.resolve();
-    var slim = { packs: d.packs || 0, pity: d.pity || 0, owned: d.owned, tr: d.tr || {}, got: d.got || {} };
+    var slim = { packs: d.packs || 0, pity: d.pity || 0, owned: d.owned, tr: d.tr || {}, got: d.got || {}, show: d.show || [], belli: d.belli || 0, ach: d.ach || {} };
     return fb.fs.setDoc(fb.fs.doc(db, 'tops', me.uid), { login: me.login, name: me.name, deck: JSON.stringify(slim), deckAt: new Date().toISOString() }, { merge: true }).catch(function (e) { console.warn('Колода:', e); });
   }
   window.__wkDeckCloud = {
@@ -41296,7 +41296,11 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     var w = arr.map(function (k) { return st && st.owned[k.key] ? 1 : NEWW; }), t = w.reduce(function (a, b) { return a + b; }, 0), r = Math.random() * t;
     for (var i = 0; i < arr.length; i++) { r -= w[i]; if (r <= 0) return arr[i]; } return arr[arr.length - 1];
   }
-  function drawPack(cards, st) {
+  function drawPack(cards, st, o) {
+    o = o || {}; var P = o.prob || RPROB, keepW = NEWW; if (o.neww) NEWW = o.neww;
+    try { return drawPack0(cards, st, o, P); } finally { NEWW = keepW; }
+  }
+  function drawPack0(cards, st, o, P) {
     var by = { common: [], rare: [], epic: [], legendary: [] }; cards.forEach(function (k) { by[k.r].push(k); });
     var used = {}, out = [];
     function one(cls) {
@@ -41305,11 +41309,14 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
       for (var i = 0; i < order.length; i++) { var l = by[order[i]].filter(function (k) { return !used[k.key]; }); if (l.length) { var k = wpick(l, st); used[k.key] = 1; return k; } }
       return null;
     }
-    for (var i = 0; i < PACKN; i++) {
-      var r = Math.random(), cls = r < RPROB.legendary ? 'legendary' : r < RPROB.legendary + RPROB.epic ? 'epic' : r < RPROB.legendary + RPROB.epic + RPROB.rare ? 'rare' : 'common';
+    for (var i = 0; i < (o.n || PACKN); i++) {
+      var r = Math.random(), cls = o.onlyCommon ? 'common' : r < P.legendary ? 'legendary' : r < P.legendary + P.epic ? 'epic' : r < P.legendary + P.epic + P.rare ? 'rare' : 'common';
       var k = one(cls); if (k) out.push(k);
     }
-    if (out.length && (st.pity || 0) >= PITY - 1 && !out.some(function (k) { return k.r === 'legendary'; })) { var lg = one('legendary'); if (lg && lg.r === 'legendary') out[0] = lg; }
+    if (o.onlyCommon) return out.map(function (k) { return { key: k.key, isNew: !st.owned[k.key] }; });
+    if (o.minEpic && out.length && !out.some(function (k) { return k.r === 'epic' || k.r === 'legendary'; })) { var ue = one('epic'); if (ue && (ue.r === 'epic' || ue.r === 'legendary')) out[out.length - 1] = ue; }
+    if (o.minLeg && out.length && !out.some(function (k) { return k.r === 'legendary'; })) { var ul = one('legendary'); if (ul && ul.r === 'legendary') out[0] = ul; }
+    if (!o.shop && (st.pity || 0) >= PITY - 1 && out.length && !out.some(function (k) { return k.r === 'legendary'; })) { var lg = one('legendary'); if (lg && lg.r === 'legendary') out[0] = lg; }
     if (out.length && !out.some(function (k) { return k.r !== 'common'; })) { var up = one('rare'); if (up && up.r !== 'common') out[out.length - 1] = up; }
     return out.map(function (k) { return { key: k.key, isNew: !st.owned[k.key] }; });
   }
@@ -41539,7 +41546,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     var tiles = shown.slice(0, lim).map(function (x) { var k = x.k; return '<div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + (x.n > 1 ? '<em class="wk-dk-x">×' + x.n + '</em>' : '') + '</div>'; }).join('');
     var sp = '';
     for (var i = 0; i < Math.min(hidden, 6); i++) sp += '<div class="wk-dk-slot"><div class="wk-dk-spoil"><b>🔒</b><span>Спойлер</span><small>Карточка скрыта, пока ты не дойдёшь до этой арки</small></div></div>';
-    return stat + '<div class="character-list character-display-grid wk-dk-grid">' + tiles + sp + '</div>' + (hidden > 6 ? '<p class="wk-dk-fnote">…и ещё ' + (hidden - 6) + ' скрытых карточек-спойлеров.</p>' : '') + (shown.length > lim ? '<div class="wk-dk-morewrap"><button type="button" class="wk-dk-ghost" data-act="fr-more">Показать ещё ' + Math.min(60, shown.length - lim) + '</button></div>' : '');
+    return stat + showcaseHTML(C, d.deck.show, false) + '<div class="character-list character-display-grid wk-dk-grid">' + tiles + sp + '</div>' + (hidden > 6 ? '<p class="wk-dk-fnote">…и ещё ' + (hidden - 6) + ' скрытых карточек-спойлеров.</p>' : '') + (shown.length > lim ? '<div class="wk-dk-morewrap"><button type="button" class="wk-dk-ghost" data-act="fr-more">Показать ещё ' + Math.min(60, shown.length - lim) + '</button></div>' : '');
   }
   function loadFriends(pane, force) {
     var cl = window.__wkDeckCloud; if (!cl) return;
@@ -41750,7 +41757,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
   function incoming() { var me = myLogin(); return TX.trades.filter(function (t) { return t.to === me && t.status === 'pending'; }); }
   function tabsHTML() {
     var n = incoming().length;
-    var T = [['me', 'Моя колода'], ['craft', 'Переработка'], ['people', 'Участники'], ['trade', 'Обмен']];
+    var T = [['me', '<span class="wk-tx-lg">Моя колода</span><span class="wk-tx-sm">Колода</span>'], ['craft', 'Переработка'], ['shop', 'Магазин'], ['people', 'Участники'], ['trade', 'Обмен']];
     return '<div class="wk-tx-tabs" role="tablist">' + T.map(function (t) { return '<button type="button" role="tab" aria-selected="' + (DK.tab === t[0]) + '" class="' + (DK.tab === t[0] ? 'on' : '') + '" data-tx="tab" data-t="' + t[0] + '">' + t[1] + (t[0] === 'trade' && n ? '<em class="wk-tx-badge">' + n + '</em>' : '') + '</button>'; }).join('') + '</div>';
   }
   function paintTabs(pane) {
@@ -41796,9 +41803,10 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     var h = friendsHTML(); return h || '<p class="wk-dk-fnote">Других участников пока нет.</p>';
   }
   /* ---- окно составления предложения ---- */
-  function compOpen(pane) {
-    var d = DK.frData && DK.frData[DK.fr]; if (!d || !d.deck) return;
-    TX.comp = { to: DK.fr, side: 'give', give: [], want: [], q: '', r: '', dup: false, pg: 0, note: '', pane: pane };
+  function compOpen(pane, mode) {
+    if (mode === 'show') TX.comp = { mode: 'show', side: 'give', give: (load().show || []).slice(0, 3), want: [], q: '', r: '', dup: false, pg: 0, note: '', pane: pane };
+    else { var d = DK.frData && DK.frData[DK.fr]; if (!d || !d.deck) return;
+    TX.comp = { to: DK.fr, side: 'give', give: [], want: [], q: '', r: '', dup: false, pg: 0, note: '', pane: pane }; }
     var ov = document.createElement('div'); ov.id = 'wkTxComp'; ov.className = 'wk-tx-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', 'Предложение обмена');
     document.body.appendChild(ov); compPaint();
     ov.addEventListener('click', compClick); ov.addEventListener('input', function (e) {
@@ -41811,7 +41819,8 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
   function compClose() { var o = document.getElementById('wkTxComp'); if (o) o.remove(); TX.comp = null; document.removeEventListener('keydown', compKey); }
   function compPool() {
     var P = TX.comp, C = allCards(), st = load(), res = reservedMap(st), src, out = [];
-    if (P.side === 'give') { src = st.owned; Object.keys(src).forEach(function (key) { var n = src[key] - (res[key] || 0); if (n > 0) out.push({ key: key, n: n }); }); }
+    if (P.mode === 'show') { Object.keys(st.owned).forEach(function (key) { if (st.owned[key] > 0) out.push({ key: key, n: st.owned[key] }); }); }
+    else if (P.side === 'give') { src = st.owned; Object.keys(src).forEach(function (key) { var n = src[key] - (res[key] || 0); if (n > 0) out.push({ key: key, n: n }); }); }
     else { var d = DK.frData[P.to]; src = (d && d.deck && d.deck.owned) || {}; Object.keys(src).forEach(function (key) { if (src[key] > 0) out.push({ key: key, n: src[key] }); }); }
     var q = P.q.trim().toLowerCase();
     var l = out.map(function (x) { x.k = cardByKey(C, x.key); return x; }).filter(function (x) {
@@ -41832,15 +41841,15 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     return (tiles ? '<div class="wk-pane wk-tx-pw"><div class="wk-dk-grid wk-tx-pool">' + tiles + '</div></div>' : '<p class="wk-dk-fnote">Ничего не нашлось.</p>') + pager;
   }
   function compPaint() {
-    var ov = document.getElementById('wkTxComp'); if (!ov) return; var P = TX.comp, nm = accName(P.to), C = allCards();
+    var ov = document.getElementById('wkTxComp'); if (!ov) return; var P = TX.comp, nm = accName(P.to), C = allCards(), SH = P.mode === 'show';
     var R = [['', 'Любая'], ['legendary', 'Легенды'], ['epic', 'Эпики'], ['rare', 'Редкие'], ['common', 'Обычные']];
     var chips = function (l) { return l.length ? l.map(function (k) { var c = cardByKey(C, k); return '<button type="button" class="wk-tx-chip" data-tx="unpick" data-key="' + esc(k) + '" title="Убрать"><span class="wk-tx-dot" style="background:' + (c ? RC[c.r] : '#666') + '"></span>' + esc(cName(c)) + (c && c.v ? ' · ' + VAR[c.v].n : '') + ' ✕</button>'; }).join('') : '<span class="wk-tx-none">пока ничего</span>'; };
-    ov.innerHTML = '<div class="wk-tx-box"><header class="wk-tx-bh"><h3>Обмен с ' + esc(nm) + '</h3><button type="button" class="wk-tx-x" data-tx="close" aria-label="Закрыть">✕</button></header>' +
-      '<div class="wk-tx-sum"><div><h4>Ты отдаёшь <small>' + P.give.length + '/6</small></h4><div class="wk-tx-chips">' + chips(P.give) + '</div></div><div><h4>Ты получаешь <small>' + P.want.length + '/6</small></h4><div class="wk-tx-chips">' + chips(P.want) + '</div></div></div>' +
-      '<div class="wk-tx-side" role="tablist"><button type="button" role="tab" class="' + (P.side === 'give' ? 'on' : '') + '" data-tx="side" data-s="give">Мои карточки</button><button type="button" role="tab" class="' + (P.side === 'want' ? 'on' : '') + '" data-tx="side" data-s="want">Карточки: ' + esc(nm) + '</button></div>' +
+    ov.innerHTML = '<div class="wk-tx-box' + (SH ? ' sh' : '') + '"><header class="wk-tx-bh"><h3>' + (SH ? 'Витрина: до трёх карточек' : 'Обмен с ' + esc(nm)) + '</h3><button type="button" class="wk-tx-x" data-tx="close" aria-label="Закрыть">✕</button></header>' +
+      (SH ? '<div class="wk-tx-sum one"><div><h4>В витрине <small>' + P.give.length + '/3</small></h4><div class="wk-tx-chips">' + chips(P.give) + '</div></div></div>' : '<div class="wk-tx-sum"><div><h4>Ты отдаёшь <small>' + P.give.length + '/6</small></h4><div class="wk-tx-chips">' + chips(P.give) + '</div></div><div><h4>Ты получаешь <small>' + P.want.length + '/6</small></h4><div class="wk-tx-chips">' + chips(P.want) + '</div></div></div>') +
+      (SH ? '' : '<div class="wk-tx-side" role="tablist"><button type="button" role="tab" class="' + (P.side === 'give' ? 'on' : '') + '" data-tx="side" data-s="give">Мои карточки</button><button type="button" role="tab" class="' + (P.side === 'want' ? 'on' : '') + '" data-tx="side" data-s="want">Карточки: ' + esc(nm) + '</button></div>') +
       '<div class="wk-tx-flt"><input id="wkTxQ" type="search" placeholder="Поиск по имени или арке" value="' + esc(P.q) + '" autocomplete="off"><div class="wk-tx-rf">' + R.map(function (r) { return '<button type="button" class="' + (P.r === r[0] ? 'on' : '') + '" data-tx="rf" data-rr="' + r[0] + '">' + r[1] + '</button>'; }).join('') + '<button type="button" class="' + (P.dup ? 'on' : '') + '" data-tx="dup">Только повторки</button></div></div>' +
       '<div id="wkTxPool">' + poolHTML() + '</div>' +
-      '<footer class="wk-tx-bf"><input id="wkTxNote" type="text" maxlength="140" placeholder="Сообщение (необязательно)" value="' + esc(P.note) + '"><span class="wk-tx-msg" id="wkTxMsg"></span><button type="button" class="wk-tx-btn pri" data-tx="send"' + (P.give.length + P.want.length ? '' : ' disabled') + '>Отправить предложение</button></footer></div>';
+      (SH ? '<footer class="wk-tx-bf"><span class="wk-tx-msg" id="wkTxMsg"></span><button type="button" class="wk-tx-btn pri" data-tx="saveshow" style="margin-left:auto">Сохранить витрину</button></footer></div>' : '<footer class="wk-tx-bf"><input id="wkTxNote" type="text" maxlength="140" placeholder="Сообщение (необязательно)" value="' + esc(P.note) + '"><span class="wk-tx-msg" id="wkTxMsg"></span><button type="button" class="wk-tx-btn pri" data-tx="send"' + (P.give.length + P.want.length ? '' : ' disabled') + '>Отправить предложение</button></footer></div>');
   }
   function compClick(e) {
     var P = TX.comp; if (!P) return;
@@ -41854,9 +41863,11 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     if (a === 'cpg') { P.pg = Math.max(0, Number(b.getAttribute('data-p')) || 0); ov.querySelector('#wkTxPool').innerHTML = poolHTML(); return; }
     if (a === 'pick' || a === 'unpick') {
       var key = b.getAttribute('data-key'), L = a === 'unpick' ? (P.give.indexOf(key) >= 0 ? P.give : P.want) : P[P.side], i = L.indexOf(key);
-      if (i >= 0) L.splice(i, 1); else if (L.length < 6) L.push(key); else { ov.querySelector('#wkTxMsg').textContent = 'Не больше 6 карточек с каждой стороны'; return; }
+      var MX = P.mode === 'show' ? 3 : 6;
+      if (i >= 0) L.splice(i, 1); else if (L.length < MX) L.push(key); else { ov.querySelector('#wkTxMsg').textContent = P.mode === 'show' ? 'В витрине помещается три карточки' : 'Не больше 6 карточек с каждой стороны'; return; }
       var y = ov.querySelector('#wkTxPool').scrollTop; compPaint(); var np = ov.querySelector('#wkTxPool'); if (np) np.scrollTop = y; return;
     }
+    if (a === 'saveshow') { var s3 = load(); if (!s3.__fake) { s3.show = P.give.slice(0, 3); save(s3); } var pn = P.pane; compClose(); if (pn && pn.isConnected) renderDeck(pn); return; }
     if (a === 'send') {
       var api = txApi(), msg = ov.querySelector('#wkTxMsg'); if (!api) { msg.textContent = 'Нет связи с облаком'; return; }
       b.disabled = true; msg.textContent = 'Отправляю…';
@@ -41894,10 +41905,248 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     if (a === 'craft') { doCraft(Number(b.getAttribute('data-i'))); var bd = pane.querySelector('#wkTxBody'); if (bd) { bd.innerHTML = craftHTML(allCards(), load()); var r0 = bd.querySelector('.wk-tx-res'); if (r0) { r0.classList.add('pop'); if (r0.scrollIntoView) r0.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } } return true; }
     if (a === 'reload') { refreshTrades(pane, true); return true; }
     if (a === 'compose') { compOpen(pane); return true; }
+    if (a === 'showedit') { compOpen(pane, 'show'); return true; }
+    if (a === 'sellall' || a === 'sell1' || a === 'buy') { shopClick(pane, a, b); return true; }
     if (a === 'accept' || a === 'decline' || a === 'cancel') { if (a !== 'accept' || window.confirm('Принять обмен? Карточки сразу перейдут.')) txAction(pane, a, b.getAttribute('data-id'), b); return true; }
     return false;
   }
-  window.__wkDeckTx = { state: TX, refresh: refreshTrades };
+  window.__wkDeckTx = { state: TX, refresh: refreshTrades, draw: function (id) { var p = SHOP.filter(function (q) { return q.id === id; })[0]; return drawPack(allCards(), load(), p ? p.opt : {}).map(function (x) { return (cardByKey(allCards(), x.key) || {}).r; }); } };
+
+  /* ======== Магазин, витрина, катсцены ======== */
+  var SELL = { common: 100, rare: 600, epic: 4800, legendary: 48000, var: 96000 };
+  var SHOP = [
+    { id: 'cheap', name: 'Шлюпка', price: 900, what: '7 обычных карточек', note: 'Новые выпадают в 6 раз охотнее повторок — удобно добирать обычные.', opt: { shop: true, onlyCommon: true, neww: 18 } },
+    { id: 'normal', name: 'Каравелла', price: 18000, what: '7 карточек с обычными шансами', note: 'Легенда 4%, эпик 10%, редкая 24%, обычная 62%. Хотя бы одна редкая или лучше.', opt: { shop: true } },
+    { id: 'boost', name: 'Галеон', price: 44000, what: '7 карточек с повышенными шансами', note: 'Легенда 10%, эпик 25%, редкая 40%, обычная 25%. Хотя бы один эпик или лучше.', opt: { shop: true, prob: { legendary: 0.10, epic: 0.25, rare: 0.40 }, minEpic: true } }
+  ];
+  function fmtB(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0') + '\u00a0белли'; }
+  function sellVal(k) { return k.v ? SELL['var'] : SELL[k.r]; }
+  function sellable(C, st) {
+    var res = reservedMap(st), out = [];
+    Object.keys(st.owned).forEach(function (key) {
+      var n = (st.owned[key] || 0) - 1 - (res[key] || 0); if (n < 1) return;
+      var k = cardByKey(C, key); if (k) out.push({ k: k, n: n });
+    });
+    return out;
+  }
+  function shopHTML(C, st) {
+    if (st.__fake) return '<p class="wk-dk-fnote">Выключи «Заполнить все» в админской плашке: магазин работает только с настоящей колодой.</p>';
+    var bel = st.belli || 0, list = sellable(C, st);
+    var G = [['common', 'Обычные'], ['rare', 'Редкие'], ['epic', 'Эпики'], ['legendary', 'Легенды'], ['var', 'Особые версии']];
+    var sum = function (g) { return list.filter(function (x) { return g === 'var' ? !!x.k.v : !x.k.v && x.k.r === g; }); };
+    var rows = G.map(function (g) {
+      var l = sum(g[0]), n = l.reduce(function (a, x) { return a + x.n; }, 0), tot = n * SELL[g[0]];
+      return '<div class="wk-sh-sr" style="--a:' + (g[0] === 'var' ? '#ff7ab6' : RC[g[0]]) + '"><span class="wk-tx-dot' + (g[0] === 'var' ? ' rb' : '') + '" style="background:var(--a)"></span><b>' + g[1] + '</b><span class="wk-sh-pr">' + fmtB(SELL[g[0]]) + ' за копию</span><span class="wk-sh-n">лишних: <b>' + n + '</b></span><button type="button" class="wk-tx-btn" data-tx="sellall" data-g="' + g[0] + '"' + (n ? '' : ' disabled') + '>' + (n ? 'Продать все · ' + fmtB(tot) : 'Нечего продать') + '</button></div>';
+    }).join('');
+    var packs = SHOP.map(function (p) {
+      var can = bel >= p.price;
+      return '<article class="wk-sh-pk p-' + p.id + '"><div class="wk-sh-art wk-dk-back r-' + (p.id === 'boost' ? 'legendary' : p.id === 'normal' ? 'rare' : 'common') + '">' + backInner(p.id === 'boost' ? 'legendary' : p.id === 'normal' ? 'rare' : 'common', '', true) + '</div><div class="wk-sh-info"><h4>' + p.name + '</h4><p class="wk-sh-what">' + p.what + '</p><p class="wk-sh-note">' + p.note + '</p></div><button type="button" class="wk-tx-btn' + (can ? ' pri' : '') + '" data-tx="buy" data-p="' + p.id + '"' + (can ? '' : ' disabled') + '>' + (can ? 'Купить · ' + fmtB(p.price) : 'Нужно ' + fmtB(p.price - bel)) + '</button></article>';
+    }).join('');
+    var detail = list.length ? '<details class="wk-sh-det"><summary>Продать по одной (' + list.length + ' карточек с лишними копиями)</summary><div class="wk-sh-dl">' + list.sort(function (a, b) { return sellVal(b.k) - sellVal(a.k) || cName(a.k).localeCompare(cName(b.k), 'ru'); }).map(function (x) {
+      var k = x.k; return '<div class="wk-sh-it"><span class="wk-tx-dot' + (k.v ? ' rb' : '') + '" style="background:' + RC[k.r] + '"></span><span class="wk-sh-nm">' + esc(cName(k)) + (k.v ? ' · ' + VAR[k.v].n : '') + '<small>' + esc(k.sub || (k.arc && k.arc.name) || '') + '</small></span><span class="wk-sh-c">лишних ×' + x.n + '</span><button type="button" class="wk-tx-btn" data-tx="sell1" data-key="' + esc(k.key) + '">Продать 1 · ' + fmtB(sellVal(k)) + '</button></div>';
+    }).join('') + '</div></details>' : '';
+    return '<div class="wk-sh-bal"><span>Твой кошелёк</span><b>' + String(Math.round(bel)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0') + '<small> белли</small></b></div>' +
+      '<h3 class="wk-dk-h">Купить набор</h3><div class="wk-sh-pks">' + packs + '</div>' +
+      '<p class="wk-sh-hint">Купленные наборы не ждут таймера, не сдвигают гарантию легенды и не превращают повторки в особые версии. Цена набора равна средней стоимости карточек в нём.</p>' +
+      '<h3 class="wk-dk-h">Продать повторки</h3><p class="wk-sh-hint">Продаются только лишние копии: последняя копия каждой карточки и карточки в ожидающих обменах остаются.</p><div class="wk-sh-srs">' + rows + '</div>' + detail;
+  }
+  function sellKeys(st, pairs) { var got = 0; pairs.forEach(function (x) { if (x.n > 0) { addCard(st, x.k.key, -x.n); got += x.n * sellVal(x.k); } }); st.belli = (st.belli || 0) + got; st.sold = (st.sold || 0) + got; return got; }
+  function shopClick(pane, a, b) {
+    var C = allCards(), st = load(); if (st.__fake) return;
+    var body = pane.querySelector('#wkTxBody'), repaint = function () { if (body) body.innerHTML = shopHTML(allCards(), load()); };
+    if (a === 'sellall') {
+      var g = b.getAttribute('data-g'), l = sellable(C, st).filter(function (x) { return g === 'var' ? !!x.k.v : !x.k.v && x.k.r === g; });
+      var tot = l.reduce(function (s, x) { return s + x.n * sellVal(x.k); }, 0);
+      if (tot >= 48000 && !window.confirm('Продать ' + l.reduce(function (s, x) { return s + x.n; }, 0) + ' лишних копий за ' + fmtB(tot).replace(/ /g, ' ') + '?')) return;
+      var got = sellKeys(st, l); save(st); repaint(); txToast('Продано на ' + fmtB(got)); return;
+    }
+    if (a === 'sell1') {
+      var key = b.getAttribute('data-key'), x = sellable(C, st).filter(function (y) { return y.k.key === key; })[0]; if (!x) return;
+      sellKeys(st, [{ k: x.k, n: 1 }]); save(st); var y0 = window.scrollY; repaint(); var dt = pane.querySelector('.wk-sh-det'); if (dt) dt.open = true; window.scrollTo(0, y0); return;
+    }
+    if (a === 'buy') {
+      var p = SHOP.filter(function (q) { return q.id === b.getAttribute('data-p'); })[0]; if (!p || (st.belli || 0) < p.price) return;
+      if (DK.pack) finish(pane, true);
+      st = load(); st.belli -= p.price; st.spent = (st.spent || 0) + p.price; st.bought = (st.bought || 0) + 1;
+      var pk = drawPack(C, st, p.opt);
+      applyPack(st, C, pk, true);
+      DK.tab = 'me'; renderDeck(pane);
+      var row = pane.querySelector('.wk-dk-row'); if (row && row.scrollIntoView) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+  /* общий шаг открытия набора (бесплатного и купленного) */
+  function applyPack(S, C, pk, shop) {
+    var gotL = false;
+    pk.forEach(function (x) {
+      var bk = cardByKey(C, x.key); if (bk && bk.r === 'legendary') gotL = true;
+      if (!shop && !x.isNew && bk && !bk.kind && VCH[bk.r] && Math.random() < VCH[bk.r]) { var v = rollVar(), vk = x.key + '#' + v; x.v = v; x.vNew = !S.owned[vk]; S.owned[vk] = (S.owned[vk] || 0) + 1; }
+      else S.owned[x.key] = (S.owned[x.key] || 0) + 1;
+    });
+    if (!shop) { S.pity = gotL ? 0 : (S.pity || 0) + 1; S.last = Date.now(); }
+    S.packs++;
+    var now = Date.now(); S.got = S.got || {}; pk.forEach(function (x) { S.got[x.v ? x.key + '#' + x.v : x.key] = now; });
+    S.open = { pk: pk.map(function (x) { return { key: x.key, isNew: !!x.isNew, v: x.v || '', vNew: !!x.vNew }; }), fl: [], shop: !!shop }; save(S);
+    DK.pack = pk; DK.flipped = 0;
+  }
+  /* ---- витрина ---- */
+  function showcaseHTML(C, keys, mine) {
+    keys = (keys || []).filter(function (k) { return cardByKey(C, k); }).slice(0, 3);
+    if (!mine && !keys.length) return '';
+    var slots = [0, 1, 2].map(function (i) {
+      var key = keys[i], k = key && cardByKey(C, key);
+      if (k) return '<div class="wk-sc-s wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + '</div>';
+      return mine ? '<button type="button" class="wk-sc-s wk-sc-e" data-tx="showedit" aria-label="Добавить карточку в витрину"><b>+</b><span>Добавить</span></button>' : '';
+    }).join('');
+    return '<section class="wk-sc' + (mine ? ' mine' : '') + '"><div class="wk-sc-h"><h3 class="wk-dk-h">' + (mine ? 'Моя витрина' : 'Витрина') + '</h3>' + (mine ? '<button type="button" class="wk-tx-btn" data-tx="showedit">' + (keys.length ? 'Изменить' : 'Выбрать карточки') + '</button>' : '') + '</div>' +
+      (mine && !keys.length ? '<p class="wk-sh-hint">Выбери до трёх любимых карточек. Участники увидят их первыми, когда откроют твою колоду.</p>' : '') +
+      '<div class="wk-pane wk-sc-g"><div class="wk-dk-grid wk-sc-row">' + slots + '</div></div></section>';
+  }
+  /* ---- катсцены ---- */
+  var CS_TXT = { legendary: 'Легенда', holo: 'Голографическая', gold: 'Пламенная', neg: 'Негативная' };
+  function csKind(el) { var v = VKEYS.filter(function (x) { return el.classList.contains('v-' + x); })[0]; return v || (el.classList.contains('r-legendary') ? 'legendary' : ''); }
+  function cutscene(pane, el, done) {
+    var kind = csKind(el), x = el.__wkx || (DK.pack && DK.pack[Number(el.getAttribute('data-i'))]);
+    if (!kind || !x || el.getAttribute('data-cs')) { done(); return; }
+    el.setAttribute('data-cs', '1');
+    var C = allCards(), k = cardByKey(C, x.key); if (!k) { done(); return; }
+    var kk = x.v && VAR[x.v] ? mkVar(k, x.v) : k;
+    var ov = document.createElement('div'); ov.className = 'wk-cut cs-' + kind; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', CS_TXT[kind] + ': ' + cName(k));
+    var parts = '', i, N = kind === 'neg' ? 0 : 26;
+    for (i = 0; i < N; i++) parts += '<i style="--x:' + (Math.random() * 100).toFixed(1) + '%;--d:' + (0.6 + Math.random() * 1.6).toFixed(2) + 's;--s:' + (2 + Math.random() * 5).toFixed(1) + 'px;--w:' + (Math.random() * 60 - 30).toFixed(0) + 'px"></i>';
+    var lay = {
+      legendary: '<div class="cs-rays"></div><div class="cs-ring"></div><div class="cs-ring r2"></div>',
+      holo: '<div class="cs-prism"></div><div class="cs-bands"></div><div class="cs-ring"></div>',
+      gold: '<div class="cs-fire"></div><div class="cs-fire f2"></div><div class="cs-heat"></div>',
+      neg: '<div class="cs-flash"></div><div class="cs-scan"></div><div class="cs-rays"></div>'
+    }[kind];
+    var card = '<div class="wk-dk-slot has r-' + kk.r + (kk.v ? ' v-' + kk.v : '') + '">' + cardHTML(kk) + '</div>';
+    ov.innerHTML = '<div class="cs-bg"></div>' + lay + '<div class="cs-pts">' + parts + '</div>' +
+      '<div class="cs-stage"><div class="wk-pane cs-card">' + card + (kind === 'neg' ? '<div class="cs-gl g1">' + card + '</div><div class="cs-gl g2">' + card + '</div>' : '') + '</div>' +
+      '<div class="cs-t"><b>' + CS_TXT[kind] + '</b><span>' + esc(cName(k)) + '</span></div></div><p class="cs-skip">Нажми, чтобы продолжить</p>';
+    document.body.appendChild(ov);
+    var t0 = Date.now(), closed = false;
+    var close = function () { if (closed || Date.now() - t0 < 350) return; closed = true; ov.classList.add('out'); document.removeEventListener('keydown', kd, true); window.removeEventListener('click', wc, true); setTimeout(function () { ov.remove(); done(); }, 320); };
+    var kd = function (e) { if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); close(); } };
+    var wc = function (e) { if (!ov.contains(e.target)) return; e.preventDefault(); e.stopPropagation(); if (e.stopImmediatePropagation) e.stopImmediatePropagation(); close(); };
+    window.addEventListener('click', wc, true); document.addEventListener('keydown', kd, true);
+    setTimeout(function () { ov.classList.add('ready'); }, 2300);
+  }
+  function flipPk(pane, el, after) {
+    if (el.classList.contains('on')) { if (after) after(); return; }
+    var go = function () { el.classList.add('on'); DK.flipped++; markFlip(el); if (DK.pack && DK.flipped >= DK.pack.length) finish(pane); if (after) after(); };
+    if (csKind(el) && !el.getAttribute('data-cs')) cutscene(pane, el, go); else go();
+  }
+  function flipAll(pane) {
+    var l = [].slice.call(pane.querySelectorAll('.wk-pk:not(.on)')), i = 0;
+    (function next() { if (i >= l.length || !pane.isConnected) return; var el = l[i++]; flipPk(pane, el, function () { setTimeout(next, csKind(el) ? 380 : 240); }); })();
+  }
+
+  /* ======== Наборы за достижения ======== */
+  var AR_OPT = {
+    small: { shop: true, n: 3 },
+    big: { shop: true, n: 5, prob: { legendary: 0.10, epic: 0.25, rare: 0.40 }, minEpic: true },
+    saga: { shop: true, n: 5, prob: { legendary: 0.10, epic: 0.25, rare: 0.40 }, minEpic: true },
+    final: { shop: true, n: 7, prob: { legendary: 0.10, epic: 0.25, rare: 0.40 }, minEpic: true, minLeg: true }
+  };
+  var AR_NOTE = { small: 'обычные шансы, хотя бы одна редкая', big: 'последний уровень: повышенные шансы, хотя бы один эпик', saga: 'сага: повышенные шансы, хотя бы один эпик', final: 'последняя сага: повышенные шансы, гарантированная легенда' };
+  function arPrefix(id) { return String(id).replace(/:[^:]*$/, ''); }
+  function arKind(id, isLast) {
+    var p = arPrefix(id);
+    if (p === 'saga-start') return 'final';
+    if (p === 'saga-complete') return 'saga';
+    if (p === 'custom') return 'small';
+    return isLast ? 'big' : 'small';
+  }
+  function arScan(root) {
+    var cards = [].slice.call(root.querySelectorAll('[data-achievement-card]')), out = [];
+    cards.forEach(function (el, i) {
+      if (el.getAttribute('data-achievement-earned') !== 'true') return;
+      var id = el.getAttribute('data-achievement-card'), p = arPrefix(id);
+      var later = cards.slice(i + 1).some(function (e2) { return arPrefix(e2.getAttribute('data-achievement-card')) === p; });
+      var tt = el.querySelector('.achievement-title');
+      out.push({ el: el, id: id, kind: arKind(id, !later), title: tt ? tt.textContent.trim() : id });
+    });
+    return out;
+  }
+  function arPreview(root) { var n = root.querySelector('#achievementPreviewNotice'); return !!(n && !n.hidden); }
+  function arDecorate() {
+    var root = document.getElementById('cabinPaneArcStats'); if (!root || !root.querySelector('[data-achievement-card]')) return;
+    var st = load(), pre = arPreview(root) || st.__fake, list = arScan(root), done = st.ach || {}, wait = [];
+    AR.busy = true;
+    list.forEach(function (a) {
+      var box = a.el.querySelector('.wk-ar-b'), n = AR_OPT[a.kind].n, got = !!done[a.id];
+      if (!got && !pre) wait.push(a);
+      var html = pre ? '' : got ? '<span class="wk-ar-got">Набор получен · ' + n + ' ' + plCards(n) + '</span>' : '<button type="button" class="wk-ar-btn k-' + a.kind + '" data-wk-ar="' + esc(a.id) + '" title="' + esc(AR_NOTE[a.kind]) + '">Забрать набор · ' + n + ' ' + plCards(n) + '</button>';
+      if (!box) { if (!html) return; box = document.createElement('div'); box.className = 'wk-ar-b'; (a.el.querySelector('.achievement-copy') || a.el).appendChild(box); }
+      if (box.innerHTML !== html) box.innerHTML = html;
+    });
+    var bar = root.querySelector('.wk-ar-bar'), cards = wait.reduce(function (s, a) { return s + AR_OPT[a.kind].n; }, 0);
+    var bh = wait.length ? '<div><b>Наградные наборы ждут: ' + wait.length + '</b><span>' + cards + ' ' + plCards(cards) + ' за полученные медали</span></div><button type="button" class="wk-tx-btn pri" data-wk-ar="*">Забрать все</button>' : '';
+    if (!bh) { if (bar) bar.remove(); }
+    else { if (!bar) { bar = document.createElement('div'); bar.className = 'wk-ar-bar'; var hd = root.querySelector('.achievement-header'); if (hd) hd.insertAdjacentElement('afterend', bar); else root.prepend(bar); } if (bar.innerHTML !== bh) bar.innerHTML = bh; }
+    AR.busy = false;
+    if (st.achOpen && !document.getElementById('wkArOv') && !AR.reopened && root.offsetParent) { AR.reopened = 1; arReveal(); }
+  }
+  function plCards(n) { return n % 10 === 1 && n % 100 !== 11 ? 'карта' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 'карты' : 'карт'; }
+  var AR = { busy: false, reopened: 0, t: 0 };
+  function arClaim(ids) {
+    var root = document.getElementById('cabinPaneArcStats'); if (!root) return;
+    var st = load(); if (st.__fake || arPreview(root)) return;
+    if (st.achOpen) { arReveal(); return; }
+    var C = allCards(), list = arScan(root).filter(function (a) { return !(st.ach || {})[a.id] && (ids === '*' || a.id === ids); });
+    if (!list.length) return;
+    st.ach = st.ach || {}; var all = [], now = Date.now(); st.got = st.got || {};
+    list.forEach(function (a) {
+      var pk = drawPack(C, st, AR_OPT[a.kind]);
+      pk.forEach(function (x) { x.isNew = !st.owned[x.key]; addCard(st, x.key, 1); st.got[x.key] = now; x.src = a.title; all.push(x); });
+      st.ach[a.id] = now;
+    });
+    st.achOpen = { title: list.length === 1 ? list[0].title : 'Награды за ' + list.length + ' ' + (list.length % 10 === 1 && list.length % 100 !== 11 ? 'достижение' : list.length % 10 >= 2 && list.length % 10 <= 4 && (list.length % 100 < 10 || list.length % 100 >= 20) ? 'достижения' : 'достижений'), note: list.length === 1 ? AR_NOTE[list[0].kind] : '', pk: all.map(function (x) { return { key: x.key, isNew: !!x.isNew, src: x.src }; }), fl: [], cs: all.length <= 14 };
+    save(st); arDecorate(); arReveal();
+  }
+  function arReveal() {
+    var st = load(), O = st.achOpen; if (!O || document.getElementById('wkArOv')) return;
+    var C = allCards();
+    var items = O.pk.map(function (x, i) {
+      var k = cardByKey(C, x.key); if (!k) return '';
+      return '<div class="wk-pk r-' + k.r + (O.fl.indexOf(i) >= 0 ? ' on' : '') + '" data-ai="' + i + '"><div class="wk-pk-in"><div class="wk-pk-bk">' + backInner(k.r, '') + '</div><div class="wk-pk-fr">' + cardHTML(k) + '<em class="wk-dk-new' + (x.isNew ? '' : ' dup') + '">' + (x.isNew ? 'НОВАЯ' : 'повтор') + '</em><em class="wk-dk-rn r-' + k.r + '">' + RN4[k.r] + '</em></div></div></div>';
+    }).join('');
+    var ov = document.createElement('div'); ov.id = 'wkArOv'; ov.className = 'wk-tx-ov wk-ar-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', 'Наградной набор');
+    ov.innerHTML = '<div class="wk-tx-box wk-ar-box"><header class="wk-tx-bh"><div><h3>' + esc(O.title) + '</h3><p class="wk-ar-sub">' + O.pk.length + ' ' + plCards(O.pk.length) + (O.note ? ' · ' + esc(O.note) : '') + '</p></div></header>' +
+      '<div class="wk-pane wk-ar-body"><div class="wk-dk-stage"><div class="wk-dk-row wk-ar-row">' + items + '</div></div></div>' +
+      '<footer class="wk-tx-bf"><label class="wk-ar-cs"><input type="checkbox" id="wkArCs"' + (O.cs ? ' checked' : '') + '> Катсцены для легенд</label><button type="button" class="wk-tx-btn" data-ar="all">Перевернуть все</button><button type="button" class="wk-tx-btn pri" data-ar="done">В коллекцию</button></footer></div>';
+    document.body.appendChild(ov);
+    var pkEls = [].slice.call(ov.querySelectorAll('.wk-pk'));
+    pkEls.forEach(function (el) { el.__wkx = { key: O.pk[Number(el.getAttribute('data-ai'))].key }; });
+    var mark = function (el) { var s2 = load(); if (!s2.achOpen) return; var i = Number(el.getAttribute('data-ai')); if (s2.achOpen.fl.indexOf(i) < 0) s2.achOpen.fl.push(i); if (s2.achOpen.fl.length >= s2.achOpen.pk.length) delete s2.achOpen; save(s2); };
+    var flip = function (el, after) {
+      if (el.classList.contains('on')) { if (after) after(); return; }
+      var go = function () { el.classList.add('on'); mark(el); if (after) after(); };
+      var useCs = ov.querySelector('#wkArCs').checked;
+      if (useCs && el.classList.contains('r-legendary') && !el.getAttribute('data-cs')) cutscene(null, el, go); else go();
+    };
+    var close = function () { var s3 = load(); if (s3.achOpen) { delete s3.achOpen; save(s3); } ov.remove(); document.removeEventListener('keydown', kd); arDecorate(); };
+    var kd = function (e) { if (e.key === 'Escape' && !document.querySelector('.wk-cut')) close(); };
+    document.addEventListener('keydown', kd);
+    ov.addEventListener('change', function (e) { if (e.target.id === 'wkArCs') { var s4 = load(); if (s4.achOpen) { s4.achOpen.cs = e.target.checked; save(s4); } } });
+    ov.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-ar]'), pk = e.target.closest('.wk-pk');
+      if (b) { e.preventDefault(); e.stopPropagation(); if (b.getAttribute('data-ar') === 'done') return close();
+        var l = pkEls.filter(function (x) { return !x.classList.contains('on'); }), i = 0;
+        (function next() { if (i >= l.length || !ov.isConnected) return; var el = l[i++]; flip(el, function () { setTimeout(next, l.length > 20 ? 60 : 200); }); })();
+        return; }
+      if (pk) { e.preventDefault(); e.stopPropagation(); flip(pk); }
+    });
+  }
+  (function arWatch() {
+    var root = document.getElementById('cabinPaneArcStats');
+    if (!root) { if ((AR.t = (AR.t || 0) + 1) < 40) setTimeout(arWatch, 1500); return; }
+    var mo = new MutationObserver(function () { if (AR.busy) return; clearTimeout(AR.d); AR.d = setTimeout(arDecorate, 60); });
+    mo.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden'] });
+    root.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-wk-ar]'); if (!b) return; e.preventDefault(); e.stopPropagation(); arClaim(b.getAttribute('data-wk-ar')); }, true);
+    window.addEventListener('wk-deck-changed', function () { clearTimeout(AR.d); AR.d = setTimeout(arDecorate, 60); });
+    arDecorate();
+  })();
 
   function markFlip(el) {
     var S = load(); if (!S.open || S.__fake) return; var i = Number(el.getAttribute('data-i')); S.open.fl = S.open.fl || [];
@@ -41910,7 +42159,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     var cards = allCards(), st = load(); migrate(st, cards);
     if (!DK.pack && st.open && st.open.pk && st.open.pk.length) { DK.pack = st.open.pk; DK.flipped = (st.open.fl || []).length; DK.restored = 1; }
     pane.innerHTML = '<div class="wk-pane-head"><div><h2>Колода</h2><p>Карточки персонажей (по одной на каждое фото в арке), дьявольских плодов и полезных статей. Новые появляются по мере прохождения.</p></div><div class="wk-dk-hbtn"><button type="button" class="wk-dk-reset" data-act="rules" title="Правила и шансы">Правила</button><button type="button" class="wk-dk-reset" data-act="reset" title="Обнулить коллекцию">Сбросить</button></div></div>' +
-      tabsHTML() + (DK.tab === 'me' ? adminHTML() + '<div id="wkDkPack">' + packHTML(cards, st) + '</div><div id="wkDkStats">' + statsHTML(cards, st) + '</div><h3 class="wk-dk-h">Коллекция</h3><div id="wkDkColl">' + collHTML(cards, st) + '</div>' : '<div id="wkTxBody" class="wk-tx-body">' + (DK.tab === 'craft' ? craftHTML(cards, st) : DK.tab === 'people' ? peopleHTML() : tradeHTML()) + '</div>');
+      tabsHTML() + (DK.tab === 'me' ? adminHTML() + '<div id="wkDkPack">' + packHTML(cards, st) + '</div>' + (st.__fake ? '' : showcaseHTML(cards, st.show, true)) + '<div id="wkDkStats">' + statsHTML(cards, st) + '</div><h3 class="wk-dk-h">Коллекция</h3><div id="wkDkColl">' + collHTML(cards, st) + '</div>' : '<div id="wkTxBody" class="wk-tx-body">' + (DK.tab === 'craft' ? craftHTML(cards, st) : DK.tab === 'shop' ? shopHTML(cards, st) : DK.tab === 'people' ? peopleHTML() : tradeHTML()) + '</div>');
     if (DK.tab === 'me' && DK.pack && st.open && st.open.fl) st.open.fl.forEach(function (i) { var el = pane.querySelector('.wk-pk[data-i="' + i + '"]'); if (el) el.classList.add('on'); });
     if (DK.restored && DK.tab === 'me' && st.open) { var rn = pane.querySelector('#wkDkPack .wk-dk-row'); if (rn) rn.insertAdjacentHTML('beforebegin', '<p class="wk-dk-convnote">Набор не был досмотрен — карточки ждут тебя.</p>'); }
     refreshTrades(pane, false);
@@ -41925,7 +42174,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
         pane.__restored = 1;
         cl.load().then(function (by) {
           var mine = by[ml], loc = load();
-          if (mine && mine.deck && (mine.deck.packs || 0) > (loc.packs || 0)) { loc.owned = mine.deck.owned || {}; loc.packs = mine.deck.packs || 0; loc.pity = mine.deck.pity || 0; loc.tr = Object.assign({}, mine.deck.tr || {}, loc.tr || {}); loc.got = Object.assign({}, mine.deck.got || {}, loc.got || {}); save(loc); renderDeck(pane); }
+          if (mine && mine.deck && (mine.deck.packs || 0) > (loc.packs || 0)) { loc.owned = mine.deck.owned || {}; loc.packs = mine.deck.packs || 0; loc.pity = mine.deck.pity || 0; loc.tr = Object.assign({}, mine.deck.tr || {}, loc.tr || {}); loc.got = Object.assign({}, mine.deck.got || {}, loc.got || {}); if (mine.deck.show && !(loc.show && loc.show.length)) loc.show = mine.deck.show; if (typeof mine.deck.belli === 'number') loc.belli = mine.deck.belli; loc.ach = Object.assign({}, mine.deck.ach || {}, loc.ach || {}); save(loc); renderDeck(pane); }
         }, function () {});
       }
     } catch (e) {}
@@ -41940,7 +42189,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
         var bw = e.target.closest && e.target.closest('.wk-dk-sbwrap'); if (bw) { if (e.target.closest('[data-wk-open-char]')) return; backZoom(bw.getAttribute('data-bkr'), bw.getAttribute('data-bkv'), bw.getAttribute('data-bkc')); return; }
         var t = e.target.closest && e.target.closest('[data-act],[data-f],[data-r],[data-v],[data-kind],[data-fr],[data-pg],.wk-pk'); if (!t) return;
         var C = allCards(), S = load();
-        if (t.classList.contains('wk-pk')) { if (!t.classList.contains('on')) { t.classList.add('on'); DK.flipped++; markFlip(t); if (DK.pack && DK.flipped >= DK.pack.length) finish(pane); } return; }
+        if (t.classList.contains('wk-pk')) { flipPk(pane, t); return; }
         if (t.hasAttribute('data-pg') && !t.disabled) { DK.pg = Number(t.getAttribute('data-pg')) || 0; var pc = pane.querySelector('#wkDkColl'); pc.innerHTML = collHTML(C, S); if (pc.scrollIntoView) pc.scrollIntoView({ block: 'start' }); return; }
         if (t.hasAttribute('data-kind')) { DK.k = t.getAttribute('data-kind'); DK.lim = 60; DK.pg = 0; pane.querySelector('#wkDkColl').innerHTML = collHTML(C, S); return; }
         if (t.hasAttribute('data-f')) { DK.f = t.getAttribute('data-f'); DK.lim = 60; DK.pg = 0; pane.querySelector('#wkDkColl').innerHTML = collHTML(C, S); return; }
@@ -41951,20 +42200,12 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
         if (a === 'open') {
           if (t.disabled || C.length < 1 || leftMs(S) > 0) return;
           if (DK.pack) finish(pane, true);
-          var pk = drawPack(C, S), gotL = false;
-          pk.forEach(function (x) {
-            var bk = cardByKey(C, x.key); if (bk && bk.r === 'legendary') gotL = true;
-            if (!x.isNew && bk && !bk.kind && VCH[bk.r] && Math.random() < VCH[bk.r]) { var v = rollVar(), vk = x.key + '#' + v; x.v = v; x.vNew = !S.owned[vk]; S.owned[vk] = (S.owned[vk] || 0) + 1; }
-            else S.owned[x.key] = (S.owned[x.key] || 0) + 1;
-          });
-          S.pity = gotL ? 0 : (S.pity || 0) + 1; S.packs++; S.last = Date.now();
-          S.got = S.got || {}; pk.forEach(function (x) { S.got[x.v ? x.key + '#' + x.v : x.key] = S.last; });
-          S.open = { pk: pk.map(function (x) { return { key: x.key, isNew: !!x.isNew, v: x.v || '', vNew: !!x.vNew }; }), fl: [] }; save(S);
+          var pk = drawPack(C, S); applyPack(S, C, pk, false);
           DK.pack = pk; DK.flipped = 0; pane.querySelector('#wkDkPack').innerHTML = packHTML(C, S);
           var row = pane.querySelector('.wk-dk-row'); if (row && row.scrollIntoView) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else if (a === 'slotflip') { var sl = t.closest('.wk-dk-slot'); if (sl) slotFlip(sl, t); }
         else if (a === 'flipall') {
-          [].forEach.call(pane.querySelectorAll('.wk-pk:not(.on)'), function (el, i) { setTimeout(function () { el.classList.add('on'); DK.flipped++; markFlip(el); if (DK.pack && DK.flipped >= DK.pack.length) finish(pane); }, i * 260); });
+          flipAll(pane);
         }
         else if (a === 'done') { finish(pane, true); }
         else if (a === 'fr-more') { DK.frLim += 60; var ff = pane.querySelector('#wkDkFriend'); if (ff) ff.innerHTML = friendBody(); }
@@ -42113,4 +42354,211 @@ html body .wk-tx-grid.wk-dk-grid{display:grid!important;grid-template-columns:re
  .wk-tx-resc{width:104px}
 }
 @media (prefers-reduced-motion:reduce){.wk-tx-res.pop .wk-tx-resc{animation:none}}
+</style><style id="wk-shop-cs-css">
+.wk-tx-sm{display:none}
+@media (max-width:760px){.wk-tx-lg{display:none}.wk-tx-sm{display:inline}}
+/* магазин */
+.wk-sh-bal{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:16px 20px;margin-bottom:6px;border-radius:16px;border:1px solid rgba(216,180,90,.4);background:radial-gradient(120% 140% at 100% 0%,rgba(216,180,90,.18),transparent 60%),rgba(10,14,26,.6)}
+.wk-sh-bal span{color:#a9b4c6;font-size:14px}
+.wk-sh-bal b small{font-size:15px;color:#c9b071;font-weight:700}
+.wk-sh-bal b{font-size:30px;line-height:1;color:#f3dc9a;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.wk-sh-pks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.wk-sh-pk{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;border:1px solid rgba(148,163,184,.2);background:rgba(10,14,26,.55)}
+.wk-sh-pk.p-normal{border-color:rgba(91,156,255,.35)}.wk-sh-pk.p-boost{border-color:rgba(242,194,48,.45);background:radial-gradient(120% 90% at 50% 0%,rgba(242,194,48,.12),transparent 60%),rgba(10,14,26,.55)}
+.wk-sh-art{position:relative;width:96px;height:136px;margin:0 auto;border-radius:12px;overflow:hidden;isolation:isolate}
+.wk-sh-art .wk-anc{width:40px;height:40px}
+.wk-sh-info h4{margin:0;font-size:18px;color:#fff}
+.wk-sh-what{margin:4px 0 0;color:#dbe3ee;font-size:14px;font-weight:700}
+.wk-sh-note{margin:6px 0 0;color:#93a0b5;font-size:13px;line-height:1.45}
+.wk-sh-pk .wk-tx-btn{margin-top:auto;width:100%}
+.wk-sh-hint{color:#8b97ad;font-size:13px;line-height:1.5;margin:10px 0 12px;max-width:72ch}
+.wk-sh-srs{display:grid;gap:8px}
+.wk-sh-sr{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto auto;gap:12px;align-items:center;padding:11px 14px;border-radius:13px;border:1px solid rgba(148,163,184,.16);background:linear-gradient(90deg,color-mix(in srgb,var(--a) 10%,transparent),rgba(10,14,26,.45) 40%)}
+.wk-sh-sr b{color:#e8edf5}
+.wk-sh-pr,.wk-sh-n{color:#93a0b5;font-size:13px;white-space:nowrap}
+.wk-sh-det{margin-top:12px;border-radius:13px;border:1px solid rgba(148,163,184,.16);background:rgba(10,14,26,.4)}
+.wk-sh-det summary{padding:12px 14px;cursor:pointer;color:#cbd5e1;font-weight:700;font-size:14px}
+.wk-sh-dl{display:grid;gap:4px;padding:0 10px 10px;max-height:420px;overflow:auto}
+.wk-sh-it{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:7px 6px;border-top:1px solid rgba(148,163,184,.08)}
+.wk-sh-nm{color:#e8edf5;font-size:14px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wk-sh-nm small{display:block;color:#7d8aa0;font-size:12px}
+.wk-sh-c{color:#93a0b5;font-size:12.5px;white-space:nowrap}
+.wk-sh-it .wk-tx-btn{padding:6px 10px;font-size:12.5px}
+/* витрина */
+.wk-sc{margin:18px 0 6px;padding:14px 16px;border-radius:16px;border:1px solid rgba(216,180,90,.28);background:radial-gradient(90% 120% at 50% 0%,rgba(216,180,90,.10),transparent 65%),rgba(10,14,26,.45)}
+.wk-sc-h{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.wk-sc-h .wk-dk-h{margin:0}
+.wk-sc-g{display:block;padding:0;margin:12px 0 0}
+html body .wk-sc .wk-sc-row{display:grid!important;grid-template-columns:repeat(3,minmax(0,180px))!important;gap:14px!important;justify-content:center}
+.wk-sc-e{display:grid;place-items:center;align-content:center;gap:6px;aspect-ratio:3/4.3;border-radius:14px;border:1.5px dashed rgba(216,180,90,.4);background:rgba(216,180,90,.04);color:#c9b071;font:inherit;cursor:pointer}
+.wk-sc-e b{font-size:30px;line-height:1}.wk-sc-e:hover{background:rgba(216,180,90,.1)}
+.wk-tx-sum.one{grid-template-columns:1fr}
+/* катсцены */
+.wk-cut{position:fixed;inset:0;z-index:100002;display:grid;place-items:center;overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent;animation:csIn .25s ease-out}
+.wk-cut.out{animation:csOut .32s ease-in forwards}
+@keyframes csIn{from{opacity:0}}@keyframes csOut{to{opacity:0;transform:scale(1.04)}}
+.wk-cut>div{position:absolute;inset:0;pointer-events:none}
+.wk-cut .cs-stage{position:relative;inset:auto;display:flex;flex-direction:column;align-items:center;gap:22px;z-index:5}
+.wk-cut .cs-card{position:relative;display:block;padding:0;margin:0;width:min(64vw,270px,calc(52vh/1.43));animation:csCard 1.5s .55s cubic-bezier(.2,.9,.25,1) both}
+.wk-cut .cs-card .wk-dk-x,.wk-cut .cs-card .wk-dk-fb{display:none!important}
+@keyframes csCard{0%{opacity:0;transform:translateY(60px) scale(.55) rotateY(-180deg)}60%{opacity:1}100%{opacity:1;transform:none}}
+.wk-cut .cs-t{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;animation:csT .7s 1.45s ease-out both}
+@keyframes csT{from{opacity:0;transform:translateY(14px);letter-spacing:.4em}}
+.wk-cut .cs-t b{font-size:clamp(30px,7vw,52px);line-height:1;font-weight:900;letter-spacing:.04em}
+.wk-cut .cs-t span{font-size:clamp(15px,3.6vw,19px);color:rgba(255,255,255,.85);font-weight:700}
+.wk-cut .cs-skip{position:absolute;bottom:calc(28px + env(safe-area-inset-bottom,0px));left:0;right:0;margin:0;text-align:center;font-size:13px;color:rgba(255,255,255,.55);opacity:0;transition:opacity .4s;z-index:6}
+.wk-cut.ready .cs-skip{opacity:1}
+.wk-cut .cs-pts i{position:absolute;left:var(--x);bottom:-10px;width:var(--s);height:var(--s);border-radius:50%;animation:csUp 2.6s var(--d) ease-out infinite}
+@keyframes csUp{0%{transform:translate(0,0);opacity:0}15%{opacity:1}100%{transform:translate(var(--w),-105vh);opacity:0}}
+.wk-cut .cs-ring{inset:auto;left:50%;top:44%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;animation:csRing 1.4s .5s ease-out both}
+.wk-cut .cs-ring.r2{animation-delay:.8s}
+@keyframes csRing{0%{transform:scale(0);opacity:1}100%{transform:scale(28);opacity:0}}
+/* легенда: золото, лучи, искры */
+.cs-legendary .cs-bg{background:radial-gradient(circle at 50% 44%,#4a3508 0%,#160f03 45%,#050402 100%);animation:csDim 1s ease-out both}
+@keyframes csDim{from{background-color:#000;filter:brightness(0)}}
+.cs-legendary .cs-rays{background:repeating-conic-gradient(from 0deg at 50% 44%,rgba(255,214,110,.26) 0 5deg,transparent 5deg 15deg);-webkit-mask:radial-gradient(circle at 50% 44%,#000 0,#000 18%,transparent 62%);mask:radial-gradient(circle at 50% 44%,#000 0,#000 18%,transparent 62%);animation:csRays 9s linear infinite,csFade 1s .35s ease-out both}
+@keyframes csRays{to{transform:rotate(360deg)}}@keyframes csFade{from{opacity:0}}
+.cs-legendary .cs-ring{border:3px solid rgba(255,214,110,.9);box-shadow:0 0 30px rgba(255,200,80,.8)}
+.cs-legendary .cs-pts i{background:#ffd76a;box-shadow:0 0 8px #ffbf3a}
+.cs-legendary .cs-card{filter:drop-shadow(0 0 34px rgba(255,200,70,.75))}
+.cs-legendary .cs-t b{background:linear-gradient(180deg,#fff3c4,#f2c230 55%,#b07a12);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 14px rgba(242,194,48,.5))}
+/* голографическая: призма, радужные полосы */
+.cs-holo .cs-bg{background:radial-gradient(circle at 50% 44%,#1b1640,#07061a 70%)}
+.cs-holo .cs-prism{background:conic-gradient(from 0deg at 50% 44%,#ff5fa2,#ffd86b,#6bff9e,#62c4ff,#b58cff,#ff5fa2);opacity:.22;filter:blur(40px);animation:csRays 6s linear infinite,csFade 1s ease-out both}
+.cs-holo .cs-bands{background:repeating-linear-gradient(115deg,transparent 0 60px,rgba(255,95,162,.16) 60px 74px,rgba(255,216,107,.16) 74px 88px,rgba(107,255,158,.16) 88px 102px,rgba(98,196,255,.16) 102px 116px,rgba(181,140,255,.16) 116px 130px,transparent 130px 240px);background-size:600px 100%;animation:csBands 2.2s linear infinite,csFade .8s .2s both}
+@keyframes csBands{to{background-position:600px 0}}
+.cs-holo .cs-ring{border:3px solid transparent;background:conic-gradient(#ff5fa2,#ffd86b,#6bff9e,#62c4ff,#b58cff,#ff5fa2) border-box;-webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.cs-holo .cs-pts i{border-radius:2px;transform-origin:center;background:linear-gradient(135deg,#fff,#9ee7ff,#ffb3e0);box-shadow:0 0 6px rgba(255,255,255,.8);animation-name:csTw}
+@keyframes csTw{0%{transform:translate(0,0) rotate(0);opacity:0}20%{opacity:1}100%{transform:translate(var(--w),-90vh) rotate(540deg);opacity:0}}
+.cs-holo .cs-card{filter:drop-shadow(0 0 26px rgba(140,200,255,.6))}
+.cs-holo .cs-t b{background:linear-gradient(90deg,#ff5fa2,#ffd86b,#6bff9e,#62c4ff,#b58cff,#ff5fa2);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:csBands 3s linear infinite}
+/* пламенная: огонь снизу, угли, жар */
+.cs-gold .cs-bg{background:radial-gradient(ellipse 90% 70% at 50% 110%,#5a1a02,#1c0701 55%,#070201 100%)}
+.cs-gold .cs-fire{top:auto;height:70%;background:radial-gradient(ellipse 30% 60% at 20% 100%,rgba(255,120,20,.9),transparent 70%),radial-gradient(ellipse 34% 70% at 55% 100%,rgba(255,170,40,.85),transparent 70%),radial-gradient(ellipse 28% 55% at 85% 100%,rgba(255,80,10,.9),transparent 70%);filter:blur(16px);transform-origin:bottom;animation:csFl .5s ease-in-out infinite alternate,csRise 1.2s ease-out both}
+.cs-gold .cs-fire.f2{height:55%;opacity:.8;background:radial-gradient(ellipse 22% 60% at 35% 100%,rgba(255,220,120,.85),transparent 70%),radial-gradient(ellipse 22% 55% at 72% 100%,rgba(255,200,90,.8),transparent 70%);animation-duration:.37s,1.4s}
+@keyframes csFl{from{transform:scaleY(.92) skewX(-2deg)}to{transform:scaleY(1.08) skewX(2deg)}}
+@keyframes csRise{from{transform:scaleY(0);opacity:0}}
+.cs-gold .cs-heat{background:radial-gradient(circle at 50% 44%,rgba(255,150,40,.25),transparent 45%);animation:csFade 1s .5s both}
+.cs-gold .cs-pts i{background:#ffb347;box-shadow:0 0 6px #ff6a00,0 0 12px #ff3d00;border-radius:50%;animation-duration:1.9s}
+.cs-gold .cs-card{filter:drop-shadow(0 0 30px rgba(255,110,20,.75))}
+.cs-gold .cs-card .wk-dk-slot{animation:csBurn 1.5s .55s ease-out both}
+@keyframes csBurn{0%{filter:brightness(3) sepia(1) saturate(4) hue-rotate(-20deg)}100%{filter:none}}
+.cs-gold .cs-t b{background:linear-gradient(0deg,#ff3d00,#ff9a1a 45%,#ffe08a);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px rgba(255,90,0,.6));animation:csT .7s 1.45s ease-out both,csFlk 1.6s 2.2s ease-in-out infinite}
+@keyframes csFlk{50%{filter:drop-shadow(0 0 22px rgba(255,140,0,.85)) brightness(1.15)}}
+/* негативная: вспышка, инверсия, помехи */
+.cs-neg .cs-bg{background:radial-gradient(circle at 50% 44%,#f4f7ff,#cdd6ea 60%,#9aa7c4 100%)}
+.cs-neg .cs-flash{background:#fff;animation:csFlash .7s ease-out both}
+@keyframes csFlash{0%{opacity:1}100%{opacity:0}}
+.cs-neg .cs-rays{background:repeating-conic-gradient(from 0deg at 50% 44%,rgba(10,20,45,.16) 0 4deg,transparent 4deg 14deg);-webkit-mask:radial-gradient(circle at 50% 44%,#000 0 15%,transparent 60%);mask:radial-gradient(circle at 50% 44%,#000 0 15%,transparent 60%);animation:csRays 14s linear infinite reverse,csFade 1s .3s both}
+.cs-neg .cs-scan{background:repeating-linear-gradient(0deg,rgba(10,20,45,.07) 0 2px,transparent 2px 4px);animation:csScan .12s steps(2) infinite}
+@keyframes csScan{to{transform:translateY(4px)}}
+.cs-neg .cs-card{filter:drop-shadow(0 0 22px rgba(20,40,90,.35))}
+.cs-neg .cs-gl{position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;opacity:0;animation:csGl 1.6s .9s steps(1) both}
+.cs-neg .cs-gl.g1{filter:sepia(1) saturate(6) hue-rotate(140deg)}
+.cs-neg .cs-gl.g2{filter:sepia(1) saturate(6) hue-rotate(-40deg);animation-delay:1s}
+@keyframes csGl{0%{opacity:.8;transform:translate(-8px,0);clip-path:inset(10% 0 70% 0)}15%{transform:translate(7px,0);clip-path:inset(55% 0 20% 0)}30%{transform:translate(-5px,0);clip-path:inset(30% 0 45% 0)}45%{transform:translate(4px,0);clip-path:inset(75% 0 5% 0)}60%{opacity:.6;transform:translate(-3px,0);clip-path:inset(5% 0 85% 0)}75%,100%{opacity:0;transform:none;clip-path:inset(0)}}
+.cs-neg .cs-t b{color:#0b1530;text-shadow:3px 0 rgba(255,40,80,.55),-3px 0 rgba(0,200,255,.55);animation:csT .7s 1.45s ease-out both,csGt 2.4s 2.2s steps(1) infinite}
+@keyframes csGt{0%,92%,100%{transform:none}93%{transform:translate(4px,-1px)}96%{transform:translate(-3px,1px)}}
+.cs-neg .cs-t span{color:#1b2a4d}.cs-neg .cs-skip{color:rgba(11,21,48,.55)}
+@media (max-width:760px){
+ .wk-sh-pks{grid-template-columns:1fr}
+ .wk-sh-pk{display:grid;grid-template-columns:76px minmax(0,1fr);gap:4px 14px;align-items:start}
+ .wk-sh-art{width:76px;grid-row:span 2;margin:0}
+ .wk-sh-pk .wk-tx-btn{grid-column:1/-1;margin-top:8px}
+ .wk-sh-sr{grid-template-columns:auto minmax(0,1fr) auto;gap:6px 10px}
+ .wk-sh-sr .wk-sh-pr{grid-column:2}.wk-sh-sr .wk-sh-n{grid-column:3;grid-row:1}
+ .wk-sh-sr .wk-tx-btn{grid-column:1/-1}
+ .wk-sh-it{grid-template-columns:auto minmax(0,1fr) auto}.wk-sh-it .wk-tx-btn{grid-column:1/-1}
+ html body .wk-sc .wk-sc-row{gap:8px!important;grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ .wk-sh-bal b{font-size:24px}
+}
+@media (prefers-reduced-motion:reduce){
+ .wk-cut *,.wk-cut{animation-duration:.01s!important;animation-iteration-count:1!important;animation-delay:0s!important}
+ .wk-cut .cs-pts{display:none}
+}
+</style><style id="wk-ar-css">
+.wk-ar-b{margin-top:10px}
+.wk-ar-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;border:0;background:linear-gradient(180deg,#e6c46d,#c99a3a);color:#1a1204;font:inherit;font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 6px 18px -8px rgba(216,180,90,.7)}
+.wk-ar-btn::before{content:'';width:14px;height:12px;border-radius:2px;background:currentColor;-webkit-mask:linear-gradient(#000 0 0) 0 4px/100% 8px no-repeat,linear-gradient(#000 0 0) 1px 0/12px 3px no-repeat;mask:linear-gradient(#000 0 0) 0 4px/100% 8px no-repeat,linear-gradient(#000 0 0) 1px 0/12px 3px no-repeat;opacity:.8}
+.wk-ar-btn:hover{filter:brightness(1.08)}.wk-ar-btn:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.wk-ar-btn.k-big,.wk-ar-btn.k-saga{background:linear-gradient(180deg,#d8b4ff,#9d6be0);color:#170a2a}
+.wk-ar-btn.k-final{background:linear-gradient(180deg,#fff0b3,#f2c230 50%,#c88a10);color:#2a1b00;box-shadow:0 0 0 1px rgba(255,230,150,.5),0 8px 24px -8px rgba(242,194,48,.9)}
+.wk-ar-got{font-size:12.5px;color:#8b97ad}
+.wk-ar-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:0 0 16px;padding:14px 18px;border-radius:16px;border:1px solid rgba(216,180,90,.45);background:radial-gradient(120% 160% at 0% 0%,rgba(216,180,90,.18),transparent 55%),rgba(10,14,26,.6)}
+.wk-ar-bar b{display:block;color:#f3dc9a;font-size:16px}.wk-ar-bar span{color:#a9b4c6;font-size:13.5px}
+.wk-ar-box{width:min(1100px,100%)}
+.wk-ar-sub{margin:4px 0 0;color:#93a0b5;font-size:13px}
+.wk-ar-body{flex:1 1 auto;overflow:auto;padding:14px 18px;display:block}
+.wk-ar-body .wk-dk-stage{padding:0;margin:0;background:none;border:0;min-height:0}
+html body .wk-ar-body .wk-ar-row{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(128px,1fr))!important;gap:12px!important;overflow:visible!important;justify-content:stretch!important;padding:0!important}
+html body .wk-ar-row .wk-pk{width:auto!important;max-width:none!important;flex:none!important;margin:0!important;aspect-ratio:3/4.3;height:auto!important;animation:none!important;opacity:1!important;transform:none}
+html body .wk-ar-ov .wk-ar-cs{display:inline-flex!important;flex-direction:row!important;align-items:center;gap:8px;width:auto!important;margin:0 auto 0 0!important;padding:0!important;color:#a9b4c6;font-size:13.5px;white-space:nowrap;cursor:pointer;grid-template-columns:none!important}
+html body .wk-ar-ov .wk-ar-cs input{flex:0 0 auto;width:17px!important;height:17px!important;margin:0!important;padding:0!important;accent-color:#d8b45a}
+html body .wk-ar-ov .wk-tx-bh>div{text-align:left;padding:0;margin:0}
+html body .wk-ar-ov .wk-ar-sub{margin:4px 0 0!important;padding:0!important;text-indent:0;text-align:left}
+@media (max-width:760px){
+ html body .wk-ar-body .wk-ar-row{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}
+ .wk-ar-body{padding:10px}
+ html body .wk-ar-ov .wk-ar-cs{width:100%!important}
+ .wk-ar-bar .wk-tx-btn{width:100%}
+}
+</style><script id="wk-avatar-zoom">
+(function () {
+  'use strict';
+  var SEL = '.wk-ava, .wk-cp-av';
+  function urlOf(el) {
+    var im = el.querySelector('img'); if (im && im.src && !/^data:,$/.test(im.src)) return im.src;
+    var m = String(getComputedStyle(el).backgroundImage || '').match(/url\(["']?(.*?)["']?\)/); return m ? m[1] : '';
+  }
+  function nameOf(el) {
+    var lg = el.getAttribute('data-wk-av'), accs = window.__wikiAccounts || ((window.WIKI_CLOUD_CONFIG || {}).accounts) || [];
+    var a = lg && accs.filter(function (x) { return x.login === lg; })[0];
+    if (a) return a.name;
+    var host = el.closest('[title]'); if (host && host.getAttribute('title')) return host.getAttribute('title');
+    var nx = el.nextElementSibling; return nx ? nx.textContent.trim().split('\n')[0].slice(0, 40) : '';
+  }
+  function busy(el) { var p = el.parentElement; return !!(p && p.closest('button, a, [role="button"], [data-fr], [data-act], [data-tx], label, .wk-acc, summary')); }
+  function open(el) {
+    var u = urlOf(el); if (!u) return;
+    var nm = nameOf(el), ov = document.createElement('div'); ov.className = 'wk-avz'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', 'Фото: ' + nm);
+    var img = document.createElement('img'); img.alt = nm; img.src = u;
+    var cap = document.createElement('p'); cap.textContent = nm;
+    var x = document.createElement('button'); x.type = 'button'; x.className = 'wk-avz-x'; x.setAttribute('aria-label', 'Закрыть'); x.textContent = '✕';
+    var fig = document.createElement('figure'); fig.appendChild(img); if (nm) fig.appendChild(cap);
+    ov.appendChild(fig); ov.appendChild(x); document.body.appendChild(ov);
+    var close = function () { ov.classList.add('out'); document.removeEventListener('keydown', kd, true); setTimeout(function () { ov.remove(); }, 220); };
+    var kd = function (e) { if (e.key === 'Escape') { e.stopPropagation(); close(); } };
+    document.addEventListener('keydown', kd, true); ov.addEventListener('click', close); x.focus();
+  }
+  function mark(root) {
+    (root || document).querySelectorAll(SEL).forEach(function (el) {
+      var ok = !busy(el) && !!urlOf(el);
+      if (ok && !el.hasAttribute('data-avz')) { el.setAttribute('data-avz', ''); el.setAttribute('tabindex', '0'); el.setAttribute('role', 'button'); el.setAttribute('aria-label', 'Открыть фото' + (nameOf(el) ? ': ' + nameOf(el) : '')); }
+      else if (!ok && el.hasAttribute('data-avz')) { el.removeAttribute('data-avz'); el.removeAttribute('tabindex'); el.removeAttribute('role'); el.removeAttribute('aria-label'); }
+    });
+  }
+  window.addEventListener('click', function (e) {
+    var el = e.target.closest && e.target.closest(SEL); if (!el || busy(el) || !urlOf(el)) return;
+    e.preventDefault(); e.stopPropagation(); if (e.stopImmediatePropagation) e.stopImmediatePropagation(); open(el);
+  }, true);
+  document.addEventListener('keydown', function (e) {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('[data-avz]')) { e.preventDefault(); open(e.target); }
+  });
+  var t = 0; new MutationObserver(function () { clearTimeout(t); t = setTimeout(function () { mark(); }, 400); }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-wk-av', 'style', 'class'] });
+  window.addEventListener('wk-avatars-changed', function () { setTimeout(mark, 300); });
+  setTimeout(mark, 1500);
+})();
+</script>
+<style id="wk-avatar-zoom-css">
+[data-avz]{cursor:zoom-in}
+[data-avz]:focus-visible{outline:2px solid #d8b45a;outline-offset:2px}
+.wk-avz{position:fixed;inset:0;z-index:100003;display:grid;place-items:center;padding:24px;background:rgba(3,6,14,.82);backdrop-filter:blur(6px);cursor:zoom-out;animation:wkAvzIn .22s ease-out}
+.wk-avz.out{animation:wkAvzOut .22s ease-in forwards}
+@keyframes wkAvzIn{from{opacity:0}}@keyframes wkAvzOut{to{opacity:0}}
+.wk-avz figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:14px;animation:wkAvzPop .3s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes wkAvzPop{from{transform:scale(.6);opacity:0}}
+.wk-avz img{width:min(78vw,72vh,520px);aspect-ratio:1;object-fit:cover;border-radius:28px;box-shadow:0 30px 80px -20px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.08)}
+.wk-avz p{margin:0;color:#f3f4f6;font-size:20px;font-weight:700}
+.wk-avz-x{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;width:42px;height:42px;border-radius:12px;border:1px solid rgba(148,163,184,.3);background:rgba(15,23,42,.7);color:#cbd5e1;font-size:16px;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.wk-avz,.wk-avz figure{animation:none}}
 </style></body></html>
