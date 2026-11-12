@@ -3630,7 +3630,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 302";
+const WIKI_VERSION = "11.11.2026 · 303";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -31929,14 +31929,20 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   });
   function apParse(v) {
     var a = []; try { a = JSON.parse(v || '[]'); } catch (e) { a = []; }
-    return (Array.isArray(a) ? a : []).filter(function (x) { return x && typeof x === 'object'; }).map(function (x) { return { arc: String(x.arc || ''), u: String(x.u || ''), y: x.y == null ? '50' : String(x.y), x: x.x == null ? '50' : String(x.x), z: x.z == null ? '100' : String(x.z), fx: String(x.fx || ''), amb: String(x.amb || ''), cs: String(x.cs || '') }; });
+    return (Array.isArray(a) ? a : []).filter(function (x) { return x && typeof x === 'object'; }).map(function (x) { return { arc: String(x.arc || ''), u: String(x.u || ''), y: x.y == null ? '50' : String(x.y), x: x.x == null ? '50' : String(x.x), z: x.z == null ? '100' : String(x.z), fx: String(x.fx || ''), amb: String(x.amb || ''), cs: String(x.cs || ''), r: String(x.r || '') }; });
   }
   function apDump(list) {
-    var out = list.filter(function (x) { return x.arc && goodUrl(x.u); }).map(function (x) { var o = { arc: x.arc, u: x.u.trim(), y: String(x.y), x: String(x.x), z: String(x.z) }; if (x.fx) o.fx = x.fx; if (x.amb) o.amb = x.amb; if (x.cs) o.cs = x.cs; return o; });
+    var out = list.filter(function (x) { return x.arc && goodUrl(x.u); }).map(function (x) { var o = { arc: x.arc, u: x.u.trim(), y: String(x.y), x: String(x.x), z: String(x.z) }; if (x.fx) o.fx = x.fx; if (x.amb) o.amb = x.amb; if (x.cs) o.cs = x.cs; if (x.r) o.r = x.r; return o; });
     return out.length ? JSON.stringify(out) : '';
   }
   function apOpts(list, cur, first) {
     return '<option value="">' + first + '</option>' + (list || []).filter(function (o) { return o && o.v; }).map(function (o) { return '<option value="' + esc(o.v) + '"' + (String(cur || '') === String(o.v) ? ' selected' : '') + '>' + esc(o.n || o.v) + '</option>'; }).join('');
+  }
+  var RAR_N = { common: 'Обычная', rare: 'Редкая', epic: 'Эпическая', legendary: 'Легендарная' };
+  function apRarOpts(hidden, x) {
+    var f = hidden.closest('form') || document, idEl = f.querySelector('[data-field="id"]'), cid = idEl ? String(idEl.value || '').trim() : '';
+    var d = window.__wkDeckDefaultRarity && cid && x.arc ? window.__wkDeckDefaultRarity(cid, x.arc) : '';
+    return '<option value="">Авто' + (d ? ' (' + RAR_N[d] + ')' : '') + '</option>' + ['common', 'rare', 'epic', 'legendary'].map(function (k) { return '<option value="' + k + '"' + (x.r === k ? ' selected' : '') + '>' + RAR_N[k] + '</option>'; }).join('');
   }
   function apMount(hidden) {
     var holder = hidden.parentNode; if (holder.querySelector('.wk-ap-ed')) return;
@@ -31957,6 +31963,7 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
           + '<div class="wk-ap-prev" title="Тяни, чтобы сдвинуть; колесо мыши — приблизить" style="width:168px;height:210px;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;cursor:grab;touch-action:none;user-select:none">' + prev(x) + '</div>'
           + '<div style="display:grid;gap:6px;min-width:0"><div><small style="opacity:.7">Арка</small>' + arcPickHTML((arcs.filter(function (a) { return a.id === x.arc; })[0] || {}).name) + '</div>'
           + '<label>Ссылка на фото<input type="url" data-k="u" placeholder="https://…" value="' + esc(x.u) + '" style="width:100%"></label>'
+          + '<label>Редкость карточки<select data-k="r" style="width:100%">' + apRarOpts(hidden, x) + '</select></label>'
                     + '<div class="wk-ap-hint" style="font-size:12.5px;opacity:.75;display:flex;gap:8px;align-items:center;flex-wrap:wrap">Тяни фото мышью или пальцем, колесо — приблизить. <output>' + Math.round(Number(x.z) || 100) + '%</output><button type="button" data-reset>Сбросить кадр</button></div></div>'
           + '<button type="button" data-del title="Убрать фото" style="align-self:start">✕</button></div>';
       }).join('') + '<button type="button" class="wk-gal-add" data-add>＋ Добавить фото для арки</button>'
@@ -40313,9 +40320,9 @@ body.wk-ie-on .wk-ie-btn{display:none}
     function dump() { var out = ph.filter(function (x) { return x.arc && /^(https?:|data:image)/.test(String(x.u || '').trim()); }); S.vals.arc_photos = out.length ? JSON.stringify(out) : ''; bar(); }
     function draw() {
       var arcs = window.__wkArcList || [];
-      phl.innerHTML = ph.map(function (x, i) { return '<div class="wk-ie-phr" data-i="' + i + '"><select aria-label="Арка"><option value="">— арка —</option>' + arcs.map(function (a) { return '<option value="' + eh(a.id) + '"' + (a.id === x.arc ? ' selected' : '') + '>' + eh(a.name) + '</option>'; }).join('') + '</select><input type="url" placeholder="Ссылка на фото" value="' + eh(x.u || '') + '"><button type="button" data-rmp aria-label="Убрать фото">✕</button></div>'; }).join('');
+      phl.innerHTML = ph.map(function (x, i) { return '<div class="wk-ie-phr" data-i="' + i + '"><select aria-label="Арка"><option value="">— арка —</option>' + arcs.map(function (a) { return '<option value="' + eh(a.id) + '"' + (a.id === x.arc ? ' selected' : '') + '>' + eh(a.name) + '</option>'; }).join('') + '</select><input type="url" placeholder="Ссылка на фото" value="' + eh(x.u || '') + '"><select data-rar aria-label="Редкость карточки"><option value="">Редкость: авто</option>' + [['common', 'Обычная'], ['rare', 'Редкая'], ['epic', 'Эпическая'], ['legendary', 'Легендарная']].map(function (q) { return '<option value="' + q[0] + '"' + (x.r === q[0] ? ' selected' : '') + '>' + q[1] + '</option>'; }).join('') + '</select><button type="button" data-rmp aria-label="Убрать фото">✕</button></div>'; }).join('');
     }
-    phl.addEventListener('input', function (e) { var r2 = e.target.closest('.wk-ie-phr'); if (!r2) return; var x = ph[Number(r2.getAttribute('data-i'))]; if (e.target.tagName === 'SELECT') x.arc = e.target.value; else x.u = e.target.value.trim(); dump(); });
+    phl.addEventListener('input', function (e) { var r2 = e.target.closest('.wk-ie-phr'); if (!r2) return; var x = ph[Number(r2.getAttribute('data-i'))]; if (e.target.hasAttribute('data-rar')) { if (e.target.value) x.r = e.target.value; else delete x.r; } else if (e.target.tagName === 'SELECT') x.arc = e.target.value; else x.u = e.target.value.trim(); dump(); });
     phl.addEventListener('click', function (e) { var bt = e.target.closest('[data-rmp]'); if (!bt) return; ph.splice(Number(bt.closest('.wk-ie-phr').getAttribute('data-i')), 1); draw(); dump(); });
     pw.querySelector('.wk-ie-addph').addEventListener('click', function () { ph.push({ arc: '', u: '', y: '50', x: '50', z: '100' }); draw(); });
     draw(); return pw;
@@ -40676,8 +40683,11 @@ html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-name,html.ios-app 
 .character-item[data-wk-var="holo"]::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.55) 48%,transparent 60%);background-size:260% 100%;mix-blend-mode:overlay;animation:wkNegSheen 4s linear infinite}
 @keyframes wkHoloMove{0%{background-position:0% 50%}100%{background-position:300% 50%}}
 .character-item[data-wk-var="gold"] .character-grid-image{filter:saturate(1.25) contrast(1.05) brightness(1.02)}
-.character-item[data-wk-var="gold"]::before{content:"";position:absolute;inset:0;z-index:7;pointer-events:none;background:radial-gradient(circle,#fff6c8 0 1.8px,#ffb347 2.6px,transparent 4px) 0 0/46px 64px,radial-gradient(circle,#ffd27a 0 1.4px,#ff8a3d 2.2px,transparent 3.4px) 23px 32px/62px 82px,radial-gradient(circle,#fff0b0 0 1px,transparent 2.4px) 11px 14px/34px 48px;-webkit-mask-image:linear-gradient(0deg,#000 15%,rgba(0,0,0,.6) 55%,transparent 92%);mask-image:linear-gradient(0deg,#000 15%,rgba(0,0,0,.6) 55%,transparent 92%);animation:wkEmber 2.8s linear infinite}
-@keyframes wkEmber{0%{background-position:0 0,23px 32px,11px 14px}100%{background-position:0 -64px,23px -50px,11px -34px}}
+.wk-em{position:absolute;z-index:7;bottom:-8px;left:var(--l);width:calc(var(--s,4px)*1.9);height:calc(var(--s,4px)*1.9);border-radius:50%;pointer-events:none;background:radial-gradient(circle,#fffbe0 0,#ffc04d 40%,rgba(255,120,30,0) 78%);box-shadow:0 0 10px 3px rgba(255,140,30,.9);animation:wkEmUp var(--d,3s) linear infinite;animation-delay:var(--dl,0s)}
+@keyframes wkEmUp{0%{bottom:-8px;transform:translateX(0) scale(1);opacity:0}12%{opacity:1}100%{bottom:96%;transform:translateX(var(--dx,10px)) scale(.35);opacity:0}}
+.wk-gl{position:absolute;z-index:7;left:var(--l);top:var(--t);width:calc(var(--s,12px)*1.8);height:calc(var(--s,12px)*1.8);pointer-events:none;background:#fff;clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);filter:drop-shadow(0 0 5px #9fdcff) drop-shadow(0 0 2px #fff);opacity:0;animation:wkGl 3.6s ease-in-out infinite;animation-delay:var(--dl,0s)}
+@keyframes wkGl{0%,34%,100%{opacity:0;transform:scale(.2) rotate(0)}10%{opacity:1;transform:scale(1) rotate(45deg)}22%{opacity:.9;transform:scale(.7) rotate(90deg)}}
+@media (prefers-reduced-motion:reduce){.wk-em,.wk-gl{animation:none;opacity:.7}}100%{background-position:0 -64px,23px -50px,11px -34px}}
 .character-item[data-wk-var="gold"] .character-grid-content{background:linear-gradient(0deg,rgba(30,6,2,.55),rgba(30,6,2,.28) 60%,transparent)!important;text-shadow:0 1px 4px rgba(0,0,0,.85)}
 .character-item[data-wk-var="gold"]::after{content:"";position:absolute;inset:0;z-index:7;pointer-events:none;border-radius:inherit;box-shadow:inset 0 0 0 3px rgba(255,138,61,1),inset 0 0 22px rgba(255,90,30,.7);background:radial-gradient(ellipse 85% 48% at 50% 108%,rgba(255,200,80,.8),transparent 74%),radial-gradient(ellipse 36% 44% at 16% 106%,rgba(255,110,30,.75),transparent 74%),radial-gradient(ellipse 36% 50% at 86% 106%,rgba(255,110,30,.75),transparent 74%),linear-gradient(0deg,rgba(255,70,20,.38),rgba(190,40,10,.14) 50%,transparent 80%);animation:wkFlame 2.2s ease-in-out infinite alternate}
 @keyframes wkFlame{0%{filter:brightness(.85)}100%{filter:brightness(1.3)}}
@@ -40974,13 +40984,14 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     var raw = rawRec(c), fa = firstArc(raw), info = arcInfo(), out = [], seen = {};
     function push(arcInf, p, isFirst) {
       var rr = window.__wkRarityRule ? window.__wkRarityRule(raw, { ch: arcInf.end || num(raw.chapter), ep: arcInf.epEnd || num(raw.episode) }).r : 'common';
+      if (p.r && RORD.indexOf(p.r) >= 0) rr = p.r;
       out.push({ key: c.id + '@' + arcInf.id, c: c, arc: arcInf, u: p.u, x: p.x, y: p.y, z: p.z, fx: p.fx, amb: p.amb, cs: p.cs, r: rr, first: !!isFirst });
     }
     var extra = parseJSON(raw.arc_photos), baseU = url(raw.person_link);
     var over = null; extra.forEach(function (x) { if (x && x.arc === fa.id && url(x.u)) over = x; });
     if (baseU || over) {
       var o = over || {};
-      push(fa, { u: url(o.u) || baseU, x: o.x != null && o.x !== '' ? o.x : raw.person_image_position_x, y: o.y != null && o.y !== '' ? o.y : raw.person_image_position, z: o.z != null && o.z !== '' ? o.z : raw.person_image_zoom, fx: '', amb: '', cs: '' }, true);
+      push(fa, { u: url(o.u) || baseU, x: o.x != null && o.x !== '' ? o.x : raw.person_image_position_x, y: o.y != null && o.y !== '' ? o.y : raw.person_image_position, z: o.z != null && o.z !== '' ? o.z : raw.person_image_zoom, fx: '', amb: '', cs: '', r: o.r }, true);
       seen[fa.id] = 1;
     }
     extra.forEach(function (x) {
@@ -40988,10 +40999,16 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
       var ai = info[x.arc]; if (!ai) return;
       try { if (window.__wikiArcDone && !window.__wikiArcDone(x.arc)) return; } catch (e) {}
       seen[x.arc] = 1;
-      push(ai, { u: url(x.u), x: x.x, y: x.y, z: x.z, fx: '', amb: '', cs: '' }, false);
+      push(ai, { u: url(x.u), x: x.x, y: x.y, z: x.z, fx: '', amb: '', cs: '', r: x.r }, false);
     });
     return out;
   }
+  window.__wkDeckDefaultRarity = function (cid, arcId) {
+    try {
+      var raw = rawRec({ id: cid }), ai = arcInfo()[arcId]; if (!raw || !ai || !window.__wkRarityRule) return '';
+      return window.__wkRarityRule(raw, { ch: ai.end || num(raw.chapter), ep: ai.epEnd || num(raw.episode) }).r;
+    } catch (e) { return ''; }
+  };
   function allCards() {
     var out = []; visibleChars().forEach(function (c) { cardsOf(c).forEach(function (k) { out.push(k); }); });
     return out;
@@ -41036,6 +41053,14 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     function onk(e) { if (e.key === 'Escape') close(); }
     ov.addEventListener('click', close); document.addEventListener('keydown', onk); document.body.appendChild(ov);
   };
+  var EM = [[8, 3.1, 0, 4, 12], [18, 2.4, .8, 3, -8], [29, 3.6, 1.6, 5, 10], [40, 2.8, .3, 3, -12], [51, 3.3, 1.2, 4, 8], [62, 2.5, 2, 3, -10], [73, 3.8, .6, 5, 12], [84, 2.9, 1.9, 4, -9], [34, 3.4, 2.4, 3, 6], [67, 3.0, 2.8, 4, -6]];
+  var GL = [[14, 12, 0, 12], [78, 18, 1.1, 9], [52, 30, 2.2, 14], [22, 52, 1.7, 10], [84, 58, .5, 13], [60, 74, 2.8, 9], [10, 76, .9, 11], [44, 12, 3.3, 8]];
+  function fxHTML(v) {
+    var h = '';
+    if (v === 'gold') EM.forEach(function (e) { h += '<i class="wk-em" style="--l:' + e[0] + '%;--d:' + e[1] + 's;--dl:-' + e[2] + 's;--s:' + e[3] + 'px;--dx:' + e[4] + 'px"></i>'; });
+    if (v === 'neg') GL.forEach(function (e) { h += '<i class="wk-gl" style="--l:' + e[0] + '%;--t:' + e[1] + '%;--dl:-' + e[2] + 's;--s:' + e[3] + 'px"></i>'; });
+    return h;
+  }
   function cardHTML(k) {
     var c = k.c, u = k.u, X = Number(k.x), Y = Number(k.y), Z = Number(k.z);
     X = isFinite(X) && String(k.x) !== '' ? Math.max(0, Math.min(100, X)) : 50; Y = isFinite(Y) && String(k.y) !== '' ? Math.max(0, Math.min(100, Y)) : 50; Z = isFinite(Z) && Z >= 100 ? 100 + Math.min(150, Z - 100) * 0.4 : 100;   // в колоде приближение мягче, чем в каталоге: карточка выше и целиком в кадре
@@ -41043,7 +41068,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     try { ps = getPrimaryCharacterStatus(c.status); cls = ps ? getCharacterStatusClass(ps) : ''; badge = characterStatusBadge(c.status, ps); } catch (e) {}
     var id = esc(c.id), pin = encodeURIComponent(JSON.stringify({ id: k.key, fx: k.fx || '', amb: k.amb || '', cs: k.cs || '', r: k.r }));
     var img = '<img class="character-grid-image" src="' + esc(u) + '" alt="' + esc(c.name) + '" style="object-position:' + X + '% ' + Y + '% !important;transform:scale(' + (Z / 100) + ') !important;transform-origin:' + X + '% ' + Y + '% !important" loading="lazy" decoding="async" data-wiki-fallbacks="[]" onerror="if(!window.__wikiTryPortraitImage||!window.__wikiTryPortraitImage(this)){this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';}"><div class="character-grid-image-fallback" style="display:none" aria-hidden="true">👤</div>';
-    return '<div class="catalog-item-shell character-grid-shell' + (k.r !== 'common' ? ' wk-r-' + k.r : '') + '"><div class="character-item character-status-item character-grid-card ' + cls + '" data-wk-pin="' + pin + '" data-wk-rarity="' + k.r + '"' + (k.v ? ' data-wk-var="' + k.v + '"' : '') + '  data-wk-rarity-label="' + RN4[k.r] + ' карточка" role="button" tabindex="0" aria-label="Показать карточку: ' + esc(c.name) + '" onclick="window.__wkDeckZoom&&window.__wkDeckZoom(this)"><div class="character-grid-image-wrap">' + img + '</div><div class="character-grid-content"><div class="character-name card-title" title="' + esc(c.name) + '">' + esc(c.name) + '</div><div class="wk-dk-arc">' + esc(k.arc.name) + '</div><div class="character-grid-status"><span class="wk-dk-rar r-' + k.r + '">' + RN4[k.r] + '</span></div></div></div></div>';
+    return '<div class="catalog-item-shell character-grid-shell' + (k.r !== 'common' ? ' wk-r-' + k.r : '') + '"><div class="character-item character-status-item character-grid-card ' + cls + '" data-wk-pin="' + pin + '" data-wk-rarity="' + k.r + '"' + (k.v ? ' data-wk-var="' + k.v + '"' : '') + '  data-wk-rarity-label="' + RN4[k.r] + ' карточка" role="button" tabindex="0" aria-label="Показать карточку: ' + esc(c.name) + '" onclick="window.__wkDeckZoom&&window.__wkDeckZoom(this)"><div class="character-grid-image-wrap">' + img + '</div>' + fxHTML(k.v) + '<div class="character-grid-content"><div class="character-name card-title" title="' + esc(c.name) + '">' + esc(c.name) + '</div><div class="wk-dk-arc">' + esc(k.arc.name) + '</div><div class="character-grid-status"><span class="wk-dk-rar r-' + k.r + '">' + RN4[k.r] + '</span></div></div></div></div>';
   }
   function bar(h, n, cls) { return '<span class="wk-dk-bar ' + (cls || '') + '"><i style="width:' + (n ? Math.round(h / n * 100) : 0) + '%"></i></span>'; }
   function statsHTML(cards, st) {
