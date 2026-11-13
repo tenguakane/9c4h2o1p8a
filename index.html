@@ -3794,7 +3794,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 340";
+const WIKI_VERSION = "11.11.2026 · 342";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -41504,7 +41504,9 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
     var rbtn = [['', 'Любая'], ['legendary', 'Легенды'], ['epic', 'Эпики'], ['rare', 'Редкие'], ['common', 'Обычные']].filter(function (x) { return !DK.v || !x[0] || x[0] === 'legendary' || x[0] === 'epic'; });
     var chips = '<div class="wk-dk-filters wk-dk-vf"><div>' + [['', 'Основные'], ['holo', 'Голографическая'], ['gold', 'Пламенная'], ['neg', 'Негативная']].map(function (x) { return '<button type="button" data-v="' + x[0] + '" class="' + (DK.v === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div>';
     chips += '<div class="wk-dk-filters"><div>' + [['all', 'Все'], ['have', 'Есть'], ['miss', 'Нет']].map(function (x) { return '<button type="button" data-f="' + x[0] + '" class="' + (DK.f === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div><div>' + rbtn.map(function (x) { return '<button type="button" data-r="' + x[0] + '" class="' + (DK.r === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div>';
-    chips = '<div class="wk-dk-sticky">' + chips.replace('<div class="wk-dk-filters">', '<div class="wk-dk-filters wk-dk-kf"><div>' + [['', 'Все типы'], ['char', 'Персонажи'], ['fruit', 'Плоды'], ['useful', 'Статьи'], ['wanted', 'Розыск']].map(function (x) { return '<button type="button" data-kind="' + x[0] + '" class="' + (DK.k === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div><div class="wk-dk-filters">') + '<div class="wk-dk-sortw" role="group" aria-label="Сортировка">' + [['', 'По сюжету'], ['new', 'Сначала новые'], ['rar', 'По редкости']].map(function (x) { return '<button type="button" data-dks="' + x[0] + '" class="' + ((DK.sort || '') === x[0] ? 'on' : '') + '" aria-pressed="' + ((DK.sort || '') === x[0]) + '">' + x[1] + '</button>'; }).join('') + '</div><span class="wk-dk-cnt">' + l.length + ' ' + plural(l.length, 'карточка', 'карточки', 'карточек') + '</span></div>';
+    var fsum = [DK.v && VAR[DK.v] ? VAR[DK.v].n : '', DK.k ? KIND_NAME[DK.k] : '', DK.f === 'have' ? 'Есть' : DK.f === 'miss' ? 'Нет' : '', DK.r ? RN4[DK.r] : '', DK.sort === 'new' ? 'Сначала новые' : DK.sort === 'rar' ? 'По редкости' : ''].filter(Boolean);
+    var ftog = '<button type="button" class="wk-dk-ftog' + (DK.fopen ? ' on' : '') + '" data-dkftog aria-expanded="' + !!DK.fopen + '"><span>Фильтры и сортировка</span><em>' + (fsum.length ? esc(fsum.join(' · ')) : 'все карточки') + '</em><i>' + l.length + '</i></button>';
+    chips = ftog + '<div class="wk-dk-sticky' + (DK.fopen ? ' fopen' : '') + '">' + chips.replace('<div class="wk-dk-filters">', '<div class="wk-dk-filters wk-dk-kf"><div>' + [['', 'Все типы'], ['char', 'Персонажи'], ['fruit', 'Плоды'], ['useful', 'Статьи'], ['wanted', 'Розыск']].map(function (x) { return '<button type="button" data-kind="' + x[0] + '" class="' + (DK.k === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div><div class="wk-dk-filters">') + '<div class="wk-dk-sortw" role="group" aria-label="Сортировка">' + [['', 'По сюжету'], ['new', 'Сначала новые'], ['rar', 'По редкости']].map(function (x) { return '<button type="button" data-dks="' + x[0] + '" class="' + ((DK.sort || '') === x[0] ? 'on' : '') + '" aria-pressed="' + ((DK.sort || '') === x[0]) + '">' + x[1] + '</button>'; }).join('') + '</div><span class="wk-dk-cnt">' + l.length + ' ' + plural(l.length, 'карточка', 'карточки', 'карточек') + '</span></div>';
     var PS = 60, pages = Math.max(1, Math.ceil(l.length / PS)); DK.pg = Math.max(0, Math.min(pages - 1, DK.pg | 0));
     var cards2 = l.slice(DK.pg * PS, DK.pg * PS + PS).map(function (k) {
       var n = st.owned[k.key] || 0;
@@ -42217,6 +42219,7 @@ html body .catalog-item-shell.wk-r-epic::after{content:"";position:absolute;inse
       pane.addEventListener('toggle', function (e) { var t = e.target; if (t && t.classList && t.classList.contains('wk-dk-admin')) DK.admOpen = t.open; }, true);
       pane.addEventListener('click', function (e) {
         if (txPaneClick(pane, e)) return;
+        var ft = e.target.closest && e.target.closest('[data-dkftog]'); if (ft) { DK.fopen = !DK.fopen; pane.querySelector('#wkDkColl').innerHTML = collHTML(allCards(), load()); return; }
         var sb = e.target.closest && e.target.closest('[data-dks]'); if (sb) { DK.sort = sb.getAttribute('data-dks'); DK.pg = 0; pane.querySelector('#wkDkColl').innerHTML = collHTML(allCards(), load()); return; }
         var oa = e.target.closest && e.target.closest('[data-dk-open]'); if (oa) { openArt(oa.getAttribute('data-dk-open')); return; }
         var bw = e.target.closest && e.target.closest('.wk-dk-sbwrap'); if (bw) { if (e.target.closest('[data-wk-open-char]')) return; backZoom(bw.getAttribute('data-bkr'), bw.getAttribute('data-bkv'), bw.getAttribute('data-bkc')); return; }
@@ -42676,4 +42679,219 @@ html body [data-fx="rainbow-foil"]>.wk-fx-a{background-position:clamp(0%,var(--p
 html body [data-fx="rainbow-foil"]>.wk-fx-b{background-position:clamp(0%,calc(var(--pos,50%) * .88),88%) clamp(0%,calc(var(--pos,50%) * .88),88%),0 0}
 html body [data-fx="rainbow-foil"]:not(.wk-fx-on)>.wk-fx-a{animation-name:wkRainbowDrift2}
 @keyframes wkRainbowDrift2{0%,100%{background-position:12% 12%}50%{background-position:88% 88%}}
-</style></body></html>
+</style><style id="wk-mobile-audit">
+.wk-dk-ftog{display:none}
+@media (max-width:760px){
+ /* шапка: заголовок не заезжает под кнопки справа */
+ html.ios-app .ios-nav-title{right:var(--wk-nav-r,150px)!important;justify-content:flex-start!important;text-align:left!important}
+ html.ios-app .ios-nav-title>span{min-width:0}
+ /* стрелки «предыдущая/следующая статья» */
+ html body .wk-crumb-row{max-width:100%;min-width:0;overflow:hidden}
+ html body [id$="Article"] .wk-crumb-row .article-nav-buttons{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:6px!important;width:100%!important;min-width:0!important}
+ html body [id$="Article"] .wk-crumb-row .article-nav-buttons>*{min-width:0!important;max-width:100%!important;overflow:hidden}
+ html body [id$="Article"] .wk-crumb-row .article-nav-buttons span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ /* достижения: числа в плитках не налезают друг на друга */
+ html body #favoritesSection #achievementOverview .achievement-stat{min-width:0;overflow:hidden}
+ html body #favoritesSection#favoritesSection#favoritesSection #achievementOverview .achievement-stat-value{font-size:16px!important;white-space:normal!important;overflow-wrap:anywhere;line-height:1.2!important;letter-spacing:0!important}
+ html body #favoritesSection #achievementOverview .achievement-stat-label{font-size:10.5px!important;line-height:1.25!important}
+ /* карта мира: счётчик и кнопки отдельными строками */
+ html body .wk-at-bar{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center;gap:8px!important}
+ html body .wk-at-bar>.wk-at-search,html body .wk-at-bar>.wk-at-types,html body .wk-at-bar>.wk-at-legend{grid-column:1/-1;min-width:0}
+ html body .wk-at-bar>.wk-at-count{grid-column:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:static!important}
+ html body .wk-at-bar>.wk-at-acts{grid-column:2;position:static!important;display:flex;gap:6px;margin:0!important}
+ html body .wk-at-acts button{white-space:nowrap}
+ /* колода: фильтры свёрнуты в одну кнопку */
+ .wk-dk-ftog{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:center;width:100%;margin:6px 0 10px;padding:11px 14px;border-radius:14px;border:1px solid rgba(148,163,184,.25);background:rgba(15,23,42,.6);color:#e8edf5;font:inherit;text-align:left;cursor:pointer}
+ .wk-dk-ftog span{font-weight:700;font-size:14.5px}
+ .wk-dk-ftog span::after{content:'▾';margin-left:8px;color:#d8b45a;display:inline-block;transition:transform .2s}
+ .wk-dk-ftog.on span::after{transform:rotate(180deg)}
+ .wk-dk-ftog em{grid-column:1;font-style:normal;font-size:12.5px;color:#93a0b5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .wk-dk-ftog i{grid-column:2;grid-row:1/3;font-style:normal;font-weight:800;font-size:15px;color:#f3dc9a;padding:4px 10px;border-radius:10px;background:rgba(216,180,90,.14)}
+ .wk-dk-ftog.on{border-color:rgba(216,180,90,.5)}
+ html body .wk-dk-sticky{display:none!important}
+ html body .wk-dk-sticky.fopen{display:flex!important;padding:10px!important;margin:-4px 0 12px!important;border:1px solid rgba(148,163,184,.18);border-radius:14px;background:rgba(10,14,26,.5)}
+ html body .wk-dk-sticky.fopen .wk-dk-cnt{display:none}
+ /* имена на карточках не уходят под кнопку переворота */
+ html body .catalog-item-shell:has(.wk-flip-btn,.catalog-flip-btn,[data-wk-flip]) .character-grid-content .character-name{padding-right:26px!important}
+ html body .character-grid-card .character-name{overflow-wrap:anywhere}
+ /* нижняя панель: подписи помещаются целиком */
+ html.ios-app .tabs .tab,html.ios-app nav.tabs button{font-size:9.5px!important;letter-spacing:-.02em!important;padding-left:1px!important;padding-right:1px!important;min-width:0!important}
+ html.ios-app .tabs .tab>span,html.ios-app nav.tabs button>span{overflow:visible!important;text-overflow:clip!important;max-width:none!important;white-space:nowrap!important}
+ /* витрина: кнопка в одну строку */
+ html body .wk-showcase-hide,html body [data-wk-showcase-toggle]{white-space:nowrap!important;padding:8px 10px!important;font-size:12px!important}
+}
+</style>
+<script id="wk-mobile-audit-js">
+(function () {
+  'use strict';
+  function fit() {
+    if (!document.documentElement.classList.contains('ios-app')) return;
+    var h = document.querySelector('body > header'), t = h && h.querySelector('.ios-nav-title'); if (!t) return;
+    var hr = h.getBoundingClientRect(), tr = t.getBoundingClientRect(), left = hr.right;
+    [].forEach.call(h.querySelectorAll('button, a, [role="button"], .wk-acc'), function (b) {
+      if (b.closest('.ios-nav-title') || b.classList.contains('ios-nav-back')) return;
+      var r = b.getBoundingClientRect(); if (r.width < 8 || r.height < 8 || getComputedStyle(b).visibility === 'hidden') return;
+      if (r.left > hr.left + hr.width * 0.3 && r.left < left) left = r.left;
+    });
+    var v = Math.max(56, Math.round(hr.right - left + 8)) + 'px';
+    if (h.style.getPropertyValue('--wk-nav-r') !== v) h.style.setProperty('--wk-nav-r', v);
+    if (window.innerWidth <= 760 && t.style.getPropertyValue('right') !== v) { t.style.setProperty('right', v, 'important'); t.style.setProperty('width', 'auto', 'important'); }
+  }
+  var q = 0; function soon() { if (q) return; q = setTimeout(function () { q = 0; fit(); }, 120); }
+  window.addEventListener('resize', soon); window.addEventListener('orientationchange', soon);
+  function start() { var h = document.querySelector('body > header'); if (!h) { setTimeout(start, 800); return; } new MutationObserver(soon).observe(h, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'hidden', 'style'] }); fit(); }
+  setTimeout(start, 1200);
+})();
+</script><style id="wk-mobile-audit2">
+@media (max-width:760px){
+html body #characterArticle#characterArticle#characterArticle#characterArticle#characterArticle .wk-crumb-row,html body #storyArticle#storyArticle#storyArticle#storyArticle#storyArticle .wk-crumb-row,html body #fruitArticle#fruitArticle#fruitArticle#fruitArticle#fruitArticle .wk-crumb-row,html body #usefulArticle#usefulArticle#usefulArticle#usefulArticle#usefulArticle .wk-crumb-row,html body #rewardArticle#rewardArticle#rewardArticle#rewardArticle#rewardArticle .wk-crumb-row{display:flex!important;flex-wrap:wrap!important;max-width:100%!important;min-width:0!important;overflow:hidden!important;gap:6px!important}
+html body #characterArticle#characterArticle#characterArticle#characterArticle#characterArticle .wk-crumb-row .article-nav,html body #storyArticle#storyArticle#storyArticle#storyArticle#storyArticle .wk-crumb-row .article-nav,html body #fruitArticle#fruitArticle#fruitArticle#fruitArticle#fruitArticle .wk-crumb-row .article-nav,html body #usefulArticle#usefulArticle#usefulArticle#usefulArticle#usefulArticle .wk-crumb-row .article-nav,html body #rewardArticle#rewardArticle#rewardArticle#rewardArticle#rewardArticle .wk-crumb-row .article-nav{flex:1 1 100%!important;min-width:0!important;max-width:100%!important;width:100%!important}
+html body #characterArticle#characterArticle#characterArticle#characterArticle#characterArticle .wk-crumb-row .article-nav-buttons,html body #storyArticle#storyArticle#storyArticle#storyArticle#storyArticle .wk-crumb-row .article-nav-buttons,html body #fruitArticle#fruitArticle#fruitArticle#fruitArticle#fruitArticle .wk-crumb-row .article-nav-buttons,html body #usefulArticle#usefulArticle#usefulArticle#usefulArticle#usefulArticle .wk-crumb-row .article-nav-buttons,html body #rewardArticle#rewardArticle#rewardArticle#rewardArticle#rewardArticle .wk-crumb-row .article-nav-buttons{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:6px!important;width:100%!important;min-width:0!important}
+html body #characterArticle#characterArticle#characterArticle#characterArticle#characterArticle .wk-crumb-row .article-nav-prev,html body #storyArticle#storyArticle#storyArticle#storyArticle#storyArticle .wk-crumb-row .article-nav-prev,html body #fruitArticle#fruitArticle#fruitArticle#fruitArticle#fruitArticle .wk-crumb-row .article-nav-prev,html body #usefulArticle#usefulArticle#usefulArticle#usefulArticle#usefulArticle .wk-crumb-row .article-nav-prev,html body #rewardArticle#rewardArticle#rewardArticle#rewardArticle#rewardArticle .wk-crumb-row .article-nav-prev,html body #characterArticle#characterArticle#characterArticle#characterArticle#characterArticle .wk-crumb-row .article-nav-next,html body #storyArticle#storyArticle#storyArticle#storyArticle#storyArticle .wk-crumb-row .article-nav-next,html body #fruitArticle#fruitArticle#fruitArticle#fruitArticle#fruitArticle .wk-crumb-row .article-nav-next,html body #usefulArticle#usefulArticle#usefulArticle#usefulArticle#usefulArticle .wk-crumb-row .article-nav-next,html body #rewardArticle#rewardArticle#rewardArticle#rewardArticle#rewardArticle .wk-crumb-row .article-nav-next{display:flex!important;min-width:0!important;max-width:100%!important;width:100%!important;overflow:hidden!important;box-sizing:border-box!important;justify-content:center!important}
+html body #characterArticle#characterArticle#characterArticle#characterArticle#characterArticle .wk-crumb-row .article-nav-prev span,html body #storyArticle#storyArticle#storyArticle#storyArticle#storyArticle .wk-crumb-row .article-nav-prev span,html body #fruitArticle#fruitArticle#fruitArticle#fruitArticle#fruitArticle .wk-crumb-row .article-nav-prev span,html body #usefulArticle#usefulArticle#usefulArticle#usefulArticle#usefulArticle .wk-crumb-row .article-nav-prev span,html body #rewardArticle#rewardArticle#rewardArticle#rewardArticle#rewardArticle .wk-crumb-row .article-nav-prev span,html body #characterArticle#characterArticle#characterArticle#characterArticle#characterArticle .wk-crumb-row .article-nav-next span,html body #storyArticle#storyArticle#storyArticle#storyArticle#storyArticle .wk-crumb-row .article-nav-next span,html body #fruitArticle#fruitArticle#fruitArticle#fruitArticle#fruitArticle .wk-crumb-row .article-nav-next span,html body #usefulArticle#usefulArticle#usefulArticle#usefulArticle#usefulArticle .wk-crumb-row .article-nav-next span,html body #rewardArticle#rewardArticle#rewardArticle#rewardArticle#rewardArticle .wk-crumb-row .article-nav-next span{min-width:0!important;max-width:none!important;flex:0 1 auto!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+html.ios-app body > header.ios-show-title .ios-nav-title,html.ios-app body > header .ios-nav-title{width:auto!important;max-width:none!important;min-width:0!important;right:var(--wk-nav-r,150px)!important;justify-content:flex-start!important;text-align:left!important}
+html.ios-app body > header .ios-nav-title>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body #characterArticle#characterArticle#characterArticle#characterArticle#characterArticle .wk-crumb-row .article-nav,html body #storyArticle#storyArticle#storyArticle#storyArticle#storyArticle .wk-crumb-row .article-nav,html body #fruitArticle#fruitArticle#fruitArticle#fruitArticle#fruitArticle .wk-crumb-row .article-nav,html body #usefulArticle#usefulArticle#usefulArticle#usefulArticle#usefulArticle .wk-crumb-row .article-nav,html body #rewardArticle#rewardArticle#rewardArticle#rewardArticle#rewardArticle .wk-crumb-row .article-nav{display:block!important}
+html body #characterArticle#characterArticle#characterArticle#characterArticle#characterArticle .wk-crumb-row .article-nav-buttons,html body #storyArticle#storyArticle#storyArticle#storyArticle#storyArticle .wk-crumb-row .article-nav-buttons,html body #fruitArticle#fruitArticle#fruitArticle#fruitArticle#fruitArticle .wk-crumb-row .article-nav-buttons,html body #usefulArticle#usefulArticle#usefulArticle#usefulArticle#usefulArticle .wk-crumb-row .article-nav-buttons,html body #rewardArticle#rewardArticle#rewardArticle#rewardArticle#rewardArticle .wk-crumb-row .article-nav-buttons{width:100%!important;max-width:none!important}
+html.ios-app body > header:has(.ios-nav-back:not([hidden])) #wkAddArticle{display:none!important}
+html.ios-app body > header .ios-nav-title{font-size:17px!important}
+html body .wk-sc-toggle.wk-sc-toggle{white-space:nowrap!important;flex:0 0 auto!important;padding:7px 10px!important;font-size:12px!important;width:auto!important;max-width:none!important}
+html body :has(>.wk-sc-toggle)>h2{min-width:0!important;font-size:15px!important}
+html body .catalog-item-shell.catalog-item-shell:has(>.wk-flip2) :is(.fruit-grid-content,.useful-grid-content,.story-grid-content,[class*="-grid-content"]){padding-right:48px!important}
+html body .catalog-item-shell.catalog-item-shell:has(>.wk-flip2) .character-grid-content .character-name{padding-right:0!important}
+html body :is(#fruitsSection,#usefulSection,#charactersSection,#storySection,#favoritesSection):is(#fruitsSection,#usefulSection,#charactersSection,#storySection,#favoritesSection):is(#fruitsSection,#usefulSection,#charactersSection,#storySection,#favoritesSection):is(#fruitsSection,#usefulSection,#charactersSection,#storySection,#favoritesSection) .catalog-item-shell:has(>.wk-flip2) .fruit-grid-title{box-sizing:border-box!important;padding-right:34px!important}
+html body :is(#fruitsSection,#usefulSection,#charactersSection,#storySection,#favoritesSection):is(#fruitsSection,#usefulSection,#charactersSection,#storySection,#favoritesSection):is(#fruitsSection,#usefulSection,#charactersSection,#storySection,#favoritesSection):is(#fruitsSection,#usefulSection,#charactersSection,#storySection,#favoritesSection) .catalog-item-shell:has(>.wk-flip2) .useful-item .character-name{padding-right:46px!important;box-sizing:border-box!important}
+html body .wsf-inner{max-width:calc(100vw - 32px)!important;box-sizing:border-box!important;margin-left:auto!important;margin-right:auto!important}
+html body #mobileBottomNav#mobileBottomNav button span{font-size:10px!important;letter-spacing:-.03em!important;overflow:visible!important;text-overflow:clip!important;max-width:none!important;white-space:nowrap!important}
+html body #mobileBottomNav#mobileBottomNav button{min-width:0!important;padding-left:0!important;padding-right:0!important;overflow:visible!important}
+html body .catalog-item-shell.catalog-item-shell:has(>.wk-flip2) .character-grid-content .character-name,html body .catalog-item-shell.catalog-item-shell:has(>.wk-flip2) .character-grid-content h3,html body .catalog-item-shell.catalog-item-shell:has(>.wk-flip-btn) .character-grid-content .character-name{padding-right:30px!important;box-sizing:border-box!important}
+html body .wk-at-acts{flex-wrap:wrap!important;justify-content:flex-end!important;gap:6px!important;grid-column:1/-1!important}
+html body .wk-at-acts .wk-at-count{flex:1 1 100%!important;white-space:normal!important}
+}
+</style><style id="wk-cab-desktop">
+@media (min-width:1100px){
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .cabin-new-shell{display:grid!important;grid-template-columns:272px minmax(0,1fr)!important;gap:0 24px!important;align-items:start!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .cabin-new-shell>*{grid-column:2;min-width:0}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .cabin-new-shell>.wk-cab-side{grid-column:1;grid-row:1/span 60;position:sticky;top:var(--wk-cab-top,84px);max-height:calc(100vh - var(--wk-cab-top,84px) - 16px);overflow:auto;scrollbar-width:thin;display:flex;flex-direction:column;gap:14px;padding:2px 2px 8px}
+ /* прогресс — компактная карточка в боковой панели */
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side #wkProgressCard{display:flex!important;flex-direction:column!important;gap:10px!important;margin:0!important;padding:14px!important;width:auto!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side #wkProgressCard .wk-where{display:flex!important;flex-direction:column!important;gap:8px!important;min-width:0}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side #wkProgressCard .wk-where>*{min-width:0;max-width:100%}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side #wkProgressCard .wk-where :is(h2,h3,strong,.wk-where-now){font-size:17px!important;line-height:1.25!important;white-space:normal!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side #wkProgressCard :is(.wk-where-bars,.wk-where-prog){display:grid!important;grid-template-columns:1fr!important;gap:8px!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side #wkProgressCard .wk-prog-title{font-size:12.5px!important;margin:4px 0 0!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side #wkProgressCard .wk-prog-field{display:flex!important;align-items:center;justify-content:space-between;gap:8px;width:100%!important;margin:0!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side #wkProgressCard .wk-prog-save{width:100%!important;margin:2px 0 0!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side #wkProgressCard .wk-prog-note{font-size:11.5px!important;line-height:1.4!important;white-space:normal!important;color:#8b97ad}
+ /* навигация — вертикальный список */
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side .cabin-subnav{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:2px!important;padding:8px!important;margin:0!important;border-radius:16px!important;overflow:visible!important;position:static!important;height:auto!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side .cabin-subnav .cabin-subtab{flex:0 0 auto!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important;width:100%!important;min-width:0!important;max-width:none!important;height:42px!important;padding:0 12px!important;border-radius:11px!important;text-align:left!important;font-size:14.5px!important;border:0!important;position:relative}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side .cabin-subnav .cabin-subtab :is(.cabin-subtab-count,.wk-cab-badge){margin-left:auto!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side .cabin-subnav{height:auto!important;max-height:none!important;min-height:0!important;flex-wrap:nowrap!important;flex:0 0 auto!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side .cabin-subnav .cabin-subtab>*{flex:0 0 auto}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side .cabin-subnav .cabin-subtab:not(:has(svg,.wk-ic))::before{content:'';flex:0 0 auto;width:13px;height:16px;margin:0 2px 0 1px;border:1.6px solid currentColor;border-radius:3px;opacity:.75;box-sizing:border-box}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side #wkProgressCard .wk-prog-note{display:none!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side #wkProgressCard .wk-where :is(h2,h3,strong,.wk-where-now){font-size:15px!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side #wkProgressCard .wk-prog-title{display:none!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side #wkProgressCard{gap:8px!important;padding:12px!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side{gap:10px!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side .wk-where-hi{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;gap:2px 8px!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side .wk-where-hi b.wk-log{font-size:14.5px!important;white-space:nowrap!important;grid-column:1;letter-spacing:-.02em!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side .wk-where-hi span:not(.wk-ic){grid-column:1;font-size:12px!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side .wk-where-hi .wk-where-gear{grid-column:2;grid-row:1/3;margin:0!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side .cabin-subnav .cabin-subtab{height:38px!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side #wkProgressCard{min-height:0!important;height:auto!important;flex:0 0 auto!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side #wkProgressCard>*{flex:0 0 auto!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side .cabin-subnav .cabin-subtab:hover:not(.active){background:rgba(148,163,184,.08)!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side .cabin-subnav .cabin-subtab.active{background:linear-gradient(90deg,rgba(216,180,90,.22),rgba(216,180,90,.06))!important;color:#f3dc9a!important;box-shadow:inset 3px 0 0 #d8b45a!important}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side .wk-cab-grp{margin:10px 12px 4px;font-size:11.5px;font-weight:700;color:#7d8aa0;letter-spacing:.02em}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side .wk-cab-grp:first-child{margin-top:2px}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side .wk-cab-badge{margin-left:auto;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#e2564b;color:#fff;font-size:11.5px;font-weight:800;display:inline-grid;place-items:center}
+ /* обзор: сначала «продолжить», потом статистика */
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .cabin-new-shell:has(.wk-ov-tab.active) #wkCabOverview{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px 20px;align-items:start}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection #wkCabOverview>*{grid-column:1/-1;margin:0!important;min-width:0}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection #wkCabOverview>.wk-cab-quick{order:-3}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection #wkCabOverview>#cabinPaneHistory{order:-2;grid-column:2}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection #wkCabOverview>#cabinPaneFavorites{order:-2;grid-column:1}
+ html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection #wkCabOverview>#wkOvAtlas{order:-1}
+}
+.wk-cab-grp,.wk-cab-quick{display:none}
+@media (min-width:1100px){html:not(.ios-app) .wk-cab-side .wk-cab-grp{display:block}html:not(.ios-app) #wkCabOverview>.wk-cab-quick{display:grid}}
+@media (max-width:1099px){.wk-cab-side{display:contents}}
+html.ios-app .wk-cab-side{display:contents}
+.wk-cab-quick{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.wk-cab-q{display:flex;flex-direction:column;gap:4px;align-items:flex-start;padding:14px 16px;border-radius:16px;border:1px solid rgba(148,163,184,.2);background:rgba(10,14,26,.55);color:#e8edf5;font:inherit;text-align:left;cursor:pointer;min-width:0}
+.wk-cab-q:hover{border-color:rgba(216,180,90,.55)}
+.wk-cab-q:focus-visible{outline:2px solid #d8b45a;outline-offset:2px}
+.wk-cab-q span{font-size:12.5px;color:#93a0b5}
+.wk-cab-q b{font-size:20px;line-height:1.15;font-weight:800;color:#fff;overflow-wrap:anywhere}
+.wk-cab-q em{font-style:normal;font-size:12.5px;color:#c9b071}
+.wk-cab-q.hot{border-color:rgba(216,180,90,.6);background:radial-gradient(120% 140% at 0 0,rgba(216,180,90,.16),transparent 60%),rgba(10,14,26,.55)}
+</style>
+<script id="wk-cab-desktop-js">
+(function () {
+  'use strict';
+  var GROUPS = { storyline: 'Путешествие', deck: 'Игра', stats: 'Команда' };
+  var ORDER = ['overview', 'storyline', 'arcs', 'timeline', 'watchgrid', 'atlas', 'deck', 'quiz', 'tops', 'stats', 'edits'];
+  function tabKey(b) { return b.getAttribute('data-cabin-tab') || b.getAttribute('data-wk-cabin-tab') || (b.classList.contains('wk-ov-tab') ? 'overview' : ''); }
+  function shellEl() { return document.querySelector('#favoritesSection .cabin-new-shell'); }
+  function wrap() {
+    var sh = shellEl(); if (!sh) return;
+    if (window.innerWidth < 1100 || document.documentElement.classList.contains('ios-app')) { sh.style.removeProperty('grid-template-columns'); return; }
+    if (sh.style.getPropertyValue('grid-template-columns') !== '272px minmax(0px, 1fr)') sh.style.setProperty('grid-template-columns', '272px minmax(0px, 1fr)', 'important');
+    var nav = sh.querySelector('.cabin-subnav'), pc = document.getElementById('wkProgressCard'); if (!nav) return;
+    var side = sh.querySelector(':scope > .wk-cab-side');
+    if (!side) { side = document.createElement('aside'); side.className = 'wk-cab-side'; side.setAttribute('aria-label', 'Разделы каюты'); sh.insertBefore(side, sh.firstChild); }
+    if (nav.parentElement !== side) side.appendChild(nav);
+    if (pc && pc.parentElement !== side) side.appendChild(pc);
+    var h = document.querySelector('body > header'); if (h) sh.style.setProperty('--wk-cab-top', Math.round(h.getBoundingClientRect().height + 14) + 'px');
+    var lg = side.querySelector('.wk-where-hi b'); if (lg && lg.style.getPropertyValue('font-size') !== '15px') { lg.style.setProperty('font-size', '15px', 'important'); lg.style.setProperty('white-space', 'nowrap', 'important'); }
+    groups(nav); badges(nav); quick();
+  }
+  function groups(nav) {
+    [].forEach.call(nav.querySelectorAll('.cabin-subtab'), function (b) {
+      var oi = ORDER.indexOf(tabKey(b)); b.style.order = String((oi < 0 ? 50 : oi) * 2 + 1);
+      var g = GROUPS[tabKey(b)]; if (!g) return;
+      var prev = b.previousElementSibling; if (prev && prev.classList.contains('wk-cab-grp')) return;
+      var d = document.createElement('div'); d.className = 'wk-cab-grp'; d.textContent = g; d.style.order = String(ORDER.indexOf(tabKey(b)) * 2); nav.insertBefore(d, b);
+    });
+  }
+  function deckInfo() {
+    var o = { rewards: 0, trades: 0, pct: null };
+    try { var tx = window.__wkDeckTx && window.__wkDeckTx.state, me = JSON.parse(localStorage.getItem('wkCloudSessionV1') || '{}').login; if (tx) o.trades = tx.trades.filter(function (t) { return t.to === me && t.status === 'pending'; }).length; } catch (e) {}
+    try { var p = window.__wkDeckProgress && window.__wkDeckProgress(); if (p && p.base) o.pct = Math.round(p.base.have / Math.max(1, p.base.total) * 100); } catch (e) {}
+    var bar = document.querySelector('#cabinPaneArcStats .wk-ar-bar b'); if (bar) { var m = bar.textContent.match(/(\d+)\s*$/); if (m) o.rewards = Number(m[1]); }
+    return o;
+  }
+  function badges(nav) {
+    var d = deckInfo();
+    [].forEach.call(nav.querySelectorAll('.cabin-subtab'), function (b) {
+      var k = tabKey(b), n = k === 'deck' ? d.trades : k === 'arcs' ? d.rewards : 0, el = b.querySelector('.wk-cab-badge');
+      if (!n) { if (el) el.remove(); return; }
+      if (!el) { el = document.createElement('span'); el.className = 'wk-cab-badge'; b.appendChild(el); }
+      if (el.textContent !== String(n)) { el.textContent = n; el.title = k === 'deck' ? 'Входящие предложения обмена' : 'Наградные наборы ждут'; }
+    });
+  }
+  function go(key) { var b = [].filter.call(document.querySelectorAll('#favoritesSection .cabin-subtab'), function (x) { return tabKey(x) === key; })[0]; if (b) b.click(); }
+  function quick() {
+    var ov = document.getElementById('wkCabOverview'); if (!ov) return;
+    var q = ov.querySelector(':scope > .wk-cab-quick'); if (!q) { q = document.createElement('div'); q.className = 'wk-cab-quick'; ov.insertBefore(q, ov.firstChild); q.addEventListener('click', function (e) { var b = e.target.closest('[data-go]'); if (b) go(b.getAttribute('data-go')); }); }
+    var d = deckInfo(), tabs = {}; [].forEach.call(document.querySelectorAll('#favoritesSection .cabin-subtab'), function (b) { tabs[tabKey(b)] = b; });
+    var val = function (k) { var b = tabs[k]; if (!b) return ''; var ce = b.querySelector('.cabin-subtab-count'); if (ce) return ce.textContent.trim(); var t = b.textContent.replace(/\s+/g, ' ').trim().match(/(\d+\s*%|\d+\s*\/\s*\d+)/); return t ? t[1] : ''; };
+    var C = [];
+    if (tabs.storyline) C.push(['storyline', 'Прогресс', val('storyline') || 'Открыть', 'главы и серии по аркам', 0]);
+    if (tabs.arcs) C.push(['arcs', 'Достижения', val('arcs') || 'Открыть', d.rewards ? 'наборов ждут: ' + d.rewards : 'медали и награды', d.rewards]);
+    if (tabs.deck) C.push(['deck', 'Колода', d.pct === null ? 'Открыть' : d.pct + '%', d.trades ? 'предложений обмена: ' + d.trades : 'наборы, обмен, магазин', d.trades]);
+    if (tabs.quiz) C.push(['quiz', 'Опросы', 'Проверить себя', 'вопросы по открытым статьям', 0]);
+    var h = C.map(function (c) { return '<button type="button" class="wk-cab-q' + (c[4] ? ' hot' : '') + '" data-go="' + c[0] + '"><span>' + c[1] + '</span><b>' + c[2] + '</b><em>' + c[3] + '</em></button>'; }).join('');
+    if (q.innerHTML !== h) q.innerHTML = h;
+  }
+  var t = 0; function soon() { if (t) return; t = setTimeout(function () { t = 0; wrap(); }, 250); }
+  function start() {
+    var sec = document.getElementById('favoritesSection'); if (!sec || !shellEl()) { setTimeout(start, 1000); return; }
+    wrap(); new MutationObserver(soon).observe(sec, { childList: true, subtree: true });
+    window.addEventListener('resize', soon); window.addEventListener('wk-deck-changed', soon);
+  }
+  setTimeout(start, 2200);
+})();
+</script></body></html>
