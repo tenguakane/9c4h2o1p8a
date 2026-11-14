@@ -6,6 +6,7 @@ const L = {
   COUNT_MAX: 999,            // потолок копий одной карточки
   SELL_MAX: 96_000,          // дороже одной карточки (вариант) продать нельзя
   ACH_BELLI_MAX: 25_000,     // максимум белли за одно достижение (самая крупная награда)
+  PIG_MAX: 200_000,          // потолок суммы в копилке
   DAILY_MAX: 1_000,          // ежедневная награда за вход
   QUIZ_SLACK: 1_100,         // опрос: потолок 1000 в день + запас
   CARDS_PER_PACK: 7,         // с запасом: в наборе до 5 карточек + бонусы
@@ -49,10 +50,18 @@ function check(prev, next, ctx) {
   const gainB = belli - pBelli;
   const newAch = Object.keys((next && next.achB) || {}).filter((k) => !((prev && prev.achB) || {})[k]).length;
   const newDaily = next.daily && (!prev.daily || next.daily.last !== prev.daily.last) ? 1 : 0;
-  const allowB = L.QUIZ_SLACK + removed * L.SELL_MAX + (ctx.marketIn || 0) + newAch * L.ACH_BELLI_MAX + newDaily * L.DAILY_MAX;
+  const newAchAny = Object.keys((next && next.ach) || {}).filter((k) => !((prev && prev.ach) || {})[k]).length;
+  const now = ctx.now || Date.now();
+  const pPig = prev.pig && +prev.pig.amt > 0 ? prev.pig : null, nPig = next.pig && +next.pig.amt > 0 ? next.pig : null;
+  const pigRel = pPig && !nPig && now >= (+pPig.until || 0) - 120000 ? Math.ceil(pPig.amt * 1.05) + 5 : 0;
+  const pigIn = !pPig && nPig ? +nPig.amt : 0;
+  if (nPig && (nPig.amt > L.PIG_MAX || nPig.amt < 0)) r.push('копилка: сумма ' + nPig.amt);
+  if (pPig && nPig && nPig.amt > pPig.amt) r.push('копилка: сумма выросла без внесения');
+  const allowB = L.QUIZ_SLACK + removed * L.SELL_MAX + (ctx.marketIn || 0) + newAch * L.ACH_BELLI_MAX + newDaily * L.DAILY_MAX + pigRel;
+  if (pigIn && gainB + pigIn > allowB) r.push('копилка: белли не списаны (' + pigIn + ')');
   if (gainB > allowB) r.push('белли +' + gainB + ' при допустимых ' + allowB + ' (продано карточек: ' + removed + ')');
   const gainC = nCards - pCards;
-  const allowC = opened * L.CARDS_PER_PACK + (ctx.tradeIn || 0) + L.CARD_SLACK;
+  const allowC = opened * L.CARDS_PER_PACK + (ctx.tradeIn || 0) + L.CARD_SLACK + (newAchAny + newDaily) * L.CARDS_PER_PACK;
   if (gainC > allowC) r.push('карточек +' + gainC + ' при допустимых ' + allowC + ' (открыто наборов: ' + opened + ')');
   if (packs - pPacks > L.PACK_GAIN_SLACK) r.push('наборов +' + (packs - pPacks));
   return { ok: !r.length, reasons: r };
