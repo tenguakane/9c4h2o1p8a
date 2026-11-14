@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "14.11.2026 · 376";
+const WIKI_VERSION = "14.11.2026 · 378";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -8721,10 +8721,12 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         card: {id:'card_new',name:'',arc:'',rarity:'common',image:'',image_position:50,image_position_x:50,image_zoom:100,article_id:''}
     };
     // ===== Биография по аркам: поле at_<id арки> у каждого персонажа =====
-    const WK_ARC_LIST=(()=>{try{return (Array.isArray(storyArcs)?storyArcs:[]).filter(a=>a&&a.id).map(a=>{const saga=String(a.saga||'').trim();const kind=(a.movie===true||saga==='Полнометражные фильмы')?'film':saga==='Обложки'?'cover':(a.filler===true)?'filler':'main';return {id:String(a.id),key:'at_'+a.id,name:String(a.name||'').trim(),kind};});}catch(e){return [];}})();
+    const WK_ARC_LIST=(()=>{try{return (Array.isArray(storyArcs)?storyArcs:[]).filter(a=>a&&a.id).map(a=>{const saga=String(a.saga||'').trim();const kind=(a.movie===true||saga==='Полнометражные фильмы')?'film':saga==='Обложки'?'cover':(a.filler===true)?'filler':'main';return {id:String(a.id),key:'at_'+a.id,name:String(a.name||'').trim(),kind,chs:a.chapters||'',eps:a.episodes||''};});}catch(e){return [];}})();
     WK_ARC_LIST.forEach(a=>{schemas.character[a.key]='';});
     schemas.character.arc_photos='';
     window.__wkArcList=WK_ARC_LIST;
+    /* Арка по номеру главы или серии: сначала основные арки, потом остальные. Возвращает id или '' */
+    window.__wkArcAt=(ch,ep)=>{ch=Number(ch)||0;ep=Number(ep)||0;const has=(txt,n)=>{if(!n||!txt)return false;try{return (parseStoryRangeSegments(txt)||[]).some(r=>n>=r.start&&n<=r.end);}catch(e){return false;}};const order=['main','filler','film','cover'];for(const kind of order){for(const a of WK_ARC_LIST){if(a.kind!==kind)continue;if(has(a.chs,ch))return a.id;}}for(const kind of order){for(const a of WK_ARC_LIST){if(a.kind!==kind)continue;if(has(a.eps,ep))return a.id;}}return '';};
     window.__wkArcLabel=k=>{const a=WK_ARC_LIST.find(x=>x.key===k);return a?'Арка «'+a.name+'»':k;};
     const fieldLabels = {
         ship_article_id:'Корабль',ship2_article_id:'Второй корабль',team_article_id:'Команда или организация',crew:'Экипаж и должности',team:'Команда корабля',
@@ -8957,9 +8959,22 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     function wkArcStart(id){const ar=(typeof storyArcs!=='undefined'&&Array.isArray(storyArcs))?storyArcs.find(x=>x&&x.id===id):null;const n=v=>{const m=String(v||'').match(/\d+/);return m?Number(m[0]):0;};return ar?{ch:n(ar.chapters),ep:n(ar.episodes)}:{ch:0,ep:0};}
     // описание арки открывается, когда читатель прошёл арку целиком (по последней главе/серии диапазона), а не с её начала
     function wkArcEnd(id){const ar=(typeof storyArcs!=='undefined'&&Array.isArray(storyArcs))?storyArcs.find(x=>x&&x.id===id):null;if(!ar)return {ch:0,ep:0,open:false};const mx=v=>{const m=String(v||'').match(/\d+/g);return m?Math.max.apply(null,m.map(Number)):0;};return {ch:mx(ar.chapters),ep:mx(ar.episodes),open:ar.ongoing===true||ar.ongoing==='true'||ar.ongoing===1};}
+    /* Биография арки состоит из абзацев (через пустую строку). Абзац может начинаться с метки [[ch=1164 ep=1160]]:
+       он открывается, когда достигнута глава ИЛИ серия. Абзац без метки открывается вместе с аркой (когда она пройдена).
+       Читатель видит открытые абзацы одним блоком. */
+    function wkBioParts(t){const out=[];String(t==null?'':t).split(/\n[ \t]*\n+/).forEach(p=>{p=p.trim();if(!p)return;let ch=0,ep=0;const m=p.match(/^\[\[([^\]]*)\]\]\s*/);if(m){const c=m[1].match(/ch\s*=\s*(\d+)/i),e=m[1].match(/ep\s*=\s*(\d+)/i);ch=c?Number(c[1]):0;ep=e?Number(e[1]):0;p=p.slice(m[0].length).trim();}if(p)out.push({ch,ep,t:p});});return out;}
+    window.__wkBioParse=wkBioParts;
     function wkArcsOf(raw,all){
         if(!raw)return [];
-        return WK_ARC_LIST.map(a=>({a,t:String(raw[a.key]==null?'':raw[a.key]).trim()})).filter(x=>x.t).filter(x=>{if(all||spoilerAuditMode)return true;const en=wkArcEnd(x.a.id);return wkReachedAt(en.ch,en.ep);}).map(x=>({id:x.a.id,name:x.a.name,kind:x.a.kind,text:x.t}));
+        const out=[],free=all||spoilerAuditMode;
+        WK_ARC_LIST.forEach(a=>{
+            const t=String(raw[a.key]==null?'':raw[a.key]).trim();if(!t)return;
+            const parts=wkBioParts(t);if(!parts.length)return;
+            const en=wkArcEnd(a.id),arcOk=free||wkReachedAt(en.ch,en.ep);
+            const vis=parts.filter(p=>free?true:((p.ch||p.ep)?wkReachedAt(p.ch,p.ep):arcOk));
+            if(vis.length)out.push({id:a.id,name:a.name,kind:a.kind,text:vis.map(p=>p.t).join('\n\n')});
+        });
+        return out;
     }
     /* ---------- Фото по аркам: на карточке и в наградах — самое свежее из уже открытых ---------- */
     const WK_PH_KEYS={person_link:'u',person_image_position:'y',person_image_position_x:'x',person_image_zoom:'z',card_fx:'fx',card_shine:'amb',card_style:'cs'};
@@ -26230,7 +26245,7 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
                     + '<div class="wk-ap-hint" style="font-size:12.5px;opacity:.75;display:flex;gap:8px;align-items:center;flex-wrap:wrap">Тяни фото мышью или пальцем, колесо — приблизить. <output>' + Math.round(Number(x.z) || 100) + '%</output><button type="button" data-reset>Сбросить кадр</button></div></div>'
           + '<button type="button" data-del title="Убрать фото" style="align-self:start">✕</button></div>';
       }).join('') + '<button type="button" class="wk-gal-add" data-add>＋ Добавить фото для арки</button>'
-        + '<div class="wk-gal-note">Фото появляется на карточке и в наградах, когда читатель прошёл выбранную арку целиком; если указать главу и/или серию, оно откроется раньше или позже (по первой достигнутой из двух) и станет основным, пока не откроется более свежее. В одной арке можно держать несколько фото: каждое станет отдельной карточкой колоды. Кадр у каждого фото свой. Эффекты и частицы для фото настраиваются на вкладке «Оформление»: сверху выбери нужную арку. В плакатах WANTED приближение настраивается отдельно для каждого фото.</div>';
+        + '<div class="wk-gal-note">Фото появляется на карточке и в наградах, когда читатель прошёл выбранную арку целиком; если указать главу и/или серию, оно откроется раньше или позже (по первой достигнутой из двух) и станет основным, пока не откроется более свежее. Арку можно не выбирать: достаточно указать главу или серию, и она подставится сама. В одной арке можно держать несколько фото: каждое станет отдельной карточкой колоды. Кадр у каждого фото свой. Эффекты и частицы для фото настраиваются на вкладке «Оформление»: сверху выбери нужную арку. В плакатах WANTED приближение настраивается отдельно для каждого фото.</div>';
     }
     function attachPick() {
       [].forEach.call(box.querySelectorAll('.wk-ap-row'), function (row) {
@@ -26251,6 +26266,10 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     function onEdit(e) {
       var k = e.target.getAttribute && e.target.getAttribute('data-k'); if (!k) return;
       var row = e.target.closest('.wk-ap-row'), x = list[Number(row.getAttribute('data-i'))]; x[k] = e.target.value;
+      if ((k === 'ch' || k === 'ep') && Number(e.target.value) > 0 && window.__wkArcAt) {
+        var aid = window.__wkArcAt(k === 'ch' ? e.target.value : x.ch, k === 'ep' ? e.target.value : x.ep) || window.__wkArcAt(x.ch, x.ep);
+        if (aid && aid !== x.arc) { x.arc = aid; var api0 = row.querySelector('.wk-arcpick input'); if (api0) api0.value = (arcs.filter(function (a) { return a.id === aid; })[0] || {}).name || ''; }
+      }
       if (k === 'u' || k === 'z' || k === 'x' || k === 'y') { row.querySelector('.wk-ap-prev').innerHTML = prev(x); var o = e.target.parentNode.querySelector('output'); if (o) o.textContent = Math.round(Number(e.target.value)) + '%'; }
       save();
     }
@@ -26309,20 +26328,40 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     var box = document.createElement('div'); box.className = 'wk-ad-ed'; box.style.cssText = 'display:grid;gap:10px'; body.appendChild(box);
     var rows = keys.filter(function (a) { return String(tas[a.key].value || '').trim(); }).map(function (a) { return a.key; });
     function setReal(k, v) { var t = tas[k]; if (!t || t.value === v) return; t.value = v; ['input', 'change'].forEach(function (n) { t.dispatchEvent(new Event(n, { bubbles: true })); }); }
+    var P = {};
+    function partsOf(k) {
+      if (!P[k]) { var ps = window.__wkBioParse ? window.__wkBioParse(tas[k].value) : []; P[k] = ps.length ? ps.map(function (p) { return { ch: p.ch ? String(p.ch) : '', ep: p.ep ? String(p.ep) : '', t: p.t }; }) : [{ ch: '', ep: '', t: String(tas[k].value || '') }]; }
+      return P[k];
+    }
+    function dump(k) {
+      return partsOf(k).map(function (p) {
+        var t = String(p.t || '').trim(); if (!t) return '';
+        var ch = Math.floor(Number(p.ch)) || 0, ep = Math.floor(Number(p.ep)) || 0;
+        if (ch || ep) return '[[' + (ch ? 'ch=' + ch : '') + (ch && ep ? ' ' : '') + (ep ? 'ep=' + ep : '') + ']] ' + t.replace(/\n[ \t]*\n+/g, '\n');
+        return t;
+      }).filter(Boolean).join('\n\n');
+    }
     function render() {
       setTimeout(function () { [].forEach.call(box.querySelectorAll('textarea[data-ad="text"]'), adFit); }, 0);
       box.innerHTML = rows.map(function (k, i) {
-        return '<div class="wk-ad-row" data-i="' + i + '" style="display:grid;gap:8px;padding:10px;border:1px solid rgba(255,255,255,.14);border-radius:12px"><div style="display:flex;gap:8px;align-items:center"><div style="flex:1;min-width:0">' + arcPickHTML(k ? ((arcs.filter(function (a) { return a.key === k; })[0] || {}).name) : '') + '</div><button type="button" class="wk-ad-del" data-ad-del title="Убрать описание" aria-label="Убрать описание">✕</button></div>'
-          + (k ? '<textarea data-ad="text" rows="1" placeholder="Что персонаж делает в этой арке" style="width:100%;resize:none;overflow:hidden">' + esc(tas[k].value) + '</textarea>' : '<small style="opacity:.7">Найди арку по названию, и появится поле для описания.</small>') + '</div>';
+        var body = '<small style="opacity:.7">Найди арку по названию, и появится поле для описания.</small>';
+        if (k) {
+          var ps = partsOf(k);
+          body = ps.map(function (p, j) {
+            return '<div class="wk-ad-part" data-j="' + j + '"><textarea data-ad="text" rows="1" placeholder="' + (j ? 'Продолжение: что происходит дальше' : 'Что персонаж делает в этой арке') + '" style="width:100%;resize:none;overflow:hidden">' + esc(p.t) + '</textarea>'
+              + '<div class="wk-ad-th"><label>Откроется с главы<input type="number" min="0" data-ad="ch" placeholder="с арки" value="' + esc(p.ch || '') + '"></label><label>…или с серии<input type="number" min="0" data-ad="ep" placeholder="с арки" value="' + esc(p.ep || '') + '"></label>' + (ps.length > 1 ? '<button type="button" data-ad-pdel title="Убрать абзац" aria-label="Убрать абзац">✕</button>' : '') + '</div></div>';
+          }).join('') + '<button type="button" class="wk-gal-add" data-ad-padd>＋ Абзац с главы или серии</button>';
+        }
+        return '<div class="wk-ad-row" data-i="' + i + '" style="display:grid;gap:8px;padding:10px;border:1px solid rgba(255,255,255,.14);border-radius:12px"><div style="display:flex;gap:8px;align-items:center"><div style="flex:1;min-width:0">' + arcPickHTML(k ? ((arcs.filter(function (a) { return a.key === k; })[0] || {}).name) : '') + '</div><button type="button" class="wk-ad-del" data-ad-del title="Убрать описание" aria-label="Убрать описание">✕</button></div>' + body + '</div>';
       }).join('') + '<button type="button" class="wk-gal-add" data-ad-add>＋ Добавить описание</button>'
-        + '<div class="wk-gal-note">Описание открывается читателю, когда он прошёл арку целиком. Пустые не показываются.</div>';
+        + '<div class="wk-gal-note">Без главы и серии описание открывается читателю, когда он прошёл арку целиком. Если у абзаца указана глава или серия, он откроется, как только читатель дойдёт до любой из двух точек, даже посреди арки. Для читателя все открытые абзацы арки выглядят одним блоком. Пустые не показываются.</div>';
       [].forEach.call(box.querySelectorAll('.wk-ad-row'), function (row) {
         var i = Number(row.getAttribute('data-i')), pk = row.querySelector('.wk-arcpick'); if (!pk) return;
         var nm = function (k) { return (arcs.filter(function (a) { return a.key === k; })[0] || {}).name || ''; };
         pk.__opts = function () { var used = {}; rows.forEach(function (k) { if (k && k !== rows[i]) used[k] = 1; }); return arcs.filter(function (a) { return tas[a.key] && !used[a.key]; }).map(function (a) { return { v: a.key, name: a.name, kind: ADK[a.kind] || '' }; }); };
         pk.__cur = function () { return nm(rows[i]); };
         pk.__pick = function (nk) {
-          var old = rows[i]; if (old && nk) { var v = tas[old].value; setReal(old, ''); setReal(nk, v); }
+          var old = rows[i]; if (old && nk) { var v = dump(old); P[nk] = partsOf(old); delete P[old]; setReal(old, ''); setReal(nk, v); }
           rows[i] = nk; render();
           var ta = box.querySelector('.wk-ad-row[data-i="' + i + '"] textarea'); if (ta) ta.focus();
         };
@@ -26331,16 +26370,27 @@ html.ios-app .wk-qe-toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
     box.addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return; e.preventDefault();
       if (b.hasAttribute('data-ad-add')) { if (rows.indexOf('') < 0) rows.push(''); render(); var ins = box.querySelectorAll('.wk-arcpick-in'); if (ins.length) ins[ins.length - 1].focus(); return; }
+      if (b.hasAttribute('data-ad-padd')) { var ri = Number(b.closest('.wk-ad-row').getAttribute('data-i')), rk = rows[ri]; if (!rk) return; partsOf(rk).push({ ch: '', ep: '', t: '' }); render(); var tl = box.querySelectorAll('.wk-ad-row[data-i="' + ri + '"] textarea'); if (tl.length) tl[tl.length - 1].focus(); return; }
+      if (b.hasAttribute('data-ad-pdel')) {
+        var pi = Number(b.closest('.wk-ad-row').getAttribute('data-i')), pk0 = rows[pi], pj = Number(b.closest('.wk-ad-part').getAttribute('data-j')); if (!pk0) return;
+        var pp = partsOf(pk0); if (String(pp[pj].t || '').trim() && !window.confirm('Убрать этот абзац?')) return;
+        pp.splice(pj, 1); if (!pp.length) pp.push({ ch: '', ep: '', t: '' }); setReal(pk0, dump(pk0)); render(); return;
+      }
       if (b.hasAttribute('data-ad-del')) {
         var i = Number(b.closest('.wk-ad-row').getAttribute('data-i')), k = rows[i];
         if (k && String(tas[k].value || '').trim() && !window.confirm('Убрать это описание арки?')) return;
-        if (k) setReal(k, ''); rows.splice(i, 1); render();
+        if (k) { setReal(k, ''); delete P[k]; } rows.splice(i, 1); render();
       }
     });
-    box.addEventListener('input', function (e) {
-      var t = e.target; if (t.getAttribute('data-ad') !== 'text') return;
-      adFit(t); var i = Number(t.closest('.wk-ad-row').getAttribute('data-i')); if (rows[i]) setReal(rows[i], t.value);
-    });
+    function onAd(e) {
+      var t = e.target, kind = t.getAttribute && t.getAttribute('data-ad'); if (!kind) return;
+      var row = t.closest('.wk-ad-row'), part = t.closest('.wk-ad-part'); if (!row || !part) return;
+      var k = rows[Number(row.getAttribute('data-i'))]; if (!k) return;
+      var p = partsOf(k)[Number(part.getAttribute('data-j'))]; if (!p) return;
+      if (kind === 'text') { adFit(t); p.t = t.value; } else p[kind] = t.value;
+      setReal(k, dump(k));
+    }
+    box.addEventListener('input', onAd); box.addEventListener('change', onAd);
     render();
   }
   new MutationObserver(function () {
@@ -33490,7 +33540,7 @@ window.__wkFxSelfTest = function () {
       var arcs = window.__wkArcList || [];
       phl.innerHTML = ph.map(function (x, i) { return '<div class="wk-ie-phr" data-i="' + i + '"><select aria-label="Арка"><option value="">— арка —</option>' + arcs.map(function (a) { return '<option value="' + eh(a.id) + '"' + (a.id === x.arc ? ' selected' : '') + '>' + eh(a.name) + '</option>'; }).join('') + '</select><input type="url" placeholder="Ссылка на фото" value="' + eh(x.u || '') + '"><select data-rar aria-label="Редкость карточки"><option value="">Редкость: авто</option>' + [['common', 'Обычная'], ['rare', 'Редкая'], ['epic', 'Эпик'], ['legendary', 'Легенда']].map(function (q) { return '<option value="' + q[0] + '"' + (x.r === q[0] ? ' selected' : '') + '>' + q[1] + '</option>'; }).join('') + '</select><input type="number" min="0" data-ch placeholder="с гл." title="Появится с главы" value="' + eh(x.ch || '') + '" style="width:76px"><input type="number" min="0" data-ep placeholder="с сер." title="Или с серии" value="' + eh(x.ep || '') + '" style="width:76px"><button type="button" data-rmp aria-label="Убрать фото">✕</button></div>'; }).join('');
     }
-    phl.addEventListener('input', function (e) { var r2 = e.target.closest('.wk-ie-phr'); if (!r2) return; var x = ph[Number(r2.getAttribute('data-i'))]; if (e.target.hasAttribute('data-rar')) { if (e.target.value) x.r = e.target.value; else delete x.r; } else if (e.target.hasAttribute('data-ch') || e.target.hasAttribute('data-ep')) { var fk = e.target.hasAttribute('data-ch') ? 'ch' : 'ep'; if (Number(e.target.value) > 0) x[fk] = String(Math.round(Number(e.target.value))); else delete x[fk]; } else if (e.target.tagName === 'SELECT') x.arc = e.target.value; else x.u = e.target.value.trim(); dump(); });
+    phl.addEventListener('input', function (e) { var r2 = e.target.closest('.wk-ie-phr'); if (!r2) return; var x = ph[Number(r2.getAttribute('data-i'))]; if (e.target.hasAttribute('data-rar')) { if (e.target.value) x.r = e.target.value; else delete x.r; } else if (e.target.hasAttribute('data-ch') || e.target.hasAttribute('data-ep')) { var fk = e.target.hasAttribute('data-ch') ? 'ch' : 'ep'; if (Number(e.target.value) > 0) { x[fk] = String(Math.round(Number(e.target.value))); var aid2 = window.__wkArcAt ? window.__wkArcAt(x.ch, x.ep) : ''; if (aid2 && aid2 !== x.arc) { x.arc = aid2; var asel = r2.querySelector('select[aria-label="Арка"]'); if (asel) asel.value = aid2; } } else delete x[fk]; } else if (e.target.tagName === 'SELECT') x.arc = e.target.value; else x.u = e.target.value.trim(); dump(); });
     phl.addEventListener('click', function (e) { var bt = e.target.closest('[data-rmp]'); if (!bt) return; ph.splice(Number(bt.closest('.wk-ie-phr').getAttribute('data-i')), 1); draw(); dump(); });
     pw.querySelector('.wk-ie-addph').addEventListener('click', function () { ph.push({ arc: '', u: '', y: '50', x: '50', z: '100', k: 'p' + Math.random().toString(36).slice(2, 6) }); draw(); });
     draw(); return pw;
@@ -37555,4 +37605,11 @@ html body .article .article-topbar>.article-nav{display:block!important;width:au
   setInterval(function(){try{tick();}catch(e){console.warn('wk-art2',e);}},500);
 })();
 </script>
+<style id="wk-ap-btn-css">
+#wikiEditorOverlay .wk-ap-row button,.wk-ap-row button,.wk-ie-phr button,#wikiEditorOverlay .wk-ad-row button,.wk-ad-row button{font:600 12.5px Arial,sans-serif!important;color:var(--wk-accent-soft,#f4d99e)!important;background:color-mix(in srgb,var(--wk-accent,#d4a84f) 9%,rgba(10,14,26,.85))!important;border:1px solid color-mix(in srgb,var(--wk-accent,#d4a84f) 45%,transparent)!important;border-radius:9px!important;padding:6px 12px!important;cursor:pointer;text-transform:none;letter-spacing:0;box-shadow:none!important;transition:background .15s,border-color .15s,color .15s}
+#wikiEditorOverlay .wk-ap-row button:hover,.wk-ap-row button:hover,.wk-ie-phr button:hover,#wikiEditorOverlay .wk-ad-row button:hover,.wk-ad-row button:hover{background:color-mix(in srgb,var(--wk-accent,#d4a84f) 20%,rgba(10,14,26,.85))!important;border-color:color-mix(in srgb,var(--wk-accent,#d4a84f) 75%,transparent)!important}
+#wikiEditorOverlay .wk-ap-row button[data-del],.wk-ap-row button[data-del],.wk-ie-phr button[data-rmp],#wikiEditorOverlay .wk-ad-row button[data-ad-del],.wk-ad-row button[data-ad-del],.wk-ad-row button[data-ad-pdel]{width:34px;height:34px;padding:0!important;display:grid;place-items:center;font-size:15px!important;color:#cbd5e1!important;background:rgba(10,14,26,.85)!important;border-color:rgba(148,163,184,.35)!important}
+#wikiEditorOverlay .wk-ap-row button[data-del]:hover,.wk-ap-row button[data-del]:hover,.wk-ie-phr button[data-rmp]:hover,.wk-ad-row button[data-ad-del]:hover,.wk-ad-row button[data-ad-pdel]:hover{color:#ff9a9a!important;background:rgba(255,90,90,.14)!important;border-color:rgba(255,120,120,.6)!important}
+.wk-ap-row button:disabled{opacity:.45;cursor:default}.wk-ad-part{display:grid;gap:6px;padding:8px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}.wk-ad-th{display:flex;gap:8px;align-items:end;flex-wrap:wrap;font-size:12.5px}.wk-ad-th label{display:grid;gap:3px;flex:1 1 120px;min-width:0}.wk-ad-th input{width:100%}.wk-ad-th button{align-self:end}
+</style>
 </body></html>
