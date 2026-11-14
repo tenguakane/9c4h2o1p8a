@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "14.11.2026 · 379";
+const WIKI_VERSION = "15.11.2026 · 381";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -13316,6 +13316,8 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     }
     return{p,groups,collections,sagas,wanted,milestones,favs,custom,previewMode};
   }
+  /* Список достижений для наград белли: только настоящие (не режим предпросмотра) */
+  window.__wkAchList=function(){try{const d=allBuild();if(d.previewMode)return null;return allAchievements.map(a=>({id:String(a.id),done:!!a.done,total:Number(a.total)||0,cat:String(a.category||''),tier:Number(a.medalTier)||0,title:String(a.title||'')}));}catch(e){return null;}};
   function artKey(item){
     if(String(item.id||'').indexOf('custom:')===0){const cid=String(item.id).slice(7);const src=readCustomAchievements().find(a=>String(a.id)===cid);if(src&&src.image){const k='customimg:'+cid;MEDAL_ART[k]=src.image;return k;}}
     if(item.material&&['wood','iron','gold'].includes(item.material))return `custom_${item.material}`;
@@ -16741,7 +16743,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
      2. ТОПЫ ДИМЫ И ЖЕНИ
      ========================================================= */
   window.__wkRenderWatchGrid = renderWatchGrid;
-  var TOPS_KEY = 'onePieceWikiTopListsV1', TOPS_CAT_KEY = 'onePieceWikiTopCategoryV1';
+  var TOPS_KEY = 'onePieceWikiTopListsV1', TOPS_CAT_KEY = 'onePieceWikiTopCategoryV1', TOPS_ARC_KEY = 'onePieceWikiTopArcV1';
   var CREW_IDS = ['char_luffy', 'char_zoro', 'char_nami', 'char_usopp', 'char_sogeking', 'char_sanji', 'char_chopper', 'char_robin', 'char_franky', 'char_brook', 'char_jinbe', 'char_jinbei'];
   var CREW_NAMES = ['Луффи', 'Зоро', 'Нами', 'Усопп', 'Согекинг', 'Санджи', 'Чоппер', 'Робин', 'Фрэнки', 'Брук', 'Джимбей', 'Дзимбэй'];
   function crewMembers() {
@@ -16826,17 +16828,67 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
   }
   document.addEventListener('wk-avatars-changed', function () { var pn = document.getElementById('wkCabinPaneTops'); if (pn && pn.children.length && !pn.hidden) { try { renderTops(pn); } catch (e) {} } });
   var openPicker = null;
+  /* Арки для топов «на момент арки»: открытые читателю, не фильмы, по порядку глав */
+  function topArcs() {
+    var l = list('storyArcs').filter(function (a) { return a && a.id && !hidden(a, 'story') && !isMovie(a); }).map(function (a, i) { var sg = segs(a.chapters)[0], se = segs(a.episodes)[0]; return { a: a, o: sg ? sg.start : se ? 100000 + se.start : 1e9 + i }; });
+    l.sort(function (x, y) { return x.o - y.o; });
+    return l.map(function (x) { return x.a; });
+  }
   function renderTops(pane) {
     var st = store();
     var catKey = lsGet(TOPS_CAT_KEY, 'villains');
     var cat = CATS.find(function (c) { return c.key === catKey; }) || CATS[0];
     var size = cat.size();
+    var arcsAll = cat.key === 'arcs' ? [] : topArcs();
+    var arcSel = cat.key === 'arcs' ? '' : lsGet(TOPS_ARC_KEY, '');
+    if (arcSel && !arcsAll.some(function (a) { return a.id === arcSel; })) arcSel = '';
+    var lk = arcSel ? cat.key + '@' + arcSel : cat.key;
+    function filledArr(x) { return Array.isArray(x) && x.some(Boolean); }
+    /* В топе на момент арки не может быть тех, кто к концу арки ещё не появился (по главе или серии первого появления) */
+    var selArc = arcSel ? arcsAll.filter(function (a) { return a.id === arcSel; })[0] : null, endCh = 0, endEp = 0;
+    if (selArc) { segs(selArc.chapters).forEach(function (r) { endCh = Math.max(endCh, r.end); }); segs(selArc.episodes).forEach(function (r) { endEp = Math.max(endEp, r.end); }); }
+    function appeared(rec) {
+      if (!selArc || cat.type !== 'character' || !rec) return true;
+      var ch = parseInt(String(rec.chapter || '').replace(/\D+/g, ''), 10) || 0, ep = parseInt(String(rec.episode || '').replace(/\D+/g, ''), 10) || 0;
+      if (ch && endCh) return ch <= endCh;
+      if (ep && endEp) return ep <= endEp;
+      return true;
+    }
+    var charById = {}; if (selArc && cat.type === 'character') list('characters').forEach(function (c) { charById[c.id] = c; });
+    function okId(id) { return !id || !selArc || cat.type !== 'character' || appeared(charById[id]); }
+    function prevKeyFor(all) {
+      var from = arcSel ? arcsAll.findIndex(function (a) { return a.id === arcSel; }) - 1 : arcsAll.length - 1;
+      for (var j = from; j >= 0; j--) { var k = cat.key + '@' + arcsAll[j].id; if (filledArr(all[k])) return k; }
+      return '';
+    }
     var meKey = st.me(), people0 = st.people().slice();
     var regN = people0.filter(function (p) { return p.reg && p.key !== meKey; }).length, showReg = lsGet('wkTopsShowReg', '') === '1';
     var people = people0.filter(function (p) { return !p.reg || p.key === meKey || showReg; });
     people.sort(function (a, b) { return (b.key === meKey) - (a.key === meKey); });
     var lists = {};
-    people.forEach(function (p) { var all = st.get(p.key) || {}; var l = (all[cat.key] || []).slice(0, size); while (l.length < size) l.push(''); lists[p.key] = l; });
+    var prevL = {}, seeded = {};
+    people.forEach(function (p) {
+      var all = st.get(p.key) || {}, own = all[lk], has = filledArr(own), pk = prevKeyFor(all), l;
+      if (has) l = own; else if (arcSel) { l = (pk ? all[pk] : all[cat.key]) || []; seeded[p.key] = true; } else l = Array.isArray(own) ? own : [];
+      if (selArc) l = l.map(function (id) { return okId(id) ? id : ''; });
+      l = l.slice(0, size); while (l.length < size) l.push(''); lists[p.key] = l;
+      if (!seeded[p.key] && filledArr(l) && pk) prevL[p.key] = all[pk];
+    });
+    function colMv(p) {
+      if (seeded[p.key]) return '<p class="wk-top-mvs is-note">Топ на эту арку ещё не составлен, показан предыдущий.</p>';
+      var pl = prevL[p.key]; if (!pl) return '';
+      var cur = lists[p.key], up = [], dn = [], nw = [], out = [];
+      cur.forEach(function (id, i) { if (!id) return; var inf = recordInfo(cat, id); if (!inf || inf.locked) return; var j = pl.indexOf(id); if (j < 0) nw.push(inf.name); else if (j > i) up.push({ n: inf.name, d: j - i }); else if (j < i) dn.push({ n: inf.name, d: i - j }); });
+      pl.forEach(function (id) { if (id && cur.indexOf(id) < 0) { var inf = recordInfo(cat, id); if (inf && !inf.locked) out.push(inf.name); } });
+      up.sort(function (a, b) { return b.d - a.d; }); dn.sort(function (a, b) { return b.d - a.d; });
+      var parts = [];
+      if (up.length) parts.push('<span class="up">▲ ' + up.slice(0, 3).map(function (x) { return esc(x.n) + ' +' + x.d; }).join(', ') + '</span>');
+      if (dn.length) parts.push('<span class="dn">▼ ' + dn.slice(0, 3).map(function (x) { return esc(x.n) + ' −' + x.d; }).join(', ') + '</span>');
+      if (nw.length) parts.push('<span class="nw">новые: ' + nw.slice(0, 3).map(esc).join(', ') + '</span>');
+      if (out.length) parts.push('<span class="ot">выпали: ' + out.slice(0, 3).map(esc).join(', ') + '</span>');
+      return parts.length ? '<p class="wk-top-mvs">' + parts.join(' · ') + '</p>' : '<p class="wk-top-mvs is-note">Без изменений по сравнению с предыдущим топом.</p>';
+    }
+    var arcBar = cat.key === 'arcs' ? '' : '<div class="wk-tops-arc"><label>Топ на момент арки <select data-top-arc aria-label="Арка"><option value="">Сейчас (общий топ)</option>' + arcsAll.map(function (a) { var mine = (st.get(meKey) || {})[cat.key + '@' + a.id]; return '<option value="' + esc(a.id) + '"' + (a.id === arcSel ? ' selected' : '') + '>' + (filledArr(mine) ? '● ' : '') + esc(a.name) + '</option>'; }).join('') + '</select></label><small>Составь топ таким, каким он был на момент арки: персонажи, которые к её концу ещё не появились, в списке недоступны. Стрелки показывают, кто поднялся или опустился по сравнению с предыдущей арки, для которой топ уже есть. ● отмечает арки с твоим топом.</small></div>';
     // Сводка: что выбирают несколько человек сразу.
     var counts = {};
     people.forEach(function (p) { lists[p.key].forEach(function (id) { if (id) counts[id] = (counts[id] || 0) + 1; }); });
@@ -16845,7 +16897,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
       (regN ? '<div class="wk-tops-reg"><button type="button" data-top-reg aria-pressed="' + showReg + '">' + (showReg ? 'Скрыть топы новых участников' : 'Показать топы новых участников (' + regN + ')') + '</button></div>' : '') +
       '<div class="wk-tops-cats" role="tablist">' + CATS.map(function (c) {
         return '<button type="button" role="tab" data-top-cat="' + c.key + '" class="' + (c.key === cat.key ? 'active' : '') + '">' + c.icon + ' ' + c.title + '<small>топ-' + c.size() + '</small></button>';
-      }).join('') + '</div>' +
+      }).join('') + '</div>' + arcBar +
       '<div class="wk-tops-summary"><span>Заполнено: ' + people.map(function (p) { return esc(p.name) + ' <b>' + lists[p.key].filter(Boolean).length + '/' + size + '</b>'; }).join(' · ') + '</span>' +
       (shared.length ? '<span>Общие выборы: ' + shared.slice(0, 5).map(function (id) { var info = recordInfo(cat, id); return '<b>' + esc(info && !info.locked ? info.name : '🔒 скрыто') + '</b> ×' + counts[id]; }).join(', ') + '</span>' : '<span>Общих выборов пока нет</span>') +
       (cat.key === 'crew' ? '<span>В команде сейчас ' + size + ' ' + plural(size, 'участник', 'участника', 'участников') + ' в данных</span>' : '') + '</div>' +
@@ -16853,14 +16905,15 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     people.forEach(function (p) {
       var editable = st.editable(p.key);
       var filled = lists[p.key].filter(Boolean).length;
-      html += '<div class="wk-tops-col' + (editable ? ' is-mine' : '') + '" data-who="' + esc(p.key) + '" style="--who:' + p.color + '"><h3>' + (function () { var h = window.__wkAvHTML && window.__wkAvHTML(p.key); return h ? '<i class="has-img">' + h + '</i>' : '<i>' + esc(p.name[0]) + '</i>'; })() + esc(p.name) + (p.key === meKey ? ' <span class="wk-top-you">это вы</span>' : '') + '<small>' + filled + ' из ' + size + '</small></h3>';
+      html += '<div class="wk-tops-col' + (editable ? ' is-mine' : '') + '" data-who="' + esc(p.key) + '" style="--who:' + p.color + '"><h3>' + (function () { var h = window.__wkAvHTML && window.__wkAvHTML(p.key); return h ? '<i class="has-img">' + h + '</i>' : '<i>' + esc(p.name[0]) + '</i>'; })() + esc(p.name) + (p.key === meKey ? ' <span class="wk-top-you">это вы</span>' : '') + '<small>' + filled + ' из ' + size + '</small></h3>' + colMv(p);
       lists[p.key].forEach(function (id, i) {
         var info = recordInfo(cat, id);
         var others = id && !(info && info.locked) ? people.filter(function (o) { return o.key !== p.key && lists[o.key].indexOf(id) >= 0; }) : [];
-        var nameHTML;
+        var nameHTML, mv = '', pl0 = prevL[p.key];
+        if (pl0 && id && info && !info.locked) { var pj = pl0.indexOf(id), dd = pj - i; mv = pj < 0 ? '<span class="wk-top-mv nw" title="Нет в предыдущем топе">NEW</span>' : dd > 0 ? '<span class="wk-top-mv up" title="Поднялся с #' + (pj + 1) + '">▲' + dd + '</span>' : dd < 0 ? '<span class="wk-top-mv dn" title="Опустился с #' + (pj + 1) + '">▼' + (-dd) + '</span>' : ''; }
         if (!info) nameHTML = editable ? '<b>Выбрать…</b><small>место свободно</small>' : '<b>—</b><small>место свободно</small>';
         else if (info.locked) nameHTML = '<b>Пока скрыто</b><small>' + esc(info.sub) + '</small>';
-        else nameHTML = '<b>' + esc(info.name) + others.map(function (o) { return '<span class="wk-top-match" style="--other:' + o.color + '" title="Есть в топе у ' + esc(o.name) + '">' + esc(o.name) + ' #' + (lists[o.key].indexOf(id) + 1) + '</span>'; }).join('') + '</b><small>' + esc(info.sub) + '</small>';
+        else nameHTML = '<b>' + esc(info.name) + mv + others.map(function (o) { return '<span class="wk-top-match" style="--other:' + o.color + '" title="Есть в топе у ' + esc(o.name) + '">' + esc(o.name) + ' #' + (lists[o.key].indexOf(id) + 1) + '</span>'; }).join('') + '</b><small>' + esc(info.sub) + '</small>';
         html += '<div class="wk-top-row' + (info && info.locked ? ' is-locked' : '') + '" data-rank="' + (i + 1) + '" data-i="' + i + '">' + '<span class="wk-top-rank">' + (i + 1) + '</span>' +
           '<button type="button" class="wk-top-pick' + (info ? '' : ' is-empty') + '" data-act="pick"' + (editable ? '' : ' tabindex="-1" aria-disabled="true"') + '>' + thumb(info) + '<span class="wk-top-name">' + nameHTML + '</span></button>' +
           '<span class="wk-top-tools">' +
@@ -16878,7 +16931,8 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     pane.querySelectorAll('[data-top-cat]').forEach(function (btn) {
       btn.addEventListener('click', function () { lsSet(TOPS_CAT_KEY, btn.getAttribute('data-top-cat')); renderTops(pane); });
     });
-    function commit(who, arr) { var all = Object.assign({}, st.get(who) || {}); all[cat.key] = arr; st.set(who, all); renderTops(pane); }
+    var arcPick = pane.querySelector('[data-top-arc]'); if (arcPick) arcPick.addEventListener('change', function () { lsSet(TOPS_ARC_KEY, arcPick.value); renderTops(pane); });
+    function commit(who, arr) { var all = Object.assign({}, st.get(who) || {}); all[lk] = arr; st.set(who, all); renderTops(pane); }
     pane.querySelectorAll('.wk-top-row').forEach(function (row) {
       var who = row.closest('.wk-tops-col').getAttribute('data-who');
       var editable = st.editable(who);
@@ -16903,6 +16957,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     function showPicker(row, who, i) {
       if (openPicker) openPicker.remove();
       var pool = cat.pool(), allPool = cat.key === 'villains' ? list('characters').filter(function (c) { return !hidden(c, 'character'); }).sort(function (a, b) { return (isAntagonist(b) ? 1 : 0) - (isAntagonist(a) ? 1 : 0) || String(a.name).localeCompare(String(b.name), 'ru'); }) : pool;
+      if (selArc) { pool = pool.filter(appeared); allPool = allPool.filter(appeared); }
       var pop = document.createElement('div');
       pop.className = 'wk-top-popover';
       pop.innerHTML = '<input type="search" placeholder="Поиск ' + (cat.type === 'arc' ? 'арки' : cat.key === 'villains' ? 'любого персонажа' : 'персонажа') + '…" autocomplete="off" aria-label="Поиск"><div class="wk-top-options" role="listbox"></div>';
@@ -34645,6 +34700,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   function nSupp() { try { return typeof Notification !== 'undefined'; } catch (e) { return false; } }
   function nPerm() { try { return nSupp() ? Notification.permission : 'unsupported'; } catch (e) { return 'unsupported'; } }
   function nActive() { return nPerm() === 'granted' && !!nGet().on; }
+  function nWant() { return !!nGet().on; }
   function nShow() {
     var t = 'Набор карточек готов', o = { body: 'Можно открыть новый набор в Колоде.', tag: 'wk-deck-pack' };
     try { var n = new Notification(t, o); n.onclick = function () { try { window.focus(); n.close(); } catch (e) {} }; return; } catch (e) {}
@@ -34692,7 +34748,43 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var fs = h.fb.fs;
     try { fs.setDoc(fs.doc(h.db, 'push', h.auth.currentUser.uid), { readyAt: v ? v : fs.deleteField() }, { merge: true }).catch(function () { PL = null; }); } catch (e) { PL = null; }
   }
-  window.addEventListener('wiki:cloud-ready', function () { setTimeout(function () { try { nSched(); } catch (e) {} }, 800); });
+  /* Тихо обновляем токен: пуш-адрес со временем меняется, и без этого уведомления молча переставали приходить */
+  var PRF = 0;
+  function pushRegFind() {
+    return navigator.serviceWorker.getRegistrations().then(function (l) { return (l || []).filter(function (r) { return /wk-push\/$/.test(r.scope || ''); })[0] || null; });
+  }
+  function pushRefresh() {
+    if (PRF || !nSupp() || nPerm() !== 'granted' || !('serviceWorker' in navigator)) return;
+    var h = pushH(); if (!h) return;
+    var o = nGet();
+    if (o.on) {
+      if (!o.push && !o.tok) return;
+      PRF = 1;
+      pushOn().then(function (tok) {
+        var r = nGet(), old = r.tok; r.push = 1; r.tok = tok; nPut(r);
+        if (old && old !== tok) { try { var fs = h.fb.fs; fs.setDoc(fs.doc(h.db, 'push', h.auth.currentUser.uid), { tokens: fs.arrayRemove(old) }, { merge: true }); } catch (e) {} }
+        PL = null; nSched(); try { var hs = document.getElementById('wkDkNt'); if (hs) hs.innerHTML = notifyHTML(); } catch (e) {}
+      }).catch(function () { PRF = 0; });
+    } else {
+      /* Локальные данные браузера пропали, а разрешение и пуш-адрес остались: возвращаем включённое состояние */
+      PRF = 1;
+      pushRegFind().then(function (reg) {
+        if (!reg) return;
+        return import(PUSH_SDK + 'firebase-messaging.js').then(function (m) { return m.getToken(m.getMessaging(h.app), { serviceWorkerRegistration: reg }); }).then(function (tok) {
+          if (!tok) return;
+          var fs = h.fb.fs;
+          return fs.getDoc(fs.doc(h.db, 'push', h.auth.currentUser.uid)).then(function (d) {
+            var toks = d && d.exists() ? (d.data().tokens || []) : [];
+            if (toks.indexOf(tok) < 0) return;
+            var r = nGet(); r.on = 1; r.push = 1; r.tok = tok; nPut(r); PL = null; nSched();
+            try { var hs = document.getElementById('wkDkNt'); if (hs) hs.innerHTML = notifyHTML(); } catch (e) {}
+          });
+        });
+      }).catch(function () {});
+    }
+  }
+  window.addEventListener('wiki:cloud-ready', function () { setTimeout(function () { try { nSched(); } catch (e) {} try { pushRefresh(); } catch (e) {} }, 800); });
+  setTimeout(function () { try { pushRefresh(); } catch (e) {} }, 6000);
   function nSched() {
     if (NT) { clearTimeout(NT); NT = 0; }
     try { pushSync(); } catch (e) {}
@@ -34706,9 +34798,9 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   });
   setTimeout(nSched, 1500);
   function notifyHTML() {
-    var p = nPerm(), on = nActive();
-    var btn = '<button type="button" class="wk-dk-nbtn' + (on ? ' on' : '') + '" data-act="notify" aria-pressed="' + on + '"><span aria-hidden="true">🔔</span> ' + (on ? 'Уведомление включено' : 'Сообщить, когда набор будет готов') + '</button>';
-    var note = p === 'unsupported' ? 'Этот браузер не показывает уведомления. На iPhone вики сначала нужно добавить на экран «Домой».' : p === 'denied' ? 'Уведомления для этого сайта запрещены. Разреши их в настройках браузера.' : on ? (nGet().push ? 'Придёт, даже если вики закрыта.' : NERR ? 'Сработает, пока вики открыта. Для закрытой не подключилось: ' + NERR : 'Сработает, пока вики открыта.') : '';
+    var p = nPerm(), on = nActive(), stale = !on && nWant() && nSupp();
+    var btn = '<button type="button" class="wk-dk-nbtn' + (on ? ' on' : '') + '" data-act="notify" aria-pressed="' + on + '"><span aria-hidden="true">🔔</span> ' + (on ? 'Уведомление включено' : stale ? 'Вернуть уведомления' : 'Сообщить, когда набор будет готов') + '</button>';
+    var note = stale && p !== 'denied' ? 'Браузер сбросил разрешение на уведомления (так бывает после очистки данных сайта или по настройкам телефона). Нажми кнопку, чтобы вернуть.' : p === 'unsupported' ? 'Этот браузер не показывает уведомления. На iPhone вики сначала нужно добавить на экран «Домой».' : p === 'denied' ? 'Уведомления для этого сайта запрещены. Разреши их в настройках браузера.' : on ? (nGet().push ? 'Придёт, даже если вики закрыта.' : NERR ? 'Сработает, пока вики открыта. Для закрытой не подключилось: ' + NERR : 'Сработает, пока вики открыта.') : '';
     return btn + (note ? '<p class="wk-dk-nnote">' + note + '</p>' : '');
   }
   function notifyToggle(pane) {
@@ -34721,7 +34813,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     function done(p) {
       if (fin) return; fin = 1;
       if (p !== 'granted') { redraw(); return; }
-      var q = nGet(); q.on = 1; nPut(q); NERR = ''; nSched(); redraw();
+      PRF = 0; var q = nGet(); q.on = 1; nPut(q); NERR = ''; nSched(); redraw();
       pushOn().then(function (tok) { var r = nGet(); r.push = 1; r.tok = tok; nPut(r); PL = null; nSched(); redraw(); })
         .catch(function (e) { NERR = String(e && e.message || e).slice(0, 80); redraw(); });
     }
@@ -35757,6 +35849,8 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     final: { shop: true, n: 7, prob: { legendary: 0.10, epic: 0.25, rare: 0.40 }, minEpic: true, minLeg: true }
   };
   var AR_NOTE = { small: 'обычные шансы, хотя бы одна редкая', big: 'последний уровень: повышенные шансы, хотя бы один эпик', saga: 'сага: повышенные шансы, хотя бы один эпик', final: 'последняя сага: повышенные шансы, гарантированная легенда' };
+  var AR_BEL = { small: 1500, big: 6000, saga: 10000, final: 25000 };
+  function arBel(a) { return AR_BEL[a.kind] || 0; }
   function arPrefix(id) { return String(id).replace(/:[^:]*$/, ''); }
   function arKind(id, isLast) {
     var p = arPrefix(id);
@@ -35782,14 +35876,14 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var st = load(), pre = arPreview(root) || st.__fake, list = arScan(root), done = st.ach || {}, wait = [];
     AR.busy = true;
     list.forEach(function (a) {
-      var box = a.el.querySelector('.wk-ar-b'), n = AR_OPT[a.kind].n, got = !!done[a.id];
-      if (!got && !pre) wait.push(a);
-      var html = pre ? '' : got ? '<span class="wk-ar-got">Набор получен · ' + n + ' ' + plCards(n) + '</span>' : '<button type="button" class="wk-ar-btn k-' + a.kind + '" data-wk-ar="' + esc(a.id) + '" title="' + esc(AR_NOTE[a.kind]) + '">Забрать набор · ' + n + ' ' + plCards(n) + '</button>';
+      var box = a.el.querySelector('.wk-ar-b'), n = AR_OPT[a.kind].n, got = !!done[a.id], gotB = !!(st.achB || {})[a.id], bl = arBel(a);
+      if ((!got || !gotB) && !pre) wait.push(a);
+      var html = pre ? '' : (got && gotB) ? '<span class="wk-ar-got">Награда получена · ' + n + ' ' + plCards(n) + ' + ' + fmtB(bl) + '</span>' : '<button type="button" class="wk-ar-btn k-' + a.kind + '" data-wk-ar="' + esc(a.id) + '" title="' + esc(AR_NOTE[a.kind]) + '">' + (got ? 'Забрать ' + fmtB(bl) : 'Забрать · ' + n + ' ' + plCards(n) + ' + ' + fmtB(bl)) + '</button>';
       if (!box) { if (!html) return; box = document.createElement('div'); box.className = 'wk-ar-b'; (a.el.querySelector('.achievement-copy') || a.el).appendChild(box); }
       if (box.innerHTML !== html) box.innerHTML = html;
     });
-    var bar = root.querySelector('.wk-ar-bar'), cards = wait.reduce(function (s, a) { return s + AR_OPT[a.kind].n; }, 0);
-    var bh = wait.length ? '<div><b>Наградные наборы ждут: ' + wait.length + '</b><span>' + cards + ' ' + plCards(cards) + ' за полученные медали</span></div><button type="button" class="wk-tx-btn pri" data-wk-ar="*">Забрать все</button>' : '';
+    var bar = root.querySelector('.wk-ar-bar'), cards = wait.reduce(function (s, a) { return s + ((st.ach || {})[a.id] ? 0 : AR_OPT[a.kind].n); }, 0), belT = wait.reduce(function (s, a) { return s + ((st.achB || {})[a.id] ? 0 : arBel(a)); }, 0);
+    var bh = wait.length ? '<div><b>Наградные наборы ждут: ' + wait.length + '</b><span>' + (cards ? cards + ' ' + plCards(cards) + ' + ' : '') + fmtB(belT) + ' за полученные медали</span></div><button type="button" class="wk-tx-btn pri" data-wk-ar="*">Забрать все</button>' : '';
     if (!bh) { if (bar) bar.remove(); }
     else { if (!bar) { bar = document.createElement('div'); bar.className = 'wk-ar-bar'; var hd = root.querySelector('.achievement-header'); if (hd) hd.insertAdjacentElement('afterend', bar); else root.prepend(bar); } if (bar.innerHTML !== bh) bar.innerHTML = bh; }
     AR.busy = false;
@@ -35801,15 +35895,20 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var root = document.getElementById('cabinPaneArcStats'); if (!root) return;
     var st = load(); if (st.__fake || arPreview(root)) return;
     if (st.achOpen) { arReveal(); return; }
-    var C = allCards(), list = arScan(root).filter(function (a) { return !(st.ach || {})[a.id] && (ids === '*' || a.id === ids); });
+    var C = allCards(), list = arScan(root).filter(function (a) { return (!(st.ach || {})[a.id] || !(st.achB || {})[a.id]) && (ids === '*' || a.id === ids); });
     if (!list.length) return;
-    st.ach = st.ach || {}; var all = [], now = Date.now(); st.got = st.got || {};
+    st.ach = st.ach || {}; st.achB = st.achB || {}; var all = [], now = Date.now(), belSum = 0; st.got = st.got || {};
     list.forEach(function (a) {
-      var pk = drawPack(C, st, AR_OPT[a.kind]);
-      pk.forEach(function (x) { x.isNew = !st.owned[x.key]; addCard(st, x.key, 1); st.got[x.key] = now; x.src = a.title; all.push(x); logPull(st, C, x.key, 'ach'); });
-      st.ach[a.id] = now;
+      if (!st.ach[a.id]) {
+        var pk = drawPack(C, st, AR_OPT[a.kind]);
+        pk.forEach(function (x) { x.isNew = !st.owned[x.key]; addCard(st, x.key, 1); st.got[x.key] = now; x.src = a.title; all.push(x); logPull(st, C, x.key, 'ach'); });
+        st.ach[a.id] = now;
+      }
+      if (!st.achB[a.id]) { st.achB[a.id] = now; belSum += arBel(a); }
     });
-    st.achOpen = { title: list.length === 1 ? list[0].title : 'Награды за ' + list.length + ' ' + (list.length % 10 === 1 && list.length % 100 !== 11 ? 'достижение' : list.length % 10 >= 2 && list.length % 10 <= 4 && (list.length % 100 < 10 || list.length % 100 >= 20) ? 'достижения' : 'достижений'), note: list.length === 1 ? AR_NOTE[list[0].kind] : '', pk: all.map(function (x) { return { key: x.key, isNew: !!x.isNew, src: x.src }; }), fl: [], cs: all.length <= 14 };
+    st.belli = (+st.belli || 0) + belSum;
+    st.achOpen = { title: list.length === 1 ? list[0].title : 'Награды за ' + list.length + ' ' + (list.length % 10 === 1 && list.length % 100 !== 11 ? 'достижение' : list.length % 10 >= 2 && list.length % 10 <= 4 && (list.length % 100 < 10 || list.length % 100 >= 20) ? 'достижения' : 'достижений'), note: list.length === 1 ? AR_NOTE[list[0].kind] : '', pk: all.map(function (x) { return { key: x.key, isNew: !!x.isNew, src: x.src }; }), fl: [], cs: all.length <= 14, bel: belSum };
+    if (!all.length) { delete st.achOpen; save(st); arDecorate(); return; }
     save(st); arDecorate(); arReveal();
   }
   function arReveal() {
@@ -35820,7 +35919,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       return '<div class="wk-pk r-' + k.r + (O.fl.indexOf(i) >= 0 ? ' on' : '') + '" data-ai="' + i + '"><div class="wk-pk-in"><div class="wk-pk-bk">' + backInner(k.r, '') + '</div><div class="wk-pk-fr">' + cardHTML(k) + '<em class="wk-dk-new' + (x.isNew ? '' : ' dup') + '">' + (x.isNew ? 'НОВАЯ' : 'повтор') + '</em><em class="wk-dk-rn r-' + k.r + '">' + RN4[k.r] + '</em></div></div></div>';
     }).join('');
     var ov = document.createElement('div'); ov.id = 'wkArOv'; ov.className = 'wk-tx-ov wk-ar-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', 'Наградной набор');
-    ov.innerHTML = '<div class="wk-tx-box wk-ar-box"><header class="wk-tx-bh"><div><h3>' + esc(O.title) + '</h3><p class="wk-ar-sub">' + O.pk.length + ' ' + plCards(O.pk.length) + (O.note ? ' · ' + esc(O.note) : '') + '</p></div></header>' +
+    ov.innerHTML = '<div class="wk-tx-box wk-ar-box"><header class="wk-tx-bh"><div><h3>' + esc(O.title) + '</h3><p class="wk-ar-sub">' + O.pk.length + ' ' + plCards(O.pk.length) + (O.bel ? ' · +' + fmtB(O.bel) : '') + (O.note ? ' · ' + esc(O.note) : '') + '</p></div></header>' +
       '<div class="wk-pane wk-ar-body"><div class="wk-dk-stage"><div class="wk-dk-row wk-ar-row">' + items + '</div></div></div>' +
       '<footer class="wk-tx-bf"><label class="wk-ar-cs"><input type="checkbox" id="wkArCs"' + (O.cs ? ' checked' : '') + '> Катсцены для легенд</label><button type="button" class="wk-tx-btn" data-ar="all">Перевернуть все</button><button type="button" class="wk-tx-btn pri" data-ar="done">В коллекцию</button></footer></div>';
     document.body.appendChild(ov);
@@ -35871,7 +35970,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     (pre ? Promise.resolve(pre) : (DK.frUnsub && DK.frData ? Promise.resolve(DK.frData) : cl.load())).then(function (by) {
       var mine = by[ml], loc = load(), ch = false; if (loc.__fake || !mine || !mine.deck) { end(false); return; }
       var cloudNewer = (mine.deck.rev || 0) > (loc.rev || 0) && (mine.deck.packs || 0) >= (loc.packs || 0);
-      if ((mine.deck.packs || 0) > (loc.packs || 0) || cloudNewer) {  loc.owned = mine.deck.owned || {}; loc.packs = mine.deck.packs || 0; loc.pity = mine.deck.pity || 0; loc.tr = Object.assign({}, mine.deck.tr || {}, loc.tr || {}); loc.got = Object.assign({}, mine.deck.got || {}, loc.got || {}); if (mine.deck.show && !(loc.show && loc.show.length)) loc.show = mine.deck.show; if (typeof mine.deck.belli === 'number') loc.belli = mine.deck.belli; loc.hold = Object.assign({}, mine.deck.hold || {}); if (mine.deck.ev && !(loc.ev && loc.ev.length)) loc.ev = mine.deck.ev; loc.ach = Object.assign({}, mine.deck.ach || {}, loc.ach || {});  ch = true;
+      if ((mine.deck.packs || 0) > (loc.packs || 0) || cloudNewer) {  loc.owned = mine.deck.owned || {}; loc.packs = mine.deck.packs || 0; loc.pity = mine.deck.pity || 0; loc.tr = Object.assign({}, mine.deck.tr || {}, loc.tr || {}); loc.got = Object.assign({}, mine.deck.got || {}, loc.got || {}); if (mine.deck.show && !(loc.show && loc.show.length)) loc.show = mine.deck.show; if (typeof mine.deck.belli === 'number') loc.belli = mine.deck.belli; loc.hold = Object.assign({}, mine.deck.hold || {}); if (mine.deck.ev && !(loc.ev && loc.ev.length)) loc.ev = mine.deck.ev; loc.ach = Object.assign({}, mine.deck.ach || {}, loc.ach || {}); loc.achB = Object.assign({}, mine.deck.achB || {}, loc.achB || {});  ch = true;
         if (mine.deck.open && mine.deck.open.pk && !loc.open) loc.open = mine.deck.open; }
       if (mine.deck.cos && Object.keys(mine.deck.cos).some(function (q) { return !(loc.cos || {})[q]; })) { loc.cos = Object.assign({}, mine.deck.cos, loc.cos || {}); if (!loc.frame && mine.deck.frame) loc.frame = mine.deck.frame; if (!loc.bg && mine.deck.bg) loc.bg = mine.deck.bg; if (!loc.alb && mine.deck.alb) loc.alb = mine.deck.alb; if (!loc.back && mine.deck.back) loc.back = mine.deck.back; ch = true; }
       if ((mine.deck.showCap || 0) > (loc.showCap || 0)) { loc.showCap = mine.deck.showCap; ch = true; }
@@ -37610,7 +37709,7 @@ html body .article .article-topbar>.article-nav{display:block!important;width:au
 #wikiEditorOverlay .wk-ap-row button:hover,.wk-ap-row button:hover,.wk-ie-phr button:hover,#wikiEditorOverlay .wk-ad-row button:hover,.wk-ad-row button:hover{background:color-mix(in srgb,var(--wk-accent,#d4a84f) 20%,rgba(10,14,26,.85))!important;border-color:color-mix(in srgb,var(--wk-accent,#d4a84f) 75%,transparent)!important}
 #wikiEditorOverlay .wk-ap-row button[data-del],.wk-ap-row button[data-del],.wk-ie-phr button[data-rmp],#wikiEditorOverlay .wk-ad-row button[data-ad-del],.wk-ad-row button[data-ad-del],.wk-ad-row button[data-ad-pdel]{width:34px;height:34px;padding:0!important;display:grid;place-items:center;font-size:15px!important;color:#cbd5e1!important;background:rgba(10,14,26,.85)!important;border-color:rgba(148,163,184,.35)!important}
 #wikiEditorOverlay .wk-ap-row button[data-del]:hover,.wk-ap-row button[data-del]:hover,.wk-ie-phr button[data-rmp]:hover,.wk-ad-row button[data-ad-del]:hover,.wk-ad-row button[data-ad-pdel]:hover{color:#ff9a9a!important;background:rgba(255,90,90,.14)!important;border-color:rgba(255,120,120,.6)!important}
-.wk-ap-row button:disabled{opacity:.45;cursor:default}
+.wk-ap-row button:disabled{opacity:.45;cursor:default}.wk-tops-arc{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin:0 0 12px;font-size:13px}.wk-tops-arc label{display:flex;gap:8px;align-items:center;font-weight:600}.wk-tops-arc select{font:inherit;color:inherit;max-width:100%;padding:7px 10px;border-radius:10px;border:1px solid rgba(148,163,184,.35);background:rgba(10,14,26,.85)}.wk-tops-arc small{opacity:.7;flex:1 1 260px}.wk-top-mv{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:999px;font:700 11px Arial,sans-serif;vertical-align:middle}.wk-top-mv.up{color:#6ee7a0;background:rgba(52,211,153,.14);border:1px solid rgba(52,211,153,.4)}.wk-top-mv.dn{color:#ff9a9a;background:rgba(248,113,113,.14);border:1px solid rgba(248,113,113,.4)}.wk-top-mv.nw{color:#f4d99e;background:rgba(212,168,79,.16);border:1px solid rgba(212,168,79,.45)}.wk-top-mvs{margin:0 0 8px;font-size:12.5px;line-height:1.5;opacity:.95}.wk-top-mvs .up{color:#6ee7a0}.wk-top-mvs .dn{color:#ff9a9a}.wk-top-mvs .nw{color:#f4d99e}.wk-top-mvs .ot{opacity:.75}.wk-top-mvs.is-note{opacity:.65}
 /* Топы: плашки «Имя #место» из чужих топов скрыты */.wk-top-match{display:none!important}.wk-ad-part{display:grid;gap:6px;padding:8px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}.wk-ad-th{display:flex;gap:8px;align-items:end;flex-wrap:wrap;font-size:12.5px}.wk-ad-th label{display:grid;gap:3px;flex:1 1 120px;min-width:0}.wk-ad-th input{width:100%}.wk-ad-th button{align-self:end}
 </style>
 </body></html>
