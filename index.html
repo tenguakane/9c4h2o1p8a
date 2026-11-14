@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 383";
+const WIKI_VERSION = "15.11.2026 · 384";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -33914,7 +33914,7 @@ html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-name,html.ios-app 
   window.__wkRarityRule = rule;
 })();
 </script>
-<style id="wk-dk-custom-css">.wk-dk-nt{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:2px}.wk-dk-nbtn{font:inherit;font-size:13px;min-height:40px;padding:8px 16px;border-radius:999px;border:1px solid var(--line,rgba(148,163,184,.35));background:transparent;color:inherit;cursor:pointer}.wk-dk-nbtn:hover{border-color:var(--wk-accent,#d8b45a)}.wk-dk-nbtn.on{border-color:var(--wk-accent,#d8b45a);color:var(--wk-accent,#d8b45a)}.wk-dk-h2{margin:14px 0 6px;font-size:13px}.wk-sh-inc{width:100%;font-size:12px}.wk-sh-inc th{text-align:left;font-weight:600;color:var(--muted,#aeb7c3);padding:3px 6px}.wk-sh-inc td{padding:3px 6px}.wk-dd{display:flex;flex-direction:column;align-items:center;gap:8px;margin:10px 0 4px}.wk-dd-h{font-size:13px;font-weight:600}.wk-dd-r{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;width:min(100%,380px)}.wk-dd-c u{text-decoration:none;font-size:9px;color:var(--wk-accent,#d8b45a)}.wk-dd-c.pk{border-style:dashed}.wk-dd-c{display:flex;flex-direction:column;align-items:center;gap:1px;padding:5px 0;border-radius:8px;border:1px solid var(--line,rgba(148,163,184,.3));font-size:11px;opacity:.6}.wk-dd-c i{font-style:normal;font-size:10px;color:var(--muted,#aeb7c3)}.wk-dd-c b{font-variant-numeric:tabular-nums}.wk-dd-c.done{opacity:1;border-color:var(--wk-accent,#d8b45a);background:rgba(216,180,90,.14)}.wk-dd-c.now{opacity:1;border-color:var(--wk-accent,#d8b45a);box-shadow:0 0 0 1px var(--wk-accent,#d8b45a)}.wk-dk-nnote{margin:0;max-width:34ch;text-align:center;font-size:12px;line-height:1.4;color:var(--muted,#aeb7c3)}
+<style id="wk-dk-custom-css">.wk-dk-nt{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:2px}.wk-dk-nbtn{font:inherit;font-size:13px;min-height:40px;padding:8px 16px;border-radius:999px;border:1px solid var(--line,rgba(148,163,184,.35));background:transparent;color:inherit;cursor:pointer}.wk-dk-nbtn:hover{border-color:var(--wk-accent,#d8b45a)}.wk-dk-nbtn.on{border-color:var(--wk-accent,#d8b45a);color:var(--wk-accent,#d8b45a)}.wk-dk-h2{margin:14px 0 6px;font-size:13px}.wk-sh-inc{width:100%;font-size:12px}.wk-sh-inc th{text-align:left;font-weight:600;color:var(--muted,#aeb7c3);padding:3px 6px}.wk-sh-inc td{padding:3px 6px}.wk-dd{display:flex;flex-direction:column;align-items:center;gap:8px;margin:10px 0 4px}.wk-dd-h{font-size:13px;font-weight:600}.wk-dd-r{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;width:min(100%,380px)}.wk-wrp-ic.wk-wrp-bk{max-width:none;aspect-ratio:1;height:auto;filter:drop-shadow(0 1px 0 rgba(255,255,255,.25)) drop-shadow(0 3px 4px rgba(0,0,0,.55))}.wk-wrp-bk.wk-bkimg{position:relative}.wk-dd-more{font:inherit;font-size:12px;background:none;border:0;color:var(--muted,#aeb7c3);cursor:pointer;text-decoration:underline;padding:2px 6px}.wk-dd-more:hover{color:var(--wk-accent,#d8b45a)}.wk-dd-c u{text-decoration:none;font-size:9px;color:var(--wk-accent,#d8b45a)}.wk-dd-c.pk{border-style:dashed}.wk-dd-c{display:flex;flex-direction:column;align-items:center;gap:1px;padding:5px 0;border-radius:8px;border:1px solid var(--line,rgba(148,163,184,.3));font-size:11px;opacity:.6}.wk-dd-c i{font-style:normal;font-size:10px;color:var(--muted,#aeb7c3)}.wk-dd-c b{font-variant-numeric:tabular-nums}.wk-dd-c.done{opacity:1;border-color:var(--wk-accent,#d8b45a);background:rgba(216,180,90,.14)}.wk-dd-c.now{opacity:1;border-color:var(--wk-accent,#d8b45a);box-shadow:0 0 0 1px var(--wk-accent,#d8b45a)}.wk-dk-nnote{margin:0;max-width:34ch;text-align:center;font-size:12px;line-height:1.4;color:var(--muted,#aeb7c3)}
 </style>
 <script id="wk-deck-timeline">
 (function () {
@@ -34706,15 +34706,18 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   }
   function dailyHTML(st) {
     if (st.__fake) return '';
-    var f = dailyInfo(st), cells = '';
-    for (var i = 0; i < 28; i++) {
-      var r = dlyRew(i), cl = i < f.pos || (i === f.pos && f.claimed) ? ' done' : i === f.pos ? ' now' : '';
-      cells += '<span class="wk-dd-c' + cl + (r.pk ? ' pk' : '') + '" title="День ' + (i + 1) + ': ' + esc(dlyTxt(r)) + '"><i>' + (i + 1) + '</i><b>' + r.amt + '</b>' + (r.pk ? '<u>+' + r.pk + '🃏</u>' : '') + '</span>';
+    var f = dailyInfo(st), cells = '', all = !!DK.dlyAll, from = all ? 0 : f.pos, to = all ? 28 : f.pos + 7;
+    for (var i = from; i < to; i++) {
+      var j = i % 28, r = dlyRew(j), cl = j < f.pos || (j === f.pos && f.claimed) ? ' done' : j === f.pos ? ' now' : '';
+      if (!all && i >= 28) cl = '';
+      cells += '<span class="wk-dd-c' + cl + (r.pk ? ' pk' : '') + '" title="День ' + (j + 1) + ': ' + esc(dlyTxt(r)) + '"><i>' + (j + 1) + '</i><b>' + r.amt + '</b>' + (r.pk ? '<u>+' + r.pk + '🃏</u>' : '') + '</span>';
     }
+    var nk = 0, st0 = f.claimed ? f.pos + 1 : f.pos; for (var q = st0; q < st0 + 28; q++) { if (dlyRew(q).pk) { nk = q - f.pos; break; } }
+    var tgl = '<button type="button" class="wk-dd-more" data-act="daily-more" aria-expanded="' + all + '">' + (all ? 'Свернуть' : 'Показать все 28 дней') + '</button>';
     var head = f.claimed ? 'Награда за вход получена · серия ' + f.streak + ' ' + (f.streak % 10 === 1 && f.streak % 100 !== 11 ? 'день' : f.streak % 10 >= 2 && f.streak % 10 <= 4 && (f.streak % 100 < 10 || f.streak % 100 >= 20) ? 'дня' : 'дней') : f.broken ? 'Серия прервалась. Начни заново' : 'Ежедневная награда за вход · 4 недели';
     var nx = dlyRew(f.streak);
-    return '<div class="wk-dd"><div class="wk-dd-h">' + head + '</div><div class="wk-dd-r">' + cells + '</div>' +
-      (f.claimed ? '<p class="wk-dk-nnote">Завтра: ' + dlyTxt(nx) + '. Наборы ждут на 14-й, 21-й и 28-й день.</p>' : '<button type="button" class="wk-dk-nbtn on" data-act="daily"><span aria-hidden="true">🎁</span> Забрать ' + dlyTxt({ amt: f.amt, pk: f.pk }) + '</button>') + '</div>';
+    return '<div class="wk-dd"><div class="wk-dd-h">' + head + '</div><div class="wk-dd-r">' + cells + '</div>' + tgl +
+      (f.claimed ? '<p class="wk-dk-nnote">Завтра: ' + dlyTxt(nx) + '. Ближайший набор через ' + nk + ' ' + (nk % 10 === 1 && nk % 100 !== 11 ? 'день' : nk % 10 >= 2 && nk % 10 <= 4 && (nk % 100 < 10 || nk % 100 >= 20) ? 'дня' : 'дней') + '.</p>' : '<button type="button" class="wk-dk-nbtn on" data-act="daily"><span aria-hidden="true">🎁</span> Забрать ' + dlyTxt({ amt: f.amt, pk: f.pk }) + '</button>') + '</div>';
   }
   function dailyClaim(pane) {
     var st = load(); if (st.__fake) return;
@@ -34870,16 +34873,21 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     normal: { n: 'Каравелла', s: 'Лавка · 7 карточек', ic: function () { return '<svg viewBox="0 0 100 100" class="wk-wrp-ic" aria-hidden="true"><path d="M14 64h72l-10 16H24z" fill="currentColor"/><path d="M50 12v52" stroke="currentColor" stroke-width="2.4"/><path d="M52 18c16 6 20 20 18 36H52z" fill="currentColor" opacity=".85"/><path d="M48 24c-12 6-16 18-14 30h14z" fill="currentColor" opacity=".65"/><path d="M50 12l12 4-12 4z" fill="currentColor"/><path d="M6 86c8 4 16 4 24 0s16-4 24 0 16 4 24 0 16-4 16-4" fill="none" stroke="currentColor" stroke-width="2" opacity=".55"/></svg>'; } },
     boost: { n: 'Галеон', s: 'Лавка · повышенные шансы', ic: function () { return '<svg viewBox="0 0 100 100" class="wk-wrp-ic" aria-hidden="true"><path d="M14 64h72l-10 16H24z" fill="currentColor"/><path d="M50 12v52" stroke="currentColor" stroke-width="2.4"/><path d="M52 18c16 6 20 20 18 36H52z" fill="currentColor" opacity=".85"/><path d="M48 24c-12 6-16 18-14 30h14z" fill="currentColor" opacity=".65"/><path d="M50 12l12 4-12 4z" fill="currentColor"/><path d="M28 26v38M72 30v34" stroke="currentColor" stroke-width="2"/><path d="M29 30c8 4 10 14 9 24h-9z" fill="currentColor" opacity=".55"/><path d="M73 34c7 4 8 12 7 20h-7z" fill="currentColor" opacity=".55"/><path d="M6 86c8 4 16 4 24 0s16-4 24 0 16 4 24 0 16-4 16-4" fill="none" stroke="currentColor" stroke-width="2" opacity=".55"/></svg>'; } }
   };
-  function wrapHTML(kd, mini, attrs) {
+  function wrapIc(w) {
+    var id = ''; try { id = load().back || ''; } catch (e) { id = ''; }
+    if (!id || !(BKE[id] || CB.some(function (q) { return q.id === id && bkOk(q); }))) return w.ic();
+    return emblem('', id).replace('class="wk-bkm', 'class="wk-bkm wk-wrp-ic wk-wrp-bk');
+  }
+  function wrapHTML(kd, mini, attrs, bk) {
     var w = WRP[kd] || WRP.free; kd = WRP[kd] ? kd : 'free';
     return '<div class="wk-wrp w-' + kd + (mini ? ' mini' : '') + '"' + (attrs || ' aria-hidden="true"') + '><div class="wk-wrp-floor"></div><div class="wk-wrp-3d">' +
       '<div class="wk-wrp-top"><i class="wk-wrp-ridges"></i><i class="wk-wrp-shade"></i></div>' +
       (mini ? '' : '<div class="wk-wrp-cut"><i class="wk-wrp-fill"></i><i class="wk-wrp-nub"></i></div>') +
-      '<div class="wk-wrp-body"><div class="wk-wrp-art">' + w.ic() + '<b class="wk-wrp-n">' + w.n + '</b><span class="wk-wrp-s">' + w.s + '</span></div><i class="wk-wrp-ridges b"></i><i class="wk-wrp-crease"></i><i class="wk-wrp-shade"></i><i class="wk-wrp-sh"></i></div></div></div>';
+      '<div class="wk-wrp-body"><div class="wk-wrp-art">' + (bk ? wrapIc(w) : w.ic()) + '<b class="wk-wrp-n">' + w.n + '</b><span class="wk-wrp-s">' + w.s + '</span></div><i class="wk-wrp-ridges b"></i><i class="wk-wrp-crease"></i><i class="wk-wrp-shade"></i><i class="wk-wrp-sh"></i></div></div></div>';
   }
   function sealedHTML() {
     var w = WRP[DK.sealed] || WRP.free, kd = WRP[DK.sealed] ? DK.sealed : 'free';
-    return '<div class="wk-dk-stage sealed">' + wrapHTML(kd, false, ' data-tear role="button" tabindex="0" aria-label="Упаковка «' + w.n + '». Проведи по линии отрыва или нажми Enter, чтобы открыть"') +
+    return '<div class="wk-dk-stage sealed">' + wrapHTML(kd, false, ' data-tear role="button" tabindex="0" aria-label="Упаковка «' + w.n + '». Проведи по линии отрыва или нажми Enter, чтобы открыть"', true) +
       '<p class="wk-wrp-hint">Проведи пальцем по пунктиру вверху, чтобы разорвать упаковку</p><button type="button" class="wk-dk-ghost wk-wrp-skip" data-act="tear">Открыть без свайпа</button></div>';
   }
   function wrapTilt(pane) {
@@ -34927,7 +34935,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   }
   function packHTML(cards, st) {
     if (DK.pack && DK.sealed) return sealedHTML();
-    if (!DK.pack) return '<div class="wk-dk-stage idle"><div class="wk-dk-idlewrp">' + wrapHTML('free', true) + '</div><div class="wk-dk-ct"><b>Набор карточек</b><p>' + PACKN + ' карточек: персонажи в арках, плоды, полезные статьи и плакаты розыска. Набор можно открывать раз в час. В каждом есть хотя бы одна редкая или лучше.</p></div><div class="wk-dk-cta" id="wkDkCta">' + ctaHTML(st) + '<div id="wkDkDay">' + dailyHTML(st) + '</div><div class="wk-dk-nt" id="wkDkNt">' + notifyHTML() + '</div></div></div>';
+    if (!DK.pack) return '<div class="wk-dk-stage idle"><div class="wk-dk-idlewrp">' + wrapHTML('free', true, '', true) + '</div><div class="wk-dk-ct"><b>Набор карточек</b><p>' + PACKN + ' карточек: персонажи в арках, плоды, полезные статьи и плакаты розыска. Набор можно открывать раз в час. В каждом есть хотя бы одна редкая или лучше.</p></div><div class="wk-dk-cta" id="wkDkCta">' + ctaHTML(st) + '<div id="wkDkDay">' + dailyHTML(st) + '</div><div class="wk-dk-nt" id="wkDkNt">' + notifyHTML() + '</div></div></div>';
     return '<div class="wk-dk-stage"><div class="wk-dk-row">' + DK.pack.map(function (x, i) {
       var k = cardByKey(cards, x.key); if (!k) return '';
       var vv = x.v && VAR[x.v] ? x.v : '', kk = vv ? mkVar(k, vv) : k, fresh = vv ? x.vNew : x.isNew;
@@ -36113,6 +36121,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
         else if (a === 'rules') { showRules(pane); }
         else if (a === 'notify') { notifyToggle(pane); }
         else if (a === 'daily') { dailyClaim(pane); }
+        else if (a === 'daily-more') { DK.dlyAll = !DK.dlyAll; var dh = pane.querySelector('#wkDkDay'); if (dh) dh.innerHTML = dailyHTML(load()); }
         else if (a === 'adm-timer') { if (!isDima()) return; S.last = 0; save(S); var cb = pane.querySelector('#wkDkCta .wk-dk-open'); if (cb) cb.outerHTML = ctaHTML(S); t.textContent = '✓ Таймер сброшен'; setTimeout(function () { t.textContent = 'Сбросить таймер'; }, 1800); }
         else if (a === 'adm-edit') { if (!isDima()) return; DK.editPrev = !DK.editPrev; renderDeck(pane); }
         else if (a === 'adm-free') { if (!isDima()) return; try { if (FREE()) localStorage.removeItem('wkAdminFreeV1'); else localStorage.setItem('wkAdminFreeV1', '1'); } catch (e) {} DK.admOpen = true; renderDeck(pane); txToast(FREE() ? 'Все цены для тебя теперь 0' : 'Цены вернулись'); }
