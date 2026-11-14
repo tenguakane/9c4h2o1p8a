@@ -22682,7 +22682,7 @@ img.wk-fade.wk-loaded{opacity:1}
     deckTimer = 0; if (!me || me.role === 'guest' || !db) return Promise.resolve();
     var d; try { d = JSON.parse(lsGet('onePieceWikiDeckV1') || 'null'); } catch (e) { d = null; }
     if (!d || !d.owned) return Promise.resolve();
-    var slim = { packs: d.packs || 0, pity: d.pity || 0, last: d.last || 0, open: d.open || null, owned: d.owned, tr: d.tr || {}, got: d.got || {}, show: d.show || [], showCap: d.showCap || 3, cos: d.cos || {}, frame: d.frame || '', bg: d.bg || '', hold: d.hold || {}, ev: d.ev || [], belli: d.belli || 0, ach: d.ach || {} };
+    var slim = { packs: d.packs || 0, pity: d.pity || 0, last: d.last || 0, open: d.open || null, owned: d.owned, tr: d.tr || {}, got: d.got || {}, show: d.show || [], showCap: d.showCap || 3, cos: d.cos || {}, frame: d.frame || '', bg: d.bg || '', alb: d.alb || '', back: d.back || '', hold: d.hold || {}, ev: d.ev || [], belli: d.belli || 0, ach: d.ach || {} };
     return fb.fs.setDoc(fb.fs.doc(db, 'tops', me.uid), { login: me.login, name: me.name, deck: JSON.stringify(slim), deckAt: new Date().toISOString() }, { merge: true }).catch(function (e) { console.warn('Колода:', e); });
   }
   window.__wkDeckCloud = {
@@ -22703,6 +22703,12 @@ img.wk-fade.wk-loaded{opacity:1}
     create: function (o) { return fb.fs.addDoc(fb.fs.collection(db, 'market'), { seller: me.login, sellerUid: me.uid, sellerEmail: emailOf(me.login).toLowerCase(), sellerName: me.name, key: String(o.key), price: Math.round(o.price), status: 'open', createdAt: new Date().toISOString(), expiresMs: Date.now() + 72 * 3600 * 1000 }); },
     buy: function (id) { return fb.fs.updateDoc(fb.fs.doc(db, 'market', id), { status: 'sold', buyer: me.login, buyerUid: me.uid, buyerName: me.name, soldAt: new Date().toISOString() }); },
     remove: function (id) { return fb.fs.deleteDoc(fb.fs.doc(db, 'market', id)); }
+  };
+  window.__wkBacks = {
+    enabled: function () { return !!(me && db && fb && me.role !== 'guest'); },
+    list: function () { return fb.fs.getDocs(fb.fs.collection(db, 'backs')).then(function (qs) { var out = []; qs.forEach(function (d) { var x = d.data() || {}; out.push({ id: d.id, n: String(x.name || ''), price: Number(x.price) || 0, d: String(x.d || ''), at: String(x.at || '') }); }); return out; }); },
+    save: function (o) { return fb.fs.setDoc(fb.fs.doc(db, 'backs', o.id), { name: String(o.n), price: Math.round(o.price), d: String(o.d), by: me.login, at: new Date().toISOString() }); },
+    remove: function (id) { return fb.fs.deleteDoc(fb.fs.doc(db, 'backs', id)); }
   };
   window.__wkTrades = {
     enabled: function () { return !!(me && db && fb && me.role !== 'guest'); },
@@ -41698,14 +41704,14 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       if (n) {
         var fl = !!DK.alBack[k.key], rn = k.v ? VAR[k.v].n : RN4[k.r], arcN = k.kind === 'wanted' ? k.sub : (k.arc && k.arc.name) || '';
         return '<div class="wk-al-s has' + (fl ? ' flipped' : '') + '">' + no + '<div class="wk-al-fi"><div class="wk-al-ff"><div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + (n > 1 ? '<em class="wk-dk-x">×' + n + '</em>' : '') + '</div></div>' +
-          '<div class="wk-al-fb r-' + k.r + (k.v ? ' v-' + k.v : '') + '"><div class="wk-dk-back">' + backInner(k.r, '', true) + '<div class="wk-al-bi"><b>' + esc(cName(k)) + '</b><span>' + esc(srcOf(k)) + '</span>' + (arcN ? '<span>' + esc(arcN) + '</span>' : '') + '<em>' + esc(rn) + (n > 1 ? ' · ×' + n : '') + '</em>' + alIcons(k) + '</div></div></div></div>' +
+          '<div class="wk-al-fb r-' + k.r + (k.v ? ' v-' + k.v : '') + '" data-bkr="' + k.r + '" data-bkv="' + (k.v || '') + '" data-bkc="' + esc(k.kind === 'char' ? k.c.id : k.kind + ':' + k.c.id) + '" title="Открыть рубашку крупно"><div class="wk-dk-back">' + backInner(k.r, '', true) + '<div class="wk-al-bi"><b>' + esc(cName(k)) + '</b><span>' + esc(srcOf(k)) + '</span>' + (arcN ? '<span>' + esc(arcN) + '</span>' : '') + '<em>' + esc(rn) + (n > 1 ? ' · ×' + n : '') + '</em>' + alIcons(k) + '</div></div></div></div>' +
           '<button type="button" class="wk-al-flip" data-alflip="' + esc(k.key) + '" aria-pressed="' + fl + '" title="Перевернуть карточку" aria-label="Перевернуть карточку">⟲</button></div>';
       }
       return '<div class="wk-al-s miss r-' + k.r + '">' + no + '<div class="wk-al-sil">' + (SIL[k.kind] || SIL.char) + '<b>№ ' + (i + 1) + '</b><span>' + esc(cName(k)) + '</span><em class="wk-al-src">' + esc(srcOf(k)) + '</em><small>' + esc(k.v ? VAR[k.v].n : RN4[k.r]) + '</small></div></div>';
     }).join('');
     var ownedP = P.cards.filter(function (k) { return st.owned[k.key]; }), allBack = ownedP.length > 0 && ownedP.every(function (k) { return DK.alBack[k.key]; });
     var done = have === tot;
-    return '<div class="wk-al' + (['gold', 'wood', 'foam'].indexOf(st.frame) >= 0 ? ' fr-' + st.frame : '') + '" data-al>' +
+    return '<div class="wk-al' + (['gold', 'wood', 'foam'].indexOf(st.frame) >= 0 ? ' fr-' + st.frame : '') + (ALBS.some(function (q) { return q.id === st.alb; }) ? ' alb-' + st.alb : '') + '" data-al>' +
       '<div class="wk-al-nav"><button type="button" class="wk-al-arw" data-alp="-1"' + (pi ? '' : ' disabled') + ' aria-label="Предыдущая арка">‹</button>' +
       '<label class="wk-al-pick"><span class="wk-al-pn">Страница ' + (pi + 1) + ' из ' + pages.length + '</span><select data-alsel aria-label="Перейти к арке">' + opts + '</select></label>' +
       '<button type="button" class="wk-al-arw" data-alp="1"' + (pi < pages.length - 1 ? '' : ' disabled') + ' aria-label="Следующая арка">›</button></div>' +
@@ -41840,12 +41846,24 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   var BK_C = '<svg viewBox="0 0 100 100" class="wk-bkm" aria-hidden="true"><circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="50" cy="50" r="22" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3"/><path d="M50 8 56 44 92 50 56 56 50 92 44 56 8 50 44 44Z" fill="currentColor" opacity=".9"/><path d="M50 20 53 47 80 50 53 53 50 80 47 53 20 50 47 47Z" fill="#0b1020"/><circle cx="50" cy="50" r="4" fill="currentColor"/></svg>';
   var BK_H = BK_C.replace('class="wk-bkm" aria-hidden="true">', 'class="wk-bkm" aria-hidden="true"><defs><linearGradient id="wkHg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5fa2"/><stop offset=".25" stop-color="#ffd86b"/><stop offset=".5" stop-color="#6bff9e"/><stop offset=".75" stop-color="#62c4ff"/><stop offset="1" stop-color="#b58cff"/></linearGradient></defs>');
   var BK_SP = [[16, 24, 0], [80, 18, .7], [86, 58, 1.3], [12, 66, .4], [46, 12, 1], [70, 82, 1.7]];
-  function backInner(r, v, noPips) {
+  var CB = []; try { CB = JSON.parse(localStorage.getItem('wkBacksV1') || '[]') || []; } catch (e) { CB = []; }
+  function cbOk(q) { return q && /^u[a-z0-9]{3,14}$/.test(String(q.id)) && /^data:image\/png;base64,[A-Za-z0-9+\/=]+$/.test(String(q.d || '')) && String(q.d).length < 400000; }
+  function cbCss() { var el = document.getElementById('wk-cb-css'); if (!el) { el = document.createElement('style'); el.id = 'wk-cb-css'; document.head.appendChild(el); } el.textContent = CB.filter(cbOk).map(function (q) { return '.wk-bki-' + q.id + '{--m:url(' + q.d + ')}'; }).join('\n'); }
+  cbCss();
+  var BKE = {"skull": "<svg viewBox=\"0 0 100 100\" class=\"wk-bkm\" aria-hidden=\"true\"><path d=\"M24 70 76 94M76 70 24 94\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"6\" stroke-linecap=\"round\"/><circle cx=\"21\" cy=\"68\" r=\"5\" fill=\"currentColor\"/><circle cx=\"79\" cy=\"68\" r=\"5\" fill=\"currentColor\"/><circle cx=\"21\" cy=\"96\" r=\"0.01\" fill=\"currentColor\"/><path d=\"M50 8c-19 0-31 11-31 28 0 10 5 17 11 20v14h40v-14c6-3 11-10 11-20 0-17-12-28-31-28z\" fill=\"currentColor\"/><path d=\"M19 27c12-9 50-9 62 0l-2 11c-11-7-47-7-58 0z\" fill=\"#0b1020\"/><path d=\"M26 30l3 5M38 28l3 5M50 27l3 5M62 28l3 5M74 30l3 5\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><path d=\"M81 30l14-4-4 9 7 6-14 1z\" fill=\"#0b1020\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linejoin=\"round\"/><path d=\"M28 43l16 4-1 9-14-3zM72 43l-16 4 1 9 14-3z\" fill=\"#0b1020\"/><path d=\"M50 52l-3 7h6z\" fill=\"#0b1020\"/><path d=\"M28 58q22 13 44 0\" fill=\"none\" stroke=\"#0b1020\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M37 62v6M44 64v6M50 65v6M56 64v6M63 62v6\" stroke=\"#0b1020\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><path d=\"M13 20l-4-8M88 16l5-7M8 40l-6-1\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\"/></svg>", "fruit": "<svg viewBox=\"0 0 100 100\" class=\"wk-bkm\" aria-hidden=\"true\"><path d=\"M50 25c-7-6-26-5-31 11-5 15 3 38 17 44 7 3 11 1 14 0 3 1 7 3 14 0 14-6 22-29 17-44-5-16-24-17-31-11z\" fill=\"currentColor\"/><path d=\"M50 26c0-9 4-15 11-18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"4.5\" stroke-linecap=\"round\"/><path d=\"M52 14c8-6 20-4 22 2-8 5-18 4-22-2z\" fill=\"currentColor\"/><path d=\"M34 60c-5-8 3-16 11-13 8 3 7 13-1 14-6 1-9-5-4-8\" fill=\"none\" stroke=\"#0b1020\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><path d=\"M66 60c5-8-3-16-11-13-8 3-7 13 1 14 6 1 9-5 4-8\" fill=\"none\" stroke=\"#0b1020\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><path d=\"M42 74c4 4 12 4 16 0\" fill=\"none\" stroke=\"#0b1020\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><path d=\"M22 14l3 6M10 30l6 2M86 38l7-2\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\"/></svg>", "bolt": "<svg viewBox=\"0 0 100 100\" class=\"wk-bkm\" aria-hidden=\"true\"><path d=\"M61 4 31 52h17l-9 44 33-55H54z\" fill=\"currentColor\"/><path d=\"M26 18 14 38h8l-4 20 14-22h-7z\" fill=\"currentColor\" opacity=\".8\"/><path d=\"M82 52 72 68h7l-3 16 12-18h-7z\" fill=\"currentColor\" opacity=\".8\"/><path d=\"M50 52 44 64\" stroke=\"#0b1020\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><path d=\"M12 12l5 5M90 20l-6 4M8 78l7-3M88 88l-5-5\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><ellipse cx=\"50\" cy=\"50\" rx=\"44\" ry=\"44\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-dasharray=\"3 5\" opacity=\".8\"/></svg>", "blades": "<svg viewBox=\"0 0 100 100\" class=\"wk-bkm\" aria-hidden=\"true\"><path d=\"M16 14 74 72M84 14 26 72\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"5\" stroke-linecap=\"round\"/><ellipse cx=\"77\" cy=\"75\" rx=\"9\" ry=\"3.6\" transform=\"rotate(45 77 75)\" fill=\"currentColor\" stroke=\"#0b1020\" stroke-width=\"1.6\"/><ellipse cx=\"23\" cy=\"75\" rx=\"9\" ry=\"3.6\" transform=\"rotate(-45 23 75)\" fill=\"currentColor\" stroke=\"#0b1020\" stroke-width=\"1.6\"/><path d=\"M81 79 92 90M19 79 8 90\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"7\" stroke-linecap=\"round\"/><path transform=\"translate(0 -16)\" d=\"M50 26l3.4 7.6 7.6 3.4-7.6 3.4L50 48l-3.4-7.6L39 37l7.6-3.4z\" fill=\"currentColor\"/><path d=\"M8 44l7 1M92 44l-7 1M50 4v9\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\"/></svg>"};
+  var BK_HD = BK_H.slice(BK_H.indexOf('<defs>'), BK_H.indexOf('</defs>') + 7);
+  function emblem(v, emb) {
+    var id = emb != null ? emb : ''; if (emb == null) { try { id = load().back || ''; } catch (e) { id = ''; } }
+    if (CB.some(function (q) { return q.id === id; })) return '<div class="wk-bkm wk-bkimg" aria-hidden="true"><i class="wk-bki-' + id + '"></i></div>';
+    var base = BKE[id] || BK_C; if (v !== 'holo') return base;
+    return base === BK_C ? BK_H : base.replace('class="wk-bkm" aria-hidden="true">', 'class="wk-bkm" aria-hidden="true">' + BK_HD);
+  }
+  function backInner(r, v, noPips, emb) {
     var n = { common: 1, rare: 2, epic: 3, legendary: 4 }[r] || 1, pp = '', ex = '', i;
     for (i = 0; i < n; i++) pp += '<svg viewBox="0 0 10 10" width="9" height="9" aria-hidden="true"><path d="M5 .5 9.5 5 5 9.5.5 5Z" fill="currentColor"/></svg>';
     if (v === 'gold') [[22, 0], [40, .6], [58, 1.4], [78, 2]].forEach(function (x) { ex += '<i class="wk-bksp" style="left:' + x[0] + '%;bottom:8px;animation-delay:' + x[1] + 's"></i>'; });
     if (v === 'neg') BK_SP.forEach(function (x) { ex += '<i class="wk-bkst" style="left:' + x[0] + '%;top:' + x[1] + '%;animation-delay:' + x[2] + 's">✦</i>'; });
-    return '<div class="wk-bkt"></div>' + ex + (v === 'holo' ? BK_H : BK_C) + (noPips ? '' : '<div class="wk-bkp">' + pp + '</div>');
+    return '<div class="wk-bkt"></div>' + ex + emblem(v, emb) + (noPips ? '' : '<div class="wk-bkp">' + pp + '</div>');
   }
   function pct(x) { return Math.round(x * 100); }
   function rulesHTML() {
@@ -42098,10 +42116,10 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       setTimeout(function () { sl.classList.remove('fl-back', 'flipped'); sl.classList.add('fl-in'); setTimeout(function () { sl.classList.remove('fl-in'); done(); }, T); }, T);
     }
   }
-  function backZoom(r, v, cid) {
+  function backZoom(r, v, cid, w0) {
     var old = document.getElementById('wkDkZoom'); if (old) old.remove();
     var ov = document.createElement('div'); ov.id = 'wkDkZoom'; ov.className = 'wk-dk-zoom';
-    var box = document.createElement('div'); box.className = 'wk-dk-zoombox'; box.innerHTML = '<div class="wk-pk r-' + r + (v ? ' is-var v-' + v : '') + ' wk-dk-sbin"><div class="wk-pk-bk">' + backInner(r, v) + '</div></div>' + '';
+    var box = document.createElement('div'); box.className = 'wk-dk-zoombox'; box.innerHTML = '<div class="wk-dk-zsc"><div class="wk-pk r-' + r + (v ? ' is-var v-' + v : '') + ' wk-dk-sbin"><div class="wk-pk-bk">' + backInner(r, v) + '</div></div></div>';
     var hint = document.createElement('div'); hint.className = 'wk-dk-zoomhint'; hint.textContent = 'Рубашка: ' + (RN4[r] || '') + (v && VAR[v] ? ' · ' + VAR[v].n : '') + '. Тяни, чтобы наклонять. Нажми рядом, чтобы закрыть';
     ov.appendChild(box); ov.appendChild(hint);
     function close() { ov.remove(); document.removeEventListener('keydown', onk); }
@@ -42121,6 +42139,8 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       if (!moved && e.pointerType !== 'mouse') close();
     });
     ov.addEventListener('click', close); document.addEventListener('keydown', onk); document.body.appendChild(ov);
+    // рубашка собирается в размере исходной карточки и растягивается целиком, поэтому знак и все пропорции совпадают
+    try { var zs = box.querySelector('.wk-dk-zsc'), ww = Number(w0) > 40 ? Number(w0) : 190, kk = box.offsetWidth / ww; if (zs && kk > 0) { zs.style.width = ww + 'px'; zs.style.height = (box.offsetHeight / kk) + 'px'; zs.style.transform = 'scale(' + kk + ')'; } } catch (e) {}
   }
   /* ======== Разделы колоды: переработка повторок, участники, обмен ======== */
   DK.tab = DK.tab || 'me';
@@ -42449,14 +42469,14 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   function txPaneClick(pane, e) {
     var b = e.target.closest && e.target.closest('[data-tx]'); if (!b || b.disabled || !pane.contains(b)) return false;
     var a = b.getAttribute('data-tx');
-    if (a === 'tab') { DK.tab = b.getAttribute('data-t'); if (DK.tab === 'feed') { DK.feedSeen0 = load().feedSeen || 0; markFeed(); feedLoad(pane, true); } if (DK.tab === 'trade' || DK.tab === 'people') refreshTrades(pane, DK.tab === 'trade'); if (DK.tab === 'shop') refreshMarket(pane, true); renderDeck(pane); return true; }
+    if (a === 'tab') { DK.tab = b.getAttribute('data-t'); if (DK.tab === 'feed') { DK.feedSeen0 = load().feedSeen || 0; markFeed(); feedLoad(pane, true); } if (DK.tab === 'trade' || DK.tab === 'people') refreshTrades(pane, DK.tab === 'trade'); if (DK.tab === 'shop') { refreshMarket(pane, true); refreshBacks(pane, true); } renderDeck(pane); return true; }
     if (a === 'craft') { var ci = Number(b.getAttribute('data-i')); TX.last = null; doCraft(ci); if (!TX.last) return true; b.disabled = true; craftAnim(RECIPE[ci], TX.last, function () { var bd = pane.querySelector('#wkTxBody'); if (bd) { bd.innerHTML = craftHTML(allCards(), load()); var r0 = bd.querySelector('.wk-tx-res'); if (r0) { r0.classList.add('pop'); if (r0.scrollIntoView) r0.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } } }); return true; }
     if (a === 'reload') { refreshTrades(pane, true); return true; }
     if (a === 'feedreload') { feedLoad(pane, true); return true; }
     if (a === 'gift') { compOpen(pane, 'gift'); return true; }
     if (a === 'compose') { compOpen(pane); return true; }
     if (a === 'showedit') { compOpen(pane, 'show'); return true; }
-    if (a === 'sellall' || a === 'sell1' || a === 'buy' || a === 'mklist' || a === 'mkbuy' || a === 'mkcancel' || a === 'buyup' || a === 'buy2' || a === 'pickup' || a === 'cosbuy' || a === 'cossel' || a === 'giftpack' || a === 'hold' || a === 'unhold') { shopClick(pane, a, b); return true; }
+    if (a === 'sellall' || a === 'sell1' || a === 'buy' || a === 'mklist' || a === 'mkbuy' || a === 'mkcancel' || a === 'buyup' || a === 'buy2' || a === 'pickup' || a === 'cosbuy' || a === 'cossel' || a === 'bkadd' || a === 'bkdel' || a === 'giftpack' || a === 'hold' || a === 'unhold') { shopClick(pane, a, b); return true; }
     if (a === 'accept' || a === 'decline' || a === 'cancel') { if (a !== 'accept' || (TX.trades.filter(function (x) { return x.id === b.getAttribute('data-id'); })[0] || {}).gift || window.confirm('Принять обмен? Карточки сразу перейдут.')) txAction(pane, a, b.getAttribute('data-id'), b); return true; }
     return false;
   }
@@ -42490,7 +42510,20 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var ok = function (k) { return k && cardByKey(C, k); }, k = (st.show || []).filter(ok)[0] || Object.keys(st.owned || {}).filter(ok)[0];
     return k || (C[0] && C[0].key) || '';
   }
+  function albPreview(C, st, id) {
+    var key = pvKey(C, st), k = key && cardByKey(C, key), sil = '';
+    try { sil = SIL.char; } catch (e) {}
+    var a = k ? '<div class="wk-al-s has"><div class="wk-al-fi"><div class="wk-al-ff"><div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + '</div></div></div></div>' : '';
+    var m = '<div class="wk-al-s miss r-common"><div class="wk-al-sil">' + sil + '<b>№ 2</b><span>Ещё не открыта</span></div></div>';
+    return '<div class="wk-sh-art wk-sh-pv wk-sh-albpv" aria-hidden="true"><div class="wk-al alb-' + id + '"><section class="wk-al-page"><header class="wk-al-h"><small>Сага</small><h4>Страница альбома</h4></header><div class="wk-al-grid">' + a + m + '</div></section></div></div>';
+  }
+  function bkPreview(id) {
+    var one = function (r) { return '<div class="wk-pk r-' + r + ' wk-dk-sbin wk-sh-bkc"><div class="wk-pk-bk">' + backInner(r, '', false, id) + '</div></div>'; };
+    return '<div class="wk-sh-art wk-sh-pv wk-sh-bkpv" aria-hidden="true">' + one('common') + one('legendary') + '</div>';
+  }
   function cosPreview(C, st, pref, id) {
+    if (pref === 'k_') return bkPreview(id);
+    if (pref === 'a_') return albPreview(C, st, id);
     var key = pvKey(C, st), cos = pref === 'f_' ? { frame: id } : { bg: id };
     if (!key) return '<div class="wk-sh-art wk-sh-sw ' + pref + '-' + id + '" aria-hidden="true">' + (pref === 'f_' ? frameSVG() : bgSVG()) + '</div>';
     return '<div class="wk-sh-art wk-sh-pv" aria-hidden="true">' + showcaseHTML(C, [key], false, 3, cos) + '</div>';
@@ -42508,6 +42541,11 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     { id: 'warrant', ico: '📜', name: 'Ордер на легенду', price: 180000, what: 'Легенда на выбор из трёх', note: 'До трёх легенд, которых у тебя ещё нет. Забираешь одну.' }
   ];
   var FRAMES = [{ id: 'gold', n: 'Золотая рамка', price: 15000 }, { id: 'wood', n: 'Деревянная рамка', price: 15000 }, { id: 'foam', n: 'Морская пена', price: 15000 }];
+  var ALBS = [{ id: 'leather', n: 'Кожаный переплёт', price: 25000 }, { id: 'chart', n: 'Морская карта', price: 25000 }, { id: 'velvet', n: 'Багровый бархат', price: 25000 }];
+  var BACKS = [{ id: 'skull', n: 'Весёлый Роджер', price: 30000 }, { id: 'fruit', n: 'Спиральный плод', price: 30000 }, { id: 'bolt', n: 'Молния воли', price: 30000 }, { id: 'blades', n: 'Скрещённые клинки', price: 30000 }];
+  function allBacks() { return BACKS.concat(CB.filter(cbOk).map(function (q) { return { id: q.id, n: q.n || 'Рубашка', price: q.price || 30000 }; })); }
+  var BKP = { d: '', name: '', price: 30000, inv: false, file: null };
+  var BKS = { at: 0, loading: false };
   var BGS = [{ id: 'deck', n: 'Палуба', price: 20000 }, { id: 'map', n: 'Карта мира', price: 20000 }, { id: 'night', n: 'Ночное море', price: 20000 }];
   function dayKey(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
   function track(st, kind, n) {
@@ -42550,7 +42588,50 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       }).join('');
     };
     return '<h3 class="wk-dk-h">Лавка Лог Поза</h3><div class="wk-sh-pks">' + items + '</div><h3 class="wk-dk-h">Подарки</h3><div class="wk-sh-pks">' + gift + '</div>' +
-      '<h3 class="wk-dk-h">Оформление витрины и альбома</h3><p class="wk-sh-hint">Рамки видны на карточках в витрине и в альбоме, фон только в витрине. Покупаются один раз, выбрать или снять можно в любой момент. Другие участники видят твоё оформление.</p><div class="wk-sh-pks">' + cosRow('frame', FRAMES, 'f_') + cosRow('bg', BGS, 'b_') + '</div>';
+      '<h3 class="wk-dk-h">Оформление витрины и альбома</h3><p class="wk-sh-hint">Рамки видны на карточках в витрине и в альбоме, фон только в витрине. Покупаются один раз, выбрать или снять можно в любой момент. Другие участники видят твоё оформление.</p><div class="wk-sh-pks">' + cosRow('frame', FRAMES, 'f_') + cosRow('bg', BGS, 'b_') + '</div><h3 class="wk-dk-h">Дизайн альбома</h3><p class="wk-sh-hint">Меняет вид страниц в режиме «Альбом» в твоей колоде. Покупается один раз, выбрать или снять можно в любой момент.</p><div class="wk-sh-pks">' + cosRow('alb', ALBS, 'a_') + '</div><h3 class="wk-dk-h">Рубашки карточек</h3><p class="wk-sh-hint">Другой знак на обороте карточек: в наборах, в колоде и в альбоме. Цвет и свечение по-прежнему зависят от редкости. Покупается один раз.</p><div class="wk-sh-pks">' + cosRow('back', allBacks(), 'k_') + '</div>' + bkAdminHTML();
+  }
+  function bkAdminHTML() {
+    if (!isDima()) return '';
+    var list = CB.filter(cbOk).map(function (q) { return '<li><span>' + esc(q.n || 'Рубашка') + ' · ' + fmtB(q.price) + '</span><button type="button" class="wk-tx-btn" data-tx="bkdel" data-id="' + esc(q.id) + '">Удалить</button></li>'; }).join('');
+    return '<h3 class="wk-dk-h">Свои рубашки (для админа)</h3><p class="wk-sh-hint">Выбери PNG со знаком: чёрный на белом или любой на прозрачном фоне. Он станет одноцветным значком и сам окрасится под редкость карточки. Лишние поля обрежутся. Рубашка сразу появится в магазине у всех. Нужны права на изображение: официальные логотипы и эмблемы серии лучше не загружать.</p>' +
+      '<div class="wk-bk-up"><div class="wk-bk-prevw"><div class="wk-bkm wk-bkimg wk-bkprev"><i id="wkBkPrevI"' + (BKP.d ? ' style="--m:url(' + BKP.d + ')"' : '') + '></i></div></div><div class="wk-bk-form"><input type="file" id="wkBkFile" accept="image/*"><input type="text" id="wkBkName" maxlength="40" placeholder="Название рубашки" value="' + esc(BKP.name) + '"><label class="wk-bk-row">Цена, белли <input type="number" id="wkBkPrice" min="1000" step="500" value="' + esc(BKP.price) + '"></label><label class="wk-bk-row"><input type="checkbox" id="wkBkInv"' + (BKP.inv ? ' checked' : '') + '> Инвертировать (если вышло наоборот)</label><button type="button" class="wk-tx-btn pri" data-tx="bkadd">Добавить в магазин</button></div></div>' + (list ? '<ul class="wk-bk-list">' + list + '</ul>' : '');
+  }
+  function bkProc() {
+    if (!BKP.file) return; var url = URL.createObjectURL(BKP.file), im = new Image();
+    im.onload = function () {
+      try {
+        var M = 512, sc0 = Math.min(1, M / Math.max(im.width, im.height)), w0 = Math.max(1, Math.round(im.width * sc0)), h0 = Math.max(1, Math.round(im.height * sc0));
+        var c0 = document.createElement('canvas'); c0.width = w0; c0.height = h0; var x0 = c0.getContext('2d', { willReadFrequently: true }); x0.drawImage(im, 0, 0, w0, h0);
+        var dt = x0.getImageData(0, 0, w0, h0), p = dt.data, i, tr = 0, n = w0 * h0;
+        for (i = 0; i < n; i++) if (p[i * 4 + 3] < 250) tr++;
+        var useA = tr > n * 0.05, x1 = w0, y1 = h0, x2 = -1, y2 = -1;
+        for (i = 0; i < n; i++) {
+          var a = p[i * 4 + 3] / 255, lum = (0.299 * p[i * 4] + 0.587 * p[i * 4 + 1] + 0.114 * p[i * 4 + 2]) / 255, m;
+          if (useA) m = BKP.inv ? 1 - a : a; else m = (BKP.inv ? Math.min(1, Math.max(0, (lum - 0.38) / 0.35)) : Math.min(1, Math.max(0, (0.62 - lum) / 0.35))) * a;
+          p[i * 4] = p[i * 4 + 1] = p[i * 4 + 2] = 0; p[i * 4 + 3] = Math.round(m * 255);
+          if (m > 0.2) { var xx = i % w0, yy = (i / w0) | 0; if (xx < x1) x1 = xx; if (xx > x2) x2 = xx; if (yy < y1) y1 = yy; if (yy > y2) y2 = yy; }
+        }
+        if (x2 < 0) { txToast('Знак не найден: попробуй «Инвертировать»'); URL.revokeObjectURL(url); return; }
+        x0.putImageData(dt, 0, 0);
+        var N = 192, c1 = document.createElement('canvas'); c1.width = c1.height = N; var x3 = c1.getContext('2d'), bw = x2 - x1 + 1, bh = y2 - y1 + 1, k = Math.min(N * 0.94 / bw, N * 0.94 / bh), dw = bw * k, dh = bh * k;
+        x3.imageSmoothingQuality = 'high'; x3.drawImage(c0, x1, y1, bw, bh, (N - dw) / 2, (N - dh) / 2, dw, dh);
+        BKP.d = c1.toDataURL('image/png'); var pv = document.getElementById('wkBkPrevI'); if (pv) pv.style.setProperty('--m', 'url(' + BKP.d + ')');
+      } catch (e) { txToast('Не получилось обработать картинку'); }
+      URL.revokeObjectURL(url);
+    };
+    im.onerror = function () { txToast('Это не картинка'); URL.revokeObjectURL(url); };
+    im.src = url;
+  }
+  document.addEventListener('change', function (e) { var t = e.target; if (!t || !t.id) return; if (t.id === 'wkBkFile' && t.files && t.files[0]) { BKP.file = t.files[0]; bkProc(); } if (t.id === 'wkBkInv') { BKP.inv = !!t.checked; bkProc(); } });
+  document.addEventListener('input', function (e) { var t = e.target; if (!t || !t.id) return; if (t.id === 'wkBkName') BKP.name = t.value; if (t.id === 'wkBkPrice') BKP.price = t.value; });
+  function refreshBacks(pane, force) {
+    var api = window.__wkBacks; if (!api || !api.enabled() || BKS.loading) return;
+    if (!force && Date.now() - BKS.at < 60000) return;
+    BKS.loading = true;
+    api.list().then(function (l) {
+      BKS.at = Date.now(); l = l.filter(cbOk).sort(function (a, b) { return String(a.at).localeCompare(String(b.at)); });
+      if (JSON.stringify(l.map(function (q) { return q.id; })) !== JSON.stringify(CB.map(function (q) { return q.id; }))) { CB = l; try { localStorage.setItem('wkBacksV1', JSON.stringify(CB)); } catch (e) {} cbCss(); if (pane && pane.isConnected && DK.tab === 'shop') { var bd = pane.querySelector('#wkTxBody'); if (bd && !DK.pack) bd.innerHTML = shopHTML(allCards(), load()); } }
+    }, function () {}).then(function () { BKS.loading = false; });
   }
   function shopStatsHTML(st) {
     var days = [], now = new Date(), i, mx = 1;
@@ -42657,6 +42738,17 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   function shopClick(pane, a, b) {
     var C = allCards(), st = load(); if (st.__fake) return;
     var body = pane.querySelector('#wkTxBody'), repaint = function () { if (body) body.innerHTML = shopHTML(allCards(), load()); };
+    if (a === 'bkadd') {
+      var ba = window.__wkBacks; if (!isDima() || !ba || !ba.enabled()) { txToast('Нужен вход админа в облако'); return; }
+      if (!BKP.d) { txToast('Сначала выбери PNG'); return; }
+      var bnm = String(BKP.name || '').trim() || 'Новая рубашка', bpr = Math.max(1000, Math.round(Number(BKP.price) || 30000)), bid = 'u' + Date.now().toString(36); b.disabled = true;
+      ba.save({ id: bid, n: bnm, price: bpr, d: BKP.d }).then(function () { BKP = { d: '', name: '', price: 30000, inv: false, file: null }; txToast('Рубашка «' + bnm + '» добавлена в магазин'); refreshBacks(pane, true); }, function (er) { b.disabled = false; txToast((er && er.code) === 'permission-denied' ? 'Нет прав: опубликуй новые правила Firebase (коллекция backs)' : 'Не получилось сохранить'); });
+      return;
+    }
+    if (a === 'bkdel') {
+      var bd2 = window.__wkBacks; if (!isDima() || !bd2) return; if (!window.confirm('Удалить эту рубашку из магазина? У тех, кто её купил, вернётся стандартная.')) return;
+      b.disabled = true; bd2.remove(b.getAttribute('data-id')).then(function () { refreshBacks(pane, true); }, function () { b.disabled = false; txToast('Не удалось удалить'); }); return;
+    }
     if (a === 'sellall') {
       var g = b.getAttribute('data-g'), l = sellable(C, st).filter(function (x) { return g === 'var' ? !!x.k.v : !x.k.v && x.k.r === g; });
       var tot = l.reduce(function (s, x) { return s + x.n * sellVal(x.k); }, 0);
@@ -42704,14 +42796,14 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       delete st.pick; save(st); repaint(); txToast('Получена карточка: ' + esc(cName(kk)) + (isN ? ' (новая)' : ' (повтор)')); return;
     }
     if (a === 'cosbuy') {
-      var ck = b.getAttribute('data-c'), isF = ck.charAt(0) === 'f', cd = (isF ? FRAMES : BGS).filter(function (q) { return q.id === ck.slice(2); })[0];
+      var ck = b.getAttribute('data-c'), px = ck.charAt(0), kn = px === 'f' ? 'frame' : px === 'a' ? 'alb' : px === 'k' ? 'back' : 'bg', cd = (px === 'f' ? FRAMES : px === 'a' ? ALBS : px === 'k' ? allBacks() : BGS).filter(function (q) { return q.id === ck.slice(2); })[0];
       if (!cd || (st.cos || {})[ck] || (st.belli || 0) < cd.price) return;
-      st.cos = st.cos || {}; st.cos[ck] = 1; st[isF ? 'frame' : 'bg'] = cd.id; st.belli -= cd.price; st.spent = (st.spent || 0) + cd.price; st.bought = (st.bought || 0) + 1; track(st, 'spend', cd.price);
+      st.cos = st.cos || {}; st.cos[ck] = 1; st[kn] = cd.id; st.belli -= cd.price; st.spent = (st.spent || 0) + cd.price; st.bought = (st.bought || 0) + 1; track(st, 'spend', cd.price);
       save(st); repaint(); txToast('«' + cd.n + '» куплена и уже выбрана'); return;
     }
     if (a === 'cossel') {
-      var kd = b.getAttribute('data-kind') === 'bg' ? 'bg' : 'frame', cid = b.getAttribute('data-id');
-      if (!(st.cos || {})[(kd === 'frame' ? 'f_' : 'b_') + cid]) return;
+      var kd0 = b.getAttribute('data-kind'), kd = kd0 === 'bg' ? 'bg' : kd0 === 'alb' ? 'alb' : kd0 === 'back' ? 'back' : 'frame', cid = b.getAttribute('data-id');
+      if (!(st.cos || {})[(kd === 'frame' ? 'f_' : kd === 'alb' ? 'a_' : kd === 'back' ? 'k_' : 'b_') + cid]) return;
       st[kd] = st[kd] === cid ? '' : cid; save(st); repaint(); return;
     }
     if (a === 'giftpack') {
@@ -42961,7 +43053,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       var mine = by[ml], loc = load(), ch = false; if (loc.__fake || !mine || !mine.deck) { end(false); return; }
       if ((mine.deck.packs || 0) > (loc.packs || 0)) {  loc.owned = mine.deck.owned || {}; loc.packs = mine.deck.packs || 0; loc.pity = mine.deck.pity || 0; loc.tr = Object.assign({}, mine.deck.tr || {}, loc.tr || {}); loc.got = Object.assign({}, mine.deck.got || {}, loc.got || {}); if (mine.deck.show && !(loc.show && loc.show.length)) loc.show = mine.deck.show; if (typeof mine.deck.belli === 'number') loc.belli = mine.deck.belli; loc.hold = Object.assign({}, mine.deck.hold || {}); if (mine.deck.ev && !(loc.ev && loc.ev.length)) loc.ev = mine.deck.ev; loc.ach = Object.assign({}, mine.deck.ach || {}, loc.ach || {});  ch = true;
         if (mine.deck.open && mine.deck.open.pk && !loc.open) loc.open = mine.deck.open; }
-      if (mine.deck.cos && Object.keys(mine.deck.cos).some(function (q) { return !(loc.cos || {})[q]; })) { loc.cos = Object.assign({}, mine.deck.cos, loc.cos || {}); if (!loc.frame && mine.deck.frame) loc.frame = mine.deck.frame; if (!loc.bg && mine.deck.bg) loc.bg = mine.deck.bg; ch = true; }
+      if (mine.deck.cos && Object.keys(mine.deck.cos).some(function (q) { return !(loc.cos || {})[q]; })) { loc.cos = Object.assign({}, mine.deck.cos, loc.cos || {}); if (!loc.frame && mine.deck.frame) loc.frame = mine.deck.frame; if (!loc.bg && mine.deck.bg) loc.bg = mine.deck.bg; if (!loc.alb && mine.deck.alb) loc.alb = mine.deck.alb; if (!loc.back && mine.deck.back) loc.back = mine.deck.back; ch = true; }
       if ((mine.deck.showCap || 0) > (loc.showCap || 0)) { loc.showCap = mine.deck.showCap; ch = true; }
       if ((mine.deck.last || 0) > (loc.last || 0)) { loc.last = mine.deck.last; ch = true; }
       if (ch) save(loc);
@@ -42972,6 +43064,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     pane.classList.toggle('wk-dk-editing', !!(DK.editPrev && isDima()));
     var cards = allCards(), st = load(); migrate(st, cards);
     try { if (mkApi() && !MK.loading && Date.now() - MK.at > 60000) refreshMarket(pane, false); } catch (e) {}
+    try { refreshBacks(pane, false); } catch (e) {}
     if (!DK.pack && st.open && st.open.pk && st.open.pk.length) { DK.pack = st.open.pk; DK.flipped = (st.open.fl || []).length; DK.restored = 1; }
     pane.innerHTML = '<div class="wk-pane-head"><div><h2>Колода</h2><p>Карточки персонажей (по одной на каждое фото в арке), дьявольских плодов, полезных статей и плакатов розыска. Новые появляются по мере прохождения.</p></div><div class="wk-dk-hbtn"><button type="button" class="wk-dk-reset" data-act="rules" title="Правила и шансы">Правила</button><button type="button" class="wk-dk-reset" data-act="reset" title="Обнулить коллекцию">Сбросить</button></div></div>' +
       tabsHTML() + (DK.tab === 'me' ? adminHTML() + '<div id="wkDkPack">' + packHTML(cards, st) + '</div>' + (st.__fake ? '' : showcaseHTML(cards, st.show, true, showCap(st), { frame: st.frame, bg: st.bg })) + '<div id="wkDkStats">' + statsHTML(cards, st) + '</div><h3 class="wk-dk-h">Коллекция</h3><div id="wkDkColl">' + collHTML(cards, st) + '</div>' : '<div id="wkTxBody" class="wk-tx-body">' + (DK.tab === 'craft' ? craftHTML(cards, st) : DK.tab === 'shop' ? shopHTML(cards, st) : DK.tab === 'people' ? peopleHTML() : DK.tab === 'feed' ? feedHTML() : tradeHTML()) + '</div>');
@@ -43007,7 +43100,8 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
         var sb = e.target.closest && e.target.closest('[data-dks]'); if (sb) { DK.sort = sb.getAttribute('data-dks'); DK.pg = 0; pane.querySelector('#wkDkColl').innerHTML = collHTML(allCards(), load()); return; }
         var oa = e.target.closest && e.target.closest('[data-dk-open]'); if (oa) { openArt(oa.getAttribute('data-dk-open')); return; }
         var bka = e.target.closest && e.target.closest('[data-bk]'); if (bka) { e.preventDefault(); bkAct(pane, bka); return; }
-        var bw = e.target.closest && e.target.closest('.wk-dk-sbwrap'); if (bw) { if (e.target.closest('.wk-dk-bkacts')) return; if (e.target.closest('[data-wk-open-char]')) return; backZoom(bw.getAttribute('data-bkr'), bw.getAttribute('data-bkv'), bw.getAttribute('data-bkc')); return; }
+        var afb = e.target.closest && e.target.closest('.wk-al-fb'); if (afb && !e.target.closest('button,[data-bk],[data-dk-open]')) { backZoom(afb.getAttribute('data-bkr'), afb.getAttribute('data-bkv'), afb.getAttribute('data-bkc'), afb.offsetWidth); return; }
+        var bw = e.target.closest && e.target.closest('.wk-dk-sbwrap'); if (bw) { if (e.target.closest('.wk-dk-bkacts')) return; if (e.target.closest('[data-wk-open-char]')) return; backZoom(bw.getAttribute('data-bkr'), bw.getAttribute('data-bkv'), bw.getAttribute('data-bkc'), bw.offsetWidth); return; }
         var t = e.target.closest && e.target.closest('[data-act],[data-f],[data-r],[data-v],[data-kind],[data-fr],[data-pg],.wk-pk'); if (!t) return;
         var C = allCards(), S = load();
         if (t.classList.contains('wk-pk')) { flipPk(pane, t); return; }
@@ -44103,5 +44197,56 @@ html body .wk-sc.bg-night .wk-sh3{background:radial-gradient(2px 2px at 12% 22%,
 .wk-sh-pv .wk-sc-g{border-radius:12px;overflow:hidden;pointer-events:none}
 .wk-sh-pv .wk-sc-row{display:flex!important;justify-content:center;grid-template-columns:none!important;padding:14px 0 6px}
 .wk-sh-pv .wk-sh3-it{width:112px;flex:0 0 112px}
+</style>
+<style id="wk-alb-css">
+.wk-dk-zsc{position:absolute;left:0;top:0;transform-origin:0 0}
+.wk-dk-zsc>.wk-pk{position:absolute;inset:0;width:100%;height:100%;margin:0}
+.wk-al-fb{cursor:zoom-in}
+.wk-al-fb .wk-al-bi{cursor:default}
+/* дизайны альбома */
+.wk-al.alb-leather .wk-al-page{border:2px solid #24130a;border-radius:8px 18px 18px 8px;background:radial-gradient(120% 90% at 0% 0%,rgba(255,200,130,.16),transparent 60%),repeating-linear-gradient(45deg,rgba(0,0,0,.10) 0 2px,transparent 2px 5px),repeating-linear-gradient(-45deg,rgba(255,255,255,.025) 0 2px,transparent 2px 6px),linear-gradient(135deg,#6a4426,#3e2514 70%,#2f1a0e)!important;box-shadow:inset 16px 0 22px -12px rgba(0,0,0,.7),0 18px 40px -22px #000}
+.wk-al.alb-leather .wk-al-page::before{border:2px dashed rgba(236,196,120,.65);border-radius:4px 12px 12px 4px}
+.wk-al.alb-leather .wk-al-h h4{color:#f8dfa6;text-shadow:0 1px 0 rgba(0,0,0,.5)}.wk-al.alb-leather .wk-al-h small,.wk-al.alb-leather .wk-al-f{color:#d9b98a}
+.wk-al.alb-chart .wk-al-page{border:1px solid rgba(120,190,255,.55);border-radius:6px 16px 16px 6px;background:linear-gradient(rgba(130,190,255,.11) 1px,transparent 1px) 0 0/24px 24px,linear-gradient(90deg,rgba(130,190,255,.11) 1px,transparent 1px) 0 0/24px 24px,radial-gradient(120% 80% at 80% 0%,rgba(90,170,255,.22),transparent 60%),linear-gradient(160deg,#10305a,#0a1d38 70%,#08162b)!important;box-shadow:inset 12px 0 18px -12px rgba(0,0,0,.7),0 18px 40px -24px #000}
+.wk-al.alb-chart .wk-al-page::before{border:1px solid rgba(150,205,255,.45);border-radius:3px 10px 10px 3px}
+.wk-al.alb-chart .wk-al-page::after{content:"";position:absolute;right:16px;top:14px;width:46px;height:46px;opacity:.5;pointer-events:none;background:radial-gradient(circle,transparent 0 15px,rgba(170,215,255,.9) 15px 16px,transparent 16px),linear-gradient(rgba(170,215,255,.9),rgba(170,215,255,.9)) 50% 0/1px 100% no-repeat,linear-gradient(90deg,rgba(170,215,255,.9),rgba(170,215,255,.9)) 0 50%/100% 1px no-repeat,conic-gradient(from 45deg,rgba(170,215,255,.55) 0 12%,transparent 12% 25%,rgba(170,215,255,.55) 25% 37%,transparent 37% 50%,rgba(170,215,255,.55) 50% 62%,transparent 62% 75%,rgba(170,215,255,.55) 75% 87%,transparent 87%) 50% 50%/22px 22px no-repeat}
+.wk-al.alb-chart .wk-al-h h4{color:#cbe7ff}.wk-al.alb-chart .wk-al-h small,.wk-al.alb-chart .wk-al-f{color:#8fb8e0}
+.wk-al.alb-velvet .wk-al-page{border:2px solid #d9ad3c;border-radius:8px 18px 18px 8px;background:radial-gradient(120% 70% at 50% 0%,rgba(255,130,150,.2),transparent 60%),repeating-linear-gradient(90deg,rgba(0,0,0,.14) 0 3px,transparent 3px 7px),linear-gradient(160deg,#611228,#350815 70%,#240510)!important;box-shadow:inset 14px 0 20px -12px rgba(0,0,0,.7),0 0 26px -8px rgba(217,173,60,.35),0 18px 40px -24px #000}
+.wk-al.alb-velvet .wk-al-page::before{border:3px double rgba(235,200,110,.6);border-radius:4px 12px 12px 4px}
+.wk-al.alb-velvet .wk-al-h h4{color:#ffe4a8}.wk-al.alb-velvet .wk-al-h small,.wk-al.alb-velvet .wk-al-f{color:#e2b9a0}
+/* превью дизайнов в магазине */
+.wk-sh-albpv .wk-al{pointer-events:none}
+.wk-sh-albpv .wk-al-page{padding:14px 12px 16px!important}
+.wk-sh-albpv .wk-al-h{margin-bottom:10px}.wk-sh-albpv .wk-al-h h4{font-size:15px;margin:1px 0 0}.wk-sh-albpv .wk-al-h small{font-size:10.5px}
+.wk-sh-albpv .wk-al-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+.wk-sh-albpv .wk-al-f{display:none}
+</style>
+<style id="wk-bk-css">
+.wk-sh-bkpv{display:flex!important;justify-content:center;gap:12px;padding:16px 0 10px;background:radial-gradient(90% 70% at 50% 40%,rgba(148,163,184,.12),transparent 70%),rgba(8,11,22,.6)!important;border:1px solid rgba(148,163,184,.22)!important;border-radius:12px}
+.wk-sh-bkpv{height:auto!important;min-height:0!important}
+.wk-sh-bkpv .wk-sh-bkc{position:relative!important;display:block!important;width:84px!important;height:119px!important;min-height:119px!important;flex:0 0 84px!important;margin:0!important;aspect-ratio:auto!important;pointer-events:none}
+.wk-sh-bkc .wk-pk-bk{position:absolute;inset:0}
+</style>
+<style id="wk-holo-seam-fix">
+/* голографический слой на карточке: градиент больше не повторяется плиткой, поэтому нет резкой вертикальной границы-«стены» */
+.wk-ho{background-repeat:no-repeat!important;background-size:320% 320%!important;animation:wkHoloPP 8s ease-in-out infinite alternate!important}
+@keyframes wkHoloPP{0%{background-position:0% 30%}100%{background-position:100% 70%}}
+.wk-hs{background-repeat:no-repeat!important;background-size:260% 100%!important;animation:wkHsFix 5s ease-in-out infinite!important}
+@keyframes wkHsFix{0%{background-position:110% 0}70%,100%{background-position:-10% 0}}
+@media (prefers-reduced-motion:reduce){.wk-ho,.wk-hs{animation:none!important}}
+</style>
+<style id="wk-cb-ui-css">
+.wk-bkimg{position:relative}
+.wk-bkimg i{display:block;width:100%;height:100%;background:currentColor;-webkit-mask:var(--m,none) center/contain no-repeat;mask:var(--m,none) center/contain no-repeat}
+.wk-pk.v-holo .wk-bkimg i{background:linear-gradient(135deg,#ff5fa2,#ffd86b,#6bff9e,#62c4ff,#b58cff)}
+.wk-bk-up{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;padding:14px;border:1px dashed rgba(148,163,184,.35);border-radius:14px;background:rgba(10,14,26,.5)}
+.wk-bk-prevw{flex:0 0 96px;height:96px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(160deg,#18203a,#0b1020);border:2px solid #9aa6bb;color:#9aa6bb}
+.wk-bk-prevw .wk-bkprev{width:64px;max-width:none;height:64px}
+.wk-bk-form{flex:1 1 240px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.wk-bk-form input[type=text],.wk-bk-form input[type=number]{font:inherit;padding:8px 10px;border-radius:10px;border:1px solid rgba(148,163,184,.3);background:rgba(8,11,20,.7);color:inherit;min-width:0}
+.wk-bk-row{display:flex;align-items:center;gap:8px;font-size:13px}.wk-bk-row input[type=number]{width:110px}
+.wk-bk-list{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.wk-bk-list li{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;padding:6px 10px;border-radius:10px;background:rgba(148,163,184,.08)}
+.wk-bk-list .wk-tx-btn{width:auto;margin:0;padding:5px 12px}
 </style>
 </body></html>
