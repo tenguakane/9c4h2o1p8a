@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "14.11.2026 · 371";
+const WIKI_VERSION = "14.11.2026 · 372";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -35256,7 +35256,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       }).join('');
     };
     return '<h3 class="wk-dk-h">Лавка Лог Поза</h3><div class="wk-sh-pks">' + items + '</div><h3 class="wk-dk-h">Подарки</h3><div class="wk-sh-pks">' + gift + '</div>' +
-      '<h3 class="wk-dk-h">Оформление витрины и альбома</h3><p class="wk-sh-hint">Рамки видны на карточках в витрине и в альбоме, фон только в витрине. Покупаются один раз, выбрать или снять можно в любой момент. Другие участники видят твоё оформление.</p><div class="wk-sh-pks">' + cosRow('frame', FRAMES, 'f_') + cosRow('bg', BGS, 'b_') + '</div><h3 class="wk-dk-h">Дизайн альбома</h3><p class="wk-sh-hint">Меняет вид страниц в режиме «Альбом» в твоей колоде. Покупается один раз, выбрать или снять можно в любой момент.</p><div class="wk-sh-pks">' + cosRow('alb', ALBS, 'a_') + '</div><h3 class="wk-dk-h">Рубашки карточек</h3><p class="wk-sh-hint">Другой знак на обороте карточек: в наборах, в колоде и в альбоме. Цвет и свечение по-прежнему зависят от редкости. Покупается один раз.</p><div class="wk-sh-pks">' + cosRow('back', allBacks(), 'k_') + '</div>' + bkAdminHTML();
+      '<h3 class="wk-dk-h">Оформление витрины и альбома</h3><p class="wk-sh-hint">Рамки видны на карточках в витрине и в альбоме, фон только в витрине. Покупаются один раз, выбрать или снять можно в любой момент. Другие участники видят твоё оформление.</p><div class="wk-sh-pks">' + cosRow('frame', FRAMES, 'f_') + cosRow('bg', BGS, 'b_') + '</div><h3 class="wk-dk-h">Дизайн альбома</h3><p class="wk-sh-hint">Меняет вид страниц в режиме «Альбом» в твоей колоде. Покупается один раз, выбрать или снять можно в любой момент.</p><div class="wk-sh-pks">' + cosRow('alb', ALBS, 'a_') + '</div><h3 class="wk-dk-h">Рубашки карточек</h3><p class="wk-sh-hint">Другой знак на обороте карточек: в наборах, в колоде и в альбоме. Цвет и свечение по-прежнему зависят от редкости. Покупается один раз.</p><div class="wk-sh-pks">' + cosRow('back', allBacks().filter(function (q) { return !/^(skull|fruit|bolt|blades)$/.test(q.id) || cos['k_' + q.id]; }), 'k_') + '</div>' + bkAdminHTML();
   }
   function bkAdminHTML() {
     if (!isDima()) return '';
