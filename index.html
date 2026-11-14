@@ -9456,7 +9456,7 @@ function renderWikiStats() {
 
         const target = event.target;
         if (
-            target.closest("input, textarea, select, button, a, .image-viewer, .global-search-modal")
+            target.closest("input, textarea, select, button, a, .image-viewer, .global-search-modal, .wk-wrp, .wk-al-page, .wk-pk")
         ) {
             tracking = false;
             return;
@@ -21493,8 +21493,9 @@ img.wk-fade.wk-loaded{opacity:1}
     var catKey = lsGet(TOPS_CAT_KEY, 'villains');
     var cat = CATS.find(function (c) { return c.key === catKey; }) || CATS[0];
     var size = cat.size();
-    var people = st.people().slice();
-    var meKey = st.me();
+    var meKey = st.me(), people0 = st.people().slice();
+    var regN = people0.filter(function (p) { return p.reg && p.key !== meKey; }).length, showReg = lsGet('wkTopsShowReg', '') === '1';
+    var people = people0.filter(function (p) { return !p.reg || p.key === meKey || showReg; });
     people.sort(function (a, b) { return (b.key === meKey) - (a.key === meKey); });
     var lists = {};
     people.forEach(function (p) { var all = st.get(p.key) || {}; var l = (all[cat.key] || []).slice(0, size); while (l.length < size) l.push(''); lists[p.key] = l; });
@@ -21503,6 +21504,7 @@ img.wk-fade.wk-loaded{opacity:1}
     people.forEach(function (p) { lists[p.key].forEach(function (id) { if (id) counts[id] = (counts[id] || 0) + 1; }); });
     var shared = Object.keys(counts).filter(function (id) { return counts[id] > 1; }).sort(function (a, b) { return counts[b] - counts[a]; });
     var html = '<div class="wk-pane-head"><div><h2>Топы</h2><p>' + (st.note() || ('Личные рейтинги участников. ' + (meKey || st === localStore ? 'Нажмите на место, чтобы выбрать ' + (cat.type === 'arc' ? 'арку' : 'персонажа') + ' поиском; стрелки меняют порядок.' : ''))) + '</p></div></div>' +
+      (regN ? '<div class="wk-tops-reg"><button type="button" data-top-reg aria-pressed="' + showReg + '">' + (showReg ? 'Скрыть топы новых участников' : 'Показать топы новых участников (' + regN + ')') + '</button></div>' : '') +
       '<div class="wk-tops-cats" role="tablist">' + CATS.map(function (c) {
         return '<button type="button" role="tab" data-top-cat="' + c.key + '" class="' + (c.key === cat.key ? 'active' : '') + '">' + c.icon + ' ' + c.title + '<small>топ-' + c.size() + '</small></button>';
       }).join('') + '</div>' +
@@ -21534,6 +21536,7 @@ img.wk-fade.wk-loaded{opacity:1}
     html += '</div>';
     pane.innerHTML = html;
 
+    var rgb = pane.querySelector('[data-top-reg]'); if (rgb) rgb.addEventListener('click', function () { lsSet('wkTopsShowReg', showReg ? '0' : '1'); renderTops(pane); });
     pane.querySelectorAll('[data-top-cat]').forEach(function (btn) {
       btn.addEventListener('click', function () { lsSet(TOPS_CAT_KEY, btn.getAttribute('data-top-cat')); renderTops(pane); });
     });
@@ -21940,9 +21943,10 @@ img.wk-fade.wk-loaded{opacity:1}
     var roleText = s.role === 'editor' ? 'Редактор: правит статьи, видит статистику и историю правок, свой прогресс, топ и избранное' : s.role === 'admin' ? 'Администратор: редактор статей и статистика' : s.role === 'guest' ? 'Гость: только просмотр, прогресс до ' + GUEST.progress.chapter + ' главы и ' + GUEST.progress.episode + ' серии' : 'Участник: свой прогресс, избранное и топ';
     menu.innerHTML = '<div><b>' + esc(s.name) + '</b><br><small>' + esc(roleText) + '</small></div>' +
       (canEditRole(s.role) ? '<button type="button" data-me="editor">✏️ Открыть редактор статей</button>' : '') +
+      (s.role === 'admin' ? '<button type="button" data-me="regs">👥 Новые участники</button>' : '') +
       (s.role === 'admin' ? '<button type="button" data-me="replace">☁️ Заменить статьи в облаке из файла</button>' : '') +
       (s.role !== 'guest' ? '<button type="button" data-me="photo">🖼️ Сменить фото</button>' : '') +
-      (canEditRole(s.role) ? ACCOUNTS.filter(function (a) { return a.login !== s.login && a.login !== 'dima' && a.role !== 'guest'; }).map(function (a) { return '<button type="button" data-me="photo-of" data-login="' + esc(a.login) + '">🖼️ Фото: ' + esc(a.name) + '</button>'; }).join('') : '') +
+      (canEditRole(s.role) ? ACCOUNTS.filter(function (a) { return a.login !== s.login && a.login !== 'dima' && a.role !== 'guest' && !a.reg; }).map(function (a) { return '<button type="button" data-me="photo-of" data-login="' + esc(a.login) + '">🖼️ Фото: ' + esc(a.name) + '</button>'; }).join('') : '') +
       '<button type="button" data-me="switch">🔁 Сменить учётку</button><button type="button" data-me="logout">🚪 Выйти</button>';
     menu.querySelectorAll('[data-me]').forEach(function (b) {
       b.addEventListener('click', function () {
@@ -21950,6 +21954,7 @@ img.wk-fade.wk-loaded{opacity:1}
         var act = b.getAttribute('data-me');
         if (act === 'editor' && typeof window.openWikiEditor === 'function') window.openWikiEditor();
         if (act === 'replace') replaceCloudWithFile();
+        if (act === 'regs') regAdminOpen();
         if (act === 'photo') avatarDialog();
         if (act === 'photo-of') { var a2 = account(b.getAttribute('data-login')); if (a2) avatarDialog({ login: a2.login, name: a2.name }); }
         if (act === 'logout' || act === 'switch') logout();
@@ -21964,11 +21969,14 @@ img.wk-fade.wk-loaded{opacity:1}
     if (!box) {
       box = document.createElement('div'); box.id = 'wkLogin'; box.className = 'wk-login'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true');
       box.innerHTML = '<div class="wk-login-card"><h2>⚓ One Piece Wiki</h2><p>Кто сегодня на палубе? Выберите свою учётку.</p>' +
-        '<div class="wk-login-grid">' + ACCOUNTS.map(function (a) {
+        '<div class="wk-login-grid">' + ACCOUNTS.filter(function (a) { return !a.reg; }).map(function (a) {
           return '<button type="button" class="wk-acc" data-login="' + esc(a.login) + '" style="--c:' + esc(a.color) + '"><span class="wk-ava">' + esc(a.name[0]) + '</span><span><b>' + esc(a.name) + '</b><small>' + (a.role === 'admin' ? 'администратор' : a.role === 'editor' ? 'редактор' : 'участник') + '</small></span></button>';
         }).join('') + '</div>' +
         '<form class="wk-login-pass" hidden><input type="password" autocomplete="current-password" placeholder="Пароль" aria-label="Пароль"><button class="wk-btn" type="submit">Войти</button></form>' +
         '<div class="wk-login-err" aria-live="polite"></div><div class="wk-login-busy">Подключаюсь…</div>' +
+        '<div class="wk-reg"><button type="button" class="wk-reg-toggle">✨ Новый участник<small>регистрация по имени и паролю · вход для уже зарегистрированных</small></button>' +
+        '<form class="wk-reg-form" hidden><div class="wk-reg-tabs"><button type="button" data-m="new" class="on">Регистрация</button><button type="button" data-m="in">Вход</button></div>' +
+        '<input name="n" type="text" maxlength="24" placeholder="Твоё имя" autocomplete="username" aria-label="Имя"><input name="p" type="password" placeholder="Пароль (от 6 символов)" autocomplete="new-password" aria-label="Пароль"><button class="wk-btn" type="submit">Зарегистрироваться</button></form></div>' +
         '<button type="button" class="wk-login-guest">👀 Войти как гость<small>статьи только для чтения · свой прогресс по главам и сериям хранится в этом браузере</small></button></div>';
       document.body.appendChild(box);
       var form = box.querySelector('form'), input = form.querySelector('input');
@@ -21981,6 +21989,10 @@ img.wk-fade.wk-loaded{opacity:1}
       });
       form.addEventListener('submit', function (e) { e.preventDefault(); if (pickedLogin && input.value) loginWithPassword(pickedLogin, input.value); });
       box.querySelector('.wk-login-guest').addEventListener('click', loginGuest);
+      var rf = box.querySelector('.wk-reg-form'), rmode = 'new';
+      box.querySelector('.wk-reg-toggle').addEventListener('click', function () { rf.hidden = !rf.hidden; if (!rf.hidden) rf.querySelector('[name=n]').focus(); });
+      rf.querySelectorAll('.wk-reg-tabs button').forEach(function (tb) { tb.addEventListener('click', function () { rmode = tb.getAttribute('data-m'); rf.querySelectorAll('.wk-reg-tabs button').forEach(function (x) { x.classList.toggle('on', x === tb); }); rf.querySelector('[type=submit]').textContent = rmode === 'new' ? 'Зарегистрироваться' : 'Войти'; rf.querySelector('[name=p]').setAttribute('autocomplete', rmode === 'new' ? 'new-password' : 'current-password'); }); });
+      rf.addEventListener('submit', function (e) { e.preventDefault(); registerNew(rf.querySelector('[name=n]').value, rf.querySelector('[name=p]').value, rmode); });
     }
     box.hidden = false; setBusy(false); setErr(message || '');
   }
@@ -22031,12 +22043,94 @@ img.wk-fade.wk-loaded{opacity:1}
     };
     flushAll().then(function () { return auth ? fb.auth.signOut(auth) : null; }).then(finish, finish);
   }
+  /* ---------- новые участники ---------- */
+  var pendingRegName = '';
+  var TRL = { 'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'ґ': 'g', 'д': 'd', 'е': 'e', 'ё': 'e', 'є': 'e', 'ж': 'zh', 'з': 'z', 'и': 'i', 'і': 'i', 'ї': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'c', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya' };
+  function slugOf(name) { var o = ''; String(name || '').toLowerCase().split('').forEach(function (c) { o += TRL[c] != null ? TRL[c] : c; }); return o.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 20); }
+  function regColor(login) {
+    var h = 0, i; for (i = 0; i < login.length; i++) h = (h * 31 + login.charCodeAt(i)) % 360;
+    var l = .62, a = .65 * Math.min(l, 1 - l), f = function (n) { var k = (n + h / 30) % 12, c = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1); return ('0' + Math.round(255 * c).toString(16)).slice(-2); };
+    return '#' + f(0) + f(8) + f(4);
+  }
+  function addReg(login, name, uid, at) {
+    if (!login) return; var ex = account(login);
+    if (ex) { if (ex.reg) { if (name) ex.name = name; if (uid) ex.uid = uid; } return; }
+    ACCOUNTS.push({ login: login, name: name || login, color: regColor(login), role: 'member', reg: true, gender: '', uid: uid || '', at: at || '' });
+  }
+  function loadPeople() {
+    if (!db) return Promise.resolve();
+    return fb.fs.getDocs(fb.fs.collection(db, 'people')).then(function (qs) { qs.forEach(function (d) { var x = d.data(); if (x && x.login) addReg(x.login, x.name, x.uid || d.id, x.createdAt); }); }).catch(function (e) { console.warn('Люди:', e); });
+  }
+  function checkBanned(u) {
+    if (!u.reg || !db) return Promise.resolve(true);
+    return fb.fs.getDoc(fb.fs.doc(db, 'banned', u.uid)).then(function (snap) {
+      if (!snap.exists()) return true;
+      quietSet(SESSION_KEY, null); return fb.auth.signOut(auth).then(function () { showLogin('Эта учётка удалена администратором.'); return false; });
+    }, function () { return true; });
+  }
+  function regError(e) {
+    var c = (e && e.code) || '';
+    if (/email-already-in-use/.test(c)) return 'Такое имя уже занято. Если это ты, нажми «Вход» и введи пароль. Иначе добавь к имени цифру или фамилию.';
+    if (/weak-password/.test(c)) return 'Пароль слишком короткий: нужно от 6 символов.';
+    if (/operation-not-allowed|admin-restricted/.test(c)) return 'Регистрация выключена в настройках Firebase.';
+    return authError(e);
+  }
+  function registerNew(name, pass, mode) {
+    name = String(name || '').replace(/\s+/g, ' ').trim().slice(0, 24);
+    var login = slugOf(name), taken = account(login);
+    if (!login) { setErr('Имя должно содержать буквы или цифры.'); return; }
+    if (['guest', 'admin', 'anonymous'].indexOf(login) >= 0 || (taken && !taken.reg)) { setErr('Это имя занято основной учёткой. Выбери другое.'); return; }
+    if (mode === 'in') { loginWithPassword(login, pass); return; }
+    if (String(pass || '').length < 6) { setErr('Пароль: от 6 символов.'); return; }
+    setBusy(true); setErr(''); pendingRegName = name;
+    loadSDK().then(function () { return fb.auth.createUserWithEmailAndPassword(auth, emailOf(login), pass); })
+      .then(function (cred) {
+        try { fb.auth.updateProfile(cred.user, { displayName: name }); } catch (e) {}
+        return fb.fs.setDoc(fb.fs.doc(db, 'people', cred.user.uid), { uid: cred.user.uid, login: login, name: name, createdAt: new Date().toISOString() }).catch(function (e) { console.warn('people:', e); });
+      })
+      .catch(function (e) { pendingRegName = ''; setBusy(false); setErr(regError(e)); });
+  }
+  function regAdminOpen() {
+    if (!me || me.role !== 'admin') return;
+    var old = document.getElementById('wkRegAdmin'); if (old) old.remove();
+    var ov = document.createElement('div'); ov.id = 'wkRegAdmin'; ov.className = 'wk-reg-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true');
+    function paint(msg) {
+      var list = ACCOUNTS.filter(function (a) { return a.reg; });
+      ov.innerHTML = '<div class="wk-reg-box"><header><h3>Новые участники</h3><button type="button" data-ra="close" aria-label="Закрыть">✕</button></header>' +
+        (list.length ? '<ul>' + list.map(function (a) { return '<li><span class="wk-reg-dot" style="background:' + esc(a.color) + '"></span><b>' + esc(a.name) + '</b><small>' + esc(a.login) + (a.at ? ' · ' + new Date(a.at).toLocaleDateString('ru-RU') : '') + '</small><button type="button" data-ra="del" data-login="' + esc(a.login) + '">Удалить</button></li>'; }).join('') + '</ul>' : '<p>Новых участников пока нет.</p>') +
+        '<p class="wk-reg-note">Удаление стирает их данные (топы, колоду, лоты) и закрывает доступ: войти они больше не смогут. Сама запись входа остаётся в Firebase Console → Authentication, её можно убрать там.</p><div class="wk-reg-msg" aria-live="polite">' + esc(msg || '') + '</div></div>';
+    }
+    paint(''); document.body.appendChild(ov);
+    ov.addEventListener('click', function (e) {
+      if (e.target === ov) { ov.remove(); return; }
+      var b = e.target.closest && e.target.closest('[data-ra]'); if (!b) return;
+      if (b.getAttribute('data-ra') === 'close') { ov.remove(); return; }
+      var a = account(b.getAttribute('data-login')); if (!a || !a.reg || !a.uid) { paint('Не нашёл идентификатор учётки. Обнови страницу.'); return; }
+      if (!window.confirm('Удалить участника «' + a.name + '»? Его данные будут стёрты, вход закрыт.')) return;
+      b.disabled = true; deleteReg(a).then(function () { paint('Удалено: ' + a.name); }, function (er) { paint('Не получилось: ' + ((er && er.code) || (er && er.message) || 'ошибка') + '. Проверь, что правила Firebase обновлены.'); });
+    });
+  }
+  function deleteReg(a) {
+    var del = function (col) { return fb.fs.deleteDoc(fb.fs.doc(db, col, a.uid)).catch(function () {}); };
+    return fb.fs.setDoc(fb.fs.doc(db, 'banned', a.uid), { uid: a.uid, login: a.login, name: a.name, at: new Date().toISOString(), by: me.login })
+      .then(function () { return Promise.all([del('people'), del('tops'), del('users'), del('push')]); })
+      .then(function () { return fb.fs.getDocs(fb.fs.collection(db, 'market')); })
+      .then(function (qs) { var jobs = []; qs.forEach(function (d) { var x = d.data() || {}; if (x.seller === a.login) jobs.push(fb.fs.deleteDoc(d.ref).catch(function () {})); }); return Promise.all(jobs); })
+      .then(function () { var i = ACCOUNTS.indexOf(a); if (i >= 0) ACCOUNTS.splice(i, 1); try { delete topsCache.byLogin[a.login]; quietSet(TOPS_CACHE_KEY, JSON.stringify(topsCache)); } catch (e) {} });
+  }
   function resolveUser(user) {
     if (!user) return null;
     if (user.isAnonymous) return { uid: user.uid, login: 'guest', name: GUEST.name, role: 'guest' };
     var email = String(user.email || '').toLowerCase();
     var acc = ACCOUNTS.find(function (a) { return emailOf(a.login).toLowerCase() === email; });
-    return acc ? { uid: user.uid, login: acc.login, name: acc.name, role: acc.role === 'admin' || acc.role === 'editor' ? acc.role : 'member' } : null;
+    if (acc) return { uid: user.uid, login: acc.login, name: acc.name, role: acc.role === 'admin' || acc.role === 'editor' ? acc.role : 'member', reg: !!acc.reg };
+    var dom = '@' + (CFG.emailDomain || 'op-wiki.app').toLowerCase();
+    if (email.length > dom.length && email.slice(-dom.length) === dom) {
+      var lg = email.slice(0, -dom.length), nm = pendingRegName || user.displayName || lg;
+      addReg(lg, nm, user.uid, '');
+      return { uid: user.uid, login: lg, name: nm, role: 'member', reg: true };
+    }
+    return null;
   }
 
   /* ---------- общий цикл запуска ---------- */
@@ -22056,7 +22150,7 @@ img.wk-fade.wk-loaded{opacity:1}
         var hasPending = !!lsGet(PENDING_KEY);
         if (hasPending && (!canEditRole(u.role) || switched)) { quietSet(PENDING_KEY, null); hasPending = false; }
         var first = hasPending ? flushContent().then(function () { if (lsGet(PENDING_KEY)) toast('Есть правки, которые ещё не дошли до облака. Они сохранены в этом браузере.'); else toast('Неотправленные правки дошли до облака ✓'); }) : Promise.resolve();
-        first.then(function () { return applyFileToCloud(); }).then(function () { return Promise.all([syncContent(), syncPersonal(switched), loadAllTops()]); }).then(function (r) {
+        first.then(function () { return applyFileToCloud(); }).then(function () { return checkBanned(u).then(function (ok) { if (!ok) throw new Error('banned'); return loadPeople(); }).then(function () { return Promise.all([syncContent(), syncPersonal(switched), loadAllTops()]); }); }).then(function (r) {
           var reload = r[0] || r[1];
           if (reload) { reloadOnce('boot:' + u.uid + ':' + (r[0] ? 'c' + lastSyncVersion : '') + (r[1] ? 'p' : '')); return; }
           startStats();
@@ -22588,7 +22682,7 @@ img.wk-fade.wk-loaded{opacity:1}
     deckTimer = 0; if (!me || me.role === 'guest' || !db) return Promise.resolve();
     var d; try { d = JSON.parse(lsGet('onePieceWikiDeckV1') || 'null'); } catch (e) { d = null; }
     if (!d || !d.owned) return Promise.resolve();
-    var slim = { packs: d.packs || 0, pity: d.pity || 0, last: d.last || 0, open: d.open || null, owned: d.owned, tr: d.tr || {}, got: d.got || {}, show: d.show || [], hold: d.hold || {}, ev: d.ev || [], belli: d.belli || 0, ach: d.ach || {} };
+    var slim = { packs: d.packs || 0, pity: d.pity || 0, last: d.last || 0, open: d.open || null, owned: d.owned, tr: d.tr || {}, got: d.got || {}, show: d.show || [], showCap: d.showCap || 3, cos: d.cos || {}, frame: d.frame || '', bg: d.bg || '', hold: d.hold || {}, ev: d.ev || [], belli: d.belli || 0, ach: d.ach || {} };
     return fb.fs.setDoc(fb.fs.doc(db, 'tops', me.uid), { login: me.login, name: me.name, deck: JSON.stringify(slim), deckAt: new Date().toISOString() }, { merge: true }).catch(function (e) { console.warn('Колода:', e); });
   }
   window.__wkDeckCloud = {
@@ -22603,6 +22697,13 @@ img.wk-fade.wk-loaded{opacity:1}
     push: pushDeck
   };
   /* ОБМЕН: trades/{id} = { from, to, fromEmail, toEmail, give[], want[], note, status: pending|accepted|declined|cancelled, appliedFrom } */
+  window.__wkMarket = {
+    enabled: function () { return !!(me && db && fb && me.role !== 'guest'); },
+    list: function () { return fb.fs.getDocs(fb.fs.collection(db, 'market')).then(function (qs) { var out = []; qs.forEach(function (d) { var x = d.data() || {}; x.id = d.id; out.push(x); }); return out; }); },
+    create: function (o) { return fb.fs.addDoc(fb.fs.collection(db, 'market'), { seller: me.login, sellerUid: me.uid, sellerEmail: emailOf(me.login).toLowerCase(), sellerName: me.name, key: String(o.key), price: Math.round(o.price), status: 'open', createdAt: new Date().toISOString(), expiresMs: Date.now() + 72 * 3600 * 1000 }); },
+    buy: function (id) { return fb.fs.updateDoc(fb.fs.doc(db, 'market', id), { status: 'sold', buyer: me.login, buyerUid: me.uid, buyerName: me.name, soldAt: new Date().toISOString() }); },
+    remove: function (id) { return fb.fs.deleteDoc(fb.fs.doc(db, 'market', id)); }
+  };
   window.__wkTrades = {
     enabled: function () { return !!(me && db && fb && me.role !== 'guest'); },
     list: function () {
@@ -22612,7 +22713,7 @@ img.wk-fade.wk-loaded{opacity:1}
       });
     },
     create: function (o) {
-      return fb.fs.addDoc(fb.fs.collection(db, 'trades'), { from: me.login, fromName: me.name, fromUid: me.uid, fromEmail: emailOf(me.login).toLowerCase(), to: o.to, toEmail: emailOf(o.to).toLowerCase(), give: o.give || [], want: o.want || [], gift: !!o.gift, note: String(o.note || '').slice(0, 140), status: 'pending', createdAt: new Date().toISOString(), appliedFrom: false });
+      return fb.fs.addDoc(fb.fs.collection(db, 'trades'), { from: me.login, fromName: me.name, fromUid: me.uid, fromEmail: emailOf(me.login).toLowerCase(), to: o.to, toEmail: emailOf(o.to).toLowerCase(), give: o.give || [], want: o.want || [], gift: !!o.gift, pack: !!o.pack, price: Math.max(0, Math.round(Number(o.price) || 0)), note: String(o.note || '').slice(0, 140), status: 'pending', createdAt: new Date().toISOString(), appliedFrom: false });
     },
     accept: function (id) { return fb.fs.updateDoc(fb.fs.doc(db, 'trades', id), { status: 'accepted', answeredAt: new Date().toISOString() }); },
     setStatus: function (id, st) { return fb.fs.updateDoc(fb.fs.doc(db, 'trades', id), { status: st, answeredAt: new Date().toISOString() }); },
@@ -22648,7 +22749,7 @@ img.wk-fade.wk-loaded{opacity:1}
       .then(function () { setSync('ok'); }, function (e) { topsDirty = topsDirty || lists; setSync('error'); console.warn(e); });
   }
   window.__wikiTopsStore = {
-    people: function () { return ACCOUNTS.map(function (a) { return { key: a.login, name: a.name, color: a.color }; }); },
+    people: function () { return ACCOUNTS.map(function (a) { return { key: a.login, name: a.name, color: a.color, reg: !!a.reg }; }); },
     me: function () { var s = session(); return s && s.role !== 'guest' ? s.login : ''; },
     editable: function (key) { var s = session(); return !!(s && s.role !== 'guest' && s.login === key); },
     get: function (key) { var e = topsCache.byLogin[key]; return e ? e.lists : {}; },
@@ -41302,14 +41403,14 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       var r = String(raw.rarity || '');
       if (KRAR.indexOf(r) < 0) r = charR[raw.owner] || 'common';   // плод наследует редкость владельца
       var a = arcOf(raw);
-      out.push({ key: 'fruit:' + f.id, kind: 'fruit', c: { id: f.id, name: raw.name || f.name || '', status: '' }, arc: a, sub: [String(raw.type || '').trim(), a.name].filter(Boolean).join(' · '), u: u, x: raw.image_position_x, y: raw.image_position, z: raw.image_zoom, fx: '', amb: '', cs: '', r: r, first: true });
+      out.push({ key: 'fruit:' + f.id, kind: 'fruit', ty: String(raw.type || '').trim(), c: { id: f.id, name: raw.name || f.name || '', status: '' }, arc: a, sub: [String(raw.type || '').trim(), a.name].filter(Boolean).join(' · '), u: u, x: raw.image_position_x, y: raw.image_position, z: raw.image_zoom, fx: '', amb: '', cs: '', r: r, first: true });
     });
     listOf('usefulArticles').forEach(function (f) {
       if (!f || !f.id || hiddenRec(f, 'useful') || String(f.__wikiDraft) === 'true') return;
       var raw = f.__wikiRaw || f, u = url(raw.image); if (!u) return;
       var r = String(raw.rarity || ''), base = USEFUL_T[String(raw.type || '').trim()] || 'common';
       if (KRAR.indexOf(r) < 0) r = conn(raw).some(function (id) { return legSet[id]; }) ? bumpR(base) : base;
-      out.push({ key: 'useful:' + f.id, kind: 'useful', c: { id: f.id, name: raw.name || f.name || '', status: '' }, arc: arcOf(raw), sub: String(raw.type || '').trim(), u: u, x: raw.image_position_x, y: raw.image_position, z: raw.image_zoom, fx: '', amb: '', cs: '', r: r, first: true });
+      out.push({ key: 'useful:' + f.id, kind: 'useful', ty: String(raw.type || '').trim(), c: { id: f.id, name: raw.name || f.name || '', status: '' }, arc: arcOf(raw), sub: String(raw.type || '').trim(), u: u, x: raw.image_position_x, y: raw.image_position, z: raw.image_zoom, fx: '', amb: '', cs: '', r: r, first: true });
     });
     var rw = listOf('rewards'), cmap = {}; chars().forEach(function (c) { cmap[c.id] = c; });
     rw.forEach(function (f) {
@@ -41366,22 +41467,30 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   }
   function drawPack0(cards, st, o, P) {
     var by = { common: [], rare: [], epic: [], legendary: [] }; cards.forEach(function (k) { by[k.r].push(k); });
-    var used = {}, out = [];
+    var used = {}, out = [], relax = false;
     function one(cls) {
       var order = [cls].concat(RORD.slice().reverse().filter(function (x) { return x !== cls; }));
       if (cls !== 'common') order = [cls, 'epic', 'rare', 'common'].filter(function (x, i, a) { return a.indexOf(x) === i; });
-      for (var i = 0; i < order.length; i++) { var l = by[order[i]].filter(function (k) { return !used[k.key]; }); if (l.length) { var k = wpick(l, st); used[k.key] = 1; return k; } }
+      for (var i = 0; i < order.length; i++) { var l = by[order[i]].filter(function (k) { return !used[k.key] && (!o.onlyNew || relax || !st.owned[k.key]); }); if (l.length) { var k = wpick(l, st); used[k.key] = 1; return k; } }
       return null;
     }
     for (var i = 0; i < (o.n || PACKN); i++) {
       var r = Math.random(), cls = o.onlyCommon ? 'common' : r < P.legendary ? 'legendary' : r < P.legendary + P.epic ? 'epic' : r < P.legendary + P.epic + P.rare ? 'rare' : 'common';
-      var k = one(cls); if (k) out.push(k);
+      var k = one(cls); if (!k && o.onlyNew && !relax) { relax = true; k = one(cls); } if (k) out.push(k);
     }
     if (o.onlyCommon) return out.map(function (k) { return { key: k.key, isNew: !st.owned[k.key] }; });
     if (o.minEpic && out.length && !out.some(function (k) { return k.r === 'epic' || k.r === 'legendary'; })) { var ue = one('epic'); if (ue && (ue.r === 'epic' || ue.r === 'legendary')) out[out.length - 1] = ue; }
     if (o.minLeg && out.length && !out.some(function (k) { return k.r === 'legendary'; })) { var ul = one('legendary'); if (ul && ul.r === 'legendary') out[0] = ul; }
     if (!o.shop && (st.pity || 0) >= PITY - 1 && out.length && !out.some(function (k) { return k.r === 'legendary'; })) { var lg = one('legendary'); if (lg && lg.r === 'legendary') out[0] = lg; }
     if (out.length && !out.some(function (k) { return k.r !== 'common'; })) { var up = one('rare'); if (up && up.r !== 'common') out[out.length - 1] = up; }
+    if (o.arcId) {
+      var ak = function (q) { var a = q.arc || {}; return a.id || (a.name ? 'n:' + a.name : '_'); };
+      if (!out.some(function (q) { return ak(q) === o.arcId; })) {
+        var cand = cards.filter(function (q) { return ak(q) === o.arcId && !used[q.key]; }), nw = cand.filter(function (q) { return !st.owned[q.key]; });
+        cand = nw.length ? nw : cand;
+        if (cand.length) { var pk0 = cand[Math.floor(Math.random() * cand.length)], ri = -1; for (var z = out.length - 1; z >= 0; z--) if (out[z].r === 'common') { ri = z; break; } if (ri < 0) ri = out.length - 1; if (out.length) out[ri] = pk0; else out.push(pk0); }
+      }
+    }
     return out.map(function (k) { return { key: k.key, isNew: !st.owned[k.key] }; });
   }
   function cardByKey(cards, key) { var vi = String(key).indexOf('#'); if (vi > 0) { var b = cardByKey(cards, key.slice(0, vi)), v = key.slice(vi + 1); return b && VAR[v] ? mkVar(b, v) : null; } for (var i = 0; i < cards.length; i++) if (cards[i].key === key) return cards[i]; return null; }
@@ -41569,23 +41678,46 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var pi = 0; pages.forEach(function (p, i) { if (p.id === DK.apId) pi = i; }); DK.apId = pages[pi].id;
     var P = pages[pi], cnt = function (p) { return p.cards.filter(function (k) { return st.owned[k.key]; }).length; }, have = cnt(P), tot = P.cards.length;
     var opts = pages.map(function (p, i) { var h = cnt(p); return '<option value="' + esc(p.id) + '"' + (i === pi ? ' selected' : '') + '>' + esc(p.name) + ' — ' + h + '/' + p.cards.length + (h === p.cards.length ? ' ✓' : '') + '</option>'; }).join('');
+    var KL = { char: 'Персонажи', wanted: 'Награды', fruit: 'Плоды', useful: 'Полезное', custom: 'Особые' };
+    var srcOf = function (k) { var kd = k.kind || 'char', t = (kd === 'fruit' || kd === 'useful') ? k.ty : ''; return (KL[kd] || 'Персонажи') + (t ? ' · ' + t : ''); };
+    DK.alBack = DK.alBack || {};
     var slots = P.cards.map(function (k, i) {
       var n = st.owned[k.key] || 0, no = '<i class="wk-al-no">' + (i + 1) + '</i>';
-      if (n) return '<div class="wk-al-s has">' + no + '<div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + (n > 1 ? '<em class="wk-dk-x">×' + n + '</em>' : '') + '</div></div>';
-      return '<div class="wk-al-s miss r-' + k.r + '">' + no + '<div class="wk-al-sil">' + (SIL[k.kind] || SIL.char) + '<b>№ ' + (i + 1) + '</b><span>' + esc(cName(k)) + '</span><small>' + esc(k.v ? VAR[k.v].n : RN4[k.r]) + '</small></div></div>';
+      if (n) {
+        var fl = !!DK.alBack[k.key], rn = k.v ? VAR[k.v].n : RN4[k.r], arcN = k.kind === 'wanted' ? k.sub : (k.arc && k.arc.name) || '';
+        return '<div class="wk-al-s has' + (fl ? ' flipped' : '') + '">' + no + '<div class="wk-al-fi"><div class="wk-al-ff"><div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + (n > 1 ? '<em class="wk-dk-x">×' + n + '</em>' : '') + '</div></div>' +
+          '<div class="wk-al-fb r-' + k.r + (k.v ? ' v-' + k.v : '') + '"><div class="wk-dk-back">' + backInner(k.r, '', true) + '<div class="wk-al-bi"><b>' + esc(cName(k)) + '</b><span>' + esc(srcOf(k)) + '</span>' + (arcN ? '<span>' + esc(arcN) + '</span>' : '') + '<em>' + esc(rn) + (n > 1 ? ' · ×' + n : '') + '</em></div></div></div></div>' +
+          '<button type="button" class="wk-al-flip" data-alflip="' + esc(k.key) + '" aria-pressed="' + fl + '" title="Перевернуть карточку" aria-label="Перевернуть карточку">⟲</button></div>';
+      }
+      return '<div class="wk-al-s miss r-' + k.r + '">' + no + '<div class="wk-al-sil">' + (SIL[k.kind] || SIL.char) + '<b>№ ' + (i + 1) + '</b><span>' + esc(cName(k)) + '</span><em class="wk-al-src">' + esc(srcOf(k)) + '</em><small>' + esc(k.v ? VAR[k.v].n : RN4[k.r]) + '</small></div></div>';
     }).join('');
+    var ownedP = P.cards.filter(function (k) { return st.owned[k.key]; }), allBack = ownedP.length > 0 && ownedP.every(function (k) { return DK.alBack[k.key]; });
     var done = have === tot;
-    return '<div class="wk-al" data-al>' +
+    return '<div class="wk-al' + (['gold', 'wood', 'foam'].indexOf(st.frame) >= 0 ? ' fr-' + st.frame : '') + '" data-al>' +
       '<div class="wk-al-nav"><button type="button" class="wk-al-arw" data-alp="-1"' + (pi ? '' : ' disabled') + ' aria-label="Предыдущая арка">‹</button>' +
       '<label class="wk-al-pick"><span class="wk-al-pn">Страница ' + (pi + 1) + ' из ' + pages.length + '</span><select data-alsel aria-label="Перейти к арке">' + opts + '</select></label>' +
       '<button type="button" class="wk-al-arw" data-alp="1"' + (pi < pages.length - 1 ? '' : ' disabled') + ' aria-label="Следующая арка">›</button></div>' +
-      '<section class="wk-al-page' + (done ? ' full' : '') + (DK.alDir ? ' turn' + (DK.alDir > 0 ? 'r' : 'l') : '') + '"><header class="wk-al-h">' + (P.saga ? '<small>' + esc(P.saga) + '</small>' : '') + '<h4>' + esc(P.name) + '</h4><div class="wk-al-prog"><span><em style="width:' + Math.round(have / Math.max(1, tot) * 100) + '%"></em></span><b>' + have + ' из ' + tot + '</b>' + (done ? '<i class="wk-al-done">Страница собрана</i>' : '') + '</div></header>' +
+      '<section class="wk-al-page' + (done ? ' full' : '') + (DK.alDir ? ' turn' + (DK.alDir > 0 ? 'r' : 'l') : '') + '"><header class="wk-al-h">' + (P.saga ? '<small>' + esc(P.saga) + '</small>' : '') + '<h4>' + esc(P.name) + '</h4><div class="wk-al-prog"><span><em style="width:' + Math.round(have / Math.max(1, tot) * 100) + '%"></em></span><b>' + have + ' из ' + tot + '</b>' + (done ? '<i class="wk-al-done">Страница собрана</i>' : '') + (ownedP.length ? '<button type="button" class="wk-al-flall" data-alflipall>⟲ ' + (allBack ? 'Лицом' : 'Перевернуть все') + '</button>' : '') + '</div></header>' +
       '<div class="wk-al-grid">' + slots + '</div><footer class="wk-al-f">' + (pi + 1) + '</footer></section></div>';
   }
   function alPaint(pane, dir) {
     var cc = pane.querySelector('#wkDkColl'); if (!cc) return;
     DK.alDir = dir; cc.innerHTML = collHTML(allCards(), load()); DK.alDir = 0;
     var pg = cc.querySelector('.wk-al-nav'); if (dir && pg && pg.getBoundingClientRect().top < 0 && pg.scrollIntoView) pg.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  }
+  function alSet(sl, on) {
+    if (!sl || sl.classList.contains('flipped') === on) return;
+    sl.classList.add('fl-go');
+    setTimeout(function () { sl.classList.toggle('flipped', on); var b = sl.querySelector('.wk-al-flip'); if (b) b.setAttribute('aria-pressed', String(on)); }, 210);
+    setTimeout(function () { sl.classList.remove('fl-go'); }, 460);
+  }
+  function alFlip(sl, key) { if (!sl) return; DK.alBack = DK.alBack || {}; var on = !DK.alBack[key]; if (on) DK.alBack[key] = 1; else delete DK.alBack[key]; alSet(sl, on); setTimeout(alFlAllLbl, 260, sl.closest('.wk-al')); }
+  function alFlAllLbl(al) { if (!al) return; var all = [].slice.call(al.querySelectorAll('.wk-al-s.has')), b = al.querySelector('[data-alflipall]'); if (b) b.textContent = '⟲ ' + (all.length && all.every(function (x) { return x.classList.contains('flipped'); }) ? 'Лицом' : 'Перевернуть все'); }
+  function alFlipAll(pane) {
+    var al = pane.querySelector('.wk-al'); if (!al) return; DK.alBack = DK.alBack || {};
+    var all = [].slice.call(al.querySelectorAll('.wk-al-s.has')), on = !all.every(function (x) { return x.classList.contains('flipped'); });
+    all.forEach(function (x, i) { var k = x.querySelector('[data-alflip]').getAttribute('data-alflip'); if (on) DK.alBack[k] = 1; else delete DK.alBack[k]; setTimeout(alSet, i * 40, x, on); });
+    setTimeout(alFlAllLbl, all.length * 40 + 280, al);
   }
   function alTurn(pane, d) {
     var C = allCards(), st = load(), base = DK.v && VAR[DK.v] ? varCards(C).filter(function (k) { return k.v === DK.v; }) : C;
@@ -41680,7 +41812,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var tiles = shown.slice(0, lim).map(function (x) { var k = x.k; return '<div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + (x.n > 1 ? '<em class="wk-dk-x">×' + x.n + '</em>' : '') + '</div>'; }).join('');
     var sp = '';
     for (var i = 0; i < Math.min(hidden, 6); i++) sp += '<div class="wk-dk-slot"><div class="wk-dk-spoil"><b>🔒</b><span>Спойлер</span><small>Карточка скрыта, пока ты не дойдёшь до этой арки</small></div></div>';
-    return stat + showcaseHTML(C, d.deck.show, false) + '<div class="character-list character-display-grid wk-dk-grid">' + tiles + sp + '</div>' + (hidden > 6 ? '<p class="wk-dk-fnote">…и ещё ' + (hidden - 6) + ' скрытых карточек-спойлеров.</p>' : '') + (shown.length > lim ? '<div class="wk-dk-morewrap"><button type="button" class="wk-dk-ghost" data-act="fr-more">Показать ещё ' + Math.min(60, shown.length - lim) + '</button></div>' : '');
+    return stat + showcaseHTML(C, d.deck.show, false, d.deck.showCap, { frame: d.deck.frame, bg: d.deck.bg }) + '<div class="character-list character-display-grid wk-dk-grid">' + tiles + sp + '</div>' + (hidden > 6 ? '<p class="wk-dk-fnote">…и ещё ' + (hidden - 6) + ' скрытых карточек-спойлеров.</p>' : '') + (shown.length > lim ? '<div class="wk-dk-morewrap"><button type="button" class="wk-dk-ghost" data-act="fr-more">Показать ещё ' + Math.min(60, shown.length - lim) + '</button></div>' : '');
   }
   function loadFriends(pane, force) {
     var cl = window.__wkDeckCloud; if (!cl) return;
@@ -41968,6 +42100,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   }
   /* ======== Разделы колоды: переработка повторок, участники, обмен ======== */
   DK.tab = DK.tab || 'me';
+  var MK = { list: [], at: 0, loading: false, err: '' };
   var TX = { trades: [], at: 0, loading: false, err: '', comp: null, last: null, busy: {} };
   var RECIPE = [
     { from: 'common', n: 5, to: 'rare', p: 0.75 },
@@ -41984,8 +42117,9 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var me = myLogin(), r = {}, done = (st && st.tr) || {};
     TX.trades.forEach(function (t) {
       if (t.from !== me || done[t.id]) return;
-      if (t.status === 'pending' || (t.status === 'accepted' && !t.appliedFrom)) (t.give || []).forEach(function (k) { r[k] = (r[k] || 0) + 1; });
+      if (!t.pack && (t.status === 'pending' || (t.status === 'accepted' && !t.appliedFrom))) (t.give || []).forEach(function (k) { r[k] = (r[k] || 0) + 1; });
     });
+    MK.list.forEach(function (l) { if (l.seller !== me || (done && (st.mk || {})[l.id])) return; if ((l.status === 'open' && l.expiresMs > Date.now()) || l.status === 'sold') r[l.key] = (r[l.key] || 0) + 1; });
     var h = (st && st.hold) || {};
     Object.keys(h).forEach(function (k) { var n = Math.min(h[k] || 0, Math.max(0, ((st.owned || {})[k] || 0) - 1)); if (n > 0) r[k] = (r[k] || 0) + n; });
     return r;
@@ -42077,16 +42211,18 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   function applyAccepted(pane) {
     var me = myLogin(), st = load(); if (st.__fake) return;
     st.tr = st.tr || {}; var got = [], api = txApi();
+    var refunded = 0;
     TX.trades.forEach(function (t) {
+      if (t.from === me && t.pack && (t.status === 'declined' || t.status === 'cancelled') && !st.tr[t.id]) { st.belli = (st.belli || 0) + (+t.price || 0); st.tr[t.id] = 'ref'; refunded += +t.price || 0; return; }
       if (t.from !== me || t.status !== 'accepted' || st.tr[t.id]) return;
-      (t.give || []).forEach(function (k) { if (st.owned[k]) addCard(st, k, -1); });
+      if (!t.pack) (t.give || []).forEach(function (k) { if (st.owned[k]) addCard(st, k, -1); });
       (t.want || []).forEach(function (k) { addCard(st, k, 1); st.got = st.got || {}; st.got[k] = Date.now(); });
       st.tr[t.id] = 'from'; got.push(t);
     });
-    if (!got.length) return;
-    save(st);
+    if (!got.length && !refunded) return;
+    save(st); if (refunded) txToast('Подарок не принят: ' + fmtB(refunded) + ' вернулись на счёт');
     got.forEach(function (t) { if (api) api.markApplied(t.id).catch(function () {}); t.appliedFrom = true; });
-    txToast(got.map(function (t) { return t.gift ? esc(accName(t.to)) + ' принял(а) твой подарок' : esc(accName(t.to)) + ' принял(а) обмен: ты получил(а) ' + (t.want || []).length + ', отдал(а) ' + (t.give || []).length; }).join('<br>'));
+    txToast(got.map(function (t) { return t.gift ? esc(accName(t.to)) + (t.pack ? ' принял(а) твой подарочный набор' : ' принял(а) твой подарок') : esc(accName(t.to)) + ' принял(а) обмен: ты получил(а) ' + (t.want || []).length + ', отдал(а) ' + (t.give || []).length; }).join('<br>'));
     if (pane && pane.isConnected && DK.tab === 'me') renderDeck(pane);
   }
   function txToast(html) {
@@ -42155,12 +42291,12 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var inc = t.to === me, who = inc ? accName(t.from) : accName(t.to);
     var st = { pending: 'Ждёт ответа', accepted: 'Состоялся', declined: 'Отклонён', cancelled: 'Отменён' }[t.status] || t.status;
     var gT = inc ? 'Ты получишь' : 'Ты отдаёшь', wT = inc ? 'Ты отдашь' : 'Ты получишь';
-    if (t.gift) { gT = inc ? 'Подарок для тебя' : 'Ты даришь'; if (t.status === 'accepted') st = 'Принят'; }
+    if (t.gift) { gT = t.pack ? (inc ? 'Подарочный набор для тебя' : 'Ты даришь набор') : (inc ? 'Подарок для тебя' : 'Ты даришь'); if (t.status === 'accepted') st = 'Принят'; }
     var grid = function (l) { return l && l.length ? '<div class="wk-dk-grid wk-tx-grid">' + l.map(function (k) { return miniHTML(C, k); }).join('') + '</div>' : '<p class="wk-tx-none">ничего</p>'; };
     var act = '';
     if (t.status === 'pending') act = inc ? '<button type="button" class="wk-tx-btn pri" data-tx="accept" data-id="' + esc(t.id) + '">' + (t.gift ? 'Принять подарок' : 'Принять обмен') + '</button><button type="button" class="wk-tx-btn" data-tx="decline" data-id="' + esc(t.id) + '">Отказаться</button>' : '<button type="button" class="wk-tx-btn" data-tx="cancel" data-id="' + esc(t.id) + '">' + (t.gift ? 'Отменить подарок' : 'Отменить предложение') + '</button>';
     var d = t.createdAt ? new Date(t.createdAt) : null;
-    return '<article class="wk-tx-card s-' + esc(t.status) + '"><header>' + avHTML(inc ? t.from : t.to, 'sm') + '<b>' + (t.gift ? 'Подарок · ' : '') + (inc ? 'От: ' : 'Кому: ') + esc(who) + '</b><span class="wk-tx-st">' + st + '</span>' + (d ? '<time>' + d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) + ', ' + d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) + '</time>' : '') + '</header>' +
+    return '<article class="wk-tx-card s-' + esc(t.status) + '"><header>' + avHTML(inc ? t.from : t.to, 'sm') + '<b>' + (t.gift ? (t.pack ? 'Набор · ' : 'Подарок · ') : '') + (inc ? 'От: ' : 'Кому: ') + esc(who) + '</b><span class="wk-tx-st">' + st + '</span>' + (d ? '<time>' + d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) + ', ' + d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) + '</time>' : '') + '</header>' +
       (t.note ? '<p class="wk-tx-note">«' + esc(t.note) + '»</p>' : '') +
       (t.gift ? '<div class="wk-tx-sides one"><div><h4>' + gT + '</h4>' + grid(t.give) + '</div></div>' : '<div class="wk-tx-sides"><div><h4>' + gT + '</h4>' + grid(t.give) + '</div><div><h4>' + wT + '</h4>' + grid(t.want) + '</div></div>') +
       (act ? '<div class="wk-tx-acts">' + act + '<span class="wk-tx-msg" data-msg="' + esc(t.id) + '"></span></div>' : '') + '</article>';
@@ -42183,7 +42319,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   /* ---- окно составления предложения ---- */
   function compOpen(pane, mode, key) {
     if (mode === 'gift') TX.comp = { mode: 'gift', to: key ? '' : (DK.fr || ''), side: 'give', give: key ? [key] : [], want: [], q: '', r: '', dup: false, pg: 0, note: '', pane: pane };
-    else if (mode === 'show') TX.comp = { mode: 'show', side: 'give', give: (load().show || []).slice(0, 3), want: [], q: '', r: '', dup: false, pg: 0, note: '', pane: pane };
+    else if (mode === 'show') TX.comp = { mode: 'show', side: 'give', give: (load().show || []).slice(0, showCap(load())), want: [], q: '', r: '', dup: false, pg: 0, note: '', pane: pane };
     else { var d = DK.frData && DK.frData[DK.fr]; if (!d || !d.deck) return;
     TX.comp = { to: DK.fr, side: 'give', give: [], want: [], q: '', r: '', dup: false, pg: 0, note: '', pane: pane }; }
     var ov = document.createElement('div'); ov.id = 'wkTxComp'; ov.className = 'wk-tx-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', mode === 'gift' ? 'Подарок' : mode === 'show' ? 'Витрина' : 'Предложение обмена');
@@ -42223,7 +42359,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var ov = document.getElementById('wkTxComp'); if (!ov) return; var P = TX.comp, nm = accName(P.to), C = allCards(), SH = P.mode === 'show', GF = P.mode === 'gift', me0 = myLogin();
     var R = [['', 'Любая'], ['legendary', 'Легенды'], ['epic', 'Эпики'], ['rare', 'Редкие'], ['common', 'Обычные']];
     var chips = function (l) { return l.length ? l.map(function (k) { var c = cardByKey(C, k); return '<button type="button" class="wk-tx-chip" data-tx="unpick" data-key="' + esc(k) + '" title="Убрать"><span class="wk-tx-dot" style="background:' + (c ? RC[c.r] : '#666') + '"></span>' + esc(cName(c)) + (c && c.v ? ' · ' + VAR[c.v].n : '') + ' ✕</button>'; }).join('') : '<span class="wk-tx-none">пока ничего</span>'; };
-    ov.innerHTML = '<div class="wk-tx-box' + (SH ? ' sh' : '') + '"><header class="wk-tx-bh"><h3 class="wk-tx-bht">' + (SH || GF ? '' : avHTML(P.to, 'sm')) + (SH ? 'Витрина: до трёх карточек' : GF ? 'Подарок' : 'Обмен с ' + esc(nm)) + '</h3><button type="button" class="wk-tx-x" data-tx="close" aria-label="Закрыть">✕</button></header>' +
+    ov.innerHTML = '<div class="wk-tx-box' + (SH ? ' sh' : '') + '"><header class="wk-tx-bh"><h3 class="wk-tx-bht">' + (SH || GF ? '' : avHTML(P.to, 'sm')) + (SH ? 'Витрина: до ' + cardsWord(showCap(load())) : GF ? 'Подарок' : 'Обмен с ' + esc(nm)) + '</h3><button type="button" class="wk-tx-x" data-tx="close" aria-label="Закрыть">✕</button></header>' +
       (GF ? '<div class="wk-tx-to" role="group" aria-label="Кому подарить"><span>Кому:</span>' + (window.__wikiAccounts || []).filter(function (a) { return a.login !== me0; }).map(function (a) { return '<button type="button" class="wk-fr-b' + (P.to === a.login ? ' active' : '') + '" data-tx="to" data-l="' + esc(a.login) + '" aria-pressed="' + (P.to === a.login) + '">' + avHTML(a.login, 'sm') + '<span>' + esc(a.name) + '</span></button>'; }).join('') + '</div><div class="wk-tx-sum one"><div><h4>Ты даришь <small>' + P.give.length + '/6 · карточки уйдут, когда получатель примет подарок</small></h4><div class="wk-tx-chips">' + chips(P.give) + '</div></div></div>' : SH ? '<div class="wk-tx-sum one"><div><h4>В витрине <small>' + P.give.length + '/3 · если есть повторки, одну карточку можно поставить несколько раз, повторное нажатие добавляет копию</small></h4><div class="wk-tx-chips">' + chips(P.give) + '</div></div></div>' : '<div class="wk-tx-sum"><div><h4>Ты отдаёшь <small>' + P.give.length + '/6</small></h4><div class="wk-tx-chips">' + chips(P.give) + '</div></div><div><h4>Ты получаешь <small>' + P.want.length + '/6</small></h4><div class="wk-tx-chips">' + chips(P.want) + '</div></div></div>') +
       (SH || GF ? '' : '<div class="wk-tx-side" role="tablist"><button type="button" role="tab" class="' + (P.side === 'give' ? 'on' : '') + '" data-tx="side" data-s="give">Мои карточки</button><button type="button" role="tab" class="' + (P.side === 'want' ? 'on' : '') + '" data-tx="side" data-s="want">Карточки: ' + esc(nm) + '</button></div>') +
       '<div class="wk-tx-flt"><input id="wkTxQ" type="search" placeholder="Поиск по имени или арке" value="' + esc(P.q) + '" autocomplete="off"><div class="wk-tx-rf">' + R.map(function (r) { return '<button type="button" class="' + (P.r === r[0] ? 'on' : '') + '" data-tx="rf" data-rr="' + r[0] + '">' + r[1] + '</button>'; }).join('') + '<button type="button" class="' + (P.dup ? 'on' : '') + '" data-tx="dup">Только повторки</button></div></div>' +
@@ -42243,18 +42379,18 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (a === 'cpg') { P.pg = Math.max(0, Number(b.getAttribute('data-p')) || 0); ov.querySelector('#wkTxPool').innerHTML = poolHTML(); return; }
     if (a === 'pick' || a === 'unpick') {
       var key = b.getAttribute('data-key'), L = a === 'unpick' ? (P.give.indexOf(key) >= 0 ? P.give : P.want) : P[P.side], i = L.indexOf(key);
-      var MX = P.mode === 'show' ? 3 : 6;
+      var MX = P.mode === 'show' ? showCap(load()) : 6;
       if (P.mode === 'show' && a === 'pick') {
         var have = (load().owned || {})[key] || 0, used = L.filter(function (q) { return q === key; }).length;
         if (used < have && L.length < MX) L.push(key);
         else if (used > 0) { for (var q = L.length - 1; q >= 0; q--) if (L[q] === key) L.splice(q, 1); }
-        else { ov.querySelector('#wkTxMsg').textContent = 'В витрине помещается три карточки'; return; }
+        else { ov.querySelector('#wkTxMsg').textContent = 'В витрине помещается ' + cardsWord(showCap(load())); return; }
         var y0 = ov.querySelector('#wkTxPool').scrollTop; compPaint(); var np0 = ov.querySelector('#wkTxPool'); if (np0) np0.scrollTop = y0; return;
       }
-      if (i >= 0) L.splice(i, 1); else if (L.length < MX) L.push(key); else { ov.querySelector('#wkTxMsg').textContent = P.mode === 'show' ? 'В витрине помещается три карточки' : P.mode === 'gift' ? 'За раз можно подарить до 6 карточек' : 'Не больше 6 карточек с каждой стороны'; return; }
+      if (i >= 0) L.splice(i, 1); else if (L.length < MX) L.push(key); else { ov.querySelector('#wkTxMsg').textContent = P.mode === 'show' ? 'В витрине помещается ' + cardsWord(showCap(load())) : P.mode === 'gift' ? 'За раз можно подарить до 6 карточек' : 'Не больше 6 карточек с каждой стороны'; return; }
       var y = ov.querySelector('#wkTxPool').scrollTop; compPaint(); var np = ov.querySelector('#wkTxPool'); if (np) np.scrollTop = y; return;
     }
-    if (a === 'saveshow') { var s3 = load(); if (!s3.__fake) { var cn = {}; s3.show = P.give.filter(function (q) { cn[q] = (cn[q] || 0) + 1; return cn[q] <= (s3.owned[q] || 0); }).slice(0, 3); save(s3); } var pn = P.pane; compClose(); if (pn && pn.isConnected) renderDeck(pn); return; }
+    if (a === 'saveshow') { var s3 = load(); if (!s3.__fake) { var cn = {}; s3.show = P.give.filter(function (q) { cn[q] = (cn[q] || 0) + 1; return cn[q] <= (s3.owned[q] || 0); }).slice(0, showCap(s3)); save(s3); } var pn = P.pane; compClose(); if (pn && pn.isConnected) renderDeck(pn); return; }
     if (a === 'send') {
       var api = txApi(), msg = ov.querySelector('#wkTxMsg'); if (!api) { msg.textContent = 'Нет связи с облаком'; return; }
       b.disabled = true; msg.textContent = 'Отправляю…';
@@ -42289,14 +42425,14 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   function txPaneClick(pane, e) {
     var b = e.target.closest && e.target.closest('[data-tx]'); if (!b || b.disabled || !pane.contains(b)) return false;
     var a = b.getAttribute('data-tx');
-    if (a === 'tab') { DK.tab = b.getAttribute('data-t'); if (DK.tab === 'feed') { DK.feedSeen0 = load().feedSeen || 0; markFeed(); feedLoad(pane, true); } if (DK.tab === 'trade' || DK.tab === 'people') refreshTrades(pane, DK.tab === 'trade'); renderDeck(pane); return true; }
+    if (a === 'tab') { DK.tab = b.getAttribute('data-t'); if (DK.tab === 'feed') { DK.feedSeen0 = load().feedSeen || 0; markFeed(); feedLoad(pane, true); } if (DK.tab === 'trade' || DK.tab === 'people') refreshTrades(pane, DK.tab === 'trade'); if (DK.tab === 'shop') refreshMarket(pane, true); renderDeck(pane); return true; }
     if (a === 'craft') { var ci = Number(b.getAttribute('data-i')); TX.last = null; doCraft(ci); if (!TX.last) return true; b.disabled = true; craftAnim(RECIPE[ci], TX.last, function () { var bd = pane.querySelector('#wkTxBody'); if (bd) { bd.innerHTML = craftHTML(allCards(), load()); var r0 = bd.querySelector('.wk-tx-res'); if (r0) { r0.classList.add('pop'); if (r0.scrollIntoView) r0.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } } }); return true; }
     if (a === 'reload') { refreshTrades(pane, true); return true; }
     if (a === 'feedreload') { feedLoad(pane, true); return true; }
     if (a === 'gift') { compOpen(pane, 'gift'); return true; }
     if (a === 'compose') { compOpen(pane); return true; }
     if (a === 'showedit') { compOpen(pane, 'show'); return true; }
-    if (a === 'sellall' || a === 'sell1' || a === 'buy' || a === 'hold' || a === 'unhold') { shopClick(pane, a, b); return true; }
+    if (a === 'sellall' || a === 'sell1' || a === 'buy' || a === 'mklist' || a === 'mkbuy' || a === 'mkcancel' || a === 'buyup' || a === 'buy2' || a === 'pickup' || a === 'cosbuy' || a === 'cossel' || a === 'giftpack' || a === 'hold' || a === 'unhold') { shopClick(pane, a, b); return true; }
     if (a === 'accept' || a === 'decline' || a === 'cancel') { if (a !== 'accept' || (TX.trades.filter(function (x) { return x.id === b.getAttribute('data-id'); })[0] || {}).gift || window.confirm('Принять обмен? Карточки сразу перейдут.')) txAction(pane, a, b.getAttribute('data-id'), b); return true; }
     return false;
   }
@@ -42309,6 +42445,13 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     { id: 'normal', name: 'Каравелла', price: 18000, what: '7 карточек с обычными шансами', note: 'Легенда 4%, эпик 10%, редкая 24%, обычная 62%. Хотя бы одна редкая или лучше.', opt: { shop: true } },
     { id: 'boost', name: 'Галеон', price: 44000, what: '7 карточек с повышенными шансами', note: 'Легенда 10%, эпик 25%, редкая 40%, обычная 25%. Хотя бы один эпик или лучше.', opt: { shop: true, prob: { legendary: 0.10, epic: 0.25, rare: 0.40 }, minEpic: true } }
   ];
+  var SHOW_UP = [
+    { cap: 5, price: 60000, name: 'Витрина на 5', note: 'Полка шире: на ней помещается пять карточек вместо трёх.' },
+    { cap: 7, price: 150000, name: 'Витрина на 7', note: 'Самая большая полка на семь карточек. Нужна витрина на 5.' }
+  ];
+  function showCap(st) { var c = +(st && st.showCap) || 3; return c >= 7 ? 7 : c >= 5 ? 5 : 3; }
+  function cardsWord(n) { return n + (n === 1 ? ' карточка' : n < 5 ? ' карточки' : ' карточек'); }
+  function shelfSVG(n) { var w = (84 - (n - 1) * 3) / n, r = ''; for (var i = 0; i < n; i++) r += '<rect x="' + (6 + i * (w + 3)).toFixed(1) + '" y="' + (52 + (i % 2 ? 0 : 6)) + '" width="' + w.toFixed(1) + '" height="' + (w * 1.4).toFixed(1) + '" rx="2" fill="#c9a24a" opacity="' + (i % 2 ? .75 : .95) + '"/>'; return '<svg viewBox="0 0 96 136" aria-hidden="true">' + r + '<rect x="2" y="96" width="92" height="9" rx="2" fill="#7a5230"/><rect x="2" y="96" width="92" height="2" fill="#c08a52"/></svg>'; }
   function fmtB(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0') + '\u00a0белли'; }
   function sellVal(k) { return k.v ? SELL['var'] : SELL[k.r]; }
   function sellable(C, st) {
@@ -42318,6 +42461,115 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       var k = cardByKey(C, key); if (k) out.push({ k: k, n: n });
     });
     return out;
+  }
+  var SHOP2 = [
+    { id: 'sand', ico: '⌛', name: 'Песочные часы', price: 8000, what: 'Сбрасывает таймер набора', note: 'Бесплатный набор можно открыть прямо сейчас, не дожидаясь часа.' },
+    { id: 'compass', ico: '🧭', name: 'Компас Лог Поза', price: 25000, what: 'Набор с картой из выбранной арки', note: '7 карточек с обычными шансами и хотя бы одна из выбранной арки. Новые карты арки в приоритете.', arc: true, opt: { shop: true } },
+    { id: 'map', ico: '🗺️', name: 'Карта сокровищ', price: 30000, what: 'Набор из карт, которых у тебя ещё нет', note: '7 карточек с обычными шансами, но сначала только новые. Повторки попадаются, только когда новых не осталось.', opt: { shop: true, onlyNew: true, neww: 40 } },
+    { id: 'fake', ico: '🎭', name: 'Поддельная награда', price: 70000, what: 'Повышенный шанс особой версии', note: 'В следующем бесплатном наборе шанс превратить повторку в особую версию втрое выше: эпик 75%, легенда 95%.' },
+    { id: 'key', ico: '🗝️', name: 'Ключ от сундука', price: 55000, what: 'Эпик на выбор из трёх', note: 'Три случайных эпика, забираешь любой один. Новые карты в приоритете.' },
+    { id: 'warrant', ico: '📜', name: 'Ордер на легенду', price: 180000, what: 'Легенда на выбор из трёх', note: 'До трёх легенд, которых у тебя ещё нет. Забираешь одну.' }
+  ];
+  var FRAMES = [{ id: 'gold', n: 'Золотая рамка', price: 15000 }, { id: 'wood', n: 'Деревянная рамка', price: 15000 }, { id: 'foam', n: 'Морская пена', price: 15000 }];
+  var BGS = [{ id: 'deck', n: 'Палуба', price: 20000 }, { id: 'map', n: 'Карта мира', price: 20000 }, { id: 'night', n: 'Ночное море', price: 20000 }];
+  function dayKey(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  function track(st, kind, n) {
+    var m = kind === 'sold' ? 'sld' : 'spd', k = dayKey(new Date()); st[m] = st[m] || {}; st[m][k] = (st[m][k] || 0) + n;
+    Object.keys(st[m]).sort().slice(0, -30).forEach(function (q) { delete st[m][q]; });
+    if (kind === 'spend' && n > (st.maxBuy || 0)) st.maxBuy = n;
+  }
+  function arcKeyOf(k) { var a = k.arc || {}; return a.id || (a.name ? 'n:' + a.name : '_'); }
+  function pickHTML(C, st) {
+    if (!st.pick || !st.pick.o) return '';
+    return '<div class="wk-pick-box"><h3 class="wk-dk-h">' + (st.pick.t === 'warrant' ? 'Ордер предъявлен: выбери легенду' : 'Сундук открыт: выбери эпик') + '</h3><div class="wk-pick">' + st.pick.o.map(function (key, i) {
+      var k = cardByKey(C, key); if (!k) return '';
+      return '<div class="wk-pick-c"><div class="wk-dk-slot has r-' + k.r + '">' + cardHTML(k) + '<em class="wk-dk-new' + (st.owned[key] ? ' dup' : '') + '">' + (st.owned[key] ? 'повтор' : 'НОВАЯ') + '</em></div><button type="button" class="wk-tx-btn pri" data-tx="pickup" data-i="' + i + '">Забрать</button></div>';
+    }).join('') + '</div></div>';
+  }
+  function extrasHTML(C, st, bel) {
+    var pages = alPages(C), arcSel = '';
+    var first = ''; pages.forEach(function (pg) { var h = pg.cards.filter(function (k) { return st.owned[k.key]; }).length; if (!first && h < pg.cards.length) first = pg.id; });
+    var cur = DK.shArc && pages.some(function (pg) { return pg.id === DK.shArc; }) ? DK.shArc : first || (pages[0] && pages[0].id) || '';
+    arcSel = '<select id="wkShArc" class="wk-sh-sel" aria-label="Арка для компаса">' + pages.map(function (pg) { var h = pg.cards.filter(function (k) { return st.owned[k.key]; }).length; return '<option value="' + esc(pg.id) + '"' + (pg.id === cur ? ' selected' : '') + '>' + esc(pg.name) + ' — ' + h + '/' + pg.cards.length + '</option>'; }).join('') + '</select>';
+    var left = leftMs(st);
+    var items = SHOP2.map(function (u) {
+      var why = '', can = bel >= u.price;
+      if (u.id === 'sand' && left <= 0) { why = 'Набор уже доступен'; can = false; }
+      if (u.id === 'fake' && st.vBoost) { why = 'Уже активна'; can = false; }
+      if (u.id === 'warrant' && !C.some(function (k) { return k.r === 'legendary' && !st.owned[k.key]; })) { why = 'Все легенды у тебя есть'; can = false; }
+      if (st.pick && (u.id === 'key' || u.id === 'warrant')) { why = 'Сначала забери выбор'; can = false; }
+      return '<article class="wk-sh-pk p-x p-' + u.id + '"><div class="wk-sh-art wk-sh-ico" aria-hidden="true">' + u.ico + '</div><div class="wk-sh-info"><h4>' + u.name + '</h4><p class="wk-sh-what">' + u.what + '</p><p class="wk-sh-note">' + u.note + '</p>' + (u.arc ? arcSel : '') + '</div><button type="button" class="wk-tx-btn' + (can ? ' pri' : '') + '" data-tx="buy2" data-u2="' + u.id + '"' + (can ? '' : ' disabled') + '>' + (why || (can ? 'Купить · ' + fmtB(u.price) : 'Нужно ' + fmtB(u.price - bel))) + '</button></article>';
+    }).join('');
+    var acc = (window.__wikiAccounts || []).filter(function (a) { return a.login !== myLogin(); });
+    var gift = '<article class="wk-sh-pk p-x p-gift"><div class="wk-sh-art wk-sh-ico" aria-hidden="true">🎁</div><div class="wk-sh-info"><h4>Подарочный набор</h4><p class="wk-sh-what">Набор в подарок другому участнику</p><p class="wk-sh-note">Цена набора плюс 10%. Карточки придут, когда получатель примет подарок. Если откажется, белли вернутся.</p>' +
+      (acc.length ? '<select id="wkGfTo" class="wk-sh-sel" aria-label="Кому">' + acc.map(function (a) { return '<option value="' + esc(a.login) + '">' + esc(a.name || a.login) + '</option>'; }).join('') + '</select><select id="wkGfPk" class="wk-sh-sel" aria-label="Какой набор">' + SHOP.map(function (q) { return '<option value="' + q.id + '">' + q.name + ' · ' + fmtB(Math.round(q.price * 1.1 / 100) * 100) + '</option>'; }).join('') + '</select>' : '<p class="wk-sh-note">Нужен вход в облако и другие участники.</p>') +
+      '</div><button type="button" class="wk-tx-btn pri" data-tx="giftpack"' + (acc.length ? '' : ' disabled') + '>Подарить</button></article>';
+    var cos = st.cos || {};
+    var cosRow = function (kind, list, pref) {
+      return list.map(function (c) {
+        var own = !!cos[pref + c.id], on = st[kind] === c.id;
+        return '<article class="wk-sh-pk p-x p-cos"><div class="wk-sh-art wk-sh-sw ' + pref + '-' + c.id + '" aria-hidden="true"></div><div class="wk-sh-info"><h4>' + c.n + '</h4></div>' +
+          (own ? '<button type="button" class="wk-tx-btn' + (on ? '' : ' pri') + '" data-tx="cossel" data-kind="' + kind + '" data-id="' + c.id + '">' + (on ? 'Снять' : 'Выбрать') + '</button>' : '<button type="button" class="wk-tx-btn' + (bel >= c.price ? ' pri' : '') + '" data-tx="cosbuy" data-c="' + pref + c.id + '"' + (bel >= c.price ? '' : ' disabled') + '>' + (bel >= c.price ? 'Купить · ' + fmtB(c.price) : 'Нужно ' + fmtB(c.price - bel)) + '</button>') + '</article>';
+      }).join('');
+    };
+    return '<h3 class="wk-dk-h">Лавка Лог Поза</h3><div class="wk-sh-pks">' + items + '</div><h3 class="wk-dk-h">Подарки</h3><div class="wk-sh-pks">' + gift + '</div>' +
+      '<h3 class="wk-dk-h">Оформление витрины и альбома</h3><p class="wk-sh-hint">Рамки видны на карточках в витрине и в альбоме, фон только в витрине. Покупаются один раз, выбрать или снять можно в любой момент. Другие участники видят твоё оформление.</p><div class="wk-sh-pks">' + cosRow('frame', FRAMES, 'f_') + cosRow('bg', BGS, 'b_') + '</div>';
+  }
+  function shopStatsHTML(st) {
+    var days = [], now = new Date(), i, mx = 1;
+    for (i = 13; i >= 0; i--) { var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i), k = dayKey(d), r = { d: d.getDate(), s: (st.sld || {})[k] || 0, p: (st.spd || {})[k] || 0 }; mx = Math.max(mx, r.s, r.p); days.push(r); }
+    var bars = days.map(function (r, j) {
+      var x = 6 + j * 23.5, hs = r.s / mx * 84, hp = r.p / mx * 84;
+      return '<rect x="' + x.toFixed(1) + '" y="' + (100 - hs).toFixed(1) + '" width="9" height="' + hs.toFixed(1) + '" rx="1.5" fill="#4ade80"><title>' + r.d + ': заработано ' + fmtB(r.s) + '</title></rect><rect x="' + (x + 10).toFixed(1) + '" y="' + (100 - hp).toFixed(1) + '" width="9" height="' + hp.toFixed(1) + '" rx="1.5" fill="#f2b23a"><title>' + r.d + ': потрачено ' + fmtB(r.p) + '</title></rect><text x="' + (x + 9.5).toFixed(1) + '" y="113" text-anchor="middle" font-size="8" fill="#8f9bad">' + r.d + '</text>';
+    }).join('');
+    var rows = [['Заработано продажами', fmtB(st.sold || 0)], ['Потрачено в лавке', fmtB(st.spent || 0)], ['Покупок в лавке', String(st.bought || 0)], ['Открыто наборов', String(st.packs || 0)], ['Самая дорогая покупка', st.maxBuy ? fmtB(st.maxBuy) : '—'], ['Сейчас на счёте', fmtB(st.belli || 0)]];
+    return '<h3 class="wk-dk-h">Итоги лавки</h3><div class="wk-sh-stats"><table class="wk-sh-tb"><tbody>' + rows.map(function (r) { return '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>'; }).join('') + '</tbody></table>' +
+      '<figure class="wk-sh-chart"><figcaption><i style="background:#4ade80"></i>Заработано <i style="background:#f2b23a"></i>Потрачено · последние 14 дней</figcaption><svg viewBox="0 0 336 118" role="img" aria-label="График доходов и расходов по дням"><line x1="0" y1="100.5" x2="336" y2="100.5" stroke="rgba(148,163,184,.3)"/>' + bars + '</svg></figure></div><p class="wk-sh-hint">График и самая дорогая покупка считаются с момента этого обновления.</p>';
+  }
+  function mkApi() { var a = window.__wkMarket; return a && a.enabled && a.enabled() && myLogin() ? a : null; }
+  function mkLive(l) { return l.status === 'open' && l.expiresMs > Date.now(); }
+  function leftTxt(ms) { var m = Math.max(0, Math.floor(ms / 60000)), d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60); return d ? d + ' д ' + h + ' ч' : h ? h + ' ч ' + (m % 60) + ' мин' : (m % 60) + ' мин'; }
+  function refreshMarket(pane, force) {
+    var api = mkApi(); if (!api || MK.loading) return;
+    if (!force && Date.now() - MK.at < 60000) return;
+    MK.loading = true;
+    api.list().then(function (l) { MK.list = l; MK.at = Date.now(); MK.err = ''; }, function (e) { MK.err = (e && e.code) === 'permission-denied' ? 'rules' : 'net'; })
+      .then(function () {
+        MK.loading = false; mkApplySold(api);
+        var me = myLogin(); MK.list.forEach(function (l) { if (l.seller === me && l.status === 'open' && l.expiresMs <= Date.now() - 86400000) api.remove(l.id).catch(function () {}); });
+        if (pane && pane.isConnected && DK.tab === 'shop') { var bd = pane.querySelector('#wkTxBody'); if (bd && !DK.pack) bd.innerHTML = shopHTML(allCards(), load()); }
+      });
+  }
+  function mkApplySold(api) {
+    var me = myLogin(), st = load(); if (st.__fake) return;
+    st.mk = st.mk || {}; var got = [], C = allCards();
+    MK.list.forEach(function (l) {
+      if (l.seller !== me || l.status !== 'sold' || st.mk[l.id]) return;
+      if (st.owned[l.key]) addCard(st, l.key, -1);
+      var cr = Math.floor((+l.price || 0) * 0.95); st.belli = (st.belli || 0) + cr; st.sold = (st.sold || 0) + cr; track(st, 'sold', cr); st.mk[l.id] = 1; got.push({ l: l, cr: cr });
+    });
+    if (!got.length) return;
+    save(st);
+    got.forEach(function (g) { api.remove(g.l.id).catch(function () {}); g.l.status = 'done'; });
+    txToast(got.map(function (g) { var k = cardByKey(C, g.l.key); return esc(g.l.buyerName || accName(g.l.buyer)) + ' купил(а) «' + esc(cName(k)) + '» за ' + fmtB(g.l.price) + ', тебе ' + fmtB(g.cr); }).join('<br>'));
+  }
+  function auctionHTML(C, st) {
+    var api = mkApi(), me = myLogin();
+    var head = '<h3 class="wk-dk-h">Аукцион</h3>';
+    if (!api) return head + '<p class="wk-dk-fnote">Аукцион работает через облако: войди под своим именем.</p>';
+    if (MK.err === 'rules') return head + '<p class="wk-dk-fnote">Облако не пускает к аукциону: нужно обновить правила Firebase.</p>';
+    var live = MK.list.filter(mkLive).sort(function (a, b) { return String(b.createdAt).localeCompare(String(a.createdAt)); });
+    var res = reservedMap(st), opts = [];
+    Object.keys(st.owned).forEach(function (key) { var k = cardByKey(C, key); if (k && freeCnt(st, key, res) >= 1) opts.push(k); });
+    opts.sort(function (a, b) { return RORD.indexOf(a.r) - RORD.indexOf(b.r) || cName(a).localeCompare(cName(b), 'ru'); });
+    var form = '<div class="wk-mk-form"><select id="wkMkCard" class="wk-sh-sel" aria-label="Какую карточку продать">' + (opts.length ? opts.map(function (k) { return '<option value="' + esc(k.key) + '">' + esc(cName(k)) + ' · ' + (k.v ? VAR[k.v].n : RN4[k.r]) + ' (свободно ×' + freeCnt(st, k.key, res) + ')</option>'; }).join('') : '<option value="">нет свободных карточек</option>') + '</select>' +
+      '<input id="wkMkPrice" class="wk-sh-sel" type="number" min="100" max="10000000" step="100" inputmode="numeric" placeholder="Цена в белли"><button type="button" class="wk-tx-btn pri" data-tx="mklist"' + (opts.length ? '' : ' disabled') + '>Выставить на 3 дня</button></div>';
+    var rows = live.length ? live.map(function (l) {
+      var k = cardByKey(C, l.key), mine = l.seller === me, can = (st.belli || 0) >= l.price;
+      return '<article class="wk-mk-lot' + (mine ? ' mine' : '') + '"><div class="wk-mk-card">' + miniHTML(C, l.key) + '</div><div class="wk-mk-info"><b>' + esc(cName(k)) + (k && k.v ? ' · ' + VAR[k.v].n : '') + '</b><small>' + (k ? RN4[k.r] : '') + ' · продавец: ' + esc(mine ? 'ты' : (l.sellerName || accName(l.seller))) + '</small><small>осталось ' + leftTxt(l.expiresMs - Date.now()) + '</small></div><div class="wk-mk-buy"><strong>' + fmtB(l.price) + '</strong>' +
+        (mine ? '<button type="button" class="wk-tx-btn" data-tx="mkcancel" data-id="' + esc(l.id) + '">Снять</button>' : '<button type="button" class="wk-tx-btn' + (can ? ' pri' : '') + '" data-tx="mkbuy" data-id="' + esc(l.id) + '"' + (can ? '' : ' disabled') + '>' + (can ? 'Купить' : 'Не хватает белли') + '</button>') + '</div></article>';
+    }).join('') : '<p class="wk-dk-fnote">' + (MK.at ? 'Лотов пока нет. Выстави первую карточку.' : 'Загружаю лоты…') + '</p>';
+    return head + '<p class="wk-sh-hint">Выставь свободную карточку за свою цену, лот висит 3 дня. Если её купят, ты получишь цену минус 5% комиссии. Пока лот висит, карточка заперта и недоступна для обмена и продажи.</p>' + form + '<div class="wk-mk-list">' + rows + '</div>';
   }
   function shopHTML(C, st) {
     if (st.__fake) return '<p class="wk-dk-fnote">Выключи «Заполнить все» в админской плашке: магазин работает только с настоящей колодой.</p>';
@@ -42341,10 +42593,15 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       var k = x.k, cap = Math.max(0, (st.owned[k.key] || 0) - 1);
       return '<div class="wk-sh-it"><span class="wk-tx-dot' + (k.v ? ' rb' : '') + '" style="background:' + RC[k.r] + '"></span><span class="wk-sh-nm">' + esc(cName(k)) + (k.v ? ' · ' + VAR[k.v].n : '') + '<small>' + esc(k.sub || (k.arc && k.arc.name) || '') + '</small></span><span class="wk-sh-c">в брони ×' + x.n + '</span><button type="button" class="wk-tx-btn" data-tx="unhold" data-key="' + esc(k.key) + '">Снять</button>' + (x.n < cap ? '<button type="button" class="wk-tx-btn" data-tx="hold" data-key="' + esc(k.key) + '">+1</button>' : '') + '</div>';
     }).join('') + '</div>' : '';
+    var curCap = showCap(st), ups = SHOW_UP.map(function (u) {
+      var own = curCap >= u.cap, lock = !own && u.cap === 7 && curCap < 5, can = !own && !lock && bel >= u.price;
+      return '<article class="wk-sh-pk p-up"><div class="wk-sh-art wk-sh-upart">' + shelfSVG(u.cap) + '</div><div class="wk-sh-info"><h4>' + u.name + '</h4><p class="wk-sh-what">Витрина: до ' + cardsWord(u.cap) + '</p><p class="wk-sh-note">' + u.note + '</p></div><button type="button" class="wk-tx-btn' + (can ? ' pri' : '') + '" data-tx="buyup" data-u="' + u.cap + '"' + (can ? '' : ' disabled') + '>' + (own ? 'Куплено' : lock ? 'Сначала витрина на 5' : can ? 'Купить · ' + fmtB(u.price) : 'Нужно ' + fmtB(u.price - bel)) + '</button></article>';
+    }).join('');
     return '<div class="wk-sh-bal"><span>Твой кошелёк</span><b><span class="wk-sh-num">' + String(Math.round(bel)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0') + '</span><small> белли</small></b></div>' +
-      '<h3 class="wk-dk-h">Купить набор</h3><div class="wk-sh-pks">' + packs + '</div>' +
+      pickHTML(C, st) + '<h3 class="wk-dk-h">Купить набор</h3><div class="wk-sh-pks">' + packs + '</div>' +
+      '<h3 class="wk-dk-h">Расширения витрины</h3><div class="wk-sh-pks">' + ups + '</div><p class="wk-sh-hint">Покупается один раз и навсегда. Другие участники тоже увидят все твои слоты.</p>' + extrasHTML(C, st, bel) + auctionHTML(C, st) +
       '<p class="wk-sh-hint">Купленные наборы не ждут таймера, не сдвигают гарантию легенды и не превращают повторки в особые версии. Цена набора равна средней стоимости карточек в нём.</p>' +
-      '<h3 class="wk-dk-h">Продать повторки</h3><p class="wk-sh-hint">Продаются только лишние копии: последняя копия каждой карточки и карточки в ожидающих обменах остаются.</p><div class="wk-sh-srs">' + rows + '</div>' + detail + holdBox;
+      '<h3 class="wk-dk-h">Продать повторки</h3><p class="wk-sh-hint">Продаются только лишние копии: последняя копия каждой карточки и карточки в ожидающих обменах остаются.</p><div class="wk-sh-srs">' + rows + '</div>' + detail + holdBox + shopStatsHTML(st);
   }
   function belliAnim(pane, from) {
     var bal = pane.querySelector('.wk-sh-bal'), el = bal && bal.querySelector('.wk-sh-num'); if (!el) return;
@@ -42359,7 +42616,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     el.textContent = f(from);
     (function st(t) { var p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3); el.textContent = f(from + d * e); if (p < 1 && el.isConnected) requestAnimationFrame(st); })(t0);
   }
-  function sellKeys(st, pairs) { var got = 0; pairs.forEach(function (x) { if (x.n > 0) { addCard(st, x.k.key, -x.n); got += x.n * sellVal(x.k); } }); st.belli = (st.belli || 0) + got; st.sold = (st.sold || 0) + got; return got; }
+  function sellKeys(st, pairs) { var got = 0; pairs.forEach(function (x) { if (x.n > 0) { addCard(st, x.k.key, -x.n); got += x.n * sellVal(x.k); } }); st.belli = (st.belli || 0) + got; st.sold = (st.sold || 0) + got; if (got) track(st, 'sold', got); return got; }
   function shopClick(pane, a, b) {
     var C = allCards(), st = load(); if (st.__fake) return;
     var body = pane.querySelector('#wkTxBody'), repaint = function () { if (body) body.innerHTML = shopHTML(allCards(), load()); };
@@ -42379,10 +42636,90 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       var key = b.getAttribute('data-key'), x = sellable(C, st).filter(function (y) { return y.k.key === key; })[0]; if (!x) return;
       var b1 = st.belli || 0; sellKeys(st, [{ k: x.k, n: 1 }]); save(st); var y0 = window.scrollY; repaint(); belliAnim(pane, b1); var dt = pane.querySelector('.wk-sh-det'); if (dt) dt.open = true; window.scrollTo(0, y0); return;
     }
+    if (a === 'buy2') {
+      var u2 = SHOP2.filter(function (q) { return q.id === b.getAttribute('data-u2'); })[0]; if (!u2 || (st.belli || 0) < u2.price) return;
+      var arcSel = pane.querySelector('#wkShArc'), arcId = arcSel ? arcSel.value : ''; if (arcId) DK.shArc = arcId;
+      if (u2.id === 'sand' && leftMs(st) <= 0) return;
+      if (u2.id === 'fake' && st.vBoost) return;
+      if (u2.arc && !arcId) return;
+      var pickKeys = null;
+      if (u2.id === 'key' || u2.id === 'warrant') {
+        if (st.pick) return;
+        var rar = u2.id === 'key' ? 'epic' : 'legendary', pool = C.filter(function (k) { return k.r === rar && (rar === 'epic' || !st.owned[k.key]); });
+        pool.sort(function () { return Math.random() - .5; }); pool.sort(function (x, y) { return (st.owned[x.key] ? 1 : 0) - (st.owned[y.key] ? 1 : 0); });
+        pickKeys = pool.slice(0, 3).map(function (k) { return k.key; }); if (!pickKeys.length) return;
+      }
+      if (!pickKeys && u2.opt && DK.pack) finish(pane, true);
+      st = load(); st.belli -= u2.price; st.spent = (st.spent || 0) + u2.price; st.bought = (st.bought || 0) + 1; track(st, 'spend', u2.price);
+      if (u2.id === 'sand') { st.last = 0; save(st); try { if (window.__wkDeckCloud && window.__wkDeckCloud.push) window.__wkDeckCloud.push(); } catch (e) {} repaint(); txToast('Таймер сброшен: бесплатный набор можно открыть сейчас'); return; }
+      if (u2.id === 'fake') { st.vBoost = 1; save(st); repaint(); txToast('Поддельная награда активна: следующий бесплатный набор чаще даст особые версии'); return; }
+      if (pickKeys) { st.pick = { t: u2.id, o: pickKeys }; save(st); repaint(); return; }
+      var pk2 = drawPack(C, st, Object.assign({}, u2.opt, u2.arc ? { arcId: arcId } : {}));
+      DK.sealKind = 'normal'; applyPack(st, C, pk2, true);
+      DK.tab = 'me'; renderDeck(pane);
+      var row2 = pane.querySelector('.wk-wrp,.wk-dk-row'); if (row2 && row2.scrollIntoView) row2.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (a === 'pickup') {
+      var pk0 = st.pick, ky = pk0 && pk0.o[Number(b.getAttribute('data-i'))]; if (!ky) return;
+      var isN = !st.owned[ky], kk = cardByKey(C, ky); addCard(st, ky, 1); st.got = st.got || {}; st.got[ky] = Date.now();
+      if (kk && kk.r === 'legendary') logEv(st, 'leg', ky, 'shop');
+      delete st.pick; save(st); repaint(); txToast('Получена карточка: ' + esc(cName(kk)) + (isN ? ' (новая)' : ' (повтор)')); return;
+    }
+    if (a === 'cosbuy') {
+      var ck = b.getAttribute('data-c'), isF = ck.charAt(0) === 'f', cd = (isF ? FRAMES : BGS).filter(function (q) { return q.id === ck.slice(2); })[0];
+      if (!cd || (st.cos || {})[ck] || (st.belli || 0) < cd.price) return;
+      st.cos = st.cos || {}; st.cos[ck] = 1; st[isF ? 'frame' : 'bg'] = cd.id; st.belli -= cd.price; st.spent = (st.spent || 0) + cd.price; st.bought = (st.bought || 0) + 1; track(st, 'spend', cd.price);
+      save(st); repaint(); txToast('«' + cd.n + '» куплена и уже выбрана'); return;
+    }
+    if (a === 'cossel') {
+      var kd = b.getAttribute('data-kind') === 'bg' ? 'bg' : 'frame', cid = b.getAttribute('data-id');
+      if (!(st.cos || {})[(kd === 'frame' ? 'f_' : 'b_') + cid]) return;
+      st[kd] = st[kd] === cid ? '' : cid; save(st); repaint(); return;
+    }
+    if (a === 'giftpack') {
+      var api = txApi(); if (!api) { txToast('Нет связи с облаком'); return; }
+      var to = (pane.querySelector('#wkGfTo') || {}).value, gp = SHOP.filter(function (q) { return q.id === (pane.querySelector('#wkGfPk') || {}).value; })[0]; if (!to || !gp) return;
+      var cost = Math.round(gp.price * 1.1 / 100) * 100; if ((st.belli || 0) < cost) { txToast('Не хватает белли'); return; }
+      var keys = drawPack(C, { owned: {}, pity: 0, hold: {} }, gp.opt).map(function (x) { return x.key; }); b.disabled = true;
+      api.create({ to: to, give: keys, want: [], gift: true, pack: true, price: cost, note: 'Подарочный набор «' + gp.name + '»' }).then(function () {
+        var s5 = load(); s5.belli = Math.max(0, (s5.belli || 0) - cost); s5.spent = (s5.spent || 0) + cost; s5.bought = (s5.bought || 0) + 1; track(s5, 'spend', cost); save(s5); repaint();
+        txToast('Набор отправлен: ' + esc(accName(to))); refreshTrades(pane, true);
+      }, function (er) { b.disabled = false; txToast((er && er.code) === 'permission-denied' ? 'Облако не пускает: нужно обновить правила Firebase' : 'Не отправилось, попробуй ещё раз'); });
+      return;
+    }
+    if (a === 'mklist') {
+      var mapi = mkApi(); if (!mapi) { txToast('Нет связи с облаком'); return; }
+      var mkey = (pane.querySelector('#wkMkCard') || {}).value, mprice = Math.round(Number((pane.querySelector('#wkMkPrice') || {}).value) || 0), mme = myLogin();
+      if (!mkey) return; if (mprice < 100 || mprice > 10000000) { txToast('Цена: от 100 до 10 000 000 белли'); return; }
+      if (freeCnt(st, mkey, reservedMap(st)) < 1) { txToast('Свободной копии нет'); return; }
+      if (MK.list.filter(function (l) { return l.seller === mme && mkLive(l); }).length >= 5) { txToast('Не больше 5 активных лотов'); return; }
+      b.disabled = true;
+      mapi.create({ key: mkey, price: mprice }).then(function () { txToast('Лот выставлен'); refreshMarket(pane, true); }, function (er) { b.disabled = false; txToast((er && er.code) === 'permission-denied' ? 'Облако не пускает: нужно обновить правила Firebase' : 'Не получилось, попробуй ещё раз'); });
+      return;
+    }
+    if (a === 'mkcancel') { var capi = mkApi(); if (!capi) return; b.disabled = true; capi.remove(b.getAttribute('data-id')).then(function () { refreshMarket(pane, true); }, function () { b.disabled = false; txToast('Не получилось снять лот'); }); return; }
+    if (a === 'mkbuy') {
+      var bapi = mkApi(), lid = b.getAttribute('data-id'), lot = MK.list.filter(function (q) { return q.id === lid; })[0]; if (!bapi || !lot || !mkLive(lot) || lot.seller === myLogin()) return;
+      if ((st.belli || 0) < lot.price) { txToast('Не хватает белли'); return; }
+      b.disabled = true;
+      bapi.buy(lid).then(function () {
+        var s6 = load(); s6.belli = Math.max(0, (s6.belli || 0) - lot.price); s6.spent = (s6.spent || 0) + lot.price; s6.bought = (s6.bought || 0) + 1; track(s6, 'spend', lot.price);
+        addCard(s6, lot.key, 1); s6.got = s6.got || {}; s6.got[lot.key] = Date.now(); var lk = cardByKey(C, lot.key); if (lk && lk.r === 'legendary') logEv(s6, 'leg', lot.key, 'shop');
+        save(s6); lot.status = 'sold'; repaint(); txToast('Куплено: ' + esc(cName(lk)) + ' за ' + fmtB(lot.price));
+      }, function () { b.disabled = false; txToast('Лот уже купили или снят'); refreshMarket(pane, true); });
+      return;
+    }
+    if (a === 'buyup') {
+      var cap0 = Number(b.getAttribute('data-u')), u0 = SHOW_UP.filter(function (q) { return q.cap === cap0; })[0]; st = load();
+      if (!u0 || st.__fake || showCap(st) >= cap0 || (cap0 === 7 && showCap(st) < 5) || (st.belli || 0) < u0.price) return;
+      var b2 = st.belli || 0; st.belli -= u0.price; st.spent = (st.spent || 0) + u0.price; st.showCap = cap0; track(st, 'spend', u0.price); save(st); repaint(); belliAnim(pane, b2);
+      txToast('Витрина расширена: теперь до ' + cardsWord(cap0)); return;
+    }
     if (a === 'buy') {
       var p = SHOP.filter(function (q) { return q.id === b.getAttribute('data-p'); })[0]; if (!p || (st.belli || 0) < p.price) return;
       if (DK.pack) finish(pane, true);
-      st = load(); st.belli -= p.price; st.spent = (st.spent || 0) + p.price; st.bought = (st.bought || 0) + 1;
+      st = load(); st.belli -= p.price; st.spent = (st.spent || 0) + p.price; st.bought = (st.bought || 0) + 1; track(st, 'spend', p.price);
       var pk = drawPack(C, st, p.opt);
       DK.sealKind = p.id; applyPack(st, C, pk, true);
       DK.tab = 'me'; renderDeck(pane);
@@ -42394,28 +42731,29 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var gotL = false;
     pk.forEach(function (x) {
       var bk = cardByKey(C, x.key); if (bk && bk.r === 'legendary') gotL = true;
-      if (!shop && !x.isNew && bk && canVar(bk) && VCH[bk.r] && Math.random() < VCH[bk.r]) { var v = rollVar(), vk = x.key + '#' + v; x.v = v; x.vNew = !S.owned[vk]; S.owned[vk] = (S.owned[vk] || 0) + 1; }
+      if (!shop && !x.isNew && bk && canVar(bk) && VCH[bk.r] && Math.random() < Math.min(.95, VCH[bk.r] * (S.vBoost ? 3 : 1))) { var v = rollVar(), vk = x.key + '#' + v; x.v = v; x.vNew = !S.owned[vk]; S.owned[vk] = (S.owned[vk] || 0) + 1; }
       else S.owned[x.key] = (S.owned[x.key] || 0) + 1;
       if (bk && bk.r === 'legendary') logEv(S, 'leg', x.v ? x.key + '#' + x.v : x.key, shop ? 'shop' : 'pack');
     });
-    if (!shop) { S.pity = gotL ? 0 : (S.pity || 0) + 1; S.last = Date.now(); }
+    if (!shop) { S.pity = gotL ? 0 : (S.pity || 0) + 1; S.last = Date.now(); S.vBoost = 0; }
     S.packs++;
     var now = Date.now(); S.got = S.got || {}; pk.forEach(function (x) { S.got[x.v ? x.key + '#' + x.v : x.key] = now; });
     S.open = { pk: pk.map(function (x) { return { key: x.key, isNew: !!x.isNew, v: x.v || '', vNew: !!x.vNew }; }), fl: [], shop: !!shop }; save(S);
     DK.pack = pk; DK.flipped = 0; DK.sealed = DK.sealKind || 'free'; DK.sealKind = '';
   }
   /* ---- витрина ---- */
-  function showcaseHTML(C, keys, mine) {
-    keys = (keys || []).filter(function (k) { return cardByKey(C, k); }).slice(0, 3);
+  function showcaseHTML(C, keys, mine, cap, cos) {
+    cap = cap >= 7 ? 7 : cap >= 5 ? 5 : 3; cos = cos || {}; var cosCls = (['gold', 'wood', 'foam'].indexOf(cos.frame) >= 0 ? ' fr-' + cos.frame : '') + (['deck', 'map', 'night'].indexOf(cos.bg) >= 0 ? ' bg-' + cos.bg : '');
+    keys = (keys || []).filter(function (k) { return cardByKey(C, k); }).slice(0, cap);
     if (!mine && !keys.length) return '';
-    var slots = [0, 1, 2].map(function (i) {
+    var slots = (cap === 7 ? [0, 1, 2, 3, 4, 5, 6] : cap === 5 ? [0, 1, 2, 3, 4] : [0, 1, 2]).map(function (i) {
       var key = keys[i], k = key && cardByKey(C, key);
       if (k) return '<div class="wk-sc-s wk-sh3-it r-' + k.r + '"><div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + '</div><i class="wk-sh3-stand" aria-hidden="true"></i></div>';
       return mine ? '<button type="button" class="wk-sc-s wk-sc-e" data-tx="showedit" aria-label="Добавить карточку в витрину"><b>+</b><span>Добавить</span></button>' : '';
     }).join('');
-    return '<section class="wk-sc' + (mine ? ' mine' : '') + '"><div class="wk-sc-h"><h3 class="wk-dk-h">' + (mine ? 'Моя витрина' : 'Витрина') + '</h3>' + (mine ? '<button type="button" class="wk-tx-btn" data-tx="showedit">' + (keys.length ? 'Изменить' : 'Выбрать карточки') + '</button>' : '') + '</div>' +
-      (mine && !keys.length ? '<p class="wk-sh-hint">Выбери до трёх любимых карточек. Участники увидят их первыми, когда откроют твою колоду.</p>' : '') +
-      '<div class="wk-pane wk-sc-g wk-sh3"><div class="wk-sh3-wall"></div><div class="wk-dk-grid wk-sc-row">' + slots + '</div><div class="wk-sh3-plank" aria-hidden="true"></div></div></section>';
+    return '<section class="wk-sc' + (mine ? ' mine' : '') + cosCls + '"><div class="wk-sc-h"><h3 class="wk-dk-h">' + (mine ? 'Моя витрина' : 'Витрина') + '</h3>' + (mine ? '<button type="button" class="wk-tx-btn" data-tx="showedit">' + (keys.length ? 'Изменить' : 'Выбрать карточки') + '</button>' : '') + '</div>' +
+      (mine && !keys.length ? '<p class="wk-sh-hint">Выбери до ' + cap + ' любимых карточек. Участники увидят их первыми, когда откроют твою колоду.</p>' : '') +
+      '<div class="wk-pane wk-sc-g wk-sh3"><div class="wk-sh3-wall"></div><div class="wk-dk-grid wk-sc-row" data-n="' + cap + '">' + slots + '</div><div class="wk-sh3-plank" aria-hidden="true"></div></div></section>';
   }
   /* ---- катсцены ---- */
   var CS_TXT = { legendary: 'Легенда', holo: 'Голографическая', gold: 'Пламенная', neg: 'Негативная' };
@@ -42586,6 +42924,8 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       var mine = by[ml], loc = load(), ch = false; if (loc.__fake || !mine || !mine.deck) { end(false); return; }
       if ((mine.deck.packs || 0) > (loc.packs || 0)) {  loc.owned = mine.deck.owned || {}; loc.packs = mine.deck.packs || 0; loc.pity = mine.deck.pity || 0; loc.tr = Object.assign({}, mine.deck.tr || {}, loc.tr || {}); loc.got = Object.assign({}, mine.deck.got || {}, loc.got || {}); if (mine.deck.show && !(loc.show && loc.show.length)) loc.show = mine.deck.show; if (typeof mine.deck.belli === 'number') loc.belli = mine.deck.belli; loc.hold = Object.assign({}, mine.deck.hold || {}); if (mine.deck.ev && !(loc.ev && loc.ev.length)) loc.ev = mine.deck.ev; loc.ach = Object.assign({}, mine.deck.ach || {}, loc.ach || {});  ch = true;
         if (mine.deck.open && mine.deck.open.pk && !loc.open) loc.open = mine.deck.open; }
+      if (mine.deck.cos && Object.keys(mine.deck.cos).some(function (q) { return !(loc.cos || {})[q]; })) { loc.cos = Object.assign({}, mine.deck.cos, loc.cos || {}); if (!loc.frame && mine.deck.frame) loc.frame = mine.deck.frame; if (!loc.bg && mine.deck.bg) loc.bg = mine.deck.bg; ch = true; }
+      if ((mine.deck.showCap || 0) > (loc.showCap || 0)) { loc.showCap = mine.deck.showCap; ch = true; }
       if ((mine.deck.last || 0) > (loc.last || 0)) { loc.last = mine.deck.last; ch = true; }
       if (ch) save(loc);
       end(ch);
@@ -42594,9 +42934,10 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   function renderDeck(pane) {
     pane.classList.toggle('wk-dk-editing', !!(DK.editPrev && isDima()));
     var cards = allCards(), st = load(); migrate(st, cards);
+    try { if (mkApi() && !MK.loading && Date.now() - MK.at > 60000) refreshMarket(pane, false); } catch (e) {}
     if (!DK.pack && st.open && st.open.pk && st.open.pk.length) { DK.pack = st.open.pk; DK.flipped = (st.open.fl || []).length; DK.restored = 1; }
     pane.innerHTML = '<div class="wk-pane-head"><div><h2>Колода</h2><p>Карточки персонажей (по одной на каждое фото в арке), дьявольских плодов, полезных статей и плакатов розыска. Новые появляются по мере прохождения.</p></div><div class="wk-dk-hbtn"><button type="button" class="wk-dk-reset" data-act="rules" title="Правила и шансы">Правила</button><button type="button" class="wk-dk-reset" data-act="reset" title="Обнулить коллекцию">Сбросить</button></div></div>' +
-      tabsHTML() + (DK.tab === 'me' ? adminHTML() + '<div id="wkDkPack">' + packHTML(cards, st) + '</div>' + (st.__fake ? '' : showcaseHTML(cards, st.show, true)) + '<div id="wkDkStats">' + statsHTML(cards, st) + '</div><h3 class="wk-dk-h">Коллекция</h3><div id="wkDkColl">' + collHTML(cards, st) + '</div>' : '<div id="wkTxBody" class="wk-tx-body">' + (DK.tab === 'craft' ? craftHTML(cards, st) : DK.tab === 'shop' ? shopHTML(cards, st) : DK.tab === 'people' ? peopleHTML() : DK.tab === 'feed' ? feedHTML() : tradeHTML()) + '</div>');
+      tabsHTML() + (DK.tab === 'me' ? adminHTML() + '<div id="wkDkPack">' + packHTML(cards, st) + '</div>' + (st.__fake ? '' : showcaseHTML(cards, st.show, true, showCap(st), { frame: st.frame, bg: st.bg })) + '<div id="wkDkStats">' + statsHTML(cards, st) + '</div><h3 class="wk-dk-h">Коллекция</h3><div id="wkDkColl">' + collHTML(cards, st) + '</div>' : '<div id="wkTxBody" class="wk-tx-body">' + (DK.tab === 'craft' ? craftHTML(cards, st) : DK.tab === 'shop' ? shopHTML(cards, st) : DK.tab === 'people' ? peopleHTML() : DK.tab === 'feed' ? feedHTML() : tradeHTML()) + '</div>');
     if (DK.tab === 'me' && DK.pack && st.open && st.open.fl) st.open.fl.forEach(function (i) { var el = pane.querySelector('.wk-pk[data-i="' + i + '"]'); if (el) el.classList.add('on'); cvShow(pane, i); });
     if (DK.restored && DK.tab === 'me' && st.open) { var rn = pane.querySelector('#wkDkPack .wk-dk-row'); if (rn) rn.insertAdjacentHTML('beforebegin', '<p class="wk-dk-convnote">Набор не был досмотрен — карточки ждут тебя.</p>'); }
     refreshTrades(pane, false); feedLoad(pane, false);
@@ -42622,6 +42963,8 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       pane.addEventListener('click', function (e) {
         if (txPaneClick(pane, e)) return;
         var avw = e.target.closest && e.target.closest('[data-alview]'); if (avw) { DK.view = avw.getAttribute('data-alview'); try { localStorage.setItem('wkDeckView', DK.view); } catch (er) {} pane.querySelector('#wkDkColl').innerHTML = collHTML(allCards(), load()); return; }
+        var alf = e.target.closest && e.target.closest('[data-alflip]'); if (alf) { e.preventDefault(); alFlip(alf.closest('.wk-al-s'), alf.getAttribute('data-alflip')); return; }
+        var alfa = e.target.closest && e.target.closest('[data-alflipall]'); if (alfa) { e.preventDefault(); alFlipAll(pane); return; }
         var alp = e.target.closest && e.target.closest('[data-alp]'); if (alp) { if (!alp.disabled) alTurn(pane, Number(alp.getAttribute('data-alp'))); return; }
         var ft = e.target.closest && e.target.closest('[data-dkftog]'); if (ft) { DK.fopen = !DK.fopen; pane.querySelector('#wkDkColl').innerHTML = collHTML(allCards(), load()); return; }
         var sb = e.target.closest && e.target.closest('[data-dks]'); if (sb) { DK.sort = sb.getAttribute('data-dks'); DK.pg = 0; pane.querySelector('#wkDkColl').innerHTML = collHTML(allCards(), load()); return; }
@@ -43533,4 +43876,147 @@ html.ios-app .wk-cab-side{display:contents}
   }
   setTimeout(start, 2200);
 })();
-</script></body></html>
+</script><style id="wk-fix-2026-11-14">
+/* Голографическая рубашка: плавная радуга без резкого возврата и мягкий блик вместо широкой «стены» */
+.wk-pk.v-holo .wk-bkt{
+ background:linear-gradient(120deg,#ff5fa2 0%,#ffd86b 20%,#6bff9e 40%,#62c4ff 60%,#b58cff 80%,#ff5fa2 100%) 0 0/250% 250%!important;
+ animation:wkHoloDotsFix 14s ease-in-out infinite alternate!important}
+@keyframes wkHoloDotsFix{from{background-position:0% 0%}to{background-position:100% 100%}}
+.wk-pk.v-holo .wk-pk-bk::after{
+ background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.05) 44%,rgba(255,255,255,.18) 48%,rgba(255,255,255,.28) 50%,rgba(255,255,255,.18) 52%,rgba(255,255,255,.05) 56%,transparent 60%) 0 0/300% 100% no-repeat!important;
+ mix-blend-mode:overlay;animation:wkHoloSweepFix 5.5s ease-in-out infinite!important}
+@keyframes wkHoloSweepFix{0%{background-position:-10% 0}65%,100%{background-position:110% 0}}
+/* Уведомления: не вылезают за экран, текст переносится */
+.wk-toast-zone{box-sizing:border-box;max-width:calc(100vw - 24px)}
+.wk-toast{box-sizing:border-box;max-width:100%;flex-wrap:wrap;overflow-wrap:anywhere;line-height:1.35}
+.wk-toast button{flex:0 0 auto;margin-left:auto}
+@media (min-width:761px){.wk-toast-zone{width:max-content;max-width:min(560px,calc(100vw - 24px))}}
+@media (max-width:760px){
+ html .wk-toast-zone,html.ios-app .wk-toast-zone{left:12px!important;right:12px!important;width:auto!important;max-width:none!important;transform:none!important}
+ .wk-toast{width:100%}
+}
+/* Витрина на 5 и 7 карточек */
+html body .wk-sc .wk-sc-row[data-n="5"]{grid-template-columns:repeat(5,minmax(0,170px))!important}
+html body .wk-sc .wk-sc-row[data-n="7"]{grid-template-columns:repeat(4,minmax(0,170px))!important}
+@media (max-width:640px){html body .wk-sc .wk-sc-row[data-n="5"],html body .wk-sc .wk-sc-row[data-n="7"]{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+.wk-sh-upart{background:radial-gradient(90% 70% at 50% 40%,rgba(242,194,48,.14),transparent 70%),rgba(10,14,26,.6);border:1px solid rgba(242,194,48,.28)}
+.wk-sh-pk.p-up{border-color:rgba(242,194,48,.3)}
+/* Альбом: переворот карточек и источник неоткрытых */
+.wk-al-s.has{padding-bottom:0}
+.wk-al-fi{position:relative}
+.wk-al-fb{display:none;aspect-ratio:3/4.3;width:100%}
+.wk-al-fb .wk-dk-back{width:100%;height:100%;box-sizing:border-box;padding:8px 8px 10px;gap:4px;justify-content:flex-start}
+.wk-al-fb.r-rare .wk-dk-back{--c:#60a5fa;--c2:#1d4e8f;--bg1:#14264a;--glow:16px;--to:.65}
+.wk-al-fb.r-epic .wk-dk-back{--c:#c084fc;--c2:#6d33b5;--bg1:#221842;--glow:22px;--to:.8}
+.wk-al-fb.r-legendary .wk-dk-back{--c:#facc15;--c2:#a16207;--bg1:#2b2210;--glow:30px;--to:1}
+.wk-al-fb .wk-bkm{width:42%;margin-top:4px;flex:0 0 auto}
+.wk-al-bi{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;width:100%;min-width:0;color:#e8edf5}
+.wk-al-bi b{font-size:13px;line-height:1.2;color:#fff;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.wk-al-bi span{font-size:11px;line-height:1.25;color:rgba(232,237,245,.78);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:100%}
+.wk-al-bi em{font-style:normal;font-size:11px;font-weight:700;color:var(--c);margin-top:2px}
+.wk-al-s.flipped .wk-al-fb{display:block}
+.wk-al-s.flipped .wk-al-ff{display:none}
+.wk-al-s.fl-go .wk-al-fi{animation:wkAlFlip .44s ease-in-out}
+@keyframes wkAlFlip{0%{transform:perspective(700px) rotateY(0)}50%{transform:perspective(700px) rotateY(90deg)}100%{transform:perspective(700px) rotateY(0)}}
+.wk-al-flip{position:absolute;right:6px;bottom:6px;z-index:12;width:32px;height:32px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(8,11,16,.75);color:#f8fafc;font-size:16px;line-height:1;cursor:pointer;display:grid;place-items:center;opacity:.85}
+.wk-al-flip:hover,.wk-al-flip:focus-visible,.wk-al-s.flipped .wk-al-flip{opacity:1;border-color:rgba(216,180,90,.7)}
+@media (hover:none){.wk-al-flip{width:38px;height:38px}}
+.wk-al-flall{margin-left:auto;padding:6px 12px;border-radius:999px;border:1px solid rgba(216,180,90,.4);background:rgba(10,14,26,.6);color:#f3dc9a;font:inherit;font-size:12.5px;cursor:pointer}
+.wk-al-sil svg{width:36%}
+.wk-al-sil .wk-al-src{font-style:normal;font-size:10.5px;line-height:1.2;color:#a9b8cf;background:rgba(148,163,184,.12);padding:2px 8px;border-radius:999px;margin-top:5px;max-width:92%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+</style><style id="wk-ep-hint-css">.wk-ep-hint{display:block;margin-top:5px;font-size:12.5px;line-height:1.35;color:#e8a93a}</style>
+<script id="wk-ep-hint">
+/* Подсказка в редакторе: не указаны глава или эпизод (кроме фильмов) */
+(function () {
+  'use strict';
+  var PAIRS = [['chapter', 'episode'], ['appearance', 'episode'], ['appearance_chapter', 'appearance_episode'], ['chapters', 'episodes']];
+  var MANGA = { chapter: 1, appearance: 1, appearance_chapter: 1, chapters: 1 };
+  function F(k) { return document.getElementById('wikiField_' + k); }
+  function val(k) { var e = F(k); return e ? String(e.value || '').trim() : ''; }
+  function chk(k) { var e = F(k); return !!(e && e.checked); }
+  function isFilm() { return !!val('movie_id') || chk('movie') || val('saga') === 'Полнометражные фильмы'; }
+  function sync() {
+    var film = isFilm(), filler = chk('filler');
+    PAIRS.forEach(function (pr) {
+      pr.forEach(function (k) {
+        var el = F(k), host = el && el.parentElement; if (!el || !host || el.type === 'hidden') return;
+        var old = host.querySelector(':scope > .wk-ep-hint[data-wk-ep="' + k + '"]');
+        var need = !film && !val(k) && !(filler && MANGA[k]);
+        if (!need) { if (old) old.remove(); return; }
+        if (old) return;
+        var h = document.createElement('small'); h.className = 'wiki-editor-hint wk-ep-hint'; h.setAttribute('data-wk-ep', k); h.setAttribute('role', 'note');
+        h.textContent = (MANGA[k] ? 'Не указана глава манги. ' : 'Не указан эпизод аниме. ') + 'По главе и эпизоду определяются арка и сага. Если это фильм, отметь это в статье.';
+        host.appendChild(h);
+      });
+    });
+  }
+  var t = 0; function soon() { if (t) return; t = setTimeout(function () { t = 0; try { sync(); } catch (e) {} }, 120); }
+  document.addEventListener('input', soon, true); document.addEventListener('change', soon, true); document.addEventListener('click', soon, true);
+  try { new MutationObserver(function () { if (F('chapter') || F('episode') || F('appearance') || F('appearance_chapter') || F('chapters')) soon(); }).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
+})();
+</script><style id="wk-shop-extra-css">
+.wk-sh-ico{display:grid;place-items:center;font-size:44px;background:radial-gradient(90% 70% at 50% 40%,rgba(148,163,184,.16),transparent 70%),rgba(10,14,26,.6);border:1px solid rgba(148,163,184,.25)}
+.wk-sh-sel{width:100%;margin-top:6px;padding:8px 10px;border-radius:10px;border:1px solid rgba(148,163,184,.3);background:#0d1424;color:#e8edf5;font:inherit;font-size:13px;min-width:0}
+.wk-sh-sw{border:1px solid rgba(148,163,184,.3)}
+.wk-sh-sw.f_-gold{background:linear-gradient(135deg,#8a6a1c,#f6dc8a,#9b6b20)}
+.wk-sh-sw.f_-wood{background:linear-gradient(135deg,#4a2e17,#9a6a3c,#5a3a1d)}
+.wk-sh-sw.f_-foam{background:linear-gradient(135deg,#6ec3dc,#e9fbff,#7fd0e6)}
+.wk-sh-sw.b_-deck{background:repeating-linear-gradient(90deg,#6a4524 0 18px,#5a3a1d 18px 20px)}
+.wk-sh-sw.b_-map{background:radial-gradient(circle at 30% 40%,#d9c590,#a98d55)}
+.wk-sh-sw.b_-night{background:radial-gradient(circle at 70% 20%,#fff 0 1px,transparent 2px),linear-gradient(180deg,#0a1230,#16305a)}
+.wk-pick{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:14px;margin:10px 0 18px}
+.wk-pick-c{display:flex;flex-direction:column;gap:8px}
+.wk-pick-c .wk-dk-slot{width:100%}
+.wk-sh-stats{display:grid;grid-template-columns:minmax(220px,1fr) minmax(260px,1.4fr);gap:14px;align-items:start}
+.wk-sh-tb{width:100%;border-collapse:collapse;font-size:13.5px}
+.wk-sh-tb td{padding:7px 8px;border-bottom:1px solid rgba(148,163,184,.15)}
+.wk-sh-tb td:last-child{text-align:right;font-weight:700;color:#f3dc9a;white-space:nowrap}
+.wk-sh-chart{margin:0}
+.wk-sh-chart figcaption{font-size:12px;color:#8f9bad;margin-bottom:4px}
+.wk-sh-chart figcaption i{display:inline-block;width:9px;height:9px;border-radius:2px;margin:0 4px 0 8px}
+.wk-sh-chart figcaption i:first-child{margin-left:0}
+.wk-sh-chart svg{width:100%;height:auto;display:block}
+@media (max-width:700px){.wk-sh-stats{grid-template-columns:1fr}}
+/* рамки и фоны */
+.wk-sc.fr-gold .wk-sh3-it .wk-dk-slot,.wk-al.fr-gold .wk-al-s.has .wk-dk-slot{outline:3px solid #d9ad3c;outline-offset:2px;border-radius:16px;box-shadow:0 0 16px rgba(240,200,80,.4)}
+.wk-sc.fr-wood .wk-sh3-it .wk-dk-slot,.wk-al.fr-wood .wk-al-s.has .wk-dk-slot{outline:4px solid #7a5230;outline-offset:2px;border-radius:14px;box-shadow:0 0 0 2px #3c2513,0 6px 14px rgba(0,0,0,.5)}
+.wk-sc.fr-foam .wk-sh3-it .wk-dk-slot,.wk-al.fr-foam .wk-al-s.has .wk-dk-slot{outline:3px solid #bfe9f5;outline-offset:2px;border-radius:16px;box-shadow:0 0 18px rgba(150,220,240,.55)}
+html body .wk-sc.bg-deck .wk-sh3{background:repeating-linear-gradient(90deg,#6a4524 0 46px,#573718 46px 49px),#4a2e17!important}
+html body .wk-sc.bg-map .wk-sh3{background:radial-gradient(120% 90% at 30% 20%,#e6d3a0,#b79a60 70%,#8a7040)!important}
+html body .wk-sc.bg-night .wk-sh3{background:radial-gradient(2px 2px at 12% 22%,#fff,transparent),radial-gradient(1.5px 1.5px at 70% 15%,#fff,transparent),radial-gradient(1.5px 1.5px at 85% 40%,#fff,transparent),radial-gradient(2px 2px at 40% 10%,#fff,transparent),linear-gradient(180deg,#070d24,#12306a)!important}
+</style><style id="wk-reg-market-css">
+.wk-reg{margin-top:10px}
+.wk-reg-toggle{width:100%;text-align:left;padding:12px 14px;border-radius:12px;border:1px solid rgba(148,163,184,.35);background:rgba(255,255,255,.04);color:inherit;font:inherit;font-weight:600;cursor:pointer}
+.wk-reg-toggle small{display:block;font-weight:400;font-size:12px;opacity:.7;margin-top:2px}
+.wk-reg-form{display:grid;gap:8px;margin-top:8px}
+.wk-reg-form input{padding:10px 12px;border-radius:10px;border:1px solid rgba(148,163,184,.35);background:rgba(0,0,0,.25);color:inherit;font:inherit}
+.wk-reg-tabs{display:flex;gap:6px}
+.wk-reg-tabs button{flex:1;padding:8px;border-radius:9px;border:1px solid rgba(148,163,184,.3);background:transparent;color:inherit;font:inherit;cursor:pointer}
+.wk-reg-tabs button.on{background:rgba(212,168,79,.2);border-color:rgba(212,168,79,.6)}
+.wk-reg-ov{position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.6);display:grid;place-items:center;padding:16px}
+.wk-reg-box{width:min(520px,100%);max-height:86vh;overflow:auto;border-radius:16px;background:#0f1626;color:#e8edf5;border:1px solid rgba(148,163,184,.3);padding:16px}
+.wk-reg-box header{display:flex;justify-content:space-between;align-items:center}
+.wk-reg-box h3{margin:0}
+.wk-reg-box header button{background:none;border:0;color:inherit;font-size:18px;cursor:pointer}
+.wk-reg-box ul{list-style:none;margin:12px 0;padding:0;display:grid;gap:8px}
+.wk-reg-box li{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.04)}
+.wk-reg-box li small{opacity:.6;margin-right:auto}
+.wk-reg-box li b{white-space:nowrap}
+.wk-reg-box li button{padding:6px 10px;border-radius:8px;border:1px solid rgba(248,113,113,.5);background:rgba(248,113,113,.12);color:#fecaca;font:inherit;cursor:pointer}
+.wk-reg-dot{width:10px;height:10px;border-radius:50%;flex:0 0 auto}
+.wk-reg-note{font-size:12.5px;opacity:.7}
+.wk-reg-msg{min-height:1.2em;font-size:13px;color:#f3dc9a}
+.wk-tops-reg{margin:0 0 10px}
+.wk-tops-reg button{padding:8px 14px;border-radius:999px;border:1px solid rgba(148,163,184,.4);background:transparent;color:inherit;font:inherit;font-size:13px;cursor:pointer}
+.wk-mk-form{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) auto;gap:8px;align-items:center;margin:8px 0 14px}
+.wk-mk-form .wk-sh-sel{margin-top:0}
+.wk-mk-list{display:grid;gap:10px}
+.wk-mk-lot{display:grid;grid-template-columns:84px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px;border-radius:14px;border:1px solid rgba(148,163,184,.2);background:rgba(10,14,26,.55)}
+.wk-mk-lot.mine{border-color:rgba(242,194,48,.4)}
+.wk-mk-card{width:84px}
+.wk-mk-info{display:grid;gap:2px;min-width:0}
+.wk-mk-info small{color:#8f9bad}
+.wk-mk-buy{display:grid;gap:6px;justify-items:end}
+.wk-mk-buy strong{color:#f3dc9a;white-space:nowrap}
+@media (max-width:640px){.wk-mk-form{grid-template-columns:1fr}.wk-mk-lot{grid-template-columns:64px minmax(0,1fr)}.wk-mk-card{width:64px}.wk-mk-buy{grid-column:1/-1;grid-template-columns:1fr auto;justify-items:stretch;align-items:center}}
+</style></body></html>
