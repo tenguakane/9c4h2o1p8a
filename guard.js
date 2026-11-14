@@ -6,6 +6,7 @@ const L = {
   COUNT_MAX: 999,            // потолок копий одной карточки
   SELL_MAX: 96_000,          // дороже одной карточки (вариант) продать нельзя
   ACH_BELLI_MAX: 25_000,     // максимум белли за одно достижение (самая крупная награда)
+  DAILY_MAX: 1_000,          // ежедневная награда за вход
   QUIZ_SLACK: 1_100,         // опрос: потолок 1000 в день + запас
   CARDS_PER_PACK: 7,         // с запасом: в наборе до 5 карточек + бонусы
   CARD_SLACK: 30,            // подарки, магазин, достижения, переработка
@@ -47,7 +48,8 @@ function check(prev, next, ctx) {
   const opened = Math.max(0, pPacks - packs);
   const gainB = belli - pBelli;
   const newAch = Object.keys((next && next.achB) || {}).filter((k) => !((prev && prev.achB) || {})[k]).length;
-  const allowB = L.QUIZ_SLACK + removed * L.SELL_MAX + (ctx.marketIn || 0) + newAch * L.ACH_BELLI_MAX;
+  const newDaily = next.daily && (!prev.daily || next.daily.last !== prev.daily.last) ? 1 : 0;
+  const allowB = L.QUIZ_SLACK + removed * L.SELL_MAX + (ctx.marketIn || 0) + newAch * L.ACH_BELLI_MAX + newDaily * L.DAILY_MAX;
   if (gainB > allowB) r.push('белли +' + gainB + ' при допустимых ' + allowB + ' (продано карточек: ' + removed + ')');
   const gainC = nCards - pCards;
   const allowC = opened * L.CARDS_PER_PACK + (ctx.tradeIn || 0) + L.CARD_SLACK;
