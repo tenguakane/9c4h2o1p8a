@@ -3797,7 +3797,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "11.11.2026 · 350";
+const WIKI_VERSION = "14.11.2026 · 352";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -22710,6 +22710,17 @@ img.wk-fade.wk-loaded{opacity:1}
     save: function (o) { return fb.fs.setDoc(fb.fs.doc(db, 'backs', o.id), { name: String(o.n), price: Math.round(o.price), d: String(o.d), by: me.login, at: new Date().toISOString() }); },
     remove: function (id) { return fb.fs.deleteDoc(fb.fs.doc(db, 'backs', id)); }
   };
+  window.__wkI18n = {
+    enabled: function () { return !!(me && db && fb && me.role !== 'guest'); },
+    get: function () { return fb.fs.getDocs(fb.fs.collection(db, 'i18n')).then(function (qs) { var t = ''; qs.forEach(function (d) { if (d.id === 'uk') t = String((d.data() || {}).d || ''); }); return t; }); },
+    set: function (txt) { return fb.fs.setDoc(fb.fs.doc(db, 'i18n', 'uk'), { d: String(txt), by: me.login, at: new Date().toISOString() }); }
+  };
+  window.__wkNews = {
+    enabled: function () { return !!(me && db && fb && me.role !== 'guest'); },
+    list: function () { return fb.fs.getDocs(fb.fs.collection(db, 'news')).then(function (qs) { var out = []; qs.forEach(function (d) { var x = d.data() || {}; out.push({ id: d.id, t: String(x.title || ''), b: String(x.body || ''), at: String(x.at || '') }); }); return out; }); },
+    add: function (t, b) { return fb.fs.addDoc(fb.fs.collection(db, 'news'), { title: String(t), body: String(b), by: me.login, at: new Date().toISOString() }); },
+    remove: function (id) { return fb.fs.deleteDoc(fb.fs.doc(db, 'news', id)); }
+  };
   window.__wkTrades = {
     enabled: function () { return !!(me && db && fb && me.role !== 'guest'); },
     list: function () {
@@ -26154,11 +26165,13 @@ html.wk-tilt-off.wk-gyro-on:not(.wk-cardfx-off) .character-item:not(.story-saga-
       SCV.map(function (t) { return row('scv-' + t[0], '▭', 'Горизонтальные карточки: ' + t[1], 'Вместо вертикальных — горизонтальные: ширина и высота меняются местами. Превью в редакторе покажет так же.'); }).join('') +
       '<h3>Внешний вид</h3>' +
       row('tfx', '🔤', 'Эффекты шрифта', 'Золотые, неоновые и другие заголовки. Выключено — обычный шрифт.') +
+      '<h3>Мова / Язык</h3><div class="wk-set-themes" role="group" aria-label="Язык">' + [['ru', '🇷🇺', 'Русский'], ['uk', '🇺🇦', 'Українська']].map(function (t) { return '<button type="button" data-set-lang="' + t[0] + '" data-wk-nolang="1"><span aria-hidden="true">' + t[1] + '</span>' + t[2] + '</button>'; }).join('') + '</div><p class="wk-set-note" data-wk-nolang="1" style="margin-top:8px">Українська: літери й слова змінюються автоматично — «и» стає «і», «ы» — «и», «э» — «е» (так само в іменах). Сторінка перезавантажиться.</p>' +
       '<h3>Тема</h3><div class="wk-set-themes" role="group" aria-label="Тема оформления">' + THEMES.map(function (t) { return '<button type="button" data-set-theme="' + t[0] + '"><span aria-hidden="true">' + t[1] + '</span>' + t[2] + '</button>'; }).join('') + '</div>' +
       '<p class="wk-set-note">Настройки хранятся только на этом устройстве.</p></div>';
     document.body.appendChild(ov);
     ov.addEventListener('click', function (e) {
       if (e.target === ov || e.target.closest('.wk-set-x')) return close();
+      var lg = e.target.closest('[data-set-lang]'); if (lg) { if (window.__wkLang) window.__wkLang.set(lg.getAttribute('data-set-lang')); return; }
       var th = e.target.closest('[data-set-theme]'); if (th) { try { window.applyTheme(th.getAttribute('data-set-theme')); } catch (er) {} sync(); return; }
       var sw = e.target.closest('.wk-gyro-sw'); if (!sw) return;
       var id = sw.closest('[data-set]').getAttribute('data-set'), on = sw.getAttribute('aria-checked') !== 'true';
@@ -26192,6 +26205,8 @@ html.wk-tilt-off.wk-gyro-on:not(.wk-cardfx-off) .character-item:not(.story-saga-
     setSw('text', get(K.text) && tfxOn, !tfxOn, !tfxOn ? 'Недоступно, пока выключены эффекты шрифта.' : null);
     if (tfxOn) ov.querySelector('[data-set="text"] small').textContent = 'Перелив, мерцание и блики в заголовках. Выключено — цвет остаётся, но не двигается.';
     setSw('tfx', tfxOn);
+    var lcur = window.__wkLang ? window.__wkLang.get() : 'ru';
+    ov.querySelectorAll('[data-set-lang]').forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-set-lang') === lcur); });
     var cur = (document.body && document.body.dataset.theme) || '';
     ov.querySelectorAll('[data-set-theme]').forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-set-theme') === cur); });
   }
@@ -29593,13 +29608,21 @@ html.wk-hdr-min.wk-hdr-min.wk-hdr-min body > header :is(.wk-edit-site,.wk-acc-bt
   function pos(rec, pre) { pre = pre || ''; var x = rec[pre + 'image_position_x'], y = rec[pre + 'image_position']; return (x === '' || x == null ? 50 : x) + '% ' + (y === '' || y == null ? 35 : y) + '%'; }
 
   /* ---------- Что доступно читателю прямо сейчас ---------- */
+  // Арки, отмеченные «не смотрел(а)» (аниме): статьи этих арок в опросы не попадают
+  function skippedNames() {
+    var o = {};
+    try { if (window.__wikiIsArcSkipped) arr('storyArcs').forEach(function (a) { if (a && a.name && window.__wikiIsArcSkipped(a.id, 'anime')) o[low(a.name)] = 1; }); } catch (e) {}
+    return o;
+  }
   function pool() {
-    var chars = arr('characters').filter(function (c) { return c && c.name && !hidden(c, 'character'); });
-    var arcs = arr('storyArcs').filter(function (a) { return a && a.name && !hidden(a, 'story') && !truthy(a.movie) && low(a.saga) !== 'полнометражные фильмы'; });
-    var fr = arr('fruits').filter(function (f) { return f && f.name && !hidden(f, 'fruit'); });
+    var SK = skippedNames(), anySk = Object.keys(SK).length > 0;
+    function skd(r) { if (!anySk) return false; var n = low(r.arc_anime) || low(r.arc); return !!n && !!SK[n]; }
+    var chars = arr('characters').filter(function (c) { return c && c.name && !hidden(c, 'character') && !skd(c); });
+    var arcs = arr('storyArcs').filter(function (a) { return a && a.name && !hidden(a, 'story') && !truthy(a.movie) && low(a.saga) !== 'полнометражные фильмы' && !SK[low(a.name)]; });
+    var fr = arr('fruits').filter(function (f) { return f && f.name && !hidden(f, 'fruit') && !skd(f); });
     var byId = {}; chars.forEach(function (c) { byId[c.id] = c; });
-    var rw = arr('rewards').filter(function (r) { return r && byId[r.character_id] && Number(r.reward) > 0 && !hidden(r, 'reward'); });
-    var us = arr('usefulArticles').filter(function (u) { return u && u.name && !hidden(u, 'useful'); });
+    var rw = arr('rewards').filter(function (r) { return r && byId[r.character_id] && Number(r.reward) > 0 && !hidden(r, 'reward') && !skd(r); });
+    var us = arr('usefulArticles').filter(function (u) { return u && u.name && !hidden(u, 'useful') && !skd(u); });
     return { chars: chars, arcs: arcs, fruits: fr, rewards: rw, useful: us, byId: byId };
   }
 
@@ -44249,4 +44272,382 @@ html body .wk-sc.bg-night .wk-sh3{background:radial-gradient(2px 2px at 12% 22%,
 .wk-bk-list li{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;padding:6px 10px;border-radius:10px;background:rgba(148,163,184,.08)}
 .wk-bk-list .wk-tx-btn{width:auto;margin:0;padding:5px 12px}
 </style>
+<style id="wk-help-css">
+.wk-hp{display:flex;flex-direction:column;gap:14px;padding:4px 2px 24px}
+.wk-hp h3{margin:0;font-size:15px}
+.wk-hp-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.wk-hp-q{flex:1;min-width:160px;padding:9px 12px;border-radius:10px;border:1px solid color-mix(in srgb,var(--line,#334155) 90%,transparent);background:color-mix(in srgb,var(--panel,#0f1623) 85%,transparent);color:inherit;font:inherit}
+.wk-hp-box{border:1px solid color-mix(in srgb,var(--line,#334155) 80%,transparent);border-radius:14px;background:color-mix(in srgb,var(--panel,#0f1623) 82%,transparent);padding:12px 14px}
+.wk-hp-ann{display:flex;flex-direction:column;gap:8px}
+.wk-hp-an{padding:10px 12px;border-radius:12px;border:1px solid color-mix(in srgb,var(--wk-accent,#d8b45a) 30%,transparent);background:color-mix(in srgb,var(--wk-accent,#d8b45a) 8%,transparent)}
+.wk-hp-an b{display:block;font-size:14px}
+.wk-hp-an small{opacity:.65;font-size:11.5px}
+.wk-hp-an p{margin:4px 0 0;font-size:13.5px;line-height:1.4;white-space:pre-wrap}
+.wk-hp-an .wk-hp-del{float:right;border:0;background:transparent;color:#f87171;cursor:pointer;font-size:15px}
+.wk-hp-add{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.wk-hp-add input,.wk-hp-add textarea{padding:8px 10px;border-radius:9px;border:1px solid color-mix(in srgb,var(--line,#334155) 90%,transparent);background:transparent;color:inherit;font:inherit}
+.wk-hp-btn{padding:7px 12px;border-radius:9px;border:1px solid color-mix(in srgb,var(--wk-accent,#d8b45a) 55%,transparent);background:color-mix(in srgb,var(--wk-accent,#d8b45a) 14%,transparent);color:inherit;font:inherit;font-size:13px;cursor:pointer}
+.wk-hp-btn:hover{background:color-mix(in srgb,var(--wk-accent,#d8b45a) 26%,transparent)}
+.wk-hp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.wk-hp-card{display:flex;flex-direction:column;gap:7px}
+.wk-hp-card h3{display:flex;gap:8px;align-items:center}
+.wk-hp-card ul{margin:0;padding-left:18px;font-size:13.5px;line-height:1.45;display:flex;flex-direction:column;gap:3px}
+.wk-hp-links{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:4px}
+.wk-hp-empty{opacity:.6;font-size:13.5px;padding:8px 2px}
+
+</style>
+<script id="wk-help">
+(function () {
+  'use strict';
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function isDima() { try { var v = JSON.parse(localStorage.getItem('wkCloudSessionV1') || 'null'); return !!(v && String(v.login) === 'dima'); } catch (e) { return false; } }
+
+  // Встроенные объявления (всегда видны, даже без облака)
+  var BUILTIN = [
+    { t: 'Украинский язык', b: 'В Настройках появилась «Українська»: буквы и слова меняются автоматически, в том числе в именах («и» → «і», «ы» → «и», «э» → «е»). Перевод механический — вернуться можно там же.', at: '2026-11-14' },
+    { t: 'Опросы обходят непросмотренные арки', b: 'Если арка отмечена как непросмотренная (например, филлеры), её статьи, персонажи, плоды и награды в опросы не попадают.', at: '2026-11-14' },
+    { t: 'Свои рубашки карточек', b: 'Админ может загружать PNG и добавлять новые рубашки в магазин. В магазине также три новых оформления альбома и превью рамок на настоящих карточках.', at: '2026-11-13' },
+    { t: 'Аукцион и подарки', b: 'В Колоде работают открытый аукцион, подарочные паки и обмены между участниками.', at: '2026-11-12' }
+  ];
+
+  // Разделы справки. go: 'main:<вкладка>' | 'cabin:<подвкладка>' | 'settings'
+  var SECS = [
+    { i: '👥', t: 'Персонажи', b: ['Карточки всех героев и злодеев с фото по аркам, прозвищами, наградами и фруктами.', 'Поиск и фильтры по статусу, саге, группировке; сверху — витрина с большой карточкой.', 'Статья открывается только до вашего прогресса: всё, что дальше, скрыто как спойлер.'], go: [['Открыть', 'main:characters']] },
+    { i: '🗺', t: 'Сюжет', b: ['Саги и арки с главами и сериями, филлеры и фильмы отдельно.', 'Можно отметить арки, которые вы не читали или не смотрели — они не считаются в прогрессе.', 'Фильтры: канон, филлеры, фильмы, ключевые арки.'], go: [['Открыть', 'main:story']] },
+    { i: '💰', t: 'Награды', b: ['Награды за головы пиратов, сгруппированные по персонажам.', 'Изменения награды показываются по мере вашего прогресса.'], go: [['Открыть', 'main:rewards']] },
+    { i: '🍎', t: 'Плоды Дьявола', b: ['Все плоды, типы, владельцы и пробуждение.', 'Владельцы и способности скрыты до нужной главы или эпизода.'], go: [['Открыть', 'main:fruits']] },
+    { i: '📚', t: 'Полезное', b: ['Справочные статьи: организации, места, термины и т.д.', 'Для статей действуют те же правила спойлеров.'], go: [['Открыть', 'main:useful']] },
+    { i: '🧭', t: 'Прогресс и спойлеры', b: ['Укажите главу и серию, до которых дошли: всё остальное скрывается.', 'Фильмы открываются отдельной отметкой «просмотрен».', 'Арки можно отметить непросмотренными (например, филлеры) — это влияет на проценты и опросы.'], go: [['Прогресс', 'cabin:storyline'], ['Сетка просмотра', 'cabin:watchgrid']] },
+    { i: '⭐', t: 'Избранное и История', b: ['Избранное — статьи, которые вы закрепили.', 'История — недавно открытые статьи.'], go: [['Избранное', 'cabin:favorites'], ['История', 'cabin:history']] },
+    { i: '🏅', t: 'Достижения и хронология', b: ['Достижения за прогресс по аркам и сагам.', 'Хронология — события сюжета по порядку.'], go: [['Достижения', 'cabin:arcs'], ['Хронология', 'cabin:timeline']] },
+    { i: '🃏', t: 'Колода', b: ['Раз в час открывается пак карточек: каждая — персонаж в конкретной арке.', 'Редкости: обычная, редкая, эпическая, легендарная; коллекции: голографическая, пламенная, негативная.', 'Альбом, витрина любимых карточек, обмены, подарки, аукцион и магазин с рамками, фонами, альбомами и рубашками.', 'Карточки персонажей, которых вы ещё не встретили, скрыты как спойлер.'], go: [['Колода', 'cabin:deck']] },
+    { i: '🏆', t: 'Топы', b: ['Ваши рейтинги и списки; можно смотреть топы других участников (у новых участников они скрыты кнопкой).'], go: [['Топы', 'cabin:tops']] },
+    { i: '🧠', t: 'Опросы', b: ['Проверка знаний по статьям, которые вам уже открыты.', 'Непросмотренные арки в вопросы не попадают.'], go: [['Опросы', 'cabin:quiz']] },
+    { i: '🕸', t: 'Карта мира', b: ['Интерактивная карта локаций и связей.'], go: [['Карта мира', 'cabin:atlas']] },
+    { i: '📊', t: 'Статистика и правки', b: ['Статистика сайта и активности (для редакторов и админа).', 'Правки — история изменений статей.'], go: [['Статистика', 'cabin:stats'], ['Правки', 'cabin:edits']] },
+    { i: '✍', t: 'Редактор статей', b: ['Редакторы создают и меняют статьи: фото по аркам, пороги спойлеров, редкость карточек.', 'Для каждого поля можно отдельно включить скрытие до нужной главы.'], go: [['Персонажи', 'main:characters']] },
+    { i: '⚙', t: 'Настройки', b: ['Темы оформления, анимации карточек и текста, 3D-наклон, гироскоп.', 'Горизонтальные карточки, витрины и язык интерфейса (русский / українська).'], go: [['Открыть настройки', 'settings']] },
+    { i: '🔐', t: 'Аккаунты и облако', b: ['Вход по имени и паролю; новые участники регистрируются сами.', 'Прогресс, колода и избранное синхронизируются через облако.', 'Гость видит сайт без сохранения прогресса.'], go: [] }
+  ];
+
+
+  var UK = false; try { UK = localStorage.getItem('onePieceWikiLangV1') === 'uk'; } catch (e) {}
+  var UK_B = [
+    { t: 'Українська мова', b: 'У Налаштуваннях зʼявилася «Українська»: літери й слова змінюються автоматично, зокрема в іменах («и» → «і», «ы» → «и», «э» → «е»). Переклад механічний — повернутися можна там само.' },
+    { t: 'Опитування оминають непереглянуті арки', b: 'Якщо арку позначено як непереглянуту (наприклад, філери), її статті, персонажі, плоди й нагороди в опитування не потрапляють.' },
+    { t: 'Власні сорочки карток', b: 'Адмін може завантажувати PNG і додавати нові сорочки до магазину. Також у магазині три нові оформлення альбому та превʼю рамок на справжніх картках.' },
+    { t: 'Аукціон і подарунки', b: 'У Колоді працюють відкритий аукціон, подарункові паки та обміни між учасниками.' }
+  ];
+  var UK_S = [
+    ['Персонажі', ['Картки всіх героїв і лиходіїв із фото за арками, прізвиськами, нагородами та плодами.', 'Пошук і фільтри за статусом, сагою, угрупованням; угорі — вітрина з великою карткою.', 'Стаття відкривається лише до вашого прогресу: усе, що далі, приховано як спойлер.'], ['Відкрити']],
+    ['Сюжет', ['Саги й арки з розділами та серіями, філери й фільми окремо.', 'Можна позначити арки, які ви не читали чи не дивилися — вони не рахуються в прогресі.', 'Фільтри: канон, філери, фільми, ключові арки.'], ['Відкрити']],
+    ['Нагороди', ['Нагороди за голови піратів, згруповані за персонажами.', 'Зміни нагороди показуються в міру вашого прогресу.'], ['Відкрити']],
+    ['Плоди Диявола', ['Усі плоди, типи, власники та пробудження.', 'Власники й здібності приховані до потрібного розділу чи епізоду.'], ['Відкрити']],
+    ['Корисне', ['Довідкові статті: організації, місця, терміни тощо.', 'Для статей діють ті самі правила спойлерів.'], ['Відкрити']],
+    ['Прогрес і спойлери', ['Вкажіть розділ і серію, до яких дійшли: решта ховається.', 'Фільми відкриваються окремою позначкою «переглянуто».', 'Арки можна позначити непереглянутими (наприклад, філери) — це впливає на відсотки й опитування.'], ['Прогрес', 'Сітка перегляду']],
+    ['Обране й Історія', ['Обране — статті, які ви закріпили.', 'Історія — нещодавно відкриті статті.'], ['Обране', 'Історія']],
+    ['Досягнення та хронологія', ['Досягнення за прогрес по арках і сагах.', 'Хронологія — події сюжету по порядку.'], ['Досягнення', 'Хронологія']],
+    ['Колода', ['Раз на годину відкривається пак карток: кожна — персонаж у конкретній арці.', 'Рідкісності: звичайна, рідкісна, епічна, легендарна; колекції: голографічна, полумʼяна, негативна.', 'Альбом, вітрина улюблених карток, обміни, подарунки, аукціон і магазин із рамками, тлами, альбомами та сорочками.', 'Картки персонажів, яких ви ще не зустріли, приховані як спойлер.'], ['Колода']],
+    ['Топи', ['Ваші рейтинги й списки; можна дивитися топи інших учасників (у нових учасників вони сховані за кнопкою).'], ['Топи']],
+    ['Опитування', ['Перевірка знань за статтями, які вам уже відкриті.', 'Непереглянуті арки в запитання не потрапляють.'], ['Опитування']],
+    ['Мапа світу', ['Інтерактивна мапа локацій і звʼязків.'], ['Мапа світу']],
+    ['Статистика й правки', ['Статистика сайту та активності (для редакторів і адміна).', 'Правки — історія змін статей.'], ['Статистика', 'Правки']],
+    ['Редактор статей', ['Редактори створюють і змінюють статті: фото за арками, пороги спойлерів, рідкісність карток.', 'Для кожного поля окремо можна ввімкнути приховування до потрібного розділу.'], ['Персонажі']],
+    ['Налаштування', ['Теми оформлення, анімації карток і тексту, 3D-нахил, гіроскоп.', 'Горизонтальні картки, вітрини та мова інтерфейсу (русский / українська).'], ['Відкрити налаштування']],
+    ['Акаунти й хмара', ['Вхід за іменем і паролем; нові учасники реєструються самі.', 'Прогрес, колода й обране синхронізуються через хмару.', 'Гість бачить сайт без збереження прогресу.'], []]
+  ];
+  var UI = UK ? { ann: 'Оголошення', feat: 'Можливості сайту', find: 'Знайти функцію…', none: 'Нічого не знайдено.', pub: 'Опублікувати для всіх', ttl: 'Заголовок', body: 'Текст оголошення', del: 'Видалити оголошення?' } : { ann: 'Объявления', feat: 'Возможности сайта', find: 'Найти функцию…', none: 'Ничего не найдено.', pub: 'Опубликовать для всех', ttl: 'Заголовок', body: 'Текст объявления', del: 'Удалить объявление?' };
+  if (UK) {
+    BUILTIN.forEach(function (n, i) { n.t = UK_B[i].t; n.b = UK_B[i].b; });
+    SECS.forEach(function (s, i) { s.t = UK_S[i][0]; s.b = UK_S[i][1]; s.go.forEach(function (g, j) { g[0] = UK_S[i][2][j] || g[0]; }); });
+  }
+  var NEWS = { list: [], at: 0, loading: false };
+  function goTo(g) {
+    if (g === 'settings') { if (window.__wikiOpenSettings) window.__wikiOpenSettings(); return; }
+    var p = g.split(':'), kind = p[0], key = p[1];
+    if (kind === 'main') { try { switchTab(key); } catch (e) {} window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+    if (kind === 'cabin') {
+      try { switchTab('favorites'); } catch (e) {}
+      setTimeout(function () {
+        var b = document.querySelector('[data-wk-cabin-tab="' + key + '"],[data-cabin-tab="' + key + '"]');
+        if (b) { b.hidden = false; b.click(); }
+      }, 60);
+    }
+  }
+  function fmt(at) { var d = new Date(at); return isNaN(d) ? '' : d.toLocaleDateString('ru-RU'); }
+  function annHTML() {
+    var all = NEWS.list.map(function (n) { return { t: n.t, b: n.b, at: n.at, id: n.id }; }).concat(BUILTIN.map(function (n) { return { t: n.t, b: n.b, at: n.at }; }));
+    all.sort(function (a, b) { return String(b.at).localeCompare(String(a.at)); });
+    var adm = isDima();
+    return all.map(function (n) {
+      return '<div class="wk-hp-an">' + (n.id && adm ? '<button type="button" class="wk-hp-del" data-del="' + esc(n.id) + '" title="Удалить" aria-label="Удалить">✕</button>' : '') + '<b>' + esc(n.t) + '</b><small>' + esc(fmt(n.at)) + '</small><p>' + esc(n.b) + '</p></div>';
+    }).join('');
+  }
+  function secHTML(q) {
+    q = String(q || '').trim().toLowerCase();
+    var l = SECS.filter(function (s) { return !q || (s.t + ' ' + s.b.join(' ')).toLowerCase().indexOf(q) >= 0; });
+    if (!l.length) return '<div class="wk-hp-empty">' + UI.none + '</div>';
+    return '<div class="wk-hp-grid">' + l.map(function (s) {
+      return '<div class="wk-hp-box wk-hp-card"><h3><span aria-hidden="true">' + s.i + '</span>' + esc(s.t) + '</h3><ul>' + s.b.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' +
+        (s.go.length ? '<div class="wk-hp-links">' + s.go.map(function (g) { return '<button type="button" class="wk-hp-btn" data-go="' + esc(g[1]) + '">' + esc(g[0]) + ' →</button>'; }).join('') + '</div>' : '') + '</div>';
+    }).join('') + '</div>';
+  }
+  function load(pane, force) {
+    var api = window.__wkNews; if (!api || !api.enabled() || NEWS.loading) return;
+    if (!force && Date.now() - NEWS.at < 60000) return;
+    NEWS.loading = true;
+    api.list().then(function (l) { NEWS.at = Date.now(); NEWS.list = l; var box = pane.querySelector('[data-ann]'); if (box) box.innerHTML = annHTML(); }, function () {}).then(function () { NEWS.loading = false; });
+  }
+  function render(pane) {
+    var adm = isDima();
+    pane.innerHTML = '<div class="wk-hp"' + (UK ? ' data-wk-nolang="1"' : '') + '>' +
+      '<div class="wk-hp-box"><h3>📣 ' + UI.ann + '</h3><div class="wk-hp-ann" data-ann style="margin-top:8px">' + annHTML() + '</div>' +
+      (adm ? '<div class="wk-hp-add"><input type="text" maxlength="80" placeholder="' + UI.ttl + '" data-nt><textarea rows="2" maxlength="600" placeholder="' + UI.body + '" data-nb></textarea><div><button type="button" class="wk-hp-btn" data-addn>' + UI.pub + '</button></div></div>' : '') + '</div>' +
+      '<div class="wk-hp-top"><h3 style="margin-right:6px">📖 ' + UI.feat + '</h3><input type="search" class="wk-hp-q" placeholder="' + UI.find + '" data-q></div>' +
+      '<div data-secs>' + secHTML('') + '</div></div>';
+    var q = pane.querySelector('[data-q]');
+    q.addEventListener('input', function () { pane.querySelector('[data-secs]').innerHTML = secHTML(q.value); });
+    pane.addEventListener('click', function (e) {
+      var g = e.target.closest('[data-go]'); if (g) return goTo(g.getAttribute('data-go'));
+      var d = e.target.closest('[data-del]');
+      if (d && window.__wkNews && window.confirm(UI.del)) { window.__wkNews.remove(d.getAttribute('data-del')).then(function () { load(pane, true); }, function () { window.alert('Не удалось удалить'); }); return; }
+      if (e.target.closest('[data-addn]')) {
+        var t = pane.querySelector('[data-nt]').value.trim(), b = pane.querySelector('[data-nb]').value.trim();
+        if (!t || !b) return;
+        if (!window.__wkNews || !window.__wkNews.enabled()) { window.alert('Нужен вход админа в облако'); return; }
+        window.__wkNews.add(t, b).then(function () { pane.querySelector('[data-nt]').value = ''; pane.querySelector('[data-nb]').value = ''; load(pane, true); }, function () { window.alert('Не удалось опубликовать — проверьте правила Firestore (коллекция news).'); });
+      }
+    });
+    load(pane, false);
+  }
+  function reg() {
+    if (typeof window.__wikiRegisterCabinTab === 'function') window.__wikiRegisterCabinTab({ key: 'help', icon: '📖', label: 'Справка', pane: 'wkCabinPaneHelp', render: render });
+    else setTimeout(reg, 300);
+  }
+  reg();
+})();
+
+</script>
+<script id="wk-uk">
+(function () {
+  'use strict';
+  var KEY = 'onePieceWikiLangV1';
+  function get() { try { return localStorage.getItem(KEY) === 'uk' ? 'uk' : 'ru'; } catch (e) { return 'ru'; } }
+  window.__wkLang = {
+    get: get,
+    set: function (l) { try { localStorage.setItem(KEY, l === 'uk' ? 'uk' : 'ru'); } catch (e) {} location.reload(); }
+  };
+  if (get() !== 'uk') return;
+  document.documentElement.lang = 'uk';
+
+  /* ---------- Словарь слов (рус=укр), остальное — по орфографическим правилам ---------- */
+  var RAW = 'что=що;это=це;этот=цей;эта=ця;эти=ці;этом=цьому;этих=цих;как=як;с=з;со=зі;из=з;от=від;после=після;если=якщо;или=або;но=але;его=його;её=її;ее=її;их=їх;он=він;она=вона;они=вони;оно=воно;вы=ви;ты=ти;мы=ми;мой=мій;твой=твій;ваш=ваш;все=усі;всё=все;всех=усіх;всем=усім;только=лише;также=також;очень=дуже;уже=вже;ещё=ще;еще=ще;где=де;когда=коли;который=який;которая=яка;которые=які;которых=яких;кто=хто;чтобы=щоб;чем=ніж;да=так;нет=ні;ни=ні;нельзя=не можна;можно=можна;нужно=потрібно;надо=треба;будет=буде;быть=бути;есть=є;был=був;была=була;было=було;были=були;тоже=теж;более=більше;менее=менше;больше=більше;меньше=менше;много=багато;несколько=кілька;каждый=кожен;каждая=кожна;каждое=кожне;любой=будь-який;любая=будь-яка;другой=інший;другие=інші;другая=інша;новый=новий;новая=нова;новые=нові;новое=нове;новых=нових;первый=перший;первая=перша;первое=перше;последний=останній;последняя=остання;последние=останні;следующий=наступний;следующая=наступна;предыдущий=попередній;свой=свій;своя=своя;своё=своє;свои=свої;себя=себе;один=один;одна=одна;одно=одне;два=два;две=дві;раз=раз;раза=рази;час=година;часа=години;часов=годин;минут=хвилин;минуты=хвилини;минуту=хвилину;секунд=секунд;день=день;дня=дня;дней=днів;недели=тижні;неделя=тиждень;месяц=місяць;год=рік;года=роки;лет=років;сегодня=сьогодні;вчера=вчора;завтра=завтра;сейчас=зараз;теперь=тепер;потом=потім;затем=потім;ранее=раніше;снова=знову;опять=знову;всегда=завжди;никогда=ніколи;иногда=іноді;здесь=тут;там=там;ниже=нижче;выше=вище;слева=ліворуч;справа=праворуч;открыть=відкрити;открыто=відкрито;открыта=відкрита;открыты=відкриті;закрыть=закрити;закрыто=закрито;показать=показати;показан=показано;показаны=показано;показано=показано;скрыть=приховати;скрыто=приховано;скрыта=прихована;скрыты=приховані;скрытые=приховані;выбрать=вибрати;выбери=вибери;выберите=виберіть;выбран=вибрано;выбрано=вибрано;выбор=вибір;найти=знайти;поиск=пошук;найдено=знайдено;искать=шукати;сохранить=зберегти;сохранено=збережено;сохраняется=зберігається;отмена=скасування;отменить=скасувати;удалить=видалити;удалено=видалено;удаление=видалення;добавить=додати;добавлено=додано;добавлен=додано;изменить=змінити;изменено=змінено;редактировать=редагувати;редактор=редактор;редактирование=редагування;создать=створити;создано=створено;создан=створено;загрузить=завантажити;загрузка=завантаження;загружается=завантажується;загружено=завантажено;обновить=оновити;обновлено=оновлено;обновление=оновлення;отправить=надіслати;отправлено=надіслано;купить=купити;куплено=куплено;покупка=покупка;продать=продати;продажа=продаж;продано=продано;цена=ціна;цену=ціну;цены=ціни;стоимость=вартість;подарить=подарувати;подарок=подарунок;получить=отримати;получено=отримано;получил=отримав;получила=отримала;получили=отримали;потратить=витратити;заработано=зароблено;заработать=заробити;белли=белі;персонаж=персонаж;персонажи=персонажі;персонажей=персонажів;персонажа=персонажа;статья=стаття;статьи=статті;статей=статей;статью=статтю;статьям=статтям;глава=розділ;главы=розділи;глав=розділів;главу=розділ;главе=розділі;серия=серія;серии=серії;серий=серій;серию=серію;эпизод=епізод;эпизоды=епізоди;эпизода=епізоду;эпизодов=епізодів;арка=арка;арки=арки;арок=арок;арку=арку;арке=арці;фильм=фільм;фильмы=фільми;фильмов=фільмів;филлер=філер;филлеры=філери;филлеров=філерів;филлерные=філерні;плод=плід;плоды=плоди;плодов=плодів;плода=плода;награда=нагорода;награды=нагороди;наград=нагород;награду=нагороду;полезное=корисне;полезные=корисні;карточка=картка;карточки=картки;карточек=карток;карточку=картку;карточке=картці;колода=колода;колоды=колоди;колоде=колоді;паки=паки;паков=паків;рубашка=сорочка;рубашки=сорочки;рубашку=сорочку;рубашек=сорочок;рамка=рамка;рамки=рамки;рамку=рамку;рамок=рамок;фоны=фони;витрина=вітрина;витрины=вітрини;витрин=вітрин;витрину=вітрину;аукцион=аукціон;обмен=обмін;обмены=обміни;обменять=обміняти;редкость=рідкісність;редкая=рідкісна;редкие=рідкісні;обычная=звичайна;обычные=звичайні;эпическая=епічна;эпические=епічні;легендарная=легендарна;легендарные=легендарні;голографическая=голографічна;золотая=золота;негативная=негативна;пламенная=полум\'яна;коллекция=колекція;коллекции=колекції;коллекций=колекцій;коллекцию=колекцію;дубликат=дублікат;повторка=повторка;повторки=повторки;повторок=повторок;повторку=повторку;бронь=бронь;спойлер=спойлер;спойлеры=спойлери;спойлеров=спойлерів;прочитано=прочитано;просмотрено=переглянуто;просмотр=перегляд;просмотрел=переглянув;просмотрела=переглянула;смотрел=дивився;смотрела=дивилась;смотреть=дивитися;читал=читав;читала=читала;читать=читати;прочитал=прочитав;непросмотренные=непереглянуті;непросмотренными=непереглянутими;пропущено=пропущено;пропущен=пропущено;пропустить=пропустити;пропуск=пропуск;тема=тема;темы=теми;тему=тему;светлая=світла;тёмная=темна;настройка=налаштування;настройки=налаштування;анимации=анімації;анимация=анімація;анимаций=анімацій;эффекты=ефекти;эффект=ефект;эффектов=ефектів;блики=відблиски;блик=відблиск;наклон=нахил;наклоняются=нахиляються;гироскоп=гіроскоп;работает=працює;работа=робота;недоступно=недоступно;пока=поки;выключены=вимкнені;выключено=вимкнено;включено=увімкнено;включить=увімкнути;выключить=вимкнути;остаются=залишаються;стоит=стоїть;ровно=рівно;большая=велика;большой=великий;маленькая=маленька;полки=полиці;над=над;списком=списком;вкладках=вкладках;вкладка=вкладка;вкладки=вкладки;сразу=одразу;горизонтальные=горизонтальні;вертикальных=вертикальних;вместо=замість;ширина=ширина;высота=висота;меняются=змінюються;местами=місцями;превью=прев\'ю;редакторе=редакторі;покажет=покаже;шрифта=шрифту;заголовках=заголовках;цвет=колір;двигается=рухається;золотые=золоті;неоновые=неонові;обычный=звичайний;шрифт=шрифт;внешний=зовнішній;вид=вигляд;хранятся=зберігаються;устройстве=пристрої;гость=гість;остров=острів;острова=острова;города=міста;город=місто;деревня=село;деревни=села;королевство=королівство;война=війна;битва=битва;пират=пірат;пираты=пірати;пиратов=піратів;команда=команда;команды=команди;капитан=капітан;корабль=корабель;сокровище=скарб;сокровища=скарби;карта=мапа;карты=мапи;мира=світу;мир=світ;море=море;моря=моря;океан=океан;имя=імʼя;имена=імена;название=назва;названия=назви;описание=опис;описания=описи;описаний=описів;фото=фото;фотографии=фотографії;фотография=фотографія;картинка=картинка;картинки=картинки;ссылка=посилання;ссылки=посилання;ссылку=посилання;ссылок=посилань;текст=текст;тип=тип;типы=типи;список=список;списки=списки;таблица=таблиця;таблицы=таблиці;график=графік;графики=графіки;всего=усього;итого=разом;среднее=середнє;среднее=середнє;максимум=максимум;минимум=мінімум;количество=кількість;число=число;номер=номер;страница=сторінка;страницы=сторінки;страниц=сторінок;назад=назад;вперёд=вперед;далее=далі;вернуться=повернутися;вернуть=повернути;войти=увійти;вход=вхід;выйти=вийти;выход=вихід;пароль=пароль;логин=логін;имя=імʼя;регистрация=реєстрація;зарегистрироваться=зареєструватися;аккаунт=акаунт;аккаунты=акаунти;участник=учасник;участники=учасники;участников=учасників;участника=учасника;игрок=гравець;игроки=гравці;игроков=гравців;админ=адмін;редакторы=редактори;читатель=читач;читатели=читачі;объявления=оголошення;объявление=оголошення;справка=довідка;возможности=можливості;возможность=можливість;функции=функції;функция=функція;информация=інформація;информацию=інформацію;подробнее=докладніше;перейти=перейти;открыть=відкрити;статистика=статистика;правки=правки;история=історія;избранное=обране;обзор=огляд;прогресс=прогрес;достижения=досягнення;хронология=хронологія;топы=топи;опросы=опитування;опрос=опитування;вопрос=питання;вопросы=питання;вопроса=питання;ответ=відповідь;ответы=відповіді;правильно=правильно;неправильно=неправильно;верно=вірно;неверно=невірно;результат=результат;результаты=результати;очки=очки;баллы=бали;уровень=рівень;уровни=рівні;награда=нагорода;серия=серія;подряд=поспіль;повторить=повторити;начать=почати;продолжить=продовжити;завершить=завершити;готово=готово;понятно=зрозуміло;хорошо=добре;ладно=гаразд;ошибка=помилка;ошибки=помилки;внимание=увага;подсказка=підказка;подсказки=підказки;совет=порада;советы=поради;правила=правила;правило=правило;условия=умови;условие=умова;доступ=доступ;доступно=доступно;доступна=доступна;доступны=доступні;недоступна=недоступна;только=лише;бесплатно=безкоштовно;бесплатный=безкоштовний;бесплатная=безкоштовна;раз=раз;раз в час=раз на годину;час=година;таймер=таймер;осталось=залишилось;ждать=чекати;ожидание=очікування;готов=готовий;готова=готова;готовы=готові;бой=бій;сила=сила;способности=здібності;способность=здібність;владелец=власник;владельцы=власники;владельца=власника;пользователь=користувач;пользователи=користувачі;пользователей=користувачів;друг=друг;друзья=друзі;друзей=друзів;друга=друга';
+  var OVK = 'onePieceWikiUkOvV1';
+  var OV = { p: {}, w: {} };
+  try { var o0 = JSON.parse(localStorage.getItem(OVK) || '{}'); if (o0 && typeof o0 === 'object') { OV.p = o0.p || {}; OV.w = o0.w || {}; } } catch (e) {}
+  var W = {};
+  RAW.split(';').forEach(function (p) { var i = p.indexOf('='); if (i > 0) W[p.slice(0, i)] = p.slice(i + 1); });
+
+  var CH = { 'и': 'і', 'ы': 'и', 'э': 'е', 'ъ': "'", 'И': 'І', 'Ы': 'И', 'Э': 'Е', 'Ъ': "'" };
+  var VOW = 'аеёиіоуыэюяАЕЁИІОУЫЭЮЯ';
+  function orth(w) {
+    var o = '';
+    for (var i = 0; i < w.length; i++) {
+      var c = w.charAt(i);
+      if (c === 'ё' || c === 'Ё') { var pv = i ? w.charAt(i - 1) : ''; var vo = !pv || VOW.indexOf(pv) >= 0 || pv === 'ь' || pv === 'ъ'; o += (c === 'ё' ? (vo ? 'йо' : 'ьо') : (vo ? 'Йо' : 'Ьо')); }
+      else o += CH.hasOwnProperty(c) ? CH[c] : c;
+    }
+    return o;
+  }
+  var SUF = [[/ский$/, 'ський'], [/ская$/, 'ська'], [/ское$/, 'ське'], [/ой$/, 'ий'], [/ется$/, 'ється'], [/ются$/, 'ються'], [/ться$/, 'тися'], [/ение$/, 'ення'], [/ание$/, 'ання'], [/ый$/, 'ий'], [/ая$/, 'а'], [/ое$/, 'е'], [/ые$/, 'і'], [/ие$/, 'і']];
+  function applyCase(src, out) {
+    if (src.length > 1 && src === src.toUpperCase()) return out.toUpperCase();
+    if (src.charAt(0) !== src.charAt(0).toLowerCase()) return out.charAt(0).toUpperCase() + out.slice(1);
+    return out;
+  }
+  var wc = {};
+  function word(w) {
+    if (wc.hasOwnProperty(w)) return wc[w];
+    var l = w.toLowerCase(), out;
+    if (OV.w.hasOwnProperty(l)) out = applyCase(w, OV.w[l]);
+    else if (W.hasOwnProperty(l)) out = applyCase(w, W[l]);
+    else {
+      var x = l;
+      if (x.length >= 5) for (var k = 0; k < SUF.length; k++) if (SUF[k][0].test(x)) { x = x.replace(SUF[k][0], SUF[k][1]); break; }
+      // имена: заглавные буквы сохраняем побуквенно
+      out = x === l ? orth(w) : applyCase(w, orth(x));
+    }
+    if (Object.keys(wc).length < 40000) wc[w] = out;
+    return out;
+  }
+  var CYR = /[А-Яа-яЁё]/;
+  function tr(s) {
+    if (!s || !CYR.test(s)) return s;
+    var tk = s.trim();
+    if (OV.p.hasOwnProperty(tk)) { var m = s.match(/^(\s*)[\s\S]*?(\s*)$/); return m[1] + OV.p[tk] + m[2]; }
+    return s.replace(/[А-Яа-яЁё]+/g, word);
+  }
+  window.__wkUk = tr;
+
+  /* ---------- Обход DOM ---------- */
+  var SKIP = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1, NOSCRIPT: 1, CODE: 1, PRE: 1, INPUT: 1 };
+  var doneT = new WeakMap(), doneA = new WeakMap(), origT = new WeakMap();
+  var ATTR = ['title', 'placeholder', 'aria-label', 'alt'];
+  function skipEl(e) {
+    if (SKIP[e.nodeName]) return true;
+    if (e.isContentEditable || (e.hasAttribute && (e.hasAttribute('contenteditable') || e.hasAttribute('data-wk-nolang')))) return true;
+    if (e.id === 'wikiEditorOverlay' || (e.classList && e.classList.contains('wiki-editor-panel'))) return true;
+    return false;
+  }
+  function doText(n) {
+    var v = n.nodeValue;
+    if (doneT.get(n) === v) return;
+    var t = tr(v);
+    if (t !== v) { n.nodeValue = t; origT.set(n, v); }
+    doneT.set(n, t);
+  }
+  function doAttrs(e) {
+    for (var i = 0; i < ATTR.length; i++) {
+      var a = ATTR[i], v = e.getAttribute && e.getAttribute(a);
+      if (!v || !CYR.test(v)) continue;
+      var d = doneA.get(e) || {};
+      if (d[a] === v) continue;
+      var t = tr(v); e.setAttribute(a, t); d[a] = t; doneA.set(e, d);
+    }
+  }
+  function walk(root) {
+    if (root.nodeType === 3) { var p = root.parentNode; if (p && p.nodeType === 1 && !p.closest('[data-wk-nolang],[contenteditable],#wikiEditorOverlay,.wiki-editor-panel') && !SKIP[p.nodeName]) doText(root); return; }
+    if (root.nodeType !== 1) return;
+    if (skipEl(root) || (root.closest && root.closest('[data-wk-nolang],[contenteditable],#wikiEditorOverlay,.wiki-editor-panel'))) return;
+    doAttrs(root);
+    for (var c = root.firstChild; c; c = c.nextSibling) {
+      if (c.nodeType === 3) doText(c);
+      else if (c.nodeType === 1 && !skipEl(c)) walk(c);
+    }
+  }
+  var queue = new Set(), raf = 0;
+  function flush() {
+    raf = 0;
+    var list = Array.from(queue); queue.clear();
+    for (var i = 0; i < list.length; i++) { var n = list[i]; if (n.isConnected) walk(n); }
+    if (document.title && CYR.test(document.title) && doneT.get(document) !== document.title) { var tt = tr(document.title); document.title = tt; doneT.set(document, tt); }
+  }
+  function enqueue(n) { queue.add(n); if (!raf) raf = requestAnimationFrame(flush); }
+  new MutationObserver(function (ms) {
+    for (var i = 0; i < ms.length; i++) {
+      var m = ms[i];
+      if (m.type === 'childList') m.addedNodes.forEach(enqueue);
+      else if (m.type === 'characterData') enqueue(m.target);
+      else if (m.type === 'attributes') enqueue(m.target);
+    }
+  }).observe(document.documentElement, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ATTR });
+  enqueue(document.body);
+  window.addEventListener('load', function () { enqueue(document.body); });
+
+  /* ---------- Правка перевода (админ) ---------- */
+  function isAdmin() { try { var v = JSON.parse(localStorage.getItem('wkCloudSessionV1') || 'null'); return !!(v && String(v.login) === 'dima'); } catch (e) { return false; } }
+  var EDK = 'onePieceWikiUkEditV1';
+  function editOn() { return isAdmin() && sessionStorage.getItem(EDK) === '1'; }
+  function ovCount() { return Object.keys(OV.p).length + Object.keys(OV.w).length; }
+  function ovSave(push) {
+    try { localStorage.setItem(OVK, JSON.stringify(OV)); } catch (e) {}
+    wc = {};
+    if (push && window.__wkI18n && window.__wkI18n.enabled()) return window.__wkI18n.set(JSON.stringify(OV));
+    return Promise.resolve();
+  }
+  function toast(t) {
+    var d = document.createElement('div'); d.setAttribute('data-wk-nolang', '1');
+    d.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:100002;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:10px;padding:9px 14px;font-size:13px';
+    d.textContent = t; document.body.appendChild(d); setTimeout(function () { d.remove(); }, 2600);
+  }
+  function escH(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var st = document.createElement('style');
+  st.textContent = '.wk-uk-bn{position:fixed;top:0;left:0;right:0;z-index:100001;background:#7c3aed;color:#fff;font-size:13px;padding:7px 12px;display:flex;gap:10px;align-items:center;justify-content:center}.wk-uk-bn button{border:1px solid #fff8;background:#0003;color:#fff;border-radius:8px;padding:3px 10px;cursor:pointer}html.wk-uk-edit *{cursor:crosshair!important}html.wk-uk-edit .wk-uk-bn *,html.wk-uk-edit .wk-uk-dlg *{cursor:auto!important}.wk-uk-dlg-ov{position:fixed;inset:0;z-index:100003;background:rgba(2,6,23,.6);display:flex;align-items:center;justify-content:center;padding:14px}.wk-uk-dlg{width:min(520px,100%);max-height:90dvh;overflow:auto;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px;font-size:13.5px}.wk-uk-dlg textarea,.wk-uk-dlg input{width:100%;box-sizing:border-box;background:#111827;color:#e2e8f0;border:1px solid #334155;border-radius:8px;padding:7px 9px;font:inherit}.wk-uk-dlg .o{opacity:.7;padding:6px 8px;border-radius:8px;background:#1e293b}.wk-uk-dlg .w{display:grid;grid-template-columns:1fr 1.3fr;gap:6px;align-items:center}.wk-uk-dlg .r{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}.wk-uk-dlg button{border:1px solid #475569;background:#1e293b;color:#e2e8f0;border-radius:8px;padding:7px 12px;cursor:pointer}.wk-uk-dlg button.p{border-color:#a78bfa;background:#6d28d9}';
+  document.head.appendChild(st);
+  function banner() {
+    var b = document.querySelector('.wk-uk-bn');
+    document.documentElement.classList.toggle('wk-uk-edit', editOn());
+    if (!editOn()) { if (b) b.remove(); return; }
+    if (b) return;
+    b = document.createElement('div'); b.className = 'wk-uk-bn'; b.setAttribute('data-wk-nolang', '1');
+    b.innerHTML = '<span>✎ Режим правки перекладу: клацніть на будь-який текст</span><button type="button">Вийти</button>';
+    b.querySelector('button').addEventListener('click', function () { sessionStorage.removeItem(EDK); banner(); });
+    document.body.appendChild(b);
+  }
+  function textAt(e) {
+    var n = null;
+    try {
+      if (document.caretPositionFromPoint) { var cp = document.caretPositionFromPoint(e.clientX, e.clientY); n = cp && cp.offsetNode; }
+      else if (document.caretRangeFromPoint) { var r = document.caretRangeFromPoint(e.clientX, e.clientY); n = r && r.startContainer; }
+    } catch (er) {}
+    if (n && n.nodeType === 3 && origT.has(n)) return n;
+    var el = e.target; if (!el || !el.childNodes) return null;
+    for (var i = 0; i < el.childNodes.length; i++) { var c = el.childNodes[i]; if (c.nodeType === 3 && origT.has(c)) return c; }
+    return null;
+  }
+  function openDlg(n) {
+    var orig = origT.get(n), cur = tr(orig).trim(), tk = orig.trim();
+    var words = []; (orig.match(/[А-Яа-яЁё]+/g) || []).forEach(function (w) { var l = w.toLowerCase(); if (words.indexOf(l) < 0) words.push(l); });
+    var ov = document.createElement('div'); ov.className = 'wk-uk-dlg-ov'; ov.setAttribute('data-wk-nolang', '1');
+    ov.innerHTML = '<div class="wk-uk-dlg"><b>Правка перекладу</b><div class="o">' + escH(tk) + '</div><label>Весь текст (діє лише для цього тексту)</label><textarea rows="2" data-ph>' + escH(cur) + '</textarea>' +
+      '<label>Окремі слова (діють усюди)</label>' + words.map(function (l, i) { return '<div class="w"><span>' + escH(l) + '</span><input data-w="' + i + '" value="' + escH(word(l)) + '"></div>'; }).join('') +
+      '<div class="r"><button type="button" data-reset>Скинути правки</button><button type="button" data-x>Скасувати</button><button type="button" class="p" data-ok>Зберегти</button></div></div>';
+    document.body.appendChild(ov);
+    function close() { ov.remove(); }
+    ov.addEventListener('click', function (e) {
+      if (e.target === ov || e.target.closest('[data-x]')) return close();
+      var save = e.target.closest('[data-ok]'), rs = e.target.closest('[data-reset]');
+      if (!save && !rs) return;
+      if (rs) { delete OV.p[tk]; words.forEach(function (l) { delete OV.w[l]; }); }
+      else {
+        words.forEach(function (l, i) { var v = ov.querySelector('[data-w="' + i + '"]').value.trim(); if (v && v !== word(l)) OV.w[l] = v; });
+        wc = {};
+        var ph = ov.querySelector('[data-ph]').value.trim();
+        if (ph && ph !== cur) OV.p[tk] = ph;
+      }
+      wc = {};
+      var t = tr(orig); n.nodeValue = t; doneT.set(n, t);
+      ovSave(true).then(function () { toast('Збережено' + (window.__wkI18n && window.__wkI18n.enabled() ? ' для всіх' : ' (лише на цьому пристрої)')); }, function () { toast('Збережено лише тут: у хмару не вийшло (перевірте правила Firestore: i18n)'); });
+      close();
+    });
+  }
+  document.addEventListener('click', function (e) {
+    if (!editOn() || e.target.closest('.wk-uk-bn,.wk-uk-dlg-ov')) return;
+    var n = textAt(e);
+    e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+    if (n) openDlg(n); else toast('Тут немає тексту для правки');
+  }, true);
+  banner();
+  // Рядок в Налаштуваннях
+  function addRow() {
+    var ovl = document.querySelector('.wk-set-ov'); if (!ovl || !isAdmin() || ovl.querySelector('.wk-uk-row')) return;
+    var note = ovl.querySelector('[data-set-lang]'); note = note && note.parentNode.nextElementSibling; if (!note) return;
+    var d = document.createElement('div'); d.className = 'wk-uk-row'; d.setAttribute('data-wk-nolang', '1'); d.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center;font-size:13px';
+    d.innerHTML = '<button type="button" data-ukedit style="padding:8px 11px;border-radius:10px;border:1px solid #a78bfa;background:#4c1d95;color:#fff;cursor:pointer">✎ Правити переклад</button><span style="opacity:.7">Правок: ' + ovCount() + '</span><button type="button" data-ukclear style="padding:6px 9px;border-radius:9px;border:1px solid #475569;background:#111827;color:#e2e8f0;cursor:pointer">Скинути всі</button>';
+    note.after(d);
+    d.addEventListener('click', function (e) {
+      if (e.target.closest('[data-ukedit]')) { sessionStorage.setItem(EDK, '1'); ovl.classList.remove('open'); banner(); toast('Клацніть на текст, який треба виправити'); }
+      else if (e.target.closest('[data-ukclear]') && window.confirm('Скинути всі ваші правки перекладу?')) { OV = { p: {}, w: {} }; ovSave(true).then(function () { location.reload(); }, function () { location.reload(); }); }
+    });
+  }
+  var _os = window.__wikiOpenSettings;
+  if (typeof _os === 'function') window.__wikiOpenSettings = function () { var r = _os.apply(this, arguments); addRow(); return r; };
+  // Підтягнути правки з хмари
+  var tries = 0;
+  (function pull() {
+    var api = window.__wkI18n;
+    if (api && api.enabled()) {
+      api.get().then(function (txt) {
+        if (!txt) return;
+        var c; try { c = JSON.parse(txt); } catch (e) { return; }
+        var np = c.p || {}, nw = c.w || {};
+        if (JSON.stringify(np) !== JSON.stringify(OV.p) || JSON.stringify(nw) !== JSON.stringify(OV.w)) { OV = { p: np, w: nw }; try { localStorage.setItem(OVK, JSON.stringify(OV)); } catch (e) {} if (!sessionStorage.getItem('wkUkPulled')) { sessionStorage.setItem('wkUkPulled', '1'); location.reload(); } }
+      }, function () {});
+      return;
+    }
+    if (++tries < 40) setTimeout(pull, 1000);
+  })();
+})();
+
+</script>
 </body></html>
