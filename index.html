@@ -41748,8 +41748,8 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   }
   function alIcons(k) {
     var spec = k.kind === 'char' ? k.c.id : k.kind + ':' + k.c.id, st = load(), g = '';
-    try { if (!st.__fake && freeCnt(st, k.key) > 0 && txApi()) g = '<button type="button" class="wk-dk-bka wk-ic" data-bk="gift" data-key="' + esc(k.key) + '" title="Подарить" aria-label="Подарить">' + IC_GIFT + '</button>'; } catch (e) {}
-    return '<div class="wk-al-ic"><button type="button" class="wk-dk-bka wk-ic" data-dk-open="' + esc(spec) + '" title="Открыть статью" aria-label="Открыть статью">' + IC_OPEN + '</button>' + g + '</div>';
+    try { if (!st.__fake && freeCnt(st, k.key) > 0 && txApi()) g = '<button type="button" class="wk-dk-bka wk-bic" data-bk="gift" data-key="' + esc(k.key) + '" title="Подарить" aria-label="Подарить">' + IC_GIFT + '</button>'; } catch (e) {}
+    return '<div class="wk-al-ic"><button type="button" class="wk-dk-bka wk-bic" data-dk-open="' + esc(spec) + '" title="Открыть статью" aria-label="Открыть статью">' + IC_OPEN + '</button>' + g + '</div>';
   }
   function alSet(sl, on) {
     if (!sl || sl.classList.contains('flipped') === on) return;
@@ -42094,15 +42094,15 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   var IC_GIFT = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 1 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 1 0 0-5C13 2 12 7 12 7z"/></svg>';
   var IC_LOCK = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
   var IC_UNLOCK = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/></svg>';
-  function openBtn(cid) { return cid ? '<button type="button" class="wk-dk-bkopen wk-ic" title="Открыть статью" aria-label="Открыть статью" ' + (cid.indexOf(':') > 0 ? 'data-dk-open="' : 'data-wk-open-char="') + esc(cid) + '">' + IC_OPEN + '</button>' : ''; }
+  function openBtn(cid) { return cid ? '<button type="button" class="wk-dk-bkopen wk-bic" title="Открыть статью" aria-label="Открыть статью" ' + (cid.indexOf(':') > 0 ? 'data-dk-open="' : 'data-wk-open-char="') + esc(cid) + '">' + IC_OPEN + '</button>' : ''; }
   function bkActsHTML(key, cid) {
     var st = load(), ob = openBtn(cid), lab = '', ic = '';
     if (!st.__fake && key && st.owned[key]) {
       var n = st.owned[key] || 0, cap = Math.max(0, n - 1), h = Math.min((st.hold || {})[key] || 0, cap), free = freeCnt(st, key);
       if (h > 0) lab = '<span class="wk-dk-bkh">В брони ' + h + ' из ' + cap + '</span>';
-      if (cap > h) ic += '<button type="button" class="wk-dk-bka wk-ic" data-bk="hold" data-key="' + esc(key) + '" title="' + (h ? 'Ещё одну повторку в бронь' : 'Бронь повторки') + ': её не продать, не переработать и не обменять" aria-label="' + (h ? 'Ещё одну в бронь' : 'Бронь повторки') + '">' + IC_LOCK + '</button>';
-      if (h > 0) ic += '<button type="button" class="wk-dk-bka wk-ic" data-bk="unhold" data-key="' + esc(key) + '" title="Снять бронь" aria-label="Снять бронь">' + IC_UNLOCK + '</button>';
-      if (free > 0 && txApi()) ic += '<button type="button" class="wk-dk-bka wk-ic" data-bk="gift" data-key="' + esc(key) + '" title="Подарить" aria-label="Подарить">' + IC_GIFT + '</button>';
+      if (cap > h) ic += '<button type="button" class="wk-dk-bka wk-bic" data-bk="hold" data-key="' + esc(key) + '" title="' + (h ? 'Ещё одну повторку в бронь' : 'Бронь повторки') + ': её не продать, не переработать и не обменять" aria-label="' + (h ? 'Ещё одну в бронь' : 'Бронь повторки') + '">' + IC_LOCK + '</button>';
+      if (h > 0) ic += '<button type="button" class="wk-dk-bka wk-bic" data-bk="unhold" data-key="' + esc(key) + '" title="Снять бронь" aria-label="Снять бронь">' + IC_UNLOCK + '</button>';
+      if (free > 0 && txApi()) ic += '<button type="button" class="wk-dk-bka wk-bic" data-bk="gift" data-key="' + esc(key) + '" title="Подарить" aria-label="Подарить">' + IC_GIFT + '</button>';
     }
     return lab + (ob || ic ? '<div class="wk-dk-bkr">' + ob + ic + '</div>' : '');
   }
@@ -44203,14 +44203,14 @@ html body .wk-sc.bg-night .wk-sh3{background:radial-gradient(2px 2px at 12% 22%,
 .wk-sh-sw{overflow:hidden}
 </style>
 <style id="wk-ic-css">
-.wk-ic{width:32px;height:32px;padding:0!important;display:inline-grid!important;place-items:center;border-radius:50%!important;line-height:0;font-size:0!important;max-width:none!important}
-.wk-ic svg{display:block;pointer-events:none}
+.wk-bic{width:32px;height:32px;padding:0!important;display:inline-grid!important;place-items:center;border-radius:50%!important;line-height:0;font-size:0!important;max-width:none!important}
+.wk-bic svg{display:block;pointer-events:none}
 .wk-dk-sbwrap .wk-dk-bkacts,.wk-dk-sbwrap .wk-dk-bkacts.low{bottom:12%;gap:7px}
 .wk-dk-bkr{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-.wk-dk-sbwrap .wk-dk-bkacts .wk-ic,.wk-dk-sbwrap .wk-dk-bkacts .wk-dk-bkopen.wk-ic{position:static!important;transform:none!important;left:auto!important;bottom:auto!important;order:0!important;align-self:auto!important}
-.wk-dk-zoombox .wk-dk-bkopen.wk-ic{width:40px;height:40px;padding:0!important;bottom:9%!important}
+.wk-dk-sbwrap .wk-dk-bkacts .wk-bic,.wk-dk-sbwrap .wk-dk-bkacts .wk-dk-bkopen.wk-bic{position:static!important;transform:none!important;left:auto!important;bottom:auto!important;order:0!important;align-self:auto!important}
+.wk-dk-zoombox .wk-dk-bkopen.wk-bic{width:40px;height:40px;padding:0!important;bottom:9%!important}
 .wk-al-ic{display:flex;justify-content:center;gap:8px;margin-top:8px}
-.wk-al-ic .wk-ic{position:static;transform:none}
+.wk-al-ic .wk-bic{position:static;transform:none}
 </style>
 <style id="wk-cos-pv-css">
 .wk-sh-pk.p-cos{display:flex!important;flex-direction:column!important}
