@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 423";
+const WIKI_VERSION = "15.11.2026 · 427";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -29621,7 +29621,7 @@ html body .catalog-item-shell:has(>.wk-flip-btn,>.wk-flip2) .character-item>.wk-
     function target() { var st = S(); if (st.mode === 'own' && st.src) return { own: true }; if (/^a:\d+$/.test(st.mode || '')) { var idx = Number(st.mode.slice(2)), o = pvList(f).filter(function (q) { return q.i === idx; })[0]; if (o) return { idx: idx, o: o }; } return null; }
     function curOf(t, place) { var c = t.own ? S() : pvCrop(t.o); if (place === 'hero' && c.hc) return c.hc; if (place === 'deck') return c.dk || { x: c.x, y: c.y, z: 100 + Math.min(150, c.z - 100) * 0.4 }; return { x: c.x, y: c.y, z: c.z }; }
     function commit(t, place, c) {
-      var x = Math.round(c.x), y = Math.round(c.y), z = Math.round(c.z);
+      var x = Math.round(c.x * 10) / 10, y = Math.round(c.y * 10) / 10, z = Math.round(c.z * 10) / 10;
       if (t.own) { var st = S(); if (place === 'hero') st.hc = { x: x, y: y, z: z }; else if (place === 'deck') st.dk = { x: x, y: y, z: z }; else { st.x = x; st.y = y; st.z = z; } schedule(); return; }
       var box = f.querySelector('.wk-ap-ed'), api = box && box.__wkAp; if (!api) return;
       api.set(t.idx, place === 'hero' ? { hc: x + ',' + y + ',' + z } : place === 'deck' ? { dx: x, dy: y, dz: z } : { x: x, y: y, z: z }); schedule();
@@ -29630,19 +29630,30 @@ html body .catalog-item-shell:has(>.wk-flip-btn,>.wk-flip2) .character-item>.wk-
     pv.addEventListener('pointerdown', function (e) {
       var card = e.target.closest && e.target.closest('.wk-lk-card'); if (!card || !pv.contains(card)) return; var t = target(); if (!t) return;
       var place = (card.closest('.wk-lk').className.match(/is-(\w+)/) || [])[1]; var c = curOf(t, place);
-      dg = { card: card, place: place, t: t, sx: e.clientX, sy: e.clientY, c: c, n: c, w: card.getBoundingClientRect() }; try { card.setPointerCapture(e.pointerId); } catch (er) {} e.preventDefault();
+      var im0 = card.querySelector('.wk-lk-img'), cw = card.offsetWidth || 1, ch = card.offsetHeight || 1, nw = im0 && im0.naturalWidth, nh = im0 && im0.naturalHeight, sc = nw && nh ? Math.max(cw / nw, ch / nh) : 0;
+      dg = { card: card, img: im0, place: place, t: t, sx: e.clientX, sy: e.clientY, c: c, n: c, dx: sc ? cw - c.z / 100 * nw * sc : 0, dy: sc ? ch - c.z / 100 * nh * sc : 0, cw: cw, ch: ch, raf: 0, ev: null }; window.__wkPvBusy = 1; card.classList.add('wk-pvdrag'); card.classList.remove('wk-live', 'is-moving'); try { card.setPointerCapture(e.pointerId); } catch (er) {} e.preventDefault();
     });
     pv.addEventListener('pointermove', function (e) {
-      if (!dg) return; var k = dg.c.z > 100 ? 1 : 1;
-      var nx = Math.max(0, Math.min(100, dg.c.x - (e.clientX - dg.sx) / dg.w.width * 100 * k)), ny = Math.max(0, Math.min(100, dg.c.y - (e.clientY - dg.sy) / dg.w.height * 100 * k));
-      dg.n = { x: nx, y: ny, z: dg.c.z }; var img = dg.card.querySelector('.wk-lk-img'); if (img) { img.style.objectPosition = nx + '% ' + ny + '%'; img.style.transformOrigin = nx + '% ' + ny + '%'; }
+      if (!dg) return; dg.ev = e; if (dg.raf) return;
+      dg.raf = requestAnimationFrame(function () {
+        if (!dg) return; dg.raf = 0; var ev = dg.ev, mx = ev.clientX - dg.sx, my = ev.clientY - dg.sy;
+        var nx = dg.c.x, ny = dg.c.y;
+        if (Math.abs(dg.dx) > 0.5) nx = dg.c.x + mx / dg.dx * 100; else nx = dg.c.x - mx / dg.cw * 100;
+        if (Math.abs(dg.dy) > 0.5) ny = dg.c.y + my / dg.dy * 100; else ny = dg.c.y - my / dg.ch * 100;
+        nx = Math.round(Math.max(0, Math.min(100, nx)) * 10) / 10; ny = Math.round(Math.max(0, Math.min(100, ny)) * 10) / 10;
+        dg.n = { x: nx, y: ny, z: dg.c.z }; var img = dg.img; if (img) { img.style.objectPosition = nx + '% ' + ny + '%'; img.style.transformOrigin = nx + '% ' + ny + '%'; }
+      });
     });
-    function dgEnd() { if (!dg) return; var d = dg; dg = null; if (d.n !== d.c) commit(d.t, d.place, d.n); }
+    function dgEnd() { if (!dg) return; var d = dg; dg = null; if (d.raf) cancelAnimationFrame(d.raf); d.card.classList.remove('wk-pvdrag'); if (d.n !== d.c) commit(d.t, d.place, d.n); setTimeout(function () { window.__wkPvBusy = 0; }, 60); }
     pv.addEventListener('pointerup', dgEnd); pv.addEventListener('pointercancel', dgEnd);
+    var wh = null;
     pv.addEventListener('wheel', function (e) {
       var card = e.target.closest && e.target.closest('.wk-lk-card'); if (!card) return; var t = target(); if (!t) return; e.preventDefault();
-      var place = (card.closest('.wk-lk').className.match(/is-(\w+)/) || [])[1], c = curOf(t, place);
-      commit(t, place, { x: c.x, y: c.y, z: Math.max(100, Math.min(250, c.z + (e.deltaY < 0 ? 10 : -10))) });
+      var place = (card.closest('.wk-lk').className.match(/is-(\w+)/) || [])[1];
+      if (!wh || wh.card !== card) { wh = { card: card, place: place, t: t, c: curOf(t, place), z: 0, tm: 0 }; wh.z = wh.c.z; }
+      wh.z = Math.max(100, Math.min(250, Math.round(wh.z * Math.exp(-e.deltaY * 0.0012) * 10) / 10));
+      window.__wkPvBusy = 1; var img = card.querySelector('.wk-lk-img'); if (img) img.style.transform = 'scale(' + wh.z / 100 + ')';
+      clearTimeout(wh.tm); var w0 = wh; wh.tm = setTimeout(function () { commit(w0.t, w0.place, { x: w0.c.x, y: w0.c.y, z: w0.z }); wh = null; setTimeout(function () { window.__wkPvBusy = 0; }, 60); }, 220);
     }, { passive: false });
     window.__wkPvSel = function (fm, n) { if (fm !== f) return; var st = S(); st.mode = 'a:' + n; st.__auto = 1; try { pvSync(); } catch (e) {} schedule(); };
     pv.__sync = pvSync; setTimeout(pvSync, 200);
@@ -29680,6 +29691,7 @@ html body .catalog-item-shell:has(>.wk-flip-btn,>.wk-flip2) .character-item>.wk-
     return { src: src, pos: x + '% ' + y + '%', tr: 'scale(' + z / 100 + ')', org: x + '% ' + y + '%' };
   }
   function update() {
+    if (window.__wkPvBusy) { pend = setTimeout(function () { pend = 0; update(); }, 200); return; }
     var f = document.getElementById('wikiEditorForm'); if (!f) return;
     var pvp = document.getElementById('wkEdPv'), look = f.getAttribute('data-wk-view') === 'look';
     if (pvp && pvp.getClientRects().length === 0) pvp = null;
@@ -38502,6 +38514,33 @@ html body .wk-dk-wpw{background:color-mix(in srgb,var(--accent,#d8b45a) 62%,#fff
 </style><style id="wk-v423-css">
 .wk-sh-bkpv[data-bkzoom]{cursor:zoom-in}.wk-sh-bkpv[data-bkzoom] .wk-sh-bkc{pointer-events:none}
 .wk-sh-bkpv[data-bkzoom]:hover .wk-sh-bkc,.wk-sh-bkpv[data-bkzoom]:focus-visible .wk-sh-bkc{transform:translateY(-3px)}.wk-sh-bkc{transition:transform .18s}
-.wk-sh-bkc .wk-pk-bk::before,.wk-nogl .wk-pk-bk::before{display:none!important}
 .wk-sh-bkc .wk-bkm,.wk-nogl .wk-bkm{filter:none!important}
-</style></body></html>
+</style><style id="wk-v425-css">
+#wkEdPv .wk-pvs{order:1;margin:0!important;padding:0 0 10px!important;border-top:0!important;border-bottom:1px dashed rgba(148,163,184,.3)}
+#wkEdPv .wk-edpv-h{order:0}#wkEdPv figure{order:2}
+#wikiEditorOverlay .wiki-editor-body{position:relative}
+.wk-ed-sb-t{position:absolute;top:10px;z-index:60;width:26px;height:26px;border-radius:50%;border:1px solid rgba(148,163,184,.4);background:#0f172a;color:#cbd5e1;font:700 15px/1 inherit;cursor:pointer;display:grid;place-items:center;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.wk-ed-sb-t:hover{color:#fff;border-color:var(--wk-accent,#d8b45a)}
+#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay .wiki-editor-body.wk-side-min{grid-template-columns:0 minmax(0,1fr)!important}
+#wikiEditorOverlay .wiki-editor-body.wk-side-min>.wiki-editor-sidebar{padding:0!important;border:0!important;overflow:hidden!important;visibility:hidden}
+#wikiEditorOverlay .wiki-editor-body.wk-side-min #wikiEditorForm.wk-pv-on .wk-ed-body{grid-template-columns:132px minmax(0,1fr) minmax(300px,30vw)}
+#wikiEditorOverlay .wiki-editor-body.wk-side-min #wkEdPv .wk-lk.is-hero .wk-lk-card{width:100%;height:auto;aspect-ratio:232/150}
+#wikiEditorOverlay .wiki-editor-body.wk-side-min #wkEdPv .wk-lk.is-cat .wk-lk-card{width:100%}
+#wikiEditorOverlay#wikiEditorOverlay .wiki-editor-body.wk-side-min .wiki-editor-form-title,#wikiEditorOverlay#wikiEditorOverlay .wiki-editor-body.wk-side-min .wk-view-bar{padding-left:34px!important;box-sizing:border-box}#wikiEditorOverlay#wikiEditorOverlay .wiki-editor-body.wk-side-min .wiki-editor-footer{margin-left:-44px!important;padding-left:44px!important}
+.wk-ed-sb-t.is-min{left:0!important;top:140px;width:14px;height:56px;border-radius:0 8px 8px 0;border-left:0}
+@media(max-width:850px){.wk-ed-sb-t{display:none}}
+</style>
+<script id="wk-v425-js">(function(){var K='wkEdSideMin';function on(){try{return localStorage.getItem(K)==='1'}catch(e){return false}}
+function tick(){var b=document.querySelector('#wikiEditorOverlay .wiki-editor-body');if(!b)return;var sb=b.querySelector(':scope>.wiki-editor-sidebar'),t=b.querySelector(':scope>.wk-ed-sb-t');
+if(!t){t=document.createElement('button');t.type='button';t.className='wk-ed-sb-t';b.appendChild(t);t.addEventListener('click',function(){var m=!b.classList.contains('wk-side-min');try{localStorage.setItem(K,m?'1':'0')}catch(e){}tick();setTimeout(function(){window.dispatchEvent(new Event('resize'))},60)})}
+var m=on();b.classList.toggle('wk-side-min',m);t.textContent=m?'›':'‹';t.title=m?'Показать список статей':'Свернуть список статей';t.setAttribute('aria-label',t.title);t.classList.toggle('is-min',m);t.style.left=m?'4px':Math.max(0,(sb?sb.offsetWidth:300)-13)+'px'}
+setInterval(tick,600);})();</script>
+<style id="wk-v426-css">#wkEdPv .wk-lk-card{touch-action:none;cursor:grab}#wkEdPv .wk-lk-card.wk-pvdrag{cursor:grabbing;transform:none!important;transition:none!important;animation:none!important}#wkEdPv .wk-lk-card.wk-pvdrag *{transition:none!important}#wkEdPv .wk-lk-img{will-change:transform,object-position;user-select:none;-webkit-user-drag:none}</style>
+<style id="wk-v427-css">
+#wikiEditorOverlay .wiki-editor-field[data-editor-field="person_image_position"]{display:flex!important;padding:0!important;border:0!important;background:none!important;grid-column:1/-1}
+#wikiEditorOverlay .wiki-editor-field[data-editor-field="person_image_position"]>label,#wikiEditorOverlay .wiki-editor-field[data-editor-field="person_image_position"]>.wiki-editor-label,#wikiEditorOverlay .wiki-character-crop-wide .wiki-character-crop-control,#wikiEditorOverlay .wiki-character-crop-wide .wiki-character-crop-preview,#wikiEditorOverlay .wiki-character-crop-wide .wk-crop-tools{display:none!important}
+#wikiEditorOverlay .wiki-character-crop-wide>.wiki-editor-field-topline,#wikiEditorOverlay .wiki-character-crop-wide>.wk-crop-sizes,#wikiEditorOverlay .wiki-character-crop-wide>.wiki-editor-hint{display:none!important}
+#wikiEditorOverlay .wiki-character-crop-wide .wiki-character-crop-editor{display:block!important;padding:0!important;border:0!important;background:none!important}
+#wikiEditorOverlay .wiki-character-crop-wide .wiki-character-crop-side-fields{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+</style>
+</body></html>
