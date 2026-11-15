@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 427";
+const WIKI_VERSION = "15.11.2026 · 429";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -19201,9 +19201,10 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     var m = part(v('arc'), v('saga')), a = part(v('arc_anime'), v('saga_anime'));
     var txt = m && a && m === a ? m : [m ? 'манга: ' + m : '', a ? 'аниме: ' + a : ''].filter(Boolean).join(' · ');
     var tp = typeOf(f);
-    note.innerHTML = film
+    var nh = film
       ? '<span>🎬</span><span>' + (tp === 'character' ? 'Персонаж' : tp === 'reward' ? 'Награда' : 'Статья') + ' из фильма «' + String(film.name).replace(/[<>&]/g, '') + '» — глава, эпизод, связи и арки не нужны. Статья откроется, когда человек отметит фильм просмотренным.</span>'
       : '<span>🧭</span><span>' + (txt ? 'Сюжет определится сам: ' + txt.replace(/[<>&]/g, '') : 'Сага и арка определятся сами, когда будут указаны глава или эпизод появления.' + (tp === 'character' ? ' Если персонаж из фильма — выбери фильм в поле «🎬 Из фильма».' : '')) + '</span>';
+    if (note.__h !== nh) { note.__h = nh; note.innerHTML = nh; }
     note.classList.toggle('wk-film-note', !!film);
   }
   // Кнопки масштаба под каждым превью кадрирования (для телефона, где нет колеса).
@@ -19476,7 +19477,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
       html = '🍎 Статус «Фруктовик» появится сам, когда привяжешь статью плода.';
       n.className = 'wk-fruit-status';
     }
-    n.innerHTML = html.replace(/<(?!\/?b>)/g, '&lt;');
+    var hh = html.replace(/<(?!\/?b>)/g, '&lt;'); if (n.__h !== hh) { n.__h = hh; n.innerHTML = hh; }
   }
   function run() { var f = document.getElementById('wikiEditorForm'); if (f) note(f); }
   var pend = 0;
@@ -38542,5 +38543,11 @@ setInterval(tick,600);})();</script>
 #wikiEditorOverlay .wiki-character-crop-wide>.wiki-editor-field-topline,#wikiEditorOverlay .wiki-character-crop-wide>.wk-crop-sizes,#wikiEditorOverlay .wiki-character-crop-wide>.wiki-editor-hint{display:none!important}
 #wikiEditorOverlay .wiki-character-crop-wide .wiki-character-crop-editor{display:block!important;padding:0!important;border:0!important;background:none!important}
 #wikiEditorOverlay .wiki-character-crop-wide .wiki-character-crop-side-fields{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+</style>
+<style id="wk-v428-css">
+#wikiEditorOverlay .wiki-editor-body.wk-side-min #wikiEditorForm.wk-pv-on #wkEdPv{grid-template-columns:repeat(2,minmax(0,1fr));align-content:start}
+#wikiEditorOverlay .wiki-editor-body.wk-side-min #wkEdPv>.wk-edpv-h,#wikiEditorOverlay .wiki-editor-body.wk-side-min #wkEdPv>.wk-pvs,#wikiEditorOverlay .wiki-editor-body.wk-side-min #wkEdPv>.wk-lk.is-hero{grid-column:1/-1}
+#wikiEditorOverlay .wiki-editor-body.wk-side-min #wkEdPv .wk-lk.is-cat .wk-lk-card{width:100%!important;max-width:260px;height:auto!important;aspect-ratio:3/4;margin:0 auto}
+#wikiEditorOverlay .wiki-editor-body.wk-side-min #wkEdPv .wk-lk.is-hero .wk-lk-card{width:100%!important;max-width:420px;height:auto!important;aspect-ratio:232/150;margin:0 auto}
 </style>
 </body></html>
