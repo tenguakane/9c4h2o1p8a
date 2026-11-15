@@ -412,6 +412,11 @@ html body .wk-sg button.wk-sg-b.done{border-color:rgba(216,180,90,.55)}html body
 .wk-ld-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;margin:8px 0 6px}.wk-ld{display:flex;flex-direction:column;gap:8px;min-width:0}.wk-ld .wk-dk-slot{position:relative}
 .wk-ld-m{display:flex;flex-direction:column;gap:6px}.wk-ld-m .wk-tx-btn{width:100%}.wk-ld-st{display:inline-flex;align-items:center;align-self:flex-start;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:750;border:1px solid rgba(148,163,184,.3);color:#a9b4c6}.wk-ld-st.new{color:#7ee2a0;border-color:rgba(126,226,160,.5);background:rgba(126,226,160,.1)}.wk-ld-st.own{color:#f3dc9a;border-color:rgba(216,180,90,.45);background:rgba(216,180,90,.1)}.wk-ld-rn{font-size:12px;line-height:1.3;color:#8e9bb0;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .wk-ld.sold .wk-dk-slot>*:not(.wk-ld-sold){filter:grayscale(.85) brightness(.55)}.wk-ld-sold{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-align:center;pointer-events:none}.wk-ld-sold b{font-size:17px;letter-spacing:.06em;text-transform:uppercase;color:#f3dc9a;text-shadow:0 2px 10px #000}.wk-ld-sold span{font-size:12px;color:#d4dbe8;text-shadow:0 1px 6px #000}
+.wk-ld-roll{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:12px 0 4px;padding:12px 14px;border-radius:12px;border:1px solid rgba(148,163,184,.22);background:rgba(15,23,42,.45)}.wk-ld-roll>div{display:flex;flex-direction:column;gap:3px;min-width:0}.wk-ld-roll b{font-size:14px}.wk-ld-roll span{font-size:12.5px;line-height:1.35;color:#9aa6ba}.wk-ld-roll .wk-tx-btn{flex:0 0 auto;white-space:nowrap}@media(max-width:600px){.wk-ld-roll{flex-direction:column;align-items:stretch}}
+.wk-al-want{position:absolute;right:6px;bottom:6px;z-index:12;width:28px;height:28px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(8,11,16,.78);color:#cbd5e1;display:grid;place-items:center;cursor:pointer;transition:background .15s,color .15s,border-color .15s,transform .15s}.wk-al-want:hover,.wk-al-want:focus-visible{color:#f3dc9a;border-color:rgba(216,180,90,.7);transform:scale(1.08)}.wk-al-want.on{background:rgba(216,180,90,.95);border-color:#f3dc9a;color:#241a05}@media (hover:none){.wk-al-want{width:34px;height:34px}}
+.wk-aw-box{max-width:420px;padding-bottom:14px}.wk-aw-box>.wk-sh-hint,.wk-aw-list,.wk-aw-f{margin-left:16px;margin-right:16px}.wk-aw-box>.wk-sh-hint{margin-top:12px;margin-bottom:0}.wk-aw-list{display:flex;flex-direction:column;gap:8px;margin:10px 0}.wk-aw-it{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 10px;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid rgba(148,163,184,.3);background:rgba(15,23,42,.6);color:#e5e7eb;cursor:pointer;font:inherit}.wk-aw-it:hover{border-color:rgba(216,180,90,.7);background:rgba(216,180,90,.1)}.wk-aw-it b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.wk-aw-it span{grid-column:1;font-size:12px;color:#94a3b8}.wk-aw-it em{grid-row:1/3;grid-column:2;font-style:normal;font-size:12px;font-weight:750;color:#f3dc9a}.wk-aw-f{display:flex;justify-content:flex-end}
+/* кнопка переворота в альбоме: на ПК только при наведении */
+@media (hover:hover) and (pointer:fine){.wk-al-flip{opacity:0!important;transition:opacity .15s}.wk-al-s:hover .wk-al-flip,.wk-al-flip:hover,.wk-al-flip:focus-visible,.wk-al-s.flipped .wk-al-flip[aria-pressed="true"]:focus-visible{opacity:1!important}}
 </style><style id="wk-v465-css">/* v465: плашка статуса: без переходов all и на своём слое, чтобы текст и точка не мерцали рядом с анимированной рамкой */html body .character-item .character-status-badge,html body .character-item .character-status-badge *{transition:none!important}html body .character-item .character-status-badge{transform:translateZ(0);backface-visibility:hidden;-webkit-font-smoothing:antialiased}/* v465: «в избранное» внутри статьи: тот же кружок со звездой */html body #articleFavoriteButton-character#articleFavoriteButton-character#articleFavoriteButton-character#articleFavoriteButton-character,html body #articleFavoriteButton-story#articleFavoriteButton-story#articleFavoriteButton-story#articleFavoriteButton-story,html body #articleFavoriteButton-fruit#articleFavoriteButton-fruit#articleFavoriteButton-fruit#articleFavoriteButton-fruit,html body #articleFavoriteButton-useful#articleFavoriteButton-useful#articleFavoriteButton-useful#articleFavoriteButton-useful,html body #articleFavoriteButton-reward#articleFavoriteButton-reward#articleFavoriteButton-reward#articleFavoriteButton-reward{display:inline-grid!important;place-items:center!important;width:38px!important;min-width:38px!important;max-width:38px!important;height:38px!important;padding:0!important;gap:0!important;border-radius:50%!important;font-size:0!important;line-height:0!important;overflow:hidden!important;color:#e9e2cf!important;background:rgba(10,13,22,.62)!important;border:1px solid rgba(255,255,255,.28)!important;box-shadow:0 2px 8px rgba(0,0,0,.35)!important;transition:transform .15s ease,background .15s ease,color .15s ease,border-color .15s ease!important}html body #articleFavoriteButton-character#articleFavoriteButton-character#articleFavoriteButton-character#articleFavoriteButton-character>*,html body #articleFavoriteButton-story#articleFavoriteButton-story#articleFavoriteButton-story#articleFavoriteButton-story>*,html body #articleFavoriteButton-fruit#articleFavoriteButton-fruit#articleFavoriteButton-fruit#articleFavoriteButton-fruit>*,html body #articleFavoriteButton-useful#articleFavoriteButton-useful#articleFavoriteButton-useful#articleFavoriteButton-useful>*,html body #articleFavoriteButton-reward#articleFavoriteButton-reward#articleFavoriteButton-reward#articleFavoriteButton-reward>*{display:none!important}html body #articleFavoriteButton-character#articleFavoriteButton-character#articleFavoriteButton-character#articleFavoriteButton-character::before,html body #articleFavoriteButton-story#articleFavoriteButton-story#articleFavoriteButton-story#articleFavoriteButton-story::before,html body #articleFavoriteButton-fruit#articleFavoriteButton-fruit#articleFavoriteButton-fruit#articleFavoriteButton-fruit::before,html body #articleFavoriteButton-useful#articleFavoriteButton-useful#articleFavoriteButton-useful#articleFavoriteButton-useful::before,html body #articleFavoriteButton-reward#articleFavoriteButton-reward#articleFavoriteButton-reward#articleFavoriteButton-reward::before{content:''!important;display:block!important;width:19px!important;height:19px!important;background:currentColor!important;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m12%203.2%202.7%205.6%206.1.9-4.4%204.3%201%206.1L12%2017.2l-5.4%202.9%201-6.1-4.4-4.3%206.1-.9z' fill='none' stroke='black' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat!important;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m12%203.2%202.7%205.6%206.1.9-4.4%204.3%201%206.1L12%2017.2l-5.4%202.9%201-6.1-4.4-4.3%206.1-.9z' fill='none' stroke='black' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat!important}html body #articleFavoriteButton-character#articleFavoriteButton-character#articleFavoriteButton-character#articleFavoriteButton-character:hover,html body #articleFavoriteButton-story#articleFavoriteButton-story#articleFavoriteButton-story#articleFavoriteButton-story:hover,html body #articleFavoriteButton-fruit#articleFavoriteButton-fruit#articleFavoriteButton-fruit#articleFavoriteButton-fruit:hover,html body #articleFavoriteButton-useful#articleFavoriteButton-useful#articleFavoriteButton-useful#articleFavoriteButton-useful:hover,html body #articleFavoriteButton-reward#articleFavoriteButton-reward#articleFavoriteButton-reward#articleFavoriteButton-reward:hover{transform:scale(1.1)!important;border-color:rgba(244,207,116,.8)!important;color:#f4cf74!important}html body #articleFavoriteButton-character#articleFavoriteButton-character#articleFavoriteButton-character#articleFavoriteButton-character.active,html body #articleFavoriteButton-story#articleFavoriteButton-story#articleFavoriteButton-story#articleFavoriteButton-story.active,html body #articleFavoriteButton-fruit#articleFavoriteButton-fruit#articleFavoriteButton-fruit#articleFavoriteButton-fruit.active,html body #articleFavoriteButton-useful#articleFavoriteButton-useful#articleFavoriteButton-useful#articleFavoriteButton-useful.active,html body #articleFavoriteButton-reward#articleFavoriteButton-reward#articleFavoriteButton-reward#articleFavoriteButton-reward.active{color:#1b1405!important;background:linear-gradient(145deg,#ffe08a,#e8a92c)!important;border-color:#ffe9a8!important;box-shadow:0 2px 10px rgba(232,169,44,.5)!important}html body #articleFavoriteButton-character#articleFavoriteButton-character#articleFavoriteButton-character#articleFavoriteButton-character.active::before,html body #articleFavoriteButton-story#articleFavoriteButton-story#articleFavoriteButton-story#articleFavoriteButton-story.active::before,html body #articleFavoriteButton-fruit#articleFavoriteButton-fruit#articleFavoriteButton-fruit#articleFavoriteButton-fruit.active::before,html body #articleFavoriteButton-useful#articleFavoriteButton-useful#articleFavoriteButton-useful#articleFavoriteButton-useful.active::before,html body #articleFavoriteButton-reward#articleFavoriteButton-reward#articleFavoriteButton-reward#articleFavoriteButton-reward.active::before{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m12%203.2%202.7%205.6%206.1.9-4.4%204.3%201%206.1L12%2017.2l-5.4%202.9%201-6.1-4.4-4.3%206.1-.9z' fill='black' stroke='black' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E")!important;mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m12%203.2%202.7%205.6%206.1.9-4.4%204.3%201%206.1L12%2017.2l-5.4%202.9%201-6.1-4.4-4.3%206.1-.9z' fill='black' stroke='black' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E")!important}</style><style id="wk-v463-css">/* v463: кружок-звезда «в избранное» на карточках */.wk-fv{position:absolute;top:8px;right:8px;z-index:6;width:28px;height:28px;padding:0;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:#e9e2cf;background:rgba(10,13,22,.62);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);box-shadow:0 2px 8px rgba(0,0,0,.35);transition:transform .15s ease,background .15s ease,color .15s ease,border-color .15s ease}.wk-fv svg{width:16px;height:16px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}.wk-fv:hover{transform:scale(1.12);border-color:rgba(244,207,116,.8);color:#f4cf74}.wk-fv.on{color:#1b1405;background:linear-gradient(145deg,#ffe08a,#e8a92c);border-color:#ffe9a8;box-shadow:0 2px 10px rgba(232,169,44,.5)}.wk-fv.on svg{fill:currentColor;stroke:currentColor}.wk-fv.on:hover{color:#1b1405;filter:brightness(1.08)}.wk-fv:focus-visible{outline:2px solid #f4cf74;outline-offset:2px}@media (hover:hover) and (pointer:fine){html body .wk-flip-btn{opacity:0!important;transition:opacity .15s ease!important}html body .character-item:hover .wk-flip-btn,html body .catalog-item-shell:hover .wk-flip-btn,html body .wk-cab-raw:hover .wk-flip-btn,html body :hover>.wk-flip-btn,html body .wk-flip-btn:hover,html body .wk-flip-btn:focus-visible,html body [aria-pressed="true"].wk-flip-btn{opacity:1!important}}html body .wk-has-fv .favorite-list-star,html body .wk-has-fv .favorite-list-toggle{display:none!important}</style></head>
 <body data-theme="mugiwara" data-active-tab="characters">
 <script id="wiki-cloud-config">
@@ -1594,7 +1599,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 469";
+const WIKI_VERSION = "15.11.2026 · 475";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -34793,6 +34798,36 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     fruit: '<svg viewBox="0 0 60 70" aria-hidden="true"><path d="M30 18c-14 0-22 12-22 26s10 22 22 22 22-8 22-22-8-26-22-26z" fill="currentColor"/><path d="M30 18c0-6 3-11 8-14" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M31 15c6-6 14-5 16-2-5 4-11 5-16 2z" fill="currentColor"/></svg>',
     useful: '<svg viewBox="0 0 60 70" aria-hidden="true"><path d="M12 8h28l10 10v46H12z" fill="currentColor"/><path d="M20 30h22M20 40h22M20 50h14" stroke="#0b1020" stroke-width="3" stroke-linecap="round"/></svg>'
   };
+  /* Кнопка «Ищу» на неоткрытой карточке альбома */
+  var WANT_SVG = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5.5 5.5"/></svg>';
+  function alWantBtn(k, st) {
+    var on = wantKeys(st.want, st.owned).indexOf(k.key) >= 0;
+    return '<button type="button" class="wk-al-want' + (on ? ' on' : '') + '" data-alwant="' + esc(k.key) + '" aria-pressed="' + on + '" title="' + (on ? 'Убрать из «Ищу»' : 'Добавить в «Ищу»') + '" aria-label="' + (on ? 'Убрать из «Ищу»' : 'Добавить в «Ищу»') + '">' + WANT_SVG + '</button>';
+  }
+  function alWantRepaint(pane) {
+    var y = window.pageYOffset; renderDeck(pane); window.scrollTo(0, y);
+  }
+  function alWantClose() { var o = document.getElementById('wkAlWant'); if (o) o.remove(); document.removeEventListener('keydown', alWantKey, true); }
+  function alWantKey(e) { if (e.key === 'Escape') { e.stopPropagation(); alWantClose(); } }
+  function alWantClick(pane, key) {
+    var st = load(); if (st.__fake) return;
+    var cur = wantKeys(st.want, st.owned), i = cur.indexOf(key);
+    if (i >= 0) { cur.splice(i, 1); st.want = cur; save(st); alWantRepaint(pane); return; }
+    if (cur.length < 3) { cur.push(key); st.want = cur; save(st); alWantRepaint(pane); return; }
+    /* витрина заполнена: предлагаем заменить */
+    var C = allCards(), nk = cardByKey(C, key); if (!nk) return; alWantClose();
+    var ov = document.createElement('div'); ov.id = 'wkAlWant'; ov.className = 'wk-tx-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', 'Заменить карточку в «Ищу»');
+    ov.innerHTML = '<div class="wk-tx-box wk-aw-box"><header class="wk-tx-bh"><h3 class="wk-tx-bht">Витрина «Ищу» заполнена</h3><button type="button" class="wk-tx-x" data-awx aria-label="Закрыть">✕</button></header>' +
+      '<p class="wk-sh-hint">Там уже три карточки. Что убрать, чтобы добавить «' + esc(cName(nk)) + '»?</p>' +
+      '<div class="wk-aw-list">' + cur.map(function (q) { var c = cardByKey(C, q); return '<button type="button" class="wk-aw-it r-' + (c ? c.r : 'common') + '" data-awrep="' + esc(q) + '"><b>' + esc(c ? cName(c) : q) + '</b><span>' + (c ? esc(c.v ? VAR[c.v].n : RN4[c.r]) : '') + '</span><em>Заменить</em></button>'; }).join('') + '</div>' +
+      '<div class="wk-aw-f"><button type="button" class="wk-tx-btn" data-awx>Отмена</button></div></div>';
+    document.body.appendChild(ov); document.addEventListener('keydown', alWantKey, true);
+    ov.addEventListener('click', function (e) {
+      var r = e.target.closest && e.target.closest('[data-awrep]');
+      if (r) { var s2 = load(), c2 = wantKeys(s2.want, s2.owned), j = c2.indexOf(r.getAttribute('data-awrep')); if (j >= 0) c2[j] = key; else c2.push(key); s2.want = c2.slice(0, 3); save(s2); alWantClose(); alWantRepaint(pane); return; }
+      if (e.target === ov || (e.target.closest && e.target.closest('[data-awx]'))) alWantClose();
+    });
+  }
   function albumHTML(base, st, pre) {
     var pages = alAll(base, st), aq = String(DK.alQ || '').trim().toLowerCase();
     if (aq) { var seen = {}, hit = []; pages.forEach(function (pp) { if (pp.all) return; pp.cards.forEach(function (k) { if (seen[k.key]) return; var hay = (cName(k) + ' ' + (k.sub || '') + ' ' + ((k.arc && k.arc.name) || '') + ' ' + (k.c && k.c.id || '')).toLowerCase(); if (hay.indexOf(aq) >= 0) { seen[k.key] = 1; hit.push(k); } }); });
@@ -34818,7 +34853,8 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
           '<div class="wk-al-fb r-' + k.r + (k.v ? ' v-' + k.v : '') + '" data-bkr="' + k.r + '" data-bkv="' + (k.v || '') + '" data-bkc="' + esc(k.kind === 'char' ? k.c.id : k.kind + ':' + k.c.id) + '" title="Открыть рубашку крупно"><div class="wk-dk-back">' + backInner(k.r, '', true) + '<div class="wk-al-bi"><b>' + esc(cName(k)) + '</b><span>' + esc(srcOf(k)) + '</span>' + (arcN ? '<span>' + esc(arcN) + '</span>' : '') + '<em>' + esc(rn) + (n > 1 ? ' · ×' + n : '') + '</em>' + alIcons(k) + '</div></div></div></div>' +
           '<button type="button" class="wk-al-flip" data-alflip="' + esc(k.key) + '" aria-pressed="' + fl + '" title="Перевернуть карточку" aria-label="Перевернуть карточку">⟲</button></div>';
       }
-      return '<div class="wk-al-s miss r-' + k.r + '">' + no + '<div class="wk-al-sil">' + (SIL[k.kind] || SIL.char) + '<b>№ ' + (i + 1) + '</b><span>' + esc(cName(k)) + '</span><em class="wk-al-src">' + esc(srcOf(k)) + '</em>' + (P.all ? '<span class="wk-al-arcn">' + esc(k.kind === 'wanted' ? k.sub : (k.arc && k.arc.name) || '') + '</span>' : '') + '<small>' + esc(k.v ? VAR[k.v].n : RN4[k.r]) + '</small></div></div>';
+      var wOn = !isC && !k.v && !st.__fake ? alWantBtn(k, st) : '';
+      return '<div class="wk-al-s miss r-' + k.r + '">' + no + wOn + '<div class="wk-al-sil">' + (SIL[k.kind] || SIL.char) + '<b>№ ' + (i + 1) + '</b><span>' + esc(cName(k)) + '</span><em class="wk-al-src">' + esc(srcOf(k)) + '</em>' + (P.all ? '<span class="wk-al-arcn">' + esc(k.kind === 'wanted' ? k.sub : (k.arc && k.arc.name) || '') + '</span>' : '') + '<small>' + esc(k.v ? VAR[k.v].n : RN4[k.r]) + '</small></div></div>';
     }).join('');
     var ownedP = P.cards.filter(function (k) { return st.owned[k.key]; }), allBack = ownedP.length > 0 && ownedP.every(function (k) { return DK.alBack[k.key]; });
     var done = !isC && have === tot;
@@ -36058,7 +36094,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (a === 'compose') { compOpen(pane); return true; }
     if (a === 'showedit') { compOpen(pane, 'show'); return true; }
     if (a === 'wantedit') { compOpen(pane, 'want'); return true; }
-    if (a === 'shtab' || a === 'sellall' || a === 'sell1' || a === 'buy' || a === 'mklist' || a === 'mkbuy' || a === 'mkcancel' || a === 'buyup' || a === 'daybuy' || a === 'buy2' || a === 'pigput' || a === 'pigget' || a === 'pickup' || a === 'cosbuy' || a === 'cossel' || a === 'bkadd' || a === 'bkedit' || a === 'bkcancel' || a === 'bkdel' || a === 'giftpack' || a === 'giftbuy' || a === 'hold' || a === 'unhold') { shopClick(pane, a, b); return true; }
+    if (a === 'shtab' || a === 'sellall' || a === 'sell1' || a === 'buy' || a === 'mklist' || a === 'mkbuy' || a === 'mkcancel' || a === 'buyup' || a === 'daybuy' || a === 'dayroll' || a === 'buy2' || a === 'pigput' || a === 'pigget' || a === 'pickup' || a === 'cosbuy' || a === 'cossel' || a === 'bkadd' || a === 'bkedit' || a === 'bkcancel' || a === 'bkdel' || a === 'giftpack' || a === 'giftbuy' || a === 'hold' || a === 'unhold') { shopClick(pane, a, b); return true; }
     if (a === 'accept' || a === 'decline' || a === 'cancel') { if (a !== 'accept' || (TX.trades.filter(function (x) { return x.id === b.getAttribute('data-id'); })[0] || {}).gift || window.confirm('Принять обмен? Карточки сразу перейдут.')) txAction(pane, a, b.getAttribute('data-id'), b); return true; }
     return false;
   }
@@ -36203,7 +36239,8 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       boost: '<h3 class="wk-dk-h">Усиления</h3><p class="wk-sh-hint">Расходуются сами, когда пригодятся: щит спасает серию входов, благословение добавляет шанс переработке.</p><div class="wk-sh-pks">' + pick([0, 1, 2, 5]) + '</div>' +
         '<h3 class="wk-dk-h">Особые находки</h3><p class="wk-sh-hint">Наборы и выбор карточек под конкретную цель.</p><div class="wk-sh-pks">' + pick([3, 4, 6, 7]) + '</div>',
       save: '<h3 class="wk-dk-h">Сбережения</h3><p class="wk-sh-hint">Копилка запирает белли на срок и возвращает их с процентами. Пока белли лежат в копилке, потратить их нельзя.</p><div class="wk-sh-pks">' + piggyHTML(st, bel) + '</div>',
-      des: '<h3 class="wk-dk-h">Оформление витрины и альбома</h3><p class="wk-sh-hint">Рамки видны на карточках в витрине и в альбоме, фон только в витрине. Покупаются один раз, выбрать или снять можно в любой момент. Другие участники видят твоё оформление.</p><div class="wk-sh-pks">' + cosRow('frame', FRAMES, 'f_') + cosRow('bg', BGS, 'b_') + '</div><h3 class="wk-dk-h">Дизайн альбома</h3><p class="wk-sh-hint">Меняет вид страниц в режиме «Альбом» в твоей колоде. Покупается один раз, выбрать или снять можно в любой момент.</p><div class="wk-sh-pks">' + cosRow('alb', ALBS, 'a_') + '</div><h3 class="wk-dk-h">Рубашки карточек</h3><p class="wk-sh-hint">Другой знак на обороте карточек: в наборах, в колоде и в альбоме. Цвет и свечение по-прежнему зависят от редкости. Покупается один раз.</p><div class="wk-sh-pks">' + cosRow('back', allBacks().filter(function (q) { return (!/^(skull|fruit|bolt|blades)$/.test(q.id) || cos['k_' + q.id]) && (!q.cu || bkOk(q)); }), 'k_') + '</div>' + bkAdminHTML()
+      des: '<h3 class="wk-dk-h">Оформление витрины и альбома</h3><p class="wk-sh-hint">Рамки видны на карточках в витрине и в альбоме, фон только в витрине. Покупаются один раз, выбрать или снять можно в любой момент. Другие участники видят твоё оформление.</p><div class="wk-sh-pks">' + cosRow('frame', FRAMES, 'f_') + cosRow('bg', BGS, 'b_') + '</div><h3 class="wk-dk-h">Дизайн альбома</h3><p class="wk-sh-hint">Меняет вид страниц в режиме «Альбом» в твоей колоде. Покупается один раз, выбрать или снять можно в любой момент.</p><div class="wk-sh-pks">' + cosRow('alb', ALBS, 'a_') + '</div>',
+      bk: '<h3 class="wk-dk-h">Рубашки карточек</h3><p class="wk-sh-hint">Другой знак на обороте карточек: в наборах, в колоде и в альбоме. Цвет и свечение по-прежнему зависят от редкости. Покупается один раз.</p><div class="wk-sh-pks">' + cosRow('back', allBacks().filter(function (q) { return (!/^(skull|fruit|bolt|blades)$/.test(q.id) || cos['k_' + q.id]) && (!q.cu || bkOk(q)); }), 'k_') + '</div>' + bkAdminHTML()
     };
   }
   function bkAdminHTML() {
@@ -36260,15 +36297,13 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   /* ===== Лавка дня: 5 карточек, у всех одинаковые, обновляются в полночь ===== */
   var DAY_N = 5, DAY_MARK = 1.5, DP = { sig: '', list: [] };
   function rngSeed(str) { var h = 1779033703 ^ str.length; for (var i = 0; i < str.length; i++) { h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = h << 13 | h >>> 19; } return function () { h = Math.imul(h ^ h >>> 16, 2246822507); h = Math.imul(h ^ h >>> 13, 3266489909); return ((h ^= h >>> 16) >>> 0) / 4294967296; }; }
-  /* Все карточки без учёта спойлеров: так выбор один и тот же у всех участников */
+  /* Пул лавки — только то, что участнику можно видеть (без спойлеров) */
   function dayPool() {
-    var sig = [chars().length, arcsAll().length, listOf('fruits').length, listOf('usefulArticles').length, listOf('rewards').length].join(':');
+    var sg = ''; try { sg = localStorage.getItem('onePieceWikiSpoilerProgressV1') || ''; } catch (e) {}
+    var sig = [chars().length, arcsAll().length, listOf('fruits').length, listOf('usefulArticles').length, listOf('rewards').length, sg].join(':');
     if (DP.sig === sig && DP.list.length) return DP.list;
-    var w = window, a0 = w.__wikiIsSpoilerActive, b0 = w.__wikiPhotoOpen, list = [];
-    try { w.__wikiIsSpoilerActive = function () { return false; }; w.__wikiPhotoOpen = function () { return true; }; list = allCards().filter(function (k) { return k && k.key && RORD.indexOf(k.r) >= 0; }); }
-    catch (e) { list = []; }
-    finally { w.__wikiIsSpoilerActive = a0; w.__wikiPhotoOpen = b0; try { allCards(); } catch (e2) {} }
-    list = list.map(function (k) { return { key: k.key, r: k.r }; }).sort(function (x, y) { return x.key < y.key ? -1 : x.key > y.key ? 1 : 0; });
+    var list = [];
+    try { list = allCards().filter(function (k) { return k && k.key && RORD.indexOf(k.r) >= 0; }).map(function (k) { return { key: k.key, r: k.r }; }).sort(function (x, y) { return x.key < y.key ? -1 : x.key > y.key ? 1 : 0; }); } catch (e) { list = []; }
     DP = { sig: sig, list: list }; return list;
   }
   /* Время лавки — по Украине (Киев), одинаково у всех независимо от пояса устройства */
@@ -36281,19 +36316,20 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   }
   function dayPrice(r) { return FREE() ? 0 : Math.round((SELL[r] || 100) * DAY_MARK / 10) * 10; }
   function dayShop(st, C) {
-    var pool = dayPool(), day = kyiv().d, rnd = rngSeed(day + '|lavka'), by = { common: [], rare: [], epic: [], legendary: [] }, used = {}, out = [];
+    var pool = dayPool(), day = kyiv().d, dl = st.dl && st.dl.d === day ? st.dl : { d: day, b: [], r: 0 }, rnd = rngSeed(day + '|lavka|' + (dl.r || 0)), by = { common: [], rare: [], epic: [], legendary: [] }, used = {}, out = [];
     pool.forEach(function (k) { by[k.r].push(k); });
-    var dl = st.dl && st.dl.d === day ? st.dl : { d: day, b: [] };
     for (var i = 0; i < DAY_N; i++) {
       var x = rnd(), cls = x < RPROB.legendary ? 'legendary' : x < RPROB.legendary + RPROB.epic ? 'epic' : x < RPROB.legendary + RPROB.epic + RPROB.rare ? 'rare' : 'common';
       var order = [cls].concat(['legendary', 'epic', 'rare', 'common'].filter(function (q) { return q !== cls; })), pick = null;
       for (var j = 0; j < order.length && !pick; j++) { var l = by[order[j]].filter(function (k) { return !used[k.key]; }); if (l.length) { pick = l[Math.floor(rnd() * l.length)]; } }
       if (!pick) continue; used[pick.key] = 1;
       var k = cardByKey(C, pick.key);
-      out.push({ i: i, key: pick.key, r: pick.r, k: k, price: dayPrice(pick.r), bought: dl.b.indexOf(i) >= 0, own: st.owned[pick.key] || 0 });
+      out.push({ i: i, key: pick.key, r: pick.r, k: k, price: dayPrice(pick.r), bought: dl.b.indexOf(pick.key) >= 0, own: st.owned[pick.key] || 0 });
     }
     return out;
   }
+  var DAY_RR = 5;
+  function dayRollInfo(st) { var d = st.dl && st.dl.d === kyiv().d ? st.dl : null, n = d && d.r || 0; return { n: n, left: DAY_RR - n, price: FREE() ? 0 : 1500 * (n + 1) }; }
   function dayLeft() { return (86400 - kyiv().s) * 1000; }
   function dayHTML(C, st, bel) {
     var l = dayShop(st, C);
@@ -36306,8 +36342,9 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
         '<div class="wk-ld-m">' + st2 + '<span class="wk-ld-rn">' + rn + (it.k.sub ? ' · ' + esc(it.k.sub) : '') + '</span>' +
         '<button type="button" class="wk-tx-btn' + (can ? ' pri' : '') + '" data-tx="daybuy" data-i="' + it.i + '"' + (can ? '' : ' disabled') + '>' + (it.bought ? 'Куплено' : it.price > 0 ? 'Купить · ' + fmtB(it.price) : 'Забрать бесплатно') + '</button></div></article>';
     }).join('');
-    var left = dayLeft();
-    return '<h3 class="wk-dk-h">Лавка дня</h3><p class="wk-sh-hint">Пять карточек, у всех участников одни и те же. Редкость выпадает с теми же шансами, что в наборе. Купленная карточка пропадает только у тебя, остальные могут взять её сами. Обновится в полночь по Киеву, через ' + leftTxt(left) + '. Цена карточки в полтора раза выше цены продажи её копии.</p><div class="wk-ld-grid">' + items + '</div>';
+    var left = dayLeft(), ri = dayRollInfo(st);
+    var rollBar = '<div class="wk-ld-roll"><div><b>Обновить карточки</b><span>' + (ri.left > 0 ? 'Таймер дня не меняется и обнулится в полночь по Киеву, но сейчас появится другой набор из пяти. Обновлений на сегодня осталось: ' + ri.left + ' из ' + DAY_RR + '. Каждый следующий дороже.' : 'Обновления на сегодня закончились, новый набор появится после полуночи по Киеву.') + '</span></div><button type="button" class="wk-tx-btn' + (ri.left > 0 && bel >= ri.price ? ' pri' : '') + '" data-tx="dayroll"' + (ri.left > 0 && bel >= ri.price ? '' : ' disabled') + '>' + (ri.left > 0 ? (ri.price ? 'Обновить · ' + fmtB(ri.price) : 'Обновить бесплатно') : 'Лимит обновлений') + '</button></div>';
+    return '<h3 class="wk-dk-h">Лавка дня</h3><p class="wk-sh-hint">Пять карточек, набор свой у каждого участника и без спойлеров: тебе попадаются только те карточки, которые ты уже можешь видеть. Редкость выпадает с теми же шансами, что в наборе. Купленная карточка пропадает только у тебя, у других она остаётся в продаже. Обновится в полночь по Киеву, через ' + leftTxt(left) + '. Цена карточки в полтора раза выше цены продажи её копии.</p><div class="wk-ld-grid">' + items + '</div>' + rollBar;
   }
   function luckHTML(st) {
     var L = st.lk, tot = L && L.n ? L.n.c + L.n.r + L.n.e + L.n.l : 0, pk = +st.packs || 0;
@@ -36420,7 +36457,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       return '<article class="wk-sh-pk p-up"><div class="wk-sh-art wk-sh-upart">' + shelfSVG(u.cap) + '</div><div class="wk-sh-info"><h4>' + u.name + '</h4><p class="wk-sh-what">Витрина: до ' + cardsWord(u.cap) + '</p><p class="wk-sh-note">' + u.note + '</p></div><span class="wk-sh-bw"><button type="button" class="wk-tx-btn' + (can ? ' pri' : '') + '" data-tx="buyup" data-u="' + u.cap + '"' + (can ? '' : ' disabled') + '>' + (own ? 'Куплено' : lock ? 'Сначала витрина на 5' : can ? 'Купить · ' + fmtB(u.price) : 'Нужно ' + fmtB(u.price - bel)) + '</button>' + giftBtn('up:' + u.cap) + '</span></article>';
     }).join('');
     var sellBlock = '<h3 class="wk-dk-h">Продать повторки</h3><p class="wk-sh-hint">Продаются только лишние копии: последняя копия каждой карточки и карточки в ожидающих обменах остаются.</p><div class="wk-sh-srs">' + rows + '</div>' + detail + holdBox;
-    var TB = [['day', 'Лавка дня'], ['packs', 'Наборы'], ['boost', 'Усиления'], ['design', 'Оформление'], ['save', 'Сбережения'], ['sell', 'Продажа'], ['auc', 'Аукцион'], ['stat', 'Итоги']];
+    var TB = [['day', 'Лавка дня'], ['packs', 'Наборы'], ['boost', 'Усиления'], ['design', 'Оформление'], ['back', 'Рубашки'], ['save', 'Сбережения'], ['sell', 'Продажа'], ['auc', 'Аукцион'], ['stat', 'Итоги']];
     var curTab = TB.some(function (t) { return t[0] === DK.shTab; }) ? DK.shTab : 'day';
     var dayN = 0; try { dayN = dayShop(st, C).filter(function (q) { return q.k && !q.bought; }).length; } catch (e) { dayN = 0; }
     var ex = extrasHTML(C, st, bel);
@@ -36429,7 +36466,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       sell: sellBlock,
       packs: '<h3 class="wk-dk-h">Купить набор</h3><div class="wk-sh-pks">' + packs + '</div>' +
         '<p class="wk-sh-hint">Купленные наборы не ждут таймера, не сдвигают гарантию легенды и не превращают повторки в особые версии. Цена набора равна средней стоимости карточек в нём.</p>',
-      boost: ex.boost, save: ex.save, design: '<h3 class="wk-dk-h">Расширения витрины</h3><div class="wk-sh-pks">' + ups + '</div><p class="wk-sh-hint">Покупается один раз и навсегда. Другие участники тоже увидят все твои слоты.</p>' + ex.des, auc: auctionHTML(C, st), stat: shopStatsHTML(st)
+      boost: ex.boost, back: ex.bk, save: ex.save, design: '<h3 class="wk-dk-h">Расширения витрины</h3><div class="wk-sh-pks">' + ups + '</div><p class="wk-sh-hint">Покупается один раз и навсегда. Другие участники тоже увидят все твои слоты.</p>' + ex.des, auc: auctionHTML(C, st), stat: shopStatsHTML(st)
     };
     var tabBar = '<div class="wk-sht" role="tablist" aria-label="Разделы магазина">' + TB.map(function (t) {
       var on = t[0] === curTab, badge = t[0] === 'sell' && list.length ? '<i>' + list.length + '</i>' : t[0] === 'day' && dayN ? '<i>' + dayN + '</i>' : '';
@@ -36594,14 +36631,22 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       var b2 = st.belli || 0; st.belli -= u0.price; st.spent = (st.spent || 0) + u0.price; st.showCap = cap0; track(st, 'spend', u0.price); save(st); repaint(); belliAnim(pane, b2);
       txToast('Витрина расширена: теперь до ' + cardsWord(cap0)); return;
     }
+    if (a === 'dayroll') {
+      var rI = dayRollInfo(st); if (rI.left <= 0) return;
+      if ((st.belli || 0) < rI.price) { txToast('Не хватает белли'); return; }
+      var dY = kyiv().d, dR = st.dl && st.dl.d === dY ? st.dl : { d: dY, b: [], r: 0 }, bR = st.belli || 0;
+      st.belli = bR - rI.price; st.spent = (st.spent || 0) + rI.price; track(st, 'spend', rI.price);
+      dR.r = (dR.r || 0) + 1; st.dl = dR; save(st); repaint(); belliAnim(pane, bR);
+      txToast('Карточки в лавке обновлены'); return;
+    }
     if (a === 'daybuy') {
       var di = Number(b.getAttribute('data-i')), dsh = dayShop(st, C).filter(function (q) { return q.i === di; })[0];
       if (!dsh || !dsh.k || dsh.bought) return;
       if ((st.belli || 0) < dsh.price) { txToast('Не хватает белли'); return; }
-      var day0 = kyiv().d, dl0 = st.dl && st.dl.d === day0 ? st.dl : { d: day0, b: [] }, bd0 = st.belli || 0;
+      var day0 = kyiv().d, dl0 = st.dl && st.dl.d === day0 ? st.dl : { d: day0, b: [], r: 0 }, bd0 = st.belli || 0;
       st.belli = bd0 - dsh.price; st.spent = (st.spent || 0) + dsh.price; st.bought = (st.bought || 0) + 1; track(st, 'spend', dsh.price);
       addCard(st, dsh.key, 1); st.got = st.got || {}; st.got[dsh.key] = Date.now();
-      dl0.b = dl0.b.concat([di]); st.dl = dl0;
+      dl0.b = dl0.b.concat([dsh.key]); st.dl = dl0;
       logPull(st, C, dsh.key, 'shop'); save(st); repaint(); belliAnim(pane, bd0);
       txToast('Куплено: ' + esc(cName(dsh.k))); return;
     }
@@ -36886,6 +36931,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       pane.addEventListener('click', function (e) {
         if (txPaneClick(pane, e)) return;
         var avw = e.target.closest && e.target.closest('[data-alview]'); if (avw) { DK.view = avw.getAttribute('data-alview'); if (!DK.inF) try { localStorage.setItem('wkDeckView', DK.view); } catch (er) {} pane.querySelector('#wkDkColl').innerHTML = collHTML(allCards(), load()); return; }
+        var alw = e.target.closest && e.target.closest('[data-alwant]'); if (alw) { e.preventDefault(); e.stopPropagation(); alWantClick(pane, alw.getAttribute('data-alwant')); return; }
         var alf = e.target.closest && e.target.closest('[data-alflip]'); if (alf) { e.preventDefault(); alFlip(alf.closest('.wk-al-s'), alf.getAttribute('data-alflip')); return; }
         var alfa = e.target.closest && e.target.closest('[data-alflipall]'); if (alfa) { e.preventDefault(); alFlipAll(pane); return; }
         var stg = e.target.closest && e.target.closest('[data-sttog]'); if (stg) { var hid = !stHidden(); try { localStorage.setItem('wkDeckStatsHideV1', hid ? '1' : '0'); } catch (er) {} stg.textContent = hid ? 'Показать статистику' : 'Скрыть статистику'; var sbx = pane.querySelector('#wkDkStats'); if (sbx) sbx.innerHTML = statsBox(allCards(), load()); return; }
@@ -38062,6 +38108,12 @@ html body .wk-sc .wk-sc-row[data-n="5"]{grid-template-columns:repeat(5,minmax(0,
   new MutationObserver(function (ms) {
     for (var i = 0; i < ms.length; i++) { var t = ms[i].target; if (t && t.nodeType === 1 && (t.id === 'wikiEditorForm' || (t.closest && t.closest('#wikiEditorForm') && !t.closest('.wk-toc') && !t.closest('#wkEdPv')))) { sched(); break; } }
   }).observe(document.documentElement, { childList: true, subtree: true });
+  /* Раздел показали/скрыли без добавления элементов (стиль, hidden, класс, вкладка) — пересобираем оглавление */
+  new MutationObserver(function (ms) {
+    for (var i = 0; i < ms.length; i++) { var t = ms[i].target; if (t && t.nodeType === 1 && (t.id === 'wikiEditorForm' || (t.classList && t.classList.contains('wiki-editor-section') && t.closest('#wikiEditorForm')))) { sched(); break; } }
+  }).observe(document.documentElement, { attributes: true, subtree: true, attributeFilter: ['style', 'hidden', 'class', 'data-wk-tab'] });
+  document.addEventListener('change', function (e) { if (e.target && e.target.closest && e.target.closest('#wikiEditorForm')) sched(); }, true);
+  setInterval(function () { if (document.getElementById('wikiEditorForm') && !document.hidden) sched(); }, 1500);
 })();
 </script>
 <style id="wk-ed3-css">/* ===== редактор v367: фильтры, «Инструменты», обязательные поля, «Дополнительно», меню «ещё» ===== */
