@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 429";
+const WIKI_VERSION = "15.11.2026 · 431";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -38535,7 +38535,7 @@ html body .wk-dk-wpw{background:color-mix(in srgb,var(--accent,#d8b45a) 62%,#fff
 function tick(){var b=document.querySelector('#wikiEditorOverlay .wiki-editor-body');if(!b)return;var sb=b.querySelector(':scope>.wiki-editor-sidebar'),t=b.querySelector(':scope>.wk-ed-sb-t');
 if(!t){t=document.createElement('button');t.type='button';t.className='wk-ed-sb-t';b.appendChild(t);t.addEventListener('click',function(){var m=!b.classList.contains('wk-side-min');try{localStorage.setItem(K,m?'1':'0')}catch(e){}tick();setTimeout(function(){window.dispatchEvent(new Event('resize'))},60)})}
 var m=on();b.classList.toggle('wk-side-min',m);t.textContent=m?'›':'‹';t.title=m?'Показать список статей':'Свернуть список статей';t.setAttribute('aria-label',t.title);t.classList.toggle('is-min',m);t.style.left=m?'4px':Math.max(0,(sb?sb.offsetWidth:300)-13)+'px'}
-setInterval(tick,600);})();</script>
+setInterval(function(){tick();var o=document.getElementById('wikiEditorOverlay'),v=!!(o&&o.getClientRects().length);document.documentElement.classList.toggle('wk-ed-lock',v)},600);})();</script>
 <style id="wk-v426-css">#wkEdPv .wk-lk-card{touch-action:none;cursor:grab}#wkEdPv .wk-lk-card.wk-pvdrag{cursor:grabbing;transform:none!important;transition:none!important;animation:none!important}#wkEdPv .wk-lk-card.wk-pvdrag *{transition:none!important}#wkEdPv .wk-lk-img{will-change:transform,object-position;user-select:none;-webkit-user-drag:none}</style>
 <style id="wk-v427-css">
 #wikiEditorOverlay .wiki-editor-field[data-editor-field="person_image_position"]{display:flex!important;padding:0!important;border:0!important;background:none!important;grid-column:1/-1}
@@ -38549,5 +38549,19 @@ setInterval(tick,600);})();</script>
 #wikiEditorOverlay .wiki-editor-body.wk-side-min #wkEdPv>.wk-edpv-h,#wikiEditorOverlay .wiki-editor-body.wk-side-min #wkEdPv>.wk-pvs,#wikiEditorOverlay .wiki-editor-body.wk-side-min #wkEdPv>.wk-lk.is-hero{grid-column:1/-1}
 #wikiEditorOverlay .wiki-editor-body.wk-side-min #wkEdPv .wk-lk.is-cat .wk-lk-card{width:100%!important;max-width:260px;height:auto!important;aspect-ratio:3/4;margin:0 auto}
 #wikiEditorOverlay .wiki-editor-body.wk-side-min #wkEdPv .wk-lk.is-hero .wk-lk-card{width:100%!important;max-width:420px;height:auto!important;aspect-ratio:232/150;margin:0 auto}
+</style>
+<style id="wk-v430-css">
+html.wk-ed-lock,html.wk-ed-lock body{overflow:hidden!important}
+#wikiEditorOverlay #wkEdPv{scrollbar-width:none;-ms-overflow-style:none}#wikiEditorOverlay #wkEdPv::-webkit-scrollbar{display:none}
+</style>
+<style id="wk-v431-css">
+.wk-ap-row>div:nth-child(2){grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:6px 10px!important;align-items:end}
+.wk-ap-row>div:nth-child(2)>div:nth-child(1){grid-column:span 4}
+.wk-ap-row>div:nth-child(2)>label:nth-child(2){grid-column:span 8}
+.wk-ap-row>div:nth-child(2)>label:nth-child(3){grid-column:span 4}
+.wk-ap-row>div:nth-child(2)>div:nth-child(4){display:contents!important}
+.wk-ap-row>div:nth-child(2)>div:nth-child(4)>label{grid-column:span 4}
+.wk-ap-row>div:nth-child(2)>.wk-ap-hint{grid-column:1/-1}
+@media(max-width:900px){.wk-ap-row>div:nth-child(2)>div:nth-child(1),.wk-ap-row>div:nth-child(2)>label:nth-child(2),.wk-ap-row>div:nth-child(2)>label:nth-child(3){grid-column:1/-1}.wk-ap-row>div:nth-child(2)>div:nth-child(4)>label{grid-column:span 6}}
 </style>
 </body></html>
