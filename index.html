@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 449";
+const WIKI_VERSION = "15.11.2026 · 452";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -17148,7 +17148,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
   // Прогресс гостя живёт только в этом браузере (в облако гость писать не может) и переживает выход из учётки.
   var GUEST_PROGRESS_KEY = 'wkGuestProgressV1';
   // Личные данные участника, которые ездят вместе с учёткой.
-  var PERSONAL_KEYS = ['onePieceWikiViewedV1', PROGRESS_KEY, 'onePieceWikiFilmProgressV1', 'onePieceWikiFavorites', 'onePieceWikiRecentVisits', 'onePieceWikiSkippedArcsV1', 'onePieceWikiQuizV1', 'onePieceWikiAvatarV1'];
+  var PERSONAL_KEYS = ['onePieceWikiViewedV1', PROGRESS_KEY, 'onePieceWikiFilmProgressV1', 'onePieceWikiFavorites', 'onePieceWikiRecentVisits', 'onePieceWikiSkippedArcsV1', 'onePieceWikiQuizV1', 'onePieceWikiAvatarV1', 'onePieceWikiUnitTitlesV1'];
   var SDK = 'https://www.gstatic.com/firebasejs/10.12.2/';
   var TYPES = ['character', 'story', 'reward', 'fruit', 'useful', 'card'];
 
@@ -18001,8 +18001,10 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     var changed = false;
     PERSONAL_KEYS.forEach(function (k) {
       if (dirty[k]) return;
-      var v = Object.prototype.hasOwnProperty.call(keys, k) ? keys[k] : null;
-      if (lsGet(k) !== v) { quietSet(k, v); changed = true; }
+      var has = Object.prototype.hasOwnProperty.call(keys, k), v = has ? keys[k] : null;
+      /* Ключ добавили позже: если в облаке его ещё нет, а на устройстве есть, не стираем, а отправляем в облако */
+      if (!has && k === 'onePieceWikiUnitTitlesV1' && lsGet(k) != null && me.role !== 'guest') { dirty[k] = true; clearTimeout(personalTimer); personalTimer = setTimeout(flushPersonal, 1000); return; }
+      if (lsGet(k) !== v) { quietSet(k, v); changed = true; if (k === 'onePieceWikiUnitTitlesV1') { try { if (window.__wkUnitTitlesReset) window.__wkUnitTitlesReset(); } catch (e) {} } }
     });
     return changed;
   }
@@ -33383,8 +33385,9 @@ html body.article-view-open #storySection#storySection#storySection#storySection
     if (box) { box.remove(); return; }
     box = document.createElement('div'); box.className = 'wk-pg-titles';
     var cur = {}; try { cur = JSON.parse(localStorage.getItem('onePieceWikiUnitTitlesV1') || '{}'); } catch (e) {}
-    box.innerHTML = '<div class="wk-pg-tt"><b>Названия для подсказок</b><span>Вставь список: каждая строка — «номер, название», например «1. Я Луффи!» или «1 — Я Луффи!». Названия увидишь только у уже пройденных серий и глав.</span></div>'
+    box.innerHTML = '<div class="wk-pg-tt"><b>Названия для подсказок</b><span>Вставь список: каждая строка — «номер, название», например «1. Я Луффи!» или «1 — Я Луффи!». Одно название можно задать или поправить по номеру, в том числе для серий и глав, которые ещё не вышли или не пройдены. Увидишь их только у уже пройденных.</span></div>'
       + '<div class="wk-pg-trow"><label><input type="radio" name="wkpgk" value="episodes" checked> Серии аниме</label><label><input type="radio" name="wkpgk" value="chapters"> Главы манги</label><span class="wk-pg-cnt"></span></div>'
+      + '<div class="wk-pg-trow wk-pg-one"><input type="number" min="1" max="9999" inputmode="numeric" placeholder="№" data-t-n><input type="text" maxlength="160" placeholder="Название (для одной главы или серии, в том числе будущей)" data-t-one><button type="button" data-t-set>Задать</button><button type="button" data-t-del>Убрать</button></div>'
       + '<textarea rows="8" placeholder="1. Название&#10;2. Название&#10;3. Название"></textarea>'
       + '<div class="wk-pg-trow"><button type="button" data-t-save>Сохранить</button><button type="button" data-t-clear>Удалить сохранённые</button><span class="wk-pg-msg"></span></div>';
     var bar = pane.querySelector(':scope > .wk-pg-bar'); bar.after(box);
@@ -33392,8 +33395,28 @@ html body.article-view-open #storySection#storySection#storySection#storySection
     function kindNow() { return box.querySelector('input[name="wkpgk"]:checked').value; }
     function stat() { var k = kindNow(), c = Object.keys(cur[k] || {}).length; var emb = {}; try { emb = JSON.parse(document.getElementById('wikiUnitTitles').textContent || '{}')[k] || {}; } catch (e) {} cnt.textContent = 'сохранено названий: ' + (c + Object.keys(emb).length); }
     box.addEventListener('change', stat); stat();
+    var nIn = box.querySelector('[data-t-n]'), oIn = box.querySelector('[data-t-one]');
+    function curTitle() { var k = kindNow(), n = String(parseInt(nIn.value, 10) || ''); if (!n) return ''; if (cur[k] && Object.prototype.hasOwnProperty.call(cur[k], n)) return cur[k][n]; var emb = {}; try { emb = JSON.parse(document.getElementById('wikiUnitTitles').textContent || '{}')[k] || {}; } catch (e) {} return emb[n] || ''; }
+    function one(n, t) {
+      var k = kindNow(); cur[k] = cur[k] || {}; cur[k][n] = t;
+      try { localStorage.setItem('onePieceWikiUnitTitlesV1', JSON.stringify(cur)); } catch (er) {}
+      try { var node = document.getElementById('wikiUnitTitles'), d = JSON.parse(node.textContent || '{}'); d[k] = d[k] || {}; if (t) d[k][n] = t; else delete d[k][n]; node.textContent = JSON.stringify(d); } catch (er) {}
+      if (window.__wkUnitTitlesReset) window.__wkUnitTitlesReset();
+      stat(); seen = false; apply(true);
+    }
+    nIn.addEventListener('input', function () { oIn.value = curTitle(); });
+    box.addEventListener('change', function (e) { if (e.target.name === 'wkpgk') oIn.value = curTitle(); });
     box.addEventListener('click', function (e) {
       var k = kindNow();
+      if (e.target.closest('[data-t-set]')) {
+        var n1 = String(parseInt(nIn.value, 10) || ''), t1 = oIn.value.trim();
+        if (!n1) { msg.textContent = 'Укажи номер.'; return; } if (!t1) { msg.textContent = 'Впиши название или нажми «Убрать».'; return; }
+        one(n1, t1); msg.textContent = 'Сохранено: №' + n1; return;
+      }
+      if (e.target.closest('[data-t-del]')) {
+        var n2 = String(parseInt(nIn.value, 10) || ''); if (!n2) { msg.textContent = 'Укажи номер.'; return; }
+        one(n2, ''); oIn.value = ''; msg.textContent = 'Убрано: №' + n2; return;
+      }
       if (e.target.closest('[data-t-save]')) {
         var r = parseTitles(ta.value); if (!r.n) { msg.textContent = 'Не нашёл строк вида «номер название».'; return; }
         cur[k] = Object.assign({}, cur[k] || {}, r.map); var dk = k === 'chapters' ? 'chapterDates' : 'episodeDates'; if (Object.keys(r.dates).length) cur[dk] = Object.assign({}, cur[dk] || {}, r.dates);
@@ -33416,11 +33439,12 @@ html body.article-view-open #storySection#storySection#storySection#storySection
       var head = pane.querySelector(':scope > .cabin-panel-head');
       bar = document.createElement('div'); bar.className = 'wk-pg-bar';
       bar.innerHTML = '<button type="button" data-pgv="grid">🟩 Сетка</button><button type="button" data-pgv="scale">📏 Шкала</button><button type="button" data-pgv-titles style="margin-left:auto">📝 Названия серий и глав</button>';
-      bar.addEventListener('click', function (e) { if (e.target.closest('[data-pgv-titles]')) { toggleTitles(pane); return; } var b = e.target.closest('[data-pgv]'); if (b) setView(b.getAttribute('data-pgv')); });
       if (head && head.nextSibling) pane.insertBefore(bar, head.nextSibling); else pane.appendChild(bar);
       host = document.createElement('div'); host.className = 'wk-pg-grid'; host.id = 'wkPgGrid';
       bar.after(host); force = true;
     }
+    /* панель могла прийти уже готовой из HTML-файла, тогда обработчика на ней нет */
+    if (!bar.__pgL) { bar.__pgL = 1; bar.addEventListener('click', function (e) { if (e.target.closest('[data-pgv-titles]')) { toggleTitles(pane); return; } var b = e.target.closest('[data-pgv]'); if (b) setView(b.getAttribute('data-pgv')); }); }
     var v = view();
     pane.classList.toggle('wk-pg-is-grid', v === 'grid');
     [].forEach.call(bar.querySelectorAll('[data-pgv]'), function (b) { b.classList.toggle('is-on', b.getAttribute('data-pgv') === v); });
@@ -34544,7 +34568,8 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   function peStart(k) {
     var X = Number(k.x), Y = Number(k.y), Z = Number(k.z);
     X = isFinite(X) && String(k.x) !== '' ? X : 50; Y = isFinite(Y) && String(k.y) !== '' ? Y : 50; Z = isFinite(Z) && Z >= 100 ? 100 + Math.min(150, Z - 100) * 0.4 : 100;
-    if (k.dz != null && String(k.dz) !== '') { X = Number(k.dx); Y = Number(k.dy); Z = Number(k.dz); X = isFinite(X) ? X : 50; Y = isFinite(Y) ? Y : 50; Z = isFinite(Z) ? Z : 100; }
+    if (k.kind !== 'custom') { var qX = Number(k.x), qY = Number(k.y), qZ = Number(k.z); X = isFinite(qX) && String(k.x) !== '' ? qX : 50; Y = isFinite(qY) && String(k.y) !== '' ? qY : 50; Z = isFinite(qZ) ? Math.max(100, Math.min(250, qZ)) : 100; }
+    else if (k.dz != null && String(k.dz) !== '') { X = Number(k.dx); Y = Number(k.dy); Z = Number(k.dz); X = isFinite(X) ? X : 50; Y = isFinite(Y) ? Y : 50; Z = isFinite(Z) ? Z : 100; }
     return { X: Math.max(0, Math.min(100, X)), Y: Math.max(0, Math.min(100, Y)), Z: Math.max(100, Math.min(300, Z)) };
   }
   function peOpen(key) {
@@ -34664,7 +34689,8 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   function cardHTML(k) {
     var c = k.c, u = k.u, X = Number(k.x), Y = Number(k.y), Z = Number(k.z);
     X = isFinite(X) && String(k.x) !== '' ? Math.max(0, Math.min(100, X)) : 50; Y = isFinite(Y) && String(k.y) !== '' ? Math.max(0, Math.min(100, Y)) : 50; Z = isFinite(Z) && Z >= 100 ? 100 + Math.min(150, Z - 100) * 0.4 : 100;
-    if (k.dz != null && String(k.dz) !== '') { var dX = Number(k.dx), dY = Number(k.dy), dZ = Number(k.dz); X = isFinite(dX) ? Math.max(0, Math.min(100, dX)) : 50; Y = isFinite(dY) ? Math.max(0, Math.min(100, dY)) : 50; Z = isFinite(dZ) ? Math.max(100, Math.min(300, dZ)) : 100; }   // в колоде приближение мягче, чем в каталоге: карточка выше и целиком в кадре
+    if (k.kind !== 'custom') { var cX = Number(k.x), cY = Number(k.y), cZ = Number(k.z); X = isFinite(cX) && String(k.x) !== '' ? Math.max(0, Math.min(100, cX)) : 50; Y = isFinite(cY) && String(k.y) !== '' ? Math.max(0, Math.min(100, cY)) : 50; Z = isFinite(cZ) ? Math.max(100, Math.min(250, cZ)) : 100; }   /* обычные карточки: кадр 1 в 1 как у вертикальной карточки в каталоге */
+    else if (k.dz != null && String(k.dz) !== '') { var dX = Number(k.dx), dY = Number(k.dy), dZ = Number(k.dz); X = isFinite(dX) ? Math.max(0, Math.min(100, dX)) : 50; Y = isFinite(dY) ? Math.max(0, Math.min(100, dY)) : 50; Z = isFinite(dZ) ? Math.max(100, Math.min(300, dZ)) : 100; }   // в колоде приближение мягче, чем в каталоге: карточка выше и целиком в кадре
     var ps = '', cls = '', badge = '';
     try { ps = getPrimaryCharacterStatus(c.status); cls = ps ? getCharacterStatusClass(ps) : ''; badge = characterStatusBadge(c.status, ps); } catch (e) {}
     var id = esc(c.id), pin = encodeURIComponent(JSON.stringify({ id: k.key, fx: k.fx || '', amb: k.amb || '', cs: k.cs || '', r: k.r }));
@@ -35063,7 +35089,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   var BK_C = '<svg viewBox="0 0 100 100" class="wk-bkm" aria-hidden="true"><circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="50" cy="50" r="22" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3"/><path d="M50 8 56 44 92 50 56 56 50 92 44 56 8 50 44 44Z" fill="currentColor" opacity=".9"/><path d="M50 20 53 47 80 50 53 53 50 80 47 53 20 50 47 47Z" fill="#0b1020"/><circle cx="50" cy="50" r="4" fill="currentColor"/></svg>';
   var BK_H = BK_C.replace('class="wk-bkm" aria-hidden="true">', 'class="wk-bkm" aria-hidden="true"><defs><linearGradient id="wkHg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5fa2"/><stop offset=".25" stop-color="#ffd86b"/><stop offset=".5" stop-color="#6bff9e"/><stop offset=".75" stop-color="#62c4ff"/><stop offset="1" stop-color="#b58cff"/></linearGradient></defs>');
   var BK_SP = [[16, 24, 0], [80, 18, .7], [86, 58, 1.3], [12, 66, .4], [46, 12, 1], [70, 82, 1.7]];
-  var CB = []; try { CB = JSON.parse(localStorage.getItem('wkBacksV1') || '[]') || []; } catch (e) { CB = []; }
+  var CB = []; try { localStorage.removeItem('wkBacksV1'); } catch (e) {}
   function cbOk(q) { return q && /^u[a-z0-9]{3,14}$/.test(String(q.id)) && /^data:image\/png;base64,[A-Za-z0-9+\/=]+$/.test(String(q.d || '')) && String(q.d).length < 400000; }
   function bkProg() { var o = { chapter: 0, episode: 0 }; function take(p) { if (!p) return; o.chapter = Math.max(o.chapter, Number(p.chapter) || 0); o.episode = Math.max(o.episode, Number(p.episode) || 0); } try { take(window.__wikiSpoilerProgress); } catch (e) {} try { take(JSON.parse(localStorage.getItem('onePieceWikiSpoilerProgressV1') || '{}')); } catch (e) {} return o; }
   function bkOk(q) { var ch = Math.floor(Number(q && q.ch) || 0), ep = Math.floor(Number(q && q.ep) || 0); if (!ch && !ep) return true; var p = bkProg(); return !!((ch && p.chapter >= ch) || (ep && p.episode >= ep)); }
@@ -36113,7 +36139,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     BKS.loading = true;
     api.list().then(function (l) {
       BKS.at = Date.now(); l = l.filter(cbOk).sort(function (a, b) { return String(a.at).localeCompare(String(b.at)); });
-      if (JSON.stringify(l.map(function (q) { return [q.id, q.n, q.price, q.d, q.z, q.ch, q.ep]; })) !== JSON.stringify(CB.map(function (q) { return [q.id, q.n, q.price, q.d, q.z, q.ch, q.ep]; }))) { CB = l; try { localStorage.setItem('wkBacksV1', JSON.stringify(CB)); } catch (e) {} cbCss(); if (pane && pane.isConnected && DK.tab === 'shop') { var bd = pane.querySelector('#wkTxBody'); if (bd && !DK.pack) bd.innerHTML = shopHTML(allCards(), load()); } }
+      if (JSON.stringify(l.map(function (q) { return [q.id, q.n, q.price, q.d, q.z, q.ch, q.ep]; })) !== JSON.stringify(CB.map(function (q) { return [q.id, q.n, q.price, q.d, q.z, q.ch, q.ep]; }))) { CB = l; cbCss(); if (pane && pane.isConnected && DK.tab === 'shop') { var bd = pane.querySelector('#wkTxBody'); if (bd && !DK.pack) bd.innerHTML = shopHTML(allCards(), load()); } }
     }, function () {}).then(function () { BKS.loading = false; });
   }
   function shopStatsHTML(st) {
@@ -38753,4 +38779,5 @@ html:not(.wk-ed-hints) #wikiEditorOverlay #wkEdPv [data-pvnote]{display:none!imp
 @media (max-width:640px){.wk-pane{min-width:0}.wk-dk-cta,#wkDkCta{grid-template-columns:minmax(0,1fr)!important;width:100%!important;max-width:100%!important;box-sizing:border-box}.wk-dk-cta *{min-width:0;max-width:100%}.wk-dk-cta button,.wk-dk-nbtn{white-space:normal;height:auto}.wk-dk-nt{width:100%}.wk-dd{width:100%;max-width:100%}.wk-dd-r{width:100%!important}.wk-dk-hbtn{flex-wrap:wrap}.wk-dk-stage.idle .wk-dk-cta>*{grid-column:1!important;grid-row:auto!important;justify-self:stretch}.wk-dk-stage.idle .wk-dk-cta>.wk-dk-open{white-space:normal!important;min-height:38px;height:auto}}</style>
 <style id="wk-v445-css">.wk-sh-free{margin:8px 0 0;padding:8px 12px;border-radius:10px;border:1px dashed var(--accent,#d8b45a);background:color-mix(in srgb,var(--accent,#d8b45a) 10%,transparent);font-size:12.5px}</style>
 <style id="wk-v449-css">.wk-dk-gate{padding:28px 8px;text-align:center;opacity:.9}.wk-dk-gate p{margin:0 0 14px;line-height:1.5}</style>
+<style id="wk-v451-css">.wk-pg-one{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:8px 0}.wk-pg-one [data-t-n]{width:76px}.wk-pg-one [data-t-one]{flex:1 1 220px;min-width:0}.wk-pg-one input{padding:6px 8px;border-radius:8px;border:1px solid rgba(128,128,128,.4);background:transparent;color:inherit;font:inherit}</style>
 </body></html>
