@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 454";
+const WIKI_VERSION = "15.11.2026 · 456";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -8714,7 +8714,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     };
     const schemas = {
         character: {id:'char_new',name:'',nickname:'',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',person_link:'',person_image_position:50,person_image_position_x:50,person_image_zoom:100,person2_link:'',person2_from_chapter:'',person2_from_episode:'',person2_image_position:50,person2_image_position_x:50,person2_image_zoom:100,poster_link:'',nickname2:'',status2:'',future_status:'',gallery:'',ts_fruit_article_id:'',ts_fruit_from_chapter:'',ts_fruit_from_episode:'',ts_ship:'',ts_ship_link:'',ts_ship_description:'',ts_flag:'',ts_flag_link:'',ts_flag_description:'',chapter:'',episode:'',description:'',filler:false,fruit_article_id:'',fruit2_article_id:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],map_hide:[],ship:'',ship_link:'',ship_description:'',ship2:'',ship2_link:'',ship2_description:'',flag:'',flag_link:'',flag_description:'',ship_article_id:'',ship2_article_id:'',team_article_id:'',status:''},
-        story: {id:'arc_new',movie_id:'',name:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',image:'',image_position:50,image_position_x:50,image_zoom:100,chapters:'',episodes:'',ongoing:false,filler:false,movie:false,saga:'',description:'',key:'',characters:[],connect:[],map_hide:[]},
+        story: {id:'arc_new',movie_id:'',name:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',image:'',image_position:50,image_position_x:50,image_zoom:100,strip_image:'',strip_position_x:'',strip_position:'',strip_zoom:'',chapters:'',episodes:'',ongoing:false,filler:false,movie:false,saga:'',description:'',key:'',characters:[],connect:[],map_hide:[]},
         reward: {id:'reward_new',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',character_id:'',reward:0,ka:0,rank:'',rank_total:'',reward_image:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',appearance_chapter:'',appearance_episode:'',connect:[]},
         fruit: {id:'fruit_new',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',name:'',appearance:'',episode:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,owner:'',type:'',filler:false,arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],map_hide:[]},
         useful: {crew:'',team:'',gallery:'',id:'article_new',movie_id:'',card_fx:'',card_shine:'',title_fx:'',title_style:'',card_style:'',name:'',description:'',image:'',image_position:50,image_position_x:50,image_zoom:100,type:'',fruit_article_id:'',appearance_chapter:'',appearance_episode:'',arc:'',saga:'',arc_anime:'',saga_anime:'',connect:[],map_hide:[]},
@@ -8730,7 +8730,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     window.__wkArcLabel=k=>{const a=WK_ARC_LIST.find(x=>x.key===k);return a?'Арка «'+a.name+'»':k;};
     const fieldLabels = {
         ship_article_id:'Корабль',ship2_article_id:'Второй корабль',team_article_id:'Команда или организация',crew:'Экипаж и должности',team:'Команда корабля',
-        map_hide:'Скрыто на карте связей',rarity:'Редкость',article_id:'Статья (необязательно)',
+        map_hide:'Скрыто на карте связей',strip_image:'Полоска в списке сюжета: своё фото (ссылка, необязательно)',strip_position_x:'Полоска: сдвиг по горизонтали, % (0–100, пусто — как у фото арки)',strip_position:'Полоска: сдвиг по вертикали, % (0–100)',strip_zoom:'Полоска: приближение, % (100–250)',rarity:'Редкость',article_id:'Статья (необязательно)',
         arc_photos:'Фото по аркам',id:'ID',name:'Название / имя',nickname:'Прозвище',person_link:'Фото первого появления (ссылка)',person_image_position:'Кадрирование фото в карточке',person_image_position_x:'Горизонтальное смещение фото в карточке',person_image_zoom:'Приближение фото в карточке',movie_id:'🎬 Из фильма',card_fx:'✨ Эффект при наклоне',card_shine:'💫 Постоянный эффект',title_fx:'🔤 Эффект шрифта',title_style:'🔤 Настройка шрифта заголовка',card_style:'🎛 Конструктор эффектов карточки',person2_link:'Второе фото (новый облик)',poster_link:'Фото для плаката награды',person2_from_chapter:'С какой главы (фото и «Таймскип»)',person2_from_episode:'С какого эпизода (фото и «Таймскип»)',timeskip_description:'Чем персонаж занят спустя два года',nickname2:'Новое прозвище',status2:'Статусы после таймскипа',future_status:'Будущие статусы',gallery:'Дополнительные фото',ts_fruit_article_id:'Плод, который появится позже',ts_fruit_from_chapter:'Показать с главы (пусто — как таймскип)',ts_fruit_from_episode:'Показать с эпизода (пусто — как таймскип)',ts_ship:'Новый корабль',ts_ship_link:'Ссылка на новый корабль',ts_ship_description:'Описание нового корабля',ts_flag:'Новый флаг / команда',ts_flag_link:'Ссылка на новый флаг',ts_flag_description:'Описание нового флага',person2_image_position:'Кадрирование второго фото',person2_image_position_x:'Горизонталь второго фото, %',person2_image_zoom:'Приближение второго фото, %',chapter:'Глава появления',episode:'Эпизод появления',description:'Описание',fruit:'Дьявольский плод (старое поле)',fruit_link:'Ссылка на плод (старое поле)',fruit_article_id:'Дьявольский плод — статья из раздела «Плоды»',fruit2:'Второй плод (старое поле)',fruit2_link:'Ссылка на второй плод (старое поле)',fruit2_article_id:'Второй дьявольский плод — статья из раздела «Плоды»',arc:'Арка (манга)',saga:'Сага (манга)',connect:'Связанные ID (через запятую)',ship:'Корабль',ship_link:'Ссылка на корабль',ship_description:'Описание корабля',ship2:'Второй корабль',ship2_link:'Ссылка на второй корабль',ship2_description:'Описание второго корабля',flag:'Флаг',flag_link:'Ссылка на флаг',flag_description:'Описание флага',status:'Статус',characters:'ID персонажей (через запятую)',chapters:'Главы',episodes:'Эпизоды',ongoing:'Арка продолжается',filler:'Филлер / аниме-оригинал',movie:'Полнометражный фильм',character_id:'ID персонажа',reward:'Награда',ka:'КА',rank:'Место в топе',rank_total:'Всего в топе',reward_image:'Ссылка на изображение для карточки награды',appearance:'Глава появления',appearance_chapter:'Глава появления',appearance_episode:'Эпизод появления',image:'Ссылка на изображение',image_position:'Кадрирование фото в карточке',image_position_x:'Горизонтальное смещение фото',image_zoom:'Приближение фото',owner:'Владелец(ы)',type:'Тип',arc_anime:'Арка (аниме)',saga_anime:'Сага (аниме)'};
     const types = Object.keys(collections);
     let activeType = 'character';
@@ -14078,7 +14078,8 @@ setInterval(function(){if(overlayOpen())exportInfo();},60000);
       if (!id) return;
       card.dataset.storyArcId = id;
       const arc = arcById(id);
-      const url = imageUrlFor(arc);
+      const stripUrl = (() => { const u = String(arc?.strip_image || '').trim(); return u && u !== 'Нет' && validImageUrl(u) ? u : ''; })();
+      const url = stripUrl || imageUrlFor(arc);
       let thumb = card.querySelector(':scope > .story-card-thumb');
       if (!url) {
         thumb?.remove();
@@ -14100,9 +14101,10 @@ setInterval(function(){if(overlayOpen())exportInfo();},60000);
       }
       card.classList.add('has-story-image');
       const img = thumb.querySelector('img');
-      const x = clamp(arc.image_position_x, 0, 100, 50);
-      const y = clamp(arc.image_position, 0, 100, 50);
-      const zoom = clamp(arc.image_zoom, 100, 250, 100);
+      const own = ['strip_position_x', 'strip_position', 'strip_zoom'].some(k => String(arc[k] ?? '').trim() !== '');
+      const x = own ? clamp(arc.strip_position_x, 0, 100, 50) : stripUrl ? 50 : clamp(arc.image_position_x, 0, 100, 50);
+      const y = own ? clamp(arc.strip_position, 0, 100, 50) : stripUrl ? 50 : clamp(arc.image_position, 0, 100, 50);
+      const zoom = own ? clamp(arc.strip_zoom, 100, 250, 100) : stripUrl ? 100 : clamp(arc.image_zoom, 100, 250, 100);
       if (img) {
         img.alt = '';
         img.style.objectPosition = `${x}% ${y}%`;
@@ -38015,24 +38017,29 @@ html body .pagination button.pagination-button.wk-pg-x{display:none!important}
   function pager(p) {
     if (p.__wkBusy) return;
     var btns = $$(':scope > button.pagination-button', p).filter(function (b) { return /^\d+$/.test(b.textContent.trim()); });
-    p.__wkBusy = 1;
-    $$(':scope > .wk-pg-gap', p).forEach(function (x) { x.remove(); });
-    btns.forEach(function (b) { b.classList.remove('wk-pg-x'); b.style.removeProperty('display'); });
-    var n = btns.length;
+    var n = btns.length, hide = [], i;
+    for (i = 0; i < n; i++) hide.push(false);
     if (n > 7) {
-      var cur = btns.findIndex(function (b) { return b.classList.contains('active'); }) + 1 || 1, keep = {}, i;
+      var cur = btns.findIndex(function (b) { return b.classList.contains('active'); }) + 1 || 1, keep = {};
       keep[1] = keep[n] = 1; for (i = cur - 1; i <= cur + 1; i++) if (i >= 1 && i <= n) keep[i] = 1;
       if (cur <= 3) for (i = 1; i <= 4; i++) keep[i] = 1;
       if (cur >= n - 2) for (i = n - 3; i <= n; i++) keep[i] = 1;
-      var prevHidden = false;
-      btns.forEach(function (b, k) {
-        if (!keep[k + 1]) {
-          b.classList.add('wk-pg-x'); b.style.setProperty('display','none','important');
-          if (!prevHidden) { var g = document.createElement('span'); g.className = 'wk-pg-gap'; g.textContent = '…'; p.insertBefore(g, b); }
-          prevHidden = true;
-        } else prevHidden = false;
-      });
+      for (i = 0; i < n; i++) hide[i] = !keep[i + 1];
     }
+    /* ничего не трогаем, если вид уже правильный: иначе страница без конца перерисовывается */
+    var gaps = 0, prev = false; hide.forEach(function (h) { if (h && !prev) gaps++; prev = h; });
+    var ok = $$(':scope > .wk-pg-gap', p).length === gaps && btns.every(function (b, k) { return b.classList.contains('wk-pg-x') === hide[k] && (b.style.display === 'none') === hide[k]; });
+    if (ok) return;
+    p.__wkBusy = 1;
+    $$(':scope > .wk-pg-gap', p).forEach(function (x) { x.remove(); });
+    var prevHidden = false;
+    btns.forEach(function (b, k) {
+      if (hide[k]) {
+        b.classList.add('wk-pg-x'); b.style.setProperty('display', 'none', 'important');
+        if (!prevHidden) { var g = document.createElement('span'); g.className = 'wk-pg-gap'; g.textContent = '…'; p.insertBefore(g, b); }
+        prevHidden = true;
+      } else { b.classList.remove('wk-pg-x'); b.style.removeProperty('display'); prevHidden = false; }
+    });
     setTimeout(function () { p.__wkBusy = 0; }, 0);
   }
   function bootPagers() {
@@ -38195,6 +38202,16 @@ html body #storyList.wk-tl .story-arc-child{aspect-ratio:auto!important;height:a
     }
   }
   setInterval(function(){try{run();}catch(e){console.warn('wk-story2',e);}},600);
+  /* при переключении саги вид применяется сразу, до отрисовки, а не через полсекунды по таймеру */
+  var pend=0,mo=null;
+  function soon(){ if(pend)return; pend=1; Promise.resolve().then(function(){ pend=0; try{run();}catch(e){} if(mo)mo.takeRecords(); }); }
+  function watch(){
+    var list=document.getElementById('storyList'),nav=document.querySelector('nav.sg-nav'); if(!list)return;
+    mo=new MutationObserver(soon);
+    mo.observe(list,{childList:true,subtree:true});
+    if(nav)mo.observe(nav,{attributes:true,attributeFilter:['class'],subtree:true});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',watch);else watch();
 })();
 </script>
 <style id="wk-perf2-css">
@@ -38821,4 +38838,5 @@ html:not(.wk-ed-hints) #wikiEditorOverlay #wkEdPv [data-pvnote]{display:none!imp
   scan();
 })();
 </script>
+<style id="wk-v455-css">html body #storyList.sg-on[data-wk-size="l"] .story-saga-item.has-story-image .story-card-thumb::after{background:linear-gradient(to right,rgba(4,6,10,.88) 0%,rgba(4,6,10,.7) 22%,rgba(4,6,10,.32) 45%,rgba(4,6,10,0) 68%),linear-gradient(to top,rgba(4,6,10,.55) 0%,rgba(4,6,10,0) 55%)!important}</style>
 </body></html>
