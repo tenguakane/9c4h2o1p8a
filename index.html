@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 398";
+const WIKI_VERSION = "15.11.2026 · 401";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -34356,7 +34356,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     show();
   }
   window.__wkDeckZoom = function (el) {
-    if (DK.editPrev && isDima()) { var pn0 = ''; try { pn0 = JSON.parse(decodeURIComponent(el.getAttribute('data-wk-pin'))).id; } catch (e) {} if (pn0 && (pn0.indexOf('@') > 0 || pn0.indexOf('fruit:') === 0 || pn0.indexOf('useful:') === 0 || pn0.indexOf('custom:') === 0)) { peOpen(pn0); return; } }
+    if (DK.editPrev && isEd()) { var pn0 = ''; try { pn0 = JSON.parse(decodeURIComponent(el.getAttribute('data-wk-pin'))).id; } catch (e) {} if (pn0 && (pn0.indexOf('@') > 0 || pn0.indexOf('fruit:') === 0 || pn0.indexOf('useful:') === 0 || pn0.indexOf('custom:') === 0)) { peOpen(pn0); return; } }
     var sh = el.closest('.catalog-item-shell'); if (!sh) return;
     var old = document.getElementById('wkDkZoom'); if (old) old.remove();
     var ov = document.createElement('div'); ov.id = 'wkDkZoom'; ov.className = 'wk-dk-zoom';
@@ -34622,6 +34622,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     h += '<button type="button" class="wk-dk-pg" data-pg="' + (pg + 1) + '"' + (pg === pages - 1 ? ' disabled' : '') + ' aria-label="Следующая страница">›</button></nav><div class="wk-dk-pginfo">Карточки ' + (pg * PS + 1) + '–' + Math.min(total, pg * PS + PS) + ' из ' + total + '</div>';
     return '<div class="wk-dk-morewrap">' + h + '</div>';
   }
+  function isEd() { try { var v = JSON.parse(localStorage.getItem('wkCloudSessionV1') || 'null'); var l = v && String(v.login); return l === 'dima' || l === 'valik'; } catch (e) { return false; } }
   function isDima() { try { var v = JSON.parse(localStorage.getItem('wkCloudSessionV1') || 'null'); return !!(v && String(v.login) === 'dima'); } catch (e) { return false; } }
   /* ======== Подарки любых товаров ======== */
   function giftCost(price) { return price > 0 ? Math.round(price * 1.1 / 100) * 100 : 0; }
@@ -34705,6 +34706,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       '<button type="button" class="wk-dk-ghost" data-act="adm-gift">Подарить бесплатно</button></div>';
   }
   function adminHTML() {
+    if (!isDima() && isEd()) return '<div class="wk-dk-edbar"><button type="button" class="wk-dk-ghost' + (DK.editPrev ? ' on' : '') + '" data-act="adm-edit" aria-pressed="' + (DK.editPrev ? 'true' : 'false') + '">' + (DK.editPrev ? 'Правка превью включена. Выключить' : 'Править превью') + '</button></div>';
     return isDima() ? '<details class="wk-dk-admin"' + (DK.admOpen ? ' open' : '') + '><summary>Инструменты Димы</summary>' + adminGiftHTML() + '<div class="wk-dk-admrow"><button type="button" class="wk-dk-ghost" data-act="adm-timer">Сбросить таймер</button><button type="button" class="wk-dk-ghost" data-act="adm-test">Тестовый набор</button><button type="button" class="wk-dk-ghost' + (DK.fillAll ? ' on' : '') + '" data-act="adm-fill" aria-pressed="' + (DK.fillAll ? 'true' : 'false') + '">' + (DK.fillAll ? 'Показаны все карточки. Вернуть мою коллекцию' : 'Заполнить все коллекции') + '</button><button type="button" class="wk-dk-ghost' + (DK.editPrev ? ' on' : '') + '" data-act="adm-edit" aria-pressed="' + (DK.editPrev ? 'true' : 'false') + '">' + (DK.editPrev ? 'Правка превью включена. Выключить' : 'Править превью') + '</button></div></details>' : '';
   }
   function testPack(cards) {
@@ -35025,7 +35027,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var p = nPerm(), on = nActive(), stale = !on && nWant() && nSupp();
     var btn = '<button type="button" class="wk-dk-nbtn' + (on ? ' on' : '') + '" data-act="notify" aria-pressed="' + on + '"><span aria-hidden="true">🔔</span> ' + (on ? 'Уведомление включено' : stale ? 'Вернуть уведомления' : 'Сообщить, когда набор будет готов') + '</button>';
     var note = stale && p !== 'denied' ? 'Браузер сбросил разрешение на уведомления (так бывает после очистки данных сайта или по настройкам телефона). Нажми кнопку, чтобы вернуть.' : p === 'unsupported' ? 'Этот браузер не показывает уведомления. На iPhone вики сначала нужно добавить на экран «Домой».' : p === 'denied' ? 'Уведомления для этого сайта запрещены. Разреши их в настройках браузера.' : on ? (nGet().push ? 'Придёт, даже если вики закрыта.' : NERR ? 'Сработает, пока вики открыта. Для закрытой не подключилось: ' + NERR : 'Сработает, пока вики открыта.') : '';
-    return btn + (note ? '<p class="wk-dk-nnote">' + note + '</p>' : '');
+    return btn + (note ? '<p class="wk-dk-nnote' + (on && !NERR ? '' : ' warn') + '">' + note + '</p>' : '');
   }
   function notifyToggle(pane) {
     var host = pane.querySelector('#wkDkNt');
@@ -36277,7 +36279,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     }, function () { end(false); });
   }
   function renderDeck(pane) {
-    pane.classList.toggle('wk-dk-editing', !!(DK.editPrev && isDima())); try { ttlBind(pane); } catch (e) {}
+    pane.classList.toggle('wk-dk-editing', !!(DK.editPrev && isEd())); try { ttlBind(pane); } catch (e) {}
     var cards = allCards(), st = load(); migrate(st, cards);
     try { if (mkApi() && !MK.loading && Date.now() - MK.at > 60000) refreshMarket(pane, false); } catch (e) {}
     try { refreshBacks(pane, false); } catch (e) {}
@@ -36368,7 +36370,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
         else if (a === 'daily') { dailyClaim(pane); }
         else if (a === 'daily-more') { DK.dlyAll = !DK.dlyAll; var dh = pane.querySelector('#wkDkDay'); if (dh) dh.innerHTML = dailyHTML(load()); }
         else if (a === 'adm-timer') { if (!isDima()) return; S.last = 0; save(S); var cb = pane.querySelector('#wkDkCta .wk-dk-open'); if (cb) cb.outerHTML = ctaHTML(S); t.textContent = '✓ Таймер сброшен'; setTimeout(function () { t.textContent = 'Сбросить таймер'; }, 1800); }
-        else if (a === 'adm-edit') { if (!isDima()) return; DK.editPrev = !DK.editPrev; renderDeck(pane); }
+        else if (a === 'adm-edit') { if (!isEd()) return; DK.editPrev = !DK.editPrev; renderDeck(pane); }
         else if (a === 'adm-free') { if (!isDima()) return; try { if (FREE()) localStorage.removeItem('wkAdminFreeV1'); else localStorage.setItem('wkAdminFreeV1', '1'); } catch (e) {} DK.admOpen = true; renderDeck(pane); txToast(FREE() ? 'Все цены для тебя теперь 0' : 'Цены вернулись'); }
         else if (a === 'adm-gift') { if (!isDima()) return; var gto = (pane.querySelector('#wkAdTo') || {}).value, gcode = (pane.querySelector('#wkAdItem') || {}).value, garc = (pane.querySelector('#wkAdArc') || {}).value || ''; if (!gto || !gcode) { txToast('Выбери, кому и что подарить'); return; } DK.admOpen = true; t.disabled = true; giftSend(pane, gto, gcode, garc, 0, function () { t.disabled = false; }); }
         
@@ -38124,16 +38126,34 @@ if(document.readyState==='complete')setTimeout(f,300);else window.addEventListen
 @media(max-width:620px){.wk-al-page .wk-al-h{grid-template-columns:1fr}.wk-al-page .wk-al-h .wk-al-prog{grid-column:1;grid-row:3;justify-content:flex-start;flex-wrap:wrap;margin-top:6px!important}}
 </style><style id="wk-v396-css">.wk-al-bar .wk-al-sortw{margin-left:0}</style><style id="wk-v397-css">
 /* Единый вид панели альбома: высота 42, скругление 12, один шрифт */
-#wkDkColl .wk-al-bar{align-items:center!important;gap:10px!important}
+#wkDkColl .wk-al-bar{align-items:flex-start!important;gap:10px!important}
 #wkDkColl .wk-al-bar .wk-dk-filters>div,#wkDkColl .wk-al-bar .wk-al-sortw{display:inline-flex!important;align-items:center!important;flex-wrap:nowrap!important;gap:2px!important;height:42px!important;box-sizing:border-box!important;padding:3px!important;margin:0!important;border-radius:12px!important;border:1px solid rgba(148,163,184,.26)!important;background:rgba(10,14,26,.55)!important}
 #wkDkColl .wk-al-bar .wk-dk-filters{margin:0!important;display:inline-flex!important}
 #wkDkColl .wk-al-bar .wk-dk-filters>div>button,#wkDkColl .wk-al-bar .wk-al-sortw>button{height:34px!important;min-height:0!important;padding:0 12px!important;border:0!important;border-radius:9px!important;background:transparent!important;box-shadow:none!important;color:#a9b4c6!important;font:700 13px/1 inherit!important;font-family:inherit!important;white-space:nowrap!important;display:inline-flex!important;align-items:center!important;gap:7px!important}
 #wkDkColl .wk-al-bar .wk-dk-filters>div>button.active,#wkDkColl .wk-al-bar .wk-al-sortw>button.on{background:rgba(216,180,90,.2)!important;color:#f3dc9a!important}
 #wkDkColl .wk-al-bar .wk-dk-filters>div>button:hover:not(.active),#wkDkColl .wk-al-bar .wk-al-sortw>button:hover:not(.on){background:rgba(148,163,184,.12)!important;color:#e5ebf5!important}
-#wkDkColl .wk-al-bar .wk-al-nav{display:flex!important;align-items:center!important;gap:8px!important;height:42px!important}
+#wkDkColl .wk-al-bar .wk-al-nav{display:flex!important;align-items:flex-start!important;gap:8px!important;height:auto!important}
 #wkDkColl .wk-al-bar .wk-al-arw{width:42px!important;height:42px!important;min-height:0!important;padding:0!important;border-radius:12px!important;border:1px solid rgba(148,163,184,.26)!important;background:rgba(10,14,26,.55)!important;color:#e5c77a!important;font-size:18px!important;display:inline-grid!important;place-items:center!important}
-#wkDkColl .wk-al-bar .wk-al-pick{height:42px!important;position:relative!important}
+#wkDkColl .wk-al-bar .wk-al-pick{display:flex!important;flex-direction:column!important;height:auto!important;position:relative!important;flex:1 1 auto;min-width:0}
 #wkDkColl .wk-al-bar .wk-al-pick select{height:42px!important;box-sizing:border-box!important;border-radius:12px!important;border:1px solid rgba(148,163,184,.26)!important;background-color:rgba(10,14,26,.55)!important;font:700 13px/1 inherit!important;font-family:inherit!important;padding:0 32px 0 14px!important;margin:0!important}
-#wkDkColl .wk-al-bar .wk-al-pn{display:none!important}
+#wkDkColl .wk-al-bar .wk-al-pn{display:block!important;order:2;margin:3px 0 0 4px!important;font-size:11px!important;line-height:1.2!important;color:#8f9bad!important}
 #wkDkColl .wk-al-bar .wk-al-cmp,#wkDkColl .wk-al-bar .wk-al-new{height:42px!important;min-height:0!important;box-sizing:border-box!important;padding:0 14px!important;border-radius:12px!important;border:1px solid rgba(148,163,184,.26)!important;background:rgba(10,14,26,.55)!important;color:#e5ebf5!important;font:700 13px/1 inherit!important;font-family:inherit!important;display:inline-flex!important;align-items:center!important;gap:9px!important;white-space:nowrap!important}
-</style></body></html>
+</style><style id="wk-v399-css">
+.wk-dk-edbar{display:flex;justify-content:flex-end;margin:0 0 8px}
+.wk-dk-stage.idle{flex-wrap:nowrap!important;padding:10px 16px!important;gap:16px!important;margin:10px 0 4px!important;align-items:center}
+.wk-dk-stage.idle .wk-dk-idlewrp{width:76px!important;margin:0!important}
+.wk-dk-stage.idle .wk-dk-ct b{font-size:15px!important;margin-bottom:2px!important}
+.wk-dk-stage.idle .wk-dk-ct p{font-size:12px!important;line-height:1.4!important}
+.wk-dk-stage.idle .wk-dk-cta{flex:0 0 auto!important;display:grid!important;grid-template-columns:auto auto;grid-auto-flow:row;gap:6px 8px!important;align-items:center;justify-items:stretch;max-width:480px!important;width:auto!important}
+.wk-dk-stage.idle .wk-dk-cta>.wk-dk-open{white-space:nowrap!important;min-height:38px!important;padding:0 16px!important;font-size:13.5px!important;grid-column:1;grid-row:1}
+.wk-dk-stage.idle .wk-dk-cta>#wkDkNt{grid-column:2;grid-row:1;display:flex;flex-direction:column;align-items:stretch}
+.wk-dk-stage.idle .wk-dk-cta>#wkDkNt .wk-dk-nbtn{min-height:38px!important;padding:0 14px!important;font-size:13px!important;white-space:nowrap}
+.wk-dk-stage.idle .wk-dk-cta>#wkDkNt .wk-dk-nnote{display:none}
+.wk-dk-stage.idle .wk-dk-cta>#wkDkNt .wk-dk-nnote.warn{display:block}
+.wk-dk-stage.idle .wk-dk-cta>#wkDkDay{grid-column:1/-1;grid-row:2}
+.wk-dk-stage.idle #wkDkDay .wk-dd{gap:5px!important}
+.wk-dk-stage.idle #wkDkDay .wk-dd-h{font-size:12px!important}
+.wk-dk-stage.idle #wkDkDay .wk-dd-c{min-height:0!important;padding:3px 0!important}
+.wk-dk-stage.idle #wkDkDay .wk-dk-nnote{margin:2px 0 0!important;font-size:11.5px!important}
+@media(max-width:760px){.wk-dk-stage.idle{flex-wrap:wrap!important}.wk-dk-stage.idle .wk-dk-cta{width:100%!important;max-width:none!important}}
+</style><style id="wk-v401-css">html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side .cabin-subnav .cabin-subtab.active{--wk-ac:var(--accent,var(--wk-accent,#d8b45a));background:linear-gradient(90deg,color-mix(in srgb,var(--wk-ac) 24%,transparent),color-mix(in srgb,var(--wk-ac) 6%,transparent))!important;color:color-mix(in srgb,var(--wk-ac) 60%,var(--text,#fff))!important;box-shadow:inset 3px 0 0 var(--wk-ac)!important}html:not(.ios-app) body #favoritesSection#favoritesSection#favoritesSection#favoritesSection .wk-cab-side .cabin-subnav .cabin-subtab.active .wk-ic{color:var(--accent,var(--wk-accent,#d8b45a))}</style></body></html>
