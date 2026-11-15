@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 396";
+const WIKI_VERSION = "15.11.2026 · 398";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -34467,7 +34467,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var KL = { char: 'Персонажи', wanted: 'Награды', fruit: 'Плоды', useful: 'Полезное', custom: 'Особые' };
     var srcOf = function (k) { var kd = k.kind || 'char', t = (kd === 'fruit' || kd === 'useful') ? k.ty : ''; return (KL[kd] || 'Персонажи') + (t ? ' · ' + t : ''); };
     DK.alBack = DK.alBack || {};
-    var lim = P.all ? (DK.alLim || 60) : 1e9, slots = P.cards.slice(0, lim).map(function (k, i) {
+    var hm = hmOn() && !isC, lim = P.all ? (DK.alLim || 60) : 1e9, slots = P.cards.map(function (k, i) { return { k: k, i: i }; }).filter(function (x) { return !hm || st.owned[x.k.key]; }).slice(0, lim).map(function (x) { var k = x.k, i = x.i;
       var n = st.owned[k.key] || 0, no = '<i class="wk-al-no">' + (i + 1) + '</i>';
       if (ed) return edSlot(k, i, no);
       if (n) {
@@ -34483,7 +34483,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     return '<div class="wk-al' + (cmpOn() ? ' cmp' : '') + (['gold', 'wood', 'foam'].indexOf(st.frame) >= 0 ? ' fr-' + st.frame : '') + (ALBS.some(function (q) { return q.id === st.alb; }) ? ' alb-' + st.alb : '') + '" data-al>' +
       '<div class="wk-al-bar">' + (pre || '') + '<div class="wk-al-nav"><button type="button" class="wk-al-arw" data-alp="-1"' + (pi ? '' : ' disabled') + ' aria-label="Предыдущая арка">‹</button>' +
       '<label class="wk-al-pick"><span class="wk-al-pn">Страница ' + (pi + 1) + ' из ' + pages.length + '</span><select data-alsel aria-label="Перейти к арке">' + opts + '</select></label>' +
-      '<button type="button" class="wk-al-arw" data-alp="1"' + (pi < pages.length - 1 ? '' : ' disabled') + ' aria-label="Следующая арка">›</button></div><button type="button" class="wk-al-cmp" data-alcmp role="switch" aria-checked="' + cmpOn() + '"><i></i>Компактный режим</button><div class="wk-dk-sortw wk-al-sortw" role="group" aria-label="Сортировка">' + [['', 'По сюжету'], ['new', 'Сначала новые'], ['rar', 'По редкости']].map(function (x) { return '<button type="button" data-dks="' + x[0] + '" class="' + ((DK.sort || '') === x[0] ? 'on' : '') + '" aria-pressed="' + ((DK.sort || '') === x[0]) + '">' + x[1] + '</button>'; }).join('') + '</div>' + (!DK.inF && !st.__fake && (st.pages || []).length < PG_MAX ? '<button type="button" class="wk-tx-btn wk-al-new" data-alnew>＋ Своя вкладка</button>' : '') + '</div>' +
+      '<button type="button" class="wk-al-arw" data-alp="1"' + (pi < pages.length - 1 ? '' : ' disabled') + ' aria-label="Следующая арка">›</button></div><button type="button" class="wk-al-cmp" data-alcmp role="switch" aria-checked="' + cmpOn() + '"><i></i>Компактный режим</button><button type="button" class="wk-al-cmp" data-alhm role="switch" aria-checked="' + hmOn() + '"><i></i>Только полученные</button><div class="wk-dk-sortw wk-al-sortw" role="group" aria-label="Сортировка">' + [['', 'По сюжету'], ['new', 'Сначала новые'], ['rar', 'По редкости']].map(function (x) { return '<button type="button" data-dks="' + x[0] + '" class="' + ((DK.sort || '') === x[0] ? 'on' : '') + '" aria-pressed="' + ((DK.sort || '') === x[0]) + '">' + x[1] + '</button>'; }).join('') + '</div>' + (!DK.inF && !st.__fake && (st.pages || []).length < PG_MAX ? '<button type="button" class="wk-tx-btn wk-al-new" data-alnew>＋ Своя вкладка</button>' : '') + '</div>' +
       '<section class="wk-al-page' + (done ? ' full' : '') + (DK.alDir ? ' turn' + (DK.alDir > 0 ? 'r' : 'l') : '') + '"><header class="wk-al-h">' + (P.saga ? '<small>' + esc(P.saga) + '</small>' : '') + (ed ? '<input class="wk-al-name" type="text" maxlength="24" value="' + esc(P.cname) + '" aria-label="Название вкладки">' : '<h4>' + esc(P.name) + '</h4>') + '<div class="wk-al-prog' + (isC ? ' pc' : '') + '">' + (isC ? '<b>' + cardsWord(P.cards.length) + '</b>' + (mineC ? '<div class="wk-al-ctl">' + (ed ? '<button type="button" class="wk-tx-btn" data-aladd>＋ Добавить карты</button><button type="button" class="wk-tx-btn" data-aldel>Удалить вкладку</button><button type="button" class="wk-tx-btn pri" data-aled>Готово</button>' : '<button type="button" class="wk-tx-btn" data-aled>✎ Изменить</button>') + '</div>' : '') : '<span><em style="width:' + Math.round(have / Math.max(1, tot) * 100) + '%"></em></span><b>' + have + ' из ' + tot + '</b>' + (done ? '<i class="wk-al-done">Страница собрана</i>' : '')) + (ownedP.length && !ed ? '<button type="button" class="wk-al-flall" data-alflipall>⟲ ' + (allBack ? 'Лицом' : 'Перевернуть все') + '</button>' : '') + '</div></header>' +
       (ed ? '<p class="wk-sh-hint wk-al-edh">Перетаскивай карточки мышью. На телефоне зажми карточку и двигай. Можно и кнопками ‹ ›.</p>' : '') + '<div class="wk-al-grid' + (P.all ? ' al-arcs' : '') + (ed ? ' edit' : '') + '">' + (slots || (isC ? '<p class="wk-dk-fnote">' + (mineC ? 'Здесь пока пусто. Нажми «Изменить», потом «Добавить карты».' : 'В этой вкладке пока нет карточек.') + '</p>' : '')) + '</div>' + (P.all && P.cards.length > lim ? '<div class="wk-al-moreb"><button type="button" class="wk-tx-btn" data-almore>Показать ещё (' + (P.cards.length - lim) + ')</button></div>' : '') + '<footer class="wk-al-f">' + (pi + 1) + '</footer></section></div>';
   }
@@ -34519,6 +34519,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     DK.apId = pages[ni].id; DK.alLim = 60; DK.alEdit = 0; alPaint(pane, d);
   }
   function gridOn() { try { return localStorage.getItem('wkDeckGridV1') === 'on'; } catch (e) { return false; } }
+  function hmOn() { try { return localStorage.getItem('wkDeckHideMissV1') === '1'; } catch (e) { return false; } }
   function cmpOn() { if (DK.alCmp == null) { try { DK.alCmp = localStorage.getItem('wkDeckCmpV1') === '1'; } catch (e) { DK.alCmp = false; } } return !!DK.alCmp; }
   function alSt() { return DK.inF && FX.st ? FX.st : load(); }
   var PG_MAX = 6, PG_CARDS = 60;
@@ -36314,6 +36315,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
         var alfa = e.target.closest && e.target.closest('[data-alflipall]'); if (alfa) { e.preventDefault(); alFlipAll(pane); return; }
         var stg = e.target.closest && e.target.closest('[data-sttog]'); if (stg) { var hid = !stHidden(); try { localStorage.setItem('wkDeckStatsHideV1', hid ? '1' : '0'); } catch (er) {} stg.textContent = hid ? 'Показать статистику' : 'Скрыть статистику'; var sbx = pane.querySelector('#wkDkStats'); if (sbx) sbx.innerHTML = statsBox(allCards(), load()); return; }
         var wtg = e.target.closest && e.target.closest('[data-wanttog]'); if (wtg) { try { localStorage.setItem('wkDeckWantHideV1', wantHidden() ? '0' : '1'); } catch (er) {} renderDeck(pane); return; }
+        var alh = e.target.closest && e.target.closest('[data-alhm]'); if (alh) { try { localStorage.setItem('wkDeckHideMissV1', hmOn() ? '0' : '1'); } catch (er) {} alPaint(pane, 0); return; }
         var alc = e.target.closest && e.target.closest('[data-alcmp]'); if (alc) { DK.alCmp = !cmpOn(); try { localStorage.setItem('wkDeckCmpV1', DK.alCmp ? '1' : '0'); } catch (er) {} alPaint(pane, 0); return; }
         var alm = e.target.closest && e.target.closest('[data-almore]'); if (alm) { DK.alLim = (DK.alLim || 60) + 60; alPaint(pane, 0); return; }
         if (e.target.closest && e.target.closest('[data-alnew]')) { pgNew(pane); return; }
@@ -38120,4 +38122,18 @@ if(document.readyState==='complete')setTimeout(f,300);else window.addEventListen
 .wk-al-page .wk-al-h .wk-al-prog>span{flex:0 0 130px;width:130px}
 .wk-al-page .wk-al-h .wk-al-prog.pc{flex-wrap:wrap}
 @media(max-width:620px){.wk-al-page .wk-al-h{grid-template-columns:1fr}.wk-al-page .wk-al-h .wk-al-prog{grid-column:1;grid-row:3;justify-content:flex-start;flex-wrap:wrap;margin-top:6px!important}}
-</style><style id="wk-v396-css">.wk-al-bar .wk-al-sortw{margin-left:0}</style></body></html>
+</style><style id="wk-v396-css">.wk-al-bar .wk-al-sortw{margin-left:0}</style><style id="wk-v397-css">
+/* Единый вид панели альбома: высота 42, скругление 12, один шрифт */
+#wkDkColl .wk-al-bar{align-items:center!important;gap:10px!important}
+#wkDkColl .wk-al-bar .wk-dk-filters>div,#wkDkColl .wk-al-bar .wk-al-sortw{display:inline-flex!important;align-items:center!important;flex-wrap:nowrap!important;gap:2px!important;height:42px!important;box-sizing:border-box!important;padding:3px!important;margin:0!important;border-radius:12px!important;border:1px solid rgba(148,163,184,.26)!important;background:rgba(10,14,26,.55)!important}
+#wkDkColl .wk-al-bar .wk-dk-filters{margin:0!important;display:inline-flex!important}
+#wkDkColl .wk-al-bar .wk-dk-filters>div>button,#wkDkColl .wk-al-bar .wk-al-sortw>button{height:34px!important;min-height:0!important;padding:0 12px!important;border:0!important;border-radius:9px!important;background:transparent!important;box-shadow:none!important;color:#a9b4c6!important;font:700 13px/1 inherit!important;font-family:inherit!important;white-space:nowrap!important;display:inline-flex!important;align-items:center!important;gap:7px!important}
+#wkDkColl .wk-al-bar .wk-dk-filters>div>button.active,#wkDkColl .wk-al-bar .wk-al-sortw>button.on{background:rgba(216,180,90,.2)!important;color:#f3dc9a!important}
+#wkDkColl .wk-al-bar .wk-dk-filters>div>button:hover:not(.active),#wkDkColl .wk-al-bar .wk-al-sortw>button:hover:not(.on){background:rgba(148,163,184,.12)!important;color:#e5ebf5!important}
+#wkDkColl .wk-al-bar .wk-al-nav{display:flex!important;align-items:center!important;gap:8px!important;height:42px!important}
+#wkDkColl .wk-al-bar .wk-al-arw{width:42px!important;height:42px!important;min-height:0!important;padding:0!important;border-radius:12px!important;border:1px solid rgba(148,163,184,.26)!important;background:rgba(10,14,26,.55)!important;color:#e5c77a!important;font-size:18px!important;display:inline-grid!important;place-items:center!important}
+#wkDkColl .wk-al-bar .wk-al-pick{height:42px!important;position:relative!important}
+#wkDkColl .wk-al-bar .wk-al-pick select{height:42px!important;box-sizing:border-box!important;border-radius:12px!important;border:1px solid rgba(148,163,184,.26)!important;background-color:rgba(10,14,26,.55)!important;font:700 13px/1 inherit!important;font-family:inherit!important;padding:0 32px 0 14px!important;margin:0!important}
+#wkDkColl .wk-al-bar .wk-al-pn{display:none!important}
+#wkDkColl .wk-al-bar .wk-al-cmp,#wkDkColl .wk-al-bar .wk-al-new{height:42px!important;min-height:0!important;box-sizing:border-box!important;padding:0 14px!important;border-radius:12px!important;border:1px solid rgba(148,163,184,.26)!important;background:rgba(10,14,26,.55)!important;color:#e5ebf5!important;font:700 13px/1 inherit!important;font-family:inherit!important;display:inline-flex!important;align-items:center!important;gap:9px!important;white-space:nowrap!important}
+</style></body></html>
