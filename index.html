@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 447";
+const WIKI_VERSION = "15.11.2026 · 449";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -18042,15 +18042,15 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
      КОЛОДА: копия коллекции лежит в tops/{uid}.deck, чтобы другие участники могли её посмотреть
      ========================================================= */
   var deckTimer = 0;
-  function scheduleDeckPush() { if (!me || me.role === 'guest' || !db) return; clearTimeout(deckTimer); deckTimer = setTimeout(pushDeck, 1500); }
-  function pushDeck() {
-    deckTimer = 0; if (!me || me.role === 'guest' || !db) return Promise.resolve();
-    var d; try { d = JSON.parse(lsGet('onePieceWikiDeckV1') || 'null'); } catch (e) { d = null; }
-    if (!d || !d.owned) return Promise.resolve();
-    if (d.rev && d.rev === window.__wkDeckPushedRev) return Promise.resolve();
-    var slim = { packs: d.packs || 0, pity: d.pity || 0, last: d.last || 0, open: d.open || null, owned: d.owned, tr: d.tr || {}, got: d.got || {}, show: d.show || [], showCap: d.showCap || 3, cos: d.cos || {}, frame: d.frame || '', bg: d.bg || '', alb: d.alb || '', back: d.back || '', hold: d.hold || {}, ev: d.ev || [], belli: d.belli || 0, ach: d.ach || {}, achB: d.achB || {}, daily: d.daily || null, shield: d.shield || 0, bless: d.bless || 0, pig: d.pig || null, ttl: d.ttl || null, inc: d.inc || {}, incD: d.incD || {}, incLog: d.incLog || [], spent: d.spent || 0, bought: d.bought || 0, crafted: d.crafted || 0, sold: d.sold || 0, qpay: d.qpay || 0, want: d.want || [], pages: d.pages || [], rev: d.rev || 0 };
-    return fb.fs.setDoc(fb.fs.doc(db, 'tops', me.uid), { login: me.login, name: me.name, deck: JSON.stringify(slim), deckAt: new Date().toISOString() }, { merge: true }).then(function () { window.__wkDeckErr = ''; if (d.rev) window.__wkDeckPushedRev = d.rev; }, function (e) { window.__wkDeckErr = String(e && (e.code || e.message) || e); console.warn('Колода:', e); });
+  function scheduleDeckPush() {}
+  function pushDeck() { deckTimer = 0; return Promise.resolve(); }
+  /* Что хранится в tops/{uid}.deck. Это же видят другие участники в «Колоде друга». */
+  function slimDeck(d) {
+  var slim = { packs: d.packs || 0, pity: d.pity || 0, last: d.last || 0, open: d.open || null, owned: d.owned, tr: d.tr || {}, got: d.got || {}, show: d.show || [], showCap: d.showCap || 3, cos: d.cos || {}, frame: d.frame || '', bg: d.bg || '', alb: d.alb || '', back: d.back || '', hold: d.hold || {}, ev: d.ev || [], belli: d.belli || 0, ach: d.ach || {}, achB: d.achB || {}, daily: d.daily || null, shield: d.shield || 0, bless: d.bless || 0, pig: d.pig || null, ttl: d.ttl || null, inc: d.inc || {}, incD: d.incD || {}, incLog: d.incLog || [], spent: d.spent || 0, bought: d.bought || 0, crafted: d.crafted || 0, sold: d.sold || 0, qpay: d.qpay || 0, want: d.want || [], pages: d.pages || [], rev: d.rev || 0 };
+    ['pick', 'achOpen', 'feedSeen', 'maxBuy', 'mk', 'sld', 'spd', 'vBoost'].forEach(function (k) { if (d[k] !== undefined && d[k] !== null) slim[k] = d[k]; });
+    return slim;
   }
+  function parseDeckDoc(x) { if (!x || !x.deck) return null; try { return JSON.parse(x.deck); } catch (e) { return null; } }
   window.__wkDeckCloud = {
     enabled: function () { return !!(me && db && fb && me.role !== 'guest' || me && db && fb); },
     load: function () {
@@ -18061,6 +18061,29 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
       });
     },
     push: pushDeck,
+    /* Своя колода: один документ. */
+    own: function () {
+      if (!me || !db || !fb) return Promise.reject(new Error('no-cloud'));
+      return fb.fs.getDoc(fb.fs.doc(db, 'tops', me.uid)).then(function (snap) { return snap.exists() ? parseDeckDoc(snap.data()) : null; });
+    },
+    /* Запись только если в облаке всё ещё та версия, из которой мы исходили. Иначе { conflict: true, deck } — ничего не пишется. */
+    commit: function (deck, baseRev) {
+      if (!me || !db || !fb) return Promise.reject(new Error('no-cloud'));
+      var ref = fb.fs.doc(db, 'tops', me.uid);
+      return fb.fs.runTransaction(db, function (tx) {
+        return tx.get(ref).then(function (snap) {
+          var cur = snap.exists() ? parseDeckDoc(snap.data()) : null, curRev = cur ? (+cur.rev || 0) : 0;
+          if (cur && curRev !== (+baseRev || 0)) return { conflict: true, deck: cur };
+          tx.set(ref, { login: me.login, name: me.name, deck: JSON.stringify(slimDeck(deck)), deckAt: new Date().toISOString() }, { merge: true });
+          return { ok: true };
+        });
+      });
+    },
+    watchOwn: function (cb, onErr) {
+      if (!me || !db || !fb) return function () {};
+      var off = fb.fs.onSnapshot(fb.fs.doc(db, 'tops', me.uid), function (snap) { cb(snap.exists() ? parseDeckDoc(snap.data()) : null, snap.metadata && snap.metadata.hasPendingWrites); }, function (e) { if (onErr) onErr(e); });
+      return function () { try { off(); } catch (e) {} };
+    },
     /* Живая подписка на колоды: читаются только изменившиеся документы. cb(by) — тот же вид, что у load(). */
     watch: function (cb, onErr) {
       var cache = {}, dead = false;
@@ -34117,6 +34140,8 @@ html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-name,html.ios-app 
 (function () {
   'use strict';
   var KEY = 'onePieceWikiDeckV1';
+  /* Колода и белли хранятся только в облаке. Здесь — рабочая копия в памяти и очередь записи. */
+  var CLOUD = { ready: false, loading: false, state: 'wait', json: '{}', rev: 0, busy: false, dirty: false, fails: 0, t: 0, at: 0, login: '', off: null, cbs: [], legacy: null, dropLegacy: false };
   var RN = { common: 'Обычная', rare: 'Редкая', epic: 'Эпик', legendary: 'Легенда' };
     function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function url(u) { u = String(u || '').trim(); return u && u !== 'Нет' && /^(https?:\/\/|data:image\/)/i.test(u) ? u : ''; }
@@ -34226,7 +34251,7 @@ html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-name,html.ios-app 
   var DK = { k: '', fr: '', frLoading: false, frData: null, frAt: 0, frLim: 60, f: 'all', r: '', v: '', pack: null, flipped: 0, lim: 60, pg: 0, timer: 0 };
 function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { var c0 = {}; v.show = v.show.filter(function (q) { c0[q] = (c0[q] || 0) + 1; return c0[q] <= (v.owned[q] || 0); }); } if (v.hold && typeof v.hold === 'object') { Object.keys(v.hold).forEach(function (q) { var m = Math.min(+v.hold[q] || 0, Math.max(0, (v.owned[q] || 0) - 1)); if (m > 0) v.hold[q] = m; else delete v.hold[q]; }); } else v.hold = {}; return v; }
   function load() {
-    var v; try { v = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { v = {}; }
+    var v; try { v = JSON.parse(deckRaw() || '{}'); } catch (e) { v = {}; }
     if (!v || typeof v !== 'object') v = {};
     v.owned = v.owned && typeof v.owned === 'object' ? v.owned : {}; v.packs = +v.packs || 0; v.pity = +v.pity || 0; v.last = +v.last || 0;
     if (DK.fillAll && isDima()) {
@@ -34236,22 +34261,98 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     }
     return cleanSH(v);
   }
-  /* Синхронизация колоды: всё, что уходит в облако. Правило одно: у кого rev больше, того колода и берётся целиком.
-     rev растёт только когда реально изменилось что-то из этого списка (а не при любом сохранении). */
-  var CLOUD_KEYS = ['packs', 'pity', 'last', 'open', 'owned', 'tr', 'got', 'show', 'showCap', 'cos', 'frame', 'bg', 'alb', 'back', 'hold', 'ev', 'belli', 'ach', 'achB', 'daily', 'shield', 'bless', 'pig', 'ttl', 'inc', 'incD', 'incLog', 'spent', 'bought', 'crafted', 'sold', 'qpay', 'want', 'pages'];
+  /* ===== Колода в облаке: tops/{uid}.deck. Правило одно: пишем только поверх той версии, которую видели; иначе действие отклоняется. ===== */
+  var CLOUD_KEYS = ['packs', 'pity', 'last', 'open', 'owned', 'tr', 'got', 'show', 'showCap', 'cos', 'frame', 'bg', 'alb', 'back', 'hold', 'ev', 'belli', 'ach', 'achB', 'daily', 'shield', 'bless', 'pig', 'ttl', 'inc', 'incD', 'incLog', 'spent', 'bought', 'crafted', 'sold', 'qpay', 'want', 'pages', 'pick', 'achOpen', 'feedSeen', 'maxBuy', 'mk', 'sld', 'spd', 'vBoost'];
   function cloudSig(o) { try { return JSON.stringify(CLOUD_KEYS.map(function (k) { return o[k] === undefined ? null : o[k]; })); } catch (e) { return ''; } }
-  function applyCloudDeck(loc, cd, force) {
-    CLOUD_KEYS.forEach(function (k) {
-      var v = cd[k];
-      if (v === undefined || v === null) { if (k !== 'show' && k !== 'want' && k !== 'pages') delete loc[k]; return; }
-      if (!force && (k === 'ach' || k === 'achB' || k === 'tr' || k === 'got')) loc[k] = Object.assign({}, v, loc[k] || {}); else loc[k] = v;
-    });
-    var r = +cd.rev || 0; if (r) { loc.rev = r; loc.__keepRev = true; window.__wkDeckPushedRev = r; }
+  function deckRaw() { return CLOUD.ready ? CLOUD.json : '{}'; }
+  function deckParse() { try { return JSON.parse(deckRaw()) || {}; } catch (e) { return {}; } }
+  function cloudAdopt(deck) {
+    CLOUD.json = JSON.stringify(deck || {}); CLOUD.rev = +(deck && deck.rev) || 0;
+    try { window.dispatchEvent(new Event('wk-deck-changed')); } catch (e) {} try { nSched(); } catch (e) {}
   }
-  function save(s) { if (s && s.__fake) return; cleanSH(s); if (s.__keepRev) delete s.__keepRev; else { var pvSig = ''; try { pvSig = cloudSig(JSON.parse(localStorage.getItem(KEY) || 'null') || {}); } catch (e0) {} if (!s.rev || cloudSig(s) !== pvSig) s.rev = Math.max(Date.now(), (+s.rev || 0) + 1); } try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} try { window.dispatchEvent(new Event('wk-deck-changed')); } catch (e) {} try { nSched(); } catch (e) {} }
-  // Прогресс по коллекциям для доски достижений (всегда по настоящей колоде, без режима «заполнить все»)
+  function cloudRepaint() { var p = document.querySelector('#wkDkCta, #wkDkPack, .wk-dk-gate'); p = p && p.closest('.wk-pane'); if (p && p.isConnected && !DK.pack) renderDeck(p); }
+  function save(s) {
+    if (!s || s.__fake || !CLOUD.ready) return;
+    cleanSH(s);
+    if (s.__keepRev) delete s.__keepRev;
+    else if (!s.rev || cloudSig(s) !== cloudSig(deckParse())) s.rev = Math.max(Date.now(), (+s.rev || 0) + 1, CLOUD.rev + 1);
+    CLOUD.json = JSON.stringify(s);
+    try { window.dispatchEvent(new Event('wk-deck-changed')); } catch (e) {} try { nSched(); } catch (e) {}
+    cloudFlushSoon();
+  }
+  function cloudFlushSoon() { clearTimeout(CLOUD.t); CLOUD.t = setTimeout(cloudFlush, 80); }
+  function cloudFlush() {
+    var cl = window.__wkDeckCloud; if (!CLOUD.ready || !cl || !cl.enabled()) return;
+    if (CLOUD.busy) { CLOUD.dirty = true; return; }
+    var d = deckParse(), rev = +d.rev || 0; if (rev === CLOUD.rev) return;
+    CLOUD.busy = true; CLOUD.dirty = false;
+    cl.commit(d, CLOUD.rev).then(function (r) {
+      CLOUD.busy = false;
+      if (r && r.conflict) {
+        CLOUD.fails = 0; cloudAdopt(r.deck); cloudRepaint();
+        try { txToast('Колода изменилась на другом устройстве. Показана актуальная версия, последнее действие не сохранилось.'); } catch (e) {}
+        return;
+      }
+      CLOUD.rev = rev; CLOUD.fails = 0; window.__wkDeckErr = '';
+      if (CLOUD.dropLegacy) { CLOUD.dropLegacy = false; try { localStorage.removeItem(KEY); } catch (e) {} }
+      if (CLOUD.dirty || (+deckParse().rev || 0) !== rev) cloudFlush();
+    }, function (e) {
+      CLOUD.busy = false; CLOUD.fails++; window.__wkDeckErr = String(e && (e.code || e.message) || e);
+      if (CLOUD.fails === 1) { try { txToast('Нет связи с облаком. Колода сохранится, когда связь появится. Не закрывай вкладку.'); } catch (e2) {} }
+      clearTimeout(CLOUD.t); CLOUD.t = setTimeout(cloudFlush, Math.min(30000, 2000 * CLOUD.fails));
+    });
+  }
+  window.addEventListener('beforeunload', function (e) { if (CLOUD.ready && (CLOUD.busy || (+deckParse().rev || 0) !== CLOUD.rev)) { e.preventDefault(); e.returnValue = ''; } });
+  function cloudDone(ok) { var l = CLOUD.cbs; CLOUD.cbs = []; l.forEach(function (f) { try { f(ok); } catch (e) {} }); }
+  function cloudReset() { try { if (CLOUD.off) CLOUD.off(); } catch (e) {} CLOUD.off = null; CLOUD.ready = false; CLOUD.loading = false; CLOUD.state = 'wait'; CLOUD.json = '{}'; CLOUD.rev = 0; CLOUD.busy = false; CLOUD.dirty = false; CLOUD.legacy = null; CLOUD.login = ''; try { window.dispatchEvent(new Event('wk-deck-changed')); } catch (e) {} cloudRepaint(); }
+  function deckBoot(cb) {
+    var cl = window.__wkDeckCloud, ml = myLogin();
+    if (CLOUD.ready) { if (cb) cb(true); return; }
+    if (cb) CLOUD.cbs.push(cb);
+    if (CLOUD.loading) return;
+    if (!ml) { CLOUD.state = 'guest'; cloudDone(false); return; }
+    if (!cl || !cl.enabled()) { CLOUD.state = 'wait'; cloudDone(false); return; }
+    CLOUD.loading = true; CLOUD.state = 'load'; CLOUD.at = Date.now();
+    cl.own().then(function (deck) {
+      var legacy = null; try { legacy = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+      if (legacy && (typeof legacy !== 'object' || !legacy.owned)) legacy = null;
+      var lrev = legacy ? (+legacy.rev || 0) : 0;
+      if (!deck) {
+        /* В облаке колоды ещё нет: если она есть на этом устройстве, переносим её */
+        if (legacy && (Object.keys(legacy.owned).length || +legacy.belli)) { legacy.rev = Math.max(lrev, Date.now()); CLOUD.json = JSON.stringify(legacy); CLOUD.rev = 0; CLOUD.dropLegacy = true; }
+        else { CLOUD.json = '{}'; CLOUD.rev = 0; }
+      } else if (legacy && lrev > (+deck.rev || 0) && cloudSig(legacy) !== cloudSig(deck)) {
+        /* На устройстве лежит колода новее и другая — не выбрасываем молча */
+        CLOUD.legacy = legacy; CLOUD.json = JSON.stringify(deck); CLOUD.rev = +deck.rev || 0;
+      } else {
+        CLOUD.json = JSON.stringify(deck); CLOUD.rev = +deck.rev || 0;
+        if (legacy) { try { localStorage.removeItem(KEY); } catch (e) {} }
+      }
+      CLOUD.ready = true; CLOUD.loading = false; CLOUD.state = 'ok'; CLOUD.login = ml; CLOUD.fails = 0;
+      try {
+        CLOUD.off = cl.watchOwn(function (d, pending) {
+          if (!d || pending) return; var r = +d.rev || 0;
+          if (r <= CLOUD.rev || CLOUD.busy || (+deckParse().rev || 0) !== CLOUD.rev) return;
+          cloudAdopt(d); cloudRepaint();
+        }, function () {});
+      } catch (e) {}
+      try { window.dispatchEvent(new Event('wk-deck-changed')); } catch (e) {} try { nSched(); } catch (e) {}
+      if (CLOUD.dropLegacy) cloudFlushSoon();
+      if (CLOUD.legacy) { try { txToast('На этом устройстве осталась колода новее облачной. Открой «Колода» → «Облако», чтобы выбрать.'); } catch (e) {} }
+      cloudDone(true);
+    }, function (e) { CLOUD.loading = false; CLOUD.state = 'err'; CLOUD.err = String(e && (e.code || e.message) || e); cloudDone(false); });
+  }
+  setInterval(function () {
+    var ml = myLogin(); if (CLOUD.login && CLOUD.login !== ml) { cloudReset(); return; }
+    if (!CLOUD.ready && !CLOUD.loading && ml && Date.now() - CLOUD.at > (CLOUD.state === 'err' ? 15000 : 1500)) { CLOUD.at = Date.now(); deckBoot(function (ok) { if (ok) cloudRepaint(); }); }
+  }, 1500);
+  function paintGate(pane) {
+    var st = CLOUD.state, msg = st === 'guest' ? 'Колода и белли хранятся в облаке. Войди в аккаунт, чтобы ими пользоваться.' : st === 'err' ? 'Не удалось связаться с облаком' + (CLOUD.err ? ' (' + esc(CLOUD.err) + ')' : '') + '. Колода работает только онлайн.' : 'Загружаю колоду из облака…';
+    pane.innerHTML = '<div class="wk-pane-head"><div><h2>Колода</h2></div></div><div class="wk-dk-gate"><p>' + msg + '</p>' + (st === 'err' || st === 'wait' ? '<button type="button" class="wk-dk-reset" data-gate="retry">Повторить</button>' : '') + '</div>';
+    var b = pane.querySelector('[data-gate]'); if (b) b.onclick = function () { CLOUD.state = 'wait'; paintGate(pane); CLOUD.loading = false; deckBoot(function (ok) { if (pane.isConnected) { if (ok) renderDeck(pane); else paintGate(pane); } }); };
+  }
   window.__wkDeckProgress = function () {
-    var raw; try { raw = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { raw = {}; }
+    var raw; try { raw = JSON.parse(deckRaw() || '{}'); } catch (e) { raw = {}; }
     var own = (raw && raw.owned) || {}, C = allCards(), out = [];
     out.push({ v: '', have: C.filter(function (k) { return own[k.key]; }).length, total: C.length });
     var VC = varCards(C);
@@ -34259,7 +34360,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     return out;
   };
   window.__wkDeckStats = function () {
-    var st; try { st = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { st = {}; }
+    var st; try { st = JSON.parse(deckRaw() || '{}') || {}; } catch (e) { st = {}; }
     var inc = st.inc || {}, jr = 0; Object.keys(inc).forEach(function (q) { jr += (inc[q] && inc[q].b) || 0; });
     var d = st.daily || {};
     return { spent: +st.spent || 0, earned: Math.max(jr, (+st.sold || 0) + (+st.qpay || 0)), packs: +st.packs || 0, bought: +st.bought || 0, crafted: +st.crafted || 0, daily: +d.n || +d.streak || 0 };
@@ -34324,7 +34425,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   function bumpR(r) { var i = KRAR.indexOf(r); return KRAR[Math.min(KRAR.length - 1, i + 1)]; }
   // Уже полученные карточки не пропадают, если статье позже поставили главу или эпизод (спойлер): они остаются в колоде, но новые такие не выпадают
   var GF = {}, SPM = {};
-  function gfSet() { var m = {}; try { var o = (JSON.parse(localStorage.getItem(KEY) || '{}') || {}).owned || {}; Object.keys(o).forEach(function (k) { if (!o[k]) return; var b = String(k).split('#')[0]; m[b] = 1; m[b.split('@')[0]] = 1; }); } catch (e) {} return m; }
+  function gfSet() { var m = {}; try { var o = (JSON.parse(deckRaw() || '{}') || {}).owned || {}; Object.keys(o).forEach(function (k) { if (!o[k]) return; var b = String(k).split('#')[0]; m[b] = 1; m[b.split('@')[0]] = 1; }); } catch (e) {} return m; }
   function gfHid(x, t, spec) { if (!hiddenRec(x, t)) return false; if (GF[spec]) { SPM[spec] = 1; return false; } return true; }
   function kindCards() {
     GF = gfSet(); SPM = {};
@@ -35010,34 +35111,32 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (a === 'cloud-x') { if (box) box.remove(); return; }
     var paint = function (inner) {
       var o = pane.querySelector('#wkDkCloud'); if (o) o.remove();
-      pane.insertAdjacentHTML('beforeend', '<div class="wk-dk-modal" id="wkDkCloud" role="dialog" aria-modal="true" aria-label="Синхронизация колоды"><div class="wk-dk-mbox"><div class="wk-dk-mscroll"><h3>Колода в облаке</h3>' + inner + '</div><div class="wk-cl-b"><button type="button" class="wk-dk-reset" data-act="cloud-x">Закрыть</button></div></div></div>');
+      pane.insertAdjacentHTML('beforeend', '<div class="wk-dk-modal" id="wkDkCloud" role="dialog" aria-modal="true" aria-label="Колода в облаке"><div class="wk-dk-mbox"><div class="wk-dk-mscroll"><h3>Колода в облаке</h3>' + inner + '</div><div class="wk-cl-b"><button type="button" class="wk-dk-reset" data-act="cloud-x">Закрыть</button></div></div></div>');
     };
     var report = function (extra) {
-      if (!cl || !ml || !cl.enabled()) { paint('<p>Нужно войти в аккаунт: без него колода хранится только на этом устройстве.</p>'); return; }
+      if (!cl || !ml || !cl.enabled() || !CLOUD.ready) { paint('<p>Колода хранится только в облаке. Войди в аккаунт и проверь подключение.</p>'); return; }
       paint('<p class="wk-cl-r">Проверяю облако…</p>');
-      cl.load().then(function (by) {
-        var mine = by[ml], loc = load();
-        var err = window.__wkDeckErr ? '<p class="wk-cl-e">Последняя отправка не удалась: ' + esc(window.__wkDeckErr) + '</p>' : '';
-        paint((extra || '') + cloudSum(loc, 'Это устройство') + cloudSum(mine && mine.deck, 'Облако') + err +
-          '<p class="wk-dk-mnote">Обычно колода синхронизируется сама. Если на другом устройстве нет покупки, на том, где она сделана, нажми «Отправить», а на отстающем — «Забрать».</p>' +
-          '<div class="wk-cl-b"><button type="button" class="wk-dk-open" data-act="cloud-send">Отправить с этого устройства</button><button type="button" class="wk-dk-reset" data-act="cloud-pull">Забрать из облака</button></div>');
+      cl.own().then(function (deck) {
+        var pend = CLOUD.busy || (+deckParse().rev || 0) !== CLOUD.rev;
+        var err = window.__wkDeckErr ? '<p class="wk-cl-e">Последняя запись не удалась: ' + esc(window.__wkDeckErr) + '</p>' : '';
+        var lg = CLOUD.legacy ? '<p class="wk-cl-e">На этом устройстве осталась старая локальная колода, она новее облачной.</p>' + cloudSum(CLOUD.legacy, 'На устройстве') + '<div class="wk-cl-b"><button type="button" class="wk-dk-open" data-act="cloud-up">Заменить облако колодой с устройства</button><button type="button" class="wk-dk-reset" data-act="cloud-drop">Удалить локальную копию</button></div>' : '';
+        paint((extra || '') + cloudSum(deckParse(), 'Сейчас на экране') + cloudSum(deck, 'В облаке') + (pend ? '<p class="wk-cl-r">Есть изменения, которые ещё сохраняются…</p>' : '') + err + lg +
+          '<p class="wk-dk-mnote">Колода и белли хранятся только в облаке, на устройстве их копии нет. Изменения на другом устройстве подтягиваются сами.</p>' +
+          '<div class="wk-cl-b"><button type="button" class="wk-dk-reset" data-act="cloud-pull">Обновить из облака</button></div>');
       }, function (e) { paint('<p class="wk-cl-e">Облако не ответило: ' + esc(String(e && (e.code || e.message) || e)) + '</p>'); });
     };
     if (a === 'cloud') { report(''); return; }
-    if (!cl || !ml || !cl.enabled()) return;
-    if (a === 'cloud-send') {
-      paint('<p class="wk-cl-r">Отправляю…</p>');
-      window.__wkDeckPushedRev = 0; Promise.resolve(cl.push()).then(function () { report(window.__wkDeckErr ? '' : '<p class="wk-cl-ok">✓ Отправлено</p>'); });
+    if (!cl || !ml || !cl.enabled() || !CLOUD.ready) return;
+    if (a === 'cloud-pull') {
+      cl.own().then(function (deck) { if (deck) { CLOUD.busy = false; cloudAdopt(deck); cloudRepaint(); } report('<p class="wk-cl-ok">✓ Обновлено из облака</p>'); }, function (e) { report('<p class="wk-cl-e">Облако не ответило: ' + esc(String(e && (e.code || e.message) || e)) + '</p>'); });
       return;
     }
-    if (a === 'cloud-pull') {
-      if (!window.confirm('Заменить колоду на этом устройстве данными из облака? Покупки и открытия, которых нет в облаке, пропадут.')) return;
-      paint('<p class="wk-cl-r">Загружаю…</p>');
-      cl.load().then(function (by) {
-        var mine = by[ml]; if (!mine || !mine.deck) { report('<p class="wk-cl-e">В облаке колоды нет.</p>'); return; }
-        var loc = load(); applyCloudDeck(loc, mine.deck, true); save(loc); DK.pack = null; renderDeck(pane); report('<p class="wk-cl-ok">✓ Колода загружена из облака</p>');
-      }, function (e) { report('<p class="wk-cl-e">Облако не ответило: ' + esc(String(e && (e.code || e.message) || e)) + '</p>'); });
+    if (a === 'cloud-up' && CLOUD.legacy) {
+      if (!window.confirm('Заменить колоду в облаке той, что лежит на этом устройстве? Облачная версия будет потеряна.')) return;
+      var d = CLOUD.legacy; d.rev = Math.max(Date.now(), CLOUD.rev + 1); CLOUD.json = JSON.stringify(d); CLOUD.legacy = null; CLOUD.dropLegacy = true; cloudFlushSoon(); cloudRepaint(); report('<p class="wk-cl-ok">✓ Отправляю колоду с устройства в облако</p>');
+      return;
     }
+    if (a === 'cloud-drop') { CLOUD.legacy = null; try { localStorage.removeItem(KEY); } catch (e) {} report('<p class="wk-cl-ok">✓ Локальная копия удалена</p>'); }
   }
   function showRules(pane) { var o = pane.querySelector('#wkDkRules'); if (o) o.remove(); pane.insertAdjacentHTML('beforeend', rulesHTML()); }
   function leftMs(st) { return Math.max(0, st.last + COOL - Date.now()); }
@@ -36499,20 +36598,16 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   function deckSync(pane, cb, paint, pre) {
     var cl = window.__wkDeckCloud, ml = myLogin(), fin = 0;
     var end = function (ch) { if (fin) return; fin = 1; DK.syncAt = Date.now(); if (ch && paint && pane && pane.isConnected && !DK.pack) renderDeck(pane); else if (ch && paint && pane && pane.isConnected) { var cb0 = pane.querySelector('#wkDkCta .wk-dk-open'); if (cb0) cb0.outerHTML = ctaHTML(load()); } if (cb) cb(ch); };
-    if (!cl || !cl.enabled() || !ml) { end(false); return; }
+    if (!CLOUD.ready || !cl || !cl.enabled() || !ml) { end(false); return; }
     setTimeout(function () { end(false); }, 5000);
-    (pre ? Promise.resolve(pre) : (DK.frUnsub && DK.frData ? Promise.resolve(DK.frData) : cl.load())).then(function (by) {
-      var mine = by[ml], loc = load(); if (loc.__fake) { end(false); return; }
-      var cd = mine && mine.deck, lr = +loc.rev || 0;
-      if (!cd) { if (lr > 0) { try { cl.push(); } catch (e) {} } end(false); return; }
-      var cr = +cd.rev || 0;
-      /* cr === 0: колода из старой версии без rev — тогда решает число открытых наборов */
-      if (cr > lr || (!cr && (+cd.packs || 0) > (+loc.packs || 0))) { applyCloudDeck(loc, cd, false); save(loc); end(true); return; }
-      if (lr > cr) { try { cl.push(); } catch (e) {} }
-      end(false);
-    }, function () { end(false); });
+    var take = function (deck) {
+      if (deck && !CLOUD.busy && (+deckParse().rev || 0) === CLOUD.rev && (+deck.rev || 0) > CLOUD.rev) { cloudAdopt(deck); end(true); } else end(false);
+    };
+    if (pre) { take(pre[ml] && pre[ml].deck); return; }
+    cl.own().then(take, function () { end(false); });
   }
   function renderDeck(pane) {
+    if (!CLOUD.ready) { paintGate(pane); deckBoot(function (ok) { if (pane.isConnected) { if (ok) renderDeck(pane); else paintGate(pane); } }); return; }
     pane.classList.toggle('wk-dk-editing', !!(DK.editPrev && isEd())); try { ttlBind(pane); } catch (e) {}
     var cards = allCards(), st = load(); migrate(st, cards);
     try { if (mkApi() && !MK.loading && Date.now() - MK.at > 60000) refreshMarket(pane, false); } catch (e) {}
@@ -36600,7 +36695,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
         else if (a === 'tear') { tearPack(pane); }
         else if (a === 'fr-more') { DK.frLim += 60; var ff = pane.querySelector('#wkDkFriend'); if (ff) ff.innerHTML = friendBody(); }
         else if (a === 'rules') { showRules(pane); }
-        else if (a === 'cloud' || a === 'cloud-send' || a === 'cloud-pull' || a === 'cloud-x') { cloudAct(pane, a); }
+        else if (a === 'cloud' || a === 'cloud-up' || a === 'cloud-drop' || a === 'cloud-pull' || a === 'cloud-x') { cloudAct(pane, a); }
         else if (a === 'notify') { notifyToggle(pane); }
         else if (a === 'daily') { dailyClaim(pane); }
         else if (a === 'daily-more') { DK.dlyAll = !DK.dlyAll; var dh = pane.querySelector('#wkDkDay'); if (dh) dh.innerHTML = dailyHTML(load()); }
@@ -36627,7 +36722,7 @@ else if (a === 'adm-fill') { if (!isDima()) return; DK.fillAll = !DK.fillAll; re
   function qpLoad() { var R; try { R = JSON.parse(localStorage.getItem(QP.key) || '{}') || {}; } catch (e) { R = {}; } var d = dayKey(new Date()); if (R.d !== d) { R.d = d; R.e = 0; } R.seen = R.seen || {}; return R; }
   window.__wkQuizPay = { cap: QP.cap, earned: function () { return qpLoad().e || 0; } };
   window.__wkQuizReward = function (o) {
-    var st = load(); if (!st || st.__fake) return { gain: 0, why: 'off' };
+    var st = load(); if (!st || st.__fake || !CLOUD.ready) return { gain: 0, why: 'off' };
     var R = qpLoad(), now = Date.now(), why = 'ok', gain = 0;
     Object.keys(R.seen).forEach(function (k) { if (now - R.seen[k] > QP.repeatDays * 864e5) delete R.seen[k]; });
     if (R.seen[o.key]) why = 'repeat'; else if (R.e >= QP.cap) why = 'cap';
@@ -38657,4 +38752,5 @@ html:not(.wk-ed-hints) #wikiEditorOverlay #wkEdPv [data-pvnote]{display:none!imp
 <style id="wk-v443-css">#wkDkCloud .wk-cl-r{margin:6px 0;font-size:13.5px;line-height:1.4}#wkDkCloud .wk-cl-e{margin:8px 0;color:#fca5a5;font-size:13.5px}#wkDkCloud .wk-cl-ok{margin:8px 0;color:#86efac;font-size:13.5px}.wk-cl-b{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}#wkDkCloud .wk-dk-mbox>.wk-cl-b{padding:0 0 4px}
 @media (max-width:640px){.wk-pane{min-width:0}.wk-dk-cta,#wkDkCta{grid-template-columns:minmax(0,1fr)!important;width:100%!important;max-width:100%!important;box-sizing:border-box}.wk-dk-cta *{min-width:0;max-width:100%}.wk-dk-cta button,.wk-dk-nbtn{white-space:normal;height:auto}.wk-dk-nt{width:100%}.wk-dd{width:100%;max-width:100%}.wk-dd-r{width:100%!important}.wk-dk-hbtn{flex-wrap:wrap}.wk-dk-stage.idle .wk-dk-cta>*{grid-column:1!important;grid-row:auto!important;justify-self:stretch}.wk-dk-stage.idle .wk-dk-cta>.wk-dk-open{white-space:normal!important;min-height:38px;height:auto}}</style>
 <style id="wk-v445-css">.wk-sh-free{margin:8px 0 0;padding:8px 12px;border-radius:10px;border:1px dashed var(--accent,#d8b45a);background:color-mix(in srgb,var(--accent,#d8b45a) 10%,transparent);font-size:12.5px}</style>
+<style id="wk-v449-css">.wk-dk-gate{padding:28px 8px;text-align:center;opacity:.9}.wk-dk-gate p{margin:0 0 14px;line-height:1.5}</style>
 </body></html>
