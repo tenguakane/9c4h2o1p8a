@@ -366,7 +366,7 @@ html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-grid-content,html.
  background:linear-gradient(120deg,#ff5fa2 0%,#ffd86b 14%,#6bff9e 28%,#62c4ff 42%,#b58cff 56%,#ff5fa2 70%,#ffd86b 84%,#6bff9e 100%) 0 0/220% 220%!important;
  animation:wkHoloDots3 9s linear infinite!important}
 @keyframes wkHoloDots3{0%{background-position:0% 0%}100%{background-position:100% 100%}}
-</style></head>
+</style><style id="wk-v462-css">/* v462: Каюта → Обзор: карточки истории стоят на одной высоте с карточками избранного (над ними строка-папка 19px + зазор 10px) */#wkCabOverview .wk-cab-group>h3{height:19px;line-height:19px;overflow:hidden}@media (min-width:1000px){#wkCabOverview .wk-cab-mir-hist{padding-top:29px}}</style></head>
 <body data-theme="mugiwara" data-active-tab="characters">
 <script id="wiki-cloud-config">
 /* ============================================================
@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 458";
+const WIKI_VERSION = "15.11.2026 · 462";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -11030,6 +11030,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
             ],
             story: [
                 {title:'Основная информация',icon:'🧭',desc:'Название арки, изображение карточки с настройкой кадрирования, сага и диапазоны глав/эпизодов.',keys:['id','name','movie_id','image','image_position','saga','chapters','episodes','ongoing','filler','movie']},
+                {title:'Полоска в списке сюжета',icon:'🎞',desc:'Широкая полоска арки в списке «Сюжет» (вид L). Можно задать другое фото и свой кадр, не меняя фото статьи. Всё необязательно: пустые поля берут фото и кадр статьи. Сдвиг 0–100 (50 — по центру), приближение 100–250.',keys:['strip_image','strip_position_x','strip_position','strip_zoom']},
                 {title:'Содержание арки',icon:'📖',desc:'Описание и ключевые события.',keys:['description','key']},
                 {title:'Эффекты карточки и заголовка',icon:'✨',desc:'Эффекты при наклоне и постоянные, конструктор слоёв и частиц, шрифт и эффект заголовка. Раздел можно свернуть.',fx:true,keys:['card_fx','card_shine','title_fx']},
                 {title:'Связанные статьи',icon:'🔗',desc:'Выбери персонажей и другие материалы для связи с аркой.',keys:['characters','connect','map_hide']}
@@ -38815,8 +38816,16 @@ html:not(.wk-ed-hints) #wikiEditorOverlay #wkEdPv [data-pvnote]{display:none!imp
 (function () {
   'use strict';
   /* Статья арки: «Мой просмотр», сведения и прогресс уходят под фото, а вкладки идут сразу под заголовком, как у персонажей */
+  /* Разделы под фото и описанием поднимаются в правую колонку: пустого места под коротким описанием быть не должно */
+  function fill(root) {
+    var hero = root.querySelector(':scope > .article-hero-layout'), det = hero && hero.querySelector('.article-hero-details');
+    if (!det) return;
+    [].slice.call(root.querySelectorAll(':scope > .article-section:not(.wk-rel-section)')).forEach(function (sec) { det.appendChild(sec); });
+  }
   function fix(root) {
-    if (!root || root.__wkArcSide) return;
+    if (!root) return;
+    fill(root);
+    if (root.__wkArcSide) return;
     var hero = root.querySelector(':scope > .article-hero-layout'), media = hero && hero.querySelector('.article-hero-media');
     if (!media) return;
     var skip = root.querySelector(':scope > .wk-skip'), meta = root.querySelector(':scope > .arc-meta'), prog = root.querySelector(':scope > .arc-reading-progress');
@@ -38845,4 +38854,5 @@ html body #storySection#storySection#storySection #storyList.wk-tl .story-arc-ch
 html body #storySection#storySection#storySection #storyList.wk-tl .wk-tl-ch::before{box-sizing:border-box!important;width:14px!important;height:14px!important;margin-top:-7px!important;right:-6px!important}
 </style>
 <style id="wk-v458-css">html body #storySection#storySection#storySection #storyList.wk-tl .wk-tl-ch{white-space:normal!important;text-align:right;line-height:1.35;overflow-wrap:anywhere;min-width:0;overflow:visible}</style>
+<style>.wk-art-story .article-hero-details{min-width:0}.wk-art-story .article-hero-details>.article-section{margin:0;min-width:0;max-width:100%;grid-column:1/-1!important}.wk-art-story .wk-arc-side .arc-reading-progress-grid{grid-template-columns:1fr 1fr!important}.wk-art-story .wk-arc-side .arc-reading-track{padding:7px 8px}.wk-art-story .wk-arc-side .arc-reading-track-head{font-size:12px}.wk-art-story .wk-arc-side .arc-reading-track-count{font-size:11px}.wk-art-story .wk-arc-side .wk-skip small{display:none}.wk-art-story .wk-arc-side .wk-skip{gap:6px}.wk-art-story .wk-arc-side .wk-skip>span{flex:1 1 100%}.wk-art-story .article-hero-details>.wk-char-arcs .wk-arc-strip{overflow-x:auto;max-width:100%;scrollbar-width:thin;padding-bottom:6px}</style>
 </body></html>
