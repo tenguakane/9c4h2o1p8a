@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 463";
+const WIKI_VERSION = "15.11.2026 · 464";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -35563,7 +35563,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     });
     ov.addEventListener('click', close); document.addEventListener('keydown', onk); document.body.appendChild(ov);
     // рубашка собирается в размере исходной карточки и растягивается целиком, поэтому знак и все пропорции совпадают
-    try { var zs = box.querySelector('.wk-dk-zsc'), ww = Number(w0) > 40 ? Number(w0) : 190, kk = box.offsetWidth / ww; if (zs && kk > 0) { zs.style.width = ww + 'px'; zs.style.height = (box.offsetHeight / kk) + 'px'; zs.style.transform = 'scale(' + kk + ')'; } } catch (e) {}
+    try { var zs = box.querySelector('.wk-dk-zsc'), ww = Number(w0) > 40 ? Number(w0) : 190, kk = box.offsetWidth / ww; if (zs && kk > 0) { zs.style.width = ww + 'px'; zs.style.height = (box.offsetHeight / kk) + 'px'; if (window.CSS && CSS.supports && CSS.supports('zoom', '1')) { zs.style.zoom = kk; zs.style.transform = 'none'; } else zs.style.transform = 'scale(' + kk + ')'; } } catch (e) {}
   }
   /* ======== Разделы колоды: переработка повторок, участники, обмен ======== */
   DK.tab = DK.tab || 'me';
