@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 438";
+const WIKI_VERSION = "15.11.2026 · 440";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -23915,7 +23915,11 @@ html body #storySection#storySection#storySection#storySection .pagination .pagi
     var names = P.arcs.map(function (a) { return a.name; });
     var has = function (x) { return names.indexOf(val(x, 'arc')) >= 0; };
     var c = t || pick(P.chars.filter(has)); if (!c || !has(c)) return null;
-    var arc = P.arcs.find(function (a) { return a.name === val(c, 'arc'); });
+    var chN = num(val(c, 'chapter')), byCh = chN ? P.arcs.find(function (a) {
+      if (truthy(a.filler) || low(a.saga) === 'обложки') return false;
+      return String(a.chapters || '').split(/[,;]/).some(function (p) { var m = /^\s*(\d+)\s*(?:[-–—]\s*(\d+))?\s*$/.exec(p); return m && chN >= +m[1] && chN <= +(m[2] || m[1]); });
+    }) : null;
+    var arc = byCh || P.arcs.find(function (a) { return a.name === val(c, 'arc'); });
     var cand = P.arcs.filter(function (a) { return a !== arc; }).sort(function (a, b) { return (a.saga === arc.saga ? 0 : 1) - (b.saga === arc.saga ? 0 : 1) + (R() - .5); });
     var o = options({ t: arc.name }, cand.slice(0, 8).map(function (a) { return { t: a.name }; })); if (!o) return null;
     return { rec: c, type: 'character', q: 'В какой арке впервые появляется ' + c.name + '?', img: url(c, 'person_link'), imgPos: pos(c, 'person_'), opts: o.opts, ans: o.ans };
@@ -36557,7 +36561,7 @@ else if (a === 'adm-fill') { if (!isDima()) return; DK.fillAll = !DK.fillAll; re
     var st = load(); if (!st || st.__fake) return { gain: 0, why: 'off' };
     var R = qpLoad(), now = Date.now(), why = 'ok', gain = 0;
     Object.keys(R.seen).forEach(function (k) { if (now - R.seen[k] > QP.repeatDays * 864e5) delete R.seen[k]; });
-    if (!(o.ms >= QP.minMs)) why = 'fast'; else if (R.seen[o.key]) why = 'repeat'; else if (R.e >= QP.cap) why = 'cap';
+    if (R.seen[o.key]) why = 'repeat'; else if (R.e >= QP.cap) why = 'cap';
     else {
       var base = o.hard ? QP.hard : QP.base, bonus = o.helped ? 0 : Math.min(Math.max(0, (o.streak || 0) - 2), 5) * 2;
       if (o.helped) base = Math.round(base / 2);
