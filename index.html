@@ -1599,7 +1599,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 475";
+const WIKI_VERSION = "15.11.2026 · 478";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -18103,7 +18103,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
   /* Что хранится в tops/{uid}.deck. Это же видят другие участники в «Колоде друга». */
   function slimDeck(d) {
   var slim = { packs: d.packs || 0, pity: d.pity || 0, last: d.last || 0, open: d.open || null, owned: d.owned, tr: d.tr || {}, got: d.got || {}, show: d.show || [], showCap: d.showCap || 3, cos: d.cos || {}, frame: d.frame || '', bg: d.bg || '', alb: d.alb || '', back: d.back || '', hold: d.hold || {}, ev: d.ev || [], belli: d.belli || 0, ach: d.ach || {}, achB: d.achB || {}, daily: d.daily || null, shield: d.shield || 0, bless: d.bless || 0, pig: d.pig || null, ttl: d.ttl || null, inc: d.inc || {}, incD: d.incD || {}, incLog: d.incLog || [], spent: d.spent || 0, bought: d.bought || 0, crafted: d.crafted || 0, sold: d.sold || 0, qpay: d.qpay || 0, want: d.want || [], pages: d.pages || [], rev: d.rev || 0 };
-    ['pick', 'achOpen', 'feedSeen', 'maxBuy', 'mk', 'sld', 'spd', 'vBoost', 'lk', 'dl'].forEach(function (k) { if (d[k] !== undefined && d[k] !== null) slim[k] = d[k]; });
+    ['pick', 'achOpen', 'feedSeen', 'maxBuy', 'mk', 'sld', 'spd', 'vBoost', 'lk', 'dl', 'pigX', 'pigE'].forEach(function (k) { if (d[k] !== undefined && d[k] !== null) slim[k] = d[k]; });
     return slim;
   }
   function parseDeckDoc(x) { if (!x || !x.deck) return null; try { return JSON.parse(x.deck); } catch (e) { return null; } }
@@ -34340,7 +34340,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     return cleanSH(v);
   }
   /* ===== Колода в облаке: tops/{uid}.deck. Правило одно: пишем только поверх той версии, которую видели; иначе действие отклоняется. ===== */
-  var CLOUD_KEYS = ['packs', 'pity', 'last', 'open', 'owned', 'tr', 'got', 'show', 'showCap', 'cos', 'frame', 'bg', 'alb', 'back', 'hold', 'ev', 'belli', 'ach', 'achB', 'daily', 'shield', 'bless', 'pig', 'ttl', 'inc', 'incD', 'incLog', 'spent', 'bought', 'crafted', 'sold', 'qpay', 'want', 'pages', 'pick', 'achOpen', 'feedSeen', 'maxBuy', 'mk', 'sld', 'spd', 'vBoost', 'lk', 'dl'];
+  var CLOUD_KEYS = ['packs', 'pity', 'last', 'open', 'owned', 'tr', 'got', 'show', 'showCap', 'cos', 'frame', 'bg', 'alb', 'back', 'hold', 'ev', 'belli', 'ach', 'achB', 'daily', 'shield', 'bless', 'pig', 'ttl', 'inc', 'incD', 'incLog', 'spent', 'bought', 'crafted', 'sold', 'qpay', 'want', 'pages', 'pick', 'achOpen', 'feedSeen', 'maxBuy', 'mk', 'sld', 'spd', 'vBoost', 'lk', 'dl', 'pigX', 'pigE'];
   function cloudSig(o) { try { return JSON.stringify(CLOUD_KEYS.map(function (k) { return o[k] === undefined ? null : o[k]; })); } catch (e) { return ''; } }
   function deckRaw() { return CLOUD.ready ? CLOUD.json : '{}'; }
   function deckParse() { try { return JSON.parse(deckRaw()) || {}; } catch (e) { return {}; } }
@@ -35104,7 +35104,12 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     });
     document.addEventListener('keydown', onk); document.body.appendChild(ov);
   }
-  function giftBtn(code) { return '<button type="button" class="wk-tx-btn" data-tx="giftbuy" data-g="' + code + '">Купить и подарить</button>'; }
+  var GC = { t: 0, m: null };
+  function giftPrice(code) {
+    var n = Date.now(); if (!GC.m || n - GC.t > 400) { GC.m = {}; try { giftCatalog().forEach(function (q) { GC.m[q.code] = giftCost(q.price); }); } catch (e) {} GC.t = n; }
+    return GC.m[code];
+  }
+  function giftBtn(code) { var p = giftPrice(code); return '<button type="button" class="wk-tx-btn" data-tx="giftbuy" data-g="' + code + '">Купить и подарить' + (p > 0 ? ' · ' + fmtB(p) : p === 0 ? ' · бесплатно' : '') + '</button>'; }
   function adminGiftHTML() {
     var cat = giftCatalog(), gs = [], by = {}; cat.forEach(function (q) { if (!by[q.g]) { by[q.g] = []; gs.push(q.g); } by[q.g].push(q); });
     var me = myLogin(), acc = (window.__wikiAccounts || []).filter(function (a) { return a.login !== me; });
@@ -36094,7 +36099,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (a === 'compose') { compOpen(pane); return true; }
     if (a === 'showedit') { compOpen(pane, 'show'); return true; }
     if (a === 'wantedit') { compOpen(pane, 'want'); return true; }
-    if (a === 'shtab' || a === 'sellall' || a === 'sell1' || a === 'buy' || a === 'mklist' || a === 'mkbuy' || a === 'mkcancel' || a === 'buyup' || a === 'daybuy' || a === 'dayroll' || a === 'buy2' || a === 'pigput' || a === 'pigget' || a === 'pickup' || a === 'cosbuy' || a === 'cossel' || a === 'bkadd' || a === 'bkedit' || a === 'bkcancel' || a === 'bkdel' || a === 'giftpack' || a === 'giftbuy' || a === 'hold' || a === 'unhold') { shopClick(pane, a, b); return true; }
+    if (a === 'shtab' || a === 'sellall' || a === 'sell1' || a === 'buy' || a === 'mklist' || a === 'mkbuy' || a === 'mkcancel' || a === 'buyup' || a === 'daybuy' || a === 'dayroll' || a === 'buy2' || a === 'pigput' || a === 'pigbuy' || a === 'pigget' || a === 'pickup' || a === 'cosbuy' || a === 'cossel' || a === 'bkadd' || a === 'bkedit' || a === 'bkcancel' || a === 'bkdel' || a === 'giftpack' || a === 'giftbuy' || a === 'hold' || a === 'unhold') { shopClick(pane, a, b); return true; }
     if (a === 'accept' || a === 'decline' || a === 'cancel') { if (a !== 'accept' || (TX.trades.filter(function (x) { return x.id === b.getAttribute('data-id'); })[0] || {}).gift || window.confirm('Принять обмен? Карточки сразу перейдут.')) txAction(pane, a, b.getAttribute('data-id'), b); return true; }
     return false;
   }
@@ -36197,13 +36202,27 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     }).join('') + '</div></div>';
   }
   var PIG_DAYS = 7, PIG_RATE = 0.05, PIG_MIN = 1000, PIG_MAX = 200000;
-  function piggyHTML(st, bel) {
-    var pg = st.pig, art = '<div class="wk-sh-art wk-sh-ico" aria-hidden="true">' + itemSVG('piggy') + '</div>';
+  var PIG_SLOT = [0, 25000, 60000];
+  function pigGet(st, i) { return i === 0 ? st.pig : (st.pigE || [])[i - 1]; }
+  function pigSet(st, i, v) { if (i === 0) { if (v) st.pig = v; else delete st.pig; return; } var a = (st.pigE || []).slice(); while (a.length < i) a.push(null); a[i - 1] = v || null; st.pigE = a; }
+  function pigSlots(st) { return 1 + Math.max(0, Math.min(2, st.pigX || 0)); }
+  function piggyAll(st, bel) {
+    var n = pigSlots(st), out = '';
+    for (var i = 0; i < n; i++) out += piggyHTML(st, bel, i);
+    if (n < 3) {
+      var pr = FREE() ? 0 : PIG_SLOT[n], can = bel >= pr;
+      out += '<article class="wk-sh-pk p-x p-pig wk-pig-lock"><div class="wk-sh-art wk-sh-ico" aria-hidden="true">' + itemSVG('piggy') + '</div><div class="wk-sh-info"><h4>Копилка №' + (n + 1) + '</h4><p class="wk-sh-what">Ещё один вклад одновременно</p><p class="wk-sh-note">Каждая копилка работает отдельно: своя сумма, свой срок, свои проценты. Покупается один раз и навсегда.</p></div><span class="wk-sh-bw"><button type="button" class="wk-tx-btn' + (can ? ' pri' : '') + '" data-tx="pigbuy"' + (can ? '' : ' disabled') + '>' + (pr ? 'Купить · ' + fmtB(pr) : 'Забрать бесплатно') + '</button></span></article>';
+    }
+    return out;
+  }
+  function piggyHTML(st, bel, i) {
+    i = i || 0;
+    var pg = pigGet(st, i), art = '<div class="wk-sh-art wk-sh-ico" aria-hidden="true">' + itemSVG('piggy') + '</div>', nm = 'Копилка' + (i ? ' №' + (i + 1) : ''), idx = ' data-pi="' + i + '"';
     if (pg && pg.amt) {
       var left = pg.until - Date.now(), due = left <= 0, bonus = Math.floor(pg.amt * PIG_RATE), pc = Math.max(0, Math.min(100, Math.round((Date.now() - pg.t0) / Math.max(1, pg.until - pg.t0) * 100)));
-      return '<article class="wk-sh-pk p-x p-pig">' + art + '<div class="wk-sh-info"><h4>Копилка</h4><p class="wk-sh-what">В копилке: ' + fmtB(pg.amt) + '</p><p class="wk-sh-note">' + (due ? 'Срок вышел: можно забрать ' + fmtB(pg.amt + bonus) + ' (с процентами ' + fmtB(bonus) + ').' : 'Откроется через ' + leftTxt(left) + '. Вернётся ' + fmtB(pg.amt + bonus) + ' (+5%). Раньше срока достать нельзя.') + '</p><span class="wk-pig-bar" aria-hidden="true"><em style="width:' + pc + '%"></em></span></div><span class="wk-sh-bw"><button type="button" class="wk-tx-btn' + (due ? ' pri' : '') + '" data-tx="pigget"' + (due ? '' : ' disabled') + '>' + (due ? 'Забрать · ' + fmtB(pg.amt + bonus) : 'Запечатана') + '</button></span></article>';
+      return '<article class="wk-sh-pk p-x p-pig">' + art + '<div class="wk-sh-info"><h4>' + nm + '</h4><p class="wk-sh-what">В копилке: ' + fmtB(pg.amt) + '</p><p class="wk-sh-note">' + (due ? 'Срок вышел: можно забрать ' + fmtB(pg.amt + bonus) + ' (с процентами ' + fmtB(bonus) + ').' : 'Откроется через ' + leftTxt(left) + '. Вернётся ' + fmtB(pg.amt + bonus) + ' (+5%). Раньше срока достать нельзя.') + '</p><span class="wk-pig-bar" aria-hidden="true"><em style="width:' + pc + '%"></em></span></div><span class="wk-sh-bw"><button type="button" class="wk-tx-btn' + (due ? ' pri' : '') + '" data-tx="pigget"' + idx + (due ? '' : ' disabled') + '>' + (due ? 'Забрать · ' + fmtB(pg.amt + bonus) : 'Запечатана') + '</button></span></article>';
     }
-    return '<article class="wk-sh-pk p-x p-pig">' + art + '<div class="wk-sh-info"><h4>Копилка</h4><p class="wk-sh-what">Отложи белли на 7 дней и получи +5%</p><p class="wk-sh-note">От ' + fmtB(PIG_MIN) + ' до ' + fmtB(PIG_MAX) + '. Пока копилка запечатана, достать белли нельзя. После срока вернётся вся сумма и проценты.</p><input id="wkPigAmt" class="wk-pig-in" type="number" inputmode="numeric" min="' + PIG_MIN + '" max="' + PIG_MAX + '" step="500" value="' + Math.min(Math.max(PIG_MIN, Math.floor((bel || 0) / 2 / 500) * 500), PIG_MAX) + '" aria-label="Сколько белли отложить"></div><span class="wk-sh-bw"><button type="button" class="wk-tx-btn' + (bel >= PIG_MIN ? ' pri' : '') + '" data-tx="pigput"' + (bel >= PIG_MIN ? '' : ' disabled') + '>' + (bel >= PIG_MIN ? 'Отложить' : 'Нужно ' + fmtB(PIG_MIN - bel)) + '</button></span></article>';
+    return '<article class="wk-sh-pk p-x p-pig">' + art + '<div class="wk-sh-info"><h4>' + nm + '</h4><p class="wk-sh-what">Отложи белли на 7 дней и получи +5%</p><p class="wk-sh-note">От ' + fmtB(PIG_MIN) + ' до ' + fmtB(PIG_MAX) + '. Пока копилка запечатана, достать белли нельзя. После срока вернётся вся сумма и проценты.</p><input id="wkPigAmt' + i + '" class="wk-pig-in" type="number" inputmode="numeric" min="' + PIG_MIN + '" max="' + PIG_MAX + '" step="500" value="' + Math.min(Math.max(PIG_MIN, Math.floor((bel || 0) / 2 / 500) * 500), PIG_MAX) + '" aria-label="Сколько белли отложить"></div><span class="wk-sh-bw"><button type="button" class="wk-tx-btn' + (bel >= PIG_MIN ? ' pri' : '') + '" data-tx="pigput"' + idx + (bel >= PIG_MIN ? '' : ' disabled') + '>' + (bel >= PIG_MIN ? 'Отложить' : 'Нужно ' + fmtB(PIG_MIN - bel)) + '</button></span></article>';
   }
   function extrasHTML(C, st, bel) {
     var pages = alPages(C), arcSel = '';
@@ -36228,6 +36247,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       '</div><button type="button" class="wk-tx-btn pri" data-tx="giftpack"' + (acc.length ? '' : ' disabled') + '>Подарить</button></article>';
     var cos = st.cos || {};
     var cosRow = function (kind, list, pref) {
+      if (kind === 'back') list = list.slice().sort(function (x, y) { return (x.price || 0) - (y.price || 0); });
       return list.map(function (c) {
         var own = !!cos[pref + c.id], on = st[kind] === c.id;
         return '<article class="wk-sh-pk p-x p-cos">' + cosPreview(C, st, pref, c.id) + '<div class="wk-sh-info"><h4>' + c.n + '</h4></div>' +
@@ -36238,7 +36258,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     return {
       boost: '<h3 class="wk-dk-h">Усиления</h3><p class="wk-sh-hint">Расходуются сами, когда пригодятся: щит спасает серию входов, благословение добавляет шанс переработке.</p><div class="wk-sh-pks">' + pick([0, 1, 2, 5]) + '</div>' +
         '<h3 class="wk-dk-h">Особые находки</h3><p class="wk-sh-hint">Наборы и выбор карточек под конкретную цель.</p><div class="wk-sh-pks">' + pick([3, 4, 6, 7]) + '</div>',
-      save: '<h3 class="wk-dk-h">Сбережения</h3><p class="wk-sh-hint">Копилка запирает белли на срок и возвращает их с процентами. Пока белли лежат в копилке, потратить их нельзя.</p><div class="wk-sh-pks">' + piggyHTML(st, bel) + '</div>',
+      save: '<h3 class="wk-dk-h">Сбережения</h3><p class="wk-sh-hint">Копилка запирает белли на срок и возвращает их с процентами. Пока белли лежат в копилке, потратить их нельзя. Можно докупить вторую и третью копилку, чтобы вклады шли одновременно.</p><div class="wk-sh-pks">' + piggyAll(st, bel) + '</div>',
       des: '<h3 class="wk-dk-h">Оформление витрины и альбома</h3><p class="wk-sh-hint">Рамки видны на карточках в витрине и в альбоме, фон только в витрине. Покупаются один раз, выбрать или снять можно в любой момент. Другие участники видят твоё оформление.</p><div class="wk-sh-pks">' + cosRow('frame', FRAMES, 'f_') + cosRow('bg', BGS, 'b_') + '</div><h3 class="wk-dk-h">Дизайн альбома</h3><p class="wk-sh-hint">Меняет вид страниц в режиме «Альбом» в твоей колоде. Покупается один раз, выбрать или снять можно в любой момент.</p><div class="wk-sh-pks">' + cosRow('alb', ALBS, 'a_') + '</div>',
       bk: '<h3 class="wk-dk-h">Рубашки карточек</h3><p class="wk-sh-hint">Другой знак на обороте карточек: в наборах, в колоде и в альбоме. Цвет и свечение по-прежнему зависят от редкости. Покупается один раз.</p><div class="wk-sh-pks">' + cosRow('back', allBacks().filter(function (q) { return (!/^(skull|fruit|bolt|blades)$/.test(q.id) || cos['k_' + q.id]) && (!q.cu || bkOk(q)); }), 'k_') + '</div>' + bkAdminHTML()
     };
@@ -36314,7 +36334,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var m = {}; p.forEach(function (q) { m[q.type] = q.value; });
     return { d: m.year + '-' + m.month + '-' + m.day, s: (+m.hour % 24) * 3600 + (+m.minute) * 60 + (+m.second) };
   }
-  function dayPrice(r) { return FREE() ? 0 : Math.round((SELL[r] || 100) * DAY_MARK / 10) * 10; }
+  function dayPrice(r, own) { return FREE() ? 0 : own ? (SELL[r] || 100) : Math.round((SELL[r] || 100) * DAY_MARK / 10) * 10; }
   function dayShop(st, C) {
     var pool = dayPool(), day = kyiv().d, dl = st.dl && st.dl.d === day ? st.dl : { d: day, b: [], r: 0 }, rnd = rngSeed(day + '|lavka|' + (dl.r || 0)), by = { common: [], rare: [], epic: [], legendary: [] }, used = {}, out = [];
     pool.forEach(function (k) { by[k.r].push(k); });
@@ -36324,7 +36344,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       for (var j = 0; j < order.length && !pick; j++) { var l = by[order[j]].filter(function (k) { return !used[k.key]; }); if (l.length) { pick = l[Math.floor(rnd() * l.length)]; } }
       if (!pick) continue; used[pick.key] = 1;
       var k = cardByKey(C, pick.key);
-      out.push({ i: i, key: pick.key, r: pick.r, k: k, price: dayPrice(pick.r), bought: dl.b.indexOf(pick.key) >= 0, own: st.owned[pick.key] || 0 });
+      out.push({ i: i, key: pick.key, r: pick.r, k: k, price: dayPrice(pick.r, st.owned[pick.key] || 0), bought: dl.b.indexOf(pick.key) >= 0, own: st.owned[pick.key] || 0 });
     }
     return out;
   }
@@ -36344,7 +36364,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     }).join('');
     var left = dayLeft(), ri = dayRollInfo(st);
     var rollBar = '<div class="wk-ld-roll"><div><b>Обновить карточки</b><span>' + (ri.left > 0 ? 'Таймер дня не меняется и обнулится в полночь по Киеву, но сейчас появится другой набор из пяти. Обновлений на сегодня осталось: ' + ri.left + ' из ' + DAY_RR + '. Каждый следующий дороже.' : 'Обновления на сегодня закончились, новый набор появится после полуночи по Киеву.') + '</span></div><button type="button" class="wk-tx-btn' + (ri.left > 0 && bel >= ri.price ? ' pri' : '') + '" data-tx="dayroll"' + (ri.left > 0 && bel >= ri.price ? '' : ' disabled') + '>' + (ri.left > 0 ? (ri.price ? 'Обновить · ' + fmtB(ri.price) : 'Обновить бесплатно') : 'Лимит обновлений') + '</button></div>';
-    return '<h3 class="wk-dk-h">Лавка дня</h3><p class="wk-sh-hint">Пять карточек, набор свой у каждого участника и без спойлеров: тебе попадаются только те карточки, которые ты уже можешь видеть. Редкость выпадает с теми же шансами, что в наборе. Купленная карточка пропадает только у тебя, у других она остаётся в продаже. Обновится в полночь по Киеву, через ' + leftTxt(left) + '. Цена карточки в полтора раза выше цены продажи её копии.</p><div class="wk-ld-grid">' + items + '</div>' + rollBar;
+    return '<h3 class="wk-dk-h">Лавка дня</h3><p class="wk-sh-hint">Пять карточек, набор свой у каждого участника и без спойлеров: тебе попадаются только те карточки, которые ты уже можешь видеть. Редкость выпадает с теми же шансами, что в наборе. Купленная карточка пропадает только у тебя, у других она остаётся в продаже. Обновится в полночь по Киеву, через ' + leftTxt(left) + '. Новая для тебя карточка стоит в полтора раза дороже цены продажи, а повторка (уже есть в колоде) продаётся по цене повторки.</p><div class="wk-ld-grid">' + items + '</div>' + rollBar;
   }
   function luckHTML(st) {
     var L = st.lk, tot = L && L.n ? L.n.c + L.n.r + L.n.e + L.n.l : 0, pk = +st.packs || 0;
@@ -36531,19 +36551,26 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       var key = b.getAttribute('data-key'), x = sellable(C, st).filter(function (y) { return y.k.key === key; })[0]; if (!x) return;
       var b1 = st.belli || 0; sellKeys(st, [{ k: x.k, n: 1 }]); save(st); var y0 = window.scrollY; repaint(); belliAnim(pane, b1); var dt = pane.querySelector('.wk-sh-det'); if (dt) dt.open = true; window.scrollTo(0, y0); return;
     }
+    if (a === 'pigbuy') {
+      var nS = pigSlots(st); if (nS >= 3) return;
+      var pPr = FREE() ? 0 : PIG_SLOT[nS]; if ((st.belli || 0) < pPr) { txToast('Не хватает белли'); return; }
+      var bP = st.belli || 0; st.belli = bP - pPr; st.pigX = nS; if (pPr) { st.spent = (st.spent || 0) + pPr; track(st, 'spend', pPr); } save(st); repaint(); belliAnim(pane, bP);
+      txToast('Куплена копилка №' + (nS + 1)); return;
+    }
     if (a === 'pigput') {
-      var pgi = pane.querySelector('#wkPigAmt'), pam = Math.floor(Number(pgi && pgi.value) || 0);
-      if (st.pig && st.pig.amt) { txToast('Копилка уже запечатана'); return; }
+      var pI = Number(b.getAttribute('data-pi')) || 0; if (pI >= pigSlots(st)) return;
+      var pgi = pane.querySelector('#wkPigAmt' + pI), pam = Math.floor(Number(pgi && pgi.value) || 0);
+      var pcur = pigGet(st, pI); if (pcur && pcur.amt) { txToast('Копилка уже запечатана'); return; }
       if (pam < PIG_MIN) { txToast('Минимум ' + fmtB(PIG_MIN)); return; }
       if (pam > PIG_MAX) pam = PIG_MAX;
       if ((st.belli || 0) < pam) { txToast('Не хватает белли'); return; }
-      st.belli -= pam; st.pig = { amt: pam, t0: Date.now(), until: Date.now() + PIG_DAYS * 864e5 }; save(st); repaint();
+      var bPu = st.belli || 0; st.belli -= pam; pigSet(st, pI, { amt: pam, t0: Date.now(), until: Date.now() + PIG_DAYS * 864e5 }); save(st); repaint(); belliAnim(pane, bPu);
       txToast('Копилка запечатана на 7 дней: ' + fmtB(pam)); return;
     }
     if (a === 'pigget') {
-      var pg2 = st.pig; if (!pg2 || !pg2.amt) return;
+      var gI = Number(b.getAttribute('data-pi')) || 0, pg2 = pigGet(st, gI); if (!pg2 || !pg2.amt) return;
       if (Date.now() < pg2.until) { txToast('Ещё рано: откроется через ' + leftTxt(pg2.until - Date.now())); return; }
-      var pbn = Math.floor(pg2.amt * PIG_RATE); st.belli = (st.belli || 0) + pg2.amt + pbn; income(st, 'pig', pbn); delete st.pig; save(st); repaint();
+      var pbn = Math.floor(pg2.amt * PIG_RATE), bGt = st.belli || 0; st.belli = bGt + pg2.amt + pbn; income(st, 'pig', pbn); pigSet(st, gI, null); save(st); repaint(); belliAnim(pane, bGt);
       txToast('Из копилки: ' + fmtB(pg2.amt + pbn) + ' (проценты ' + fmtB(pbn) + ')'); return;
     }
     if (a === 'buy2') {
