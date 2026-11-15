@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 456";
+const WIKI_VERSION = "15.11.2026 · 458";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -38150,7 +38150,7 @@ html body #storyList.wk-tl .story-arc-child{aspect-ratio:auto!important;height:a
   function arcs(){try{return (typeof storyArcs!=='undefined'&&storyArcs)||[];}catch(e){return [];}}
   function chLabel(a){
     var c=String(a&&a.chapters||'').replace(/\s+/g,'');
-    if(!c||c==='—'||c==='-')return a&&a.episodes?('сер. '+String(a.episodes).replace(/\s+/g,'')):'';
+    if(!c||c==='—'||c==='-')return a&&a.episodes?('сер. '+String(a.episodes).replace(/\s+/g,'').replace(/,/g,', ')):'';
     var m=c.match(/^(\d+)[^\d]*?(?:.*?(\d+))?$/); var nums=c.match(/\d+/g)||[];
     if(!nums.length)return c;
     var f=nums[0],l=nums[nums.length-1];
@@ -38839,4 +38839,10 @@ html:not(.wk-ed-hints) #wikiEditorOverlay #wkEdPv [data-pvnote]{display:none!imp
 })();
 </script>
 <style id="wk-v455-css">html body #storyList.sg-on[data-wk-size="l"] .story-saga-item.has-story-image .story-card-thumb::after{background:linear-gradient(to right,rgba(4,6,10,.88) 0%,rgba(4,6,10,.7) 22%,rgba(4,6,10,.32) 45%,rgba(4,6,10,0) 68%),linear-gradient(to top,rgba(4,6,10,.55) 0%,rgba(4,6,10,0) 55%)!important}</style>
+<style id="wk-v457-css">
+html body #storySection#storySection#storySection #storyList.wk-tl .story-arc-child>.character-item{justify-content:center!important;gap:6px!important;padding-top:0!important;padding-bottom:0!important}
+html body #storySection#storySection#storySection #storyList.wk-tl .story-arc-child>.character-item>.character-name,html body #storySection#storySection#storySection #storyList.wk-tl .story-arc-child>.character-item>.character-meta{margin:0!important;padding-top:0!important;padding-bottom:0!important;flex:0 0 auto!important}
+html body #storySection#storySection#storySection #storyList.wk-tl .wk-tl-ch::before{box-sizing:border-box!important;width:14px!important;height:14px!important;margin-top:-7px!important;right:-6px!important}
+</style>
+<style id="wk-v458-css">html body #storySection#storySection#storySection #storyList.wk-tl .wk-tl-ch{white-space:normal!important;text-align:right;line-height:1.35;overflow-wrap:anywhere;min-width:0;overflow:visible}</style>
 </body></html>
