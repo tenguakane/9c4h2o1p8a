@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 445";
+const WIKI_VERSION = "15.11.2026 · 447";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -18021,7 +18021,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     return fb.fs.setDoc(fb.fs.doc(db, 'users', me.uid), { login: me.login, name: me.name, role: me.role, keys: keys, updatedAt: new Date().toISOString() }, { merge: true })
       .then(function () { setSync('ok'); }, function (e) { Object.keys(sent).forEach(function (k) { dirty[k] = true; }); setSync('error'); console.warn(e); });
   }
-  function flushAll() { return Promise.all([flushPersonal(), contentTimer ? flushContent() : Promise.resolve(), flushTops()]).catch(function () {}); }
+  function flushAll() { try { if (deckTimer) { clearTimeout(deckTimer); pushDeck(); } } catch (e) {} return Promise.all([flushPersonal(), contentTimer ? flushContent() : Promise.resolve(), flushTops()]).catch(function () {}); }
   window.addEventListener('pagehide', function () { flushAll(); });
   document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') flushAll(); });
 
@@ -18047,8 +18047,9 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     deckTimer = 0; if (!me || me.role === 'guest' || !db) return Promise.resolve();
     var d; try { d = JSON.parse(lsGet('onePieceWikiDeckV1') || 'null'); } catch (e) { d = null; }
     if (!d || !d.owned) return Promise.resolve();
-    var slim = { packs: d.packs || 0, pity: d.pity || 0, last: d.last || 0, open: d.open || null, owned: d.owned, tr: d.tr || {}, got: d.got || {}, show: d.show || [], showCap: d.showCap || 3, cos: d.cos || {}, frame: d.frame || '', bg: d.bg || '', alb: d.alb || '', back: d.back || '', hold: d.hold || {}, ev: d.ev || [], belli: d.belli || 0, ach: d.ach || {}, achB: d.achB || {}, daily: d.daily || null, shield: d.shield || 0, bless: d.bless || 0, pig: d.pig || null, ttl: d.ttl || null, inc: d.inc || {}, incD: d.incD || {}, incLog: d.incLog || [], spent: d.spent || 0, bought: d.bought || 0, crafted: d.crafted || 0, sold: d.sold || 0, qpay: d.qpay || 0, want: d.want || [], pages: d.pages || [], selAt: d.selAt || 0, rev: d.rev || 0 };
-    return fb.fs.setDoc(fb.fs.doc(db, 'tops', me.uid), { login: me.login, name: me.name, deck: JSON.stringify(slim), deckAt: new Date().toISOString() }, { merge: true }).then(function () { window.__wkDeckErr = ''; }, function (e) { window.__wkDeckErr = String(e && (e.code || e.message) || e); console.warn('Колода:', e); });
+    if (d.rev && d.rev === window.__wkDeckPushedRev) return Promise.resolve();
+    var slim = { packs: d.packs || 0, pity: d.pity || 0, last: d.last || 0, open: d.open || null, owned: d.owned, tr: d.tr || {}, got: d.got || {}, show: d.show || [], showCap: d.showCap || 3, cos: d.cos || {}, frame: d.frame || '', bg: d.bg || '', alb: d.alb || '', back: d.back || '', hold: d.hold || {}, ev: d.ev || [], belli: d.belli || 0, ach: d.ach || {}, achB: d.achB || {}, daily: d.daily || null, shield: d.shield || 0, bless: d.bless || 0, pig: d.pig || null, ttl: d.ttl || null, inc: d.inc || {}, incD: d.incD || {}, incLog: d.incLog || [], spent: d.spent || 0, bought: d.bought || 0, crafted: d.crafted || 0, sold: d.sold || 0, qpay: d.qpay || 0, want: d.want || [], pages: d.pages || [], rev: d.rev || 0 };
+    return fb.fs.setDoc(fb.fs.doc(db, 'tops', me.uid), { login: me.login, name: me.name, deck: JSON.stringify(slim), deckAt: new Date().toISOString() }, { merge: true }).then(function () { window.__wkDeckErr = ''; if (d.rev) window.__wkDeckPushedRev = d.rev; }, function (e) { window.__wkDeckErr = String(e && (e.code || e.message) || e); console.warn('Колода:', e); });
   }
   window.__wkDeckCloud = {
     enabled: function () { return !!(me && db && fb && me.role !== 'guest' || me && db && fb); },
@@ -34235,7 +34236,19 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     }
     return cleanSH(v);
   }
-  function save(s) { if (s && s.__fake) return; cleanSH(s); try { var pv0 = JSON.parse(localStorage.getItem(KEY) || 'null') || {}, sg0 = function (o) { return JSON.stringify([o.show || [], o.want || [], o.pages || [], o.frame || '', o.bg || '', o.alb || '', o.back || '']); }; if (s.__keepSel) delete s.__keepSel; else if (sg0(pv0) !== sg0(s)) s.selAt = Date.now(); } catch (e0) {} if (s.__keepRev) delete s.__keepRev; else s.rev = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} try { window.dispatchEvent(new Event('wk-deck-changed')); } catch (e) {} try { nSched(); } catch (e) {} }
+  /* Синхронизация колоды: всё, что уходит в облако. Правило одно: у кого rev больше, того колода и берётся целиком.
+     rev растёт только когда реально изменилось что-то из этого списка (а не при любом сохранении). */
+  var CLOUD_KEYS = ['packs', 'pity', 'last', 'open', 'owned', 'tr', 'got', 'show', 'showCap', 'cos', 'frame', 'bg', 'alb', 'back', 'hold', 'ev', 'belli', 'ach', 'achB', 'daily', 'shield', 'bless', 'pig', 'ttl', 'inc', 'incD', 'incLog', 'spent', 'bought', 'crafted', 'sold', 'qpay', 'want', 'pages'];
+  function cloudSig(o) { try { return JSON.stringify(CLOUD_KEYS.map(function (k) { return o[k] === undefined ? null : o[k]; })); } catch (e) { return ''; } }
+  function applyCloudDeck(loc, cd, force) {
+    CLOUD_KEYS.forEach(function (k) {
+      var v = cd[k];
+      if (v === undefined || v === null) { if (k !== 'show' && k !== 'want' && k !== 'pages') delete loc[k]; return; }
+      if (!force && (k === 'ach' || k === 'achB' || k === 'tr' || k === 'got')) loc[k] = Object.assign({}, v, loc[k] || {}); else loc[k] = v;
+    });
+    var r = +cd.rev || 0; if (r) { loc.rev = r; loc.__keepRev = true; window.__wkDeckPushedRev = r; }
+  }
+  function save(s) { if (s && s.__fake) return; cleanSH(s); if (s.__keepRev) delete s.__keepRev; else { var pvSig = ''; try { pvSig = cloudSig(JSON.parse(localStorage.getItem(KEY) || 'null') || {}); } catch (e0) {} if (!s.rev || cloudSig(s) !== pvSig) s.rev = Math.max(Date.now(), (+s.rev || 0) + 1); } try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} try { window.dispatchEvent(new Event('wk-deck-changed')); } catch (e) {} try { nSched(); } catch (e) {} }
   // Прогресс по коллекциям для доски достижений (всегда по настоящей колоде, без режима «заполнить все»)
   window.__wkDeckProgress = function () {
     var raw; try { raw = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { raw = {}; }
@@ -34986,7 +34999,6 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       '<p class="wk-dk-mnote">Особые версии собираются отдельно: в коллекции есть вкладки «Голографическая», «Пламенная» и «Негативная».</p>' +
       '</div><button type="button" class="wk-dk-open" data-act="rules-ok">Понятно</button></div></div>';
   }
-  var CLOUD_KEYS = ['packs', 'pity', 'last', 'open', 'owned', 'tr', 'got', 'show', 'showCap', 'cos', 'frame', 'bg', 'alb', 'back', 'hold', 'ev', 'belli', 'ach', 'achB', 'daily', 'shield', 'bless', 'pig', 'ttl', 'inc', 'incD', 'incLog', 'spent', 'bought', 'crafted', 'sold', 'qpay', 'want', 'pages', 'selAt'];
   function cloudSum(d, label) {
     if (!d) return '<p class="wk-cl-r"><b>' + label + ':</b> данных нет</p>';
     var cards = 0; Object.keys(d.owned || {}).forEach(function (k) { if ((+d.owned[k] || 0) > 0) cards++; });
@@ -35015,7 +35027,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (!cl || !ml || !cl.enabled()) return;
     if (a === 'cloud-send') {
       paint('<p class="wk-cl-r">Отправляю…</p>');
-      Promise.resolve(cl.push()).then(function () { report(window.__wkDeckErr ? '' : '<p class="wk-cl-ok">✓ Отправлено</p>'); });
+      window.__wkDeckPushedRev = 0; Promise.resolve(cl.push()).then(function () { report(window.__wkDeckErr ? '' : '<p class="wk-cl-ok">✓ Отправлено</p>'); });
       return;
     }
     if (a === 'cloud-pull') {
@@ -35023,9 +35035,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       paint('<p class="wk-cl-r">Загружаю…</p>');
       cl.load().then(function (by) {
         var mine = by[ml]; if (!mine || !mine.deck) { report('<p class="wk-cl-e">В облаке колоды нет.</p>'); return; }
-        var loc = load(); CLOUD_KEYS.forEach(function (k) { if (mine.deck[k] !== undefined) loc[k] = mine.deck[k]; });
-        if (mine.deck.rev) { loc.rev = mine.deck.rev; loc.__keepRev = true; }
-        loc.__keepSel = true; save(loc); DK.pack = null; renderDeck(pane); report('<p class="wk-cl-ok">✓ Колода загружена из облака</p>');
+        var loc = load(); applyCloudDeck(loc, mine.deck, true); save(loc); DK.pack = null; renderDeck(pane); report('<p class="wk-cl-ok">✓ Колода загружена из облака</p>');
       }, function (e) { report('<p class="wk-cl-e">Облако не ответило: ' + esc(String(e && (e.code || e.message) || e)) + '</p>'); });
     }
   }
@@ -36492,18 +36502,14 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (!cl || !cl.enabled() || !ml) { end(false); return; }
     setTimeout(function () { end(false); }, 5000);
     (pre ? Promise.resolve(pre) : (DK.frUnsub && DK.frData ? Promise.resolve(DK.frData) : cl.load())).then(function (by) {
-      var mine = by[ml], loc = load(), ch = false; if (loc.__fake || !mine || !mine.deck) { end(false); return; }
-      var cloudNewer = (mine.deck.rev || 0) > (loc.rev || 0) && (mine.deck.packs || 0) >= (loc.packs || 0);
-      if ((mine.deck.packs || 0) > (loc.packs || 0) || cloudNewer) {  loc.owned = mine.deck.owned || {}; loc.packs = mine.deck.packs || 0; loc.pity = mine.deck.pity || 0; loc.tr = Object.assign({}, mine.deck.tr || {}, loc.tr || {}); loc.got = Object.assign({}, mine.deck.got || {}, loc.got || {}); if (mine.deck.show && !(loc.show && loc.show.length)) loc.show = mine.deck.show; if (typeof mine.deck.belli === 'number') loc.belli = mine.deck.belli; loc.hold = Object.assign({}, mine.deck.hold || {}); if (mine.deck.ev && !(loc.ev && loc.ev.length)) loc.ev = mine.deck.ev; loc.ach = Object.assign({}, mine.deck.ach || {}, loc.ach || {}); loc.achB = Object.assign({}, mine.deck.achB || {}, loc.achB || {}); if (mine.deck.daily && (!loc.daily || String(mine.deck.daily.last) > String(loc.daily.last))) loc.daily = mine.deck.daily; if (mine.deck.inc && (!loc.inc || Object.keys(mine.deck.inc).reduce(function (a, q) { return a + ((mine.deck.inc[q] || {}).b || 0); }, 0) > Object.keys(loc.inc).reduce(function (a, q) { return a + ((loc.inc[q] || {}).b || 0); }, 0))) { loc.inc = mine.deck.inc; loc.incD = mine.deck.incD || {}; loc.incLog = mine.deck.incLog || []; }
-        loc.shield = +mine.deck.shield || 0; loc.bless = +mine.deck.bless || 0; if (mine.deck.pig) loc.pig = mine.deck.pig; else delete loc.pig; if (mine.deck.ttl && !loc.ttl) loc.ttl = mine.deck.ttl; if (loc.want === undefined && mine.deck.want) loc.want = mine.deck.want; if (loc.pages === undefined && mine.deck.pages) loc.pages = mine.deck.pages;
-        ['spent', 'bought', 'crafted', 'sold', 'qpay'].forEach(function (q) { if ((+mine.deck[q] || 0) > (+loc[q] || 0)) loc[q] = +mine.deck[q]; });  ch = true;
-        if (mine.deck.open && mine.deck.open.pk && !loc.open) loc.open = mine.deck.open; }
-      if (mine.deck.cos && Object.keys(mine.deck.cos).some(function (q) { return !(loc.cos || {})[q]; })) { loc.cos = Object.assign({}, mine.deck.cos, loc.cos || {}); if (!loc.frame && mine.deck.frame) loc.frame = mine.deck.frame; if (!loc.bg && mine.deck.bg) loc.bg = mine.deck.bg; if (!loc.alb && mine.deck.alb) loc.alb = mine.deck.alb; if (!loc.back && mine.deck.back) loc.back = mine.deck.back; ch = true; }
-      if ((+mine.deck.selAt || 0) > (+loc.selAt || 0)) { ['show', 'want', 'pages'].forEach(function (k) { if (mine.deck[k] !== undefined) loc[k] = mine.deck[k]; }); ['frame', 'bg', 'alb', 'back'].forEach(function (k) { loc[k] = mine.deck[k] || ''; }); loc.selAt = +mine.deck.selAt; loc.__keepSel = true; ch = true; }
-      if ((mine.deck.showCap || 0) > (loc.showCap || 0)) { loc.showCap = mine.deck.showCap; ch = true; }
-      if ((mine.deck.last || 0) > (loc.last || 0)) { loc.last = mine.deck.last; ch = true; }
-      if (ch) { if (mine.deck.rev && mine.deck.rev > (loc.rev || 0)) { loc.rev = mine.deck.rev; loc.__keepRev = true; } save(loc); }
-      end(ch);
+      var mine = by[ml], loc = load(); if (loc.__fake) { end(false); return; }
+      var cd = mine && mine.deck, lr = +loc.rev || 0;
+      if (!cd) { if (lr > 0) { try { cl.push(); } catch (e) {} } end(false); return; }
+      var cr = +cd.rev || 0;
+      /* cr === 0: колода из старой версии без rev — тогда решает число открытых наборов */
+      if (cr > lr || (!cr && (+cd.packs || 0) > (+loc.packs || 0))) { applyCloudDeck(loc, cd, false); save(loc); end(true); return; }
+      if (lr > cr) { try { cl.push(); } catch (e) {} }
+      end(false);
     }, function () { end(false); });
   }
   function renderDeck(pane) {
@@ -36526,8 +36532,8 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       var cl = window.__wkDeckCloud, ml = myLogin();
       if (cl && cl.enabled() && ml && !pane.__restored) {
         pane.__restored = 1; deckSync(pane, null, true);
-        document.addEventListener('visibilitychange', function () { if (!document.hidden && pane.isConnected && Date.now() - (DK.syncAt || 0) > 20000) deckSync(pane, null, true); });
-        window.addEventListener('focus', function () { if (pane.isConnected && Date.now() - (DK.syncAt || 0) > 20000) deckSync(pane, null, true); });
+        document.addEventListener('visibilitychange', function () { if (!document.hidden && pane.isConnected && Date.now() - (DK.syncAt || 0) > 5000) deckSync(pane, null, true); });
+        window.addEventListener('focus', function () { if (pane.isConnected && Date.now() - (DK.syncAt || 0) > 5000) deckSync(pane, null, true); });
       }
     } catch (e) {}
     if (!pane.__dk) {
