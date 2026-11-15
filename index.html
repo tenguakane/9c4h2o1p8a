@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 431";
+const WIKI_VERSION = "15.11.2026 · 435";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -38563,5 +38563,16 @@ html.wk-ed-lock,html.wk-ed-lock body{overflow:hidden!important}
 .wk-ap-row>div:nth-child(2)>div:nth-child(4)>label{grid-column:span 4}
 .wk-ap-row>div:nth-child(2)>.wk-ap-hint{grid-column:1/-1}
 @media(max-width:900px){.wk-ap-row>div:nth-child(2)>div:nth-child(1),.wk-ap-row>div:nth-child(2)>label:nth-child(2),.wk-ap-row>div:nth-child(2)>label:nth-child(3){grid-column:1/-1}.wk-ap-row>div:nth-child(2)>div:nth-child(4)>label{grid-column:span 6}}
+</style>
+<style id="wk-v432-css">html:not(.wk-ed-hints) #wikiEditorOverlay small.wk-hint,html:not(.wk-ed-hints) #wikiEditorOverlay .wk-gal-note,html:not(.wk-ed-hints) #wikiEditorOverlay .wk-fst-note,html:not(.wk-ed-hints) #wikiEditorOverlay .wk-ctx-note:not(.wk-film-note),html:not(.wk-ed-hints) #wikiEditorOverlay .wk-saga-hint,html:not(.wk-ed-hints) #wikiEditorOverlay .wk-edp-note,html:not(.wk-ed-hints) #wikiEditorOverlay .wk-cut-note,html:not(.wk-ed-hints) #wikiEditorOverlay .wk-cut-live-hint,html:not(.wk-ed-hints) #wikiEditorOverlay .wk-rw-look-note,html:not(.wk-ed-hints) #wikiEditorOverlay .wk-rel-edit-hint,html:not(.wk-ed-hints) #wikiEditorOverlay .wk-pe-hint,html:not(.wk-ed-hints) #wikiEditorOverlay .wk-fruit-status:not(.is-warn),html:not(.wk-ed-hints) #wikiEditorOverlay .wk-ap-hint{display:none!important}</style>
+<style id="wk-v434-css">
+#wikiEditorOverlay .wiki-editor-body.wk-side-min #wkEdPv{--ph:clamp(110px,calc((100vh - 430px)/1.6),345px);padding:8px;gap:6px 10px}
+#wikiEditorOverlay .wiki-editor-body.wk-side-min #wkEdPv .wk-lk.is-cat .wk-lk-card{height:var(--ph)!important;width:calc(var(--ph)*.75)!important;max-width:100%;aspect-ratio:auto}
+#wikiEditorOverlay .wiki-editor-body.wk-side-min #wkEdPv .wk-lk.is-hero .wk-lk-card{height:calc(var(--ph)*.6)!important;width:calc(var(--ph)*.6*232/150)!important;max-width:100%;aspect-ratio:auto}
+#wikiEditorOverlay .wiki-editor-body.wk-side-min #wkEdPv .wk-pvs{padding-bottom:6px!important}
+html:not(.wk-ed-hints) #wikiEditorOverlay #wkEdPv [data-pvnote]{display:none!important}
+</style>
+<style id="wk-v435-css">
+#wkEdPv .wk-lk.is-deck .wk-lk-txt::before,#wkEdPv .wk-lk.is-hero .wk-lk-txt::before{content:"";position:absolute;left:0;right:0;bottom:0;top:-34px;z-index:-1;pointer-events:none;background:linear-gradient(to top,rgba(4,6,10,.88),rgba(4,6,10,.55) 55%,rgba(4,6,10,0))!important;display:block!important}
 </style>
 </body></html>
