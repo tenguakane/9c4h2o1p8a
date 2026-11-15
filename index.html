@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 443";
+const WIKI_VERSION = "15.11.2026 · 445";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -18047,7 +18047,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     deckTimer = 0; if (!me || me.role === 'guest' || !db) return Promise.resolve();
     var d; try { d = JSON.parse(lsGet('onePieceWikiDeckV1') || 'null'); } catch (e) { d = null; }
     if (!d || !d.owned) return Promise.resolve();
-    var slim = { packs: d.packs || 0, pity: d.pity || 0, last: d.last || 0, open: d.open || null, owned: d.owned, tr: d.tr || {}, got: d.got || {}, show: d.show || [], showCap: d.showCap || 3, cos: d.cos || {}, frame: d.frame || '', bg: d.bg || '', alb: d.alb || '', back: d.back || '', hold: d.hold || {}, ev: d.ev || [], belli: d.belli || 0, ach: d.ach || {}, achB: d.achB || {}, daily: d.daily || null, shield: d.shield || 0, bless: d.bless || 0, pig: d.pig || null, ttl: d.ttl || null, inc: d.inc || {}, incD: d.incD || {}, incLog: d.incLog || [], spent: d.spent || 0, bought: d.bought || 0, crafted: d.crafted || 0, sold: d.sold || 0, qpay: d.qpay || 0, want: d.want || [], pages: d.pages || [], rev: d.rev || 0 };
+    var slim = { packs: d.packs || 0, pity: d.pity || 0, last: d.last || 0, open: d.open || null, owned: d.owned, tr: d.tr || {}, got: d.got || {}, show: d.show || [], showCap: d.showCap || 3, cos: d.cos || {}, frame: d.frame || '', bg: d.bg || '', alb: d.alb || '', back: d.back || '', hold: d.hold || {}, ev: d.ev || [], belli: d.belli || 0, ach: d.ach || {}, achB: d.achB || {}, daily: d.daily || null, shield: d.shield || 0, bless: d.bless || 0, pig: d.pig || null, ttl: d.ttl || null, inc: d.inc || {}, incD: d.incD || {}, incLog: d.incLog || [], spent: d.spent || 0, bought: d.bought || 0, crafted: d.crafted || 0, sold: d.sold || 0, qpay: d.qpay || 0, want: d.want || [], pages: d.pages || [], selAt: d.selAt || 0, rev: d.rev || 0 };
     return fb.fs.setDoc(fb.fs.doc(db, 'tops', me.uid), { login: me.login, name: me.name, deck: JSON.stringify(slim), deckAt: new Date().toISOString() }, { merge: true }).then(function () { window.__wkDeckErr = ''; }, function (e) { window.__wkDeckErr = String(e && (e.code || e.message) || e); console.warn('Колода:', e); });
   }
   window.__wkDeckCloud = {
@@ -34235,7 +34235,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     }
     return cleanSH(v);
   }
-  function save(s) { if (s && s.__fake) return; cleanSH(s); if (s.__keepRev) delete s.__keepRev; else s.rev = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} try { window.dispatchEvent(new Event('wk-deck-changed')); } catch (e) {} try { nSched(); } catch (e) {} }
+  function save(s) { if (s && s.__fake) return; cleanSH(s); try { var pv0 = JSON.parse(localStorage.getItem(KEY) || 'null') || {}, sg0 = function (o) { return JSON.stringify([o.show || [], o.want || [], o.pages || [], o.frame || '', o.bg || '', o.alb || '', o.back || '']); }; if (s.__keepSel) delete s.__keepSel; else if (sg0(pv0) !== sg0(s)) s.selAt = Date.now(); } catch (e0) {} if (s.__keepRev) delete s.__keepRev; else s.rev = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} try { window.dispatchEvent(new Event('wk-deck-changed')); } catch (e) {} try { nSched(); } catch (e) {} }
   // Прогресс по коллекциям для доски достижений (всегда по настоящей колоде, без режима «заполнить все»)
   window.__wkDeckProgress = function () {
     var raw; try { raw = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { raw = {}; }
@@ -34986,7 +34986,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       '<p class="wk-dk-mnote">Особые версии собираются отдельно: в коллекции есть вкладки «Голографическая», «Пламенная» и «Негативная».</p>' +
       '</div><button type="button" class="wk-dk-open" data-act="rules-ok">Понятно</button></div></div>';
   }
-  var CLOUD_KEYS = ['packs', 'pity', 'last', 'open', 'owned', 'tr', 'got', 'show', 'showCap', 'cos', 'frame', 'bg', 'alb', 'back', 'hold', 'ev', 'belli', 'ach', 'achB', 'daily', 'shield', 'bless', 'pig', 'ttl', 'inc', 'incD', 'incLog', 'spent', 'bought', 'crafted', 'sold', 'qpay', 'want', 'pages'];
+  var CLOUD_KEYS = ['packs', 'pity', 'last', 'open', 'owned', 'tr', 'got', 'show', 'showCap', 'cos', 'frame', 'bg', 'alb', 'back', 'hold', 'ev', 'belli', 'ach', 'achB', 'daily', 'shield', 'bless', 'pig', 'ttl', 'inc', 'incD', 'incLog', 'spent', 'bought', 'crafted', 'sold', 'qpay', 'want', 'pages', 'selAt'];
   function cloudSum(d, label) {
     if (!d) return '<p class="wk-cl-r"><b>' + label + ':</b> данных нет</p>';
     var cards = 0; Object.keys(d.owned || {}).forEach(function (k) { if ((+d.owned[k] || 0) > 0) cards++; });
@@ -35025,7 +35025,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
         var mine = by[ml]; if (!mine || !mine.deck) { report('<p class="wk-cl-e">В облаке колоды нет.</p>'); return; }
         var loc = load(); CLOUD_KEYS.forEach(function (k) { if (mine.deck[k] !== undefined) loc[k] = mine.deck[k]; });
         if (mine.deck.rev) { loc.rev = mine.deck.rev; loc.__keepRev = true; }
-        save(loc); DK.pack = null; renderDeck(pane); report('<p class="wk-cl-ok">✓ Колода загружена из облака</p>');
+        loc.__keepSel = true; save(loc); DK.pack = null; renderDeck(pane); report('<p class="wk-cl-ok">✓ Колода загружена из облака</p>');
       }, function (e) { report('<p class="wk-cl-e">Облако не ответило: ' + esc(String(e && (e.code || e.message) || e)) + '</p>'); });
     }
   }
@@ -36112,7 +36112,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       return '<button type="button" role="tab" class="wk-sht-b' + (on ? ' on' : '') + '" aria-selected="' + on + '" data-tx="shtab" data-t="' + t[0] + '">' + t[1] + badge + '</button>';
     }).join('') + '</div>';
     return '<div class="wk-sh-bal"><span>Твой кошелёк</span><b><span class="wk-sh-num">' + String(Math.round(bel)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0') + '</span><small> белли</small></b></div>' +
-      pickHTML(C, st) + tabBar + TB.map(function (t) { return '<div class="wk-sht-p' + (t[0] === curTab ? ' on' : '') + '" data-shp="' + t[0] + '">' + PN[t[0]] + '</div>'; }).join('');
+      (FREE() ? '<p class="wk-sh-free">Режим админа: всё в магазине для тебя бесплатно. Выключается в «Инструменты Димы».</p>' : '') + pickHTML(C, st) + tabBar + TB.map(function (t) { return '<div class="wk-sht-p' + (t[0] === curTab ? ' on' : '') + '" data-shp="' + t[0] + '">' + PN[t[0]] + '</div>'; }).join('');
   }
   function belliAnim(pane, from) {
     var bal = pane.querySelector('.wk-sh-bal'), el = bal && bal.querySelector('.wk-sh-num'); if (!el) return;
@@ -36499,6 +36499,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
         ['spent', 'bought', 'crafted', 'sold', 'qpay'].forEach(function (q) { if ((+mine.deck[q] || 0) > (+loc[q] || 0)) loc[q] = +mine.deck[q]; });  ch = true;
         if (mine.deck.open && mine.deck.open.pk && !loc.open) loc.open = mine.deck.open; }
       if (mine.deck.cos && Object.keys(mine.deck.cos).some(function (q) { return !(loc.cos || {})[q]; })) { loc.cos = Object.assign({}, mine.deck.cos, loc.cos || {}); if (!loc.frame && mine.deck.frame) loc.frame = mine.deck.frame; if (!loc.bg && mine.deck.bg) loc.bg = mine.deck.bg; if (!loc.alb && mine.deck.alb) loc.alb = mine.deck.alb; if (!loc.back && mine.deck.back) loc.back = mine.deck.back; ch = true; }
+      if ((+mine.deck.selAt || 0) > (+loc.selAt || 0)) { ['show', 'want', 'pages'].forEach(function (k) { if (mine.deck[k] !== undefined) loc[k] = mine.deck[k]; }); ['frame', 'bg', 'alb', 'back'].forEach(function (k) { loc[k] = mine.deck[k] || ''; }); loc.selAt = +mine.deck.selAt; loc.__keepSel = true; ch = true; }
       if ((mine.deck.showCap || 0) > (loc.showCap || 0)) { loc.showCap = mine.deck.showCap; ch = true; }
       if ((mine.deck.last || 0) > (loc.last || 0)) { loc.last = mine.deck.last; ch = true; }
       if (ch) { if (mine.deck.rev && mine.deck.rev > (loc.rev || 0)) { loc.rev = mine.deck.rev; loc.__keepRev = true; } save(loc); }
@@ -38649,4 +38650,5 @@ html:not(.wk-ed-hints) #wikiEditorOverlay #wkEdPv [data-pvnote]{display:none!imp
 <style id="wk-v442-css">.wk-sht{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 14px}.wk-sht-b{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:999px;border:1px solid rgba(148,163,184,.3);background:rgba(10,14,26,.5);color:inherit;font:600 13px/1 inherit;cursor:pointer}.wk-sht-b:hover{border-color:rgba(148,163,184,.6)}.wk-sht-b.on{background:color-mix(in srgb,var(--accent,#d8b45a) 18%,transparent);border-color:var(--accent,#d8b45a);color:#fff}.wk-sht-b i{font-style:normal;font-size:11px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;display:inline-grid;place-items:center;background:rgba(148,163,184,.25)}.wk-sht-b.on i{background:var(--accent,#d8b45a);color:#111}.wk-sht-p{display:none}.wk-sht-p.on{display:block}.wk-sht-p>h3:first-child{margin-top:0}</style>
 <style id="wk-v443-css">#wkDkCloud .wk-cl-r{margin:6px 0;font-size:13.5px;line-height:1.4}#wkDkCloud .wk-cl-e{margin:8px 0;color:#fca5a5;font-size:13.5px}#wkDkCloud .wk-cl-ok{margin:8px 0;color:#86efac;font-size:13.5px}.wk-cl-b{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}#wkDkCloud .wk-dk-mbox>.wk-cl-b{padding:0 0 4px}
 @media (max-width:640px){.wk-pane{min-width:0}.wk-dk-cta,#wkDkCta{grid-template-columns:minmax(0,1fr)!important;width:100%!important;max-width:100%!important;box-sizing:border-box}.wk-dk-cta *{min-width:0;max-width:100%}.wk-dk-cta button,.wk-dk-nbtn{white-space:normal;height:auto}.wk-dk-nt{width:100%}.wk-dd{width:100%;max-width:100%}.wk-dd-r{width:100%!important}.wk-dk-hbtn{flex-wrap:wrap}.wk-dk-stage.idle .wk-dk-cta>*{grid-column:1!important;grid-row:auto!important;justify-self:stretch}.wk-dk-stage.idle .wk-dk-cta>.wk-dk-open{white-space:normal!important;min-height:38px;height:auto}}</style>
+<style id="wk-v445-css">.wk-sh-free{margin:8px 0 0;padding:8px 12px;border-radius:10px;border:1px dashed var(--accent,#d8b45a);background:color-mix(in srgb,var(--accent,#d8b45a) 10%,transparent);font-size:12.5px}</style>
 </body></html>
