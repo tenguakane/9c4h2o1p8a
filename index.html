@@ -366,7 +366,7 @@ html.ios-app body .wk-pane .wk-dk-grid .wk-dk-slot .character-grid-content,html.
  background:linear-gradient(120deg,#ff5fa2 0%,#ffd86b 14%,#6bff9e 28%,#62c4ff 42%,#b58cff 56%,#ff5fa2 70%,#ffd86b 84%,#6bff9e 100%) 0 0/220% 220%!important;
  animation:wkHoloDots3 9s linear infinite!important}
 @keyframes wkHoloDots3{0%{background-position:0% 0%}100%{background-position:100% 100%}}
-</style><style id="wk-v462-css">/* v462: Каюта → Обзор: карточки истории стоят на одной высоте с карточками избранного (над ними строка-папка 19px + зазор 10px) */#wkCabOverview .wk-cab-group>h3{height:19px;line-height:19px;overflow:hidden}@media (min-width:1000px){#wkCabOverview .wk-cab-mir-hist{padding-top:29px}}</style></head>
+</style><style id="wk-v462-css">/* v462: Каюта → Обзор: карточки истории стоят на одной высоте с карточками избранного (над ними строка-папка 19px + зазор 10px) */#wkCabOverview .wk-cab-group>h3{height:19px;line-height:19px;overflow:hidden}@media (min-width:1000px){#wkCabOverview .wk-cab-mir-hist{padding-top:29px}}</style><style id="wk-v463-css">/* v463: кружок-звезда «в избранное» на карточках */.wk-fv{position:absolute;top:8px;right:8px;z-index:6;width:28px;height:28px;padding:0;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:#e9e2cf;background:rgba(10,13,22,.62);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);box-shadow:0 2px 8px rgba(0,0,0,.35);transition:transform .15s ease,background .15s ease,color .15s ease,border-color .15s ease}.wk-fv svg{width:16px;height:16px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}.wk-fv:hover{transform:scale(1.12);border-color:rgba(244,207,116,.8);color:#f4cf74}.wk-fv.on{color:#1b1405;background:linear-gradient(145deg,#ffe08a,#e8a92c);border-color:#ffe9a8;box-shadow:0 2px 10px rgba(232,169,44,.5)}.wk-fv.on svg{fill:currentColor;stroke:currentColor}.wk-fv.on:hover{color:#1b1405;filter:brightness(1.08)}.wk-fv:focus-visible{outline:2px solid #f4cf74;outline-offset:2px}@media (hover:hover) and (pointer:fine){html body .wk-flip-btn{opacity:0!important;transition:opacity .15s ease!important}html body .character-item:hover .wk-flip-btn,html body .catalog-item-shell:hover .wk-flip-btn,html body .wk-cab-raw:hover .wk-flip-btn,html body :hover>.wk-flip-btn,html body .wk-flip-btn:hover,html body .wk-flip-btn:focus-visible,html body [aria-pressed="true"].wk-flip-btn{opacity:1!important}}html body .wk-has-fv .favorite-list-star,html body .wk-has-fv .favorite-list-toggle{display:none!important}</style></head>
 <body data-theme="mugiwara" data-active-tab="characters">
 <script id="wiki-cloud-config">
 /* ============================================================
@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 462";
+const WIKI_VERSION = "15.11.2026 · 463";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -38855,4 +38855,41 @@ html body #storySection#storySection#storySection #storyList.wk-tl .wk-tl-ch::be
 </style>
 <style id="wk-v458-css">html body #storySection#storySection#storySection #storyList.wk-tl .wk-tl-ch{white-space:normal!important;text-align:right;line-height:1.35;overflow-wrap:anywhere;min-width:0;overflow:visible}</style>
 <style>.wk-art-story .article-hero-details{min-width:0}.wk-art-story .article-hero-details>.article-section{margin:0;min-width:0;max-width:100%;grid-column:1/-1!important}.wk-art-story .wk-arc-side .arc-reading-progress-grid{grid-template-columns:1fr 1fr!important}.wk-art-story .wk-arc-side .arc-reading-track{padding:7px 8px}.wk-art-story .wk-arc-side .arc-reading-track-head{font-size:12px}.wk-art-story .wk-arc-side .arc-reading-track-count{font-size:11px}.wk-art-story .wk-arc-side .wk-skip small{display:none}.wk-art-story .wk-arc-side .wk-skip{gap:6px}.wk-art-story .wk-arc-side .wk-skip>span{flex:1 1 100%}.wk-art-story .article-hero-details>.wk-char-arcs .wk-arc-strip{overflow-x:auto;max-width:100%;scrollbar-width:thin;padding-bottom:6px}</style>
-</body></html>
+<script id="wk-v463-js">(function(){
+  var STAR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.2 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17.2l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>';
+  function dec(v){try{return decodeURIComponent(v)}catch(e){return v}}
+  function ident(c){
+    if(c.hasAttribute('data-reward-id'))return null;
+    var h=c.querySelector('.catalog-favorite-button[data-favorite-type],.favorite-list-toggle[data-favorite-type]');
+    if(h)return{t:h.getAttribute('data-favorite-type'),i:h.getAttribute('data-favorite-id')};
+    var a;
+    if((a=c.getAttribute('data-story-arc-id')))return{t:'story',i:a};
+    if((a=c.getAttribute('data-fruit-id')))return{t:'fruit',i:a};
+    if((a=c.getAttribute('data-useful-id')))return{t:'useful',i:a};
+    var o=c.getAttribute('onclick')||'',m=o.match(/openCharacterArticle\(\s*['"]([^'"]+)['"]/);
+    if(m)return{t:'character',i:m[1]};
+    m=o.match(/openStoryArticle\(\s*['"]([^'"]+)['"]/);if(m)return{t:'story',i:m[1]};
+    return null;
+  }
+  function on(t,i){try{return typeof isFavorite==='function'&&isFavorite(t,i)}catch(e){return false}}
+  function paint(b){var f=on(b.dataset.t,b.dataset.i);b.classList.toggle('on',f);b.setAttribute('aria-pressed',f?'true':'false');var l=f?'Убрать из избранного':'Добавить в избранное';b.title=l;b.setAttribute('aria-label',l)}
+  function card(c){
+    if(c.__wkFv!==undefined&&c.querySelector(':scope>.wk-fv'))return;
+    if(c.closest('#wkEdPv,.wk-mir-sandbox,.wk-deck,[id^="wkDeck"]')||c.classList.contains('favorite-category-folder'))return;
+    var id=ident(c);c.__wkFv=1;if(!id||!id.t||!id.i)return;
+    var b=document.createElement('button');b.type='button';b.className='wk-fv';b.dataset.t=id.t;b.dataset.i=id.i;b.innerHTML=STAR;paint(b);c.appendChild(b);c.classList.add('wk-has-fv');
+  }
+  function all(){document.querySelectorAll('.wk-fv').forEach(paint);document.querySelectorAll('.wk-has-fv .favorite-list-star,.wk-has-fv .favorite-list-toggle').forEach(function(e){e.style.setProperty('display','none','important')})}
+  document.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('.wk-fv');if(!b)return;
+    e.preventDefault();e.stopPropagation();
+    try{toggleFavorite(b.dataset.t,b.dataset.i)}catch(x){console.warn(x)}
+    all();setTimeout(all,120);
+  },true);
+  document.addEventListener('keydown',function(e){if(e.target.classList&&e.target.classList.contains('wk-fv'))e.stopPropagation()},true);
+  var q=false;
+  function scan(){q=false;document.querySelectorAll('.character-item').forEach(function(c){var f=c.querySelectorAll('.wk-fv');if(!f.length)card(c);else{c.classList.add('wk-has-fv');for(var k=1;k<f.length;k++)f[k].remove()}});all()}
+  function soon(){if(q)return;q=true;Promise.resolve().then(scan)}
+  new MutationObserver(function(ms){for(var i=0;i<ms.length;i++){var m=ms[i];if(m.addedNodes.length){for(var j=0;j<m.addedNodes.length;j++){var n=m.addedNodes[j];if(n.nodeType===1&&!(n.classList&&n.classList.contains('wk-fv'))){soon();return}}}}}).observe(document.body,{childList:true,subtree:true});
+  window.addEventListener('storage',all);soon();
+})();</script></body></html>
