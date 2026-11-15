@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 412";
+const WIKI_VERSION = "15.11.2026 · 413";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -30920,7 +30920,7 @@ html body #storyList[data-wk-size="l"]{--sg-ac:repeat(auto-fill,minmax(300px,1fr
     if (!Array.isArray(l)) return out;
     l.forEach(function (x) {
       var u = x && goodUrl(x.u); if (!u || !x.arc) return;
-      try { if (window.__wikiPhotoOpen && !window.__wikiPhotoOpen(x)) return; } catch (e) {}
+      try { if (window.__wikiPhotoOpen && !window.__wikiPhotoOpen(x) && !(window.__wikiCanEdit && window.__wikiCanEdit())) return; } catch (e) {}
       out.push({ u: u, arc: String(x.arc), x: x.x, y: x.y, z: x.z });
     });
     return out;
@@ -31478,7 +31478,7 @@ html body #storyList[data-wk-size="l"]{--sg-ac:repeat(auto-fill,minmax(300px,1fr
     box.innerHTML = '<div class="wiki-editor-field-topline"><label>Фото на плакате награды</label></div>'
       + '<div class="wk-edp"><div class="wk-edp-big" data-edp-big>' + posterHTML(r, { char: c, eager: true }) + '</div><div class="wk-edp-ctl">'
       + (rws.length > 1 ? '<div class="wk-edp-list">' + rws.map(function (x) { return '<button type="button" data-edp-r="' + esc(x.id) + '"' + (String(x.id) === String(r.id) ? ' class="active"' : '') + '>' + '<span class="wk-edp-sum"><span class="berry-symbol" aria-hidden="true"></span>' + esc(money(x.reward).replace(/-$/, '')) + '</span><small>' + esc(x.arc || '') + '</small></button>'; }).join('') + '</div>' : '')
-      + '<div class="wk-edp-who">' + (p.pl ? '🖼 Фото для плаката' : p.ts ? '🕰 Облик после таймскипа' : '🖼 Фото первого появления') + (has2 ? ' · у каждого облика свой кадр' : '') + '</div>'
+      + '<div class="wk-edp-who">' + (p.pl ? '🖼 Фото для плаката' : p.ts ? '🕰 Облик после таймскипа' : p.arc ? '🖼 Фото арки «' + esc(p.arc) + '»' : '🖼 Фото первого появления') + (has2 ? ' · у каждого облика свой кадр' : '') + '</div>'
       + '<div class="wk-rl-f wk-edp-src">Откуда фото<div class="wk-rl-seg" data-pph>' + [['auto', 'Авто'], ['main', 'Основное']].concat(has2 ? [['ts', 'После таймскипа']] : []).concat(aph0.length ? [['arc', 'Фото из арки']] : []).concat([['url', 'Своя ссылка']]).map(function (x) { return '<button type="button" data-v="' + x[0] + '"' + (x[0] === mode0 ? ' class="active"' : '') + '>' + x[1] + '</button>'; }).join('') + '</div></div>'
       + (aph0.length ? '<div class="wk-rl-arcs" data-pph-arcs' + (mode0 === 'arc' ? '' : ' hidden') + '>' + aph0.map(function (q) { return '<button type="button" data-pph-u="' + esc(q.u) + '" class="' + (p.src === q.u && mode0 === 'arc' ? 'active' : '') + '" title="' + esc(q.arc) + '"><img src="' + esc(q.u) + '" alt="" loading="lazy"><span>' + esc(q.arc) + '</span></button>'; }).join('') + '</div>' : '')
       + '<div class="wk-rl-line"' + (mode0 === 'url' ? '' : ' hidden') + '><input type="url" data-pph-url placeholder="https://… прямая ссылка на картинку" value="' + esc(a0e.url || '') + '" style="flex:1 1 260px"></div>'
@@ -38305,4 +38305,4 @@ if(document.readyState==='complete')setTimeout(f,300);else window.addEventListen
 .wk-al-bar .wk-al-q::placeholder{color:#8f9bad;font-weight:600}
 .wk-al-bar .wk-al-q:focus{outline:0!important;border-color:rgba(216,180,90,.6)!important}
 .wk-al-bar .wk-al-q::-webkit-search-cancel-button{filter:invert(.7)}
-</style></body></html>
+</style><style id="wk-v413-css">.wk-edp [hidden],.wk-rl-ctl [hidden]{display:none!important}</style></body></html>
