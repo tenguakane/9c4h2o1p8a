@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 435";
+const WIKI_VERSION = "15.11.2026 · 438";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -10609,7 +10609,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
             .sort((a,b)=>(a.severity==='error'?0:1)-(b.severity==='error'?0:1)||String(a.title).localeCompare(String(b.title),'ru'));
     }
     function supportsImageFilter(type){return ['character','reward','fruit','useful'].includes(type);}
-    function hasRecordImage(type,record){const key={character:'person_link',reward:'reward_image',fruit:'image',useful:'image'}[type];if(type==='reward'&&!String(rawValue(record,'reward_image')||'').trim()){const cid=String(rawValue(record,'character_id')||'');const ch=cid&&allRecords('character').find(x=>String(rawValue(x,'id'))===cid);return !!(ch&&(String(rawValue(ch,'person_link')||'').trim()||String(rawValue(ch,'person2_link')||'').trim()));}return key?!!String(rawValue(record,key)||'').trim():true;}
+    function hasRecordImage(type,record){const key={character:'person_link',reward:'reward_image',fruit:'image',useful:'image'}[type];if(type==='reward'&&!String(rawValue(record,'reward_image')||'').trim()){const cid=String(rawValue(record,'character_id')||'');const ch=cid&&allRecords('character').find(x=>String(rawValue(x,'id'))===cid);return !!(ch&&(String(rawValue(ch,'person_link')||'').trim()||String(rawValue(ch,'person2_link')||'').trim()));}if(type==='character'){if(String(rawValue(record,'person_link')||'').trim()||String(rawValue(record,'person2_link')||'').trim())return true;try{let ap=rawValue(record,'arc_photos');if(typeof ap==='string'){ap=ap.trim()?JSON.parse(ap):[];}if(ap&&!Array.isArray(ap))ap=Object.values(ap);return !!(ap&&ap.some(function(p){return p&&String(typeof p==='string'?p:(p.u||p.url||p.link||p.src||'')).trim();}));}catch(e){return false;}}return key?!!String(rawValue(record,key)||'').trim():true;}
     function hasRecordDescription(type,record){return ['character','story','fruit','useful'].includes(type)&&!!String(rawValue(record,'description')||'').trim();}
     function hasRecordLinks(type,record){
         const linked=splitReferenceValues(rawValue(record,'connect'));
@@ -17845,6 +17845,8 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     var file = fileSnapshot(); if (!file || !file.updatedAt) return Promise.resolve(false);
     var fileTs = Date.parse(file.updatedAt); if (!fileTs) return Promise.resolve(false);
     var fcont = contentOf(file);
+    var fmark = fileTs + ':' + TYPES.reduce(function (n, t) { return n + ((fcont.collections[t] || []).length); }, 0);
+    try { if (localStorage.getItem('wkFileAppliedV1') === fmark) return Promise.resolve(false); } catch (e0) {}
     return Promise.all([
       fb.fs.getDocs(fb.fs.collection(db, 'records')),
       fb.fs.getDoc(fb.fs.doc(db, 'content', 'meta')),
@@ -17876,14 +17878,14 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
           updated++;
         });
       });
-      if (!ops.length) return false;
+      if (!ops.length) { try { localStorage.setItem('wkFileAppliedV1', fmark); } catch (e1) {} return false; }
       var meta2 = {}; Object.keys(meta).forEach(function (k) { meta2[k] = meta[k]; });
       meta2.version = Date.now(); meta2.updatedAt = now; meta2.updatedBy = me.login; meta2.order = JSON.stringify(order);
       ops.push({ ref: fb.fs.doc(db, 'content', 'meta'), data: meta2 });
       toast('В файле есть более новые статьи — переношу в облако…', null, 5000);
       return writeBatches(ops).then(function () {
         writeBatches(logOps).catch(function (e) { console.warn('История правок не записалась:', e); });
-        quietSet(CONTENT_KEY, null);
+        quietSet(CONTENT_KEY, null); try { localStorage.setItem('wkFileAppliedV1', fmark); } catch (e2) {}
         toast('Из файла в облако перенесено: обновлено ' + updated + ', добавлено ' + added + ' ✓ (см. «История правок»)', null, 6000);
         return true;
       });
@@ -17965,7 +17967,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
         toast(nameOf(meta.updatedBy) + ' сохранил(а) правки в статьях. Обнови страницу, чтобы увидеть их.', { label: 'Обновить', run: function () { flushAll().then(syncContent).then(function () { location.reload(); }); } }, 20000);
       }).catch(function () {});
     }
-    setInterval(check, 90000);
+    setInterval(check, 240000);
     document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') setTimeout(check, 800); });
   }
   function setSync(s) { syncState = s; renderMe(); }
@@ -18452,7 +18454,9 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     var q1 = fb.fs.query(fb.fs.collection(db, 'sessions'), fb.fs.where('start', '>=', since), fb.fs.orderBy('start', 'desc'), fb.fs.limit(5000));
     var q2 = fb.fs.query(fb.fs.collection(db, 'events'), fb.fs.where('ts', '>=', since), fb.fs.orderBy('ts', 'desc'), fb.fs.limit(10000));
     var q3 = fb.fs.query(fb.fs.collection(db, 'edits'), fb.fs.orderBy('ts', 'desc'), fb.fs.limit(300));
-    Promise.all([fb.fs.getDocs(q1), fb.fs.getDocs(q2), fb.fs.getDocs(fb.fs.collection(db, 'users')), fb.fs.getDocs(fb.fs.collection(db, 'tops')), fb.fs.getDocs(q3).catch(function () { return null; })]).then(function (r) {
+    var sck = String(prefs.days), sc = window.__wkStatsCache = window.__wkStatsCache || {};
+    var sget = sc[sck] && Date.now() - sc[sck].t < 600000 ? Promise.resolve(sc[sck].r) : Promise.all([fb.fs.getDocs(q1), fb.fs.getDocs(q2), fb.fs.getDocs(fb.fs.collection(db, 'users')), fb.fs.getDocs(fb.fs.collection(db, 'tops')), fb.fs.getDocs(q3).catch(function () { return null; })]).then(function (r0) { sc[sck] = { t: Date.now(), r: r0 }; return r0; });
+    sget.then(function (r) {
       var sessions = [], events = [], users = {}, tops = {}, edits = [];
       if (r[4]) r[4].forEach(function (d) { var x = d.data(); x._id = d.id; edits.push(x); });
       edits.sort(function (a, b) { return b.ts - a.ts; });
@@ -38575,4 +38579,5 @@ html:not(.wk-ed-hints) #wikiEditorOverlay #wkEdPv [data-pvnote]{display:none!imp
 <style id="wk-v435-css">
 #wkEdPv .wk-lk.is-deck .wk-lk-txt::before,#wkEdPv .wk-lk.is-hero .wk-lk-txt::before{content:"";position:absolute;left:0;right:0;bottom:0;top:-34px;z-index:-1;pointer-events:none;background:linear-gradient(to top,rgba(4,6,10,.88),rgba(4,6,10,.55) 55%,rgba(4,6,10,0))!important;display:block!important}
 </style>
+<style id="wk-v437-css">@media (min-width:901px){#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay#wikiEditorOverlay #wkEdPv{position:relative!important;top:auto!important;max-height:none!important;overflow:visible!important;align-self:start}}</style>
 </body></html>
