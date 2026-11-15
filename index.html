@@ -1613,7 +1613,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 489";
+const WIKI_VERSION = "15.11.2026 · 491";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -17589,7 +17589,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
           startStats();
           if (typeof window.__wikiRefreshCabinTabs === 'function') window.__wikiRefreshCabinTabs(true);
           window.dispatchEvent(new CustomEvent('wiki:cloud-ready', { detail: u }));
-          watchCloud(); try { loadSharedAvatars(); } catch (e) {}
+          watchCloud(); try { loadSharedAvatars(); } catch (e) {} watchPersonal();
         }).catch(function (e) { console.warn('Облако:', e); startStats(); });
       });
     }).catch(function (e) {
@@ -18092,6 +18092,31 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     var sent = dirty; dirty = {};
     return fb.fs.setDoc(fb.fs.doc(db, 'users', me.uid), { login: me.login, name: me.name, role: me.role, keys: keys, updatedAt: new Date().toISOString() }, { merge: true })
       .then(function () { setSync('ok'); }, function (e) { Object.keys(sent).forEach(function (k) { dirty[k] = true; }); setSync('error'); console.warn(e); });
+  }
+  /* Живая подписка на личные данные: прогресс по манге/аниме, фильмы, избранное меняются на другом устройстве, пока страница открыта */
+  var persOff = null, persUid = '', persToastAt = 0;
+  function watchPersonal() {
+    try {
+      if (!me || me.role === 'guest' || !db || !fb || !fb.fs.onSnapshot) return;
+      if (persOff && persUid === me.uid) return;
+      if (persOff) { try { persOff(); } catch (e) {} persOff = null; }
+      persUid = me.uid;
+      persOff = fb.fs.onSnapshot(fb.fs.doc(db, 'users', me.uid), function (snap) {
+        try {
+          if (!snap.exists() || (snap.metadata && snap.metadata.hasPendingWrites)) return;
+          var keys = (snap.data() || {}).keys || {};
+          if (Object.keys(dirty).length) return;
+          var prog0 = lsGet(PROGRESS_KEY) + '|' + lsGet('onePieceWikiFilmProgressV1');
+          var changed = applyKeys(keys);
+          if (!changed) return;
+          var prog1 = lsGet(PROGRESS_KEY) + '|' + lsGet('onePieceWikiFilmProgressV1');
+          if (prog0 !== prog1 && Date.now() - persToastAt > 4000) {
+            persToastAt = Date.now();
+            toast('Прогресс обновлён на другом устройстве.', { label: 'Обновить страницу', run: function () { location.reload(); } }, 20000);
+          }
+        } catch (e) {}
+      }, function () {});
+    } catch (e) {}
   }
   function flushAll() { try { if (deckTimer) { clearTimeout(deckTimer); pushDeck(); } } catch (e) {} return Promise.all([flushPersonal(), contentTimer ? flushContent() : Promise.resolve(), flushTops()]).catch(function () {}); }
   window.addEventListener('pagehide', function () { flushAll(); });
@@ -35332,6 +35357,8 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   function titleHTML(st) {
     if (st.__fake) return '';
     var l = ttlList(), cur = (st.ttl && st.ttl.id) || '';
+    /* Титул выбран на другом устройстве, а здесь это достижение по локальному прогрессу ещё не открыто: оставляем его в списке по сохранённому названию */
+    if (cur && st.ttl.t && !l.some(function (q) { return q.id === cur; })) l = l.concat([{ id: cur, tt: String(st.ttl.t).slice(0, 60), done: true }]);
     if (!l.length) return '<div class="wk-ttl-box"><h3 class="wk-dk-h">Титул</h3><p class="wk-sh-hint">Титулы открываются за достижения: получишь первую медаль, и её название можно будет поставить рядом с именем.</p></div>';
     return '<div class="wk-ttl-box"><h3 class="wk-dk-h">Титул</h3><div class="wk-ttl-row"><select id="wkTtlSel" aria-label="Выбор титула"><option value="">Без титула</option>' + l.map(function (a) { return '<option value="' + esc(a.id) + '"' + (a.id === cur ? ' selected' : '') + '>' + esc(a.tt) + '</option>'; }).join('') + '</select><span class="wk-ttl-cnt">Открыто: ' + l.length + '</span></div><p class="wk-sh-hint">Титул видят другие участники рядом с твоим именем: в колоде, ленте и списке участников. Новые открываются вместе с достижениями.</p></div>';
   }
@@ -35341,6 +35368,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       if (!e.target || e.target.id !== 'wkTtlSel') return;
       var st = load(); if (st.__fake) return;
       var a = ttlList().filter(function (q) { return q.id === e.target.value; })[0];
+      if (!a && e.target.value && st.ttl && st.ttl.id === e.target.value) return;
       if (a) st.ttl = { id: a.id, t: a.tt }; else delete st.ttl;
       save(st); try { if (window.__wkDeckCloud && window.__wkDeckCloud.push) window.__wkDeckCloud.push(); } catch (e2) {}
       var h = document.getElementById('wkOvTtl'); if (h) { h.__h = titleHTML(load()); h.innerHTML = h.__h; }
@@ -35358,6 +35386,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     } catch (e) {}
   }
   setInterval(ovTitle, 1500);
+  window.addEventListener('wk-deck-changed', function () { OVT = 0; });
   function wantHidden() { try { return localStorage.getItem('wkDeckWantHideV1') === '1'; } catch (e) { return false; } }
   function stHidden() { try { return localStorage.getItem('wkDeckStatsHideV1') === '1'; } catch (e) { return false; } }
   function statsBox(c, st) { return stHidden() ? '' : statsHTML(c, st); }
