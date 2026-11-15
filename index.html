@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 386";
+const WIKI_VERSION = "15.11.2026 · 389";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -13341,7 +13341,21 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     return{p,groups,collections,sagas,wanted,milestones,favs,custom,previewMode};
   }
   /* Список достижений для наград белли: только настоящие (не режим предпросмотра) */
-  window.__wkAchList=function(){try{const d=allBuild();if(d.previewMode)return null;return allAchievements.map(a=>({id:String(a.id),done:!!a.done,total:Number(a.total)||0,cat:String(a.category||''),tier:Number(a.medalTier)||0,title:String(a.title||''),tt:String(a.title||'').replace(/^Закрыть коллекцию «(.+)»$/,'Коллекционер «$1»').replace(/^Хозяин колоды$/,'Хозяин колоды').slice(0,60)}));}catch(e){return null;}};
+  /* Титулы: красивые названия без спойлеров. Сюжетные арки по имени не называем. */
+  const TTL_SAGA={east_blue:'Покинувший родное море',alabasta:'Странник Гранд-Лайна',sky_island:'Бывалый мореход',water7:'Штурман дальних вод',thriller_bark:'Закалённый пират',great_war:'Ветеран штормов',fishman_island:'Морской волк',dressrosa:'Гроза морей',whole_cake:'Легенда горизонта',wano:'Эпический мореход'};
+  const TTL_DECK={base:'Хранитель колоды',holo:'Сияющий коллекционер',gold:'Огненный коллекционер',neg:'Коллекционер теней',all:'Хозяин колоды'};
+  function ttlName(a){
+    const id=String(a.id||''),p=id.split(':');
+    try{
+      if(p[0]==='collection'){const l=(COLLECTION_LEVELS[p[1]]||[]).find(x=>String(x.target)===p[2]);if(l&&l.name)return l.name;}
+      if(p[0]==='deck'&&TTL_DECK[p[1]||'base'])return TTL_DECK[p[1]||'base'];
+      if(p[0]==='saga-complete'&&TTL_SAGA[p[1]])return TTL_SAGA[p[1]];
+      if(id==='saga-start:final')return 'Идущий до конца';
+    }catch(e){}
+    return String(a.title||'');
+  }
+
+  window.__wkAchList=function(){try{const d=allBuild();if(d.previewMode)return null;return allAchievements.map(a=>({id:String(a.id),done:!!a.done,total:Number(a.total)||0,cat:String(a.category||''),tier:Number(a.medalTier)||0,title:String(a.title||''),tt:ttlName(a).slice(0,60)}));}catch(e){return null;}};
   function artKey(item){
     if(String(item.id||'').indexOf('custom:')===0){const cid=String(item.id).slice(7);const src=readCustomAchievements().find(a=>String(a.id)===cid);if(src&&src.image){const k='customimg:'+cid;MEDAL_ART[k]=src.image;return k;}}
     if(item.material&&['wood','iron','gold'].includes(item.material))return `custom_${item.material}`;
@@ -13372,9 +13386,10 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     const pct=item.total>0?Math.max(0,Math.min(100,item.progress/item.total*100)):0;
     return `<article class="achievement-card ${item.done?'is-earned':''}" style="--achievement-color:${item.color}" data-achievement-card="${escape(item.id)}" data-achievement-filter-value="${escape(item.filter)}" data-achievement-earned="${item.done?'true':'false'}" data-achievement-search="${escape(`${item.title} ${item.subtitle} ${item.section} ${item.search||''}`.toLocaleLowerCase('ru'))}">
       ${medal(item)}<div class="achievement-copy"><div class="achievement-type">${escape(item.typeLabel)}</div><h4 class="achievement-title">${escape(item.title)}</h4><p class="achievement-desc">${escape(item.subtitle)}</p>
-      <div class="achievement-progress-top"><span>Прогресс</span><strong>${escape(item.progressLabel)}</strong></div><div class="achievement-progress-track" role="progressbar" aria-label="${escape(item.title)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(pct)}"><div class="achievement-progress-fill" style="width:${pct.toFixed(2)}%"></div></div>
+      <div class="achievement-progress-top"><span>Прогресс</span><strong>${escape(plabel(item))}</strong></div><div class="achievement-progress-track" role="progressbar" aria-label="${escape(item.title)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(pct)}"><div class="achievement-progress-fill" style="width:${pct.toFixed(2)}%"></div></div>
       <div class="achievement-status">${item.done?'Получено':'В процессе'}</div></div></article>`;
   }
+  function plabel(item){const l=String(item.progressLabel||'');if(!item.done)return l;const m=l.match(/^\d[\d\s\u00a0.,]*?\s*\/\s*(\d[\d\s\u00a0.,]*)$/);return m?m[1]+' / '+m[1]:l;}
   function render(){return window.__wkLazy?window.__wkLazy('cabinPaneArcStats',renderNow):renderNow();}
   function renderNow(){
     const data=allBuild(),p=data.p,fcount=favoriteCount(),previewMode=!!data.previewMode;
@@ -18015,7 +18030,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     deckTimer = 0; if (!me || me.role === 'guest' || !db) return Promise.resolve();
     var d; try { d = JSON.parse(lsGet('onePieceWikiDeckV1') || 'null'); } catch (e) { d = null; }
     if (!d || !d.owned) return Promise.resolve();
-    var slim = { packs: d.packs || 0, pity: d.pity || 0, last: d.last || 0, open: d.open || null, owned: d.owned, tr: d.tr || {}, got: d.got || {}, show: d.show || [], showCap: d.showCap || 3, cos: d.cos || {}, frame: d.frame || '', bg: d.bg || '', alb: d.alb || '', back: d.back || '', hold: d.hold || {}, ev: d.ev || [], belli: d.belli || 0, ach: d.ach || {}, achB: d.achB || {}, daily: d.daily || null, shield: d.shield || 0, bless: d.bless || 0, pig: d.pig || null, ttl: d.ttl || null, inc: d.inc || {}, incD: d.incD || {}, incLog: d.incLog || [], spent: d.spent || 0, bought: d.bought || 0, crafted: d.crafted || 0, sold: d.sold || 0, qpay: d.qpay || 0, rev: d.rev || 0 };
+    var slim = { packs: d.packs || 0, pity: d.pity || 0, last: d.last || 0, open: d.open || null, owned: d.owned, tr: d.tr || {}, got: d.got || {}, show: d.show || [], showCap: d.showCap || 3, cos: d.cos || {}, frame: d.frame || '', bg: d.bg || '', alb: d.alb || '', back: d.back || '', hold: d.hold || {}, ev: d.ev || [], belli: d.belli || 0, ach: d.ach || {}, achB: d.achB || {}, daily: d.daily || null, shield: d.shield || 0, bless: d.bless || 0, pig: d.pig || null, ttl: d.ttl || null, inc: d.inc || {}, incD: d.incD || {}, incLog: d.incLog || [], spent: d.spent || 0, bought: d.bought || 0, crafted: d.crafted || 0, sold: d.sold || 0, qpay: d.qpay || 0, want: d.want || [], pages: d.pages || [], rev: d.rev || 0 };
     return fb.fs.setDoc(fb.fs.doc(db, 'tops', me.uid), { login: me.login, name: me.name, deck: JSON.stringify(slim), deckAt: new Date().toISOString() }, { merge: true }).catch(function (e) { console.warn('Колода:', e); });
   }
   window.__wkDeckCloud = {
@@ -20866,6 +20881,8 @@ html.wk-tilt-off.wk-gyro-on:not(.wk-cardfx-off) .character-item:not(.story-saga-
       row('text', '✨', 'Анимации текста', 'Перелив, мерцание и блики в заголовках. Выключено — цвет остаётся, но не двигается.') +
       '<h3>Форма карточек</h3>' +
       SCV.map(function (t) { return row('scv-' + t[0], '▭', 'Горизонтальные карточки: ' + t[1], 'Вместо вертикальных — горизонтальные: ширина и высота меняются местами. Превью в редакторе покажет так же.'); }).join('') +
+      '<h3>Колода</h3>' +
+      row('dkgrid', '🗂', 'Режим «Сетка» в коллекции', 'Вернуть переключатель «Сетка / Альбом по аркам». По умолчанию в Колоде только альбом.') +
       '<h3>Внешний вид</h3>' +
       row('tfx', '🔤', 'Эффекты шрифта', 'Золотые, неоновые и другие заголовки. Выключено — обычный шрифт.') +
       '<h3 data-wk-nolang="1">Мова / Язык</h3><div class="wk-set-themes" role="group" aria-label="Язык">' + [['ru', '🇷🇺', 'Русский'], ['uk', '🇺🇦', 'Українська']].map(function (t) { return '<button type="button" data-set-lang="' + t[0] + '" data-wk-nolang="1"><span aria-hidden="true">' + t[1] + '</span>' + t[2] + '</button>'; }).join('') + '</div><p class="wk-set-note" data-wk-nolang="1" style="margin-top:8px">Українська: літери й слова змінюються автоматично — «и» стає «і», «ы» — «и», «э» — «е» (так само в іменах). Сторінка перезавантажиться.</p>' +
@@ -20883,6 +20900,7 @@ html.wk-tilt-off.wk-gyro-on:not(.wk-cardfx-off) .character-item:not(.story-saga-
       else if (id === 'tilt') { put(K.tilt, on); applyAll(); }
       else if (id === 'sc') { put(K.sc, on); applyAll(); }
       else if (id.indexOf('scv-') === 0) { put(K.scv + id.slice(4), on); applyAll(); }
+      else if (id === 'dkgrid') { try { localStorage.setItem('wkDeckGridV1', on ? 'on' : 'off'); } catch (er) {} try { window.dispatchEvent(new Event('wk-settings')); } catch (er) {} }
       else if (id === 'tfx') { if (window.__wikiTextFxSet) window.__wikiTextFxSet(on); }
       else if (id === 'gyro' && window.__wikiGyro) { window.__wikiGyro.set(on).then(sync, sync); setTimeout(sync, 1500); }
       sync();
@@ -20898,7 +20916,7 @@ html.wk-tilt-off.wk-gyro-on:not(.wk-cardfx-off) .character-item:not(.story-saga-
     if (!ov) return;
     var cardOn = get(K.card), tfxOn = window.__wikiTextFxOn ? window.__wikiTextFxOn() : true;
     setSw('card', cardOn);
-    var scOn = get(K.sc); setSw('sc', scOn);
+    var scOn = get(K.sc); setSw('sc', scOn); setSw('dkgrid', (function () { try { return localStorage.getItem('wkDeckGridV1') === 'on'; } catch (e) { return false; } })());
     SCV.forEach(function (t) { setSw('scv-' + t[0], vget(t[0])); });
 
     setSw('tilt', get(K.tilt) && cardOn, !cardOn, !cardOn ? 'Недоступно, пока выключены анимации карточек.' : null);
@@ -34426,6 +34444,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     });
     list.sort(function (a, b) { return a.start - b.start || String(a.name).localeCompare(String(b.name), 'ru'); });
     list.forEach(function (p) { p.cards.sort(function (a, b) { return (KORD[a.kind || 'char'] || 0) - (KORD[b.kind || 'char'] || 0) || (num(a.c.chapter) || 9e9) - (num(b.c.chapter) || 9e9) || cName(a).localeCompare(cName(b), 'ru'); }); });
+    if (list.length > 1) { var allc = []; list.forEach(function (p) { allc = allc.concat(p.cards); }); list.unshift({ id: '__all', name: 'Все карточки', saga: '', start: -1, cards: allc, all: true }); }
     return list;
   }
   var SIL = {
@@ -34434,32 +34453,34 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     fruit: '<svg viewBox="0 0 60 70" aria-hidden="true"><path d="M30 18c-14 0-22 12-22 26s10 22 22 22 22-8 22-22-8-26-22-26z" fill="currentColor"/><path d="M30 18c0-6 3-11 8-14" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M31 15c6-6 14-5 16-2-5 4-11 5-16 2z" fill="currentColor"/></svg>',
     useful: '<svg viewBox="0 0 60 70" aria-hidden="true"><path d="M12 8h28l10 10v46H12z" fill="currentColor"/><path d="M20 30h22M20 40h22M20 50h14" stroke="#0b1020" stroke-width="3" stroke-linecap="round"/></svg>'
   };
-  function albumHTML(base, st) {
-    var pages = alPages(base); if (!pages.length) return '<div class="wk-tl-none">Здесь пока пусто.</div>';
-    var pi = 0; pages.forEach(function (p, i) { if (p.id === DK.apId) pi = i; }); DK.apId = pages[pi].id;
+  function albumHTML(base, st, pre) {
+    var pages = alAll(base, st); if (!pages.length) return '<div class="wk-al-bar">' + (pre || '') + '</div><div class="wk-tl-none">Здесь пока пусто.</div>';
+    var pi = -1; pages.forEach(function (p, i) { if (p.id === DK.apId) pi = i; }); if (pi < 0) pi = pages.length > 1 && pages[0].all ? 1 : 0; DK.apId = pages[pi].id;
+    var isC = !!pages[pi].custom, mineC = isC && !DK.inF && !st.__fake, ed = mineC && !!DK.alEdit;
     var P = pages[pi], cnt = function (p) { return p.cards.filter(function (k) { return st.owned[k.key]; }).length; }, have = cnt(P), tot = P.cards.length;
-    var opts = pages.map(function (p, i) { var h = cnt(p); return '<option value="' + esc(p.id) + '"' + (i === pi ? ' selected' : '') + '>' + esc(p.name) + ' — ' + h + '/' + p.cards.length + (h === p.cards.length ? ' ✓' : '') + '</option>'; }).join('');
+    var opts = pages.map(function (p, i) { var h = cnt(p); return '<option value="' + esc(p.id) + '"' + (i === pi ? ' selected' : '') + '>' + esc(p.name) + (p.custom ? ' — ' + p.cards.length : ' — ' + h + '/' + p.cards.length + (!p.all && h === p.cards.length ? ' ✓' : '')) + '</option>'; }).join('');
     var KL = { char: 'Персонажи', wanted: 'Награды', fruit: 'Плоды', useful: 'Полезное', custom: 'Особые' };
     var srcOf = function (k) { var kd = k.kind || 'char', t = (kd === 'fruit' || kd === 'useful') ? k.ty : ''; return (KL[kd] || 'Персонажи') + (t ? ' · ' + t : ''); };
     DK.alBack = DK.alBack || {};
-    var slots = P.cards.map(function (k, i) {
+    var lim = P.all ? (DK.alLim || 60) : 1e9, slots = P.cards.slice(0, lim).map(function (k, i) {
       var n = st.owned[k.key] || 0, no = '<i class="wk-al-no">' + (i + 1) + '</i>';
+      if (ed) return edSlot(k, i, no);
       if (n) {
         var fl = !!DK.alBack[k.key], rn = k.v ? VAR[k.v].n : RN4[k.r], arcN = k.kind === 'wanted' ? k.sub : (k.arc && k.arc.name) || '';
         return '<div class="wk-al-s has' + (fl ? ' flipped' : '') + '">' + no + '<div class="wk-al-fi"><div class="wk-al-ff"><div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + (n > 1 ? '<em class="wk-dk-x">×' + n + '</em>' : '') + '</div></div>' +
           '<div class="wk-al-fb r-' + k.r + (k.v ? ' v-' + k.v : '') + '" data-bkr="' + k.r + '" data-bkv="' + (k.v || '') + '" data-bkc="' + esc(k.kind === 'char' ? k.c.id : k.kind + ':' + k.c.id) + '" title="Открыть рубашку крупно"><div class="wk-dk-back">' + backInner(k.r, '', true) + '<div class="wk-al-bi"><b>' + esc(cName(k)) + '</b><span>' + esc(srcOf(k)) + '</span>' + (arcN ? '<span>' + esc(arcN) + '</span>' : '') + '<em>' + esc(rn) + (n > 1 ? ' · ×' + n : '') + '</em>' + alIcons(k) + '</div></div></div></div>' +
           '<button type="button" class="wk-al-flip" data-alflip="' + esc(k.key) + '" aria-pressed="' + fl + '" title="Перевернуть карточку" aria-label="Перевернуть карточку">⟲</button></div>';
       }
-      return '<div class="wk-al-s miss r-' + k.r + '">' + no + '<div class="wk-al-sil">' + (SIL[k.kind] || SIL.char) + '<b>№ ' + (i + 1) + '</b><span>' + esc(cName(k)) + '</span><em class="wk-al-src">' + esc(srcOf(k)) + '</em><small>' + esc(k.v ? VAR[k.v].n : RN4[k.r]) + '</small></div></div>';
+      return '<div class="wk-al-s miss r-' + k.r + '">' + no + '<div class="wk-al-sil">' + (SIL[k.kind] || SIL.char) + '<b>№ ' + (i + 1) + '</b><span>' + esc(cName(k)) + '</span><em class="wk-al-src">' + esc(srcOf(k)) + '</em>' + (P.all ? '<span class="wk-al-arcn">' + esc(k.kind === 'wanted' ? k.sub : (k.arc && k.arc.name) || '') + '</span>' : '') + '<small>' + esc(k.v ? VAR[k.v].n : RN4[k.r]) + '</small></div></div>';
     }).join('');
     var ownedP = P.cards.filter(function (k) { return st.owned[k.key]; }), allBack = ownedP.length > 0 && ownedP.every(function (k) { return DK.alBack[k.key]; });
-    var done = have === tot;
-    return '<div class="wk-al' + (['gold', 'wood', 'foam'].indexOf(st.frame) >= 0 ? ' fr-' + st.frame : '') + (ALBS.some(function (q) { return q.id === st.alb; }) ? ' alb-' + st.alb : '') + '" data-al>' +
-      '<div class="wk-al-nav"><button type="button" class="wk-al-arw" data-alp="-1"' + (pi ? '' : ' disabled') + ' aria-label="Предыдущая арка">‹</button>' +
+    var done = !isC && have === tot;
+    return '<div class="wk-al' + (cmpOn() ? ' cmp' : '') + (['gold', 'wood', 'foam'].indexOf(st.frame) >= 0 ? ' fr-' + st.frame : '') + (ALBS.some(function (q) { return q.id === st.alb; }) ? ' alb-' + st.alb : '') + '" data-al>' +
+      '<div class="wk-al-bar">' + (pre || '') + '<div class="wk-al-nav"><button type="button" class="wk-al-arw" data-alp="-1"' + (pi ? '' : ' disabled') + ' aria-label="Предыдущая арка">‹</button>' +
       '<label class="wk-al-pick"><span class="wk-al-pn">Страница ' + (pi + 1) + ' из ' + pages.length + '</span><select data-alsel aria-label="Перейти к арке">' + opts + '</select></label>' +
-      '<button type="button" class="wk-al-arw" data-alp="1"' + (pi < pages.length - 1 ? '' : ' disabled') + ' aria-label="Следующая арка">›</button></div>' +
-      '<section class="wk-al-page' + (done ? ' full' : '') + (DK.alDir ? ' turn' + (DK.alDir > 0 ? 'r' : 'l') : '') + '"><header class="wk-al-h">' + (P.saga ? '<small>' + esc(P.saga) + '</small>' : '') + '<h4>' + esc(P.name) + '</h4><div class="wk-al-prog"><span><em style="width:' + Math.round(have / Math.max(1, tot) * 100) + '%"></em></span><b>' + have + ' из ' + tot + '</b>' + (done ? '<i class="wk-al-done">Страница собрана</i>' : '') + (ownedP.length ? '<button type="button" class="wk-al-flall" data-alflipall>⟲ ' + (allBack ? 'Лицом' : 'Перевернуть все') + '</button>' : '') + '</div></header>' +
-      '<div class="wk-al-grid">' + slots + '</div><footer class="wk-al-f">' + (pi + 1) + '</footer></section></div>';
+      '<button type="button" class="wk-al-arw" data-alp="1"' + (pi < pages.length - 1 ? '' : ' disabled') + ' aria-label="Следующая арка">›</button></div><button type="button" class="wk-al-cmp" data-alcmp role="switch" aria-checked="' + cmpOn() + '"><i></i>Компактный режим</button>' + (!DK.inF && !st.__fake && (st.pages || []).length < PG_MAX ? '<button type="button" class="wk-tx-btn wk-al-new" data-alnew>＋ Своя вкладка</button>' : '') + '</div>' +
+      '<section class="wk-al-page' + (done ? ' full' : '') + (DK.alDir ? ' turn' + (DK.alDir > 0 ? 'r' : 'l') : '') + '"><header class="wk-al-h">' + (P.saga ? '<small>' + esc(P.saga) + '</small>' : '') + (ed ? '<input class="wk-al-name" type="text" maxlength="24" value="' + esc(P.cname) + '" aria-label="Название вкладки">' : '<h4>' + esc(P.name) + '</h4>') + '<div class="wk-al-prog' + (isC ? ' pc' : '') + '">' + (isC ? '<b>' + cardsWord(P.cards.length) + '</b>' + (mineC ? '<div class="wk-al-ctl">' + (ed ? '<button type="button" class="wk-tx-btn" data-aladd>＋ Добавить карты</button><button type="button" class="wk-tx-btn" data-aldel>Удалить вкладку</button><button type="button" class="wk-tx-btn pri" data-aled>Готово</button>' : '<button type="button" class="wk-tx-btn" data-aled>✎ Изменить</button>') + '</div>' : '') : '<span><em style="width:' + Math.round(have / Math.max(1, tot) * 100) + '%"></em></span><b>' + have + ' из ' + tot + '</b>' + (done ? '<i class="wk-al-done">Страница собрана</i>' : '')) + (ownedP.length && !ed ? '<button type="button" class="wk-al-flall" data-alflipall>⟲ ' + (allBack ? 'Лицом' : 'Перевернуть все') + '</button>' : '') + '</div></header>' +
+      (ed ? '<p class="wk-sh-hint wk-al-edh">Перетаскивай карточки мышью. На телефоне зажми карточку и двигай. Можно и кнопками ‹ ›.</p>' : '') + '<div class="wk-al-grid' + (P.all ? ' al-arcs' : '') + (ed ? ' edit' : '') + '">' + (slots || (isC ? '<p class="wk-dk-fnote">' + (mineC ? 'Здесь пока пусто. Нажми «Изменить», потом «Добавить карты».' : 'В этой вкладке пока нет карточек.') + '</p>' : '')) + '</div>' + (P.all && P.cards.length > lim ? '<div class="wk-al-moreb"><button type="button" class="wk-tx-btn" data-almore>Показать ещё (' + (P.cards.length - lim) + ')</button></div>' : '') + '<footer class="wk-al-f">' + (pi + 1) + '</footer></section></div>';
   }
   function alPaint(pane, dir) {
     var cc = pane.querySelector('#wkDkColl'); if (!cc) return;
@@ -34488,9 +34509,69 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   function alTurn(pane, d) {
     var C = allCards(), st = load(), base = DK.v && VAR[DK.v] ? varCards(C).filter(function (k) { return k.v === DK.v; }) : C;
     if (DK.k) base = base.filter(function (k) { return (k.kind || 'char') === DK.k; });
-    var pages = alPages(base), i = 0; pages.forEach(function (p, j) { if (p.id === DK.apId) i = j; });
+    var pages = alAll(base, alSt()), i = 0; pages.forEach(function (p, j) { if (p.id === DK.apId) i = j; });
     var ni = Math.max(0, Math.min(pages.length - 1, i + d)); if (ni === i) return;
-    DK.apId = pages[ni].id; alPaint(pane, d);
+    DK.apId = pages[ni].id; DK.alLim = 60; DK.alEdit = 0; alPaint(pane, d);
+  }
+  function gridOn() { try { return localStorage.getItem('wkDeckGridV1') === 'on'; } catch (e) { return false; } }
+  function cmpOn() { if (DK.alCmp == null) { try { DK.alCmp = localStorage.getItem('wkDeckCmpV1') === '1'; } catch (e) { DK.alCmp = false; } } return !!DK.alCmp; }
+  function alSt() { return DK.inF && FX.st ? FX.st : load(); }
+  var PG_MAX = 6, PG_CARDS = 60;
+  function alAll(base, st) {
+    var l = alPages(base), C = allCards();
+    (st.pages || []).forEach(function (pg) {
+      var cs = (pg.k || []).filter(function (k) { return st.owned && st.owned[k]; }).map(function (k) { return cardByKey(C, k); }).filter(Boolean);
+      l.push({ id: 'c:' + pg.id, name: '★ ' + pg.n, cname: pg.n, saga: DK.inF ? 'Подборка участника' : 'Моя подборка', start: 9e11, cards: cs, custom: true });
+    });
+    return l;
+  }
+  function pgIdx(st) { var id = String(DK.apId || '').slice(2); for (var i = 0; i < (st.pages || []).length; i++) if (st.pages[i].id === id) return i; return -1; }
+  function pgSave(mut) { var S = load(), i = pgIdx(S); if (i < 0 || S.__fake) return; mut(S.pages[i], S); save(S); }
+  function pgShown(p, S) { return (p.k || []).filter(function (k) { return S.owned[k]; }); }
+  function edSlot(k, i, no) {
+    var key = esc(k.key);
+    return '<div class="wk-al-s has ed" data-alk="' + key + '" title="Перетащи, чтобы поменять порядок">' + no + '<div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + '</div><button type="button" class="wk-al-rm" data-alrm="' + key + '" aria-label="Убрать из вкладки">✕</button><span class="wk-al-mv"><button type="button" data-almv="-1" data-alk2="' + key + '" aria-label="Левее">‹</button><button type="button" data-almv="1" data-alk2="' + key + '" aria-label="Правее">›</button></span></div>';
+  }
+  function alDragBind(pane) {
+    if (pane.__alDrag) return; pane.__alDrag = 1;
+    var D = null, tmr = 0, ghost = null, sc = 0;
+    function slotOf(t) { return t && t.closest ? t.closest('.wk-al-grid.edit .wk-al-s[data-alk]') : null; }
+    function stop() { clearTimeout(tmr); clearInterval(sc); sc = 0; document.removeEventListener('touchmove', blockTouch, { passive: false }); if (ghost) { ghost.remove(); ghost = null; } if (D && D.s) D.s.classList.remove('dragging'); }
+    function blockTouch(e) { if (D && D.on) e.preventDefault(); }
+    function begin() {
+      D.on = true; var s = D.s, r = s.getBoundingClientRect(); D.dx = D.x - r.left; D.dy = D.y - r.top;
+      ghost = s.cloneNode(true); ghost.classList.add('wk-al-ghost'); ghost.style.cssText = 'position:fixed;left:' + r.left + 'px;top:' + r.top + 'px;width:' + r.width + 'px;height:' + r.height + 'px;z-index:99999;pointer-events:none;margin:0';
+      document.body.appendChild(ghost); s.classList.add('dragging');
+      document.addEventListener('touchmove', blockTouch, { passive: false });
+      try { if (navigator.vibrate) navigator.vibrate(12); } catch (e) {}
+      sc = setInterval(function () { if (!D || !D.on) return; if (D.cy < 90) window.scrollBy(0, -14); else if (D.cy > innerHeight - 90) window.scrollBy(0, 14); }, 16);
+    }
+    pane.addEventListener('pointerdown', function (e) {
+      if (e.button > 0 || D) return; var s = slotOf(e.target); if (!s || (e.target.closest && e.target.closest('button'))) return;
+      D = { s: s, x: e.clientX, y: e.clientY, cy: e.clientY, touch: e.pointerType !== 'mouse', on: false, id: e.pointerId };
+      if (D.touch) tmr = setTimeout(function () { if (D && !D.on) begin(); }, 380);
+    });
+    document.addEventListener('pointermove', function (e) {
+      if (!D || e.pointerId !== D.id) return; D.cy = e.clientY;
+      if (!D.on) { var mv = Math.hypot(e.clientX - D.x, e.clientY - D.y); if (D.touch) { if (mv > 9) { stop(); D = null; } } else if (mv > 5) begin(); return; }
+      if (ghost) { ghost.style.left = (e.clientX - D.dx) + 'px'; ghost.style.top = (e.clientY - D.dy) + 'px'; }
+      var t = slotOf(document.elementFromPoint(e.clientX, e.clientY));
+      if (t && t !== D.s && t.parentNode === D.s.parentNode) { var kids = [].slice.call(t.parentNode.children); if (kids.indexOf(D.s) < kids.indexOf(t)) t.after(D.s); else t.before(D.s); }
+    });
+    function end(e) {
+      if (!D || (e && e.pointerId !== D.id)) return;
+      var on = D.on, grid = D.s.parentNode, keys = on ? [].map.call(grid.querySelectorAll('.wk-al-s[data-alk]'), function (x) { return x.getAttribute('data-alk'); }) : null;
+      stop(); D = null;
+      if (on) { pane.__alSw = Date.now(); pgSave(function (pg) { pg.k = keys; }); [].forEach.call(grid.querySelectorAll('.wk-al-s[data-alk] .wk-al-no'), function (n, i) { n.textContent = i + 1; }); }
+    }
+    document.addEventListener('pointerup', end); document.addEventListener('pointercancel', end);
+    pane.addEventListener('click', function (e) { if (pane.__alSw && Date.now() - pane.__alSw < 350) { e.stopPropagation(); e.preventDefault(); } }, true);
+    pane.addEventListener('dragstart', function (e) { if (e.target.closest && e.target.closest('.wk-al-grid.edit')) e.preventDefault(); });
+    pane.addEventListener('contextmenu', function (e) { if (e.target.closest && e.target.closest('.wk-al-grid.edit')) e.preventDefault(); });
+  }
+  function pgNew(pane) {
+    var S = load(); if (S.__fake) return; S.pages = S.pages || []; if (S.pages.length >= PG_MAX) { txToast('Можно создать до ' + PG_MAX + ' своих вкладок'); return; }
+    var id = 'p' + Date.now().toString(36); S.pages.push({ id: id, n: 'Подборка ' + (S.pages.length + 1), k: [] }); save(S); DK.apId = 'c:' + id; DK.alEdit = 1; DK.alLim = 60; alPaint(pane, 0);
   }
   function viewHTML() {
     return '<div class="wk-dk-view" role="group" aria-label="Вид коллекции">' + [['grid', 'Сетка'], ['album', 'Альбом по аркам']].map(function (x) { return '<button type="button" data-alview="' + x[0] + '" class="' + ((DK.view || 'grid') === x[0] ? 'on' : '') + '" aria-pressed="' + ((DK.view || 'grid') === x[0]) + '">' + x[1] + '</button>'; }).join('') + '</div>';
@@ -34498,12 +34579,13 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   function collHTML(cards, st) {
     if (DK.inF && FX.st) st = FX.st;
     if (DK.view == null) { try { DK.view = localStorage.getItem('wkDeckView') || 'grid'; } catch (e) { DK.view = 'grid'; } }
+    if (!gridOn()) DK.view = 'album';
     if (DK.view === 'album') {
       var ab = DK.v && VAR[DK.v] ? varCards(cards).filter(function (k) { return k.v === DK.v; }) : cards;
       if (DK.k) ab = ab.filter(function (k) { return (k.kind || 'char') === DK.k; });
       var vrow = '<div class="wk-dk-filters wk-dk-vf"><div>' + [['', 'Основные'], ['holo', 'Голографическая'], ['gold', 'Пламенная'], ['neg', 'Негативная']].map(function (x) { return '<button type="button" data-v="' + x[0] + '" class="' + (DK.v === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div>';
       var krow = '<div class="wk-dk-filters wk-dk-kf"><div>' + [['', 'Все типы'], ['char', 'Персонажи'], ['fruit', 'Плоды'], ['useful', 'Статьи'], ['wanted', 'Розыск']].concat(cards.some(function (q) { return q.kind === 'custom'; }) ? [['custom', 'Свои']] : []).map(function (x) { return '<button type="button" data-kind="' + x[0] + '" class="' + (DK.k === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div>';
-      return viewHTML() + '<div class="wk-al-flt">' + vrow + krow + '</div>' + albumHTML(ab, st);
+      return (gridOn() ? viewHTML() : '') + albumHTML(ab, st, vrow + krow);
     }
     var base = DK.v && VAR[DK.v] ? varCards(cards).filter(function (k) { return k.v === DK.v; }) : cards;
     if (DK.k) base = base.filter(function (k) { return (k.kind || 'char') === DK.k; });
@@ -34636,6 +34718,12 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (!h) { u = window.__wkAvatar ? window.__wkAvatar(login) : ''; if (u) h = '<img alt="" draggable="false" src="' + esc(u) + '">'; }
     return '<span class="wk-ava wk-dav s-' + sz + (h ? ' has-img' : '') + '" data-wk-av="' + esc(h ? login : '') + '" data-wk-avname="' + esc(a.name || login) + '" style="--c:' + esc(a.color || '#94a3b8') + ';background-color:' + esc(a.color || '#94a3b8') + '">' + (h || esc(String(a.name || login).charAt(0).toUpperCase())) + '</span>';
   }
+  function meBarHTML() {
+    var cl = window.__wkDeckCloud; if (!cl || !cl.enabled()) return '';
+    var me = myLogin(), acc = (window.__wikiAccounts || []).filter(function (a) { return a.login !== me; });
+    if (!acc.length) return '';
+    return '<div class="wk-fr-list wk-me-bar" role="group" aria-label="Чья колода"><button type="button" data-fr="" class="wk-fr-b' + (DK.fr ? '' : ' active') + '" aria-pressed="' + (!DK.fr) + '">' + avHTML(me, 'md') + '<span>Моя колода</span></button>' + acc.map(function (a) { return '<button type="button" data-fr="' + esc(a.login) + '" class="wk-fr-b' + (DK.fr === a.login ? ' active' : '') + '" aria-pressed="' + (DK.fr === a.login) + '">' + avHTML(a.login, 'md') + '<span>' + esc(a.name) + ttlTag(a.login) + '</span></button>'; }).join('') + '</div>';
+  }
   function friendsHTML() {
     var cl = window.__wkDeckCloud; if (!cl || !cl.enabled()) return '';
     var me = myLogin(), acc = (window.__wikiAccounts || []).filter(function (a) { return a.login !== me; });
@@ -34658,10 +34746,10 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var lim = DK.frLim, name = (window.__wikiAccounts || []).filter(function (a) { return a.login === DK.fr; }).map(function (a) { return a.name; })[0] || DK.fr;
     var stat = '<div class="wk-dk-fstat">' + avHTML(DK.fr, 'lg') + '<b>' + esc(name) + '</b>' + ttlTag(DK.fr) + '<span>наборов: ' + (d.deck.packs || 0) + '</span><span>🟡 ' + rc.legendary + '</span><span>🟣 ' + rc.epic + '</span><span>🔵 ' + rc.rare + '</span><span>⚪ ' + rc.common + '</span><span>особых: ' + vc + '</span>' + (hidden ? '<span>🔒 скрыто: ' + hidden + '</span>' : '') + (txApi() ? '<button type="button" class="wk-tx-btn pri" data-tx="compose">Предложить обмен</button><button type="button" class="wk-tx-btn" data-tx="gift">Подарить</button>' : '') + '</div>';
     var fo = {}; shown.forEach(function (x) { fo[x.k.key] = x.n; });
-    FX.st = { owned: fo, got: d.deck.got || {}, frame: d.deck.frame || '', alb: d.deck.alb || '', hold: {}, __friend: true };
-    return stat + showcaseHTML(C, d.deck.show, false, d.deck.showCap, { frame: d.deck.frame, bg: d.deck.bg }) + (hidden ? '<p class="wk-dk-fnote">🔒 Карточек-спойлеров скрыто: ' + hidden + '. Они появятся, когда ты дойдёшь до этих арок.</p>' : '') + '<div id="wkDkFriendColl">' + friendCollHTML() + '</div>';
+    FX.st = { owned: fo, got: d.deck.got || {}, frame: d.deck.frame || '', alb: d.deck.alb || '', hold: {}, pages: d.deck.pages || [], __friend: true };
+    return stat + showcaseHTML(C, d.deck.show, false, d.deck.showCap, { frame: d.deck.frame, bg: d.deck.bg }) + showcaseHTML(C, wantKeys(d.deck.want, fo), false, 3, { frame: d.deck.frame, bg: d.deck.bg }, 1) + (hidden ? '<p class="wk-dk-fnote">🔒 Карточек-спойлеров скрыто: ' + hidden + '. Они появятся, когда ты дойдёшь до этих арок.</p>' : '') + '<div id="wkDkFriendColl">' + friendCollHTML() + '</div>';
   }
-  var FS = { view: 'grid', v: '', k: '', f: 'have', r: '', sort: '', pg: 0, apId: '', fopen: false, alBack: {} };
+  var FS = { view: 'grid', v: '', k: '', f: 'have', r: '', sort: '', pg: 0, apId: '', fopen: false, alBack: {}, alLim: 60 };
   var FKEYS = Object.keys(FS), FX = { on: false, st: null, own: null, oc: null, fc: null };
   function friendCollHTML() {
     if (FX.on) return collHTML(allCards(), FX.st);
@@ -34749,10 +34837,23 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       var a = ttlList().filter(function (q) { return q.id === e.target.value; })[0];
       if (a) st.ttl = { id: a.id, t: a.tt }; else delete st.ttl;
       save(st); try { if (window.__wkDeckCloud && window.__wkDeckCloud.push) window.__wkDeckCloud.push(); } catch (e2) {}
-      var h = pane.querySelector('#wkDkTtl'); if (h) h.innerHTML = titleHTML(load());
+      var h = document.getElementById('wkOvTtl'); if (h) { h.__h = titleHTML(load()); h.innerHTML = h.__h; }
       try { txToast(a ? 'Титул: ' + a.tt : 'Титул снят'); } catch (e3) {}
     });
   }
+  var OVT = 0;
+  function ovTitle() {
+    try {
+      var ov = document.getElementById('wkCabOverview'); if (!ov || ov.hidden || !ov.offsetParent || !myLogin()) return;
+      var box = document.getElementById('wkOvTtl');
+      if (!box || box.parentNode !== ov) { box = document.createElement('section'); box.id = 'wkOvTtl'; box.className = 'wk-ov-ttl'; var tb0 = ov.querySelector(':scope > .wk-ov-tilesbox'); if (tb0) tb0.after(box); else ov.insertBefore(box, ov.firstChild); ttlBind(box); OVT = 0; box.__h = null; }
+      if (Date.now() - OVT < 6000 && box.innerHTML) return; OVT = Date.now();
+      var h = titleHTML(load()); if (box.__h !== h) { box.__h = h; box.innerHTML = h; }
+    } catch (e) {}
+  }
+  setInterval(ovTitle, 1500);
+  function stHidden() { try { return localStorage.getItem('wkDeckStatsHideV1') === '1'; } catch (e) { return false; } }
+  function statsBox(c, st) { return stHidden() ? '' : statsHTML(c, st); }
   /* ---- Ежедневная награда за вход ---- */
   var DAILY = [200, 300, 400, 500, 600, 800, 1000], DPK = [0, 3, 5, 7];
   var DPK_OPT = [null, { shop: true, n: 3 }, { shop: true, n: 5, prob: { legendary: 0.10, epic: 0.25, rare: 0.40 }, minEpic: true }, { shop: true, n: 7, prob: { legendary: 0.10, epic: 0.25, rare: 0.40 }, minEpic: true, minLeg: true }];
@@ -35317,7 +35418,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   function incoming() { var me = myLogin(); return TX.trades.filter(function (t) { return t.to === me && t.status === 'pending'; }); }
   function tabsHTML() {
     var n = incoming().length;
-    var T = [['me', '<span class="wk-tx-lg">Моя колода</span><span class="wk-tx-sm">Колода</span>'], ['craft', 'Переработка'], ['shop', 'Магазин'], ['feed', 'Лента'], ['people', 'Участники'], ['trade', 'Обмен']], fn = feedNew();
+    var T = [['me', 'Коллекции'], ['craft', 'Переработка'], ['shop', 'Магазин'], ['feed', 'Лента'], ['trade', 'Обмен']], fn = feedNew();
     return '<div class="wk-tx-tabs" role="tablist">' + T.map(function (t) { return '<button type="button" role="tab" aria-selected="' + (DK.tab === t[0]) + '" class="' + (DK.tab === t[0] ? 'on' : '') + '" data-tx="tab" data-t="' + t[0] + '">' + t[1] + (t[0] === 'trade' && n ? '<em class="wk-tx-badge">' + n + '</em>' : '') + (t[0] === 'feed' && fn && DK.tab !== 'feed' ? '<em class="wk-tx-badge fd">' + fn + '</em>' : '') + '</button>'; }).join('') + '</div>';
   }
   function paintTabs(pane) {
@@ -35356,7 +35457,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var inc = incoming(), out = TX.trades.filter(function (t) { return t.from === me && t.status === 'pending'; });
     var hist = TX.trades.filter(function (t) { return (t.from === me || t.to === me) && t.status !== 'pending'; }).slice(0, 10);
     var sec = function (title, l, empty) { return '<h3 class="wk-dk-h">' + title + (l.length ? ' <small>' + l.length + '</small>' : '') + '</h3>' + (l.length ? l.map(function (t) { return tradeCard(C, t, me); }).join('') : '<p class="wk-dk-fnote">' + empty + '</p>'); };
-    return '<div class="wk-tx-top"><p>Выбери участника во вкладке «Участники» и предложи обмен или подари карточку. Когда он согласится, карточки перейдут.</p><button type="button" class="wk-tx-btn" data-tx="reload">Обновить</button></div>' +
+    return '<div class="wk-tx-top"><p>Выбери участника на вкладке «Коллекции» и предложи обмен или подари карточку. Когда он согласится, карточки перейдут.</p><button type="button" class="wk-tx-btn" data-tx="reload">Обновить</button></div>' +
       sec('Входящие', inc, 'Пока никто ничего не предлагал.') + sec('Твои предложения', out, 'Нет предложений, которые ждут ответа.') + (hist.length ? sec('История', hist, '') : '');
   }
   function peopleHTML() {
@@ -35366,10 +35467,12 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   /* ---- окно составления предложения ---- */
   function compOpen(pane, mode, key) {
     if (mode === 'gift') TX.comp = { mode: 'gift', to: key ? '' : (DK.fr || ''), side: 'give', give: key ? [key] : [], want: [], q: '', r: '', dup: false, pg: 0, note: '', pane: pane };
+    else if (mode === 'want') TX.comp = { mode: 'want', side: 'give', give: wantKeys(load().want, load().owned), want: [], q: '', r: '', dup: false, pg: 0, note: '', pane: pane };
+    else if (mode === 'page') { var S1 = load(), ix1 = pgIdx(S1); TX.comp = { mode: 'page', side: 'give', give: ix1 >= 0 ? pgShown(S1.pages[ix1], S1) : [], want: [], q: '', r: '', dup: false, pg: 0, note: '', pane: pane }; }
     else if (mode === 'show') TX.comp = { mode: 'show', side: 'give', give: (load().show || []).slice(0, showCap(load())), want: [], q: '', r: '', dup: false, pg: 0, note: '', pane: pane };
     else { var d = DK.frData && DK.frData[DK.fr]; if (!d || !d.deck) return;
     TX.comp = { to: DK.fr, side: 'give', give: [], want: [], q: '', r: '', dup: false, pg: 0, note: '', pane: pane }; }
-    var ov = document.createElement('div'); ov.id = 'wkTxComp'; ov.className = 'wk-tx-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', mode === 'gift' ? 'Подарок' : mode === 'show' ? 'Витрина' : 'Предложение обмена');
+    var ov = document.createElement('div'); ov.id = 'wkTxComp'; ov.className = 'wk-tx-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', mode === 'gift' ? 'Подарок' : mode === 'show' ? 'Витрина' : mode === 'want' ? 'Ищу' : mode === 'page' ? 'Своя вкладка' : 'Предложение обмена');
     document.body.appendChild(ov); compPaint();
     ov.addEventListener('click', compClick); ov.addEventListener('input', function (e) {
       var t = e.target; if (t.id === 'wkTxQ') { TX.comp.q = t.value; TX.comp.pg = 0; var g = ov.querySelector('#wkTxPool'); if (g) g.innerHTML = poolHTML(); }
@@ -35381,7 +35484,8 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   function compClose() { var o = document.getElementById('wkTxComp'); if (o) o.remove(); TX.comp = null; document.removeEventListener('keydown', compKey); }
   function compPool() {
     var P = TX.comp, C = allCards(), st = load(), res = reservedMap(st), src, out = [];
-    if (P.mode === 'show') { Object.keys(st.owned).forEach(function (key) { if (st.owned[key] > 0) out.push({ key: key, n: st.owned[key] }); }); }
+    if (P.mode === 'want') { C.forEach(function (k) { if (!k.v && !st.owned[k.key]) out.push({ key: k.key, n: 1 }); }); }
+    else if (P.mode === 'show' || P.mode === 'page') { Object.keys(st.owned).forEach(function (key) { if (st.owned[key] > 0) out.push({ key: key, n: st.owned[key] }); }); }
     else if (P.side === 'give') { src = st.owned; Object.keys(src).forEach(function (key) { var n = src[key] - (res[key] || 0); if (n > 0) out.push({ key: key, n: n }); }); }
     else { var d = DK.frData[P.to]; src = (d && d.deck && d.deck.owned) || {}; Object.keys(src).forEach(function (key) { if (src[key] > 0) out.push({ key: key, n: src[key] }); }); }
     var q = P.q.trim().toLowerCase();
@@ -35403,15 +35507,15 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     return (tiles ? '<div class="wk-pane wk-tx-pw"><div class="wk-dk-grid wk-tx-pool">' + tiles + '</div></div>' : '<p class="wk-dk-fnote">Ничего не нашлось.</p>') + pager;
   }
   function compPaint() {
-    var ov = document.getElementById('wkTxComp'); if (!ov) return; var P = TX.comp, nm = accName(P.to), C = allCards(), SH = P.mode === 'show', GF = P.mode === 'gift', me0 = myLogin();
+    var ov = document.getElementById('wkTxComp'); if (!ov) return; var P = TX.comp, nm = accName(P.to), C = allCards(), WN = P.mode === 'want', PGM = P.mode === 'page', SH = P.mode === 'show' || WN || PGM, GF = P.mode === 'gift', me0 = myLogin();
     var R = [['', 'Любая'], ['legendary', 'Легенды'], ['epic', 'Эпики'], ['rare', 'Редкие'], ['common', 'Обычные']];
     var chips = function (l) { return l.length ? l.map(function (k) { var c = cardByKey(C, k); return '<button type="button" class="wk-tx-chip" data-tx="unpick" data-key="' + esc(k) + '" title="Убрать"><span class="wk-tx-dot" style="background:' + (c ? RC[c.r] : '#666') + '"></span>' + esc(cName(c)) + (c && c.v ? ' · ' + VAR[c.v].n : '') + ' ✕</button>'; }).join('') : '<span class="wk-tx-none">пока ничего</span>'; };
-    ov.innerHTML = '<div class="wk-tx-box' + (SH ? ' sh' : '') + '"><header class="wk-tx-bh"><h3 class="wk-tx-bht">' + (SH || GF ? '' : avHTML(P.to, 'sm')) + (SH ? 'Витрина: до ' + cardsWord(showCap(load())) : GF ? 'Подарок' : 'Обмен с ' + esc(nm)) + '</h3><button type="button" class="wk-tx-x" data-tx="close" aria-label="Закрыть">✕</button></header>' +
-      (GF ? '<div class="wk-tx-to" role="group" aria-label="Кому подарить"><span>Кому:</span>' + (window.__wikiAccounts || []).filter(function (a) { return a.login !== me0; }).map(function (a) { return '<button type="button" class="wk-fr-b' + (P.to === a.login ? ' active' : '') + '" data-tx="to" data-l="' + esc(a.login) + '" aria-pressed="' + (P.to === a.login) + '">' + avHTML(a.login, 'sm') + '<span>' + esc(a.name) + '</span></button>'; }).join('') + '</div><div class="wk-tx-sum one"><div><h4>Ты даришь <small>' + P.give.length + '/6 · карточки уйдут, когда получатель примет подарок</small></h4><div class="wk-tx-chips">' + chips(P.give) + '</div></div></div>' : SH ? '<div class="wk-tx-sum one"><div><h4>В витрине <small>' + P.give.length + '/3 · если есть повторки, одну карточку можно поставить несколько раз, повторное нажатие добавляет копию</small></h4><div class="wk-tx-chips">' + chips(P.give) + '</div></div></div>' : '<div class="wk-tx-sum"><div><h4>Ты отдаёшь <small>' + P.give.length + '/6</small></h4><div class="wk-tx-chips">' + chips(P.give) + '</div></div><div><h4>Ты получаешь <small>' + P.want.length + '/6</small></h4><div class="wk-tx-chips">' + chips(P.want) + '</div></div></div>') +
+    ov.innerHTML = '<div class="wk-tx-box' + (SH ? ' sh' : '') + '"><header class="wk-tx-bh"><h3 class="wk-tx-bht">' + (SH || GF ? '' : avHTML(P.to, 'sm')) + (WN ? 'Ищу: до 3 карточек' : PGM ? 'Своя вкладка: до ' + cardsWord(PG_CARDS) : SH ? 'Витрина: до ' + cardsWord(showCap(load())) : GF ? 'Подарок' : 'Обмен с ' + esc(nm)) + '</h3><button type="button" class="wk-tx-x" data-tx="close" aria-label="Закрыть">✕</button></header>' +
+      (GF ? '<div class="wk-tx-to" role="group" aria-label="Кому подарить"><span>Кому:</span>' + (window.__wikiAccounts || []).filter(function (a) { return a.login !== me0; }).map(function (a) { return '<button type="button" class="wk-fr-b' + (P.to === a.login ? ' active' : '') + '" data-tx="to" data-l="' + esc(a.login) + '" aria-pressed="' + (P.to === a.login) + '">' + avHTML(a.login, 'sm') + '<span>' + esc(a.name) + '</span></button>'; }).join('') + '</div><div class="wk-tx-sum one"><div><h4>Ты даришь <small>' + P.give.length + '/6 · карточки уйдут, когда получатель примет подарок</small></h4><div class="wk-tx-chips">' + chips(P.give) + '</div></div></div>' : SH ? '<div class="wk-tx-sum one"><div><h4>' + (WN ? 'Ищу' : PGM ? 'В вкладке' : 'В витрине') + ' <small>' + P.give.length + '/' + (WN ? 3 : PGM ? PG_CARDS : 3) + ' · ' + (WN ? 'карточки, которых у тебя ещё нет. Участники увидят их в твоей колоде' : PGM ? 'порядок потом меняется перетаскиванием' : 'если есть повторки, одну карточку можно поставить несколько раз, повторное нажатие добавляет копию') + '</small></h4><div class="wk-tx-chips">' + chips(P.give) + '</div></div></div>' : '<div class="wk-tx-sum"><div><h4>Ты отдаёшь <small>' + P.give.length + '/6</small></h4><div class="wk-tx-chips">' + chips(P.give) + '</div></div><div><h4>Ты получаешь <small>' + P.want.length + '/6</small></h4><div class="wk-tx-chips">' + chips(P.want) + '</div></div></div>') +
       (SH || GF ? '' : '<div class="wk-tx-side" role="tablist"><button type="button" role="tab" class="' + (P.side === 'give' ? 'on' : '') + '" data-tx="side" data-s="give">Мои карточки</button><button type="button" role="tab" class="' + (P.side === 'want' ? 'on' : '') + '" data-tx="side" data-s="want">Карточки: ' + esc(nm) + '</button></div>') +
-      '<div class="wk-tx-flt"><input id="wkTxQ" type="search" placeholder="Поиск по имени или арке" value="' + esc(P.q) + '" autocomplete="off"><div class="wk-tx-rf">' + R.map(function (r) { return '<button type="button" class="' + (P.r === r[0] ? 'on' : '') + '" data-tx="rf" data-rr="' + r[0] + '">' + r[1] + '</button>'; }).join('') + '<button type="button" class="' + (P.dup ? 'on' : '') + '" data-tx="dup">Только повторки</button></div></div>' +
+      '<div class="wk-tx-flt"><input id="wkTxQ" type="search" placeholder="Поиск по имени или арке" value="' + esc(P.q) + '" autocomplete="off"><div class="wk-tx-rf">' + R.map(function (r) { return '<button type="button" class="' + (P.r === r[0] ? 'on' : '') + '" data-tx="rf" data-rr="' + r[0] + '">' + r[1] + '</button>'; }).join('') + (WN || PGM ? '' : '<button type="button" class="' + (P.dup ? 'on' : '') + '" data-tx="dup">Только повторки</button>') + '</div></div>' +
       '<div id="wkTxPool">' + poolHTML() + '</div>' +
-      (GF ? '<footer class="wk-tx-bf"><input id="wkTxNote" type="text" maxlength="140" placeholder="Подпись к подарку (необязательно)" value="' + esc(P.note) + '"><span class="wk-tx-msg" id="wkTxMsg"></span><button type="button" class="wk-tx-btn pri" data-tx="send"' + (P.to && P.give.length ? '' : ' disabled') + '>Подарить</button></footer></div>' : SH ? '<footer class="wk-tx-bf"><span class="wk-tx-msg" id="wkTxMsg"></span><button type="button" class="wk-tx-btn pri" data-tx="saveshow" style="margin-left:auto">Сохранить витрину</button></footer></div>' : '<footer class="wk-tx-bf"><input id="wkTxNote" type="text" maxlength="140" placeholder="Сообщение (необязательно)" value="' + esc(P.note) + '"><span class="wk-tx-msg" id="wkTxMsg"></span><button type="button" class="wk-tx-btn pri" data-tx="send"' + (P.give.length + P.want.length ? '' : ' disabled') + '>Отправить предложение</button></footer></div>');
+      (GF ? '<footer class="wk-tx-bf"><input id="wkTxNote" type="text" maxlength="140" placeholder="Подпись к подарку (необязательно)" value="' + esc(P.note) + '"><span class="wk-tx-msg" id="wkTxMsg"></span><button type="button" class="wk-tx-btn pri" data-tx="send"' + (P.to && P.give.length ? '' : ' disabled') + '>Подарить</button></footer></div>' : SH ? '<footer class="wk-tx-bf"><span class="wk-tx-msg" id="wkTxMsg"></span><button type="button" class="wk-tx-btn pri" data-tx="' + (WN ? 'savewant' : PGM ? 'savepage' : 'saveshow') + '" style="margin-left:auto">' + (WN ? 'Сохранить список' : PGM ? 'Сохранить вкладку' : 'Сохранить витрину') + '</button></footer></div>' : '<footer class="wk-tx-bf"><input id="wkTxNote" type="text" maxlength="140" placeholder="Сообщение (необязательно)" value="' + esc(P.note) + '"><span class="wk-tx-msg" id="wkTxMsg"></span><button type="button" class="wk-tx-btn pri" data-tx="send"' + (P.give.length + P.want.length ? '' : ' disabled') + '>Отправить предложение</button></footer></div>');
   }
   function compClick(e) {
     var P = TX.comp; if (!P) return;
@@ -35426,7 +35530,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (a === 'cpg') { P.pg = Math.max(0, Number(b.getAttribute('data-p')) || 0); ov.querySelector('#wkTxPool').innerHTML = poolHTML(); return; }
     if (a === 'pick' || a === 'unpick') {
       var key = b.getAttribute('data-key'), L = a === 'unpick' ? (P.give.indexOf(key) >= 0 ? P.give : P.want) : P[P.side], i = L.indexOf(key);
-      var MX = P.mode === 'show' ? showCap(load()) : 6;
+      var MX = P.mode === 'show' ? showCap(load()) : P.mode === 'want' ? 3 : P.mode === 'page' ? PG_CARDS : 6;
       if (P.mode === 'show' && a === 'pick') {
         var have = (load().owned || {})[key] || 0, used = L.filter(function (q) { return q === key; }).length;
         if (used < have && L.length < MX) L.push(key);
@@ -35434,9 +35538,11 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
         else { ov.querySelector('#wkTxMsg').textContent = 'В витрине помещается ' + cardsWord(showCap(load())); return; }
         var y0 = ov.querySelector('#wkTxPool').scrollTop; compPaint(); var np0 = ov.querySelector('#wkTxPool'); if (np0) np0.scrollTop = y0; return;
       }
-      if (i >= 0) L.splice(i, 1); else if (L.length < MX) L.push(key); else { ov.querySelector('#wkTxMsg').textContent = P.mode === 'show' ? 'В витрине помещается ' + cardsWord(showCap(load())) : P.mode === 'gift' ? 'За раз можно подарить до 6 карточек' : 'Не больше 6 карточек с каждой стороны'; return; }
+      if (i >= 0) L.splice(i, 1); else if (L.length < MX) L.push(key); else { ov.querySelector('#wkTxMsg').textContent = P.mode === 'want' ? 'Можно отметить до 3 карточек' : P.mode === 'page' ? 'В вкладке помещается до ' + cardsWord(PG_CARDS) : P.mode === 'show' ? 'В витрине помещается ' + cardsWord(showCap(load())) : P.mode === 'gift' ? 'За раз можно подарить до 6 карточек' : 'Не больше 6 карточек с каждой стороны'; return; }
       var y = ov.querySelector('#wkTxPool').scrollTop; compPaint(); var np = ov.querySelector('#wkTxPool'); if (np) np.scrollTop = y; return;
     }
+    if (a === 'savewant') { var s4 = load(); if (!s4.__fake) { s4.want = P.give.filter(function (q, i, arr) { return arr.indexOf(q) === i && !s4.owned[q]; }).slice(0, 3); save(s4); } var pn2 = P.pane; compClose(); if (pn2 && pn2.isConnected) renderDeck(pn2); return; }
+    if (a === 'savepage') { var s5 = load(), ix5 = pgIdx(s5); if (ix5 >= 0 && !s5.__fake) { s5.pages[ix5].k = P.give.filter(function (q, i, arr) { return arr.indexOf(q) === i && s5.owned[q] > 0; }).slice(0, PG_CARDS); save(s5); } var pn3 = P.pane; compClose(); if (pn3 && pn3.isConnected) { var cc3 = pn3.querySelector('#wkDkColl'); if (cc3) cc3.innerHTML = collHTML(allCards(), load()); } return; }
     if (a === 'saveshow') { var s3 = load(); if (!s3.__fake) { var cn = {}; s3.show = P.give.filter(function (q) { cn[q] = (cn[q] || 0) + 1; return cn[q] <= (s3.owned[q] || 0); }).slice(0, showCap(s3)); save(s3); } var pn = P.pane; compClose(); if (pn && pn.isConnected) renderDeck(pn); return; }
     if (a === 'send') {
       var api = txApi(), msg = ov.querySelector('#wkTxMsg'); if (!api) { msg.textContent = 'Нет связи с облаком'; return; }
@@ -35480,6 +35586,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (a === 'gift') { compOpen(pane, 'gift'); return true; }
     if (a === 'compose') { compOpen(pane); return true; }
     if (a === 'showedit') { compOpen(pane, 'show'); return true; }
+    if (a === 'wantedit') { compOpen(pane, 'want'); return true; }
     if (a === 'sellall' || a === 'sell1' || a === 'buy' || a === 'mklist' || a === 'mkbuy' || a === 'mkcancel' || a === 'buyup' || a === 'buy2' || a === 'pigput' || a === 'pigget' || a === 'pickup' || a === 'cosbuy' || a === 'cossel' || a === 'bkadd' || a === 'bkedit' || a === 'bkcancel' || a === 'bkdel' || a === 'giftpack' || a === 'giftbuy' || a === 'hold' || a === 'unhold') { shopClick(pane, a, b); return true; }
     if (a === 'accept' || a === 'decline' || a === 'cancel') { if (a !== 'accept' || (TX.trades.filter(function (x) { return x.id === b.getAttribute('data-id'); })[0] || {}).gift || window.confirm('Принять обмен? Карточки сразу перейдут.')) txAction(pane, a, b.getAttribute('data-id'), b); return true; }
     return false;
@@ -35944,17 +36051,19 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     DK.pack = pk; DK.flipped = 0; DK.sealed = DK.sealKind || 'free'; DK.sealKind = '';
   }
   /* ---- витрина ---- */
-  function showcaseHTML(C, keys, mine, cap, cos) {
-    cap = cap >= 7 ? 7 : cap >= 5 ? 5 : 3; cos = cos || {}; var cosCls = (['gold', 'wood', 'foam'].indexOf(cos.frame) >= 0 ? ' fr-' + cos.frame : '') + (['deck', 'map', 'night'].indexOf(cos.bg) >= 0 ? ' bg-' + cos.bg : '');
+  function spareOf(key) { try { return freeCnt(load(), key) > 0; } catch (e) { return false; } }
+  function wantKeys(w, owned) { return (w || []).filter(function (k) { return !(owned || {})[k]; }).slice(0, 3); }
+  function showcaseHTML(C, keys, mine, cap, cos, wl) {
+    cap = wl ? 3 : cap >= 7 ? 7 : cap >= 5 ? 5 : 3; cos = cos || {}; var cosCls = (['gold', 'wood', 'foam'].indexOf(cos.frame) >= 0 ? ' fr-' + cos.frame : '') + (['deck', 'map', 'night'].indexOf(cos.bg) >= 0 ? ' bg-' + cos.bg : '');
     keys = (keys || []).filter(function (k) { return cardByKey(C, k); }).slice(0, cap);
     if (!mine && !keys.length) return '';
     var slots = (cap === 7 ? [0, 1, 2, 3, 4, 5, 6] : cap === 5 ? [0, 1, 2, 3, 4] : [0, 1, 2]).map(function (i) {
       var key = keys[i], k = key && cardByKey(C, key);
-      if (k) return '<div class="wk-sc-s wk-sh3-it r-' + k.r + '"><div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + '</div><i class="wk-sh3-stand" aria-hidden="true"></i></div>';
-      return mine ? '<button type="button" class="wk-sc-s wk-sc-e" data-tx="showedit" aria-label="Добавить карточку в витрину"><b>+</b><span>Добавить</span></button>' : '';
+      if (k) return '<div class="wk-sc-s wk-sh3-it r-' + k.r + '"><div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + '</div>' + (wl && !mine && spareOf(key) ? '<em class="wk-wl-have">есть у тебя</em>' : '') + '<i class="wk-sh3-stand" aria-hidden="true"></i></div>';
+      return mine ? '<button type="button" class="wk-sc-s wk-sc-e" data-tx="' + (wl ? 'wantedit' : 'showedit') + '" aria-label="Добавить карточку в витрину"><b>+</b><span>Добавить</span></button>' : '';
     }).join('');
-    return '<section class="wk-sc' + (mine ? ' mine' : '') + cosCls + '"><div class="wk-sc-h"><h3 class="wk-dk-h">' + (mine ? 'Моя витрина' : 'Витрина') + '</h3>' + (mine ? '<button type="button" class="wk-tx-btn" data-tx="showedit">' + (keys.length ? 'Изменить' : 'Выбрать карточки') + '</button>' : '') + '</div>' +
-      (mine && !keys.length ? '<p class="wk-sh-hint">Выбери до ' + cap + ' любимых карточек. Участники увидят их первыми, когда откроют твою колоду.</p>' : '') +
+    return '<section class="wk-sc' + (mine ? ' mine' : '') + (wl ? ' wl' : '') + cosCls + '"><div class="wk-sc-h"><h3 class="wk-dk-h">' + (wl ? 'Ищу' : mine ? 'Моя витрина' : 'Витрина') + '</h3>' + (mine ? '<button type="button" class="wk-tx-btn" data-tx="' + (wl ? 'wantedit' : 'showedit') + '">' + (keys.length ? 'Изменить' : 'Выбрать карточки') + '</button>' : '') + '</div>' +
+      (mine && !keys.length ? '<p class="wk-sh-hint">' + (wl ? 'Отметь до 3 карточек, которые ты сейчас ищешь. Участники увидят их, когда откроют твою колоду.' : 'Выбери до ' + cap + ' любимых карточек. Участники увидят их первыми, когда откроют твою колоду.') + '</p>' : '') +
       '<div class="wk-pane wk-sc-g wk-sh3"><div class="wk-sh3-wall"></div><div class="wk-dk-grid wk-sc-row" data-n="' + cap + '">' + slots + '</div><div class="wk-sh3-plank" aria-hidden="true"></div></div></section>';
   }
   /* ---- катсцены ---- */
@@ -36135,7 +36244,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       var mine = by[ml], loc = load(), ch = false; if (loc.__fake || !mine || !mine.deck) { end(false); return; }
       var cloudNewer = (mine.deck.rev || 0) > (loc.rev || 0) && (mine.deck.packs || 0) >= (loc.packs || 0);
       if ((mine.deck.packs || 0) > (loc.packs || 0) || cloudNewer) {  loc.owned = mine.deck.owned || {}; loc.packs = mine.deck.packs || 0; loc.pity = mine.deck.pity || 0; loc.tr = Object.assign({}, mine.deck.tr || {}, loc.tr || {}); loc.got = Object.assign({}, mine.deck.got || {}, loc.got || {}); if (mine.deck.show && !(loc.show && loc.show.length)) loc.show = mine.deck.show; if (typeof mine.deck.belli === 'number') loc.belli = mine.deck.belli; loc.hold = Object.assign({}, mine.deck.hold || {}); if (mine.deck.ev && !(loc.ev && loc.ev.length)) loc.ev = mine.deck.ev; loc.ach = Object.assign({}, mine.deck.ach || {}, loc.ach || {}); loc.achB = Object.assign({}, mine.deck.achB || {}, loc.achB || {}); if (mine.deck.daily && (!loc.daily || String(mine.deck.daily.last) > String(loc.daily.last))) loc.daily = mine.deck.daily; if (mine.deck.inc && (!loc.inc || Object.keys(mine.deck.inc).reduce(function (a, q) { return a + ((mine.deck.inc[q] || {}).b || 0); }, 0) > Object.keys(loc.inc).reduce(function (a, q) { return a + ((loc.inc[q] || {}).b || 0); }, 0))) { loc.inc = mine.deck.inc; loc.incD = mine.deck.incD || {}; loc.incLog = mine.deck.incLog || []; }
-        loc.shield = +mine.deck.shield || 0; loc.bless = +mine.deck.bless || 0; if (mine.deck.pig) loc.pig = mine.deck.pig; else delete loc.pig; if (mine.deck.ttl && !loc.ttl) loc.ttl = mine.deck.ttl;
+        loc.shield = +mine.deck.shield || 0; loc.bless = +mine.deck.bless || 0; if (mine.deck.pig) loc.pig = mine.deck.pig; else delete loc.pig; if (mine.deck.ttl && !loc.ttl) loc.ttl = mine.deck.ttl; if (loc.want === undefined && mine.deck.want) loc.want = mine.deck.want; if (loc.pages === undefined && mine.deck.pages) loc.pages = mine.deck.pages;
         ['spent', 'bought', 'crafted', 'sold', 'qpay'].forEach(function (q) { if ((+mine.deck[q] || 0) > (+loc[q] || 0)) loc[q] = +mine.deck[q]; });  ch = true;
         if (mine.deck.open && mine.deck.open.pk && !loc.open) loc.open = mine.deck.open; }
       if (mine.deck.cos && Object.keys(mine.deck.cos).some(function (q) { return !(loc.cos || {})[q]; })) { loc.cos = Object.assign({}, mine.deck.cos, loc.cos || {}); if (!loc.frame && mine.deck.frame) loc.frame = mine.deck.frame; if (!loc.bg && mine.deck.bg) loc.bg = mine.deck.bg; if (!loc.alb && mine.deck.alb) loc.alb = mine.deck.alb; if (!loc.back && mine.deck.back) loc.back = mine.deck.back; ch = true; }
@@ -36152,7 +36261,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     try { refreshBacks(pane, false); } catch (e) {}
     if (!DK.pack && st.open && st.open.pk && st.open.pk.length) { DK.pack = st.open.pk; DK.flipped = (st.open.fl || []).length; DK.restored = 1; }
     pane.innerHTML = '<div class="wk-pane-head"><div><h2>Колода</h2><p>Карточки персонажей (по одной на каждое фото в арке), дьявольских плодов, полезных статей и плакатов розыска. Новые появляются по мере прохождения.</p></div><div class="wk-dk-hbtn"><button type="button" class="wk-dk-reset" data-act="rules" title="Правила и шансы">Правила</button><button type="button" class="wk-dk-reset" data-act="reset" title="Обнулить коллекцию">Сбросить</button></div></div>' +
-      tabsHTML() + (DK.tab === 'me' ? adminHTML() + '<div id="wkDkPack">' + packHTML(cards, st) + '</div><div id="wkDkTtl">' + titleHTML(st) + '</div>' + (st.__fake ? '' : showcaseHTML(cards, st.show, true, showCap(st), { frame: st.frame, bg: st.bg })) + '<div id="wkDkStats">' + statsHTML(cards, st) + '</div><h3 class="wk-dk-h">Коллекция</h3><div id="wkDkColl">' + collHTML(cards, st) + '</div>' : '<div id="wkTxBody" class="wk-tx-body">' + (DK.tab === 'craft' ? craftHTML(cards, st) : DK.tab === 'shop' ? shopHTML(cards, st) : DK.tab === 'people' ? peopleHTML() : DK.tab === 'feed' ? feedHTML() : tradeHTML()) + '</div>');
+      tabsHTML() + (DK.tab === 'me' ? meBarHTML() + (DK.fr ? '<div id="wkDkFriend">' + friendBody() + '</div>' : adminHTML() + '<div id="wkDkPack">' + packHTML(cards, st) + '</div>' + (st.__fake ? '' : showcaseHTML(cards, st.show, true, showCap(st), { frame: st.frame, bg: st.bg }) + showcaseHTML(cards, wantKeys(st.want, st.owned), true, 3, { frame: st.frame, bg: st.bg }, 1)) + '<div class="wk-st-tg"><button type="button" class="wk-tx-btn" data-sttog>' + (stHidden() ? 'Показать статистику' : 'Скрыть статистику') + '</button></div><div id="wkDkStats">' + statsBox(cards, st) + '</div><h3 class="wk-dk-h">Коллекция</h3><div id="wkDkColl">' + collHTML(cards, st) + '</div>') : '<div id="wkTxBody" class="wk-tx-body">' + (DK.tab === 'craft' ? craftHTML(cards, st) : DK.tab === 'shop' ? shopHTML(cards, st) : DK.tab === 'people' ? peopleHTML() : DK.tab === 'feed' ? feedHTML() : tradeHTML()) + '</div>');
     if (DK.tab === 'me' && DK.pack && st.open && st.open.fl) st.open.fl.forEach(function (i) { var el = pane.querySelector('.wk-pk[data-i="' + i + '"]'); if (el) el.classList.add('on'); cvShow(pane, i); });
     if (DK.restored && DK.tab === 'me' && st.open) { var rn = pane.querySelector('#wkDkPack .wk-dk-row'); if (rn) rn.insertAdjacentHTML('beforebegin', '<p class="wk-dk-convnote">Набор не был досмотрен — карточки ждут тебя.</p>'); }
     txWatchStart(); frWatchStart(); refreshTrades(pane, false); feedLoad(pane, false);
@@ -36172,15 +36281,25 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (!pane.__dk) {
       pane.__dk = 1;
       pane.addEventListener('keydown', function (e) { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('wk-dk-sbwrap')) { e.preventDefault(); backZoom(e.target.getAttribute('data-bkr'), e.target.getAttribute('data-bkv'), e.target.getAttribute('data-bkc')); } });
-      tearBind(pane);
+      tearBind(pane); alDragBind(pane);
+      window.addEventListener('wk-settings', function () { var c = pane.querySelector('#wkDkColl'); if (c && pane.isConnected && !FX.on) c.innerHTML = collHTML(allCards(), load()); });
       pane.addEventListener('click', function (e) { frSwapIn(e, pane); }, true); pane.addEventListener('change', function (e) { frSwapIn(e, pane); }, true);
-      pane.addEventListener('change', function (e) { var t = e.target; if (t && t.hasAttribute && t.hasAttribute('data-alsel')) { DK.apId = t.value; alPaint(pane, 0); } });
+      pane.addEventListener('change', function (e) { var t = e.target; if (t && t.hasAttribute && t.hasAttribute('data-alsel')) { DK.apId = t.value; DK.alLim = 60; DK.alEdit = 0; alPaint(pane, 0); } if (t && t.classList && t.classList.contains('wk-al-name')) { var nm = String(t.value || '').trim().slice(0, 24) || 'Подборка'; pgSave(function (pg) { pg.n = nm; }); } });
       pane.addEventListener('toggle', function (e) { var t = e.target; if (t && t.classList && t.classList.contains('wk-dk-admin')) DK.admOpen = t.open; }, true);
       pane.addEventListener('click', function (e) {
         if (txPaneClick(pane, e)) return;
         var avw = e.target.closest && e.target.closest('[data-alview]'); if (avw) { DK.view = avw.getAttribute('data-alview'); if (!DK.inF) try { localStorage.setItem('wkDeckView', DK.view); } catch (er) {} pane.querySelector('#wkDkColl').innerHTML = collHTML(allCards(), load()); return; }
         var alf = e.target.closest && e.target.closest('[data-alflip]'); if (alf) { e.preventDefault(); alFlip(alf.closest('.wk-al-s'), alf.getAttribute('data-alflip')); return; }
         var alfa = e.target.closest && e.target.closest('[data-alflipall]'); if (alfa) { e.preventDefault(); alFlipAll(pane); return; }
+        var stg = e.target.closest && e.target.closest('[data-sttog]'); if (stg) { var hid = !stHidden(); try { localStorage.setItem('wkDeckStatsHideV1', hid ? '1' : '0'); } catch (er) {} stg.textContent = hid ? 'Показать статистику' : 'Скрыть статистику'; var sbx = pane.querySelector('#wkDkStats'); if (sbx) sbx.innerHTML = statsBox(allCards(), load()); return; }
+        var alc = e.target.closest && e.target.closest('[data-alcmp]'); if (alc) { DK.alCmp = !cmpOn(); try { localStorage.setItem('wkDeckCmpV1', DK.alCmp ? '1' : '0'); } catch (er) {} alPaint(pane, 0); return; }
+        var alm = e.target.closest && e.target.closest('[data-almore]'); if (alm) { DK.alLim = (DK.alLim || 60) + 60; alPaint(pane, 0); return; }
+        if (e.target.closest && e.target.closest('[data-alnew]')) { pgNew(pane); return; }
+        if (e.target.closest && e.target.closest('[data-aled]')) { DK.alEdit = DK.alEdit ? 0 : 1; alPaint(pane, 0); return; }
+        if (e.target.closest && e.target.closest('[data-aladd]')) { compOpen(pane, 'page'); return; }
+        if (e.target.closest && e.target.closest('[data-aldel]')) { if (window.confirm('Удалить эту вкладку? Карточки останутся в колоде.')) { var S0 = load(), i0 = pgIdx(S0); if (i0 >= 0) { S0.pages.splice(i0, 1); save(S0); } DK.apId = ''; DK.alEdit = 0; alPaint(pane, 0); } return; }
+        var arm = e.target.closest && e.target.closest('[data-alrm]'); if (arm) { var rk = arm.getAttribute('data-alrm'); pgSave(function (pg, S) { pg.k = pgShown(pg, S).filter(function (q) { return q !== rk; }); }); alPaint(pane, 0); return; }
+        var amv = e.target.closest && e.target.closest('[data-almv]'); if (amv) { var mk = amv.getAttribute('data-alk2'), md = Number(amv.getAttribute('data-almv')); pgSave(function (pg, S) { var l = pgShown(pg, S), ix = l.indexOf(mk), jx = ix + md; if (ix < 0 || jx < 0 || jx >= l.length) return; var tmp = l[ix]; l[ix] = l[jx]; l[jx] = tmp; pg.k = l; }); alPaint(pane, 0); return; }
         var alp = e.target.closest && e.target.closest('[data-alp]'); if (alp) { if (!alp.disabled) alTurn(pane, Number(alp.getAttribute('data-alp'))); return; }
         var ft = e.target.closest && e.target.closest('[data-dkftog]'); if (ft) { DK.fopen = !DK.fopen; pane.querySelector('#wkDkColl').innerHTML = collHTML(allCards(), load()); return; }
         var sb = e.target.closest && e.target.closest('[data-dks]'); if (sb) { DK.sort = sb.getAttribute('data-dks'); DK.pg = 0; pane.querySelector('#wkDkColl').innerHTML = collHTML(allCards(), load()); return; }
@@ -36194,7 +36313,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
         if (t.hasAttribute('data-pg') && !t.disabled) { DK.pg = Number(t.getAttribute('data-pg')) || 0; var pc = pane.querySelector('#wkDkColl'); pc.innerHTML = collHTML(C, S); if (pc.scrollIntoView) pc.scrollIntoView({ block: 'start' }); return; }
         if (t.hasAttribute('data-kind')) { DK.k = t.getAttribute('data-kind'); DK.lim = 60; DK.pg = 0; pane.querySelector('#wkDkColl').innerHTML = collHTML(C, S); return; }
         if (t.hasAttribute('data-f')) { DK.f = t.getAttribute('data-f'); DK.lim = 60; DK.pg = 0; pane.querySelector('#wkDkColl').innerHTML = collHTML(C, S); return; }
-        if (t.hasAttribute('data-fr')) { DK.fr = t.getAttribute('data-fr'); DK.frLim = 60; FS.pg = 0; FS.apId = ''; FS.alBack = {}; [].forEach.call(pane.querySelectorAll('[data-fr]'), function (x) { x.classList.toggle('active', x === t); }); loadFriends(pane, false); return; }
+        if (t.hasAttribute('data-fr')) { DK.fr = t.getAttribute('data-fr'); DK.frLim = 60; FS.pg = 0; FS.apId = ''; FS.alBack = {}; renderDeck(pane); if (DK.fr) loadFriends(pane, false); return; }
         if (t.hasAttribute('data-v')) { DK.v = t.getAttribute('data-v'); DK.lim = 60; DK.pg = 0; var cc = pane.querySelector('#wkDkColl'); cc.innerHTML = collHTML(C, S); if (t.hasAttribute('data-scroll') && cc.scrollIntoView) cc.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
         if (t.hasAttribute('data-r')) { DK.r = t.getAttribute('data-r'); DK.lim = 60; DK.pg = 0; pane.querySelector('#wkDkColl').innerHTML = collHTML(C, S); return; }
         var a = t.getAttribute('data-act');
@@ -36238,7 +36357,7 @@ else if (a === 'adm-fill') { if (!isDima()) return; DK.fillAll = !DK.fillAll; re
   }
   function finish(pane, close) {
     var C = allCards(), S = load();
-    var fs0 = pane.querySelector('#wkDkStats'), fc0 = pane.querySelector('#wkDkColl'); if (fs0) fs0.innerHTML = statsHTML(C, S); if (fc0) fc0.innerHTML = collHTML(C, S);
+    var fs0 = pane.querySelector('#wkDkStats'), fc0 = pane.querySelector('#wkDkColl'); if (fs0) fs0.innerHTML = statsBox(C, S); if (fc0) fc0.innerHTML = collHTML(C, S);
     if (close) { DK.pack = null; DK.sealed = ''; DK.restored = 0; if (S.open && !S.__fake) { delete S.open; save(S); } var fp0 = pane.querySelector('#wkDkPack'); if (fp0) fp0.innerHTML = packHTML(C, S); }
   }
   window.__wkDeckRender = renderDeck;
@@ -36686,9 +36805,10 @@ html body .wk-sc .wk-sc-row[data-n="5"]{grid-template-columns:repeat(5,minmax(0,
 
   // Встроенные объявления (всегда видны, даже без облака)
   var BUILTIN = [
+    { t: 'Колода: альбом, подборки и «Ищу»', b: 'Вкладка «Моя колода» теперь называется «Коллекции», и чужие колоды смотрятся прямо на ней: выбери участника вверху. В альбоме есть страница «Все карточки», «Компактный режим» (только имена) и свои вкладки: собери подборку из любых карточек и расставь их как хочешь, перетаскивая мышью или зажав карточку на телефоне. Ещё можно отметить до 3 карточек, которые ты ищешь: их увидят все, кто откроет твою колоду. Режим «Сетка» вернётся в настройках.', at: '2026-11-15' },
     { t: 'Награда за вход на 4 недели', b: 'Каждый день в Колоде можно забрать белли: от 200 до 1 000. На 14, 21 и 28 день серии к белли добавляется набор из 3, 5 и 7 карточек. Пропуск дня обнуляет серию, но Щит серии спасает один пропуск. Сетка показывает ближайшие 7 дней, остальное раскрывается ссылкой.', at: '2026-11-15' },
     { t: 'Новые товары: Щит серии, Благословение, Копилка', b: 'Щит серии (5 000) прощает один пропущенный день. Благословение переработки (8 000) даёт +15% к шансу одной переработки. Копилка: отложи от 1 000 до 200 000 белли на 7 дней и получи +5%. Щиты и благословения можно дарить.', at: '2026-11-15' },
-    { t: 'Титулы за достижения', b: 'За каждое полученное достижение открывается титул. Выбрать его можно в Колоде, на вкладке «Моя колода»: другие участники увидят титул рядом с твоим именем в ленте и списке участников.', at: '2026-11-15' },
+    { t: 'Титулы за достижения', b: 'За каждое полученное достижение открывается титул. Выбрать его можно в Колоде, на вкладке «Коллекции»: другие участники увидят титул рядом с твоим именем в ленте и списке участников.', at: '2026-11-15' },
     { t: 'Белли за достижения и новые медали', b: 'К наградному набору за достижение теперь добавляются белли: от 1 500 до 10 000. Появились медали про лавку: траты, доходы, открытые наборы, покупки, переработки и ежедневные награды. Те, кто уже забрал наборы, могут добрать белли отдельной кнопкой.', at: '2026-11-15' },
     { t: 'Итоги лавки и особые карточки', b: 'В «Итогах лавки» теперь видно, откуда пришли белли и когда. У голографических, пламенных и негативных карточек свои свечения при открытии, а выбранная рубашка карточек теперь видна и на упаковке набора.', at: '2026-11-15' },
     { t: 'Украинский язык', b: 'В Настройках появилась «Українська»: буквы и слова меняются автоматически, в том числе в именах («и» → «і», «ы» → «и», «э» → «е»). Перевод механический — вернуться можно там же.', at: '2026-11-14' },
@@ -36707,7 +36827,7 @@ html body .wk-sc .wk-sc-row[data-n="5"]{grid-template-columns:repeat(5,minmax(0,
     { i: '🧭', t: 'Прогресс и спойлеры', b: ['Укажите главу и серию, до которых дошли: всё остальное скрывается.', 'Фильмы открываются отдельной отметкой «просмотрен».', 'Арки можно отметить непросмотренными (например, филлеры) — это влияет на проценты и опросы.'], go: [['Прогресс', 'cabin:storyline'], ['Сетка просмотра', 'cabin:watchgrid']] },
     { i: '⭐', t: 'Избранное и История', b: ['Избранное — статьи, которые вы закрепили.', 'История — недавно открытые статьи.'], go: [['Избранное', 'cabin:favorites'], ['История', 'cabin:history']] },
     { i: '🏅', t: 'Достижения и хронология', b: ['Достижения за прогресс по аркам и сагам, а также за дела в лавке и колоде: траты, доходы, наборы, покупки, переработки и ежедневные награды.', 'За каждое достижение выдаются наградной набор и белли, а ещё открывается титул.', 'Хронология — события сюжета по порядку.'], go: [['Достижения', 'cabin:arcs'], ['Хронология', 'cabin:timeline']] },
-    { i: '🃏', t: 'Колода', b: ['Раз в час открывается пак карточек: каждая — персонаж в конкретной арке.', 'Редкости: обычная, редкая, эпическая, легендарная; коллекции: голографическая, пламенная, негативная.', 'Альбом, витрина любимых карточек, обмены, подарки, аукцион и магазин с рамками, фонами, альбомами и рубашками.', 'Белли дают опросы, достижения, продажа повторок и ежедневная награда за вход (серия 28 дней, на 14, 21 и 28 день ещё и наборы).', 'В Лавке Лог Поза: Щит серии, Благословение переработки (+15% к шансу), Копилка (+5% за 7 дней) и другие товары. «Итоги лавки» показывают, откуда пришли белли.', 'Титул из полученных достижений выбирается в «Моей колоде» и виден другим участникам.', 'Карточки персонажей, которых вы ещё не встретили, скрыты как спойлер.'], go: [['Колода', 'cabin:deck']] },
+    { i: '🃏', t: 'Колода', b: ['Раз в час открывается пак карточек: каждая — персонаж в конкретной арке.', 'Редкости: обычная, редкая, эпическая, легендарная; коллекции: голографическая, пламенная, негативная.', 'Альбом, витрина любимых карточек, обмены, подарки, аукцион и магазин с рамками, фонами, альбомами и рубашками.', 'Белли дают опросы, достижения, продажа повторок и ежедневная награда за вход (серия 28 дней, на 14, 21 и 28 день ещё и наборы).', 'В Лавке Лог Поза: Щит серии, Благословение переработки (+15% к шансу), Копилка (+5% за 7 дней) и другие товары. «Итоги лавки» показывают, откуда пришли белли.', 'Титул из полученных достижений выбирается на вкладке «Коллекции» и виден другим участникам.', 'Карточки персонажей, которых вы ещё не встретили, скрыты как спойлер.'], go: [['Колода', 'cabin:deck']] },
     { i: '🏆', t: 'Топы', b: ['Ваши рейтинги и списки; можно смотреть топы других участников (у новых участников они скрыты кнопкой).'], go: [['Топы', 'cabin:tops']] },
     { i: '🧠', t: 'Опросы', b: ['Проверка знаний по статьям, которые вам уже открыты.', 'Непросмотренные арки в вопросы не попадают.', 'За верные ответы капают белли для магазина: 10 за ответ (сложные — 15), с подсказкой — половина, серия даёт бонус до +10. Один вопрос оплачивается раз в 14 дней, потолок — 1000 белли в день.'], go: [['Опросы', 'cabin:quiz']] },
     { i: '🕸', t: 'Карта мира', b: ['Интерактивная карта локаций и связей.'], go: [['Карта мира', 'cabin:atlas']] },
@@ -36720,9 +36840,10 @@ html body .wk-sc .wk-sc-row[data-n="5"]{grid-template-columns:repeat(5,minmax(0,
 
   var UK = false; try { UK = localStorage.getItem('onePieceWikiLangV1') === 'uk'; } catch (e) {}
   var UK_B = [
+    { t: 'Колода: альбом, добірки та «Шукаю»', b: 'Вкладка «Моя колода» тепер називається «Колекції», і чужі колоди дивляться просто на ній: обери учасника вгорі. В альбомі є сторінка «Усі картки», «Компактний режим» (лише імена) та власні вкладки: збери добірку з будь-яких карток і розстав їх як хочеш, перетягуючи мишею або затиснувши картку на телефоні. Ще можна позначити до 3 карток, які ти шукаєш: їх побачать усі, хто відкриє твою колоду. Режим «Сітка» повернеться в налаштуваннях.' },
     { t: 'Нагорода за вхід на 4 тижні', b: 'Щодня в Колоді можна забрати беллі: від 200 до 1 000. На 14, 21 і 28 день серії до беллі додається набір із 3, 5 і 7 карток. Пропуск дня обнуляє серію, але Щит серії рятує один пропуск. Сітка показує найближчі 7 днів, решту розгортає посилання.' },
     { t: 'Нові товари: Щит серії, Благословення, Скарбничка', b: 'Щит серії (5 000) прощає один пропущений день. Благословення переробки (8 000) дає +15% до шансу однієї переробки. Скарбничка: відклади від 1 000 до 200 000 беллі на 7 днів і отримай +5%. Щити й благословення можна дарувати.' },
-    { t: 'Титули за досягнення', b: 'За кожне отримане досягнення відкривається титул. Обрати його можна в Колоді, на вкладці «Моя колода»: інші учасники побачать титул поруч із твоїм імʼям у стрічці та списку учасників.' },
+    { t: 'Титули за досягнення', b: 'За кожне отримане досягнення відкривається титул. Обрати його можна в Колоді, на вкладці «Колекції»: інші учасники побачать титул поруч із твоїм імʼям у стрічці та списку учасників.' },
     { t: 'Беллі за досягнення та нові медалі', b: 'До нагородного набору за досягнення тепер додаються беллі: від 1 500 до 10 000. Зʼявилися медалі про крамницю: витрати, доходи, відкриті набори, покупки, переробки та щоденні нагороди. Ті, хто вже забрав набори, можуть добрати беллі окремою кнопкою.' },
     { t: 'Підсумки крамниці й особливі картки', b: 'У «Підсумках крамниці» тепер видно, звідки прийшли беллі та коли. У голографічних, полумʼяних і негативних карток свої сяйва під час відкриття, а обрана сорочка карток тепер видна й на пакуванні набору.' },
     { t: 'Українська мова', b: 'У Налаштуваннях зʼявилася «Українська»: літери й слова змінюються автоматично, зокрема в іменах («и» → «і», «ы» → «и», «э» → «е»). Переклад механічний — повернутися можна там само.' },
@@ -36739,7 +36860,7 @@ html body .wk-sc .wk-sc-row[data-n="5"]{grid-template-columns:repeat(5,minmax(0,
     ['Прогрес і спойлери', ['Вкажіть розділ і серію, до яких дійшли: решта ховається.', 'Фільми відкриваються окремою позначкою «переглянуто».', 'Арки можна позначити непереглянутими (наприклад, філери) — це впливає на відсотки й опитування.'], ['Прогрес', 'Сітка перегляду']],
     ['Обране й Історія', ['Обране — статті, які ви закріпили.', 'Історія — нещодавно відкриті статті.'], ['Обране', 'Історія']],
     ['Досягнення та хронологія', ['Досягнення за прогрес по арках і сагах, а також за справи в крамниці й колоді: витрати, доходи, набори, покупки, переробки та щоденні нагороди.', 'За кожне досягнення видаються нагородний набір і беллі, а ще відкривається титул.', 'Хронологія — події сюжету по порядку.'], ['Досягнення', 'Хронологія']],
-    ['Колода', ['Раз на годину відкривається пак карток: кожна — персонаж у конкретній арці.', 'Рідкісності: звичайна, рідкісна, епічна, легендарна; колекції: голографічна, полумʼяна, негативна.', 'Альбом, вітрина улюблених карток, обміни, подарунки, аукціон і магазин із рамками, тлами, альбомами та сорочками.', 'Беллі дають опитування, досягнення, продаж повторок і щоденна нагорода за вхід (серія 28 днів, на 14, 21 і 28 день ще й набори).', 'У Крамниці Лог Поза: Щит серії, Благословення переробки (+15% до шансу), Скарбничка (+5% за 7 днів) та інші товари. «Підсумки крамниці» показують, звідки прийшли беллі.', 'Титул із отриманих досягнень обирається в «Моїй колоді» й видимий іншим учасникам.', 'Картки персонажів, яких ви ще не зустріли, приховані як спойлер.'], ['Колода']],
+    ['Колода', ['Раз на годину відкривається пак карток: кожна — персонаж у конкретній арці.', 'Рідкісності: звичайна, рідкісна, епічна, легендарна; колекції: голографічна, полумʼяна, негативна.', 'Альбом, вітрина улюблених карток, обміни, подарунки, аукціон і магазин із рамками, тлами, альбомами та сорочками.', 'Беллі дають опитування, досягнення, продаж повторок і щоденна нагорода за вхід (серія 28 днів, на 14, 21 і 28 день ще й набори).', 'У Крамниці Лог Поза: Щит серії, Благословення переробки (+15% до шансу), Скарбничка (+5% за 7 днів) та інші товари. «Підсумки крамниці» показують, звідки прийшли беллі.', 'Титул із отриманих досягнень обирається на вкладці «Колекції» й видимий іншим учасникам.', 'Картки персонажів, яких ви ще не зустріли, приховані як спойлер.'], ['Колода']],
     ['Топи', ['Ваші рейтинги й списки; можна дивитися топи інших учасників (у нових учасників вони сховані за кнопкою).'], ['Топи']],
     ['Опитування', ['Перевірка знань за статтями, які вам уже відкриті.', 'Непереглянуті арки в запитання не потрапляють.', 'За правильні відповіді капають беллі для магазину: 10 за відповідь (складні — 15), з підказкою — половина, серія дає бонус до +10. Те саме запитання оплачується раз на 14 днів, ліміт — 1000 беллі на день.'], ['Опитування']],
     ['Мапа світу', ['Інтерактивна мапа локацій і звʼязків.'], ['Мапа світу']],
@@ -37924,5 +38045,44 @@ html body .article .article-topbar>.article-nav{display:block!important;width:au
 .wk-pig-in:focus-visible{outline:none;border-color:var(--wk-accent,#d8b45a);box-shadow:0 0 0 3px rgba(216,180,90,.22)}
 .wk-pig-bar{display:block;height:6px;margin-top:10px;border-radius:99px;background:rgba(148,163,184,.22);overflow:hidden;max-width:260px}.wk-pig-bar em{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#e5819a,#d8b45a)}
 .wk-bl-note{margin:0 0 10px;padding:9px 14px;border-radius:12px;border:1px solid rgba(196,168,255,.45);background:rgba(120,90,200,.12);font-size:13px}
+</style>
+<style id="wk-v388-css">
+/* альбом: компактная панель, компактный режим, свои вкладки */
+.wk-al-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin:0 0 12px}
+.wk-al-bar .wk-dk-filters{margin:0!important;width:auto;max-width:100%}
+.wk-al-bar .wk-al-nav{margin:0;flex:1 1 300px;min-width:min(100%,260px)}
+.wk-al-cmp{display:inline-flex;align-items:center;gap:9px;min-height:40px;padding:0 14px 0 10px;border-radius:12px;border:1px solid var(--line,rgba(148,163,184,.35));background:rgba(10,14,26,.6);color:var(--text,#e5e7eb);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+.wk-al-cmp i{position:relative;width:34px;height:20px;border-radius:99px;background:rgba(148,163,184,.35);transition:background .2s}
+.wk-al-cmp i::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s}
+.wk-al-cmp[aria-checked=true]{border-color:rgba(216,180,90,.6)}
+.wk-al-cmp[aria-checked=true] i{background:var(--wk-accent,#d8b45a)}
+.wk-al-cmp[aria-checked=true] i::after{transform:translateX(14px)}
+.wk-al-new{min-height:40px;white-space:nowrap}
+.wk-al .wk-dk-arc{display:none!important}
+.wk-al .al-arcs .wk-dk-arc{display:-webkit-box!important}
+.wk-al.cmp .wk-dk-arc,.wk-al.cmp .wk-dk-rarp,.wk-al.cmp .character-grid-status,.wk-al.cmp .wk-al-arcn,.wk-al.cmp .wk-al-src,.wk-al.cmp .wk-al-sil small{display:none!important}
+.wk-al-arcn{display:block;margin-top:2px;font-size:11px;line-height:1.2;opacity:.75;text-align:center}
+.wk-al-moreb{display:flex;justify-content:center;margin:16px 0 4px}
+.wk-me-bar{margin:0 0 14px}
+/* свои вкладки */
+.wk-al-name{font:inherit;font-size:20px;font-weight:700;min-width:0;width:min(100%,320px);padding:4px 10px;border-radius:10px;border:1px solid rgba(216,180,90,.5);background:rgba(10,14,26,.7);color:#f3dc9a}
+.wk-al-ctl{display:inline-flex;flex-wrap:wrap;gap:8px;margin-left:auto}
+.wk-al-edh{margin:4px 0 12px}
+.wk-al-s.ed{cursor:grab;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+.wk-al-s.ed .wk-dk-slot,.wk-al-s.ed .wk-dk-slot *{pointer-events:none}
+.wk-al-s.ed.dragging{opacity:.25}
+.wk-al-ghost{opacity:.95;transform:scale(1.06) rotate(2deg);box-shadow:0 20px 44px rgba(0,0,0,.65);border-radius:14px}
+.wk-al-rm{position:absolute;top:4px;right:4px;z-index:12;width:28px;height:28px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(8,11,16,.8);color:#fecaca;font-size:13px;line-height:1;cursor:pointer}
+.wk-al-s.ed{padding-bottom:38px}.wk-al-mv{position:absolute;left:50%;bottom:0;transform:translateX(-50%);z-index:12;display:flex;gap:8px}.wk-al-prog.pc{display:flex!important;flex-wrap:wrap;align-items:center;gap:8px 12px}.wk-al-prog.pc>b{flex:0 0 auto}
+.wk-al-mv button{width:28px;height:28px;padding:0;border-radius:8px;border:1px solid rgba(255,255,255,.3);background:rgba(8,11,16,.8);color:#f8fafc;font-size:16px;line-height:1;cursor:pointer}
+/* «Ищу» */
+.wk-sc.wl .wk-sc-h h3{color:var(--wk-accent,#d8b45a)}
+.wk-wl-have{position:absolute;left:50%;top:-9px;transform:translateX(-50%);z-index:6;padding:2px 9px;border-radius:99px;background:#d8b45a;color:#1a1204;font:700 11px/1.5 inherit;font-style:normal;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.wk-sc-s{position:relative}
+.wk-st-tg{display:flex;justify-content:flex-end;margin:0 0 6px}
+#wkCabOverview>.wk-ov-ttl{grid-column:1/-1!important;order:-1!important;margin:0 0 14px!important}.wk-ov-ttl{padding:12px 14px;border-radius:14px;border:1px solid var(--line,rgba(148,163,184,.25));background:rgba(10,14,26,.4)}
+.wk-ov-ttl .wk-dk-h{margin:0 0 8px;font-size:14px}
+.wk-ov-ttl .wk-sh-hint{margin:0}
+#favoritesSection .achievement-desc{display:block!important;margin:0 0 6px!important;font-size:11.5px!important;line-height:1.35!important;color:var(--cabin-muted,#94a3b8)!important}
 </style>
 </body></html>
