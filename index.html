@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 409";
+const WIKI_VERSION = "15.11.2026 · 412";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -10712,7 +10712,9 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
             const searchable=[getTitle(activeType,x),...Object.keys(schemas[activeType]).map(k=>fieldText(rawValue(x,k))),(x.__wikiFieldSpoilers||[]).map(k=>fieldLabels[k]||k).join(' '),x.__wikiDraft?'черновик':''].join(' ').toLocaleLowerCase('ru');
             return (!q||searchable.includes(q))&&recordMatchesManagerFilter(activeType,x,managerFilter);
         }).slice();
+        const wkRelS=x=>{if(!q)return 0;const t=String(getTitle(activeType,x)||'').toLocaleLowerCase('ru'),id=String(rawValue(x,'id')||'').toLocaleLowerCase('ru');if(t===q)return 0;if(t.startsWith(q))return 1;if(t.split(/[\s.,()«»"'\-–—:]+/).some(w=>w.startsWith(q)))return 2;if(t.includes(q))return 3;if(id.includes(q))return 4;return 5;};
         items.sort((a,b)=>{
+            if(q){const ra=wkRelS(a)-wkRelS(b);if(ra)return ra;}
             if(managerSort==='name')return String(getTitle(activeType,a)).localeCompare(String(getTitle(activeType,b)),'ru');
             if(managerSort==='id')return String(rawValue(a,'id')).localeCompare(String(rawValue(b,'id')),'ru');
             if(/^(chapter|episode)_(asc|desc)$/.test(managerSort)){
@@ -31471,11 +31473,15 @@ html body #storyList[data-wk-size="l"]{--sg-ac:repeat(auto-fill,minmax(300px,1fr
     var sig = mkSig();
     if (old && old.getAttribute('data-sig') === sig) return;
     var box = document.createElement('div'); box.className = 'wiki-editor-field wk-ed-poster'; box.setAttribute('data-wk-c', '1'); box.setAttribute('data-sig', sig);
+    var a0e = pcfg().adj[r.id] || {}, mode0 = a0e.photo || 'auto', aph0 = arcPhotos(c);
     var seg = function (attr, items, cur) { return '<div class="wk-rl-seg" data-pseg="' + attr + '">' + items.map(function (x) { return '<button type="button" data-v="' + x[0] + '"' + (x[0] === cur ? ' class="active"' : '') + '>' + x[1] + '</button>'; }).join('') + '</div>'; };
     box.innerHTML = '<div class="wiki-editor-field-topline"><label>Фото на плакате награды</label></div>'
       + '<div class="wk-edp"><div class="wk-edp-big" data-edp-big>' + posterHTML(r, { char: c, eager: true }) + '</div><div class="wk-edp-ctl">'
       + (rws.length > 1 ? '<div class="wk-edp-list">' + rws.map(function (x) { return '<button type="button" data-edp-r="' + esc(x.id) + '"' + (String(x.id) === String(r.id) ? ' class="active"' : '') + '>' + '<span class="wk-edp-sum"><span class="berry-symbol" aria-hidden="true"></span>' + esc(money(x.reward).replace(/-$/, '')) + '</span><small>' + esc(x.arc || '') + '</small></button>'; }).join('') + '</div>' : '')
       + '<div class="wk-edp-who">' + (p.pl ? '🖼 Фото для плаката' : p.ts ? '🕰 Облик после таймскипа' : '🖼 Фото первого появления') + (has2 ? ' · у каждого облика свой кадр' : '') + '</div>'
+      + '<div class="wk-rl-f wk-edp-src">Откуда фото<div class="wk-rl-seg" data-pph>' + [['auto', 'Авто'], ['main', 'Основное']].concat(has2 ? [['ts', 'После таймскипа']] : []).concat(aph0.length ? [['arc', 'Фото из арки']] : []).concat([['url', 'Своя ссылка']]).map(function (x) { return '<button type="button" data-v="' + x[0] + '"' + (x[0] === mode0 ? ' class="active"' : '') + '>' + x[1] + '</button>'; }).join('') + '</div></div>'
+      + (aph0.length ? '<div class="wk-rl-arcs" data-pph-arcs' + (mode0 === 'arc' ? '' : ' hidden') + '>' + aph0.map(function (q) { return '<button type="button" data-pph-u="' + esc(q.u) + '" class="' + (p.src === q.u && mode0 === 'arc' ? 'active' : '') + '" title="' + esc(q.arc) + '"><img src="' + esc(q.u) + '" alt="" loading="lazy"><span>' + esc(q.arc) + '</span></button>'; }).join('') + '</div>' : '')
+      + '<div class="wk-rl-line"' + (mode0 === 'url' ? '' : ' hidden') + '><input type="url" data-pph-url placeholder="https://… прямая ссылка на картинку" value="' + esc(a0e.url || '') + '" style="flex:1 1 260px"></div>'
       + '<label class="wk-rl-f">Как вписать' + seg('fit', [['cover', 'Заполнить рамку'], ['contain', 'Целиком (PNG без фона)']], fit) + '</label>'
       + '<label class="wk-rl-f">Масштаб <output data-po="z">' + Math.round(p.z) + '%</output><input type="range" min="30" max="300" step="1" data-pr="z" value="' + Math.round(p.z) + '"></label>'
       + '<label class="wk-rl-f">По горизонтали <output data-po="x">' + Math.round(p.x) + '%</output><input type="range" min="0" max="100" step="1" data-pr="x" value="' + Math.round(p.x) + '"></label>'
@@ -31492,6 +31498,17 @@ html body #storyList[data-wk-size="l"]{--sg-ac:repeat(auto-fill,minmax(300px,1fr
       if (full) charPosterBlock(f); else { var big = box.querySelector('[data-edp-big]'); var t = document.createElement('div'); t.innerHTML = posterHTML(r, { char: c, eager: true }); big.replaceChild(t.firstChild, big.firstChild); box.setAttribute('data-sig', mkSig()); bindDrag(); }
     }
     box.querySelectorAll('[data-edp-r]').forEach(function (b) { b.addEventListener('click', function () { edPv.rid = b.getAttribute('data-edp-r'); charPosterBlock(f); }); });
+    function setPhoto(patch) {
+      var c2 = pcfg(), cur = Object.assign({}, c2.adj[r.id] || {}, patch);
+      Object.keys(cur).forEach(function (k) { if (cur[k] === '' || cur[k] == null) delete cur[k]; });
+      if (cur.photo === 'auto') delete cur.photo;
+      if (Object.keys(cur).length) c2.adj[r.id] = cur; else delete c2.adj[r.id];
+      savePcfg(c2); clearTimeout(store.t); store.t = setTimeout(afterPosterChange, 500); charPosterBlock(f);
+      var sv = f.querySelector('.wk-edp-saved'); if (sv) { sv.textContent = '✓ Сохранено'; setTimeout(function () { sv.textContent = ''; }, 1400); }
+    }
+    var pph = box.querySelector('[data-pph]'); if (pph) pph.addEventListener('click', function (e) { var b = e.target.closest('[data-v]'); if (!b) return; var v = b.getAttribute('data-v'); if (v === 'arc' || v === 'url') { var cur = pcfg().adj[r.id] || {}; if (v === 'arc' && !cur.apu && aph0.length) setPhoto({ photo: 'arc', apu: aph0[0].u, x: null, y: null, z: null }); else setPhoto({ photo: v, x: null, y: null, z: null }); } else setPhoto({ photo: v, x: null, y: null, z: null }); });
+    box.querySelectorAll('[data-pph-u]').forEach(function (b) { b.addEventListener('click', function () { setPhoto({ photo: 'arc', apu: b.getAttribute('data-pph-u'), x: null, y: null, z: null }); }); });
+    var pu = box.querySelector('[data-pph-url]'); if (pu) pu.addEventListener('change', function () { setPhoto({ photo: 'url', url: String(pu.value || '').trim(), x: null, y: null, z: null }); });
     box.querySelectorAll('[data-pseg]').forEach(function (sg) { sg.addEventListener('click', function (e) { var b = e.target.closest('[data-v]'); if (!b) return; store({ fit: b.getAttribute('data-v') }, true); }); });
     box.querySelectorAll('[data-pr]').forEach(function (rg) { rg.addEventListener('input', function () { var k = rg.getAttribute('data-pr'), o = {}; o[k] = Number(rg.value); box.querySelector('[data-po="' + k + '"]').textContent = rg.value + '%'; store(o); }); });
     var enm = box.querySelector('[data-edp-name]'); if (enm) enm.addEventListener('input', function () { clearTimeout(enm.t); enm.t = setTimeout(function () { store({ name: String(enm.value || '').trim() }); }, 300); });
@@ -38283,4 +38300,9 @@ if(document.readyState==='complete')setTimeout(f,300);else window.addEventListen
 .wk-al-q{flex:1 1 150px;min-width:120px;max-width:220px;height:34px;box-sizing:border-box;border-radius:9px;border:1px solid var(--wk-line,#334155);background:rgba(15,23,42,.6);color:inherit;padding:0 10px;font:inherit;font-size:13px}
 .wk-al-q:focus{outline:2px solid var(--accent,#f2c14e);outline-offset:1px}
 </style>
-<script id="wk-al-q-js">(function(){var t=0;document.addEventListener('input',function(e){var i=e.target;if(!i||!i.matches||!i.matches('[data-alq]'))return;clearTimeout(t);t=setTimeout(function(){window.__wkAlSearch&&window.__wkAlSearch(i.value);},180);},true);})();</script></body></html>
+<script id="wk-al-q-js">(function(){var t=0;document.addEventListener('input',function(e){var i=e.target;if(!i||!i.matches||!i.matches('[data-alq]'))return;clearTimeout(t);t=setTimeout(function(){window.__wkAlSearch&&window.__wkAlSearch(i.value);},180);},true);})();</script><style id="wk-v410-css">
+.wk-al-bar .wk-al-q{height:42px!important;box-sizing:border-box!important;flex:0 1 210px!important;min-width:150px!important;max-width:260px!important;margin:0!important;padding:0 14px 0 36px!important;border-radius:12px!important;border:1px solid rgba(148,163,184,.26)!important;color:#e5ebf5!important;font:700 13px/1 inherit!important;font-family:inherit!important;background:rgba(10,14,26,.55) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238f9bad' stroke-width='2.4' stroke-linecap='round'><circle cx='11' cy='11' r='7'/><path d='M20 20l-3.5-3.5'/></svg>") no-repeat 12px 50%!important;-webkit-appearance:none;appearance:none}
+.wk-al-bar .wk-al-q::placeholder{color:#8f9bad;font-weight:600}
+.wk-al-bar .wk-al-q:focus{outline:0!important;border-color:rgba(216,180,90,.6)!important}
+.wk-al-bar .wk-al-q::-webkit-search-cancel-button{filter:invert(.7)}
+</style></body></html>
