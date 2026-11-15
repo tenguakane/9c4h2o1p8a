@@ -1613,7 +1613,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 491";
+const WIKI_VERSION = "15.11.2026 · 493";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -18073,7 +18073,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
       if (dirty[k]) return;
       var has = Object.prototype.hasOwnProperty.call(keys, k), v = has ? keys[k] : null;
       /* Ключ добавили позже: если в облаке его ещё нет, а на устройстве есть, не стираем, а отправляем в облако */
-      if (!has && k === 'onePieceWikiUnitTitlesV1' && lsGet(k) != null && me.role !== 'guest') { dirty[k] = true; clearTimeout(personalTimer); personalTimer = setTimeout(flushPersonal, 1000); return; }
+      if (!has && lsGet(k) != null && me.role !== 'guest') { dirty[k] = true; clearTimeout(personalTimer); personalTimer = setTimeout(flushPersonal, 1000); return; }
       if (lsGet(k) !== v) { quietSet(k, v); changed = true; if (k === 'onePieceWikiUnitTitlesV1') { try { if (window.__wkUnitTitlesReset) window.__wkUnitTitlesReset(); } catch (e) {} } }
     });
     return changed;
@@ -36909,12 +36909,12 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       if ((!got || !gotB) && !pre) wait.push(a);
       var html = pre ? '' : (got && gotB) ? '<span class="wk-ar-got">Награда получена · ' + n + ' ' + plCards(n) + ' + ' + fmtB(bl) + '</span>' : '<button type="button" class="wk-ar-btn k-' + a.kind + '" data-wk-ar="' + esc(a.id) + '" title="' + esc(arNoteOf(a)) + '">' + (got ? 'Забрать ' + fmtB(bl) : 'Забрать · ' + n + ' ' + plCards(n) + ' + ' + fmtB(bl)) + '</button>';
       if (!box) { if (!html) return; box = document.createElement('div'); box.className = 'wk-ar-b'; (a.el.querySelector('.achievement-copy') || a.el).appendChild(box); }
-      if (box.innerHTML !== html) box.innerHTML = html;
+      if (box.__h !== html) { box.__h = html; box.innerHTML = html; }
     });
     var bar = root.querySelector('.wk-ar-bar'), cards = wait.reduce(function (s, a) { return s + ((st.ach || {})[a.id] ? 0 : AR_OPT[a.kind].n); }, 0), belT = wait.reduce(function (s, a) { return s + ((st.achB || {})[a.id] ? 0 : arBel(a)); }, 0);
     var bh = wait.length ? '<div><b>Наградные наборы ждут: ' + wait.length + '</b><span>' + (cards ? cards + ' ' + plCards(cards) + ' + ' : '') + fmtB(belT) + ' за полученные медали</span></div><button type="button" class="wk-tx-btn pri" data-wk-ar="*">Забрать все</button>' : '';
     if (!bh) { if (bar) bar.remove(); }
-    else { if (!bar) { bar = document.createElement('div'); bar.className = 'wk-ar-bar'; var hd = root.querySelector('.achievement-header'); if (hd) hd.insertAdjacentElement('afterend', bar); else root.prepend(bar); } if (bar.innerHTML !== bh) bar.innerHTML = bh; }
+    else { if (!bar) { bar = document.createElement('div'); bar.className = 'wk-ar-bar'; var hd = root.querySelector('.achievement-header'); if (hd) hd.insertAdjacentElement('afterend', bar); else root.prepend(bar); } if (bar.__h !== bh) { bar.__h = bh; bar.innerHTML = bh; } }
     AR.busy = false;
     if (st.achOpen && !document.getElementById('wkArOv') && !AR.reopened && root.offsetParent) { AR.reopened = 1; arReveal(); }
   }
