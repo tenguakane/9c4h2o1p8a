@@ -1548,7 +1548,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "15.11.2026 · 452";
+const WIKI_VERSION = "15.11.2026 · 454";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -37761,6 +37761,7 @@ html body .wk-sc .wk-sc-row[data-n="5"]{grid-template-columns:repeat(5,minmax(0,
       var hasFx = !!f.querySelector('[data-wk-fx]') || !!f.querySelector('[data-field="article_id"]');
       if (hasFx) {
         var pv = document.createElement('aside'); pv.id = 'wkEdPv'; pv.setAttribute('aria-label', 'Предпросмотр карточки');
+        if (!f.querySelector('[data-field="article_id"]')) pv.classList.add('wk-pv-nodeck');
         pv.innerHTML = '<div class="wk-edpv-h"><b>Как увидит читатель</b><button type="button" data-pvx title="Закрыть">✕</button></div>' +
           [['cat', 'В каталоге'], ['deck', 'В колоде'], ['hero', 'Витрина']].map(function (p) { return '<figure class="wk-lk is-' + p[0] + (p[0] === 'deck' ? ' is-cat' : '') + '"><div class="wk-lk-card"><img class="wk-lk-img" alt=""><div class="wk-lk-txt"><div class="wk-lk-title card-title"></div><span class="wk-lk-chip"></span></div></div><figcaption>' + p[1] + '</figcaption></figure>'; }).join('') +
           '<div class="wk-pvs"><label>Фото для превью<select data-pvsrc><option value="">Как на сайте</option></select></label>' +
@@ -38780,4 +38781,44 @@ html:not(.wk-ed-hints) #wikiEditorOverlay #wkEdPv [data-pvnote]{display:none!imp
 <style id="wk-v445-css">.wk-sh-free{margin:8px 0 0;padding:8px 12px;border-radius:10px;border:1px dashed var(--accent,#d8b45a);background:color-mix(in srgb,var(--accent,#d8b45a) 10%,transparent);font-size:12.5px}</style>
 <style id="wk-v449-css">.wk-dk-gate{padding:28px 8px;text-align:center;opacity:.9}.wk-dk-gate p{margin:0 0 14px;line-height:1.5}</style>
 <style id="wk-v451-css">.wk-pg-one{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:8px 0}.wk-pg-one [data-t-n]{width:76px}.wk-pg-one [data-t-one]{flex:1 1 220px;min-width:0}.wk-pg-one input{padding:6px 8px;border-radius:8px;border:1px solid rgba(128,128,128,.4);background:transparent;color:inherit;font:inherit}</style>
+<style id="wk-v453-css">
+#wkEdPv.wk-pv-nodeck .wk-lk.is-deck{display:none!important}
+.wk-art-story .wk-arc-side{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.wk-art-story .wk-arc-side>*{margin:0!important;width:auto!important;max-width:none!important}
+.wk-art-story .wk-arc-side .arc-meta{padding:10px 12px;border:1px solid rgba(148,163,184,.22);border-radius:12px;background:rgba(15,23,42,.45);font-size:13px;line-height:1.55;display:flex;flex-direction:column;gap:4px}
+.wk-art-story .wk-arc-side .arc-meta .wk-arc-m{display:flex;justify-content:space-between;gap:10px}
+.wk-art-story .wk-arc-side .arc-meta .wk-arc-m b{font-weight:500;opacity:.65}
+.wk-art-story .wk-arc-side .arc-reading-progress{padding:10px 12px}
+.wk-art-story .wk-arc-side .arc-reading-progress-grid{grid-template-columns:1fr!important;gap:8px}
+.wk-art-story .wk-arc-side .arc-reading-track{padding:8px 10px}
+.wk-art-story .wk-arc-side .wk-skip{padding:10px 12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.wk-art-story .wk-arc-side .wk-skip small{flex:1 1 100%}
+</style>
+<script id="wk-v453-js">
+(function () {
+  'use strict';
+  /* Статья арки: «Мой просмотр», сведения и прогресс уходят под фото, а вкладки идут сразу под заголовком, как у персонажей */
+  function fix(root) {
+    if (!root || root.__wkArcSide) return;
+    var hero = root.querySelector(':scope > .article-hero-layout'), media = hero && hero.querySelector('.article-hero-media');
+    if (!media) return;
+    var skip = root.querySelector(':scope > .wk-skip'), meta = root.querySelector(':scope > .arc-meta'), prog = root.querySelector(':scope > .arc-reading-progress');
+    if (!skip && !meta && !prog) return;
+    root.__wkArcSide = 1;
+    var side = document.createElement('div'); side.className = 'wk-arc-side';
+    if (meta) {
+      var parts = (meta.textContent || '').replace(/\s+/g, ' ').split('•').map(function (x) { return x.trim(); }).filter(Boolean);
+      meta.innerHTML = parts.map(function (t) { var i = t.indexOf(':'); return i > 0 ? '<div class="wk-arc-m"><b>' + t.slice(0, i).replace(/[<>&]/g, '') + '</b><span>' + t.slice(i + 1).trim().replace(/[<>&]/g, '') + '</span></div>' : '<div class="wk-arc-m"><span>' + t.replace(/[<>&]/g, '') + '</span></div>'; }).join('');
+      side.appendChild(meta);
+    }
+    if (prog) side.appendChild(prog);
+    if (skip) side.appendChild(skip);
+    media.appendChild(side);
+  }
+  function scan() { fix(document.getElementById('storyArticleContent')); }
+  var t = 0;
+  new MutationObserver(function () { clearTimeout(t); t = setTimeout(scan, 30); }).observe(document.body, { childList: true, subtree: true });
+  scan();
+})();
+</script>
 </body></html>
