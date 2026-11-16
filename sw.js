@@ -68,7 +68,7 @@ self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
-  if (url.hostname === 'i.pinimg.com') { e.respondWith(image(req)); return; }
+  if (url.hostname === 'i.pinimg.com' || url.hostname === 'res.cloudinary.com') { e.respondWith(image(req)); return; }
   if (url.origin !== self.location.origin) return;
   if (url.pathname.indexOf('/wk-push/') >= 0 || url.pathname.indexOf('firebase-messaging-sw') >= 0) return;
   if (req.mode === 'navigate' || /\.html?$/.test(url.pathname) || url.pathname.endsWith('/')) { e.respondWith(page(req, e)); return; }
