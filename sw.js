@@ -1,6 +1,6 @@
 /* One Piece Wiki — кеш для повторных заходов и работы без сети.
    Положи рядом с index.html (корень сайта). Пуши живут отдельно, в firebase-messaging-sw.js. */
-const PAGE = 'wk-page-v1', IMG = 'wk-img-v1', STATIC = 'wk-static-v1';
+const PAGE = 'wk-page-v2', IMG = 'wk-img-v1', STATIC = 'wk-static-v1';
 const KEEP = [PAGE, IMG, STATIC];
 const IMG_LIMIT = 900;
 
@@ -18,21 +18,32 @@ async function trim(cache, limit) {
   if (keys.length > limit) await Promise.all(keys.slice(0, keys.length - limit).map((k) => cache.delete(k)));
 }
 
-/* страница: сначала сеть (чтобы новая версия приходила сразу; без изменений сервер отвечает 304), без сети — из кеша */
-async function page(req) {
+/* страница: сначала сеть (новая версия приходит сразу; без изменений сервер отвечает 304).
+   Если сеть отвечает дольше 6 секунд или не отвечает, показываем кеш, но запрос не бросаем:
+   когда свежая версия догрузится, она ляжет в кеш и страница получит сообщение wk-update. */
+async function page(req, evt) {
   const cache = await caches.open(PAGE);
-  try {
-    const res = await Promise.race([
-      fetch(req),
-      new Promise((_, rej) => setTimeout(() => rej(new Error('slow')), 6000))
-    ]);
-    if (res && res.ok) cache.put(req, res.clone());
+  const old = (await cache.match(req)) || (await cache.match(req, { ignoreSearch: true })) || (await cache.match('./')) || (await cache.match('index.html'));
+  const oldTag = old ? (old.headers.get('etag') || old.headers.get('last-modified') || old.headers.get('content-length') || '') : '';
+  const net = fetch(req).then(async (res) => {
+    if (res && res.ok) await cache.put(req, res.clone());
     return res;
-  } catch (e) {
-    const hit = (await cache.match(req)) || (await cache.match(req, { ignoreSearch: true })) || (await cache.match('./')) || (await cache.match('index.html'));
-    if (hit) return hit;
-    return fetch(req);
-  }
+  });
+  const first = await Promise.race([
+    net.then((r) => ({ r }), () => ({ r: null })),
+    new Promise((ok) => setTimeout(() => ok({ late: true }), 6000))
+  ]);
+  if (first.r) return first.r;
+  if (!old) return net;
+  const tail = net.then(async (res) => {
+    if (!res || !res.ok) return;
+    const tag = res.headers.get('etag') || res.headers.get('last-modified') || res.headers.get('content-length') || '';
+    if (tag && tag === oldTag) return;
+    const list = await self.clients.matchAll({ type: 'window' });
+    list.forEach((c) => c.postMessage({ type: 'wk-update' }));
+  }).catch(() => {});
+  if (evt && evt.waitUntil) evt.waitUntil(tail);
+  return old;
 }
 
 /* картинки: из кеша сразу, если нет — из сети и в кеш */
@@ -60,6 +71,6 @@ self.addEventListener('fetch', (e) => {
   if (url.hostname === 'i.pinimg.com') { e.respondWith(image(req)); return; }
   if (url.origin !== self.location.origin) return;
   if (url.pathname.indexOf('/wk-push/') >= 0 || url.pathname.indexOf('firebase-messaging-sw') >= 0) return;
-  if (req.mode === 'navigate' || /\.html?$/.test(url.pathname) || url.pathname.endsWith('/')) { e.respondWith(page(req)); return; }
+  if (req.mode === 'navigate' || /\.html?$/.test(url.pathname) || url.pathname.endsWith('/')) { e.respondWith(page(req, e)); return; }
   if (/\.(?:webmanifest|png|jpe?g|webp|svg|ico|woff2?|css|js)$/.test(url.pathname)) { e.respondWith(stale(req)); return; }
 });
