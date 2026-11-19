@@ -35964,6 +35964,21 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       if (DK.sort === 'rar') return RORD.indexOf(a.r) - RORD.indexOf(b.r);
       var oa = st.owned[a.key] ? 0 : 1, ob = st.owned[b.key] ? 0 : 1; return oa - ob || (GT2[b.key] || 0) - (GT2[a.key] || 0); }) }); }
     var cnt = function (p) { return p.cards.filter(function (k) { return st.owned[k.key]; }).length; }, have = cnt(P), tot = P.cards.length;
+    var allNavPages = aq ? alAll(base, st) : pages;
+    var navHave = base.filter(function (k) { return !!st.owned[k.key]; }).length;
+    var navTotal = base.length;
+    var navPercent = navTotal ? Math.round(navHave * 100 / navTotal) : 0;
+    var albSelected = ALBS.filter(function (q) { return q.id === st.alb; })[0];
+    var albumTheme = albSelected ? albSelected.n : 'Капитанский фолиант';
+    var navGroup = '', navRows = '';
+    allNavPages.forEach(function (p) {
+      var saga = p.custom ? 'МОИ ПОДБОРКИ' : (p.all ? 'КОЛЛЕКЦИЯ' : String(p.saga || 'ДРУГИЕ АРКИ'));
+      if (saga !== navGroup) { navRows += '<div class="wk-al-sidegroup">' + esc(saga) + '</div>'; navGroup = saga; }
+      var h = cnt(p), t = p.cards.length, isActive = !aq && p.id === DK.apId;
+      navRows += '<button type="button" class="wk-al-sideitem' + (isActive ? ' on' : '') + '" data-aljump="' + esc(p.id) + '" title="' + esc(p.name) + '" aria-pressed="' + isActive + '">' +
+        '<span class="wk-al-sideitem-name">' + esc(p.name) + '</span><small>' + h + '/' + t + '</small>' + (t && h === t ? '<i aria-label="Собрано">✓</i>' : '') + '</button>';
+    });
+    if (aq) navRows = '<button type="button" class="wk-al-sideitem on" aria-current="page" disabled><span class="wk-al-sideitem-name">Результаты поиска</span><small>' + tot + '</small></button>' + navRows;
     var opts = pages.map(function (p, i) { var h = cnt(p); return '<option value="' + esc(p.id) + '"' + (i === pi ? ' selected' : '') + '>' + esc(p.name) + (p.custom ? ' — ' + p.cards.length : ' — ' + h + '/' + p.cards.length + (!p.all && h === p.cards.length ? ' ✓' : '')) + '</option>'; }).join('');
     var KL = { char: 'Персонажи', wanted: 'Награды', fruit: 'Плоды', useful: 'Полезное', custom: 'Особые' };
     var srcOf = function (k) { var kd = k.kind || 'char', t = (kd === 'fruit' || kd === 'useful') ? k.ty : ''; return (KL[kd] || 'Персонажи') + (t ? ' · ' + t : ''); };
@@ -35982,12 +35997,15 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     }).join('');
     var ownedP = P.cards.filter(function (k) { return st.owned[k.key]; }), allBack = ownedP.length > 0 && ownedP.every(function (k) { return DK.alBack[k.key]; });
     var done = !isC && have === tot;
-    return '<div class="wk-al' + (cmpOn() ? ' cmp' : '') + '' + (ALBS.some(function (q) { return q.id === st.alb; }) ? ' alb-' + st.alb : '') + '" data-al>' +
-      '<div class="wk-al-bar">' + (pre || '') + '<input type="search" class="wk-al-q" data-alq placeholder="Поиск по альбому" value="' + esc(DK.alQ || '') + '" aria-label="Поиск по альбому" autocomplete="off">' + (aq ? '' : '') + '<div class="wk-al-nav"><button type="button" class="wk-al-arw" data-alp="-1"' + (pi ? '' : ' disabled') + ' aria-label="Предыдущая арка">‹</button>' +
-      '<label class="wk-al-pick"><span class="wk-al-pn">Страница ' + (pi + 1) + ' из ' + pages.length + '</span><select class="wk-al-sel" data-alsel aria-label="Выбрать арку" title="' + esc(P.name) + '">' + opts + '</select></label>' +
+    return '<div class="wk-al wk-al-modern' + (cmpOn() ? ' cmp' : '') + ' alb-' + (albSelected ? esc(albSelected.id) : 'captain') + '" data-al>' +
+      '<header class="wk-al-cover"><div class="wk-al-cover-copy"><small>ONE PIECE · КОЛЛЕКЦИЯ КАРТ</small><h3>' + esc(albumTheme) + '</h3><span>Все страницы и арки твоей колоды</span></div>' +
+      '<div class="wk-al-cover-stats"><div class="wk-al-ring" style="--pct:' + navPercent + '%"><b>' + navPercent + '%</b></div><div><strong>' + navHave + ' / ' + navTotal + '</strong><small>карточек собрано</small></div></div></header>' +
+      '<div class="wk-al-shell"><aside class="wk-al-sidebar" aria-label="Навигация по аркам"><div class="wk-al-sidecap">НАВИГАЦИЯ</div><nav class="wk-al-sidelist">' + navRows + '</nav><div class="wk-al-sidefoot">Выбирай арку или подборку. Прогресс обновляется по твоим карточкам.</div></aside>' +
+      '<main class="wk-al-main"><div class="wk-al-bar">' + (pre || '') + '<input type="search" class="wk-al-q" data-alq placeholder="Поиск по альбому" value="' + esc(DK.alQ || '') + '" aria-label="Поиск по альбому" autocomplete="off">' + (aq ? '' : '') + '<div class="wk-al-nav"><button type="button" class="wk-al-arw" data-alp="-1"' + (pi ? '' : ' disabled') + ' aria-label="Предыдущая арка">‹</button>' +
+      '<div class="wk-al-pagepill" aria-label="Текущая страница альбома" title="' + esc(P.name) + '"><b>' + (pi + 1) + ' / ' + pages.length + '</b><span>' + esc(P.name) + '</span></div>' +
       '<button type="button" class="wk-al-arw" data-alp="1"' + (pi < pages.length - 1 ? '' : ' disabled') + ' aria-label="Следующая арка">›</button></div><button type="button" class="wk-al-cmp" data-alcmp role="switch" aria-checked="' + cmpOn() + '"><i></i>Компактный режим</button>' + alColsHTML() + '<button type="button" class="wk-al-cmp" data-alhm role="switch" aria-checked="' + hmOn() + '"><i></i>Только полученные</button><div class="wk-dk-sortw wk-al-sortw" role="group" aria-label="Сортировка">' + [['', 'По сюжету'], ['new', 'Сначала новые'], ['rar', 'По редкости']].map(function (x) { return '<button type="button" data-dks="' + x[0] + '" class="' + ((DK.sort || '') === x[0] ? 'on' : '') + '" aria-pressed="' + ((DK.sort || '') === x[0]) + '">' + x[1] + '</button>'; }).join('') + '</div>' + (!DK.inF && !st.__fake && (st.pages || []).length < PG_MAX ? '<button type="button" class="wk-tx-btn wk-al-new" data-alnew>＋ Своя вкладка</button>' : '') + '</div>' +
       '<section class="wk-al-page' + (done ? ' full' : '') + (DK.alDir ? ' turn' + (DK.alDir > 0 ? 'r' : 'l') : '') + '"><header class="wk-al-h">' + (P.saga ? '<small>' + esc(P.saga) + '</small>' : '') + (ed ? '<input class="wk-al-name" type="text" maxlength="24" value="' + esc(P.cname) + '" aria-label="Название вкладки">' : '<h4>' + esc(P.name) + '</h4>') + '<div class="wk-al-prog' + (isC ? ' pc' : '') + '">' + (isC ? '<b>' + cardsWord(P.cards.length) + '</b>' + (mineC ? '<div class="wk-al-ctl">' + (ed ? '<button type="button" class="wk-tx-btn" data-aladd>＋ Добавить карты</button><button type="button" class="wk-tx-btn" data-aldel>Удалить вкладку</button><button type="button" class="wk-tx-btn pri" data-aled>Готово</button>' : '<button type="button" class="wk-tx-btn" data-aled>✎ Изменить</button>') + '</div>' : '') : '<span><em style="width:' + Math.round(have / Math.max(1, tot) * 100) + '%"></em></span><b>' + have + ' из ' + tot + '</b>' + (done ? '<i class="wk-al-done">Страница собрана</i>' : '')) + (ownedP.length && !ed ? '<button type="button" class="wk-al-flall" data-alflipall>⟲ ' + (allBack ? 'Лицом' : 'Перевернуть все') + '</button>' : '') + '</div></header>' +
-      (ed ? '<p class="wk-sh-hint wk-al-edh">Перетаскивай карточки мышью. На телефоне зажми карточку и двигай. Можно и кнопками ‹ ›.</p>' : '') + '<div class="wk-al-grid' + (P.all ? ' al-arcs' : '') + (ed ? ' edit' : '') + '"' + alColsStyle() + '>' + (slots || (isC ? '<p class="wk-dk-fnote">' + (mineC ? 'Здесь пока пусто. Нажми «Изменить», потом «Добавить карты».' : 'В этой вкладке пока нет карточек.') + '</p>' : '')) + '</div>' + (P.all && P.cards.length > lim ? '<div class="wk-al-moreb"><button type="button" class="wk-tx-btn" data-almore>Показать ещё (' + (P.cards.length - lim) + ')</button></div>' : '') + '<footer class="wk-al-f">' + (pi + 1) + '</footer></section></div>';
+      (ed ? '<p class="wk-sh-hint wk-al-edh">Перетаскивай карточки мышью. На телефоне зажми карточку и двигай. Можно и кнопками ‹ ›.</p>' : '') + '<div class="wk-al-grid' + (P.all ? ' al-arcs' : '') + (ed ? ' edit' : '') + '"' + alColsStyle() + '>' + (slots || (isC ? '<p class="wk-dk-fnote">' + (mineC ? 'Здесь пока пусто. Нажми «Изменить», потом «Добавить карты».' : 'В этой вкладке пока нет карточек.') + '</p>' : '')) + '</div>' + (P.all && P.cards.length > lim ? '<div class="wk-al-moreb"><button type="button" class="wk-tx-btn" data-almore>Показать ещё (' + (P.cards.length - lim) + ')</button></div>' : '') + '<footer class="wk-al-f">' + (pi + 1) + '</footer></section></main></div></div>';
   }
   /* v563: размерность сетки альбома — карточек в ряду (ползунок) */
   function alColsGet() { try { var v = parseInt(localStorage.getItem('wkAlCols'), 10); return v >= 1 && v <= 10 ? v : 0; } catch (e) { return 0; } }
@@ -36116,10 +36134,12 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (DK.view === 'album') {
       var ab = DK.v && VAR[DK.v] ? varCards(cards).filter(function (k) { return k.v === DK.v; }) : cards;
       if (DK.k) ab = ab.filter(function (k) { return (k.kind || 'char') === DK.k; });
-      var sgA = sagaStrip(ab, st, true); if (DK.saga) ab = ab.filter(function (k) { return sagaOf(k) === DK.saga; });
+      // Album navigation lives in the left-side arc list. The legacy saga strip
+      // no longer appears here, and its old selection must not hide pages.
+      if (DK.saga) DK.saga = '';
       var vrow = '<div class="wk-dk-filters wk-dk-vf"><div>' + [['', 'Основные'], ['holo', 'Голографическая'], ['gold', 'Пламенная'], ['neg', 'Негативная']].map(function (x) { return '<button type="button" data-v="' + x[0] + '" class="' + (DK.v === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div>';
       var krow = '<div class="wk-dk-filters wk-dk-kf"><div>' + [['', 'Все типы'], ['char', 'Персонажи'], ['fruit', 'Плоды'], ['useful', 'Статьи'], ['wanted', 'Розыск']].concat(cards.some(function (q) { return q.kind === 'custom'; }) ? [['custom', 'Свои']] : []).map(function (x) { return '<button type="button" data-kind="' + x[0] + '" class="' + (DK.k === x[0] ? 'active' : '') + '">' + x[1] + '</button>'; }).join('') + '</div></div>';
-      return (gridOn() ? viewHTML() : '') + sgA + albumHTML(ab, st, vrow + krow);
+      return (gridOn() ? viewHTML() : '') + albumHTML(ab, st, vrow + krow);
     }
     var base = DK.v && VAR[DK.v] ? varCards(cards).filter(function (k) { return k.v === DK.v; }) : cards;
     if (DK.k) base = base.filter(function (k) { return (k.kind || 'char') === DK.k; });
@@ -36333,7 +36353,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var stat = '<div class="wk-dk-fstat">' + avHTML(DK.fr, 'lg') + '<b>' + nmHTML(DK.fr) + '</b>' + ttlTag(DK.fr) + '<span>наборов: ' + (d.deck.packs || 0) + '</span><span>🟡 ' + rc.legendary + '</span><span>🟣 ' + rc.epic + '</span><span>🔵 ' + rc.rare + '</span><span>⚪ ' + rc.common + '</span><span>особых: ' + vc + '</span>' + (hidden ? '<span>🔒 скрыто: ' + hidden + '</span>' : '') + (txApi() ? '<button type="button" class="wk-tx-btn pri" data-tx="compose">Предложить обмен</button><button type="button" class="wk-tx-btn" data-tx="gift">Подарить</button>' : '') + '</div>';
     var fo = {}; shown.forEach(function (x) { fo[x.k.key] = x.n; });
     FX.st = { owned: fo, got: d.deck.got || {}, frame: d.deck.frame || '', alb: d.deck.alb || '', hold: {}, pages: d.deck.pages || [], __friend: true };
-    return stat + showcaseHTML(C, d.deck.show, false, d.deck.showCap, { frame: '', bg: d.deck.bg }) + showcaseHTML(C, wantKeys(d.deck.want, fo), false, 3, { frame: '', bg: d.deck.bg }, 1) + (hidden ? '<p class="wk-dk-fnote">🔒 Карточек-спойлеров скрыто: ' + hidden + '. Они появятся, когда ты дойдёшь до этих арок.</p>' : '') + '<div id="wkDkFriendColl">' + friendCollHTML() + '</div>';
+    return stat + showcaseHTML(C, d.deck.show, false, d.deck.showCap, { frame: '', bg: d.deck.bg, alb: d.deck.alb }) + showcaseHTML(C, wantKeys(d.deck.want, fo), false, 3, { frame: '', bg: d.deck.bg, alb: d.deck.alb }, 1) + (hidden ? '<p class="wk-dk-fnote">🔒 Карточек-спойлеров скрыто: ' + hidden + '. Они появятся, когда ты дойдёшь до этих арок.</p>' : '') + '<div id="wkDkFriendColl">' + friendCollHTML() + '</div>';
   }
   var FS = { view: 'grid', saga: '', v: '', k: '', f: 'have', r: '', sort: '', pg: 0, apId: '', fopen: false, alBack: {}, alLim: 60 };
   var FKEYS = Object.keys(FS), FX = { on: false, st: null, own: null, oc: null, fc: null };
@@ -37505,7 +37525,13 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     try { sil = SIL.char; } catch (e) {}
     var a = k ? '<div class="wk-al-s has"><div class="wk-al-fi"><div class="wk-al-ff"><div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + '</div></div></div></div>' : '';
     var m = '<div class="wk-al-s miss r-common"><div class="wk-al-sil">' + sil + '<b>№ 2</b><span>Ещё не открыта</span></div></div>';
-    return '<div class="wk-sh-art wk-sh-pv wk-sh-albpv" aria-hidden="true"><div class="wk-al alb-' + id + '"><section class="wk-al-page"><header class="wk-al-h"><small>Сага</small><h4>Страница альбома</h4></header><div class="wk-al-grid">' + a + m + '</div></section></div></div>';
+    var theme = ALBS.filter(function (q) { return q.id === id; })[0];
+    var title = theme ? theme.n : 'Капитанский фолиант';
+    return '<div class="wk-sh-art wk-sh-pv wk-sh-albpv" aria-hidden="true"><div class="wk-al wk-al-modern alb-' + esc(id) + '">' +
+      '<header class="wk-al-cover"><div class="wk-al-cover-copy"><small>ONE PIECE · КОЛЛЕКЦИЯ</small><h3>' + esc(title) + '</h3></div></header>' +
+      '<div class="wk-al-shell"><aside class="wk-al-sidebar"><div class="wk-al-sidecap">НАВИГАЦИЯ</div><span class="wk-al-sideitem on">Ист-Блю</span><span class="wk-al-sideitem">Алабаста</span><span class="wk-al-sideitem">Скайпия</span><span class="wk-al-sideitem">Маринфорд</span></aside>' +
+      '<main class="wk-al-main"><section class="wk-al-page"><header class="wk-al-h"><small>Сага</small><h4>Страница альбома</h4></header><div class="wk-al-grid">' + a + m + '</div></section></main></div></div>' +
+      '<div class="wk-sh-vitr-preview wk-sc vitr-theme vitr-alb-' + esc(id) + '"><div class="wk-sh-vitr-tag">Витрина в комплекте</div><div class="wk-sh3"><div class="wk-sh3-wall"></div><div class="wk-sh-vitr-slots"><i></i><i></i><i></i></div><div class="wk-sh3-plank"></div></div></div></div>';
   }
   function bkPreview(id) {
     var one = function (r) { return '<div class="wk-pk r-' + r + ' wk-dk-sbin wk-sh-bkc"><div class="wk-pk-bk">' + backInner(r, '', false, id) + '</div></div>'; };
@@ -37516,7 +37542,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (pref === 'a_') return albPreview(C, st, id);
     if (pref === 'v_') return '<div class="wk-sh-art wk-av-pv" aria-hidden="true"><span class="wk-ava wk-dav s-lg" data-wk-frm="' + id + '" style="--c:' + esc(((window.__wikiAccounts || []).filter(function (a) { return a.login === myLogin(); })[0] || {}).color || '#94a3b8') + ';background-color:' + esc(((window.__wikiAccounts || []).filter(function (a) { return a.login === myLogin(); })[0] || {}).color || '#94a3b8') + '">' + esc((accName(myLogin()) || '?').charAt(0)) + '</span></div>';
     if (pref === 'n_') { var pt = nkSplit(st.nkc)[0] ? nkSplit(st.nkc)[1] : 't'; return '<div class="wk-sh-art wk-nk-pv" aria-hidden="true"><span class="wk-nm"' + (pt !== 't' ? ' data-wk-nk="' + id + '"' : '') + '>' + esc(accName(myLogin()) || 'Ник') + '</span><span class="wk-ttl"' + (pt !== 'n' ? ' data-wk-nk="' + id + '"' : '') + '>' + esc(ttlOf(myLogin()) || 'Титул') + '</span></div>'; }
-    var key = pvKey(C, st), cos = pref === 'f_' ? { frame: id } : { bg: id };
+    var key = pvKey(C, st), cos = pref === 'f_' ? { frame: id, alb: st.alb } : { bg: id, alb: st.alb };
     if (!key) return '<div class="wk-sh-art wk-sh-sw ' + pref + '-' + id + '" aria-hidden="true">' + (pref === 'f_' ? frameSVG() : bgSVG()) + '</div>';
     return '<div class="wk-sh-art wk-sh-pv" aria-hidden="true">' + showcaseHTML(C, [key], false, 3, cos) + '</div>';
   }
@@ -37603,7 +37629,12 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     { id: 'wanted', n: 'Розыскной лист', price: 30000, d: 'Плотная выгоревшая бумага с обожжёнными краями.' },
     { id: 'jade', n: 'Нефритовая шкатулка', price: 30000, d: 'Глубокий зелёный камень и золотая решётка.' },
     { id: 'wave', n: 'Восточная волна', price: 35000, d: 'Индиго с узором волн и красной лентой.' },
-    { id: 'pearl', n: 'Чёрный жемчуг', price: 50000, d: 'Чёрная страница с переливающимся кантом.' }
+    { id: 'pearl', n: 'Чёрный жемчуг', price: 50000, d: 'Чёрная страница с переливающимся кантом.' },
+    { id: 'atlas', n: 'Морской атлас', price: 30000, d: 'Тёмно-синяя навигационная карта с координатами, компасом и подсвеченными ячейками.' },
+    { id: 'trophies', n: 'Зал трофеев', price: 45000, d: 'Тёмная музейная галерея, золотые пьедесталы и коллекционные ниши.' },
+    { id: 'dossier', n: 'Архив Дозора', price: 32000, d: 'Секретные досье, папки, красные штампы и архивная бумага.' },
+    { id: 'holoarchive', n: 'Голоархив', price: 55000, d: 'Игровой голографический музей с неоновой сеткой и сияющими слотами.' },
+    { id: 'cabinet', n: 'Коллекционный шкаф', price: 50000, d: 'Резное дерево, латунь, полки и отдельные ячейки для трофейных карт.' }
   ];
   var BACKS = [{ id: 'skull', n: 'Весёлый Роджер', price: 30000 }, { id: 'fruit', n: 'Спиральный плод', price: 30000 }, { id: 'bolt', n: 'Молния воли', price: 30000 }, { id: 'blades', n: 'Скрещённые клинки', price: 30000 }];
   function allBacks() { return BACKS.concat(CB.filter(cbOk).map(function (q) { return { id: q.id, n: q.n || 'Рубашка', price: FREE() ? 0 : (q.price || 30000), ch: q.ch, ep: q.ep, cu: 1 }; })); }
@@ -37744,7 +37775,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       boost: '<h3 class="wk-dk-h">Усиления</h3><p class="wk-sh-hint">Расходуются сами, когда пригодятся: щит спасает серию входов, благословение добавляет шанс переработке.</p><div class="wk-sh-pks">' + pick(['sand', 'auto', 'shield', 'bless', 'fake']) + '</div>' +
         '<h3 class="wk-dk-h">Особые находки</h3><p class="wk-sh-hint">Наборы и выбор карточек под конкретную цель.</p><div class="wk-sh-pks">' + pick(['compass', 'map', 'key', 'warrant']) + '</div>',
       save: '<h3 class="wk-dk-h">Сбережения</h3><p class="wk-sh-hint">Копилка запирает белли на 7 дней и возвращает их с процентами: первая даёт +10%, вторая +15%, третья +20%. Пока белли лежат в копилке, потратить их нельзя. Вторую и третью копилку можно докупить, чтобы вклады шли одновременно и приносили больше.</p><div class="wk-sh-pks">' + piggyAll(st, bel) + '</div>',
-      des: '<h3 class="wk-dk-h">Фон витрины</h3><p class="wk-sh-hint">Меняет стену и полку за карточками в твоей витрине. Покупается один раз, выбрать или снять можно в любой момент. Другие участники видят твой фон.</p><div class="wk-sh-pks">' + cosRow('bg', BGS, 'b_') + '</div><h3 class="wk-dk-h">Дизайн альбома</h3><p class="wk-sh-hint">Меняет вид страниц в режиме «Альбом» в твоей колоде. Покупается один раз, выбрать или снять можно в любой момент.</p><div class="wk-sh-pks">' + cosRow('alb', ALBS, 'a_') + '</div><h3 class="wk-dk-h">Рамки аватара</h3><p class="wk-sh-hint">Эффект вокруг твоего аватара везде, где он показан: в обмене, в списках участников, в колоде. Другие участники тоже его видят.</p><div class="wk-sh-pks">' + cosRow('avf', AVF, 'v_') + '</div><h3 class="wk-dk-h">Эффект имени и титула</h3><p class="wk-sh-hint">Цвет или свечение для имени, для титула или для обоих сразу: в обменах, списках, колоде и профиле. Покупается один раз, выбрать или снять можно в любой момент. Титул выбирается в профиле.</p>' + nkTgtHTML(st) + '<div class="wk-sh-pks">' + cosRow('nkc', NKC, 'n_') + '</div>',
+      des: '<h3 class="wk-dk-h">Фон витрины</h3><p class="wk-sh-hint">Дополнительное оформление окружения витрины: меняет фон и полку, не отменяя стиль выбранного альбома. Можно снять или сменить в любой момент; фон виден другим участникам.</p><div class="wk-sh-pks">' + cosRow('bg', BGS, 'b_') + '</div><h3 class="wk-dk-h">Дизайн альбома</h3><p class="wk-sh-hint">Каждый альбом включает собственную витрину избранных карточек в том же стиле. Навигация по аркам слева, страницы и фильтры остаются прежними. «Капитанский фолиант» бесплатный.</p><div class="wk-sh-pks">' + '<article class="wk-sh-pk p-x p-cos' + (!st.alb ? ' is-on' : '') + '">' + albPreview(C, st, 'captain') + '<div class="wk-sh-info"><h4>Капитанский фолиант <em class="wk-sh-st' + (!st.alb ? ' on' : '') + '">' + (!st.alb ? 'Выбрано' : 'Бесплатно') + '</em></h4><p class="wk-sh-note">Классический переплёт, страницы пергамента, боковая навигация и витрина в стиле капитанской книги.</p></div><span class="wk-sh-bw"><button type="button" class="wk-tx-btn' + (!st.alb ? '' : ' pri') + '" data-tx="cossel" data-kind="alb" data-id="captain">' + (!st.alb ? 'Выбрано' : 'Выбрать бесплатно') + '</button></span></article>' + cosRow('alb', ALBS, 'a_') + '</div><h3 class="wk-dk-h">Рамки аватара</h3><p class="wk-sh-hint">Эффект вокруг твоего аватара везде, где он показан: в обмене, в списках участников, в колоде. Другие участники тоже его видят.</p><div class="wk-sh-pks">' + cosRow('avf', AVF, 'v_') + '</div><h3 class="wk-dk-h">Эффект имени и титула</h3><p class="wk-sh-hint">Цвет или свечение для имени, для титула или для обоих сразу: в обменах, списках, колоде и профиле. Покупается один раз, выбрать или снять можно в любой момент. Титул выбирается в профиле.</p>' + nkTgtHTML(st) + '<div class="wk-sh-pks">' + cosRow('nkc', NKC, 'n_') + '</div>',
       bk: '<h3 class="wk-dk-h">Рубашки карточек</h3><p class="wk-sh-hint">Другой знак на обороте карточек: в наборах, в колоде и в альбоме. Цвет и свечение по-прежнему зависят от редкости. Покупается один раз.</p><div class="wk-sh-pks">' + cosRow('back', allBacks().filter(function (q) { return (!/^(skull|fruit|bolt|blades)$/.test(q.id) || cos['k_' + q.id]) && (!q.cu || bkOk(q)); }), 'k_') + '</div>' + bkAdminHTML()
     };
   }
@@ -38156,6 +38187,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     }
     if (a === 'cossel') {
       var kd0 = b.getAttribute('data-kind'), kd = kd0 === 'bg' ? 'bg' : kd0 === 'alb' ? 'alb' : kd0 === 'back' ? 'back' : kd0 === 'avf' ? 'avf' : kd0 === 'nkc' ? 'nkc' : 'frame', cid = b.getAttribute('data-id');
+      if (kd === 'alb' && cid === 'captain') { st.alb = ''; save(st); repaint(); return; }
       if (!(st.cos || {})[(kd === 'frame' ? 'f_' : kd === 'alb' ? 'a_' : kd === 'back' ? 'k_' : kd === 'avf' ? 'v_' : kd === 'nkc' ? 'n_' : 'b_') + cid]) return;
       if (kd === 'nkc') { var nc = nkSplit(st.nkc); st.nkc = nc[0] === cid ? '' : nkJoin(cid, nc[0] ? nc[1] : 't'); } else st[kd] = st[kd] === cid ? '' : cid; save(st); repaint(); try { if (window.__wkCosApply) window.__wkCosApply(); } catch (e) {} return;
     }
@@ -38275,12 +38307,16 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     return '<div class="wk-dk-empty wk-sil wk-wl-sil r-' + k.r + '" title="' + esc(cName(k) + ' · ' + RN4[k.r]) + '"><span class="wk-sil-ic">' + ic + '</span><span class="wk-sil-g" aria-hidden="true">' + g + '</span><b>' + esc(cName(k)) + '</b><span class="wk-sil-a">' + RN4[k.r] + (where ? ' · ' + where : '') + '</span></div>';
   }
   function showcaseHTML(C, keys, mine, cap, cos, wl) {
-    cap = wl ? 3 : cap >= 7 ? 7 : cap >= 5 ? 5 : 3; cos = cos || {}; var cosCls = (['gold', 'wood', 'foam'].indexOf(cos.frame) >= 0 ? ' fr-' + cos.frame : '') + (BGS.some(function (q) { return q.id === cos.bg; }) ? ' bg-' + cos.bg : '');
+    cap = wl ? 3 : cap >= 7 ? 7 : cap >= 5 ? 5 : 3; cos = cos || {};
+    var albId = cos.alb && ALBS.some(function (q) { return q.id === cos.alb; }) ? cos.alb : 'captain';
+    var cosCls = (['gold', 'wood', 'foam'].indexOf(cos.frame) >= 0 ? ' fr-' + cos.frame : '') +
+      (BGS.some(function (q) { return q.id === cos.bg; }) ? ' bg-' + cos.bg : '') +
+      ' vitr-theme vitr-alb-' + albId;
     keys = (keys || []).filter(function (k) { return cardByKey(C, k); }).slice(0, cap);
     if (!mine && !keys.length) return '';
-    if (wl && mine && wantHidden()) return '<section class="wk-sc mine wl"><div class="wk-sc-h"><h3 class="wk-dk-h">Ищу</h3><button type="button" class="wk-tx-btn" data-wanttog>Показать</button></div></section>';
+    if (wl && mine && wantHidden()) return '<section class="wk-sc mine wl' + cosCls + '"><div class="wk-sc-h"><h3 class="wk-dk-h">Ищу</h3><button type="button" class="wk-tx-btn" data-wanttog>Показать</button></div></section>';
     /* Пустая полка своей колоды сворачивается в одну строку, чтобы не занимать экран */
-    if (mine && !keys.length) return '<section class="wk-sc mine wk-sc-empty' + (wl ? ' wl' : '') + '"><div class="wk-sc-h"><h3 class="wk-dk-h">' + (wl ? 'Ищу' : 'Моя витрина') + '</h3><span class="wk-sc-emp">' + (wl ? 'пока пусто · отметь до 3 карточек, которые ищешь' : 'пока пусто · выбери до ' + cap + ' любимых карточек') + '</span><button type="button" class="wk-tx-btn" data-tx="' + (wl ? 'wantedit' : 'showedit') + '">Выбрать</button></div></section>';
+    if (mine && !keys.length) return '<section class="wk-sc mine wk-sc-empty' + (wl ? ' wl' : '') + cosCls + '"><div class="wk-sc-h"><h3 class="wk-dk-h">' + (wl ? 'Ищу' : 'Моя витрина') + '</h3><span class="wk-sc-emp">' + (wl ? 'пока пусто · отметь до 3 карточек, которые ищешь' : 'пока пусто · выбери до ' + cap + ' любимых карточек') + '</span><button type="button" class="wk-tx-btn" data-tx="' + (wl ? 'wantedit' : 'showedit') + '">Выбрать</button></div></section>';
     var slots = (cap === 7 ? [0, 1, 2, 3, 4, 5, 6] : cap === 5 ? [0, 1, 2, 3, 4] : [0, 1, 2]).map(function (i) {
       var key = keys[i], k = key && cardByKey(C, key);
       if (k && wl && !(!mine && spareOf(key))) return '<div class="wk-sc-s wk-sh3-it r-' + k.r + '">' + wlSil(k) + '<i class="wk-sh3-stand" aria-hidden="true"></i></div>';
@@ -38495,7 +38531,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     try { refreshBacks(pane, false); } catch (e) {}
     if (!DK.pack && st.open && st.open.pk && st.open.pk.length) { DK.pack = st.open.pk; DK.flipped = (st.open.fl || []).length; DK.restored = 1; }
     pane.innerHTML = '<div class="wk-pane-head"><div><h2>Колода</h2><p>Карточки персонажей (по одной на каждое фото в арке), дьявольских плодов, полезных статей и плакатов розыска. Новые появляются по мере прохождения.</p></div><div class="wk-dk-hbtn">' + (isDima() && DK.tab === 'me' && !DK.fr ? adminHTML() : '') + '<button type="button" class="wk-dk-reset" data-act="rules" title="Правила и шансы">Правила</button><button type="button" class="wk-dk-reset" data-act="cloud" title="Отправить колоду в облако или забрать её оттуда">Облако</button></div></div>' +
-      tabsHTML() + (DK.tab === 'me' ? (DK.fr ? meBarHTML() : '') + (DK.fr ? '<div id="wkDkFriend">' + friendBody() + '</div>' : (isDima() ? '' : adminHTML()) + '<div id="wkDkPack">' + packHTML(cards, st) + '</div><div id="wkDkAutoLog">' + (DK.autoLog ? autoLogHTML(cards, st) : '') + '</div>' + (st.__fake ? '' : showcaseHTML(cards, st.show, true, showCap(st), { frame: '', bg: st.bg }) + showcaseHTML(cards, wantKeys(st.want, st.owned), true, 3, { frame: '', bg: st.bg }, 1)) + '<div class="wk-st-tg"><button type="button" class="wk-tx-btn" data-sttog>' + (stHidden() ? 'Показать статистику' : 'Скрыть статистику') + '</button></div><div id="wkDkStats">' + statsBox(cards, st) + '</div>' + meBarHTML() + '<h3 class="wk-dk-h">Коллекция</h3><div id="wkDkColl">' + collHTML(cards, st) + '</div>') : '<div id="wkTxBody" class="wk-tx-body">' + (DK.tab === 'craft' ? craftHTML(cards, st) : DK.tab === 'shop' ? shopHTML(cards, st) : DK.tab === 'people' ? peopleHTML() : DK.tab === 'feed' ? feedHTML() : tradeHTML()) + '</div>');
+      tabsHTML() + (DK.tab === 'me' ? (DK.fr ? meBarHTML() : '') + (DK.fr ? '<div id="wkDkFriend">' + friendBody() + '</div>' : (isDima() ? '' : adminHTML()) + '<div id="wkDkPack">' + packHTML(cards, st) + '</div><div id="wkDkAutoLog">' + (DK.autoLog ? autoLogHTML(cards, st) : '') + '</div>' + (st.__fake ? '' : showcaseHTML(cards, st.show, true, showCap(st), { frame: '', bg: st.bg, alb: st.alb }) + showcaseHTML(cards, wantKeys(st.want, st.owned), true, 3, { frame: '', bg: st.bg, alb: st.alb }, 1)) + '<div class="wk-st-tg"><button type="button" class="wk-tx-btn" data-sttog>' + (stHidden() ? 'Показать статистику' : 'Скрыть статистику') + '</button></div><div id="wkDkStats">' + statsBox(cards, st) + '</div>' + meBarHTML() + '<h3 class="wk-dk-h">Коллекция</h3><div id="wkDkColl">' + collHTML(cards, st) + '</div>') : '<div id="wkTxBody" class="wk-tx-body">' + (DK.tab === 'craft' ? craftHTML(cards, st) : DK.tab === 'shop' ? shopHTML(cards, st) : DK.tab === 'people' ? peopleHTML() : DK.tab === 'feed' ? feedHTML() : tradeHTML()) + '</div>');
     if (DK.tab === 'me' && DK.pack && st.open && st.open.fl) st.open.fl.forEach(function (i) { var el = pane.querySelector('.wk-pk[data-i="' + i + '"]'); if (el) el.classList.add('on'); cvShow(pane, i); });
     if (DK.restored && DK.tab === 'me' && st.open) { var rn = pane.querySelector('#wkDkPack .wk-dk-row'); if (rn) rn.insertAdjacentHTML('beforebegin', '<p class="wk-dk-convnote">Набор не был досмотрен — карточки ждут тебя.</p>'); }
     txWatchStart(); frWatchStart(); refreshTrades(pane, false); feedLoad(pane, false);
@@ -38538,6 +38574,8 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
         if (e.target.closest && e.target.closest('[data-aldel]')) { if (window.confirm('Удалить эту вкладку? Карточки останутся в колоде.')) { var S0 = load(), i0 = pgIdx(S0); if (i0 >= 0) { S0.pages.splice(i0, 1); save(S0); } DK.apId = ''; DK.alEdit = 0; alPaint(pane, 0); } return; }
         var arm = e.target.closest && e.target.closest('[data-alrm]'); if (arm) { var rk = arm.getAttribute('data-alrm'); pgSave(function (pg, S) { pg.k = pgShown(pg, S).filter(function (q) { return q !== rk; }); }); alPaint(pane, 0); return; }
         var amv = e.target.closest && e.target.closest('[data-almv]'); if (amv) { var mk = amv.getAttribute('data-alk2'), md = Number(amv.getAttribute('data-almv')); pgSave(function (pg, S) { var l = pgShown(pg, S), ix = l.indexOf(mk), jx = ix + md; if (ix < 0 || jx < 0 || jx >= l.length) return; var tmp = l[ix]; l[ix] = l[jx]; l[jx] = tmp; pg.k = l; }); alPaint(pane, 0); return; }
+        var aljump = e.target.closest && e.target.closest('[data-aljump]');
+        if (aljump && !aljump.disabled) { DK.alQ = ''; DK.apId = aljump.getAttribute('data-aljump'); DK.alLim = 60; DK.alEdit = 0; alPaint(pane, 0); return; }
         var alp = e.target.closest && e.target.closest('[data-alp]'); if (alp) { if (!alp.disabled) alTurn(pane, Number(alp.getAttribute('data-alp'))); return; }
         var ft = e.target.closest && e.target.closest('[data-dkftog]'); if (ft) { DK.fopen = !DK.fopen; pane.querySelector('#wkDkColl').innerHTML = collHTML(allCards(), load()); return; }
         var sb = e.target.closest && e.target.closest('[data-dks]'); if (sb) { DK.sort = sb.getAttribute('data-dks'); DK.pg = 0; pane.querySelector('#wkDkColl').innerHTML = collHTML(allCards(), load()); return; }
@@ -38706,7 +38744,7 @@ else if (a === 'adm-fill') { if (!isDima()) return; DK.fillAll = !DK.fillAll; re
       var d = this.deck(login); if (!d) return '';
       var C = allCards(), keys = (d.show || []).filter(function (k) { return cardByKey(C, k); });
       if (!keys.length) return '';
-      return showcaseHTML(C, keys, false, (!login || login === myLogin()) ? showCap(d) : d.showCap, { frame: d.frame, bg: d.bg });
+      return showcaseHTML(C, keys, false, (!login || login === myLogin()) ? showCap(d) : d.showCap, { frame: d.frame, bg: d.bg, alb: d.alb });
     },
     showCount: function (login) { var d = this.deck(login); return d ? (d.show || []).length : 0; }
   };
@@ -42758,7 +42796,7 @@ var done=0;function build(){if(done)return;done=1;var out=[];
  if(out.length){var st=document.createElement('style');st.id='wk-v571-nopulse';st.textContent=out.join('\n');document.head.appendChild(st)}}
 if(document.readyState==='complete')setTimeout(build,600);else window.addEventListener('load',function(){setTimeout(build,600)});
 }catch(e){}})();</script>
-<style id="wk-v579-css">html{scrollbar-gutter:stable}</style>
+<style id="wk-v578-compact-album-bar">#wkDkColl .wk-al-bar{gap:8px 9px!important;align-items:center!important}#wkDkColl .wk-al-bar .wk-dk-filters>div,#wkDkColl .wk-al-bar .wk-al-sortw,#wkDkColl .wk-al-bar .wk-al-q,#wkDkColl .wk-al-bar .wk-al-arw,#wkDkColl .wk-al-bar .wk-al-cmp,#wkDkColl .wk-al-bar .wk-al-new,#wkDkColl .wk-al-bar .wk-al-cols{height:38px!important;min-height:38px!important;box-sizing:border-box!important}#wkDkColl .wk-al-bar .wk-dk-filters>div{padding:2px!important}#wkDkColl .wk-al-bar .wk-dk-filters>div>button,#wkDkColl .wk-al-bar .wk-al-sortw>button{min-height:32px!important;padding:0 11px!important;font-size:13px!important}#wkDkColl .wk-al-bar .wk-al-q{flex:0 1 200px!important;min-width:150px!important;max-width:220px!important;padding-left:34px!important}#wkDkColl .wk-al-bar .wk-al-nav{margin:0!important;flex:0 0 auto!important;min-width:0!important;gap:6px!important;align-items:center!important}#wkDkColl .wk-al-bar .wk-al-pagepill{height:38px;min-width:128px;max-width:220px;padding:0 12px;border-radius:var(--r-md)!important;border:1px solid color-mix(in srgb,var(--accent,#d8b45a) 32%,transparent);background:color-mix(in srgb,var(--bg-soft,#efe2be) 78%,transparent);display:flex;flex-direction:column;justify-content:center;overflow:hidden;box-sizing:border-box}#wkDkColl .wk-al-bar .wk-al-pagepill b{display:block;font-size:12px;line-height:1.05;color:var(--c-text,#3b2d1f);font-weight:800;letter-spacing:.01em}#wkDkColl .wk-al-bar .wk-al-pagepill span{display:block;font-size:11px;line-height:1.15;color:var(--c-muted,#7a6648);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#wkDkColl .wk-al-bar .wk-al-arw{width:38px!important;flex:0 0 38px!important;font-size:22px!important}#wkDkColl .wk-al-bar .wk-al-cmp,#wkDkColl .wk-al-bar .wk-al-new{padding:0 12px!important;gap:8px!important}#wkDkColl .wk-al-bar .wk-al-cmp i{display:block!important;position:relative!important;overflow:hidden!important;flex:0 0 36px!important;width:36px!important;height:20px!important;min-width:36px!important;border-radius:999px!important;font-size:0!important;line-height:0!important;vertical-align:middle!important}#wkDkColl .wk-al-bar .wk-al-cmp i::after{top:2px!important;left:2px!important;width:16px!important;height:16px!important;transform:none!important}#wkDkColl .wk-al-bar .wk-al-cmp[aria-checked="true"] i::after{transform:translateX(16px)!important}#wkDkColl .wk-al-bar .wk-al-cols{padding:4px 10px!important;gap:8px!important}#wkDkColl .wk-al-bar .wk-al-cols span{white-space:nowrap}#wkDkColl .wk-al-bar .wk-al-cols output{min-width:2em!important}#wkDkColl .wk-al-bar .wk-al-new{height:38px!important}@media (max-width:900px){#wkDkColl .wk-al-bar .wk-al-q{flex:1 1 100%!important;max-width:none!important}#wkDkColl .wk-al-bar .wk-al-nav{order:3;flex:1 1 auto!important}#wkDkColl .wk-al-bar .wk-al-pagepill{flex:1 1 auto;max-width:none}}@media (max-width:560px){#wkDkColl .wk-al-bar{gap:7px!important}#wkDkColl .wk-al-bar .wk-al-cmp{flex:1 1 calc(50% - 4px)!important;font-size:12.5px!important;padding:0 10px!important}#wkDkColl .wk-al-bar .wk-al-cols{flex:1 1 100%!important;height:auto!important;min-height:38px!important}}</style><style id="wk-v579-css">html{scrollbar-gutter:stable}</style>
 <style id="wk-v584-css">.wk-tx-btn .wk-need{display:inline-block;margin-left:.4em;padding:.05em .5em;border-radius:99px;background:rgba(255,255,255,.08);font-size:.82em;font-weight:600;opacity:.85;white-space:nowrap}.wk-tx-btn:disabled .wk-need{opacity:1}</style>
 <style id="wk-v586-css">html body .catalog-item-shell.wk-r-legendary,html body .character-grid-shell.wk-r-legendary{animation:none!important;box-shadow:0 0 0 1px rgba(250,204,21,.32),0 0 18px -5px rgba(250,204,21,.45)}
 .wk-ph-h small{margin-left:8px;font-weight:400;font-size:.78em;opacity:.6}.wk-ph-it.on{cursor:zoom-in}</style>
@@ -43316,6 +43354,527 @@ html body .wk-wrp:is(.w-cheap,.w-normal,.w-boost,.w-chars,.w-fruits,.w-wanted,.w
 html body .wk-wrp:is(.w-cheap,.w-normal,.w-boost,.w-chars,.w-fruits,.w-wanted,.w-lore) .wk-wrp-body{
  image-rendering:auto;
 }
+</style>
+<style id="wk-album-modern-2026">
+/* All album finishes share the same functional book layout & left arc navigation.
+   A is free/default. Purchased legacy skins remain selectable with their old ids. */
+html body .wk-al.wk-al-modern{
+  --al-outer:#322117;--al-nav:#e3cfaa;--al-nav2:#efe0bc;--al-paper:#ead8b4;
+  --al-ink:#3d2b18;--al-muted:#79664c;--al-metal:#a77b3e;--al-border:#ac8a58;
+  --al-top:#251911;--al-toptext:#f6dfb9;
+  display:block;position:relative;overflow:hidden;min-width:0;
+  border:7px solid var(--al-outer);border-radius:22px;
+  background:var(--al-outer);color:var(--al-ink);
+  box-shadow:0 0 0 1px var(--al-border),0 22px 42px -16px rgba(0,0,0,.65);
+  isolation:isolate;
+}
+html body .wk-al.wk-al-modern .wk-al-cover{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:14px;
+  margin:0!important;padding:16px 22px!important;min-height:86px;
+  border:0!important;border-bottom:3px solid var(--al-metal)!important;border-radius:0!important;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--al-top) 87%,white 13%),var(--al-top))!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.14)!important;
+  color:var(--al-toptext)!important;position:relative;z-index:3;
+}
+html body .wk-al.wk-al-modern .wk-al-cover-copy{min-width:0}
+html body .wk-al.wk-al-modern .wk-al-cover-copy small{
+  display:block;font-weight:800;font-size:10px;line-height:1.3;letter-spacing:.17em;color:color-mix(in srgb,var(--al-toptext) 75%,transparent);
+}
+html body .wk-al.wk-al-modern .wk-al-cover-copy h3{
+  margin:5px 0 4px;font-size:clamp(18px,2vw,26px);font-weight:850;line-height:1.14;letter-spacing:-.025em;color:var(--al-toptext)!important;
+}
+html body .wk-al.wk-al-modern .wk-al-cover-copy>span{font-size:var(--fs-xs,12px);color:color-mix(in srgb,var(--al-toptext) 73%,transparent)}
+html body .wk-al.wk-al-modern .wk-al-cover-stats{display:flex;align-items:center;gap:12px;flex:0 0 auto;color:var(--al-toptext)}
+html body .wk-al.wk-al-modern .wk-al-cover-stats>div:last-child{display:flex;flex-direction:column;gap:3px}
+html body .wk-al.wk-al-modern .wk-al-cover-stats strong{font-size:16px;white-space:nowrap}
+html body .wk-al.wk-al-modern .wk-al-cover-stats small{font-size:10px;color:color-mix(in srgb,var(--al-toptext) 73%,transparent)}
+html body .wk-al.wk-al-modern .wk-al-ring{
+  flex:0 0 50px;width:50px;height:50px;padding:5px;border-radius:50%;display:grid;place-items:center;
+  background:conic-gradient(var(--al-metal) 0 var(--pct),rgba(255,255,255,.12) var(--pct) 100%);
+}
+html body .wk-al.wk-al-modern .wk-al-ring b{display:grid;place-items:center;width:100%;height:100%;background:var(--al-top);border-radius:50%;color:var(--al-toptext);font-size:12px}
+html body .wk-al.wk-al-modern .wk-al-shell{
+  display:grid;grid-template-columns:clamp(155px,20%,215px) minmax(0,1fr);min-width:0;
+  background:var(--al-paper);position:relative;min-height:460px;
+}
+html body .wk-al.wk-al-modern .wk-al-sidebar{
+  display:flex;flex-direction:column;align-items:stretch;min-width:0;align-self:stretch;min-height:100%;height:auto;max-height:none;box-sizing:border-box;
+  padding:15px 10px 13px;overflow:auto;
+  border-right:4px solid color-mix(in srgb,var(--al-border) 65%,transparent);
+  background:linear-gradient(90deg,var(--al-nav) 0%,var(--al-nav2) 94%,color-mix(in srgb,var(--al-nav) 83%,black));
+  color:var(--al-ink);scrollbar-width:thin;scrollbar-color:var(--al-border) transparent;
+}
+html body .wk-al.wk-al-modern .wk-al-sidecap{font-size:11px;font-weight:850;letter-spacing:.12em;color:var(--al-muted);padding:1px 9px 10px}
+html body .wk-al.wk-al-modern .wk-al-sidelist{display:flex;flex-direction:column;align-items:stretch;gap:3px}
+html body .wk-al.wk-al-modern .wk-al-sidegroup{font-size:9px;letter-spacing:.07em;font-weight:850;padding:14px 8px 4px;color:var(--al-muted);text-transform:uppercase;overflow-wrap:anywhere}
+html body .wk-al.wk-al-modern .wk-al-sideitem{
+  display:flex!important;align-items:center;gap:5px;width:100%;min-height:36px;padding:8px 8px;
+  font-family:inherit;font-size:12px;font-weight:650;text-align:left;
+  color:var(--al-ink);background:transparent;border:1px solid transparent;border-radius:8px;
+  cursor:pointer;transition:background .16s ease,border-color .16s ease;
+}
+html body .wk-al.wk-al-modern .wk-al-sideitem:hover:not(:disabled){background:color-mix(in srgb,var(--al-metal) 13%,transparent)}
+html body .wk-al.wk-al-modern .wk-al-sideitem.on{
+  background:color-mix(in srgb,var(--al-metal) 19%,transparent);
+  border-color:color-mix(in srgb,var(--al-border) 65%,transparent);color:var(--al-ink);font-weight:850;
+}
+html body .wk-al.wk-al-modern .wk-al-sideitem:focus-visible{outline:2px solid var(--al-metal);outline-offset:2px}
+html body .wk-al.wk-al-modern .wk-al-sideitem-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body .wk-al.wk-al-modern .wk-al-sideitem small{font-size:10px;color:var(--al-muted);white-space:nowrap;flex:0 0 auto;font-weight:700}
+html body .wk-al.wk-al-modern .wk-al-sideitem i{font-style:normal;color:var(--al-metal);font-size:10px}
+html body .wk-al.wk-al-modern .wk-al-sidefoot{margin-top:20px;padding:14px 8px 0;border-top:1px solid var(--al-border);font-size:10px;line-height:1.5;color:var(--al-muted)}
+html body .wk-al.wk-al-modern .wk-al-main{min-width:0;padding:14px clamp(10px,2vw,23px) 25px;
+  background:linear-gradient(90deg,rgba(0,0,0,.12),transparent 4%),repeating-linear-gradient(0deg,rgba(74,40,8,.022) 0 1px,transparent 1px 10px);
+}
+html body .wk-al.wk-al-modern .wk-al-bar{
+  display:flex!important;flex-wrap:wrap!important;gap:8px!important;align-items:center!important;
+  padding:11px!important;margin:0 0 15px!important;border-radius:12px!important;
+  border:1px solid color-mix(in srgb,var(--al-border) 55%,transparent)!important;
+  background:linear-gradient(155deg,color-mix(in srgb,var(--al-nav2) 82%,var(--al-paper)),color-mix(in srgb,var(--al-paper) 88%,var(--al-metal)))!important;
+  color:var(--al-ink)!important;
+}
+html body .wk-al.wk-al-modern .wk-al-bar button,
+html body .wk-al.wk-al-modern .wk-al-bar label{color:var(--al-ink)}
+html body .wk-al.wk-al-modern .wk-al-bar .wk-al-pn{color:var(--al-muted)}
+html body .wk-al.wk-al-modern .wk-al-page{
+  min-width:0;min-height:290px;margin:0;border:1px solid var(--al-border)!important;
+  border-radius:9px 17px 17px 9px!important;
+  background:var(--al-paper)!important;
+  color:var(--al-ink)!important;
+  box-shadow:inset 12px 0 18px -15px #26150072,0 8px 20px -15px #000!important;
+  position:relative;
+}
+html body .wk-al.wk-al-modern .wk-al-page::before{content:"";position:absolute;inset:9px;border:1px solid color-mix(in srgb,var(--al-metal) 32%,transparent)!important;border-radius:5px 12px 12px 5px;pointer-events:none}
+html body .wk-al.wk-al-modern .wk-al-page::after{background:none!important}
+html body .wk-al.wk-al-modern .wk-al-page>.wk-al-h h4,
+html body .wk-al.wk-al-modern .wk-al-page>.wk-al-h .wk-al-name{color:var(--al-ink)!important;text-shadow:none!important}
+html body .wk-al.wk-al-modern .wk-al-page>.wk-al-h small,
+html body .wk-al.wk-al-modern .wk-al-page>.wk-al-h .wk-al-prog b,
+html body .wk-al.wk-al-modern .wk-al-page>.wk-al-f{color:var(--al-muted)!important}
+html body .wk-al.wk-al-modern .wk-al-page .wk-al-s.has,
+html body .wk-al.wk-al-modern .wk-al-page .wk-al-s.miss{min-width:0;padding:5px 4px 6px;border:1px solid color-mix(in srgb,var(--al-border) 50%,transparent);border-radius:10px;background:color-mix(in srgb,var(--al-metal) 7%,transparent)}
+html body .wk-al.wk-al-modern .wk-al-page .wk-al-s.has:hover{background:color-mix(in srgb,var(--al-metal) 12%,transparent)}
+html body .wk-al.wk-al-modern .wk-al-page .wk-al-no{color:var(--al-ink);background:var(--al-paper);border-color:var(--al-border)}
+html body .wk-al.wk-al-modern .wk-al-page .wk-al-grid{gap:14px 10px}
+html body .wk-al.wk-al-modern .wk-al-page .wk-al-sil{background:rgba(12,20,33,.62)!important;border-color:color-mix(in srgb,var(--al-metal) 40%,transparent)!important;color:#c5cedc!important}
+html body .wk-al.wk-al-modern .wk-al-page .wk-al-prog>span em{background:linear-gradient(90deg,var(--al-border),var(--al-metal))}
+html body .wk-al.wk-al-modern .wk-al-page .wk-al-name{background:rgba(255,255,255,.10)}
+
+/* A — default classic captain's leather journal with bright, usable pages. */
+html body .wk-al.wk-al-modern.alb-captain{--al-outer:#56371f;--al-nav:#d6bd8e;--al-nav2:#eddcb7;--al-paper:#eaddb9;--al-ink:#342616;--al-muted:#795d37;--al-metal:#ae8651;--al-border:#a58555;--al-top:#2e1c14;--al-toptext:#ffdfab}
+html body .wk-al.wk-al-modern.alb-captain .wk-al-page{background:radial-gradient(ellipse at 86% 5%,#fff5d647,transparent 54%),repeating-linear-gradient(0deg,#39240d08 0 1px,transparent 1px 8px),linear-gradient(110deg,#dac39a,#f0dfb9 42%,#e4d1aa)!important}
+html body .wk-al.wk-al-modern.alb-captain .wk-al-main{background:linear-gradient(90deg,#4b341e2b,transparent 5%),linear-gradient(105deg,#edddba,#e9d7b3)}
+/* Existing leather: deeper embossed version than the free journal. */
+html body .wk-al.wk-al-modern.alb-leather{--al-outer:#281508;--al-nav:#87613a;--al-nav2:#a47b4f;--al-paper:#d7b982;--al-ink:#3c230d;--al-muted:#68461e;--al-metal:#f0c77d;--al-border:#9a672f;--al-top:#231308;--al-toptext:#fce1a5}
+html body .wk-al.wk-al-modern.alb-leather .wk-al-page{background:linear-gradient(140deg,#d2b581,#edd5a3 64%,#c7a16c)!important}
+/* B and original chart: cartographic navigation atlas, without changing the stored theme ids. */
+html body .wk-al.wk-al-modern.alb-atlas,html body .wk-al.wk-al-modern.alb-chart{--al-outer:#092035;--al-nav:#0d3043;--al-nav2:#173e50;--al-paper:#0e334a;--al-ink:#e1f5fa;--al-muted:#96c0d1;--al-metal:#6ac4e2;--al-border:#397b99;--al-top:#0b1f30;--al-toptext:#d7f4ff}
+html body .wk-al.wk-al-modern.alb-atlas .wk-al-page,html body .wk-al.wk-al-modern.alb-chart .wk-al-page{background:linear-gradient(#a0cde31c 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,#a0cde31c 1px,transparent 1px) 0 0/44px 44px,radial-gradient(ellipse at 55% 0%,#28536a,#081b2f 85%)!important}
+html body .wk-al.wk-al-modern.alb-atlas .wk-al-main,html body .wk-al.wk-al-modern.alb-chart .wk-al-main{background:radial-gradient(ellipse at 60% 15%,#267ea71b,transparent 65%)}
+/* C: trophy hall, plus existing ornate velvet skin. */
+html body .wk-al.wk-al-modern.alb-trophies{--al-outer:#1c1320;--al-nav:#2d2030;--al-nav2:#2a212e;--al-paper:#231925;--al-ink:#f9e2ae;--al-muted:#baa68c;--al-metal:#e0b663;--al-border:#927448;--al-top:#251823;--al-toptext:#ffdfa6}
+html body .wk-al.wk-al-modern.alb-trophies .wk-al-page{background:radial-gradient(ellipse at 50% 0%,#674c2a88,transparent 65%),linear-gradient(160deg,#1d1523,#100e17)!important}
+html body .wk-al.wk-al-modern.alb-trophies .wk-al-s.has::after{content:"";position:absolute;bottom:1px;left:10%;right:10%;height:5px;background:linear-gradient(#cda867,#5c4228);border-radius:1px;pointer-events:none}
+html body .wk-al.wk-al-modern.alb-velvet{--al-outer:#380d21;--al-nav:#4b1930;--al-nav2:#512137;--al-paper:#3a1227;--al-ink:#ffe9bd;--al-muted:#dfb7c0;--al-metal:#ddb665;--al-border:#a05b70;--al-top:#2a0c20;--al-toptext:#ffe5b5}
+html body .wk-al.wk-al-modern.alb-velvet .wk-al-page{background:radial-gradient(ellipse at 28% 0%,#9d375036,transparent 70%),repeating-linear-gradient(46deg,#fff1 0 1px,transparent 1px 5px),linear-gradient(130deg,#4e1b32,#1c0e20)!important}
+/* D: dossier and two preserved archival finishes. */
+html body .wk-al.wk-al-modern.alb-dossier,html body .wk-al.wk-al-modern.alb-logbook,html body .wk-al.wk-al-modern.alb-wanted{--al-outer:#3d3830;--al-nav:#ceb994;--al-nav2:#d8c6a6;--al-paper:#dcc8a2;--al-ink:#3b3024;--al-muted:#796750;--al-metal:#a45c48;--al-border:#987c5b;--al-top:#41443c;--al-toptext:#f6e6c7}
+html body .wk-al.wk-al-modern.alb-dossier .wk-al-page{background:repeating-linear-gradient(0deg,#482d1310 0 1px,transparent 1px 30px),linear-gradient(125deg,#dfd0ae,#c5af88)!important}
+html body .wk-al.wk-al-modern.alb-dossier .wk-al-page::after{content:"CONFIDENTIAL";display:block;background:none!important;position:absolute;top:18px;right:18px;width:auto;height:auto;color:#a44d3c55;transform:rotate(-11deg);font:900 12px/1 system-ui,sans-serif;letter-spacing:.1em;pointer-events:none}
+html body .wk-al.wk-al-modern.alb-logbook{--al-outer:#4c3a21;--al-nav:#e0d5b8;--al-nav2:#e8ddc1;--al-paper:#f0e5c9;--al-metal:#a78148;--al-border:#b6a078}
+html body .wk-al.wk-al-modern.alb-logbook .wk-al-page{background:repeating-linear-gradient(0deg,transparent 0 29px,#56718f1e 29px 30px),linear-gradient(90deg,transparent 0 26px,#ba676744 26px 28px,transparent 28px),#f1e3c5!important}
+html body .wk-al.wk-al-modern.alb-wanted{--al-outer:#5a3920;--al-nav:#c59d64;--al-nav2:#d7b887;--al-paper:#dcc49b;--al-metal:#8c502c;--al-border:#8c603b}
+html body .wk-al.wk-al-modern.alb-wanted .wk-al-page{background:radial-gradient(ellipse at 40% 45%,#f0daa9,#b78c60 98%)!important}
+/* E holographic display / existing pearl */
+html body .wk-al.wk-al-modern.alb-holoarchive,html body .wk-al.wk-al-modern.alb-pearl{--al-outer:#0b0c23;--al-nav:#101939;--al-nav2:#17193e;--al-paper:#111431;--al-ink:#eeeaff;--al-muted:#a9b1e4;--al-metal:#ac8cff;--al-border:#6765a9;--al-top:#0e1230;--al-toptext:#e8e4ff}
+html body .wk-al.wk-al-modern.alb-holoarchive .wk-al-page{background:linear-gradient(#ad9dff12 1px,transparent 1px) 0 0/33px 33px,linear-gradient(90deg,#ad9dff12 1px,transparent 1px) 0 0/33px 33px,radial-gradient(ellipse at 55% 0%,#3f2b6d,#0c132d 78%)!important}
+html body .wk-al.wk-al-modern.alb-holoarchive .wk-al-s.has{box-shadow:inset 0 0 15px #8369ff24,0 0 14px #8e7aff13}
+html body .wk-al.wk-al-modern.alb-pearl{--al-outer:#05070f;--al-nav:#121521;--al-nav2:#171b2d;--al-paper:#0e111d;--al-metal:#79e5e6;--al-border:#8167b8}
+html body .wk-al.wk-al-modern.alb-pearl .wk-al-page{background:radial-gradient(ellipse at 15% 0%,#7bf4ed15,transparent 65%),radial-gradient(ellipse at 95% 90%,#e29efc19,transparent 60%),linear-gradient(140deg,#151626,#090c13)!important}
+/* F cabinet and compatible existing jade finish */
+html body .wk-al.wk-al-modern.alb-cabinet{--al-outer:#3c2616;--al-nav:#302012;--al-nav2:#49331b;--al-paper:#291b12;--al-ink:#ffe5b8;--al-muted:#d0b48b;--al-metal:#e0ae61;--al-border:#957141;--al-top:#352211;--al-toptext:#ffdb9a}
+html body .wk-al.wk-al-modern.alb-cabinet .wk-al-page{background:repeating-linear-gradient(0deg,transparent 0 225px,#dca55a42 226px 230px,#1c100b 233px 237px),linear-gradient(110deg,#47301f,#20140e)!important}
+html body .wk-al.wk-al-modern.alb-cabinet .wk-al-s{box-shadow:0 5px 12px #080403a3,inset 0 0 12px #fff1}
+html body .wk-al.wk-al-modern.alb-jade{--al-outer:#15372b;--al-nav:#214737;--al-nav2:#2e5942;--al-paper:#153d31;--al-ink:#e6fbd2;--al-muted:#a5d4bd;--al-metal:#ebc978;--al-border:#b99a50;--al-top:#173027;--al-toptext:#f4e1ad}
+html body .wk-al.wk-al-modern.alb-jade .wk-al-page{background:repeating-linear-gradient(60deg,#e4cd7513 0 1px,transparent 1px 29px),repeating-linear-gradient(-60deg,#e4cd7513 0 1px,transparent 1px 29px),linear-gradient(135deg,#235441,#0c291f)!important}
+/* Existing oriental wave */
+html body .wk-al.wk-al-modern.alb-wave{--al-outer:#152244;--al-nav:#213460;--al-nav2:#1d345f;--al-paper:#1a294e;--al-ink:#e8eefe;--al-muted:#b9c9eb;--al-metal:#d7ab73;--al-border:#9a7c74;--al-top:#111b38;--al-toptext:#ffebc7}
+html body .wk-al.wk-al-modern.alb-wave .wk-al-page{background:repeating-radial-gradient(ellipse at 50% 125%,transparent 0 16px,#8baafa1e 17px 18px,transparent 19px 27px),linear-gradient(135deg,#253660,#0e1b39)!important}
+/* Every purchased theme uses its own surface plus the same accessible navigation. */
+html body .wk-al.wk-al-modern.alb-chart .wk-al-sidebar,html body .wk-al.wk-al-modern.alb-jade .wk-al-sidebar,html body .wk-al.wk-al-modern.alb-velvet .wk-al-sidebar,
+html body .wk-al.wk-al-modern.alb-wave .wk-al-sidebar,html body .wk-al.wk-al-modern.alb-cabinet .wk-al-sidebar,
+html body .wk-al.wk-al-modern.alb-trophies .wk-al-sidebar,html body .wk-al.wk-al-modern.alb-holoarchive .wk-al-sidebar,
+html body .wk-al.wk-al-modern.alb-pearl .wk-al-sidebar,html body .wk-al.wk-al-modern.alb-atlas .wk-al-sidebar{background:linear-gradient(95deg,var(--al-nav),var(--al-nav2) 95%)}
+/* Miniatures in shop actually show a book cover, left navigation and two slots. */
+html body .wk-sh-albpv .wk-al.wk-al-modern{width:100%;max-width:100%;height:186px;min-height:0;display:block;border-width:4px!important;border-radius:13px;overflow:hidden;box-shadow:none!important}
+html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-cover{min-height:25px!important;padding:5px 8px!important;border-bottom-width:1px!important}
+html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-cover small{font-size:5px;letter-spacing:.1em}
+html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-cover h3{font-size:10px!important;margin:1px 0 0!important}
+html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-shell{grid-template-columns:31% 69%;min-height:0;height:158px}
+html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-sidebar{padding:8px 4px;max-height:none;overflow:hidden;border-right-width:2px}
+html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-sidecap{font-size:5px;padding:0 3px 5px}
+html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-sideitem{min-height:0;padding:5px 3px;border-radius:3px;font-size:6.5px;white-space:nowrap}
+html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-main{padding:7px 5px}
+html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-page{padding:7px 4px 8px!important;min-height:0;border-radius:4px!important}
+html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-page::before{inset:3px!important;border-radius:3px}
+html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-page .wk-al-h{padding:0!important;margin:0 0 4px!important}
+html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-page .wk-al-h small{font-size:5px!important}
+html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-page .wk-al-h h4{font-size:8px!important;white-space:nowrap}
+html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-page .wk-al-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}
+html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-page .wk-al-s{padding:1px!important}
+html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-page .wk-al-s .wk-al-sil b{font-size:7px!important}
+html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-page .wk-al-s .wk-al-sil span{font-size:5px!important}
+html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-page .wk-al-f{display:none}
+@media(max-width:920px){
+  html body .wk-al.wk-al-modern .wk-al-shell{grid-template-columns:155px minmax(0,1fr)}
+  html body .wk-al.wk-al-modern .wk-al-bar{gap:7px!important}
+  html body .wk-al.wk-al-modern .wk-al-sideitem{font-size:11px}
+}
+@media(max-width:670px){
+  html body .wk-al.wk-al-modern{border-width:4px;border-radius:15px}
+  html body .wk-al.wk-al-modern .wk-al-cover{min-height:0;padding:12px!important;gap:8px!important}
+  html body .wk-al.wk-al-modern .wk-al-cover-copy h3{font-size:19px!important}
+  html body .wk-al.wk-al-modern .wk-al-cover-copy>span{display:none}
+  html body .wk-al.wk-al-modern .wk-al-cover-stats{gap:6px}
+  html body .wk-al.wk-al-modern .wk-al-ring{width:40px;height:40px;flex-basis:40px}
+  html body .wk-al.wk-al-modern .wk-al-cover-stats strong{font-size:12px}
+  html body .wk-al.wk-al-modern .wk-al-cover-stats small{font-size:9px}
+  html body .wk-al.wk-al-modern .wk-al-shell{display:flex;flex-direction:column}
+  html body .wk-al.wk-al-modern .wk-al-sidebar{max-height:155px;border-right:none;border-bottom:2px solid var(--al-border);padding:9px;}
+  html body .wk-al.wk-al-modern .wk-al-sidecap{padding:0 4px 5px;font-size:9px}
+  html body .wk-al.wk-al-modern .wk-al-sidelist{display:flex;flex-direction:row;gap:5px;overflow-x:auto;overflow-y:hidden;padding:0 0 3px}
+  html body .wk-al.wk-al-modern .wk-al-sidegroup{display:none}
+  html body .wk-al.wk-al-modern .wk-al-sideitem{flex:0 0 auto!important;width:auto;max-width:160px;min-height:32px;padding:7px 10px}
+  html body .wk-al.wk-al-modern .wk-al-sideitem-name{max-width:115px}
+  html body .wk-al.wk-al-modern .wk-al-sidefoot{display:none}
+  html body .wk-al.wk-al-modern .wk-al-main{padding:9px 7px 16px}
+  html body .wk-al.wk-al-modern .wk-al-bar{padding:6px!important}
+  html body .wk-al.wk-al-modern .wk-al-page{padding:13px 8px 28px!important}
+  html body .wk-al.wk-al-modern .wk-al-page .wk-al-grid{gap:10px 7px}
+  /* Preview thumbnails remain side-by-side even inside mobile shop. */
+  html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-shell{display:grid;grid-template-columns:31% 69%}
+  html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-sidebar{max-height:none;border-right:2px solid var(--al-border);border-bottom:none}
+  html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-sidelist{display:block;overflow:hidden}
+  html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-sideitem{display:block!important;max-width:100%;white-space:nowrap}
+  html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-main{padding:7px 4px}
+  html body .wk-sh-albpv .wk-al.wk-al-modern .wk-al-page{padding:7px 4px 8px!important}
+}
+@media(prefers-reduced-motion:reduce){html body .wk-al.wk-al-modern .wk-al-sideitem{transition:none}}
+
+</style>
+
+<style id="wk-album-ui-polish-2026">
+/* All album themes: matching controls, and an uninterrupted navigation spine. */
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-shell{
+  align-items:stretch!important;
+  grid-template-rows:auto;
+}
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-sidebar{
+  align-self:stretch!important;
+  height:auto!important;
+  min-height:100%!important;
+  max-height:none!important;
+  box-sizing:border-box!important;
+  overflow-x:hidden;
+  overflow-y:auto;
+}
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-main{align-self:stretch;}
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar{
+  --alb-control:color-mix(in srgb,var(--al-nav) 73%,var(--al-paper));
+  --alb-control-hover:color-mix(in srgb,var(--al-paper) 80%,var(--al-metal));
+  --alb-selected:color-mix(in srgb,var(--al-metal) 27%,var(--al-paper));
+  border:1px solid color-mix(in srgb,var(--al-border) 73%,transparent)!important;
+  background:linear-gradient(160deg,
+    color-mix(in srgb,var(--al-nav2) 77%,var(--al-paper)),
+    color-mix(in srgb,var(--al-paper) 86%,var(--al-metal)))!important;
+  color:var(--al-ink)!important;
+  box-shadow:0 3px 11px color-mix(in srgb,var(--al-outer) 12%,transparent),
+    inset 0 1px color-mix(in srgb,var(--al-toptext) 19%,transparent)!important;
+}
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-dk-filters>div,
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-sortw{
+  background:var(--alb-control)!important;
+  border:1px solid var(--al-border)!important;
+  box-shadow:inset 0 1px color-mix(in srgb,var(--al-toptext) 11%,transparent)!important;
+}
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-dk-filters>div>button,
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-sortw>button{
+  background:transparent!important;
+  border-color:transparent!important;
+  color:var(--al-ink)!important;
+  text-shadow:none!important;
+  transition:background .16s,border-color .16s,color .16s!important;
+}
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-dk-filters>div>button.active,
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-sortw>button.on{
+  background:var(--alb-selected)!important;
+  color:var(--al-ink)!important;
+  border-color:color-mix(in srgb,var(--al-metal) 62%,transparent)!important;
+  box-shadow:inset 0 1px color-mix(in srgb,var(--al-toptext) 15%,transparent)!important;
+}
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-dk-filters>div>button:hover:not(.active),
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-sortw>button:hover:not(.on){
+  background:var(--alb-control-hover)!important;
+  color:var(--al-ink)!important;
+}
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-q,
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-pick select,
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-arw,
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-cmp,
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-new,
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-cols{
+  background:var(--alb-control)!important;
+  border:1px solid var(--al-border)!important;
+  color:var(--al-ink)!important;
+  box-shadow:inset 0 1px color-mix(in srgb,var(--al-toptext) 11%,transparent)!important;
+  text-shadow:none!important;
+}
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-q::placeholder{
+  color:var(--al-muted)!important;
+  opacity:1;
+}
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-pn,
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-cols,
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-cols output{
+  color:var(--al-ink)!important;
+}
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-pick select option{
+  color:var(--al-ink);
+  background:var(--al-nav2);
+}
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-arw:not(:disabled):hover,
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-cmp:hover,
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-new:hover{
+  background:var(--alb-control-hover)!important;
+  border-color:var(--al-metal)!important;
+}
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-arw:disabled{opacity:.42!important;}
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-cmp i{
+  background:color-mix(in srgb,var(--al-muted) 43%,var(--al-paper))!important;
+}
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-cmp[aria-checked="true"] i{
+  background:var(--al-metal)!important;
+}
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar .wk-al-cmp i::after{
+  background:color-mix(in srgb,var(--al-paper) 88%,white)!important;
+  box-shadow:0 1px 3px #0004;
+}
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar input[type="range"]{
+  accent-color:var(--al-metal);
+  background:color-mix(in srgb,var(--al-border) 34%,transparent)!important;
+}
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar input[type="range"]::-webkit-slider-thumb{
+  background:var(--al-metal)!important;
+  border-color:var(--al-paper)!important;
+  box-shadow:0 0 0 1px var(--al-border)!important;
+}
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar input[type="range"]::-moz-range-thumb{
+  background:var(--al-metal)!important;
+  border-color:var(--al-paper)!important;
+}
+html body #wkDkColl .wk-al.wk-al-modern .wk-al-bar :is(button,input,select):focus-visible{
+  outline:2px solid var(--al-metal)!important;
+  outline-offset:2px;
+}
+@media(max-width:670px){
+  /* A horizontal chapter list on mobile remains a compact top navigation. */
+  html body #wkDkColl .wk-al.wk-al-modern .wk-al-sidebar{
+    min-height:0!important;
+    max-height:155px!important;
+    height:auto!important;
+    overflow-y:hidden;
+  }
+}
+</style>
+
+<style id="wk-showcase-album-pairing-2026">
+/* Showcase theme follows the purchased/selected album. A manually selected
+   existing shop background remains an optional backdrop and keeps its own art.
+   Favorite and wishlist showcases share the same album theme.
+   Wishlist silhouettes and rarity animations are left unchanged. */
+html body .wk-sc.vitr-theme{
+ --vs-outer:#43291b;--vs-wall:#e9d5aa;--vs-gold:#b9955b;--vs-ink:#f8dfb1;
+ --vs-bright:#fff4d1;--vs-head:#2d1c14;
+ margin:16px 0 15px!important;padding:0 0 7px!important;
+ border:7px solid var(--vs-outer)!important;border-radius:22px!important;
+ background:var(--vs-outer)!important;
+ box-shadow:0 0 0 1px var(--vs-gold),0 18px 36px -20px #000d,inset 0 1px #ffffff22!important;
+ color:var(--vs-ink);overflow:hidden;position:relative;isolation:isolate;
+}
+html body .wk-sc.vitr-theme .wk-sc-h{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+ padding:14px 18px 9px;margin:0!important;border:0;border-bottom:1px solid color-mix(in srgb,var(--vs-gold) 65%,transparent);
+ background:linear-gradient(120deg,color-mix(in srgb,var(--vs-head) 90%,white),var(--vs-head))!important;
+}
+html body .wk-sc.vitr-theme .wk-sc-h .wk-dk-h{font-family:Georgia,'Times New Roman',serif;font-size:clamp(19px,1.5vw,25px);letter-spacing:.01em;line-height:1.2;color:var(--vs-ink)!important;text-shadow:0 1px #0005}
+html body .wk-sc.vitr-theme .wk-sc-h::after{content:'✦';color:var(--vs-gold);font-size:17px;margin-left:auto;opacity:.85}
+html body .wk-sc.vitr-theme .wk-sc-h .wk-tx-btn{order:3;color:var(--vs-ink)!important;background:color-mix(in srgb,var(--vs-head) 80%,white)!important;border:1px solid var(--vs-gold)!important;border-radius:10px!important;font-weight:700}
+html body .wk-sc.vitr-theme .wk-sc-h .wk-tx-btn:hover{filter:brightness(1.18)}
+html body .wk-sc.vitr-theme .wk-sc-note{
+ color:color-mix(in srgb,var(--vs-ink) 76%,transparent)!important;
+ padding:7px 18px 10px!important;margin:0!important;
+ background:var(--vs-head)!important;border:0!important;font-size:11px!important
+}
+html body .wk-sc.vitr-theme .wk-sc-g.wk-sh3{
+ border:3px solid var(--vs-gold)!important;border-radius:13px!important;
+ margin:10px 10px 4px!important;position:relative!important;
+ padding-top:30px!important;
+ box-shadow:inset 0 0 0 3px color-mix(in srgb,var(--vs-outer) 88%,black),inset 0 30px 45px -25px #0007,0 0 0 2px var(--vs-outer)!important;
+ overflow:hidden!important;isolation:isolate;
+}
+html body .wk-sc.vitr-theme:not([class*="bg-"]) .wk-sh3{
+ background:radial-gradient(90% 65% at 50% 10%,color-mix(in srgb,var(--vs-wall) 78%,white),transparent 86%),repeating-linear-gradient(90deg,#ffffff09 0 2px,#00000008 2px 4px,transparent 4px 42px),linear-gradient(145deg,var(--vs-wall),color-mix(in srgb,var(--vs-wall) 75%,black))!important;
+}
+html body .wk-sc.vitr-theme:not([class*="bg-"]) .wk-sh3-wall{
+ opacity:.14!important;background:var(--vs-icon) center 40%/min(32%,240px) auto no-repeat!important;
+ pointer-events:none;z-index:0!important;
+}
+html body .wk-sc.vitr-theme .wk-sh3::before{
+ content:'';position:absolute;inset:7px;z-index:1;pointer-events:none;
+ border:1px solid color-mix(in srgb,var(--vs-gold) 72%,transparent);border-radius:5px;
+ box-shadow:inset 0 1px #ffffff1c;
+}
+html body .wk-sc.vitr-theme .wk-sh3::after{
+ content:'';position:absolute;z-index:1;top:0;left:0;right:0;height:23%;pointer-events:none;
+ background:linear-gradient(180deg,#fff5,transparent);
+ mix-blend-mode:soft-light;
+}
+html body .wk-sc.vitr-theme .wk-sh3 .wk-sc-row{z-index:3;position:relative;padding:0 12px!important;align-items:end;}
+html body .wk-sc.vitr-theme:not([class*="bg-"]) .wk-sh3-plank{
+ z-index:4;position:relative;height:23px!important;margin:0 -3px!important;border-top:3px solid var(--vs-gold)!important;
+ background:linear-gradient(180deg,var(--vs-gold) 0 4px,var(--vs-outer) 4px 57%,color-mix(in srgb,var(--vs-outer) 75%,black) 100%)!important;
+ box-shadow:0 -3px 14px #0007,inset 0 1px #fff5!important;
+}
+html body .wk-sc.vitr-theme .wk-sh3-stand{
+ z-index:4;border-color:var(--vs-gold)!important;
+ background:linear-gradient(180deg,color-mix(in srgb,var(--vs-gold) 70%,white),color-mix(in srgb,var(--vs-gold) 60%,black))!important;
+ box-shadow:0 2px 5px #0007!important;
+}
+html body .wk-sc.vitr-theme .wk-sc-e{
+ align-self:stretch!important;border-color:var(--vs-gold)!important;
+ background:color-mix(in srgb,var(--vs-outer) 45%,transparent)!important;
+ color:var(--vs-bright)!important;
+}
+/* The actual Deck screen has older ID-specific layout rules. Preserve
+   its scrolling slots, but restore the themed book's full-width header. */
+html body #wkCabinPaneDeck .wk-sc.vitr-theme{
+ margin:0 0 14px!important;padding:0 0 7px!important;border-radius:20px!important;
+}
+html body #wkCabinPaneDeck .wk-sc.vitr-theme .wk-sc-h .wk-dk-h{
+ font-family:Georgia,'Times New Roman',serif!important;font-size:clamp(18px,1.5vw,25px)!important;
+}
+html body #wkCabinPaneDeck .wk-sc.vitr-theme:has(.wk-sh3-it) .wk-sh3{
+ margin:10px 10px 4px!important;padding:30px 0 0!important;
+}
+html body #wkCabinPaneDeck .wk-sc.vitr-theme:has(.wk-sh3-it) .wk-sc-row{
+ padding:0 12px!important;
+}
+/* Every purchased showroom background retains its scene, but receives a
+   cleaner gallery enclosure, consistent lighting and themed brass borders. */
+html body .wk-sc.vitr-theme[class*=" bg-"] .wk-sh3{
+ border-color:color-mix(in srgb,var(--bgl, var(--vs-gold)) 75%,var(--vs-gold))!important;
+ box-shadow:inset 0 0 0 3px #040c1788,inset 0 30px 35px -22px #000a,0 0 0 2px var(--vs-outer),0 10px 20px -16px var(--bgl,#ffffffaa)!important;
+}
+html body .wk-sc.vitr-theme[class*=" bg-"] .wk-sh3-wall{opacity:.9!important}
+html body .wk-sc.vitr-theme[class*=" bg-"] .wk-sh3-plank{
+ min-height:22px!important;border-top:3px solid color-mix(in srgb,var(--bgl, var(--vs-gold)) 82%,white)!important;
+ box-shadow:inset 0 1px #fff5,0 -4px 9px #0006!important;
+}
+html body .wk-sc.vitr-theme.bg-deck{--bgl:#e2ba6d}
+html body .wk-sc.vitr-theme.bg-map{--bgl:#a97e3b}
+html body .wk-sc.vitr-theme.bg-night{--bgl:#7bafff}
+html body .wk-sc.vitr-theme.bg-cabin{--bgl:#dcb563}
+html body .wk-sc.vitr-theme.bg-abyss{--bgl:#53dfe1}
+html body .wk-sc.vitr-theme.bg-sky{--bgl:#9fc9ff}
+html body .wk-sc.vitr-theme.bg-sunset{--bgl:#f2b46c}
+html body .wk-sc.vitr-theme.bg-sakura{--bgl:#ffb4da}
+html body .wk-sc.vitr-theme.bg-treasure{--bgl:#f3d574}
+/* Museum frame and jewel details for special premium themes. */
+html body .wk-sc.vitr-alb-trophies .wk-sh3-it::before,html body .wk-sc.vitr-alb-jade .wk-sh3-it::before{opacity:.8}
+html body .wk-sc.vitr-alb-holoarchive .wk-sh3::after{
+ background:linear-gradient(130deg,transparent 0 20%,#69fff712 35%,transparent 54%,#c16bff14 65%,transparent 84%);
+ mix-blend-mode:screen;
+}
+html body .wk-sc.vitr-alb-logbook:not([class*="bg-"]) .wk-sh3{
+ background:repeating-linear-gradient(0deg,transparent 0 25px,#677b7b1b 25px 26px),linear-gradient(110deg,#fcf1d3,#e0d3b0)!important;
+}
+html body .wk-sc.vitr-alb-wanted:not([class*="bg-"]) .wk-sh3{
+ background:radial-gradient(60% 90% at 50% 30%,#f2ddb2,#b59a71),repeating-linear-gradient(45deg,#00000012 0 1px,transparent 1px 8px)!important;
+}
+html body .wk-sc.vitr-alb-pearl:not([class*="bg-"]) .wk-sh3{
+ background:radial-gradient(90% 75% at 50% 15%,#504f8399,transparent 65%),linear-gradient(125deg,#0a1020,#19263d 45%,#0d0d1a)!important;
+}
+html body .wk-sc.vitr-alb-chart:not([class*="bg-"]) .wk-sh3,html body .wk-sc.vitr-alb-atlas:not([class*="bg-"]) .wk-sh3{
+ background:repeating-linear-gradient(0deg,transparent 0 31px,#9de9fb18 31px 32px),repeating-linear-gradient(90deg,transparent 0 31px,#9de9fb18 31px 32px),radial-gradient(80% 70% at 50% 10%,#27607a,#0b243c)!important;
+}
+html body .wk-sc.vitr-alb-cabinet:not([class*="bg-"]) .wk-sh3{
+ background:repeating-linear-gradient(90deg,#0002 0 3px,transparent 3px 148px,#0003 148px 152px),linear-gradient(90deg,#422a1b,#6a4426 14%,#2b1a10 48%,#55381f 82%,#372217)!important;
+}
+html body .wk-sc.vitr-alb-holoarchive:not([class*="bg-"]) .wk-sh3{
+ background:linear-gradient(0deg,transparent 0 90%,#7efffb17),repeating-linear-gradient(90deg,#65fefc12 0 1px,transparent 1px 34px),linear-gradient(145deg,#081d36,#112950)!important;
+}
+html body .wk-sc.vitr-alb-trophies:not([class*="bg-"]) .wk-sh3{
+ background:radial-gradient(65% 90% at 50% 3%,#c89c5538,transparent 75%),linear-gradient(130deg,#2b182b,#1a1323 66%,#361f31)!important;
+}
+html body .wk-sc.vitr-alb-wave:not([class*="bg-"]) .wk-sh3{
+ background:repeating-radial-gradient(ellipse at 40% 110%,#9ed5ec18 0 2px,transparent 2px 24px),linear-gradient(140deg,#0f214a,#152e5f)!important;
+}
+html body .wk-sc.vitr-alb-jade:not([class*="bg-"]) .wk-sh3{
+ background:repeating-linear-gradient(45deg,#f6df7f0a 0 1px,transparent 1px 28px),radial-gradient(110% 100% at 60% 20%,#36705d,#09271e)!important;
+}
+/* Preview in every album item is the actual same themed shelf CSS, not a raster. */
+html body .wk-sh-pk .wk-sh-vitr-preview.wk-sc{
+ width:100%;max-width:100%;padding:0 0 2px!important;margin:8px 0 0!important;
+ border-width:3px!important;border-radius:11px!important;pointer-events:none;
+}
+html body .wk-sh-vitr-preview .wk-sh-vitr-tag{
+ text-align:center;font-size:10px;letter-spacing:.07em;font-weight:800;color:var(--vs-ink);
+ background:var(--vs-head);padding:5px 7px;
+}
+html body .wk-sh-vitr-preview .wk-sh3{
+ height:100px!important;min-height:100px!important;margin:3px!important;padding:10px 14px 0!important;
+ border-width:2px!important;border-radius:6px!important;position:relative!important;display:flex;flex-direction:column;justify-content:flex-end;
+}
+html body .wk-sh-vitr-preview .wk-sh3::before{inset:4px}
+html body .wk-sh-vitr-preview .wk-sh-vitr-slots{
+ position:relative;z-index:3;display:flex;justify-content:center;align-items:flex-end;
+ gap:8px;max-height:77px;flex:1;pointer-events:none;
+}
+html body .wk-sh-vitr-preview .wk-sh-vitr-slots i{
+ display:block;width:36px;height:67px;border:2px solid #b8a57a;border-radius:4px;
+ background:radial-gradient(ellipse at 60% 15%,#d3ddea99,transparent 43%),linear-gradient(165deg,#273549,#0b1427 80%);
+ box-shadow:0 0 0 1px #0008,0 4px 6px #0009,inset 0 0 0 2px #ffffff24;
+ position:relative;
+}
+html body .wk-sh-vitr-preview .wk-sh-vitr-slots i:nth-child(2){border-color:#c092ec;height:75px}
+html body .wk-sh-vitr-preview .wk-sh-vitr-slots i:nth-child(3){border-color:#e3bf61;height:71px}
+html body .wk-sh-vitr-preview .wk-sh3-plank{
+ position:relative!important;z-index:5!important;height:9px!important;min-height:9px!important;margin:0 -12px!important;
+}
+@media(max-width:640px){
+ html body .wk-sc.vitr-theme{border-width:4px!important;border-radius:16px!important}
+ html body .wk-sc.vitr-theme .wk-sc-h{padding:11px 11px 7px!important}
+ html body .wk-sc.vitr-theme .wk-sc-note{padding:7px 11px!important}
+ html body .wk-sc.vitr-theme .wk-sc-g.wk-sh3{margin:6px 6px 3px!important;padding-top:22px!important}
+ html body .wk-sc.vitr-theme .wk-sc-h .wk-dk-h{font-size:18px}
+ html body .wk-sc.vitr-theme .wk-sh3 .wk-sc-row{padding:0 3px!important}
+ html body .wk-sh-vitr-preview .wk-sh3{margin:3px!important;padding-top:10px!important}
+}
+@media (prefers-reduced-motion:reduce){html body .wk-sc.vitr-theme .wk-sh3-it .wk-dk-slot{transition:none!important}}
+html body .wk-sc.vitr-alb-captain{--vs-outer:#43291b;--vs-wall:#e9d5aa;--vs-gold:#b9955b;--vs-ink:#f5deb3;--vs-bright:#fff4d1;--vs-head:#2d1c14;--vs-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%22100%22%20cy%3D%22100%22%20r%3D%2276%22%2F%3E%3Ccircle%20cx%3D%22100%22%20cy%3D%22100%22%20r%3D%2265%22%20stroke-dasharray%3D%223%209%22%2F%3E%3Cpath%20d%3D%22M100%2015L110%2092%20185%20100%20110%20108%20100%20185%2090%20108%2015%20100%2090%2092Z%22%2F%3E%3Cpath%20d%3D%22M62%2062l38%2025%2038-25-25%2038%2025%2038-38-25-38%2025%2025-38Z%22%2F%3E%3C%2Fsvg%3E")}
+html body .wk-sc.vitr-alb-leather{--vs-outer:#241508;--vs-wall:#87613a;--vs-gold:#e4b66e;--vs-ink:#ffebc1;--vs-bright:#f8cd8b;--vs-head:#291607;--vs-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M35%2020Q100%2065%20165%2020%20M35%20180Q100%20135%20165%20180%22%2F%3E%3Cpath%20d%3D%22M30%20100Q60%2045%20100%20100T170%20100%22%2F%3E%3Cpath%20d%3D%22M35%2045l12-11%2012%2011-12%2011z%20M141%20155l12-11%2012%2011-12%2011z%22%2F%3E%3C%2Fsvg%3E")}
+html body .wk-sc.vitr-alb-chart{--vs-outer:#081d30;--vs-wall:#103c54;--vs-gold:#69c8e0;--vs-ink:#d7f4ff;--vs-bright:#74dfff;--vs-head:#092033;--vs-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%22100%22%20cy%3D%22100%22%20r%3D%2265%22%2F%3E%3Cpath%20d%3D%22M100%2010V190M10%20100H190M32%2032L168%20168M168%2032L32%20168%22%2F%3E%3Cpath%20d%3D%22M100%2025l14%2061%2061%2014-61%2014-14%2061-14-61-61-14%2061-14Z%22%2F%3E%3C%2Fsvg%3E")}
+html body .wk-sc.vitr-alb-velvet{--vs-outer:#34091d;--vs-wall:#4b142b;--vs-gold:#dfb766;--vs-ink:#f8e7d0;--vs-bright:#ecb7c9;--vs-head:#290c20;--vs-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M100%2018C128%2052%20150%2062%20170%2044Q154%2078%20125%2082Q170%2099%20163%20120Q143%20100%20112%20106Q135%20143%20100%20178Q65%20143%2088%20106Q57%20100%2037%20120Q30%2099%2075%2082Q46%2078%2030%2044Q50%2062%2072%2052Z%22%2F%3E%3C%2Fsvg%3E")}
+html body .wk-sc.vitr-alb-logbook{--vs-outer:#51402a;--vs-wall:#f3e9cb;--vs-gold:#b17e45;--vs-ink:#fff1ce;--vs-bright:#fff7e4;--vs-head:#523b22;--vs-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M45%2025V175M56%2025V175M66%2040H175M66%2060H175M66%2080H175M66%20100H175M66%20120H175M66%20140H175M66%20160H175%22%2F%3E%3Ccircle%20cx%3D%2229%22%20cy%3D%2245%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%2229%22%20cy%3D%22100%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%2229%22%20cy%3D%22155%22%20r%3D%225%22%2F%3E%3C%2Fsvg%3E")}
+html body .wk-sc.vitr-alb-wanted{--vs-outer:#65462a;--vs-wall:#d4b785;--vs-gold:#986237;--vs-ink:#ffecd2;--vs-bright:#fff1c0;--vs-head:#49301b;--vs-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2230%22%20y%3D%2218%22%20width%3D%22140%22%20height%3D%22165%22%20rx%3D%223%22%2F%3E%3Cpath%20d%3D%22M50%2045h100%20M60%20155h80%20M80%2065h40%20M90%20110l10-28%2010%2028%20M80%20111h40%22%2F%3E%3Cpath%20d%3D%22M55%20126h90M55%20135h90%22%2F%3E%3C%2Fsvg%3E")}
+html body .wk-sc.vitr-alb-jade{--vs-outer:#12332b;--vs-wall:#1c5b48;--vs-gold:#e6c87d;--vs-ink:#edffe0;--vs-bright:#aff0d6;--vs-head:#142e25;--vs-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M100%2017l80%2083-80%2083-80-83Z%22%2F%3E%3Cpath%20d%3D%22M100%2040l58%2060-58%2060-58-60Z%22%2F%3E%3Ccircle%20cx%3D%22100%22%20cy%3D%22100%22%20r%3D%2229%22%2F%3E%3Cpath%20d%3D%22M100%2057v86M57%20100h86%22%2F%3E%3C%2Fsvg%3E")}
+html body .wk-sc.vitr-alb-wave{--vs-outer:#15234c;--vs-wall:#162b58;--vs-gold:#dcad7b;--vs-ink:#eff4ff;--vs-bright:#81b8f5;--vs-head:#142342;--vs-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M15%2080q25-40%2050%200t50%200t50%200M15%20100q25-40%2050%200t50%200t50%200M15%20120q25-40%2050%200t50%200t50%200%22%2F%3E%3Ccircle%20cx%3D%22100%22%20cy%3D%22100%22%20r%3D%2268%22%2F%3E%3C%2Fsvg%3E")}
+html body .wk-sc.vitr-alb-pearl{--vs-outer:#090f1a;--vs-wall:#151b30;--vs-gold:#a1e3ec;--vs-ink:#e7eeff;--vs-bright:#bda8f6;--vs-head:#0c1323;--vs-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%22100%22%20cy%3D%22100%22%20r%3D%2270%22%2F%3E%3Ccircle%20cx%3D%22100%22%20cy%3D%22100%22%20r%3D%2248%22%2F%3E%3Ccircle%20cx%3D%22100%22%20cy%3D%22100%22%20r%3D%2223%22%2F%3E%3Cpath%20d%3D%22M100%205l8%2028-8%208-8-8z%20M100%20195l8-28-8-8-8%208z%20M5%20100l28-8%208%208-8%208z%20M195%20100l-28-8-8%208%208%208z%22%2F%3E%3C%2Fsvg%3E")}
+html body .wk-sc.vitr-alb-atlas{--vs-outer:#0b2442;--vs-wall:#0a355d;--vs-gold:#77d9ed;--vs-ink:#e5faff;--vs-bright:#9bdeff;--vs-head:#0a1d34;--vs-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%22100%22%20cy%3D%22100%22%20r%3D%2274%22%2F%3E%3Cpath%20d%3D%22M100%2015v170M15%20100h170M45%2045l110%20110%20M155%2045L45%20155%22%2F%3E%3Cpath%20d%3D%22M100%2038l15%2047%2047%2015-47%2015-15%2047-15-47-47-15%2047-15Z%22%2F%3E%3C%2Fsvg%3E")}
+html body .wk-sc.vitr-alb-trophies{--vs-outer:#251525;--vs-wall:#372238;--vs-gold:#e4bb75;--vs-ink:#fff0dc;--vs-bright:#ffdf9c;--vs-head:#1c1121;--vs-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M63%2032h74v35q0%2048-37%2061-37-13-37-61zM63%2045H31q-3%2041%2039%2046M137%2045h32q3%2041-39%2046M88%20127v26M112%20127v26M68%20155h64v15H68Z%22%2F%3E%3C%2Fsvg%3E")}
+html body .wk-sc.vitr-alb-dossier{--vs-outer:#28312a;--vs-wall:#c6c4a4;--vs-gold:#8d7752;--vs-ink:#e6e8d3;--vs-bright:#ebdfb7;--vs-head:#25342f;--vs-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M25%2042H175V172H25Z%20M45%2026H115L130%2042H45Z%22%2F%3E%3Cpath%20d%3D%22M48%2075h100%20M48%2090h65%20M48%20110h100%20M48%20125h80%20M48%20143h100%22%2F%3E%3Cpath%20d%3D%22M125%20145l32-27%22%2F%3E%3C%2Fsvg%3E")}
+html body .wk-sc.vitr-alb-holoarchive{--vs-outer:#09162b;--vs-wall:#0d2541;--vs-gold:#52def5;--vs-ink:#c7faff;--vs-bright:#b179fb;--vs-head:#0b1632;--vs-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%22100%22%20cy%3D%22100%22%20r%3D%2270%22%2F%3E%3Cpath%20d%3D%22M100%2015V185M15%20100H185M30%2030L170%20170M170%2030L30%20170%22%2F%3E%3Cpath%20d%3D%22M100%2042l52%2030v56l-52%2030-52-30V72Z%20M48%2072l52%2030%2052-30M100%20102v56%22%2F%3E%3C%2Fsvg%3E")}
+html body .wk-sc.vitr-alb-cabinet{--vs-outer:#392416;--vs-wall:#4b301e;--vs-gold:#e5b96c;--vs-ink:#fce7c5;--vs-bright:#f9d79e;--vs-head:#281a13;--vs-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M30%2020h140v160H30Z%20M40%2030h120v140H40Z%20M100%2030v140M40%20100h120%22%2F%3E%3Cpath%20d%3D%22M57%2040h26v50H57z%20M117%2040h26v50h-26zM57%20110h26v50H57z%20M117%20110h26v50h-26z%22%2F%3E%3C%2Fsvg%3E")}
 </style>
 </body></html>
 
