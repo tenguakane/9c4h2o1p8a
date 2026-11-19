@@ -42991,4 +42991,62 @@ html body .wk-sc .wk-sh3-it .character-grid-content .character-name{line-height:
 html body .wk-sc .wk-sh3-it .character-grid-content .wk-dk-arc{margin:2px 0 0!important}
 html body .wk-sc .wk-sh3-it .character-grid-content .character-grid-status{display:none!important}
 </style>
+
+<style id="wk-deck-special-label-fix">
+/* Единая палитра подписей особых карт */
+.wk-pk.v-neg .wk-dk-rn,
+.wk-pk.v-neg .wk-pk-bk small,
+.wk-dk-back.v-neg small {
+  color: #17345f !important;
+  text-shadow: 0 1px 2px rgba(255,255,255,.8), 0 0 7px rgba(125,211,252,.55) !important;
+}
+.wk-pk.v-holo .wk-dk-rn,
+.wk-pk.v-holo .wk-pk-bk small,
+.wk-dk-back.v-holo small {
+  color: #b9eaff !important;
+  background: linear-gradient(100deg,#ff83c5,#ffe58a,#9bffc7,#8bdcff,#d0a6ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 8px rgba(151,205,255,.35) !important;
+}
+.wk-pk.v-gold .wk-dk-rn,
+.wk-pk.v-gold .wk-pk-bk small,
+.wk-dk-back.v-gold small {
+  color: #ffd08a !important;
+  text-shadow: 0 0 7px rgba(255,111,30,.75), 0 1px 2px rgba(35,5,0,.9) !important;
+}
+
+/* Негативная лицевая сторона: рамка в тон рубашки вместо белой */
+.wk-pk.v-neg .wk-pk-fr .catalog-item-shell {
+  border: 2px solid #bae6fd !important;
+  border-radius: var(--r-lg) !important;
+  box-shadow:
+    inset 0 0 0 5px #eef3ff,
+    inset 0 0 0 6px #7dd3fc,
+    0 0 24px rgba(186,230,253,.6) !important;
+  overflow: hidden;
+}
+.wk-pk.v-neg .wk-pk-fr .character-item {
+  border-color: transparent !important;
+}
+
+/* Цвет названия редкости на лицевой стороне особых карт */
+.wk-pk.v-neg .wk-dk-rn.r-epic,
+.wk-pk.v-neg .wk-dk-rn.r-legendary {
+  color: #c5eaff !important;
+  text-shadow: 0 0 7px rgba(56,119,177,.8) !important;
+}
+.wk-pk.v-holo .wk-dk-rn.r-epic,
+.wk-pk.v-holo .wk-dk-rn.r-legendary {
+  color: #d9c7ff !important;
+  text-shadow: 0 0 8px rgba(115,185,255,.65) !important;
+}
+.wk-pk.v-gold .wk-dk-rn.r-epic,
+.wk-pk.v-gold .wk-dk-rn.r-legendary {
+  color: #ffd18a !important;
+  text-shadow: 0 0 8px rgba(255,102,25,.8) !important;
+}
+</style>
+
 </body></html>
