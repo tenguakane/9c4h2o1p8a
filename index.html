@@ -36753,10 +36753,12 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   }
   function wrapHTML(kd, mini, attrs, bk) {
     var w = WRP[kd] || WRP.free; kd = WRP[kd] ? kd : 'free';
+    var showLabel = kd !== 'free';
+    var txt = showLabel ? '<b class="wk-wrp-n">' + w.n + '</b><span class="wk-wrp-s">' + w.s + '</span>' : '';
     return '<div class="wk-wrp w-' + kd + (mini ? ' mini' : '') + '"' + (attrs || ' aria-hidden="true"') + '><div class="wk-wrp-floor"></div><div class="wk-wrp-3d">' +
       '<div class="wk-wrp-top"><i class="wk-wrp-ridges"></i><i class="wk-wrp-shade"></i></div>' +
       (mini ? '' : '<div class="wk-wrp-cut"><i class="wk-wrp-fill"></i><i class="wk-wrp-nub"></i></div>') +
-      '<div class="wk-wrp-body"><div class="wk-wrp-art">' + (bk ? wrapIc(w) : w.ic()) + '<b class="wk-wrp-n">' + w.n + '</b><span class="wk-wrp-s">' + w.s + '</span></div><i class="wk-wrp-ridges b"></i><i class="wk-wrp-crease"></i><i class="wk-wrp-shade"></i><i class="wk-wrp-sh"></i></div></div></div>';
+      '<div class="wk-wrp-body"><div class="wk-wrp-art">' + (bk ? wrapIc(w) : w.ic()) + txt + '</div><i class="wk-wrp-ridges b"></i><i class="wk-wrp-crease"></i><i class="wk-wrp-shade"></i><i class="wk-wrp-sh"></i></div></div></div>';
   }
   function sealedHTML() {
     var w = WRP[DK.sealed] || WRP.free, kd = WRP[DK.sealed] ? DK.sealed : 'free';
@@ -43172,6 +43174,26 @@ html body .wk-wrp.w-free.mini {
 }
 html body .wk-wrp.w-free.mini .wk-wrp-art{bottom:15.2%}
 html body .wk-wrp.w-free.mini .wk-wrp-n{font-size:6cqw!important}
+
+/* Make the small daily-pack preview crisp instead of soft/blurry. */
+html body .wk-wrp.w-free.mini,
+html #wkCabinPaneDeck .wk-dk-stage.idle .wk-dk-idlewrp .wk-wrp.w-free{
+  width:64px!important;
+  max-width:none!important;
+  transform:none!important;
+}
+html body .wk-wrp.w-free.mini .wk-wrp-3d,
+html #wkCabinPaneDeck .wk-dk-stage.idle .wk-dk-idlewrp .wk-wrp.w-free .wk-wrp-3d{
+  filter:drop-shadow(0 2px 2px rgba(0,0,0,.42)) drop-shadow(0 6px 10px rgba(0,0,0,.34))!important;
+  transform:none!important;
+}
+html #wkCabinPaneDeck .wk-dk-stage.idle .wk-dk-idlewrp .wk-wrp{
+  transform:none!important;
+}
+html body .wk-wrp.w-free.mini .wk-wrp-n,
+html body .wk-wrp.w-free.mini .wk-wrp-s{
+  display:none!important;
+}
 @media (prefers-reduced-motion:reduce){
   html body .wk-wrp.w-free .wk-wrp-sh{animation:none!important}
 }
