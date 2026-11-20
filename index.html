@@ -1732,7 +1732,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "20.11.2026 · 622";
+const WIKI_VERSION = "20.11.2026 · 623";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -22357,20 +22357,25 @@ html.wk-tilt-off.wk-gyro-on:not(.wk-cardfx-off) .character-item:not(.story-saga-
 (function () {
   'use strict';
   var root = document.documentElement;
-  var K = { text: 'onePieceWikiTextAnimV1', card: 'onePieceWikiCardAnimV1', tilt: 'onePieceWikiTiltV1', sc: 'onePieceWikiShowcaseV1', scv: 'onePieceWikiHorizV1_' };
+  var K = { text: 'onePieceWikiTextAnimV1', card: 'onePieceWikiCardAnimV1', tilt: 'onePieceWikiTiltV1', sc: 'onePieceWikiShowcaseV1', scv: 'onePieceWikiHorizV1_', mobileStill: 'onePieceWikiMobileStillV1' };
+  function isPhone() { try { return /iPhone|iPod|Android.*Mobile|Windows Phone|IEMobile|Opera Mini/i.test(navigator.userAgent) || (window.matchMedia('(max-width:700px)').matches && window.matchMedia('(pointer:coarse)').matches); } catch (e) { return false; } }
+  function mobileStill() { try { return isPhone() && localStorage.getItem(K.mobileStill) === 'on'; } catch (e) { return false; } }
+  window.__wkMobileNoMotion = mobileStill;
   var SCV = [['c', 'Персонажи'], ['s', 'Сюжет'], ['f', 'Плоды'], ['u', 'Полезное'], ['v', 'Избранное'], ['h', 'История']];
   function vget(k) { try { return localStorage.getItem(K.scv + k) === 'on'; } catch (e) { return false; } }
   function get(k) { try { return localStorage.getItem(k) !== 'off'; } catch (e) { return true; } }
   function put(k, on) { try { localStorage.setItem(k, on ? 'on' : 'off'); } catch (e) {} }
   function applyAll() {
-    root.classList.toggle('wk-tfx-still', !get(K.text));
-    root.classList.toggle('wk-cardfx-off', !get(K.card));
-    root.classList.toggle('wk-tilt-off', !get(K.tilt));
+    root.classList.toggle('wk-mobile-no-motion', mobileStill());
+    root.classList.toggle('wk-tfx-still', !get(K.text) || mobileStill());
+    root.classList.toggle('wk-cardfx-off', !get(K.card) || mobileStill());
+    root.classList.toggle('wk-tilt-off', !get(K.tilt) || mobileStill());
     root.classList.toggle('wk-sc-off', !get(K.sc));
     SCV.forEach(function (t) { root.classList.toggle('wk-hz-' + t[0], vget(t[0])); });
     try { window.dispatchEvent(new Event('wk-settings')); } catch (e) {}
   }
   applyAll();
+  window.addEventListener('resize', function () { root.classList.toggle('wk-mobile-no-motion', mobileStill()); });
   var THEMES = [['default', '🌑', 'Аметист'], ['ocean', '🌊', 'Океан'], ['light', '📜', 'Светлая'], ['mugiwara', '🏴‍☠️', 'Мугивара'], ['paper', '🗺️', 'Пергамент']];
   var ov = null;
   function row(id, ico, title, sub) { return '<div class="wk-set-row" data-set="' + id + '"><span class="ico" aria-hidden="true">' + ico + '</span><span class="txt"><b>' + title + '</b><small>' + sub + '</small></span><button type="button" class="wk-gyro-sw" role="switch" aria-label="' + title + '"></button></div>'; }
@@ -22378,6 +22383,7 @@ html.wk-tilt-off.wk-gyro-on:not(.wk-cardfx-off) .character-item:not(.story-saga-
     ov = document.createElement('div'); ov.className = 'wk-set-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', 'Настройки');
     ov.innerHTML = '<div class="wk-set"><div class="wk-set-head"><span aria-hidden="true">⚙</span><h2>Настройки</h2><button type="button" class="wk-set-x" aria-label="Закрыть">✕</button></div>' +
       '<h3>Анимации</h3>' +
+      (isPhone() ? row('mobileStill', '◼', 'Без анимаций — слабый телефон', 'Отключить эффекты и переходы во всём приложении. Наборы показываются сразу, без упаковки и переворотов. Только на этом телефоне.') : '') +
       row('card', '🃏', 'Анимации карточек', 'Эффекты и блики карточек, фото статей и медалей.') +
       row('tilt', '🧊', '3D-наклон', 'Карточки и фото наклоняются за курсором, пальцем или телефоном. Выключено — эффекты остаются, но карточка стоит ровно.') +
       row('gyro', '📱', 'Гироскоп на телефоне', '') +
@@ -22402,7 +22408,8 @@ html.wk-tilt-off.wk-gyro-on:not(.wk-cardfx-off) .character-item:not(.story-saga-
       var th = e.target.closest('[data-set-theme]'); if (th) { try { window.applyTheme(th.getAttribute('data-set-theme')); } catch (er) {} sync(); return; }
       var sw = e.target.closest('.wk-gyro-sw'); if (!sw) return;
       var id = sw.closest('[data-set]').getAttribute('data-set'), on = sw.getAttribute('aria-checked') !== 'true';
-      if (id === 'card') { put(K.card, on); applyAll(); }
+      if (id === 'mobileStill' && isPhone()) { try { localStorage.setItem(K.mobileStill, on ? 'on' : 'off'); } catch (e) {} applyAll(); }
+      else if (id === 'card') { put(K.card, on); applyAll(); }
       else if (id === 'text') { put(K.text, on); applyAll(); }
       else if (id === 'tilt') { put(K.tilt, on); applyAll(); }
       else if (id === 'sc') { put(K.sc, on); applyAll(); }
@@ -22422,6 +22429,7 @@ html.wk-tilt-off.wk-gyro-on:not(.wk-cardfx-off) .character-item:not(.story-saga-
   function sync() {
     if (!ov) return;
     var cardOn = get(K.card), tfxOn = window.__wikiTextFxOn ? window.__wikiTextFxOn() : true;
+    if (isPhone()) setSw('mobileStill', mobileStill());
     setSw('card', cardOn);
     var scOn = get(K.sc); setSw('sc', scOn); setSw('dkgrid', (function () { try { return localStorage.getItem('wkDeckGridV1') === 'on'; } catch (e) { return false; } })());
     SCV.forEach(function (t) { setSw('scv-' + t[0], vget(t[0])); });
@@ -37445,6 +37453,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     pane.addEventListener('mouseout', function (e) { var w = e.target.closest && e.target.closest('.wk-wrp'); if (w && !w.contains(e.relatedTarget)) { w.classList.remove('tilt'); w.style.setProperty('--rx', '0deg'); w.style.setProperty('--ry', '0deg'); w.style.setProperty('--tx', 0); } });
   }
   function tearPack(pane) {
+    if (window.__wkMobileNoMotion && window.__wkMobileNoMotion()) { skipAll(pane); return; }
     var w = pane.querySelector('.wk-wrp'); if (!w || w.__torn) return; w.__torn = 1;
     var still = false; try { still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
     w.style.setProperty('--p', 1); w.classList.add('torn');
@@ -37628,7 +37637,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (sl.__fl) return; sl.__fl = 1;
     var back = sl.classList.contains('flipped'), still = false;
     try { still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
-    var T = still ? 0 : 260;
+    var T = (still || (window.__wkMobileNoMotion && window.__wkMobileNoMotion())) ? 0 : 260;
     function done() { sl.__fl = 0; if (btn) btn.setAttribute('aria-pressed', String(sl.classList.contains('flipped'))); }
     if (!back) {
       if (!sl.querySelector(':scope > .wk-dk-sbwrap')) { var k = slotKind(sl); sl.insertAdjacentHTML('beforeend', backWrapHTML(k.r, k.v, cardCid(sl), cardArc(sl), sl.closest('#wkDkColl') ? slotKey(sl) : '')); }
@@ -39340,7 +39349,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (!el || !el.matches('#wkDkPack .wk-dk-row > .wk-pk[data-i]')) return;
     if (el.classList.contains('on')) { if (after) after(); return; }
     var go = function () { el.classList.add('on'); try { if (window.__wkPkx) window.__wkPkx.flip(pane, el); } catch (e) {} DK.flipped++; markFlip(el); cvShow(pane, el.getAttribute('data-i')); if (DK.pack && DK.flipped >= DK.pack.length) finish(pane); if (after) after(); };
-    if (csKind(el) && !el.getAttribute('data-cs')) {
+    if (csKind(el) && !el.getAttribute('data-cs') && !(window.__wkMobileNoMotion && window.__wkMobileNoMotion())) {
       if (el.__chg) return; el.__chg = 1;
       var still = false; try { still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
       el.classList.add('wk-pk-chg', 'cg-' + csKind(el));
@@ -39357,6 +39366,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     finish(pane);
   }
   function flipAll(pane) {
+    if (window.__wkMobileNoMotion && window.__wkMobileNoMotion()) { skipAll(pane); return; }
     try { if (window.__wkPkx) window.__wkPkx.all(pane); } catch (e) {} 
     var l = [].slice.call(pane.querySelectorAll('#wkDkPack .wk-dk-row > .wk-pk[data-i]:not(.on)')), i = 0;
     (function next() { if (i >= l.length || !pane.isConnected) return; var el = l[i++]; flipPk(pane, el, function () { setTimeout(next, csKind(el) ? 380 : 110); }); })();
@@ -39510,6 +39520,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (!DK.pack && st.open && st.open.pk && st.open.pk.length) { DK.pack = st.open.pk; DK.flipped = (st.open.fl || []).length; DK.restored = 1; }
     pane.innerHTML = '<div class="wk-pane-head"><div><h2>Колода</h2><p>Карточки персонажей (по одной на каждое фото в арке), дьявольских плодов, полезных статей и плакатов розыска. Новые появляются по мере прохождения.</p></div><div class="wk-dk-hbtn">' + (isDima() && DK.tab === 'me' && !DK.fr ? adminHTML() : '') + '<button type="button" class="wk-dk-reset" data-act="rules" title="Правила и шансы">Правила</button><button type="button" class="wk-dk-reset" data-act="cloud" title="Отправить колоду в облако или забрать её оттуда">Облако</button></div></div>' +
       tabsHTML() + (DK.tab === 'me' ? (DK.fr ? meBarHTML() : '') + (DK.fr ? '<div id="wkDkFriend">' + friendBody() + '</div>' : (isDima() ? '' : adminHTML()) + '<div id="wkDkPack">' + packHTML(cards, st) + '</div><div id="wkDkAutoLog">' + (DK.autoLog ? autoLogHTML(cards, st) : '') + '</div>' + (st.__fake ? '' : showcaseHTML(cards, st.show, true, showCap(st), { frame: '', bg: st.bg, alb: st.alb }) + showcaseHTML(cards, wantKeys(st.want, st.owned), true, 3, { frame: '', bg: st.bg, alb: st.alb }, 1)) + '<div class="wk-st-tg"><button type="button" class="wk-tx-btn" data-sttog>' + (stHidden() ? 'Показать статистику' : 'Скрыть статистику') + '</button></div><div id="wkDkStats">' + statsBox(cards, st) + '</div>' + meBarHTML() + '<h3 class="wk-dk-h">Коллекция</h3><div id="wkDkColl">' + collHTML(cards, st) + '</div>') : '<div id="wkTxBody" class="wk-tx-body">' + (DK.tab === 'craft' ? craftHTML(cards, st) : DK.tab === 'shop' ? shopHTML(cards, st) : DK.tab === 'people' ? peopleHTML() : DK.tab === 'feed' ? feedHTML() : tradeHTML()) + '</div>');
+    if (DK.tab === 'me' && DK.pack && window.__wkMobileNoMotion && window.__wkMobileNoMotion()) { skipAll(pane); }
     if (DK.tab === 'me' && DK.pack && st.open && st.open.fl) st.open.fl.forEach(function (i) { var el = pane.querySelector('.wk-pk[data-i="' + i + '"]'); if (el) el.classList.add('on'); cvShow(pane, i); });
     if (DK.restored && DK.tab === 'me' && st.open) { var rn = pane.querySelector('#wkDkPack .wk-dk-row'); if (rn) rn.insertAdjacentHTML('beforebegin', '<p class="wk-dk-convnote">Набор не был досмотрен — карточки ждут тебя.</p>'); }
     txWatchStart(); frWatchStart(); refreshTrades(pane, false); feedLoad(pane, false);
@@ -39592,7 +39603,9 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
           if (DK.pack) finish(pane, true);
           var pk = drawPack(C, S, deckFull(S, C) ? { minVar: 1 } : undefined); DK.sealKind = 'free'; applyPack(S, C, pk, false);
           DK.pack = pk; DK.flipped = 0; pane.querySelector('#wkDkPack').innerHTML = packHTML(C, S);
-          var row = pane.querySelector('.wk-wrp,.wk-dk-row'); if (row && row.scrollIntoView) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          var noFx = window.__wkMobileNoMotion && window.__wkMobileNoMotion();
+          if (noFx) skipAll(pane);
+          var row = pane.querySelector('.wk-wrp,.wk-dk-row'); if (row && row.scrollIntoView) row.scrollIntoView({ behavior: noFx ? 'instant' : 'smooth', block: 'center' });
         } else if (a === 'slotflip') { var sl = t.closest('.wk-dk-slot'); if (sl) slotFlip(sl, t); }
         else if (a === 'flipall') {
           flipAll(pane);
@@ -39622,6 +39635,11 @@ else if (a === 'adm-fill') { if (!isDima()) return; DK.fillAll = !DK.fillAll; re
     var fs0 = pane.querySelector('#wkDkStats'), fc0 = pane.querySelector('#wkDkColl'); if (fs0) fs0.innerHTML = statsBox(C, S); if (fc0) fc0.innerHTML = collHTML(C, S);
     if (close) { DK.pack = null; DK.sealed = ''; DK.restored = 0; if (S.open && !S.__fake) { delete S.open; save(S); } var fp0 = pane.querySelector('#wkDkPack'); if (fp0) fp0.innerHTML = packHTML(C, S); }
   }
+  window.addEventListener('wk-settings', function () {
+    if (!(window.__wkMobileNoMotion && window.__wkMobileNoMotion())) return;
+    var p = document.getElementById('wkCabinPaneDeck');
+    if (p && p.isConnected && DK.pack && p.querySelector('#wkDkPack .wk-dk-stage:not(.idle):not(.fin)')) skipAll(p);
+  });
   window.__wkDeckRender = renderDeck;
   /* Обнуление коллекции: кнопки в Колоде больше нет, вызывается только из Настроек («Опасная зона») */
   window.__wkDeckReset = function () {
@@ -42277,6 +42295,7 @@ html .wk-pkx-pager{display:none}
   'use strict';
   /* Колода v3: экран открытия набора на телефоне, эффекты переворота, плавающий переключатель страниц альбома */
   var RM = false; try { RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  function still() { return RM || !!(window.__wkMobileNoMotion && window.__wkMobileNoMotion()); }
   function phone() { try { return window.matchMedia('(max-width: 700px)').matches; } catch (e) { return false; } }
   function rar(el) { return ['legendary', 'epic', 'rare', 'common'].filter(function (r) { return el.classList.contains('r-' + r); })[0] || 'common'; }
   function isOn(el) { return el.classList.contains('on'); }
@@ -42288,7 +42307,7 @@ html .wk-pkx-pager{display:none}
   function centerOn(st, el, smooth) {
     var row = st.querySelector('.wk-dk-row'); if (!row || !el || !carousel(st)) return;
     var left = el.offsetLeft - (row.clientWidth - el.offsetWidth) / 2;
-    try { row.scrollTo({ left: left, behavior: smooth && !RM ? 'smooth' : 'auto' }); } catch (e) { row.scrollLeft = left; }
+    try { row.scrollTo({ left: left, behavior: smooth && !still() ? 'smooth' : 'auto' }); } catch (e) { row.scrollLeft = left; }
   }
   function markCur(st) {
     var row = st.querySelector('.wk-dk-row'), l = cards(st); if (!row || !l.length) return;
@@ -42319,7 +42338,7 @@ html .wk-pkx-pager{display:none}
   function mount(pane, fresh) {
     var st = stageOf(pane); if (!st || st.__pkx) return; st.__pkx = 1;
     var row = st.querySelector('.wk-dk-row'), l = cards(st); if (!row || !l.length) return;
-    if (fresh && !RM) { st.classList.add('just'); setTimeout(function () { st.classList.add('wk-dealt'); st.classList.remove('just'); }, 1500); }
+    if (fresh && !still()) { st.classList.add('just'); setTimeout(function () { st.classList.add('wk-dealt'); st.classList.remove('just'); }, 1500); }
     var head = document.createElement('div'); head.className = 'wk-pkx-head';
     head.innerHTML = '<b class="wk-pkx-ttl"></b><span class="wk-pkx-cnt" aria-live="polite"></span>';
     st.insertBefore(head, st.firstChild);
@@ -42349,11 +42368,12 @@ html .wk-pkx-pager{display:none}
   }
   function flip(pane, el) {
     var st = el.closest('.wk-dk-stage'); if (!st || !el.parentNode || !el.parentNode.classList.contains('wk-dk-row')) return;
-    if (!RM) { el.classList.add('wk-pkx-now'); sparks(el); }
-    buzz(el);
+    if (!still()) { el.classList.add('wk-pkx-now'); sparks(el); }
+    if (!still()) buzz(el);
     var hint = st.querySelector('.wk-pkx-hint'); if (hint) hint.classList.add('off');
-    var all = paint(st), slow = el.classList.contains('is-var') || rar(el) === 'legendary', wait = phone() ? (RM ? 0 : (slow ? 260 : 160)) : (slow ? (rar(el) === 'legendary' ? 1100 : 700) : { common: 120, rare: 220, epic: 380 }[rar(el)]);
+    var all = paint(st), slow = el.classList.contains('is-var') || rar(el) === 'legendary', wait = phone() ? (still() ? 0 : (slow ? 260 : 160)) : (slow ? (rar(el) === 'legendary' ? 1100 : 700) : { common: 120, rare: 220, epic: 380 }[rar(el)]);
     clearTimeout(st.__adv);
+    if (still()) { if (all) summary(st); else { var remain = cards(st).filter(function (x) { return !isOn(x); })[0]; if (remain) centerOn(st, remain, false); } return; }
     if (all) { st.__adv = setTimeout(function () { summary(st); }, st.classList.contains('sum') ? 700 : wait + (slow ? 500 : 200)); return; }
     if (st.classList.contains('sum') || !phone()) return;
     st.__adv = setTimeout(function () {
@@ -42382,7 +42402,7 @@ html .wk-pkx-pager{display:none}
       setTimeout(function () {
         var page = p.querySelector('#wkDkColl .wk-al-page'); if (!page) return;
         var top = page.getBoundingClientRect().top + window.pageYOffset - 130;
-        try { window.scrollTo({ top: top, behavior: RM ? 'auto' : 'smooth' }); } catch (er) { window.scrollTo(0, top); }
+        try { window.scrollTo({ top: top, behavior: still() ? 'auto' : 'smooth' }); } catch (er) { window.scrollTo(0, top); }
         sync();
       }, 60);
     });
@@ -45598,5 +45618,109 @@ html body .wk-ddm.wk-ddm-album .wk-ddm-g {color:var(--al-muted)!important}
   #wkCabinPaneDeck .wk-dk-stage:not(.idle) .wk-pkx-sp{display:none!important}
 }
 </style>
+<style id="wk-mobile-still-quality-623">
+/* On real phones only: locally selectable full motion reduction. */
+html.wk-mobile-no-motion,html.wk-mobile-no-motion body,
+html.wk-mobile-no-motion * , html.wk-mobile-no-motion *::before,html.wk-mobile-no-motion *::after{
+  animation:none!important;transition:none!important;scroll-behavior:auto!important;
+  animation-delay:0s!important;transition-delay:0s!important;
+}
+html.wk-mobile-no-motion .wk-pk{opacity:1!important;visibility:visible!important;transform:none!important}
+/* No 3D layer during pack summary; back faces become ordinary flat cards. */
+html.wk-mobile-no-motion #wkDkPack .wk-pk-in,
+html.wk-mobile-no-motion #wkDkPack .wk-pk.on .wk-pk-in{
+  transform:none!important;transform-style:flat!important;perspective:none!important;
+}
+html.wk-mobile-no-motion #wkDkPack .wk-pk.on .wk-pk-fr{
+  display:block!important;transform:none!important;-webkit-backface-visibility:visible!important;backface-visibility:visible!important;
+}
+html.wk-mobile-no-motion #wkDkPack .wk-pk.on .wk-pk-bk{display:none!important}
+html.wk-mobile-no-motion .wk-wrp-sh,html.wk-mobile-no-motion .wk-wrp-floor,
+html.wk-mobile-no-motion .wk-pkx-sp,html.wk-mobile-no-motion .wk-pkx-ring,
+html.wk-mobile-no-motion .wk-amb-p,html.wk-mobile-no-motion .wk-tilt-glare{display:none!important}
+html.wk-mobile-no-motion .wk-dk-slot.fl-in>.catalog-item-shell,
+html.wk-mobile-no-motion .wk-dk-slot.fl-out>.catalog-item-shell{transform:none!important}
+/* Keep images sharp when a mobile browser downsamples 3D layers. */
+@media(max-width:900px){
+  .character-grid-image-wrap img.character-grid-image,
+  .fruit-grid-image-wrap img,.useful-catalog-image-wrap img,
+  .reward-grid-image-wrap img,.story-card-thumb img{
+    image-rendering:auto!important;
+    -webkit-backface-visibility:visible!important;
+    backface-visibility:visible!important;
+    will-change:auto!important;
+  }
+  #wkDkColl .wk-dk-slot .character-grid-image,
+  #wkDkPack .wk-pk-fr .character-grid-image{filter:none!important}
+  #wkDkPack .wk-dk-stage.fin .wk-pk-in{transform:none!important;transform-style:flat!important}
+  #wkDkPack .wk-dk-stage.fin .wk-pk-fr{transform:none!important;backface-visibility:visible!important;-webkit-backface-visibility:visible!important}
+  #wkDkPack .wk-dk-stage.fin .wk-pk-bk{display:none!important}
+}
+</style>
+<script id="wk-mobile-preview-quality-623">
+(function () {
+  'use strict';
+  // Upgrade only visible low-resolution Pinterest previews, not entire data sets.
+  function isPhone() { try { return /iPhone|iPod|Android.*Mobile|Windows Phone|IEMobile|Opera Mini/i.test(navigator.userAgent) || (matchMedia('(max-width:700px)').matches && matchMedia('(pointer:coarse)').matches); } catch (e) { return false; } }
+  if (!isPhone()) return;
+  var selectors = '.character-grid-image, .fruit-grid-image, .reward-grid-image, .reward-card-image, .useful-catalog-image';
+  var watched = new WeakSet(), busy = 0, queue = [], maxConcurrent = 2;
+  function attempt(img) {
+    if (!img || !img.isConnected || !img.getAttribute('src')) return;
+    var src = img.getAttribute('src');
+    if (!/^https:\/\/i\.pinimg\.com\/(236x|474x|564x|736x)\//i.test(src)) return;
+    var zoom = 1, m = (img.style.transform || '').match(/scale\(([\d.]+)\)/);
+    if (m) zoom = Math.min(3, Math.max(1, parseFloat(m[1]) || 1));
+    var density = Math.min(window.devicePixelRatio || 1, 3);
+    var required = (img.clientWidth || img.getBoundingClientRect().width || 0) * zoom * density;
+    var target = '';
+    if (/\/(236x|474x|564x)\//.test(src)) target = '736x';
+    else if (/\/736x\//.test(src) && zoom >= 1.4 && required > 820) target = '1200x';
+    if (!target) return;
+    var nextSrc = src.replace(/\/(236x|474x|564x|736x)\//, '/' + target + '/');
+    // Preload before swapping: a missing larger CDN variant never hides the image.
+    queue.push({ img: img, source: src, next: nextSrc }); pump();
+  }
+  function pump() {
+    while (busy < maxConcurrent && queue.length) {
+      var job = queue.shift(); if (!job.img.isConnected || job.img.getAttribute('src') !== job.source) continue;
+      busy++;
+      (function (j) {
+        var probe = new Image();
+        var timeout = setTimeout(function () { probe.onload = probe.onerror = null; busy--; pump(); }, 10000);
+        function done(ok) {
+          clearTimeout(timeout); probe.onload = probe.onerror = null;
+          if (ok && j.img.isConnected && j.img.getAttribute('src') === j.source) j.img.setAttribute('src', j.next);
+          busy--; pump();
+        }
+        probe.onload = function () { done(true); };
+        probe.onerror = function () { done(false); };
+        probe.src = j.next;
+      })(job);
+    }
+  }
+  var io = 'IntersectionObserver' in window ? new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) { io.unobserve(e.target); attempt(e.target); } });
+  }, { rootMargin: '100px 0px' }) : null;
+  function scan(root) {
+    if (!root) return;
+    var imgs = [];
+    if (root.matches && root.matches(selectors)) imgs.push(root);
+    if (root.querySelectorAll) root.querySelectorAll(selectors).forEach(function (img) { imgs.push(img); });
+    imgs.forEach(function (img) {
+      if (watched.has(img)) return;
+      watched.add(img);
+      if (io) io.observe(img); else if (img.getBoundingClientRect().top < innerHeight + 100) attempt(img);
+    });
+  }
+  function init() {
+    scan(document);
+    if ('MutationObserver' in window) new MutationObserver(function (records) {
+      records.forEach(function (r) { r.addedNodes.forEach(function (n) { if (n.nodeType === 1) scan(n); }); });
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true }); else init();
+})();
+</script>
 </body></html>
 
