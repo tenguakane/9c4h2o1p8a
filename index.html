@@ -28541,7 +28541,18 @@ html body #charactersSection#charactersSection #characterList#characterList.char
     if (!box) { box = document.createElement('div'); box.className = 'wk-ov-tilesbox'; ov.insertBefore(box, ov.firstChild); }
     [].forEach.call(ov.querySelectorAll(':scope > .wk-ov-group'), function (g) { g.remove(); });
     placeInOverview(ov);
-    var open = anyOpen(), want = (desk() || window.__wkOvMobOn === true) && !open;
+    /* Mobile cabin: the profile is the explicitly selected Overview screen.
+       A delayed Favorites/History repaint may unhide a legacy panel. It must not
+       take over the screen until the user actually opens that section. */
+    var mobileOverview = !desk() && window.__wkOvMobOn === true;
+    if (mobileOverview) {
+      panels().forEach(function (p) { if (!p.hidden) p.hidden = true; });
+      $$('#favoritesSection .cabin-subnav .cabin-subtab.active').forEach(function (b) {
+        b.classList.remove('active', 'is-active');
+        b.setAttribute('aria-selected', 'false');
+      });
+    }
+    var open = mobileOverview ? false : anyOpen(), want = (desk() || mobileOverview) && !open;
     ov.hidden = !want;
     var shO = ov.parentNode; if (shO && shO.classList) shO.classList.toggle('wk-mov', want && !desk());
     var tb = $('.wk-ov-tab', nav); if (tb) { tb.classList.toggle('active', want); tb.setAttribute('aria-selected', String(want)); }
@@ -44975,6 +44986,21 @@ html body .wk-ddm.wk-ddm-album [role=option].sel {
   font-weight:800!important;
 }
 html body .wk-ddm.wk-ddm-album .wk-ddm-g {color:var(--al-muted)!important}
+</style>
+
+<style id="wk-mobile-cabin-profile-stability-2026">
+/* Only the profile is visible on the mobile Cabin root screen. The legacy
+   favorites/history panels can be reactivated asynchronously by their own code;
+   they remain available from the Cabin's explicit navigation. */
+@media (max-width:760px){
+  html.ios-app #favoritesSection .cabin-new-shell.wk-mov > :is(.cabin-tab-panel,.wk-pane):not(#wkCabOverview){
+    display:none!important;
+  }
+  html.ios-app #favoritesSection .cabin-new-shell.wk-mov > #wkCabOverview:not([hidden]){
+    display:flex!important;
+    flex-direction:column;
+  }
+}
 </style>
 </body></html>
 
