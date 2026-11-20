@@ -18791,7 +18791,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
           if (!/^o[a-z0-9]{3,14}$/.test(doc.id)) return;
           var d = doc.data() || {};
           out.push({ id: doc.id, n: String(d.name || ''), price: Number(d.price) || 0,
-            d: String(d.d || ''), at: String(d.at || '') });
+            d: String(d.d || ''), s: Number(d.s) >= 60 && Number(d.s) <= 110 ? Number(d.s) : 100, at: String(d.at || '') });
         }); return out;
       });
     },
@@ -18802,7 +18802,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
         return Promise.reject(new Error('invalid-ornament'));
       return fb.fs.setDoc(fb.fs.doc(db, 'backs', orn.id), {
         kind: 'ornament', name: String(orn.n || '').slice(0, 40), price: orn.price,
-        d: String(orn.d), by: me.login, at: new Date().toISOString()
+        d: String(orn.d), s: Math.min(110, Math.max(60, Number(orn.s) || 100)), by: me.login, at: new Date().toISOString()
       });
     },
     remove: function (id) {
@@ -37742,7 +37742,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   var ORNS = [], OR_NO = { id: 'none', n: 'Без орнамента', price: 1 };
   /* Постоянный товар: убирает только угловые вензеля. Не хранится в Firestore backs и не редактируется в загрузчике. */
   function ornGoods() { return [OR_NO].concat(ORNS.filter(ornValid)); }
-  var ORP = { id: '', name: '', price: 15000, d: '', file: null, mode: 'corners', busy: false };
+  var ORP = { id: '', name: '', price: 15000, d: '', file: null, mode: 'corners', s: 100, busy: false };
   var ORS = { at: 0, loading: false };
   function ornValid(q) {
     return !!(q && /^o[a-z0-9]{3,14}$/.test(String(q.id)) &&
@@ -37756,7 +37756,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     el.textContent = ORNS.filter(ornValid).map(function (q) {
       var mask = 'url(' + q.d + ')', sel = 'html[data-wk-orn="' + q.id + '"] body :is(.wk-pk,.wk-al-fb)',
           prev = 'html body [data-wk-orn-preview="' + q.id + '"] :is(.wk-pk,.wk-al-fb)';
-      return sel + ',' + prev + '{--wk-cf-b:' + mask + '!important;}';
+      return sel + ',' + prev + '{--wk-cf-b:' + mask + '!important;--wk-orn-scale:' + (Number(q.s)>=60&&Number(q.s)<=110?Number(q.s):100) + '%!important;}';
     }).join('\n');
   }
   function refreshOrnaments(pane, force) {
@@ -37766,7 +37766,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     api.list().then(function (items) {
       ORS.at = Date.now();
       var next = (items || []).filter(ornValid).sort(function (a,b) { return String(a.at).localeCompare(String(b.at)); });
-      var sig = function (ls) { return JSON.stringify(ls.map(function (q) { return [q.id,q.n,q.price,q.d]; })); };
+      var sig = function (ls) { return JSON.stringify(ls.map(function (q) { return [q.id,q.n,q.price,q.d,q.s]; })); };
       if (sig(next) !== sig(ORNS)) {
         ORNS = next; ornCSS(); syncOrnament();
         var body = pane && pane.querySelector('#wkTxBody');
@@ -37776,7 +37776,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       if (force && isDima()) txToast('Не получилось загрузить орнаменты из облака');
     }).then(function () { ORS.loading = false; });
   }
-  function ornReset() { ORP = { id: '', name: '', price: 15000, d: '', file: null, mode: 'corners', busy: false }; }
+  function ornReset() { ORP = { id: '', name: '', price: 15000, d: '', file: null, mode: 'corners', s: 100, busy: false }; }
   function allBacks() { return BACKS.concat(CB.filter(cbOk).map(function (q) { return { id: q.id, n: q.n || 'Рубашка', price: FREE() ? 0 : (q.price || 30000), ch: q.ch, ep: q.ep, cu: 1 }; })); }
   var BKP = { d: '', name: '', price: 30000, inv: false, file: null };
   var BKS = { at: 0, loading: false };
@@ -38037,7 +38037,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var items = ORNS.map(function (q) { return '<li><span>' + esc(q.n) + ' · ' + fmtB(q.price) + '</span><span class="wk-bk-lb">' +
       '<button type="button" class="wk-tx-btn" data-tx="ornedit" data-id="' + esc(q.id) + '">Изменить</button>' +
       '<button type="button" class="wk-tx-btn" data-tx="orndel" data-id="' + esc(q.id) + '">Удалить</button></span></li>'; }).join('');
-    var preview = '<div class="wk-sh-art wk-sh-orn-art" id="wkOrnDraft" style="--wk-orn-draft:' + (ORP.d ? 'url(' + ORP.d + ')' : 'none') + '">' +
+    var preview = '<div class="wk-sh-art wk-sh-orn-art" id="wkOrnDraft" style="--wk-orn-draft:' + (ORP.d ? 'url(' + ORP.d + ')' : 'none') + ';--wk-orn-scale:' + (ORP.s || 100) + '%">' +
       '<div class="wk-pk r-legendary wk-dk-sbin wk-sh-orn-card"><div class="wk-pk-bk">' + backInner('legendary', '') + '</div></div></div>';
     return '<h3 class="wk-dk-h" id="wkOrnHead">' + (ORP.id ? 'Редактирование орнамента' : 'Добавить свой орнамент') + '</h3>' +
       '<p class="wk-sh-hint">Загрузи PNG с прозрачным фоном. Можно использовать готовый рисунок из четырёх углов или один угол — он отразится на остальные три. Орнамент будет окрашен в цвет редкости карты, компас и рамка останутся прежними. Новый товар появится у всех игроков после сохранения.</p>' +
@@ -38047,6 +38047,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       '<input type="text" id="wkOrnName" maxlength="40" placeholder="Название орнамента" value="' + esc(ORP.name) + '">' +
       '<label class="wk-bk-row">Цена, белли <input id="wkOrnPrice" type="number" min="0" max="10000000" step="500" value="' + esc(ORP.price) + '"></label>' +
       '<label class="wk-bk-row">Изображение <select id="wkOrnMode"><option value="corners"' + (ORP.mode === 'corners' ? ' selected' : '') + '>Все четыре угла</option><option value="single"' + (ORP.mode === 'single' ? ' selected' : '') + '>Один угол (зеркально)</option></select></label>' +
+      '<label class="wk-bk-row wk-bk-zr">Масштаб орнамента <input type="range" id="wkOrnScale" min="60" max="110" step="5" value="' + (ORP.s || 100) + '"><b id="wkOrnScaleVal">' + (ORP.s || 100) + '%</b></label>' +
       '<p class="wk-sh-hint" id="wkOrnStatus">' + (ORP.d ? 'Изображение готово к публикации.' : 'Файл ещё не выбран.') + '</p>' +
       '<span class="wk-bk-lb"><button type="button" class="wk-tx-btn pri" data-tx="ornadd">' + (ORP.id ? 'Сохранить изменения' : 'Опубликовать в магазине') + '</button>' +
       (ORP.id ? '<button type="button" class="wk-tx-btn" data-tx="orncancel">Отмена</button>' : '') + '</span></div></div>' +
@@ -38109,6 +38110,11 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (!e.target) return;
     if (e.target.id==='wkOrnName') ORP.name=e.target.value;
     if (e.target.id==='wkOrnPrice') ORP.price=e.target.value;
+    if (e.target.id==='wkOrnScale') {
+      ORP.s=Math.max(60,Math.min(110,Number(e.target.value)||100));
+      var out=document.getElementById('wkOrnScaleVal');if(out)out.textContent=ORP.s+'%';
+      var draft=document.getElementById('wkOrnDraft');if(draft)draft.style.setProperty('--wk-orn-scale',ORP.s+'%');
+    }
   });
   function bkAdminHTML() {
     if (!isDima()) return '';
@@ -38423,7 +38429,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (a === 'ornedit') {
       var old = ORNS.filter(function (q) { return q.id === b.getAttribute('data-id'); })[0];
       if (!old || !isDima()) return;
-      ORP = { id: old.id, name: old.n, price: old.price, d: old.d, file: null, mode: 'corners', busy: false };
+      ORP = { id: old.id, name: old.n, price: old.price, d: old.d, file: null, mode: 'corners', s: Number(old.s) >= 60 && Number(old.s) <= 110 ? Number(old.s) : 100, busy: false };
       repaint(); var head = pane.querySelector('#wkOrnHead'); if (head) head.scrollIntoView({ block:'start', behavior:'smooth' }); return;
     }
     if (a === 'orncancel') { ornReset(); repaint(); return; }
@@ -38436,7 +38442,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       if (!Number.isSafeInteger(price) || price < 0 || price > 10000000) { txToast('Цена от 0 до 10 000 000 белли'); return; }
       var id = ORP.id || ('o' + Date.now().toString(36)), ed = !!ORP.id;
       b.disabled = true;
-      api.save({ id:id, n:name, price:price, d:ORP.d }).then(function(){
+      api.save({ id:id, n:name, price:price, d:ORP.d, s: Math.min(110,Math.max(60,Number(ORP.s)||100)) }).then(function(){
         ornReset(); txToast(ed ? 'Орнамент обновлён' : 'Орнамент появился в магазине');
         ORS.at = 0; refreshOrnaments(pane, true);
       },function(err){ b.disabled=false; txToast((err && err.code)==='permission-denied' ? 'Firebase запретил запись в backs: проверь правила доступа' : 'Не удалось сохранить орнамент'); });
@@ -44432,8 +44438,8 @@ html body .wk-sc .character-item[data-wk-pin] > .character-grid-image-wrap {
   /* Рабочий запасной вариант и точный SVG-путь для современных браузеров. */
   -webkit-clip-path:inset(4.055944% 5.8% round 6.79% / 4.57%)!important;
   clip-path:inset(4.055944% 5.8% round 6.79% / 4.57%)!important;
-  -webkit-clip-path:url(#wkDeckFaceArtOpening)!important;
-  clip-path:url(#wkDeckFaceArtOpening)!important;
+  
+  
   z-index:1!important;
 }
 /* Никакого второго (смещённого) обрезания у самого фото. Кадрирование и zoom работают по-прежнему. */
@@ -44751,8 +44757,8 @@ html body .wk-sc .wk-sh3-it .character-item[data-wk-pin]{
 html body .wk-sc .wk-sh3-it .character-item[data-wk-pin]>.character-grid-image-wrap{
  position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
  overflow:hidden!important;
- -webkit-clip-path:url(#wkDeckFaceArtOpening)!important;
- clip-path:url(#wkDeckFaceArtOpening)!important;
+ 
+ 
 }
 /* Soften black gradient under text. Keep enough contrast on bright pictures. */
 html body .wk-sc .character-grid-card .character-grid-content::before,
@@ -44767,5 +44773,42 @@ html body #wkDkColl .character-grid-card .character-grid-content{
 html body .wk-sc .wk-sh3-it .wk-dk-slot{filter:drop-shadow(0 10px 9px rgba(0,0,0,.24))!important}
 </style>
 
+
+<style id="wk-ornament-scale-showcase-final-2026">
+/* Custom corner masks are resized within the entire card, not cropped at their edges. */
+html body :is(.wk-pk-bk,.wk-dk-back) > .wk-bkf{
+ -webkit-mask:var(--wk-cf-b) center center / var(--wk-orn-scale,100%) var(--wk-orn-scale,100%) no-repeat!important;
+ mask:var(--wk-cf-b) center center / var(--wk-orn-scale,100%) var(--wk-orn-scale,100%) no-repeat!important;
+}
+/* Draft art overrides whatever ornament is currently equipped by the user. */
+html body #wkOrnDraft.wk-sh-orn-art .wk-pk.wk-sh-orn-card .wk-pk-bk > .wk-bkf{
+ -webkit-mask:var(--wk-orn-draft,none) center center / var(--wk-orn-scale,100%) var(--wk-orn-scale,100%) no-repeat!important;
+ mask:var(--wk-orn-draft,none) center center / var(--wk-orn-scale,100%) var(--wk-orn-scale,100%) no-repeat!important;
+}
+/* Fix the shifted compass/emblem on backs; independent of ornament size. */
+html body .wk-pk-bk > .wk-bkm.wk-bkc,
+html body .wk-dk-back > .wk-bkm.wk-bkc,
+html body .wk-pk-bk > .wk-bkm.wk-bkimg{
+ position:absolute!important;left:50%!important;top:50%!important;
+ transform:translate(-50%,-50%)!important;
+ margin:0!important;flex:none!important;
+}
+/* Showcase: the photo is cut along the INNER border outline.
+   A broken url(#...) clip-path was overriding the actual inset and leaving visible slivers. */
+html body .wk-sc .wk-sh3-it .character-item[data-wk-pin]{
+ overflow:hidden!important;border-radius:10.2% / 7.1%!important;
+ clip-path:inset(0 round 10.2% / 7.1%)!important;
+ -webkit-clip-path:inset(0 round 10.2% / 7.1%)!important;
+}
+html body .wk-sc .wk-sh3-it .character-item[data-wk-pin] > .character-grid-image-wrap{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ overflow:hidden!important;
+ clip-path:inset(4.055944% 5.8% round 6.79% / 4.57%)!important;
+ -webkit-clip-path:inset(4.055944% 5.8% round 6.79% / 4.57%)!important;
+}
+html body .wk-sc .wk-sh3-it .character-item[data-wk-pin] > .character-grid-image-wrap > *{
+ clip-path:none!important;-webkit-clip-path:none!important;
+}
+</style>
 </body></html>
 
