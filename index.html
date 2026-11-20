@@ -38009,7 +38009,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       if (kind === 'back') list = list.slice().sort(function (x, y) { return (x.price || 0) - (y.price || 0); });
       return list.map(function (c) {
         var own = !!cos[pref + c.id] || (kind === 'orn' && c.id === 'classic'), on = (kind === 'orn' ? (st.orn || 'classic') : kind === 'nkc' ? nkSplit(st.nkc)[0] : st[kind]) === c.id;
-        return '<article class="wk-sh-pk p-x p-cos' + (on ? ' is-on' : own ? ' is-own' : '') + '">' + cosPreview(C, st, pref, c.id) + '<div class="wk-sh-info"><h4>' + c.n + (own ? '' : dealBadge(c)) + (on ? '<em class="wk-sh-st on">Выбрано</em>' : own ? '<em class="wk-sh-st">Куплено</em>' : '') + '</h4>' + (c.d ? '<p class="wk-sh-note">' + c.d + '</p>' : '') + '</div>' +
+        return '<article class="wk-sh-pk p-x p-cos' + (on ? ' is-on' : own ? ' is-own' : '') + '">' + cosPreview(C, st, pref, c.id) + '<div class="wk-sh-info"><h4>' + c.n + (own ? '' : dealBadge(c)) + (on ? '<em class="wk-sh-st on">Выбрано</em>' : own ? '<em class="wk-sh-st">Куплено</em>' : '') + '</h4>' + (kind === 'orn' ? '' : (c.d ? '<p class="wk-sh-note">' + esc(c.d) + '</p>' : '')) + '</div>' +
           '<span class="wk-sh-bw">' + (own ? '<button type="button" class="wk-tx-btn' + (on ? '' : ' pri') + '" data-tx="cossel" data-kind="' + kind + '" data-id="' + c.id + '">' + (on ? (kind === 'orn' && c.id === 'classic' ? 'По умолчанию' : 'Снять') : 'Выбрать') + '</button>' : '<button type="button" class="wk-tx-btn' + (bel >= c.price ? ' pri' : '') + '" data-tx="cosbuy" data-c="' + pref + c.id + '"' + (bel >= c.price ? '' : ' disabled') + '>' + (bel >= c.price ? 'Купить · ' + fmtB(c.price) : needTxt(c.price, bel)) + '</button>') + giftBtn('cos:' + pref + c.id) + '</span></article>';
       }).join('');
     };
@@ -38715,6 +38715,9 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   }
   function cvShow(pane, i) { var c = pane && pane.querySelector('.wk-dk-cv[data-cv="' + i + '"]'); if (c) c.hidden = false; }
   function flipPk(pane, el, after) {
+    /* Превью в магазине использует те же CSS-классы, но это НЕ карточка набора.
+       Только .wk-dk-row внутри #wkDkPack может быть перевёрнута/проигрывать катсцену. */
+    if (!el || !el.matches('#wkDkPack .wk-dk-row > .wk-pk[data-i]')) return;
     if (el.classList.contains('on')) { if (after) after(); return; }
     var go = function () { el.classList.add('on'); try { if (window.__wkPkx) window.__wkPkx.flip(pane, el); } catch (e) {} DK.flipped++; markFlip(el); cvShow(pane, el.getAttribute('data-i')); if (DK.pack && DK.flipped >= DK.pack.length) finish(pane); if (after) after(); };
     if (csKind(el) && !el.getAttribute('data-cs')) {
@@ -38735,7 +38738,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   }
   function flipAll(pane) {
     try { if (window.__wkPkx) window.__wkPkx.all(pane); } catch (e) {} 
-    var l = [].slice.call(pane.querySelectorAll('.wk-pk:not(.on)')), i = 0;
+    var l = [].slice.call(pane.querySelectorAll('#wkDkPack .wk-dk-row > .wk-pk[data-i]:not(.on)')), i = 0;
     (function next() { if (i >= l.length || !pane.isConnected) return; var el = l[i++]; flipPk(pane, el, function () { setTimeout(next, csKind(el) ? 380 : 110); }); })();
   }
 
@@ -38941,7 +38944,11 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
         var bw = e.target.closest && e.target.closest('.wk-dk-sbwrap'); if (bw) { if (e.target.closest('.wk-dk-bkacts')) return; if (e.target.closest('[data-wk-open-char]')) return; backZoom(bw.getAttribute('data-bkr'), bw.getAttribute('data-bkv'), bw.getAttribute('data-bkc'), bw.offsetWidth); return; }
         var t = e.target.closest && e.target.closest('[data-act],[data-f],[data-r],[data-v],[data-kind],[data-fr],[data-pg],[data-saga],[data-alcust],.wk-pk'); if (!t) return;
         var C = allCards(), S = load();
-        if (t.classList.contains('wk-pk')) { flipPk(pane, t); return; }
+        if (t.classList.contains('wk-pk')) {
+          /* Клик по образцу орнамента/рубашки в магазине не является получением карты. */
+          if (t.closest('.wk-sh-orn-art,.wk-sh-bkpv,#wkTxBody') || !t.matches('#wkDkPack .wk-dk-row > .wk-pk[data-i]')) return;
+          flipPk(pane, t); return;
+        }
         if (t.hasAttribute('data-pg') && !t.disabled) { DK.pg = Number(t.getAttribute('data-pg')) || 0; var pc = pane.querySelector('#wkDkColl'); pc.innerHTML = collHTML(C, S); if (pc.scrollIntoView) pc.scrollIntoView({ block: 'start' }); return; }
         if (t.hasAttribute('data-alcust')) { DK.apId = t.getAttribute('data-alcust'); DK.alLim = 60; DK.alEdit = 0; DK.alDir = 0; pane.querySelector('#wkDkColl').innerHTML = collHTML(C, S); return; }
         if (t.hasAttribute('data-saga')) { DK.saga = t.getAttribute('data-saga'); DK.lim = 60; DK.pg = 0; if (String(DK.apId || '').indexOf('c:') === 0) DK.apId = ''; DK.alEdit = 0; var sc = pane.querySelector('#wkDkColl'); sc.innerHTML = collHTML(C, S); return; }
