@@ -17456,6 +17456,14 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
   var PERSONAL_KEYS = ['onePieceWikiViewedV1', PROGRESS_KEY, 'onePieceWikiFilmProgressV1', 'onePieceWikiFavorites', 'onePieceWikiRecentVisits', 'onePieceWikiSkippedArcsV1', 'onePieceWikiQuizV1', 'onePieceWikiAvatarV1', 'onePieceWikiUnitTitlesV1', 'wkPhPickV1'];
   var SDK = 'https://www.gstatic.com/firebasejs/10.12.2/';
   var TYPES = ['character', 'story', 'reward', 'fruit', 'useful', 'card'];
+  // Защита только клиентская: серверные правила Firestore не распознают тип устройства.
+  // На смартфоне можно менять только колоду, обмены, аукцион и создать свой аккаунт.
+  var PHONE_READ_ONLY = /Android.*Mobile|iPhone|iPod|Windows Phone|Opera Mini|IEMobile/i.test(navigator.userAgent) ||
+    (navigator.userAgentData && navigator.userAgentData.mobile === true) ||
+    (/iPad/i.test(navigator.userAgent)) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  window.__wkPhoneReadOnly = !!PHONE_READ_ONLY;
+
 
   window.__wikiAccounts = ACCOUNTS;
   
@@ -17499,9 +17507,9 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     setTimeout(function () { t.remove(); }, ms || (action ? 12000 : 3800));
   }
   window.__wkToast = toast;
-  function canEditRole(r) { return r === 'admin' || r === 'editor'; }
+  function canEditRole(r) { return !PHONE_READ_ONLY && (r === 'admin' || r === 'editor'); }
   window.__wikiCanEdit = function () { var s = session(); return !!(s && canEditRole(s.role)); };
-  window.__wikiNoEditNotice = function () { toast('Редактор доступен только администратору и редактору.'); };
+  window.__wikiNoEditNotice = function () { toast(PHONE_READ_ONLY ? 'На телефоне статьи и настройки открыты только для чтения.' : 'Редактор доступен только администратору и редактору.'); };
 
   /* ---------- роль на странице ---------- */
   function applyRoleAttrs() {
@@ -17539,7 +17547,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
         var prev = lsGet(SH_KEY), nxt = JSON.stringify(m); if (prev !== nxt) { try { localStorage.setItem(SH_KEY, nxt); } catch (e) {} renderMe(); avChanged(); }
         /* своё фото, выбранное раньше, выкладываем, чтобы его видели остальные */
         var mine = avNorm(readJSON(AV_KEY, null));
-        if (mine && qs && mineCloud !== JSON.stringify(mine)) publishMine(mine).catch(function () {});
+        if (!PHONE_READ_ONLY && mine && qs && mineCloud !== JSON.stringify(mine)) publishMine(mine).catch(function () {});
       }).catch(function () {});
     } catch (e) {}
   }
@@ -17551,7 +17559,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     if (myCloud() && fb) { var o = {}; o['a_' + login] = av ? JSON.stringify(av) : ''; o.updatedBy = me.login; return fb.fs.setDoc(fb.fs.doc(db, 'content', 'avatars'), o, { merge: true }); }
     return Promise.resolve();
   }
-  function canSetFor(login) { var s0 = session(); if (!s0 || s0.role === 'guest') return false; if (login === s0.login) return true; return canEditRole(s0.role) && login !== 'dima'; }
+  function canSetFor(login) { var s0 = session(); if (PHONE_READ_ONLY || !s0 || s0.role === 'guest') return false; if (login === s0.login) return true; return canEditRole(s0.role) && login !== 'dima'; }
   function avImg(av) { return '<img alt="" draggable="false" src="' + esc(av.u) + '" style="object-position:' + av.x + '% ' + av.y + '%;transform:scale(' + (av.z / 100) + ');transform-origin:' + av.x + '% ' + av.y + '%">'; }
   window.__wkAvHTML = function (login) { var a = avGet(login); return a ? avImg(a) : ''; };
   function avChanged() { try { document.dispatchEvent(new Event('wk-avatars-changed')); } catch (e) {} }
@@ -17699,10 +17707,15 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     return new Response(new Blob([fromB64(s)]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
   }
   function cloudSnapshot() {
-    return Promise.all([fb.fs.getDoc(fb.fs.doc(db, 'content', 'meta')), fb.fs.getDocs(fb.fs.collection(db, 'records'))]).then(function (r) {
+    return Promise.all([fb.fs.getDocFromServer(fb.fs.doc(db, 'content', 'meta')), fb.fs.getDocsFromServer(fb.fs.collection(db, 'records'))]).then(function (r) {
       var meta = r[0].exists() ? r[0].data() : {}, recs = [];
       r[1].forEach(function (d) { var x = d.data() || {}; recs.push({ k: d.id, t: x.type, i: x.id, j: x.json, u: x.updatedAt || '', b: x.by || '', n: x.byName || '' }); });
-      return { v: 1, meta: { order: meta.order || '{}', extra: meta.extra || '{}', version: meta.version || 0, updatedAt: meta.updatedAt || '', updatedBy: meta.updatedBy || '' }, recs: recs };
+      if (!r[0].exists() || (typeof meta.records === 'number' && recs.length !== meta.records))
+        throw new Error('incomplete-cloud-backup: данные неполные');
+      return fb.fs.getDocFromServer(fb.fs.doc(db, 'content', 'meta')).then(function (check) {
+        if (!check.exists() || check.data().version !== meta.version) throw new Error('changed-during-backup: повтори копирование');
+        return { v: 1, meta: { order: meta.order || '{}', extra: meta.extra || '{}', version: meta.version || 0, updatedAt: meta.updatedAt || '', updatedBy: meta.updatedBy || '' }, recs: recs };
+      });
     });
   }
   function makeBackup(tag) {
@@ -17810,7 +17823,9 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
       });
     }).catch(function (e) { console.warn('Дотягивание не удалось:', e); });
   }
-  setTimeout(healExtras, 14000);
+  // Автодотягивание старых локальных медалей выключено: оно обходило проверку конфликтов.
+  // Сохрани локальную резервную копию и импортируй её вручную при необходимости.
+  // setTimeout(healExtras, 14000);
   function renderMe() {
     var header = document.querySelector('body > header') || document.querySelector('header');
     if (!header) return;
@@ -17840,9 +17855,10 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
       (s.role === 'guest' ? '' : pend2.length ? '<div class="wk-pend"><b>⬆ Не отправлено в облако</b><ul>' + pend2.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul><button type="button" data-me="sendnow">Отправить сейчас</button></div>' : '<div class="wk-pend ok">☁ Всё сохранено в облаке</div>') +
       (canEditRole(s.role) ? '<button type="button" data-me="backups">🗄 Копии в облаке</button>' : '') +
       (canEditRole(s.role) ? '<button type="button" data-me="editor">✏️ Открыть редактор статей</button>' : '') +
-      (s.role === 'admin' ? '<button type="button" data-me="regs">👥 Новые участники</button>' : '') +
-      (s.role === 'admin' ? '<button type="button" data-me="replace">☁️ Заменить статьи в облаке из файла</button>' : '') +
-      (s.role !== 'guest' ? '<button type="button" data-me="photo">🖼️ Сменить фото</button>' : '') +
+      (canEditRole(s.role) && lsGet(CONFLICT_KEY) ? '<button type="button" data-me="conflicts">Скачать конфликтующие версии (JSON)</button>' : '') +
+      (!PHONE_READ_ONLY && s.role === 'admin' ? '<button type="button" data-me="regs">👥 Новые участники</button>' : '') +
+      (!PHONE_READ_ONLY && s.role === 'admin' ? '<button type="button" data-me="replace">☁️ Заменить статьи в облаке из файла</button>' : '') +
+      (!PHONE_READ_ONLY && s.role !== 'guest' ? '<button type="button" data-me="photo">🖼️ Сменить фото</button>' : '') +
       (canEditRole(s.role) ? ACCOUNTS.filter(function (a) { return a.login !== s.login && a.login !== 'dima' && a.role !== 'guest' && !a.reg; }).map(function (a) { return '<button type="button" data-me="photo-of" data-login="' + esc(a.login) + '">🖼️ Фото: ' + esc(a.name) + '</button>'; }).join('') : '') +
       '<button type="button" data-me="switch">🔁 Сменить учётку</button><button type="button" data-me="logout">🚪 Выйти</button>';
     menu.querySelectorAll('[data-me]').forEach(function (b) {
@@ -17850,9 +17866,10 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
         menu.hidden = true;
         var act = b.getAttribute('data-me');
         if (act === 'editor' && typeof window.openWikiEditor === 'function') window.openWikiEditor();
-        if (act === 'replace') replaceCloudWithFile();
+        if (act === 'replace') toast('Полная замена облака отключена для защиты статей. Используй резервные копии или редактор.');
         if (act === 'sendnow') { toast('Отправляю…'); sendNow().then(function () { var p3 = []; try { p3 = pendingInfo(); } catch (e) {} toast(p3.length ? 'Не всё отправилось: ' + p3.join('; ') : 'Всё отправлено в облако.'); }); }
         if (act === 'backups') backupsDialog();
+        if (act === 'conflicts') exportCloudConflicts();
         if (act === 'regs') regAdminOpen();
         if (act === 'photo') avatarDialog();
         if (act === 'photo-of') { var a2 = account(b.getAttribute('data-login')); if (a2) avatarDialog({ login: a2.login, name: a2.name }); }
@@ -17914,6 +17931,85 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     if (fb) return Promise.resolve(fb);
     return Promise.all([import(SDK + 'firebase-app.js'), import(SDK + 'firebase-auth.js'), import(SDK + 'firebase-firestore.js')]).then(function (m) {
       fb = { app: m[0], auth: m[1], fs: m[2] };
+      if (PHONE_READ_ONLY) {
+        // Разрешённые пути: собственная колода (только через транзакцию),
+        // обмены и аукцион, а также первоначальная регистрация игрока.
+        // Это предохранитель приложения, НЕ проверка устройства на сервере.
+        var rawFS = fb.fs, guardedFS = Object.assign({}, rawFS);
+        function mobileWriteDenied() {
+          return Promise.reject(new Error('phone-read-only: записи статей и настроек с телефона запрещены'));
+        }
+        function docPath(ref) { return ref && typeof ref.path === 'string' ? ref.path : ''; }
+        function ownTop(ref) { return !!(me && docPath(ref) === 'tops/' + me.uid); }
+        function gameDoc(ref) { return /^(trades|market)\/[^/]+$/.test(docPath(ref)); }
+        function gameCollection(ref) { return /^(trades|market)$/.test(docPath(ref)); }
+        function ownRegistration(ref, data) {
+          var uid = auth && auth.currentUser && auth.currentUser.uid;
+          return !!(uid && docPath(ref) === 'people/' + uid && data && data.uid === uid);
+        }
+        guardedFS.setDoc = function (ref, data, options) {
+          if (gameDoc(ref) || ownRegistration(ref, data)) return rawFS.setDoc(ref, data, options);
+          return mobileWriteDenied();
+        };
+        guardedFS.addDoc = function (ref, data) {
+          return gameCollection(ref) ? rawFS.addDoc(ref, data) : mobileWriteDenied();
+        };
+        guardedFS.updateDoc = function (ref) {
+          return gameDoc(ref) ? rawFS.updateDoc.apply(null, arguments) : mobileWriteDenied();
+        };
+        guardedFS.deleteDoc = function (ref) {
+          return gameDoc(ref) ? rawFS.deleteDoc(ref) : mobileWriteDenied();
+        };
+        guardedFS.writeBatch = function () {
+          var batch = rawFS.writeBatch.apply(null, arguments), rejected = false;
+          var wrapper = {
+            set: function (ref, data, options) {
+              if (!gameDoc(ref)) rejected = true;
+              else batch.set(ref, data, options);
+              return wrapper;
+            },
+            update: function (ref) {
+              if (!gameDoc(ref)) rejected = true;
+              else batch.update.apply(batch, arguments);
+              return wrapper;
+            },
+            delete: function (ref) {
+              if (!gameDoc(ref)) rejected = true;
+              else batch.delete(ref);
+              return wrapper;
+            },
+            commit: function () { return rejected ? mobileWriteDenied() : batch.commit(); }
+          };
+          return wrapper;
+        };
+        guardedFS.runTransaction = function (database, fn, options) {
+          return rawFS.runTransaction(database, function (tx) {
+            var blocked = function () { throw new Error('phone-read-only: транзакция запрещена'); };
+            var guard = {
+              get: function (ref) { return tx.get(ref); },
+              set: function (ref, data, options) {
+                var keys = data && Object.keys(data);
+                var deckOnly = keys && keys.indexOf('deck') !== -1 && keys.every(function (key) {
+                  return ['login', 'name', 'deck', 'deckAt', 'deckBest', 'deckBestAt', 'deckPrev', 'deckPrevAt'].indexOf(key) >= 0;
+                });
+                if (ownTop(ref) && deckOnly && options && options.merge === true) return tx.set(ref, data, options);
+                if (gameDoc(ref)) return tx.set(ref, data, options);
+                return blocked();
+              },
+              update: function (ref) {
+                if (gameDoc(ref)) return tx.update.apply(tx, arguments);
+                return blocked();
+              },
+              delete: function (ref) {
+                if (gameDoc(ref)) return tx.delete(ref);
+                return blocked();
+              }
+            };
+            return fn(guard);
+          }, options);
+        };
+        fb.fs = guardedFS;
+      }
       app = fb.app.initializeApp(CFG.firebase);
       auth = fb.auth.getAuth(app);
       db = fb.fs.getFirestore(app);
@@ -18049,14 +18145,28 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
         var hasPending = !!lsGet(PENDING_KEY);
         if (hasPending && (!canEditRole(u.role) || switched)) { quietSet(PENDING_KEY, null); hasPending = false; }
         var first = hasPending ? flushContent().then(function () { if (lsGet(PENDING_KEY)) toast('Есть правки, которые ещё не дошли до облака. Они сохранены в этом браузере.'); else toast('Неотправленные правки дошли до облака ✓'); }) : Promise.resolve();
-        first.then(function () { return applyFileToCloud(); }).then(function () { return checkBanned(u).then(function (ok) { if (!ok) throw new Error('banned'); return loadPeople(); }).then(function () { return Promise.all([syncContent(), syncPersonal(switched), loadAllTops()]); }); }).then(function (r) {
+        // Автоперенос из встроенного HTML выключен: только явный импорт/восстановление.
+        first.then(function () { return checkBanned(u).then(function (ok) { if (!ok) throw new Error('banned'); return loadPeople(); }).then(function () { return Promise.all([
+          syncContent().catch(function (e) {
+            console.warn('Не удалось загрузить статьи с сервера:', e);
+            toast('Свежие статьи не загружены: оставляю последнюю локальную копию. Проверь интернет.', null, 9000);
+            return false;
+          }),
+          syncPersonal(switched).catch(function (e) { console.warn('Личные данные не загружены, локальные не стираю:', e); return false; }),
+          loadAllTops()
+        ]); }); }).then(function (r) {
           var reload = r[0] || r[1];
           if (reload) { reloadOnce('boot:' + u.uid + ':' + (r[0] ? 'c' + lastSyncVersion : '') + (r[1] ? 'p' : '')); return; }
           startStats();
           if (typeof window.__wikiRefreshCabinTabs === 'function') window.__wikiRefreshCabinTabs(true);
           window.dispatchEvent(new CustomEvent('wiki:cloud-ready', { detail: u }));
           watchCloud(); try { loadSharedAvatars(); } catch (e) {} watchPersonal();
-        }).catch(function (e) { console.warn('Облако:', e); startStats(); });
+        }).catch(function (e) {
+          console.warn('Облако:', e);
+          if (String(e && e.message || '').indexOf('content') >= 0 || String(e && e.message || '').indexOf('record') >= 0)
+            toast('Статьи из облака не загружены полностью. Локальную копию не заменяю. Проверь соединение и обнови страницу.', null, 11000);
+          startStats();
+        });
       });
     }).catch(function (e) {
       console.warn('Не удалось загрузить Firebase:', e);
@@ -18136,27 +18246,43 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     var m = extra.medalArt; if (!m || typeof m !== 'object') return Promise.resolve(extra);
     var need = Object.keys(m).filter(function (k) { return typeof m[k] === 'string' && m[k].indexOf('cloud:') === 0; });
     if (!need.length) return shrinkExtra(extra);
-    return fb.fs.getDocs(fb.fs.query(fb.fs.collection(db, 'content'), fb.fs.where('kind', '==', 'medalimg'))).then(function (qs) {
+    return fb.fs.getDocsFromServer(fb.fs.query(fb.fs.collection(db, 'content'), fb.fs.where('kind', '==', 'medalimg'))).then(function (qs) {
       var by = {}; qs.forEach(function (d) { var x = d.data() || {}; if (x.id && x.d) by[x.id] = x.d; });
-      need.forEach(function (k) { var id = m[k].slice(6); if (by[id]) m[k] = by[id]; else delete m[k]; });
+      need.forEach(function (k) { var id = m[k].slice(6); if (by[id]) m[k] = by[id]; else throw new Error('missing-medal-image: ' + id); });
       return shrinkExtra(extra);
     });
   }
   function syncContent() {
     var ref = fb.fs.doc(db, 'content', 'meta');
-    return fb.fs.getDoc(ref).then(function (snap) {
+    return fb.fs.getDocFromServer(ref).then(function (snap) {
       if (!snap.exists()) {
-        if (me.role === 'admin') return seedContent().then(function () { return false; });
+        if (!PHONE_READ_ONLY && me.role === 'admin') return seedContent().then(function () { return false; });
         return false;
       }
       var meta = snap.data();
+      // Не подменяем облачным кэшем несохранённые изменения этого ПК.
+      if (lsGet(PENDING_KEY) && canEditRole(me.role)) return false;
       var cache = readJSON(CONTENT_KEY, null);
-      if (cache && cache.version === meta.version && lsGet(REC_META_KEY) != null) return false;
-      return Promise.all([fb.fs.getDocs(fb.fs.collection(db, 'records')), resolveExtra(meta)]).then(function (rr) {
+      if (cache && cache.version === meta.version && lsGet(REC_META_KEY) != null
+        && cache.data && cache.data.collections
+        && (typeof meta.records !== 'number' || TYPES.reduce(function (n, t) { return n + (Array.isArray(cache.data.collections[t]) ? cache.data.collections[t].length : 0); }, 0) === meta.records)) return false;
+      return Promise.all([fb.fs.getDocsFromServer(fb.fs.collection(db, 'records')), resolveExtra(meta)]).then(function (rr) {
         var qs = rr[0], extra = rr[1], rmeta = {};
         var order = JSON.parse(meta.order || '{}');
         var byType = {}; TYPES.forEach(function (t) { byType[t] = []; });
-        qs.forEach(function (d) { var x = d.data(); if (!byType[x.type]) byType[x.type] = []; try { byType[x.type].push(JSON.parse(x.json)); } catch (e) {} if (x.updatedAt || x.by) rmeta[d.id] = { by: x.by || '', n: x.byName || '', at: x.updatedAt || '' }; });
+        qs.forEach(function (d) {
+          var x = d.data();
+          if (!x || TYPES.indexOf(x.type) < 0 || typeof x.json !== 'string') throw new Error('invalid-record: ' + d.id);
+          try { byType[x.type].push(JSON.parse(x.json)); } catch (e) { throw new Error('invalid-record-json: ' + d.id); }
+          if (x.updatedAt || x.by) rmeta[d.id] = { by: x.by || '', n: x.byName || '', at: x.updatedAt || '' };
+        });
+        // Не сохранять частичную загрузку вместо полной базы статей.
+        if (typeof meta.records === 'number' && qs.size !== meta.records) {
+          throw new Error('incomplete-content: получено ' + qs.size + ' из ' + meta.records);
+        }
+        return fb.fs.getDocFromServer(ref).then(function (verifiedMeta) {
+          if (!verifiedMeta.exists() || verifiedMeta.data().version !== meta.version)
+            throw new Error('cloud-content-changed-during-load');
         quietSet(REC_META_KEY, JSON.stringify(rmeta));
         TYPES.forEach(function (t) {
           var pos = {}; (order[t] || []).forEach(function (id, i) { pos[id] = i; });
@@ -18167,6 +18293,25 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
         lastSyncVersion = meta.version;
         if (cache && cache.version === meta.version) { try { document.dispatchEvent(new CustomEvent('wiki:recmeta')); } catch (e) {} return false; }
         return true; // нужна перезагрузка, чтобы ядро подхватило новые статьи
+        }); // verifiedMeta
+      });
+    });
+  }
+  // Транзакционная запись правок: метаданные, записи и история изменяются вместе.
+  // Если другой редактор обновил content/meta после чтения, ничего не перезаписываем.
+  function commitContentCAS(ops, logs, metaRef, expectedVersion) {
+    logs = logs || [];
+    var writes = ops.concat(logs);
+    if (writes.length > 350) return Promise.reject(new Error('too-many-content-changes: сохрани правки меньшими порциями'));
+    return fb.fs.runTransaction(db, function (tx) {
+      return tx.get(metaRef).then(function (snap) {
+        var actual = snap.exists() ? snap.data().version : null;
+        if (actual !== expectedVersion) {
+          var err = new Error('cloud-version-conflict: облако изменилось — сохранение будет повторено после сверки');
+          err.code = 'cloud-version-conflict'; throw err;
+        }
+        writes.forEach(function (op) { if (op.del) tx.delete(op.ref); else tx.set(op.ref, op.data); });
+        return true;
       });
     });
   }
@@ -18182,6 +18327,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     }, Promise.resolve());
   }
   function seedContent() {
+    if (PHONE_READ_ONLY) return Promise.resolve(false);
     var snap = localSnapshot(); if (!snap) return Promise.resolve();
     toast('Первый вход администратора: переношу статьи в облако…');
     return pushContent(contentOf(snap), null, true);
@@ -18189,6 +18335,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
   /* Перед записью сверяемся с облаком: если кто-то (Дима или Валик) успел сохранить свои правки,
      не затираем их порядок/настройки и просим обновить страницу. */
   function pushContent(content, prevContent, all) {
+    if (PHONE_READ_ONLY) return Promise.reject(new Error('phone-read-only'));
     var cache = readJSON(CONTENT_KEY, null), cachedVer = cache && cache.version;
     var check = prevContent ? fb.fs.getDoc(fb.fs.doc(db, 'content', 'meta')).then(function (snap) { return snap.exists() ? snap.data() : null; }, function () { return null; }) : Promise.resolve(null);
     return check.then(function (cloudMeta) {
@@ -18250,19 +18397,27 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     if (!ops.length && JSON.stringify(extra) === prevExtra && orderJson === prevOrder) return Promise.resolve(false);
     var version = Date.now();
     ops.push({ ref: fb.fs.doc(db, 'content', 'meta'), data: { version: version, updatedAt: now, updatedBy: me.login, order: orderJson, extra: extraOut(extra, ops), records: Object.keys(seen).length } });
-    return writeBatches(ops, all ? function (d, n) { if (n > 50 && d < n) toast('Загружено в облако: ' + d + ' из ' + n, null, 1500); } : null).then(function () {
+    return fb.fs.getDocFromServer(fb.fs.doc(db, 'content', 'meta')).then(function (existing) {
+      if (existing.exists() && !prevContent) throw new Error('cloud-already-initialized: полная первичная загрузка отменена');
+      if (existing.exists()) throw new Error('full-content-replace-disabled: используй защищённое сохранение');
+      return fb.fs.getDocsFromServer(fb.fs.collection(db, 'records')).then(function (records) {
+        if (!records.empty) throw new Error('partial-cloud-initialization: записи в облаке уже есть, но нет meta');
+      return writeBatches(ops, all ? function (d, n) { if (n > 50 && d < n) toast('Загружено в облако: ' + d + ' из ' + n, null, 1500); } : null).then(function () {
       var data = { version: 1, updatedAt: now, updatedBy: me.login, collections: content.collections, accentSettings: content.accentSettings, rewardRankColors: content.rewardRankColors, customAchievements: content.customAchievements, hiddenFruitIds: content.hiddenFruitIds, medalArt: content.medalArt || {} };
       quietSet(CONTENT_KEY, JSON.stringify({ version: stale ? 0 : version, data: data }));
       if (logOps.length) writeBatches(logOps).catch(function (e) { console.warn('История правок не записалась (проверь правила Firestore для edits):', e); });
       if (all) toast('Статьи загружены в облако ✓');
       if (stale) toast('Твои правки сохранены. Пока ты работал, ' + nameOf(stale.updatedBy) + ' тоже вносил изменения — обнови страницу, чтобы их увидеть.', { label: 'Обновить', run: function () { syncContent().then(function () { location.reload(); }, function () { location.reload(); }); } });
       return true;
+      });
+      });
     });
   }
   var contentTimer = 0, contentBusy = null, pendingSeq = 0;
   // Пока правки не дошли до облака, эта отметка не даёт затереть их облачной копией при перезагрузке.
   var PENDING_KEY = 'wkCloudPendingV1';
   function scheduleContentPush() {
+    if (PHONE_READ_ONLY) return;
     if (!me || !canEditRole(me.role)) return;
     clearTimeout(contentTimer);
     setSync('saving');
@@ -18300,12 +18455,41 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     if (snap && snap.collections) base = baseFrom(contentOf(snap));
   }
   function setField(obj, k, mine) { if (Object.prototype.hasOwnProperty.call(mine, k)) obj[k] = mine[k]; else delete obj[k]; }
+  var CONFLICT_KEY = 'wkCloudConflictsV1';
+  function saveCloudConflict(key, baseline, local, remote) {
+    try {
+      var entries = readJSON(CONFLICT_KEY, []);
+      if (!Array.isArray(entries)) entries = [];
+      entries.unshift({ at: new Date().toISOString(), key: key, base: baseline, local: local, cloud: remote });
+      quietSet(CONFLICT_KEY, JSON.stringify(entries.slice(0, 5)));
+    } catch (e) { console.warn('Не удалось записать копию конфликта:', e); }
+  }
+  function cloudConflict(key, baseVersion, mine, cloud) {
+    saveCloudConflict(key, baseVersion, mine, cloud);
+    var err = new Error('content-field-conflict: обе стороны изменили одни и те же поля (' + key + '); ни одна не перезаписана');
+    err.code = 'content-field-conflict';
+    return err;
+  }
+  function exportCloudConflicts() {
+    var data = lsGet(CONFLICT_KEY);
+    if (!data) { toast('Сохранённых конфликтов пока нет.'); return; }
+    var url = URL.createObjectURL(new Blob([data], { type: 'application/json;charset=utf-8' }));
+    var a = document.createElement('a'); a.href = url;
+    a.download = 'one_piece_cloud_conflicts_' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+  }
+  window.__wkExportCloudConflicts = exportCloudConflicts;
   var contentRepairInProgress = false;
   function safePush() {
+    if (PHONE_READ_ONLY) return Promise.resolve(false);
     if (contentRepairInProgress) return Promise.resolve(false);
     captureBase('push');
     var snap = readJSON(STORAGE_KEY, null); if (!snap || !snap.collections || !base) return Promise.resolve(false);
     var cur = contentOf(snap), changes = [], curKeys = {};
+    if (TYPES.some(function (t) { return !Array.isArray(snap.collections[t]); })) {
+      return Promise.reject(new Error('incomplete-local-content: локальная база неполная, отправка заблокирована'));
+    }
     TYPES.forEach(function (t) {
       (cur.collections[t] || []).forEach(function (r) {
         if (!r || r.id == null) return;
@@ -18316,20 +18500,33 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
       });
     });
     var deletes = Object.keys(base.recs).filter(function (k) { return !curKeys[k]; });
+    // Массовые исчезновения в локальном кэше обычно означают сбой загрузки, а не удаление пользователем.
+    if (deletes.length > Math.max(5, Math.ceil(Object.keys(base.recs).length * .05))) {
+      return Promise.reject(new Error('mass-delete-guard: обнаружено слишком много удалённых локальных записей (' + deletes.length + ')'));
+    }
     var extraKeys = EXTRA_KEYS.filter(function (k) { return JSON.stringify(cur[k] == null ? null : cur[k]) !== base.extra[k]; });
     var curOrder = {}; TYPES.forEach(function (t) { curOrder[t] = (cur.collections[t] || []).filter(function (r) { return r && r.id != null; }).map(function (r) { return r.id; }); });
     if (!changes.length && !deletes.length && !extraKeys.length) return Promise.resolve(false);
     var metaRef = fb.fs.doc(db, 'content', 'meta');
-    var reads = [fb.fs.getDoc(metaRef)].concat(changes.map(function (c) { return fb.fs.getDoc(fb.fs.doc(db, 'records', c.k)); })).concat(deletes.map(function (k) { return fb.fs.getDoc(fb.fs.doc(db, 'records', k)); }));
-    return Promise.all(reads).then(function (res) {
+    // Сначала читаем версию, затем записи. CAS ниже отменит запись, если версия сменилась.
+    return fb.fs.getDocFromServer(metaRef).then(function (metaSnap) {
+      var reads = changes.map(function (c) { return fb.fs.getDocFromServer(fb.fs.doc(db, 'records', c.k)); })
+        .concat(deletes.map(function (k) { return fb.fs.getDocFromServer(fb.fs.doc(db, 'records', k)); }));
+      return Promise.all(reads).then(function (docs) { return [metaSnap].concat(docs); });
+    }).then(function (res) {
       var metaSnap = res[0], meta = metaSnap.exists() ? metaSnap.data() : null;
       if (!meta) return pushContent(cur, null, true).then(function () { base = baseFrom(cur); return true; }); // облако пустое — первая загрузка
-      var now = new Date().toISOString(), ops = [], logOps = [], merged = 0, written = {}, removed = [], keptDeleted = 0;
+      var now = new Date().toISOString(), ops = [], logOps = [], merged = 0, written = {}, removed = [], keptDeleted = 0, createdN = 0, removedN = 0;
       changes.forEach(function (c, i) {
         var d = res[1 + i], cj = d.exists() ? d.data().json : null, out = c.j;
         if (cj && c.b && changedFields(c.b, cj).length) {
           // Кто-то менял эту же статью: берём облачную версию и кладём сверху только свои поля.
           var obj = {}; try { obj = JSON.parse(cj); } catch (e) {}
+          var changedRemote = changedFields(c.b, cj);
+          var overlaps = c.fields.filter(function (field) {
+            return changedRemote.indexOf(field) >= 0 && JSON.stringify(obj[field]) !== JSON.stringify(c.mine[field]);
+          });
+          if (overlaps.length) throw cloudConflict('record:' + c.k + ':' + overlaps.join(','), c.b, c.j, cj);
           c.fields.forEach(function (f) { setField(obj, f, c.mine); });
           out = JSON.stringify(obj); merged++;
         } else if (cj && !c.b) {
@@ -18337,6 +18534,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
           Object.keys(c.mine).forEach(function (f) { o2[f] = c.mine[f]; }); out = JSON.stringify(o2);
         }
         if (cj === out) { written[c.k] = out; return; }
+        if (!d.exists()) createdN++;
         ops.push({ ref: fb.fs.doc(db, 'records', c.k), data: { type: c.t, id: String(c.id), json: out, updatedAt: now, by: me.login, byName: me.name } });
         logOps.push(editOp(c.t, c.id, recTitle(c.mine), cj ? 'update' : 'create', cj || c.b, out));
         written[c.k] = out;
@@ -18345,7 +18543,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
         var d = res[1 + changes.length + i], cj = d.exists() ? d.data().json : null;
         if (!cj) { removed.push(k); return; }
         if (changedFields(base.recs[k], cj).length) { keptDeleted++; return; } // её успели изменить — не удаляем
-        ops.push({ ref: fb.fs.doc(db, 'records', k), del: true }); removed.push(k);
+        ops.push({ ref: fb.fs.doc(db, 'records', k), del: true }); removed.push(k); removedN++;
         var old = null; try { old = JSON.parse(cj); } catch (e) {}
         logOps.push(editOp(k.split('~')[0], old ? old.id : k.split('~').slice(1).join('~'), recTitle(old), 'delete', cj, null));
       });
@@ -18365,16 +18563,26 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
         var mine = cur[k], was = null; try { was = JSON.parse(base.extra[k]); } catch (e) {}
         if (mine && typeof mine === 'object' && !Array.isArray(mine)) {
           var target = extra[k] && typeof extra[k] === 'object' && !Array.isArray(extra[k]) ? extra[k] : {}, w = was && typeof was === 'object' ? was : {};
-          Object.keys(mine).concat(Object.keys(w)).forEach(function (sk) { if (JSON.stringify(mine[sk]) !== JSON.stringify(w[sk])) { if (Object.prototype.hasOwnProperty.call(mine, sk)) target[sk] = mine[sk]; else delete target[sk]; } });
+          Object.keys(mine).concat(Object.keys(w)).forEach(function (sk) {
+            if (JSON.stringify(mine[sk]) !== JSON.stringify(w[sk])) {
+              if (JSON.stringify(target[sk]) !== JSON.stringify(w[sk]) && JSON.stringify(target[sk]) !== JSON.stringify(mine[sk]))
+                throw cloudConflict('extra:' + k + ':' + sk, w[sk], mine[sk], target[sk]);
+              if (Object.prototype.hasOwnProperty.call(mine, sk)) target[sk] = mine[sk]; else delete target[sk];
+            }
+          });
           extra[k] = target;
-        } else extra[k] = mine;
+        } else {
+          if (JSON.stringify(extra[k]) !== JSON.stringify(was) && JSON.stringify(extra[k]) !== JSON.stringify(mine))
+            throw cloudConflict('extra:' + k, was, mine, extra[k]);
+          extra[k] = mine;
+        }
       });
       var cache = readJSON(CONTENT_KEY, null);
       var foreign = !(cache && cache.version === meta.version) && meta.updatedBy !== me.login;
       if (!ops.length && !extraKeys.length && JSON.stringify(order) === meta.order) { base = baseFrom(cur); return false; }
-      var version = Date.now();
-      ops.push({ ref: metaRef, data: { version: version, updatedAt: now, updatedBy: me.login, order: JSON.stringify(order), extra: extraOut(extra, ops), records: Math.max(0, (meta.records || 0) + changes.filter(function (c) { return !c.b; }).length - removed.length) } });
-      return writeBatches(ops).then(function () {
+      var version = Math.max(Date.now(), (+meta.version || 0) + 1);
+      ops.push({ ref: metaRef, data: { version: version, updatedAt: now, updatedBy: me.login, order: JSON.stringify(order), extra: extraOut(extra, ops), records: Math.max(0, (meta.records || 0) + createdN - removedN) } });
+      return commitContentCAS(ops, logOps, metaRef, meta.version).then(function () {
         // База — то, что этот человек видит у себя: дальше снова отправятся только его новые правки.
         changes.forEach(function (c) { base.recs[c.k] = c.j; });
         try { recMetaSet(changes.filter(function (c) { return written[c.k] != null; }).map(function (c) { return c.k; }), now); } catch (e) {}
@@ -18396,7 +18604,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
           cd.updatedAt = now; cd.updatedBy = me.login;
           quietSet(CONTENT_KEY, JSON.stringify({ version: foreign || merged ? 0 : version, data: cd }));
         } catch (e) {}
-        if (logOps.length) writeBatches(logOps).catch(function (e) { console.warn('История правок не записалась:', e); });
+        // История записана в той же транзакции, что и сами статьи.
         if (merged || foreign) toast('Твои правки сохранены и аккуратно совмещены с правками ' + nameOf(meta.updatedBy) + '. Обнови страницу, чтобы увидеть всё вместе.', { label: 'Обновить', run: function () { syncContent().then(function () { location.reload(); }); } }, 15000);
         if (keptDeleted) toast('Статью не удалил из облака: её успели изменить. Обнови страницу и удали снова, если нужно.');
         return true;
@@ -18404,6 +18612,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     });
   }
   function flushContent() {
+    if (PHONE_READ_ONLY) return Promise.resolve(false);
     clearTimeout(contentTimer); contentTimer = 0;
     if (!me || !canEditRole(me.role) || !db) return Promise.resolve();
     var seqAtStart = pendingSeq;
@@ -18413,7 +18622,16 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
         if (pendingSeq === seqAtStart) quietSet(PENDING_KEY, null);
       }, function (e) {
         console.warn('Не сохранилось в облако:', e); setSync('error');
-        toast('Не удалось сохранить статьи в облако (' + (e && (e.code || e.message) || 'ошибка') + '). Правки сохранены в этом браузере и не потеряются — попробую ещё раз.', { label: 'Повторить', run: function () { flushContent(); } });
+        var code = String(e && (e.code || e.message) || 'ошибка');
+        if (code.indexOf('content-field-conflict') >= 0) {
+          toast('Обе версии статьи изменились. Облако не перезаписано; твоя версия осталась локально. Скачай конфликт и сравни.', { label: 'Скачать JSON', run: exportCloudConflicts }, 20000);
+          return; // Не перезаписываем автоматически даже при повторе.
+        }
+        if (code.indexOf('mass-delete-guard') >= 0 || code.indexOf('incomplete-local-content') >= 0 || code.indexOf('too-many-content-changes') >= 0) {
+          toast('Сохранение заблокировано: локальные статьи неполные или изменений слишком много. Сначала проверь резервную копию.', null, 15000);
+          return;
+        }
+        toast('Не удалось сохранить статьи (' + code + '). Локальные правки сохранены; повторю после проверки облака.', { label: 'Повторить', run: function () { flushContent(); } });
         clearTimeout(contentTimer); contentTimer = setTimeout(flushContent, 20000);
       });
     };
@@ -18431,6 +18649,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
      Каждое изменение пишется в «Историю правок» (там работает «↩ Вернуть как было»). Повторно то же самое не делается:
      после записи updatedAt в облаке становится новее файла. */
   function applyFileToCloud() {
+    if (PHONE_READ_ONLY) return Promise.resolve(false);
     if (!me || me.role !== 'admin' || !db) return Promise.resolve(false);
     var file = fileSnapshot(); if (!file || !file.updatedAt) return Promise.resolve(false);
     var fileTs = Date.parse(file.updatedAt); if (!fileTs) return Promise.resolve(false);
@@ -18575,12 +18794,13 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
       return Promise.resolve(changed);
     }
     var ref = fb.fs.doc(db, 'users', me.uid);
-    return fb.fs.getDoc(ref).then(function (snap) {
+    return fb.fs.getDocFromServer(ref).then(function (snap) {
       var keys;
       if (!snap.exists()) {
         // Первый вход: админ переносит то, что уже есть в этом браузере; участники начинают с чистого листа.
         keys = {};
         PERSONAL_KEYS.forEach(function (k) { keys[k] = me.role === 'admin' ? lsGet(k) : null; });
+        if (PHONE_READ_ONLY) return false; // если облачная учётка ещё не создана, локальные настройки телефона не стираем
         return fb.fs.setDoc(ref, { login: me.login, name: me.name, role: me.role, keys: keys, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }).then(function () { return applyKeys(keys); });
       }
       keys = snap.data().keys || {};
@@ -18593,17 +18813,19 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
       if (dirty[k]) return;
       var has = Object.prototype.hasOwnProperty.call(keys, k), v = has ? keys[k] : null;
       /* Ключ добавили позже: если в облаке его ещё нет, а на устройстве есть, не стираем, а отправляем в облако */
-      if (!has && lsGet(k) != null && me.role !== 'guest') { dirty[k] = true; clearTimeout(personalTimer); personalTimer = setTimeout(flushPersonal, 1000); return; }
+      if (!PHONE_READ_ONLY && !has && lsGet(k) != null && me.role !== 'guest') { dirty[k] = true; clearTimeout(personalTimer); personalTimer = setTimeout(flushPersonal, 1000); return; }
       if (lsGet(k) !== v) { quietSet(k, v); changed = true; if (k === 'onePieceWikiUnitTitlesV1') { try { if (window.__wkUnitTitlesReset) window.__wkUnitTitlesReset(); } catch (e) {} } }
     });
     return changed;
   }
   function schedulePersonalPush(key) {
+    if (PHONE_READ_ONLY) return;
     if (!me || me.role === 'guest') return;
     dirty[key] = true; setSync('saving');
     clearTimeout(personalTimer); personalTimer = setTimeout(flushPersonal, 1000);
   }
   function flushPersonal() {
+    if (PHONE_READ_ONLY) return Promise.resolve();
     clearTimeout(personalTimer); personalTimer = 0;
     if (!me || me.role === 'guest' || !db) return Promise.resolve();
     var keys = {}, any = false;
@@ -18623,7 +18845,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
       persUid = me.uid;
       persOff = fb.fs.onSnapshot(fb.fs.doc(db, 'users', me.uid), function (snap) {
         try {
-          if (!snap.exists() || (snap.metadata && snap.metadata.hasPendingWrites)) return;
+          if (!snap.exists() || (snap.metadata && (snap.metadata.hasPendingWrites || snap.metadata.fromCache))) return;
           var keys = (snap.data() || {}).keys || {};
           if (Object.keys(dirty).length) return;
           var prog0 = lsGet(PROGRESS_KEY) + '|' + lsGet('onePieceWikiFilmProgressV1');
@@ -18877,6 +19099,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     }).catch(function (e) { console.warn('Топы:', e); return false; });
   }
   function flushTops() {
+    if (PHONE_READ_ONLY) return Promise.resolve(false);
     clearTimeout(topsTimer); topsTimer = 0;
     if (!topsDirty || !me || me.role === 'guest' || !db) return Promise.resolve();
     var lists = topsDirty; topsDirty = null;
@@ -18886,7 +19109,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
   window.__wikiTopsStore = {
     people: function () { return ACCOUNTS.map(function (a) { return { key: a.login, name: a.name, color: a.color, reg: !!a.reg }; }); },
     me: function () { var s = session(); return s && s.role !== 'guest' ? s.login : ''; },
-    editable: function (key) { var s = session(); return !!(s && s.role !== 'guest' && s.login === key); },
+    editable: function (key) { var s = session(); return !!(!PHONE_READ_ONLY && s && s.role !== 'guest' && s.login === key); },
     get: function (key) { var e = topsCache.byLogin[key]; return e ? e.lists : {}; },
     set: function (key, lists) {
       if (!this.editable(key)) return;
@@ -19015,17 +19238,26 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     var what = e.action === 'create' ? 'удалить статью «' + e.title + '», созданную этой правкой' : e.action === 'delete' ? 'восстановить удалённую статью «' + e.title + '»' : 'вернуть статью «' + e.title + '» к состоянию до этой правки';
     if (!confirm('Точно ' + what + '?\n\nЕсли после этой правки статью меняли ещё, те изменения тоже откатятся.')) return;
     var rid = recId(e.type, e.id), ref = fb.fs.doc(db, 'records', rid), now = new Date().toISOString();
-    var curRef = fb.fs.getDoc(ref).then(function (snap) { return snap.exists() ? snap.data().json : null; });
     var metaRef = fb.fs.doc(db, 'content', 'meta');
-    Promise.all([curRef, fb.fs.getDoc(metaRef)]).then(function (r) {
-      var current = r[0], meta = r[1].exists() ? r[1].data() : {};
-      var ops = [];
-      if (e.before) ops.push({ ref: ref, data: { type: e.type, id: String(e.id), json: e.before, updatedAt: now, by: me.login, byName: me.name } }); else ops.push({ ref: ref, del: true });
-      var log = editOp(e.type, e.id, e.title, 'revert', current, e.before); log.data.revertOf = e._id || ''; ops.push(log);
-      var order = {}; try { order = JSON.parse(meta.order || '{}'); } catch (er) {}
-      order[e.type] = (order[e.type] || []).filter(function (x) { return String(x) !== String(e.id); });
-      if (e.before) order[e.type].push(e.id);
-      return writeBatches(ops).then(function () { return fb.fs.setDoc(metaRef, { version: Date.now(), updatedAt: now, updatedBy: me.login, order: JSON.stringify(order) }, { merge: true }); });
+    fb.fs.getDocFromServer(metaRef).then(function (metaSnap) {
+      if (!metaSnap.exists()) throw new Error('Нет метаданных облака');
+      var meta = metaSnap.data();
+      return fb.fs.getDocFromServer(ref).then(function (snap) {
+        var current = snap.exists() ? snap.data().json : null, hadRecord = snap.exists();
+        var ops = [];
+        if (e.before) ops.push({ ref: ref, data: { type: e.type, id: String(e.id), json: e.before, updatedAt: now, by: me.login, byName: me.name } });
+        else if (hadRecord) ops.push({ ref: ref, del: true });
+        var log = editOp(e.type, e.id, e.title, 'revert', current, e.before); log.data.revertOf = e._id || '';
+        var order = {}; try { order = JSON.parse(meta.order || '{}'); } catch (er) {}
+        order[e.type] = (order[e.type] || []).filter(function (x) { return String(x) !== String(e.id); });
+        if (e.before) order[e.type].push(e.id);
+        var delta = e.before && !hadRecord ? 1 : (!e.before && hadRecord ? -1 : 0);
+        ops.push({ ref: metaRef, data: Object.assign({}, meta, {
+          version: Math.max(Date.now(), (+meta.version || 0) + 1), updatedAt: now, updatedBy: me.login,
+          order: JSON.stringify(order), records: Math.max(0, (+meta.records || 0) + delta)
+        }) });
+        return commitContentCAS(ops, [log], metaRef, meta.version);
+      });
     }).then(function () {
       var c = readJSON(CONTENT_KEY, null); if (c) { c.version = 0; quietSet(CONTENT_KEY, JSON.stringify(c)); }
       toast('Готово: «' + e.title + '» возвращена. Обновляю страницу…');
@@ -19050,7 +19282,12 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
         logs.push(editOp(f[0], k, recTitle(o), 'update', raw, out)); done++;
       });
       if (!ops.length) return { done: 0, skipped: skipped };
-      return writeBatches(ops.concat(logs)).then(function () { return fb.fs.setDoc(metaRef, { version: Date.now(), updatedAt: now, updatedBy: me.login }, { merge: true }); }).then(function () { return { done: done, skipped: skipped }; });
+      return fb.fs.getDocFromServer(metaRef).then(function (metaSnap) {
+        if (!metaSnap.exists()) throw new Error('Нет метаданных облака');
+        var meta = metaSnap.data();
+        ops.push({ ref: metaRef, data: Object.assign({}, meta, { version: Math.max(Date.now(), (+meta.version || 0) + 1), updatedAt: now, updatedBy: me.login }) });
+        return commitContentCAS(ops, logs, metaRef, meta.version);
+      }).then(function () { return { done: done, skipped: skipped }; });
     });
   }
 /* ---------- Безопасный перенос недостающих записей из текущего HTML в облако ----------
@@ -19331,7 +19568,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
         }
       }
     } catch (e) {}
-    if (me.role === 'admin') html += '<div class="wk-st-admin"><span>Облако статей:</span><button type="button" data-import-missing>＋ Добавить отсутствующие статьи из этого HTML в облако</button><span>Добавляет только отсутствующие статьи персонажей, плодов, наград, сюжета и «Полезного»; существующие записи не перезаписывает.</span><button type="button" data-fill-eps>🎞 Проставить недостающие эпизоды (32 статьи)</button><span>Только пустые поля; пишется в «Правки», можно откатить.</span><button type="button" data-reupload>⬆ Перезалить все статьи из этого браузера в облако</button><span>— полная перезапись облачной копии.</span></div>';
+    if (me.role === 'admin') html += '<div class="wk-st-admin"><span>Облако статей:</span><button type="button" data-import-missing>＋ Добавить отсутствующие статьи из этого HTML в облако</button><span>Добавляет только отсутствующие статьи персонажей, плодов, наград, сюжета и «Полезного»; существующие записи не перезаписывает.</span><button type="button" data-fill-eps>🎞 Проставить недостающие эпизоды (32 статьи)</button><span>Только пустые поля; пишется в «Правки», можно откатить.</span><button type="button" data-reupload>⬆ Отправить только мои изменения</button><span>Без перезаписи чужих статей; при конфликте сохраняются обе версии.</span></div>';
     pane.innerHTML = html;
     try {
       var headEl = pane.querySelector('.wk-pane-head'), ctr = pane.querySelector('.wk-st-controls');
@@ -19372,10 +19609,10 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
       }).catch(function (e) { toast('Не получилось: ' + (e && (e.code || e.message) || e)); fillBtn.disabled = false; fillBtn.textContent = '🎞 Проставить недостающие эпизоды (32 статьи)'; });
     });
     var reupBtn = pane.querySelector('[data-reupload]'); if (reupBtn) reupBtn.addEventListener('click', function () {
-      if (!confirm('Перезаписать облачную копию статей данными из этого браузера?')) return;
+      if (!confirm('Отправить только свои несохранённые изменения? Чужие статьи не будут перезаписаны.')) return;
       var snap = localSnapshot(); if (!snap) return;
       var cache = readJSON(CONTENT_KEY, null);
-      pushContent(contentOf(snap), cache && cache.data, true).then(function () { toast('Готово: облако совпадает с этим браузером.'); }, function (e) { toast('Ошибка: ' + (e && (e.code || e.message))); });
+      safePush().then(function () { toast('Готово: проверены и отправлены только мои изменения.'); }, function (e) { toast('Ошибка: ' + (e && (e.code || e.message))); });
     });
   }
   if (typeof window.__wikiRegisterCabinTab === 'function') {
@@ -41765,14 +42002,14 @@ html .wk-pkx-pager{display:none}
     if (!RM) { el.classList.add('wk-pkx-now'); sparks(el); }
     buzz(el);
     var hint = st.querySelector('.wk-pkx-hint'); if (hint) hint.classList.add('off');
-    var all = paint(st), slow = el.classList.contains('is-var') || rar(el) === 'legendary', wait = slow ? (rar(el) === 'legendary' ? 1100 : 700) : { common: 120, rare: 220, epic: 380 }[rar(el)];
+    var all = paint(st), slow = el.classList.contains('is-var') || rar(el) === 'legendary', wait = phone() ? (RM ? 0 : (slow ? 260 : 160)) : (slow ? (rar(el) === 'legendary' ? 1100 : 700) : { common: 120, rare: 220, epic: 380 }[rar(el)]);
     clearTimeout(st.__adv);
     if (all) { st.__adv = setTimeout(function () { summary(st); }, st.classList.contains('sum') ? 700 : wait + (slow ? 500 : 200)); return; }
     if (st.classList.contains('sum') || !phone()) return;
     st.__adv = setTimeout(function () {
       if (!st.isConnected || st.classList.contains('sum')) return;
       var l = cards(st), i = l.indexOf(el), nx = l.slice(i + 1).concat(l.slice(0, i)).filter(function (x) { return !isOn(x); })[0];
-      if (nx && st.__cur === i) centerOn(st, nx, true);
+      if (nx && st.__cur === i) centerOn(st, nx, false); // Immediate mobile transition: avoid long smooth-scroll hold on previous card
     }, wait);
   }
   function all(pane) {
@@ -45000,6 +45237,15 @@ html body .wk-ddm.wk-ddm-album .wk-ddm-g {color:var(--al-muted)!important}
     display:flex!important;
     flex-direction:column;
   }
+}
+</style>
+
+<style id="wk-mobile-pack-performance">
+/* Mobile pack opening: keep card transitions responsive on constrained GPUs. */
+@media(max-width:700px){
+  #wkCabinPaneDeck .wk-dk-stage:not(.idle) .wk-dk-row{scroll-behavior:auto!important}
+  #wkCabinPaneDeck .wk-dk-stage:not(.idle) .wk-dk-row>.wk-pk{transition:opacity .14s linear,scale .14s ease-out!important}
+  #wkCabinPaneDeck .wk-dk-stage:not(.idle) .wk-pkx-sp{display:none!important}
 }
 </style>
 </body></html>
