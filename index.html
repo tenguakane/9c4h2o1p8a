@@ -107,8 +107,10 @@ window.__wkLazy=function(id,fn){
     }, t);
   };
   /* 4. Миниатюры pinimg в списках: 474x вместо 736x (крупные карточки и горизонтальные не трогаем). Если размера нет — возврат на 736x. */
-  var TS = __lite ? '236x' : '474x';
-  var CLD = /(res\.cloudinary\.com\/[^\/"'\s]+\/image\/upload\/f_auto,q_auto)\//g, CLDW = ',c_limit,w_' + (__lite ? 236 : 474) + '/';
+  // Minimum mobile thumbnail quality must not depend on CPU/RAM or screen width.
+  // Keep the light initial image, then promote only visible cards according to their CSS size and DPR.
+  var TS = '474x';
+  var CLD = /(res\.cloudinary\.com\/[^\/"'\s]+\/image\/upload\/f_auto,q_auto)\//g, CLDW = ',c_limit,w_474/';
   window.__wkThumbOf = function (u) { return typeof u === 'string' ? u.replace(/i\.pinimg\.com\/(?:736x|1200x)\//, 'i.pinimg.com/' + TS + '/').replace(CLD, '$1' + CLDW) : u; };
   var CARD = /class="[^"]*(?:catalog-item-shell|character-grid-image-wrap|story-card-thumb)/, BIG = /article-inline-image|article-hero|wk-gal|wk-lb|character-appearance-image|fruit-main-image/;
   var LISTS = { characterList: 'c', fruitsList: 'f', usefulList: 'u', rewardsList: 'r' };
@@ -1732,7 +1734,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "20.11.2026 · 623";
+const WIKI_VERSION = "20.11.2026 · 624";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -35113,8 +35115,10 @@ html body #storyList[data-wk-size="l"]{--sg-ac:repeat(auto-fill,minmax(300px,1fr
     pend.set(t, setTimeout(function () { re = true; try { t.dispatchEvent(new Event('input', { bubbles: true })); } finally { re = false; } }, 140));
   }, true);
 
-  /* 4. Миниатюры pinimg 736x -> 474x в списках (если innerHTML-хук не успел). Крупные и горизонтальные карточки не трогаем. */
+  /* Avoid second-pass image downsampling on phones: visible images are promoted by the DPR-aware loader. */
   (function () {
+    try { if (/iPhone|iPod|Android.*Mobile|Windows Phone|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+      (matchMedia('(max-width:700px)').matches && matchMedia('(pointer:coarse)').matches)) return; } catch (e) {}
     var L = { characterList: 'c', fruitsList: 'f', usefulList: 'u', rewardsList: 'r' };
     try { if (localStorage.getItem('onePieceWikiThumbsV1') === 'off') return; } catch (e) {}
     function hz(k) { try { return localStorage.getItem('onePieceWikiHorizV1_' + k) === 'on'; } catch (e) { return false; } }
@@ -45657,67 +45661,135 @@ html.wk-mobile-no-motion .wk-dk-slot.fl-out>.catalog-item-shell{transform:none!i
   #wkDkPack .wk-dk-stage.fin .wk-pk-bk{display:none!important}
 }
 </style>
-<script id="wk-mobile-preview-quality-623">
+<script id="wk-mobile-preview-quality-624">
 (function () {
   'use strict';
-  // Upgrade only visible low-resolution Pinterest previews, not entire data sets.
-  function isPhone() { try { return /iPhone|iPod|Android.*Mobile|Windows Phone|IEMobile|Opera Mini/i.test(navigator.userAgent) || (matchMedia('(max-width:700px)').matches && matchMedia('(pointer:coarse)').matches); } catch (e) { return false; } }
+  // Pixel density varies by phone: keep fast initial thumbnails but upgrade
+  // *visible* images as needed. This runs on phones independently from animation/perf modes.
+  function isPhone() {
+    try { return /iPhone|iPod|Android.*Mobile|Windows Phone|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+      (matchMedia('(max-width:700px)').matches && matchMedia('(pointer:coarse)').matches); }
+    catch (e) { return false; }
+  }
   if (!isPhone()) return;
-  var selectors = '.character-grid-image, .fruit-grid-image, .reward-grid-image, .reward-card-image, .useful-catalog-image';
-  var watched = new WeakSet(), busy = 0, queue = [], maxConcurrent = 2;
-  function attempt(img) {
-    if (!img || !img.isConnected || !img.getAttribute('src')) return;
-    var src = img.getAttribute('src');
-    if (!/^https:\/\/i\.pinimg\.com\/(236x|474x|564x|736x)\//i.test(src)) return;
-    var zoom = 1, m = (img.style.transform || '').match(/scale\(([\d.]+)\)/);
-    if (m) zoom = Math.min(3, Math.max(1, parseFloat(m[1]) || 1));
-    var density = Math.min(window.devicePixelRatio || 1, 3);
-    var required = (img.clientWidth || img.getBoundingClientRect().width || 0) * zoom * density;
-    var target = '';
-    if (/\/(236x|474x|564x)\//.test(src)) target = '736x';
-    else if (/\/736x\//.test(src) && zoom >= 1.4 && required > 820) target = '1200x';
-    if (!target) return;
-    var nextSrc = src.replace(/\/(236x|474x|564x|736x)\//, '/' + target + '/');
-    // Preload before swapping: a missing larger CDN variant never hides the image.
-    queue.push({ img: img, source: src, next: nextSrc }); pump();
+  var selectors = [
+    'img.character-grid-image', 'img.fruit-grid-image', 'img.reward-grid-image',
+    'img.reward-card-image', 'img.useful-catalog-image', '.fruit-grid-image-wrap img',
+    '.useful-catalog-image-wrap img', '.story-card-thumb img', '.story-saga-cover img',
+    '.wiki-continue-thumb img', '#wkCabinPaneDeck img', '.wk-wp-ph img'
+  ].join(',');
+  var observed = new WeakSet(), attempts = new WeakMap(), pending = new WeakSet();
+  var queue = [], active = 0, LIMIT = 2;
+  var io = null;
+  function sourceInfo(url) {
+    var pm = /^https:\/\/i\.pinimg\.com\/(236x|474x|564x|736x|1200x)\//i.exec(url);
+    if (pm) return { kind: 'pin', width: parseInt(pm[1], 10), label: pm[1] };
+    if (/^https:\/\/res\.cloudinary\.com\//i.test(url) && /\/image\/upload\//.test(url)) {
+      var cm = /(,c_limit,w_)(\d+)(?=\/|,)/.exec(url);
+      if (cm) return { kind: 'cloudinary', width: +cm[2], label: cm[2] };
+    }
+    return null;
+  }
+  function sizeNeeded(img) {
+    var r = img.getBoundingClientRect(), w = Math.max(r.width || 0, img.clientWidth || 0);
+    if (!w || !r.height) return 0;
+    // On high-DPI screens 236px images are dramatically too small, even for short cards.
+    return w * Math.min(3, Math.max(1, window.devicePixelRatio || 1)) * 1.08;
+  }
+  function nextImage(url, info, needed) {
+    var desired = needed > 760 ? 1200 : (needed > 410 ? 736 : 474);
+    if (info.kind === 'pin') {
+      if (desired <= info.width) return '';
+      return url.replace(/\/\d+x\//, '/' + desired + 'x/');
+    }
+    // Don't enlarge beyond 1200px; Cloudinary c_limit will never upscale a small original.
+    if (info.kind === 'cloudinary') {
+      var target = Math.max(474, desired);
+      if (target <= info.width) return '';
+      return url.replace(/,c_limit,w_\d+/, ',c_limit,w_' + target);
+    }
+    return '';
+  }
+  function consider(img) {
+    if (!img || !img.isConnected || pending.has(img)) return;
+    var src = img.getAttribute('src') || '', info = sourceInfo(src);
+    if (!info) return;
+    var needed = sizeNeeded(img);
+    if (!needed) return;
+    var hd = nextImage(src, info, needed);
+    if (!hd || hd === src) return;
+    var key = src + ' -> ' + hd;
+    if (attempts.get(img) === key) return;
+    attempts.set(img, key);
+    pending.add(img);
+    queue.push({ img: img, old: src, hd: hd });
+    pump();
   }
   function pump() {
-    while (busy < maxConcurrent && queue.length) {
-      var job = queue.shift(); if (!job.img.isConnected || job.img.getAttribute('src') !== job.source) continue;
-      busy++;
+    while (active < LIMIT && queue.length) {
+      var job = queue.shift(), img = job.img;
+      if (!img.isConnected || img.getAttribute('src') !== job.old) { pending.delete(img); continue; }
+      active++;
       (function (j) {
-        var probe = new Image();
-        var timeout = setTimeout(function () { probe.onload = probe.onerror = null; busy--; pump(); }, 10000);
-        function done(ok) {
-          clearTimeout(timeout); probe.onload = probe.onerror = null;
-          if (ok && j.img.isConnected && j.img.getAttribute('src') === j.source) j.img.setAttribute('src', j.next);
-          busy--; pump();
+        var probe = new Image(), ended = false;
+        var timeout = setTimeout(function () { finish(false); }, 9000);
+        function finish(ok) {
+          if (ended) return;
+          ended = true; clearTimeout(timeout);
+          probe.onload = probe.onerror = null;
+          if (ok && j.img.isConnected && j.img.getAttribute('src') === j.old) {
+            j.img.setAttribute('src', j.hd);
+          }
+          pending.delete(j.img);
+          active--; pump();
         }
-        probe.onload = function () { done(true); };
-        probe.onerror = function () { done(false); };
-        probe.src = j.next;
+        probe.onload = function () { finish(true); };
+        probe.onerror = function () { finish(false); };
+        probe.src = j.hd;
       })(job);
     }
   }
-  var io = 'IntersectionObserver' in window ? new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) { if (e.isIntersecting) { io.unobserve(e.target); attempt(e.target); } });
-  }, { rootMargin: '100px 0px' }) : null;
-  function scan(root) {
-    if (!root) return;
-    var imgs = [];
-    if (root.matches && root.matches(selectors)) imgs.push(root);
-    if (root.querySelectorAll) root.querySelectorAll(selectors).forEach(function (img) { imgs.push(img); });
-    imgs.forEach(function (img) {
-      if (watched.has(img)) return;
-      watched.add(img);
-      if (io) io.observe(img); else if (img.getBoundingClientRect().top < innerHeight + 100) attempt(img);
-    });
+  function watch(img) {
+    if (!img || img.tagName !== 'IMG') return;
+    if (!observed.has(img)) {
+      observed.add(img);
+      if (io) io.observe(img);
+    }
+    // Handle dynamically assigned src on existing card nodes.
+    if (!io || (img.getClientRects().length && visible(img))) consider(img);
+  }
+  function visible(img) {
+    var r = img.getBoundingClientRect();
+    return r.width > 0 && r.height > 0 && r.bottom >= -100 && r.top <= innerHeight + 100;
+  }
+  function scan(node) {
+    if (!node || node.nodeType !== 1) return;
+    if (node.matches && node.matches(selectors)) watch(node);
+    if (node.querySelectorAll) node.querySelectorAll(selectors).forEach(watch);
+  }
+  if ('IntersectionObserver' in window) {
+    io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) consider(e.target); });
+    }, { rootMargin: '100px 0px' });
   }
   function init() {
-    scan(document);
-    if ('MutationObserver' in window) new MutationObserver(function (records) {
-      records.forEach(function (r) { r.addedNodes.forEach(function (n) { if (n.nodeType === 1) scan(n); }); });
-    }).observe(document.body, { childList: true, subtree: true });
+    scan(document.documentElement);
+    if ('MutationObserver' in window) {
+      new MutationObserver(function (changes) {
+        changes.forEach(function (c) {
+          if (c.type === 'attributes') {
+            if (c.target.matches && c.target.matches(selectors)) watch(c.target);
+          } else {
+            c.addedNodes.forEach(scan);
+          }
+        });
+      }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['src'] });
+    }
+    // Recheck after orientation change and when a pack becomes visible.
+    window.addEventListener('resize', function () {
+      clearTimeout(window.__wkQualityResize);
+      window.__wkQualityResize = setTimeout(function () { document.querySelectorAll(selectors).forEach(function (x) { if (visible(x)) consider(x); }); }, 250);
+    });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true }); else init();
 })();
