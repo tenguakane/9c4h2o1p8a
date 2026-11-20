@@ -37058,14 +37058,14 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       if (!art) return;
       if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
       e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
-      var ornId = art.getAttribute('data-wk-orn-preview'), data = ORNS.filter(function (q) { return q.id === ornId; })[0];
+      var ornId = art.getAttribute('data-wk-orn-preview'), data = ornGoods().filter(function (q) { return q.id === ornId; })[0];
       if (!data) return;
       var prev = document.getElementById('wkOrnPreviewOverlay'); if (prev) prev.remove();
       var ov = document.createElement('div'); ov.id = 'wkOrnPreviewOverlay'; ov.className = 'wk-dk-zoom';
       ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true');
       ov.setAttribute('aria-label', 'Предпросмотр орнамента ' + data.n);
       ov.setAttribute('data-wk-orn-preview', ornId);
-      ov.innerHTML = '<div class="wk-dk-zoombox" tabindex="0"><div class="wk-dk-zsc"><div class="wk-pk r-legendary wk-dk-sbin"><div class="wk-pk-bk">' + backInner('legendary', '') + '</div></div></div></div>' +
+      ov.innerHTML = '<div class="wk-dk-zoombox" tabindex="0"><div class="wk-pk r-legendary wk-dk-sbin"><div class="wk-pk-bk">' + backInner('legendary', '') + '</div></div></div>' +
         '<div class="wk-dk-zoomhint">' + esc(data.n) + ' · Нажми вне карточки, чтобы закрыть</div>';
       document.body.appendChild(ov);
       var box = ov.querySelector('.wk-dk-zoombox');
@@ -37733,14 +37733,17 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
 
   /* В магазине только авторские орнаменты администратора. Старые восемь не продаются;
      классическая рубашка остаётся стандартной, не товаром. */
-  var ORNS = [], ORP = { id: '', name: '', price: 15000, d: '', file: null, mode: 'corners', busy: false };
+  var ORNS = [], OR_NO = { id: 'none', n: 'Без орнамента', price: 1 };
+  /* Постоянный товар: убирает только угловые вензеля. Не хранится в Firestore backs и не редактируется в загрузчике. */
+  function ornGoods() { return [OR_NO].concat(ORNS.filter(ornValid)); }
+  var ORP = { id: '', name: '', price: 15000, d: '', file: null, mode: 'corners', busy: false };
   var ORS = { at: 0, loading: false };
   function ornValid(q) {
     return !!(q && /^o[a-z0-9]{3,14}$/.test(String(q.id)) &&
       /^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(String(q.d || '')) &&
       String(q.d || '').length < 500000 && Number.isFinite(Number(q.price)) && Number(q.price) >= 0);
   }
-  function ornSelected(id) { return Array.isArray(ORNS) && ORNS.some(function (q) { return q.id === id && ornValid(q); }) ? id : 'classic'; }
+  function ornSelected(id) { if (id === 'none') return 'none'; return Array.isArray(ORNS) && ORNS.some(function (q) { return q.id === id && ornValid(q); }) ? id : 'classic'; }
   function ornCSS() {
     var el = document.getElementById('wk-custom-orn-css');
     if (!el) { el = document.createElement('style'); el.id = 'wk-custom-orn-css'; document.head.appendChild(el); }
@@ -38010,7 +38013,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       return list.map(function (c) {
         var own = !!cos[pref + c.id] || (kind === 'orn' && c.id === 'classic'), on = (kind === 'orn' ? (st.orn || 'classic') : kind === 'nkc' ? nkSplit(st.nkc)[0] : st[kind]) === c.id;
         return '<article class="wk-sh-pk p-x p-cos' + (on ? ' is-on' : own ? ' is-own' : '') + '">' + cosPreview(C, st, pref, c.id) + '<div class="wk-sh-info"><h4>' + c.n + (own ? '' : dealBadge(c)) + (on ? '<em class="wk-sh-st on">Выбрано</em>' : own ? '<em class="wk-sh-st">Куплено</em>' : '') + '</h4>' + (kind === 'orn' ? '' : (c.d ? '<p class="wk-sh-note">' + esc(c.d) + '</p>' : '')) + '</div>' +
-          '<span class="wk-sh-bw">' + (own ? '<button type="button" class="wk-tx-btn' + (on ? '' : ' pri') + '" data-tx="cossel" data-kind="' + kind + '" data-id="' + c.id + '">' + (on ? (kind === 'orn' && c.id === 'classic' ? 'По умолчанию' : 'Снять') : 'Выбрать') + '</button>' : '<button type="button" class="wk-tx-btn' + (bel >= c.price ? ' pri' : '') + '" data-tx="cosbuy" data-c="' + pref + c.id + '"' + (bel >= c.price ? '' : ' disabled') + '>' + (bel >= c.price ? 'Купить · ' + fmtB(c.price) : needTxt(c.price, bel)) + '</button>') + giftBtn('cos:' + pref + c.id) + '</span></article>';
+          '<span class="wk-sh-bw">' + (own ? '<button type="button" class="wk-tx-btn' + (on ? '' : ' pri') + '" data-tx="cossel" data-kind="' + kind + '" data-id="' + c.id + '">' + (on ? (kind === 'orn' && c.id === 'classic' ? 'По умолчанию' : 'Снять') : 'Выбрать') + '</button>' : '<button type="button" class="wk-tx-btn' + (bel >= c.price ? ' pri' : '') + '" data-tx="cosbuy" data-c="' + pref + c.id + '"' + (bel >= c.price ? '' : ' disabled') + '>' + (bel >= c.price ? 'Купить · ' + fmtB(c.price) : needTxt(c.price, bel)) + '</button>') + (kind === 'orn' && c.id === 'none' ? '' : giftBtn('cos:' + pref + c.id)) + '</span></article>';
       }).join('');
     };
     var pick = function (ids) { return ids.map(function (id) { var ix = -1; SHOP2.forEach(function (q, n) { if (q.id === id) ix = n; }); return ix >= 0 ? itemsA[ix] : ''; }).join(''); };
@@ -38019,7 +38022,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
         '<h3 class="wk-dk-h">Особые находки</h3><p class="wk-sh-hint">Наборы и выбор карточек под конкретную цель.</p><div class="wk-sh-pks">' + pick(['compass', 'map', 'key', 'warrant']) + '</div>',
       save: '<h3 class="wk-dk-h">Сбережения</h3><p class="wk-sh-hint">Копилка запирает белли на 7 дней и возвращает их с процентами: первая даёт +10%, вторая +15%, третья +20%. Пока белли лежат в копилке, потратить их нельзя. Вторую и третью копилку можно докупить, чтобы вклады шли одновременно и приносили больше.</p><div class="wk-sh-pks">' + piggyAll(st, bel) + '</div>',
       des: '<h3 class="wk-dk-h">Фон витрины</h3><p class="wk-sh-hint">Дополнительное оформление окружения витрины: меняет фон и полку, не отменяя стиль выбранного альбома. Можно снять или сменить в любой момент; фон виден другим участникам.</p><div class="wk-sh-pks">' + cosRow('bg', BGS, 'b_') + '</div><h3 class="wk-dk-h">Дизайн альбома</h3><p class="wk-sh-hint">Каждый альбом включает собственную витрину избранных карточек в том же стиле. Навигация по аркам слева, страницы и фильтры остаются прежними. «Капитанский фолиант» бесплатный.</p><div class="wk-sh-pks">' + '<article class="wk-sh-pk p-x p-cos' + (!st.alb ? ' is-on' : '') + '">' + albPreview(C, st, 'captain') + '<div class="wk-sh-info"><h4>Капитанский фолиант <em class="wk-sh-st' + (!st.alb ? ' on' : '') + '">' + (!st.alb ? 'Выбрано' : 'Бесплатно') + '</em></h4><p class="wk-sh-note">Классический переплёт, страницы пергамента, боковая навигация и витрина в стиле капитанской книги.</p></div><span class="wk-sh-bw"><button type="button" class="wk-tx-btn' + (!st.alb ? '' : ' pri') + '" data-tx="cossel" data-kind="alb" data-id="captain">' + (!st.alb ? 'Выбрано' : 'Выбрать бесплатно') + '</button></span></article>' + cosRow('alb', ALBS, 'a_') + '</div><h3 class="wk-dk-h">Рамки аватара</h3><p class="wk-sh-hint">Эффект вокруг твоего аватара везде, где он показан: в обмене, в списках участников, в колоде. Другие участники тоже его видят.</p><div class="wk-sh-pks">' + cosRow('avf', AVF, 'v_') + '</div><h3 class="wk-dk-h">Эффект имени и титула</h3><p class="wk-sh-hint">Цвет или свечение для имени, для титула или для обоих сразу: в обменах, списках, колоде и профиле. Покупается один раз, выбрать или снять можно в любой момент. Титул выбирается в профиле.</p>' + nkTgtHTML(st) + '<div class="wk-sh-pks">' + cosRow('nkc', NKC, 'n_') + '</div>',
-      bk: '<h3 class="wk-dk-h">Авторские орнаменты рубашек</h3><p class="wk-sh-hint">Здесь продаются только украшения, загруженные администратором. Классические вензеля остаются стандартным бесплатным оформлением. Нажми на изображение для увеличения.</p>' + (st.orn && st.orn !== 'classic' ? '<button type="button" class="wk-tx-btn" data-tx="ornreset">Вернуть стандартный орнамент</button>' : '') + (ORNS.length ? '<div class="wk-sh-pks">' + cosRow('orn', ORNS, 'o_') + '</div>' : '<p class="wk-sh-hint">Пока авторские орнаменты не добавлены.</p>') + ornAdminHTML() + '<h3 class="wk-dk-h">Рубашки карточек</h3><p class="wk-sh-hint">Другой знак на обороте карточек: в наборах, в колоде и в альбоме. Цвет и свечение по-прежнему зависят от редкости. Покупается один раз.</p><div class="wk-sh-pks">' + cosRow('back', allBacks().filter(function (q) { return (!/^(skull|fruit|bolt|blades)$/.test(q.id) || cos['k_' + q.id]) && (!q.cu || bkOk(q)); }), 'k_') + '</div>' + bkAdminHTML()
+      bk: '<h3 class="wk-dk-h">Авторские орнаменты рубашек</h3><p class="wk-sh-hint">Выбирай авторские орнаменты или вариант «Без орнамента» за 1 белли. Классические вензеля остаются стандартным бесплатным оформлением. Нажми на изображение для увеличения.</p>' + (st.orn && st.orn !== 'classic' ? '<button type="button" class="wk-tx-btn" data-tx="ornreset">Вернуть стандартный орнамент</button>' : '') + '<div class="wk-sh-pks">' + cosRow('orn', ornGoods(), 'o_') + '</div>' + ornAdminHTML() + '<h3 class="wk-dk-h">Рубашки карточек</h3><p class="wk-sh-hint">Другой знак на обороте карточек: в наборах, в колоде и в альбоме. Цвет и свечение по-прежнему зависят от редкости. Покупается один раз.</p><div class="wk-sh-pks">' + cosRow('back', allBacks().filter(function (q) { return (!/^(skull|fruit|bolt|blades)$/.test(q.id) || cos['k_' + q.id]) && (!q.cu || bkOk(q)); }), 'k_') + '</div>' + bkAdminHTML()
     };
   }
   /* Загрузка PNG с четырьмя углами или одного угла для зеркального повтора. */
@@ -38534,7 +38537,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       delete st.pick; save(st); repaint(); txToast('Получена карточка: ' + esc(cName(kk)) + (isN ? ' (новая)' : ' (повтор)')); return;
     }
     if (a === 'cosbuy') {
-      var ck = b.getAttribute('data-c'), px = ck.charAt(0), kn = px === 'f' ? 'frame' : px === 'a' ? 'alb' : px === 'k' ? 'back' : px === 'o' ? 'orn' : px === 'v' ? 'avf' : px === 'n' ? 'nkc' : 'bg', cd = (px === 'f' ? FRAMES : px === 'a' ? ALBS : px === 'k' ? allBacks() : px === 'o' ? ORNS : px === 'v' ? AVF : px === 'n' ? NKC : BGS).filter(function (q) { return q.id === ck.slice(2); })[0];
+      var ck = b.getAttribute('data-c'), px = ck.charAt(0), kn = px === 'f' ? 'frame' : px === 'a' ? 'alb' : px === 'k' ? 'back' : px === 'o' ? 'orn' : px === 'v' ? 'avf' : px === 'n' ? 'nkc' : 'bg', cd = (px === 'f' ? FRAMES : px === 'a' ? ALBS : px === 'k' ? allBacks() : px === 'o' ? ornGoods() : px === 'v' ? AVF : px === 'n' ? NKC : BGS).filter(function (q) { return q.id === ck.slice(2); })[0];
       if (!cd || (st.cos || {})[ck] || (st.belli || 0) < cd.price || (cd.cu && !bkOk(cd))) return;
       st.cos = st.cos || {}; st.cos[ck] = 1; st[kn] = kn === 'nkc' ? nkJoin(cd.id, st.nkc ? nkSplit(st.nkc)[1] : 't') : cd.id; st.belli -= cd.price; st.spent = (st.spent || 0) + cd.price; st.bought = (st.bought || 0) + 1; track(st, 'spend', cd.price);
       save(st); repaint(); try { if (window.__wkCosApply) window.__wkCosApply(); } catch (e) {} txToast('«' + cd.n + '» куплена и уже выбрана'); return;
@@ -44615,6 +44618,56 @@ html body .wk-orn-upload select{width:100%;padding:8px;border-radius:8px;backgro
 html body #wkOrnPreviewOverlay{z-index:2147482600!important}
 html body #wkOrnPreviewOverlay .wk-dk-zoombox{cursor:default!important}
 html body .wk-sh-orn-art[data-wk-orn-preview]{cursor:zoom-in!important}
+</style>
+
+<style id="wk-fix-pack-left-glow-and-ornament-preview-2026">
+/* Ornament store preview is full-size, not an unsized absolutely positioned layer. */
+html body #wkOrnPreviewOverlay .wk-dk-zoombox{
+  position:relative!important;
+  display:block!important;
+  overflow:visible!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  outline:0!important;
+}
+html body #wkOrnPreviewOverlay .wk-dk-zoombox > .wk-pk.wk-dk-sbin{
+  position:absolute!important;
+  inset:0!important;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  margin:0!important;
+  transform:none!important;
+}
+html body #wkOrnPreviewOverlay .wk-dk-zoombox > .wk-pk.wk-dk-sbin > .wk-pk-bk{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+}
+/* The daily-pack artwork includes its own metallic lighting.  Remove the
+   displaced side halo/shine in the opened-pack scene; do not change the art. */
+html body .wk-dk-stage.sealed .wk-wrp.w-free .wk-wrp-3d{
+  filter:none!important;
+}
+html body .wk-dk-stage.sealed .wk-wrp.w-free .wk-wrp-sh{
+  display:none!important;
+}
+</style>
+
+<style id="wk-ornament-none-2026">
+/* Товар за 1 белли: только угловые украшения отключены.
+   Сам контур .wk-bk-edge, компас и ромбы остаются на месте. */
+html[data-wk-orn="none"] body :is(.wk-pk,.wk-al-fb) :is(.wk-pk-bk,.wk-dk-back) > .wk-bkf,
+html body [data-wk-orn-preview="none"] :is(.wk-pk,.wk-al-fb) :is(.wk-pk-bk,.wk-dk-back) > .wk-bkf{
+  display:none!important;
+}
+/* Если открыт просмотр другой покупки, он должен показывать её орнамент независимо
+   от выбранного «Без орнамента» на личной рубашке. */
+html[data-wk-orn="none"] body [data-wk-orn-preview]:not([data-wk-orn-preview="none"]) :is(.wk-pk,.wk-al-fb) :is(.wk-pk-bk,.wk-dk-back) > .wk-bkf{
+  display:block!important;
+}
 </style>
 </body></html>
 
