@@ -37727,7 +37727,13 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     { id: 'trophies', n: 'Зал трофеев', price: 45000, d: 'Тёмная музейная галерея, золотые пьедесталы и коллекционные ниши.' },
     { id: 'dossier', n: 'Архив Дозора', price: 32000, d: 'Секретные досье, папки, красные штампы и архивная бумага.' },
     { id: 'holoarchive', n: 'Голоархив', price: 55000, d: 'Игровой голографический музей с неоновой сеткой и сияющими слотами.' },
-    { id: 'cabinet', n: 'Коллекционный шкаф', price: 50000, d: 'Резное дерево, латунь, полки и отдельные ячейки для трофейных карт.' }
+    { id: 'cabinet', n: 'Коллекционный шкаф', price: 50000, d: 'Резное дерево, латунь, полки и отдельные ячейки для трофейных карт.' },
+    { id: 'obsidian', n: 'Обсидиановый кодекс', price: 36000, d: 'Чёрный камень с золотыми прожилками, строгий медный переплёт и графитовые страницы.' },
+    { id: 'nocturne', n: 'Полуночная обсерватория', price: 40000, d: 'Глубокий ночной индиго, созвездия и серебряные навигационные штрихи.' },
+    { id: 'ember', n: 'Пепельный архив', price: 38000, d: 'Тёмный уголь, тлеющие красно-медные края и фактура обожжённой бумаги.' },
+    { id: 'glacier', n: 'Ледяной атлас', price: 42000, d: 'Сине-чёрный лёд, матовое стекло и тонкие морозные узоры.' },
+    { id: 'bloodmoon', n: 'Алый гримуар', price: 45000, d: 'Винно-чёрная кожа, багровая луна и тонкие серебряные арабески.' },
+    { id: 'abyssal', n: 'Бездонная библиотека', price: 46000, d: 'Темная бирюзовая глубина, патинированная бронза и светящиеся морские руны.' }
   ];
   var BACKS = [{ id: 'skull', n: 'Весёлый Роджер', price: 30000 }, { id: 'fruit', n: 'Спиральный плод', price: 30000 }, { id: 'bolt', n: 'Молния воли', price: 30000 }, { id: 'blades', n: 'Скрещённые клинки', price: 30000 }];
 
@@ -44669,5 +44675,97 @@ html[data-wk-orn="none"] body [data-wk-orn-preview]:not([data-wk-orn-preview="no
   display:block!important;
 }
 </style>
+
+<style id="wk-dark-albums-and-preview-repair-2026">
+/* NEW NIGHT ALBUMS: same existing nav, collection, buying and showcase mechanics. */
+html body .wk-al.wk-al-modern.alb-obsidian{--al-outer:#0b0c0e;--al-nav:#17191d;--al-nav2:#242320;--al-paper:#1b1c1d;--al-ink:#f5e7ce;--al-muted:#c6b6a0;--al-metal:#d4a861;--al-border:#816e50;--al-top:#0d0e11;--al-toptext:#ffe2a9}
+html body .wk-al.wk-al-modern.alb-obsidian .wk-al-page{background:repeating-linear-gradient(128deg,transparent 0 82px,#f6c57710 83px 84px,transparent 85px 170px),radial-gradient(ellipse at 83% 5%,#72532b24,transparent 63%),linear-gradient(145deg,#232427,#101113 82%)!important}
+html body .wk-al.wk-al-modern.alb-obsidian .wk-al-cover{background:repeating-linear-gradient(124deg,transparent 0 100px,#e7b0611a 101px 102px,transparent 103px 190px),linear-gradient(110deg,#0b0b0f,#30281e 50%,#0d0f11)!important}
+html body .wk-al.wk-al-modern.alb-nocturne{--al-outer:#080c20;--al-nav:#0e1834;--al-nav2:#17264a;--al-paper:#101e3d;--al-ink:#e4edff;--al-muted:#adbfe3;--al-metal:#8bb9f7;--al-border:#577dab;--al-top:#080e28;--al-toptext:#e3f2ff}
+html body .wk-al.wk-al-modern.alb-nocturne .wk-al-page{background:radial-gradient(circle at 15% 23%,#fff8 0 1px,transparent 2px),radial-gradient(circle at 67% 38%,#fff6 0 1px,transparent 2px),radial-gradient(circle at 88% 75%,#fff6 0 1px,transparent 2px),repeating-linear-gradient(56deg,transparent 0 54px,#a0d2ff12 55px 56px,transparent 57px 96px),radial-gradient(ellipse at 66% -10%,#2e4f82,#10182f 75%)!important}
+html body .wk-al.wk-al-modern.alb-nocturne .wk-al-cover{background:radial-gradient(circle at 85% 31%,#c6eaff70 0 2px,transparent 3px),radial-gradient(circle at 23% 71%,#c6eaff64 0 1px,transparent 2px),linear-gradient(120deg,#060e27,#1a2f56,#080e25)!important}
+html body .wk-al.wk-al-modern.alb-ember{--al-outer:#170f0e;--al-nav:#2b1b19;--al-nav2:#3b2420;--al-paper:#241916;--al-ink:#ffe8cd;--al-muted:#dbb5a2;--al-metal:#ea915f;--al-border:#8c4b38;--al-top:#200e0d;--al-toptext:#ffd6a7}
+html body .wk-al.wk-al-modern.alb-ember .wk-al-page{background:radial-gradient(circle at 87% 17%,#ff88502b,transparent 31%),repeating-linear-gradient(103deg,#ffbf7e0c 0 1px,transparent 2px 25px),linear-gradient(120deg,#301b18,#140f10 78%)!important}
+html body .wk-al.wk-al-modern.alb-ember .wk-al-cover{background:radial-gradient(ellipse at 75% 10%,#d64a2c38,transparent 68%),linear-gradient(110deg,#170b0d,#3b201a,#140c0e)!important}
+html body .wk-al.wk-al-modern.alb-glacier{--al-outer:#0a1623;--al-nav:#132639;--al-nav2:#1c3548;--al-paper:#102638;--al-ink:#e7faff;--al-muted:#a6cbd5;--al-metal:#8de2f5;--al-border:#4c91ac;--al-top:#0a1b2a;--al-toptext:#e2faff}
+html body .wk-al.wk-al-modern.alb-glacier .wk-al-page{background:repeating-linear-gradient(134deg,transparent 0 39px,#e2ffff10 40px 41px,transparent 42px 72px),repeating-linear-gradient(-47deg,transparent 0 66px,#c9fdff0a 67px 68px,transparent 69px 117px),radial-gradient(ellipse at 20% 2%,#2b708b,#0c2335 80%)!important}
+html body .wk-al.wk-al-modern.alb-glacier .wk-al-cover{background:linear-gradient(125deg,#0a1727,#20536b 55%,#0a1625)!important}
+html body .wk-al.wk-al-modern.alb-bloodmoon{--al-outer:#180c16;--al-nav:#2b1526;--al-nav2:#411c2a;--al-paper:#281521;--al-ink:#ffe1df;--al-muted:#d7adb7;--al-metal:#e4a3a3;--al-border:#93566b;--al-top:#220d1c;--al-toptext:#ffe0e0}
+html body .wk-al.wk-al-modern.alb-bloodmoon .wk-al-page{background:radial-gradient(circle at 85% 16%,#cd586935 0 23px,transparent 24px),repeating-radial-gradient(circle at 90% 20%,transparent 0 26px,#ffd2d20b 27px 28px,transparent 29px 52px),linear-gradient(130deg,#361923,#170d1a 85%)!important}
+html body .wk-al.wk-al-modern.alb-bloodmoon .wk-al-cover{background:radial-gradient(circle at 90% 50%,#c85d7060 0 22px,transparent 23px),linear-gradient(90deg,#210e1c,#461b2d,#1a0c16)!important}
+html body .wk-al.wk-al-modern.alb-abyssal{--al-outer:#071b20;--al-nav:#112e30;--al-nav2:#174042;--al-paper:#102c30;--al-ink:#d5fff2;--al-muted:#a1d0c1;--al-metal:#83dec5;--al-border:#46897f;--al-top:#0a2026;--al-toptext:#d7fbe9}
+html body .wk-al.wk-al-modern.alb-abyssal .wk-al-page{background:repeating-radial-gradient(circle at 50% 125%,transparent 0 21px,#9cecd018 22px 23px,transparent 24px 39px),radial-gradient(ellipse at 78% 6%,#276960,#092329 80%)!important}
+html body .wk-al.wk-al-modern.alb-abyssal .wk-al-cover{background:repeating-linear-gradient(120deg,transparent 0 42px,#a4ffc512 43px 44px,transparent 45px 74px),linear-gradient(120deg,#09181d,#1b514b,#09202a)!important}
+/* Contrast, navigation selection and showcase styles for every new skin. */
+html body .wk-al.wk-al-modern:is(.alb-obsidian,.alb-nocturne,.alb-ember,.alb-glacier,.alb-bloodmoon,.alb-abyssal) .wk-al-sidebar{background:linear-gradient(95deg,var(--al-nav),var(--al-nav2) 95%)!important}
+html body #wkDkColl .wk-al.wk-al-modern:is(.alb-obsidian,.alb-nocturne,.alb-ember,.alb-glacier,.alb-bloodmoon,.alb-abyssal){--wk-filter-picked-bg:var(--al-metal);--wk-filter-picked-fg:#101920;--wk-filter-picked-edge:color-mix(in srgb,var(--al-metal) 75%,white)}
+html body .wk-sc:is(.vitr-alb-obsidian,.vitr-alb-nocturne,.vitr-alb-ember,.vitr-alb-glacier,.vitr-alb-bloodmoon,.vitr-alb-abyssal){--vs-ink:#ecf2f7;--vs-bright:#f4e5d0}
+html body .wk-sc.vitr-alb-obsidian{--vs-outer:#101114;--vs-wall:#262426;--vs-gold:#d4a861;--vs-head:#101114}
+html body .wk-sc.vitr-alb-nocturne{--vs-outer:#080e24;--vs-wall:#152748;--vs-gold:#8bb9f7;--vs-head:#0a1431}
+html body .wk-sc.vitr-alb-ember{--vs-outer:#1f0f0e;--vs-wall:#361d19;--vs-gold:#ea915f;--vs-head:#220e0d}
+html body .wk-sc.vitr-alb-glacier{--vs-outer:#0a1d29;--vs-wall:#1d4350;--vs-gold:#8de2f5;--vs-head:#091e2c}
+html body .wk-sc.vitr-alb-bloodmoon{--vs-outer:#220d1c;--vs-wall:#422030;--vs-gold:#e4a3a3;--vs-head:#220d1c}
+html body .wk-sc.vitr-alb-abyssal{--vs-outer:#092328;--vs-wall:#204d48;--vs-gold:#83dec5;--vs-head:#071f23}
+html body .wk-sc.vitr-alb-obsidian:not([class*="bg-"]) .wk-sh3{background:repeating-linear-gradient(140deg,transparent 0 42px,#d5a86618 43px 44px,transparent 45px 90px),linear-gradient(120deg,#121214,#2e2a26)!important}
+html body .wk-sc.vitr-alb-nocturne:not([class*="bg-"]) .wk-sh3{background:radial-gradient(circle at 20% 18%,#edf7ff70 0 1px,transparent 2px),repeating-linear-gradient(110deg,transparent 0 53px,#a8d6ff12 54px 55px),linear-gradient(140deg,#09132e,#1c3760)!important}
+html body .wk-sc.vitr-alb-ember:not([class*="bg-"]) .wk-sh3{background:radial-gradient(ellipse at 75% 100%,#cf672a40,transparent 70%),linear-gradient(130deg,#170e0e,#44261f)!important}
+html body .wk-sc.vitr-alb-glacier:not([class*="bg-"]) .wk-sh3{background:repeating-linear-gradient(135deg,transparent 0 38px,#b7f7ff16 39px 40px),linear-gradient(125deg,#0a2236,#20536b)!important}
+html body .wk-sc.vitr-alb-bloodmoon:not([class*="bg-"]) .wk-sh3{background:radial-gradient(circle at 85% 20%,#e688a644 0 21px,transparent 23px),linear-gradient(130deg,#150d1a,#431d2e)!important}
+html body .wk-sc.vitr-alb-abyssal:not([class*="bg-"]) .wk-sh3{background:repeating-radial-gradient(circle at 50% 120%,transparent 0 22px,#a8fbe715 23px 24px,transparent 25px 36px),linear-gradient(125deg,#071e28,#20544f)!important}
+
+/* AUTHOR ORNAMENT UPLOAD: the card was absolutely positioned but the editor slot
+   did not have a reliable height. Provide a proper full-size live preview. */
+html body #wkOrnDraft.wk-sh-orn-art{
+ position:relative!important;display:block!important;flex:0 0 180px!important;
+ width:180px!important;height:258px!important;min-width:0!important;
+ max-width:100%!important;min-height:258px!important;
+ aspect-ratio:100/143!important;padding:0!important;margin:0 auto!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ overflow:visible!important;isolation:isolate!important;
+}
+html body #wkOrnDraft.wk-sh-orn-art>.wk-pk.wk-sh-orn-card{
+ position:absolute!important;display:block!important;inset:0!important;
+ width:100%!important;height:100%!important;min-width:0!important;max-width:none!important;
+ min-height:0!important;aspect-ratio:100/143!important;margin:0!important;
+ transform:none!important;visibility:visible!important;opacity:1!important;
+}
+html body #wkOrnDraft.wk-sh-orn-art>.wk-pk>.wk-pk-bk{
+ position:absolute!important;inset:0!important;display:block!important;
+ width:100%!important;height:100%!important;
+}
+html body #wkOrnDraft.wk-sh-orn-art .wk-pk-bk>.wk-bkf{
+ display:block!important;visibility:visible!important;
+ -webkit-mask:var(--wk-orn-draft,none) center / 100% 100% no-repeat!important;
+ mask:var(--wk-orn-draft,none) center / 100% 100% no-repeat!important;
+}
+/* Hide nothing when the selected saved ornament is "none": draft must preview its own image. */
+html[data-wk-orn="none"] body #wkOrnDraft .wk-pk-bk>.wk-bkf{display:block!important}
+
+/* CARD FRONTS: The wrapper and its rendered card use the same edge geometry
+   in the showcase, even when one slot is scaled/rotated individually. */
+html body .wk-sc .wk-sh3-it .character-item[data-wk-pin]{
+ overflow:hidden!important;border-radius:10.2% / 7.1%!important;
+ -webkit-clip-path:inset(0 round 10.2% / 7.1%)!important;
+ clip-path:inset(0 round 10.2% / 7.1%)!important;
+}
+html body .wk-sc .wk-sh3-it .character-item[data-wk-pin]>.character-grid-image-wrap{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ overflow:hidden!important;
+ -webkit-clip-path:url(#wkDeckFaceArtOpening)!important;
+ clip-path:url(#wkDeckFaceArtOpening)!important;
+}
+/* Soften black gradient under text. Keep enough contrast on bright pictures. */
+html body .wk-sc .character-grid-card .character-grid-content::before,
+html body #wkDkColl .character-grid-card .character-grid-content::before,
+html body #characterList .character-grid-card .character-grid-content::before{
+ background:linear-gradient(to top,rgba(7,12,23,.39) 0%,rgba(7,12,23,.14) 58%,rgba(7,12,23,0) 100%)!important;
+}
+html body .wk-sc .character-grid-card .character-grid-content,
+html body #wkDkColl .character-grid-card .character-grid-content{
+ text-shadow:0 1px 3px rgba(2,4,10,.75)!important;
+}
+html body .wk-sc .wk-sh3-it .wk-dk-slot{filter:drop-shadow(0 10px 9px rgba(0,0,0,.24))!important}
+</style>
+
 </body></html>
 
