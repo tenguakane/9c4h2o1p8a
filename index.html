@@ -600,6 +600,13 @@ html body .character-grid-card:has(> .wk-cf) > .character-grid-content.character
   clip-path:inset(-40px 5% 0 5% round 0 0 10px 10px)!important;
   -webkit-clip-path:inset(-40px 5% 0 5% round 0 0 10px 10px)!important}
 </style>
+<style id="wk-url-inputs">
+html body .wk-bk-form input[type=url]{font:inherit;padding:8px 10px;border-radius:var(--r-md);border:1px solid rgba(148,163,184,.3);background:rgba(8,11,20,.7);color:inherit;min-width:0}
+html body .wk-wl-up{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:8px 0}
+html body .wk-wl-pv{flex:1 1 260px;min-height:110px;aspect-ratio:16/6;max-width:520px;border-radius:12px;border:1px dashed rgba(148,163,184,.45);background:#14110d center/cover no-repeat;display:grid;place-items:center;color:rgba(255,255,255,.5);font-size:12px;overflow:hidden}
+html body .wk-wl-pv[style*="url"] span{display:none}
+html body .wk-wl-up .wk-bk-form{flex:1 1 260px}
+</style>
 </head>
 <body data-theme="mugiwara" data-active-tab="characters">
 <script id="wiki-cloud-config">
@@ -19558,6 +19565,32 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
       return fb.fs.deleteDoc(fb.fs.doc(db, 'backs', id));
     }
   };
+  /* Свои фоны витрины по ссылке: коллекция backs, id вида uw…, поле url (картинка лежит у внешнего хоста). */
+  window.__wkWalls = {
+    enabled: function () { return !!(me && db && fb && me.role !== 'guest'); },
+    list: function () {
+      if (!this.enabled()) return Promise.reject(new Error('not-connected'));
+      return fb.fs.getDocs(fb.fs.collection(db, 'backs')).then(function (qs) {
+        var out = []; qs.forEach(function (doc) {
+          if (!/^uw[a-z0-9]{2,14}$/.test(doc.id)) return;
+          var d = doc.data() || {};
+          out.push({ id: doc.id, n: String(d.name || ''), price: Number(d.price) || 0, url: String(d.url || ''), at: String(d.at || '') });
+        }); return out;
+      });
+    },
+    save: function (w) {
+      if (!me || !db || !fb || me.role !== 'admin') return Promise.reject(new Error('no-admin-rights'));
+      if (!/^uw[a-z0-9]{2,14}$/.test(String(w.id)) || !/^https?:\/\/[^\s"'<>\\]{3,780}$/i.test(String(w.url)) ||
+          !Number.isSafeInteger(w.price) || w.price < 0 || w.price > 10000000)
+        return Promise.reject(new Error('invalid-wall'));
+      return fb.fs.setDoc(fb.fs.doc(db, 'backs', w.id), { kind: 'wall', name: String(w.n || '').slice(0, 40), price: w.price, url: String(w.url), by: me.login, at: new Date().toISOString() });
+    },
+    remove: function (id) {
+      if (!me || !db || !fb || me.role !== 'admin') return Promise.reject(new Error('no-admin-rights'));
+      if (!/^uw[a-z0-9]{2,14}$/.test(String(id))) return Promise.reject(new Error('invalid-id'));
+      return fb.fs.deleteDoc(fb.fs.doc(db, 'backs', id));
+    }
+  };
   window.__wkI18n = {
     enabled: function () { return !!(me && db && fb && me.role !== 'guest'); },
     get: function () { return fb.fs.getDocs(fb.fs.collection(db, 'i18n')).then(function (qs) { var t = ''; qs.forEach(function (d) { if (d.id === 'uk') t = String((d.data() || {}).d || ''); }); return t; }); },
@@ -38410,7 +38443,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (a === 'compose') { compOpen(pane); return true; }
     if (a === 'showedit') { compOpen(pane, 'show'); return true; }
     if (a === 'wantedit') { compOpen(pane, 'want'); return true; }
-    if (a === 'priceeditor' || a === 'shtab' || a === 'sellall' || a === 'sell1' || a === 'buy' || a === 'mklist' || a === 'mkbuy' || a === 'mkcancel' || a === 'buyup' || a === 'daybuy' || a === 'dayroll' || a === 'buy2' || a === 'pigput' || a === 'pigbuy' || a === 'pigget' || a === 'pickup' || a === 'cosbuy' || a === 'cossel' || a === 'nktgt' || a === 'bkadd' || a === 'bkedit' || a === 'bkcancel' || a === 'bkdel' || a === 'ornadd' || a === 'ornedit' || a === 'orncancel' || a === 'orndel' || a === 'ornreset' || a === 'orndef' || a === 'giftpack' || a === 'giftbuy' || a === 'hold' || a === 'unhold') { shopClick(pane, a, b); return true; }
+    if (a === 'priceeditor' || a === 'shtab' || a === 'sellall' || a === 'sell1' || a === 'buy' || a === 'mklist' || a === 'mkbuy' || a === 'mkcancel' || a === 'buyup' || a === 'daybuy' || a === 'dayroll' || a === 'buy2' || a === 'pigput' || a === 'pigbuy' || a === 'pigget' || a === 'pickup' || a === 'cosbuy' || a === 'cossel' || a === 'nktgt' || a === 'bkadd' || a === 'bkedit' || a === 'bkcancel' || a === 'bkdel' || a === 'ornadd' || a === 'ornedit' || a === 'orncancel' || a === 'orndel' || a === 'ornreset' || a === 'orndef' || a === 'walladd' || a === 'walledit' || a === 'wallcancel' || a === 'walldel' || a === 'giftpack' || a === 'giftbuy' || a === 'hold' || a === 'unhold') { shopClick(pane, a, b); return true; }
     if (a === 'accept' || a === 'decline' || a === 'cancel') { if (a !== 'accept' || (TX.trades.filter(function (x) { return x.id === b.getAttribute('data-id'); })[0] || {}).gift || window.confirm('Принять обмен? Карточки сразу перейдут.')) txAction(pane, a, b.getAttribute('data-id'), b); return true; }
     return false;
   }
@@ -38912,7 +38945,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       boost: '<h3 class="wk-dk-h">Усиления</h3><p class="wk-sh-hint">Расходуются сами, когда пригодятся: щит спасает серию входов, благословение добавляет шанс переработке.</p><div class="wk-sh-pks">' + pick(['sand', 'auto', 'shield', 'bless', 'fake']) + '</div>' +
         '<h3 class="wk-dk-h">Особые находки</h3><p class="wk-sh-hint">Наборы и выбор карточек под конкретную цель.</p><div class="wk-sh-pks">' + pick(['compass', 'map', 'key', 'warrant']) + '</div>',
       save: '<h3 class="wk-dk-h">Сбережения</h3><p class="wk-sh-hint">Копилка запирает белли на 7 дней и возвращает их с процентами: первая даёт +10%, вторая +15%, третья +20%. Пока белли лежат в копилке, потратить их нельзя. Вторую и третью копилку можно докупить, чтобы вклады шли одновременно и приносили больше.</p><div class="wk-sh-pks">' + piggyAll(st, bel) + '</div>',
-      des: '<h3 class="wk-dk-h">Фон витрины</h3><p class="wk-sh-hint">Дополнительное оформление окружения витрины: меняет фон и полку, не отменяя стиль выбранного альбома. Можно снять или сменить в любой момент; фон виден другим участникам.</p><div class="wk-sh-pks">' + cosRow('bg', BGS, 'b_') + '</div><h3 class="wk-dk-h">Дизайн альбома</h3><p class="wk-sh-hint">Каждый альбом включает собственную витрину избранных карточек в том же стиле. Навигация по аркам слева, страницы и фильтры остаются прежними. «Капитанский фолиант» бесплатный.</p><div class="wk-sh-pks">' + '<article class="wk-sh-pk p-x p-cos' + (!st.alb ? ' is-on' : '') + '">' + albPreview(C, st, 'captain') + '<div class="wk-sh-info"><h4>Капитанский фолиант <em class="wk-sh-st' + (!st.alb ? ' on' : '') + '">' + (!st.alb ? 'Выбрано' : 'Бесплатно') + '</em></h4><p class="wk-sh-note">Классический переплёт, страницы пергамента, боковая навигация и витрина в стиле капитанской книги.</p></div><span class="wk-sh-bw"><button type="button" class="wk-tx-btn' + (!st.alb ? '' : ' pri') + '" data-tx="cossel" data-kind="alb" data-id="captain">' + (!st.alb ? 'Выбрано' : 'Выбрать бесплатно') + '</button></span></article>' + cosRow('alb', ALBS, 'a_') + '</div><h3 class="wk-dk-h">Рамки аватара</h3><p class="wk-sh-hint">Эффект вокруг твоего аватара везде, где он показан: в обмене, в списках участников, в колоде. Другие участники тоже его видят.</p><div class="wk-sh-pks">' + cosRow('avf', AVF, 'v_') + '</div><h3 class="wk-dk-h">Эффект имени и титула</h3><p class="wk-sh-hint">Цвет или свечение для имени, для титула или для обоих сразу: в обменах, списках, колоде и профиле. Покупается один раз, выбрать или снять можно в любой момент. Титул выбирается в профиле.</p>' + nkTgtHTML(st) + '<div class="wk-sh-pks">' + cosRow('nkc', NKC, 'n_') + '</div>',
+      des: '<h3 class="wk-dk-h">Фон витрины</h3><p class="wk-sh-hint">Дополнительное оформление окружения витрины: меняет фон и полку, не отменяя стиль выбранного альбома. Можно снять или сменить в любой момент; фон виден другим участникам.</p><div class="wk-sh-pks">' + cosRow('bg', BGS, 'b_') + '</div>' + wallAdminHTML() + '<h3 class="wk-dk-h">Дизайн альбома</h3><p class="wk-sh-hint">Каждый альбом включает собственную витрину избранных карточек в том же стиле. Навигация по аркам слева, страницы и фильтры остаются прежними. «Капитанский фолиант» бесплатный.</p><div class="wk-sh-pks">' + '<article class="wk-sh-pk p-x p-cos' + (!st.alb ? ' is-on' : '') + '">' + albPreview(C, st, 'captain') + '<div class="wk-sh-info"><h4>Капитанский фолиант <em class="wk-sh-st' + (!st.alb ? ' on' : '') + '">' + (!st.alb ? 'Выбрано' : 'Бесплатно') + '</em></h4><p class="wk-sh-note">Классический переплёт, страницы пергамента, боковая навигация и витрина в стиле капитанской книги.</p></div><span class="wk-sh-bw"><button type="button" class="wk-tx-btn' + (!st.alb ? '' : ' pri') + '" data-tx="cossel" data-kind="alb" data-id="captain">' + (!st.alb ? 'Выбрано' : 'Выбрать бесплатно') + '</button></span></article>' + cosRow('alb', ALBS, 'a_') + '</div><h3 class="wk-dk-h">Рамки аватара</h3><p class="wk-sh-hint">Эффект вокруг твоего аватара везде, где он показан: в обмене, в списках участников, в колоде. Другие участники тоже его видят.</p><div class="wk-sh-pks">' + cosRow('avf', AVF, 'v_') + '</div><h3 class="wk-dk-h">Эффект имени и титула</h3><p class="wk-sh-hint">Цвет или свечение для имени, для титула или для обоих сразу: в обменах, списках, колоде и профиле. Покупается один раз, выбрать или снять можно в любой момент. Титул выбирается в профиле.</p>' + nkTgtHTML(st) + '<div class="wk-sh-pks">' + cosRow('nkc', NKC, 'n_') + '</div>',
       bk: '<h3 class="wk-dk-h">Авторские орнаменты рубашек</h3><p class="wk-sh-hint">Выбирай авторские орнаменты или вариант «Без орнамента» за 1 белли. Классические вензеля остаются стандартным бесплатным оформлением. Нажми на изображение для увеличения.</p>' + (st.orn && st.orn !== 'classic' ? '<button type="button" class="wk-tx-btn" data-tx="ornreset">Вернуть орнамент по умолчанию</button>' : '') + '<div class="wk-sh-pks">' + cosRow('orn', ornGoods(), 'o_') + '</div>' + ornAdminHTML() + '<h3 class="wk-dk-h">Рубашки карточек</h3><p class="wk-sh-hint">Другой знак на обороте карточек: в наборах, в колоде и в альбоме. Цвет и свечение по-прежнему зависят от редкости. Покупается один раз.</p><div class="wk-sh-pks">' + cosRow('back', allBacks().filter(function (q) { return (!/^(skull|fruit|bolt|blades)$/.test(q.id) || cos['k_' + q.id]) && (!q.cu || bkOk(q)); }), 'k_') + '</div>' + bkAdminHTML()
     };
   }
@@ -38930,23 +38963,24 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var preview = '<div class="wk-sh-art wk-sh-orn-art" id="wkOrnDraft" style="--wk-orn-draft:' + (ORP.d ? 'url(' + ORP.d + ')' : 'none') + ';--wk-orn-scale:' + (ORP.s || 100) + '%;--wk-orn-height:' + ((ORP.s || 100)*(ORP.sy || 100)/100) + '%">' +
       '<div class="wk-pk r-legendary wk-dk-sbin wk-sh-orn-card"><div class="wk-pk-bk">' + backInner('legendary', '') + '</div></div></div>';
     return defBlock + '<h3 class="wk-dk-h" id="wkOrnHead">' + (ORP.id ? 'Редактирование орнамента' : 'Добавить свой орнамент') + '</h3>' +
-      '<p class="wk-sh-hint">Загрузи PNG с прозрачным фоном. Можно использовать готовый рисунок из четырёх углов или один угол — он отразится на остальные три. Орнамент будет окрашен в цвет редкости карты, компас и рамка останутся прежними. Новый товар появится у всех игроков после сохранения.</p>' +
+      '<p class="wk-sh-hint">Загрузи PNG с прозрачным фоном или вставь ссылку на картинку. Можно использовать готовый рисунок из четырёх углов или один угол — он отразится на остальные три. Орнамент будет окрашен в цвет редкости карты, компас и рамка останутся прежними. Новый товар появится у всех игроков после сохранения.</p>' +
       '<div class="wk-bk-up wk-orn-upload">' + preview + '<div class="wk-bk-form">' +
       '<label class="wk-tx-btn wk-bk-file" for="wkOrnFile">⤒ <span id="wkOrnFilename">' + (ORP.file ? esc(ORP.file.name) : ORP.id ? 'Заменить изображение (необязательно)' : 'Выбрать изображение') + '</span></label>' +
       '<input type="file" class="wk-bk-fin" id="wkOrnFile" accept="image/png,image/webp,image/jpeg">' +
+      '<input type="url" id="wkOrnUrl" class="wk-bk-url" placeholder="…или вставь ссылку на картинку (https://…)" autocomplete="off" value="' + esc(ORP.url || '') + '">' +
       '<input type="text" id="wkOrnName" maxlength="40" placeholder="Название орнамента" value="' + esc(ORP.name) + '">' +
       '<label class="wk-bk-row">Цена, белли <input id="wkOrnPrice" type="number" min="0" max="10000000" step="500" value="' + esc(ORP.price) + '"></label>' +
       '<label class="wk-bk-row">Изображение <select id="wkOrnMode"><option value="corners"' + (ORP.mode === 'corners' ? ' selected' : '') + '>Все четыре угла</option><option value="single"' + (ORP.mode === 'single' ? ' selected' : '') + '>Один угол (зеркально)</option></select></label>' +
       '<label class="wk-bk-row wk-bk-zr">Масштаб орнамента <input type="range" id="wkOrnScale" min="60" max="110" step="5" value="' + (ORP.s || 100) + '"><b id="wkOrnScaleVal">' + (ORP.s || 100) + '%</b></label>' +
       '<label class="wk-bk-row wk-bk-zr">Растяжение по вертикали <input type="range" id="wkOrnScaleY" min="90" max="130" step="5" value="' + (ORP.sy || 100) + '"><b id="wkOrnScaleYVal">' + (ORP.sy || 100) + '%</b></label>' +
-      '<p class="wk-sh-hint" id="wkOrnStatus">' + (ORP.d ? 'Изображение готово к публикации.' : 'Файл ещё не выбран.') + '</p>' +
+      '<p class="wk-sh-hint" id="wkOrnStatus">' + (ORP.d ? 'Изображение готово к публикации.' : 'Файл или ссылка ещё не выбраны.') + '</p>' +
       '<span class="wk-bk-lb"><button type="button" class="wk-tx-btn pri" data-tx="ornadd">' + (ORP.id ? 'Сохранить изменения' : 'Опубликовать в магазине') + '</button>' +
       (ORP.id ? '<button type="button" class="wk-tx-btn" data-tx="orncancel">Отмена</button>' : '') + '</span></div></div>' +
       (items ? '<ul class="wk-bk-list">' + items + '</ul>' : '');
   }
   function ornProcess() {
-    if (!ORP.file) return;
-    var file = ORP.file, url = URL.createObjectURL(file), im = new Image();
+    if (!ORP.file && !ORP.url) return;
+    var file = ORP.file, url = file ? URL.createObjectURL(file) : ORP.url, im = new Image(); if (!file) im.crossOrigin = 'anonymous';
     ORP.busy = true;
     var msg = document.getElementById('wkOrnStatus'); if (msg) msg.textContent = 'Обрабатываю изображение…';
     im.onload = function () {
@@ -38983,10 +39017,10 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
           var el = document.getElementById('wkOrnDraft'); if (el) el.style.setProperty('--wk-orn-draft','url('+d+')');
           if (msg) msg.textContent = 'Готово. Можно сохранять товар.';
         }
-      } catch (er) { if (msg) msg.textContent = 'Не удалось прочитать изображение.'; }
+      } catch (er) { if (!file && !im.__px) { im.__px = 1; im.src = pxUrl(ORP.url); return; } if (msg) msg.textContent = file ? 'Не удалось прочитать изображение.' : 'Не удалось прочитать картинку по ссылке. Скачай её и выбери файлом.'; }
       ORP.busy=false; URL.revokeObjectURL(url);
     };
-    im.onerror = function () { ORP.busy=false; if (msg) msg.textContent='Файл не похож на изображение.'; URL.revokeObjectURL(url); };
+    im.onerror = function () { if (!file && !im.__px) { im.__px = 1; im.src = pxUrl(ORP.url); return; } ORP.busy=false; if (msg) msg.textContent = file ? 'Файл не похож на изображение.' : 'Ссылка не открылась как картинка. Проверь её или выбери файл.'; URL.revokeObjectURL(url); };
     im.src=url;
   }
   document.addEventListener('change',function(e){
@@ -38995,7 +39029,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       if (t.files[0].size>6000000) { txToast('Изображение должно быть меньше 6 МБ'); return; }
       ORP.file=t.files[0]; var f=document.getElementById('wkOrnFilename'); if(f) f.textContent=ORP.file.name; ornProcess();
     }
-    if (t.id==='wkOrnMode') { ORP.mode=t.value==='single'?'single':'corners'; if (ORP.file) ornProcess(); }
+    if (t.id==='wkOrnMode') { ORP.mode=t.value==='single'?'single':'corners'; if (ORP.file || ORP.url) ornProcess(); }
   });
   document.addEventListener('input',function(e){
     if (!e.target) return;
@@ -39012,14 +39046,95 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       var ydraft=document.getElementById('wkOrnDraft');if(ydraft)ydraft.style.setProperty('--wk-orn-height',((ORP.s||100)*ORP.sy/100)+'%');
     }
   });
+  /* ===== Свои фоны витрины по ссылке на картинку ===== */
+  var BGS_BASE = BGS.length, WLS = [], WLP = { id: '', name: '', price: 25000, url: '' }, WLST = { at: 0, loading: false };
+  function wallReset() { WLP = { id: '', name: '', price: 25000, url: '' }; }
+  function wallOk(q) { return !!(q && /^uw[a-z0-9]{2,14}$/.test(String(q.id)) && imgLink(q.url) && Number.isFinite(Number(q.price)) && Number(q.price) >= 0); }
+  function wallWrap(o) {
+    if (o.__fw) return; var pv = o.price;
+    Object.defineProperty(o, 'price', { configurable: true, enumerable: true, get: function () { return FREE() ? 0 : dealOn(o) ? Math.round(pv * (100 - DEAL_PCT) / 1000) * 10 : pv; }, set: function (v) { pv = v; } });
+    Object.defineProperty(o, 'basePrice', { get: function () { return pv; } }); Object.defineProperty(o, '__fw', { value: 1 });
+  }
+  function wallCSS() {
+    var el = document.getElementById('wk-custom-wall-css');
+    if (!el) { el = document.createElement('style'); el.id = 'wk-custom-wall-css'; document.head.appendChild(el); }
+    el.textContent = WLS.filter(wallOk).map(function (q) {
+      var c = 'html .wk-sc.bg-' + q.id;
+      return c + ' .wk-sh3{background:#14110d!important}' + c + ' .wk-sh3-wall{background:url("' + imgLink(q.url) + '") center/cover no-repeat!important}' +
+        c + ' .wk-sh3-plank{background:linear-gradient(180deg,rgba(255,255,255,.6) 0,#9a7640 28%,#4d3719 30%,#21170a 100%)}' +
+        'html body .wk-sc.vitr-theme.bg-' + q.id + '{--bgl:#ecd9a8}';
+    }).join('\n');
+  }
+  function wallApply() {
+    BGS.length = BGS_BASE;
+    WLS.forEach(function (q) { var o = { id: q.id, n: q.n || 'Фон витрины', price: Number(q.price) || 0, d: 'Особый фон витрины.', wl: 1, url: imgLink(q.url) }; wallWrap(o); BGS.push(o); });
+    wallCSS();
+  }
+  function refreshWalls(pane, force) {
+    var api = window.__wkWalls; if (!api || !api.enabled() || WLST.loading) return;
+    if (!force && Date.now() - WLST.at < 60000) return;
+    WLST.loading = true;
+    api.list().then(function (items) {
+      WLST.at = Date.now();
+      var next = (items || []).filter(wallOk).sort(function (a, b) { return String(a.at).localeCompare(String(b.at)); });
+      var sig = function (ls) { return JSON.stringify(ls.map(function (q) { return [q.id, q.n, q.price, q.url]; })); };
+      if (sig(next) !== sig(WLS)) {
+        WLS = next; wallApply();
+        if (pane && pane.isConnected && !DK.pack) {
+          if (DK.tab === 'shop') { var body = pane.querySelector('#wkTxBody'); if (body) body.innerHTML = shopHTML(allCards(), load()); }
+          else if (DK.tab === 'me') { try { renderDeck(pane); } catch (e) {} }
+        }
+      }
+    }, function () { if (force && isDima()) txToast('Не получилось загрузить фоны витрины из облака'); }).then(function () { WLST.loading = false; });
+  }
+  function wallAdminHTML() {
+    if (!isDima()) return '';
+    var ed = !!WLP.id, u = imgLink(WLP.url);
+    var list = WLS.map(function (q) { return '<li><span>' + esc(q.n) + ' · ' + fmtB(q.price) + '</span><span class="wk-bk-lb">' +
+      '<button type="button" class="wk-tx-btn" data-tx="walledit" data-id="' + esc(q.id) + '">Изменить</button>' +
+      '<button type="button" class="wk-tx-btn" data-tx="walldel" data-id="' + esc(q.id) + '">Удалить</button></span></li>'; }).join('');
+    return '<h3 class="wk-dk-h" id="wkWlHead">' + (ed ? 'Изменение фона витрины' : 'Свои фоны витрины (для админа)') + '</h3>' +
+      '<p class="wk-sh-hint">Вставь ссылку на картинку: она станет фоном витрины. Лучше широкая, примерно 1600×600. Ссылка должна вести прямо на изображение (jpg, png, webp, gif) и оставаться рабочей. Фон появится в магазине у всех игроков.</p>' +
+      '<div class="wk-wl-up"><div class="wk-wl-pv" id="wkWlPv"' + (u ? ' style="background-image:url(&quot;' + esc(u) + '&quot;)"' : '') + '><span>Здесь появится предпросмотр</span></div><div class="wk-bk-form">' +
+      '<input type="url" id="wkWlUrl" class="wk-bk-url" placeholder="Ссылка на картинку (https://…)" autocomplete="off" value="' + esc(WLP.url || '') + '">' +
+      '<input type="text" id="wkWlName" maxlength="40" placeholder="Название фона" value="' + esc(WLP.name) + '">' +
+      '<label class="wk-bk-row">Цена, белли <input id="wkWlPrice" type="number" min="0" max="10000000" step="500" value="' + esc(WLP.price) + '"></label>' +
+      '<span class="wk-bk-lb"><button type="button" class="wk-tx-btn pri" data-tx="walladd">' + (ed ? 'Сохранить изменения' : 'Опубликовать в магазине') + '</button>' +
+      (ed ? '<button type="button" class="wk-tx-btn" data-tx="wallcancel">Отмена</button>' : '') + '</span></div></div>' +
+      (list ? '<ul class="wk-bk-list">' + list + '</ul>' : '');
+  }
+  document.addEventListener('input', function (e) {
+    var t = e.target; if (!t || !t.id) return;
+    if (t.id === 'wkWlName') WLP.name = t.value;
+    if (t.id === 'wkWlPrice') WLP.price = t.value;
+    if (t.id === 'wkWlUrl') { WLP.url = t.value; var pv = document.getElementById('wkWlPv'), u = imgLink(t.value); if (pv) pv.style.backgroundImage = u ? 'url("' + u + '")' : ''; }
+    if (t.id === 'wkBkUrl' || t.id === 'wkOrnUrl') {
+      var isB = t.id === 'wkBkUrl', v = imgLink(t.value); clearTimeout(t.__tm);
+      t.__tm = setTimeout(function () {
+        if (!v) return;
+        if (isB) { BKP.file = null; BKP.url = v; var fb1 = document.getElementById('wkBkFileName'); if (fb1) fb1.textContent = BKP.id ? 'Заменить картинку (необязательно)' : 'Выбрать PNG'; bkProc(); }
+        else { ORP.file = null; ORP.url = v; var fb2 = document.getElementById('wkOrnFilename'); if (fb2) fb2.textContent = ORP.id ? 'Заменить изображение (необязательно)' : 'Выбрать изображение'; ornProcess(); }
+      }, 500);
+    }
+  });
+  /* Выбрали файл: ссылка больше не нужна */
+  document.addEventListener('change', function (e) {
+    var t = e.target; if (!t || !t.files || !t.files[0]) return;
+    if (t.id === 'wkBkFile') { BKP.url = ''; var u1 = document.getElementById('wkBkUrl'); if (u1) u1.value = ''; }
+    if (t.id === 'wkOrnFile') { ORP.url = ''; var u2 = document.getElementById('wkOrnUrl'); if (u2) u2.value = ''; }
+  });
+  window.addEventListener('wiki:cloud-ready', function () { setTimeout(function () { try { refreshWalls(null, false); } catch (e) {} }, 900); });
   function bkAdminHTML() {
     if (!isDima()) return '';
     var list = CB.filter(cbOk).map(function (q) { return '<li><span>' + esc(q.n || 'Рубашка') + ' · ' + fmtB(q.price) + (q.ch || q.ep ? ' · с ' + [q.ch ? 'гл. ' + q.ch : '', q.ep ? 'сер. ' + q.ep : ''].filter(Boolean).join(' или ') : '') + '</span><span class="wk-bk-lb"><button type="button" class="wk-tx-btn" data-tx="bkedit" data-id="' + esc(q.id) + '">Изменить</button><button type="button" class="wk-tx-btn" data-tx="bkdel" data-id="' + esc(q.id) + '">Удалить</button></span></li>'; }).join('');
-    var ed = !!BKP.id; return '<h3 class="wk-dk-h" id="wkBkHead">' + (ed ? 'Изменение рубашки' : 'Свои рубашки (для админа)') + '</h3>' + (ed ? '<p class="wk-sh-hint">Меняй название и цену. Новый файл не обязателен: без него останется текущая картинка. Новая цена действует для будущих покупок, у купивших рубашка останется.</p>' : '') + '<p class="wk-sh-hint">Выбери PNG со знаком: чёрный на белом или любой на прозрачном фоне. Если внутри знака есть и светлое, и тёмное (например, белый с чёрными полосами), преобладающий цвет станет значком, а второй прорежется. Он станет одноцветным значком и сам окрасится под редкость карточки. Лишние поля обрежутся. Если указать главу или серию, рубашка появится в магазине только у тех, кто дошёл до этой точки; у остальных на таких карточках будет стандартная рубашка. Рубашка сразу появится в магазине у всех. Нужны права на изображение: официальные логотипы и эмблемы серии лучше не загружать.</p>' +
-      '<div class="wk-bk-up"><div class="wk-bk-prevw"><div class="wk-bkm wk-bkimg wk-bkprev"><i id="wkBkPrevI" style="--z:' + (BKP.z || 1) + (BKP.d ? ';--m:url(' + BKP.d + ')' : '') + '"></i></div></div><div class="wk-bk-form"><label class="wk-tx-btn wk-bk-file" for="wkBkFile"><span class="wk-bk-fi">⤒</span><span id="wkBkFileName">' + (BKP.file ? esc(BKP.file.name) : (BKP.id ? "Заменить картинку (необязательно)" : "Выбрать PNG")) + '</span></label><input type="file" id="wkBkFile" accept="image/*" class="wk-bk-fin"><input type="text" id="wkBkName" maxlength="40" placeholder="Название рубашки" value="' + esc(BKP.name) + '"><label class="wk-bk-row">Цена, белли <input type="number" id="wkBkPrice" min="1000" step="500" value="' + esc(BKP.price) + '"></label><label class="wk-bk-row wk-bk-zr">Размер знака <input type="range" id="wkBkZ" min="30" max="250" step="5" value="' + Math.round((BKP.z || 1) * 100) + '"><b id="wkBkZv">' + Math.round((BKP.z || 1) * 100) + '%</b></label><label class="wk-bk-row">Доступна с главы <input type="number" id="wkBkCh" min="0" step="1" placeholder="0 — сразу" value="' + (BKP.ch ? esc(BKP.ch) : '') + '"></label><label class="wk-bk-row">или с серии <input type="number" id="wkBkEp" min="0" step="1" placeholder="0 — сразу" value="' + (BKP.ep ? esc(BKP.ep) : '') + '"></label><label class="wk-bk-row"><input type="checkbox" id="wkBkInv"' + (BKP.inv ? ' checked' : '') + '> Инвертировать (если вышло наоборот)</label><button type="button" class="wk-tx-btn pri" data-tx="bkadd">' + (ed ? 'Сохранить изменения' : 'Добавить в магазин') + '</button>' + (ed ? '<button type="button" class="wk-tx-btn" data-tx="bkcancel">Отмена</button>' : '') + '</div></div>' + (list ? '<ul class="wk-bk-list">' + list + '</ul>' : '');
+    var ed = !!BKP.id; return '<h3 class="wk-dk-h" id="wkBkHead">' + (ed ? 'Изменение рубашки' : 'Свои рубашки (для админа)') + '</h3>' + (ed ? '<p class="wk-sh-hint">Меняй название и цену. Новый файл не обязателен: без него останется текущая картинка. Новая цена действует для будущих покупок, у купивших рубашка останется.</p>' : '') + '<p class="wk-sh-hint">Выбери PNG со знаком или вставь ссылку на картинку: чёрный на белом или любой на прозрачном фоне. Если внутри знака есть и светлое, и тёмное (например, белый с чёрными полосами), преобладающий цвет станет значком, а второй прорежется. Он станет одноцветным значком и сам окрасится под редкость карточки. Лишние поля обрежутся. Если указать главу или серию, рубашка появится в магазине только у тех, кто дошёл до этой точки; у остальных на таких карточках будет стандартная рубашка. Рубашка сразу появится в магазине у всех. Нужны права на изображение: официальные логотипы и эмблемы серии лучше не загружать.</p>' +
+      '<div class="wk-bk-up"><div class="wk-bk-prevw"><div class="wk-bkm wk-bkimg wk-bkprev"><i id="wkBkPrevI" style="--z:' + (BKP.z || 1) + (BKP.d ? ';--m:url(' + BKP.d + ')' : '') + '"></i></div></div><div class="wk-bk-form"><label class="wk-tx-btn wk-bk-file" for="wkBkFile"><span class="wk-bk-fi">⤒</span><span id="wkBkFileName">' + (BKP.file ? esc(BKP.file.name) : (BKP.id ? "Заменить картинку (необязательно)" : "Выбрать PNG")) + '</span></label><input type="file" id="wkBkFile" accept="image/*" class="wk-bk-fin"><input type="url" id="wkBkUrl" class="wk-bk-url" placeholder="…или вставь ссылку на картинку (https://…)" autocomplete="off" value="' + esc(BKP.url || '') + '"><input type="text" id="wkBkName" maxlength="40" placeholder="Название рубашки" value="' + esc(BKP.name) + '"><label class="wk-bk-row">Цена, белли <input type="number" id="wkBkPrice" min="1000" step="500" value="' + esc(BKP.price) + '"></label><label class="wk-bk-row wk-bk-zr">Размер знака <input type="range" id="wkBkZ" min="30" max="250" step="5" value="' + Math.round((BKP.z || 1) * 100) + '"><b id="wkBkZv">' + Math.round((BKP.z || 1) * 100) + '%</b></label><label class="wk-bk-row">Доступна с главы <input type="number" id="wkBkCh" min="0" step="1" placeholder="0 — сразу" value="' + (BKP.ch ? esc(BKP.ch) : '') + '"></label><label class="wk-bk-row">или с серии <input type="number" id="wkBkEp" min="0" step="1" placeholder="0 — сразу" value="' + (BKP.ep ? esc(BKP.ep) : '') + '"></label><label class="wk-bk-row"><input type="checkbox" id="wkBkInv"' + (BKP.inv ? ' checked' : '') + '> Инвертировать (если вышло наоборот)</label><button type="button" class="wk-tx-btn pri" data-tx="bkadd">' + (ed ? 'Сохранить изменения' : 'Добавить в магазин') + '</button>' + (ed ? '<button type="button" class="wk-tx-btn" data-tx="bkcancel">Отмена</button>' : '') + '</div></div>' + (list ? '<ul class="wk-bk-list">' + list + '</ul>' : '');
   }
+  /* Картинки по ссылке: сначала напрямую (нужен CORS), если сайт не разрешает, пробуем через публичный прокси изображений. */
+  function pxUrl(u) { return 'https://wsrv.nl/?url=' + encodeURIComponent(u) + '&output=png'; }
+  function imgLink(u) { u = String(u || '').trim().replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/'/g, '%27'); return /^https?:\/\/[^\s"'<>\\]{3,780}$/i.test(u) ? u : ''; }
   function bkProc() {
-    if (!BKP.file) return; var url = URL.createObjectURL(BKP.file), im = new Image();
+    if (!BKP.file && !BKP.url) return; var url = BKP.file ? URL.createObjectURL(BKP.file) : BKP.url, im = new Image(); if (!BKP.file) im.crossOrigin = 'anonymous';
     im.onload = function () {
       try {
         var M = 512, sc0 = Math.min(1, M / Math.max(im.width, im.height)), w0 = Math.max(1, Math.round(im.width * sc0)), h0 = Math.max(1, Math.round(im.height * sc0));
@@ -39046,10 +39161,10 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
         var N = 192, c1 = document.createElement('canvas'); c1.width = c1.height = N; var x3 = c1.getContext('2d'), bw = x2 - x1 + 1, bh = y2 - y1 + 1, k = Math.min(N * 0.94 / bw, N * 0.94 / bh), dw = bw * k, dh = bh * k;
         x3.imageSmoothingQuality = 'high'; x3.drawImage(c0, x1, y1, bw, bh, (N - dw) / 2, (N - dh) / 2, dw, dh);
         BKP.d = c1.toDataURL('image/png'); var pv = document.getElementById('wkBkPrevI'); if (pv) pv.style.setProperty('--m', 'url(' + BKP.d + ')');
-      } catch (e) { txToast('Не получилось обработать картинку'); }
+      } catch (e) { if (!BKP.file && !im.__px) { im.__px = 1; im.src = pxUrl(BKP.url); return; } txToast(BKP.file ? 'Не получилось обработать картинку' : 'Не получилось прочитать картинку по ссылке. Скачай её и выбери файлом'); }
       URL.revokeObjectURL(url);
     };
-    im.onerror = function () { txToast('Это не картинка'); URL.revokeObjectURL(url); };
+    im.onerror = function () { if (!BKP.file && !im.__px) { im.__px = 1; im.src = pxUrl(BKP.url); return; } txToast(BKP.file ? 'Это не картинка' : 'Ссылка не открылась как картинка. Проверь её или выбери файл'); URL.revokeObjectURL(url); };
     im.src = url;
   }
   document.addEventListener('change', function (e) { var t = e.target; if (!t || !t.id) return; if (t.id === 'wkBkFile' && t.files && t.files[0]) { BKP.file = t.files[0]; var fnm = document.getElementById('wkBkFileName'); if (fnm) fnm.textContent = BKP.file.name; bkProc(); } if (t.id === 'wkBkInv') { BKP.inv = !!t.checked; bkProc(); } });
@@ -39338,6 +39453,34 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       if (!old || !isDima()) return;
       ORP = { id: old.id, name: old.n, price: old.price, d: old.d, file: null, mode: 'corners', s: Number(old.s) >= 60 && Number(old.s) <= 110 ? Number(old.s) : 100, sy: Number(old.sy) >= 90 && Number(old.sy) <= 130 ? Number(old.sy) : 100, busy: false };
       repaint(); var head = pane.querySelector('#wkOrnHead'); if (head) head.scrollIntoView({ block:'start', behavior:'smooth' }); return;
+    }
+    if (a === 'walledit') {
+      var wo = WLS.filter(function (q) { return q.id === b.getAttribute('data-id'); })[0]; if (!wo || !isDima()) return;
+      WLP = { id: wo.id, name: wo.n, price: wo.price, url: wo.url };
+      repaint(); var wh = pane.querySelector('#wkWlHead'); if (wh) wh.scrollIntoView({ block: 'start', behavior: 'smooth' }); return;
+    }
+    if (a === 'wallcancel') { wallReset(); repaint(); return; }
+    if (a === 'walladd') {
+      var wapi = window.__wkWalls;
+      if (!isDima() || !wapi || !wapi.enabled()) { txToast('Нужен вход администратора в облако'); return; }
+      var wnm = String(WLP.name || '').trim(), wpr = Number(WLP.price), wur = imgLink(WLP.url);
+      if (!wur) { txToast('Вставь ссылку на картинку, она должна начинаться с https://'); return; }
+      if (!wnm) { txToast('Введи название фона'); return; }
+      if (!Number.isSafeInteger(wpr) || wpr < 0 || wpr > 10000000) { txToast('Цена от 0 до 10 000 000 белли'); return; }
+      var wid = WLP.id || ('uw' + Date.now().toString(36)), wed = !!WLP.id;
+      b.disabled = true;
+      wapi.save({ id: wid, n: wnm, price: wpr, url: wur }).then(function () {
+        wallReset(); txToast(wed ? 'Фон обновлён' : 'Фон появился в магазине'); WLST.at = 0; refreshWalls(pane, true);
+        setTimeout(function () { if (pane.isConnected && DK.tab === 'shop') repaint(); }, 50);
+      }, function (err) { b.disabled = false; txToast((err && err.code) === 'permission-denied' ? 'Firebase запретил запись в backs: проверь правила доступа' : 'Не удалось сохранить фон'); });
+      return;
+    }
+    if (a === 'walldel') {
+      if (!isDima() || !window.__wkWalls) return;
+      if (!window.confirm('Удалить этот фон из магазина? У купивших будет обычный фон витрины.')) return;
+      b.disabled = true; window.__wkWalls.remove(b.getAttribute('data-id')).then(function () {
+        wallReset(); WLST.at = 0; refreshWalls(pane, true); setTimeout(function () { if (pane.isConnected && DK.tab === 'shop') repaint(); }, 50);
+      }, function () { b.disabled = false; txToast('Не удалось удалить фон'); }); return;
     }
     if (a === 'orncancel') { ornReset(); repaint(); return; }
     if (a === 'ornadd') {
@@ -39814,6 +39957,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var cards = allCards(), st = load(); migrate(st, cards);
     try { if (mkApi() && !MK.loading && Date.now() - MK.at > 60000) refreshMarket(pane, false); } catch (e) {}
     try { refreshBacks(pane, false); } catch (e) {}
+    try { refreshWalls(pane, false); } catch (e) {}
     if (!DK.pack && st.open && st.open.pk && st.open.pk.length) { DK.pack = st.open.pk; DK.flipped = (st.open.fl || []).length; DK.restored = 1; }
     pane.innerHTML = '<div class="wk-pane-head"><div><h2>Колода</h2><p>Карточки персонажей (по одной на каждое фото в арке), дьявольских плодов, полезных статей и плакатов розыска. Новые появляются по мере прохождения.</p></div><div class="wk-dk-hbtn">' + (isDima() && DK.tab === 'me' && !DK.fr ? adminHTML() : '') + '<button type="button" class="wk-dk-reset" data-act="rules" title="Правила и шансы">Правила</button><button type="button" class="wk-dk-reset" data-act="cloud" title="Отправить колоду в облако или забрать её оттуда">Облако</button></div></div>' +
       tabsHTML() + (DK.tab === 'me' ? (DK.fr ? meBarHTML() : '') + (DK.fr ? '<div id="wkDkFriend">' + friendBody() + '</div>' : (isDima() ? '' : adminHTML()) + '<div id="wkDkPack">' + packHTML(cards, st) + '</div><div id="wkDkAutoLog">' + (DK.autoLog ? autoLogHTML(cards, st) : '') + '</div>' + (st.__fake ? '' : showcaseHTML(cards, st.show, true, showCap(st), { frame: '', bg: st.bg, alb: st.alb }) + showcaseHTML(cards, wantKeys(st.want, st.owned), true, 3, { frame: '', bg: st.bg, alb: st.alb }, 1)) + '<div class="wk-st-tg"><button type="button" class="wk-tx-btn" data-sttog>' + (stHidden() ? 'Показать статистику' : 'Скрыть статистику') + '</button></div><div id="wkDkStats">' + statsBox(cards, st) + '</div>' + meBarHTML() + '<h3 class="wk-dk-h">Коллекция</h3><div id="wkDkColl">' + collHTML(cards, st) + '</div>') : '<div id="wkTxBody" class="wk-tx-body">' + (DK.tab === 'craft' ? craftHTML(cards, st) : DK.tab === 'shop' ? shopHTML(cards, st) : DK.tab === 'people' ? peopleHTML() : DK.tab === 'feed' ? feedHTML() : tradeHTML()) + '</div>');
