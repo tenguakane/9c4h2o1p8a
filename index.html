@@ -567,6 +567,32 @@ html body .wk-al-fb.wk-al-fb .wk-dk-back .wk-al-bi .wk-al-ic{margin-top:8px!impo
 /* Чёрная обводка вокруг рубашки: подложка выступала за контур рамки; обрезаем ровно по внешнему краю рамки, как на лицевой стороне */
 html body .wk-pk.wk-pk .wk-pk-bk.wk-pk-bk,html body .wk-al-fb.wk-al-fb .wk-dk-back.wk-dk-back{clip-path:inset(.65% .9% round 10.38% / 7.22%)!important;-webkit-clip-path:inset(.65% .9% round 10.38% / 7.22%)!important}
 </style>
+<style id="wk-al-side-font">
+/* Левая панель альбома: шрифт крупнее на 2 пункта */
+html body .wk-al.wk-al-modern.wk-al-modern .wk-al-sidecap{font-size:13px}
+html body .wk-al.wk-al-modern.wk-al-modern .wk-al-sidegroup{font-size:11px}
+html body .wk-al.wk-al-modern.wk-al-modern .wk-al-sideitem{font-size:14px}
+html body .wk-al.wk-al-modern.wk-al-modern .wk-al-sideitem small,html body .wk-al.wk-al-modern.wk-al-modern .wk-al-sideitem i{font-size:12px}
+html body .wk-al.wk-al-modern.wk-al-modern .wk-al-sidefoot{font-size:12px}
+@media(max-width:920px){
+  html body .wk-al.wk-al-modern.wk-al-modern .wk-al-shell{grid-template-columns:172px minmax(0,1fr)}
+  html body .wk-al.wk-al-modern.wk-al-modern .wk-al-sideitem{font-size:13px}
+}
+@media(max-width:670px){
+  html body .wk-al.wk-al-modern.wk-al-modern .wk-al-sidecap{font-size:11px}
+  html body .wk-al.wk-al-modern.wk-al-modern .wk-al-sideitem{font-size:13px}
+}
+</style>
+<style id="wk-sc-friend-row">
+/* Чужая витрина: ряд по центру; закрытый слот выглядит как карточка-заглушка */
+@media(min-width:700px){
+  html body .wk-sc:not(.mine) .wk-sc-row.wk-sc-row{display:flex!important;justify-content:center!important;grid-template-columns:none!important;gap:14px!important;overflow:visible}
+  html body .wk-sc:not(.mine) .wk-sc-row.wk-sc-row>.wk-sc-s{flex:0 0 170px;width:170px;min-width:0}
+}
+html body .wk-sc-lock .wk-dk-slot.wk-dk-slot{aspect-ratio:3/4.3!important;width:100%;box-sizing:border-box;display:grid!important;place-content:center;justify-items:center;gap:6px;border:2px dashed rgba(70,45,20,.55);border-radius:12px;background:rgba(70,45,20,.16);color:rgba(55,35,15,.92);text-align:center;padding:8px}
+html body .wk-sc-lock .wk-dk-slot span{font-size:28px;line-height:1}
+html body .wk-sc-lock .wk-dk-slot small{font-size:12px;line-height:1.25}
+</style>
 </head>
 <body data-theme="mugiwara" data-active-tab="characters">
 <script id="wiki-cloud-config">
@@ -39557,13 +39583,16 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var cosCls = (['gold', 'wood', 'foam'].indexOf(cos.frame) >= 0 ? ' fr-' + cos.frame : '') +
       (BGS.some(function (q) { return q.id === cos.bg; }) ? ' bg-' + cos.bg : '') +
       ' vitr-theme vitr-alb-' + albId;
-    keys = (keys || []).filter(function (k) { return cardByKey(C, k); }).slice(0, cap);
+    var rawK = (keys || []).slice(0, cap);
+    /* Чужая витрина: карточки, которые тебе ещё закрыты по сюжету, остаются на полке закрытыми слотами, а не пропадают */
+    keys = rawK.filter(function (k) { return cardByKey(C, k) || (!mine && !wl && charKnown(String(k).split('@')[0])); });
     if (!mine && !keys.length) return '';
     if (wl && mine && wantHidden()) return '<section class="wk-sc mine wl' + cosCls + '"><div class="wk-sc-h"><h3 class="wk-dk-h">Ищу</h3><button type="button" class="wk-tx-btn" data-wanttog>Показать</button></div></section>';
     /* Пустая полка своей колоды сворачивается в одну строку, чтобы не занимать экран */
     if (mine && !keys.length) return '<section class="wk-sc mine wk-sc-empty' + (wl ? ' wl' : '') + cosCls + '"><div class="wk-sc-h"><h3 class="wk-dk-h">' + (wl ? 'Ищу' : 'Моя витрина') + '</h3><span class="wk-sc-emp">' + (wl ? 'пока пусто · отметь до 3 карточек, которые ищешь' : 'пока пусто · выбери до ' + cap + ' любимых карточек') + '</span><button type="button" class="wk-tx-btn" data-tx="' + (wl ? 'wantedit' : 'showedit') + '">Выбрать</button></div></section>';
-    var slots = (cap === 7 ? [0, 1, 2, 3, 4, 5, 6] : cap === 5 ? [0, 1, 2, 3, 4] : [0, 1, 2]).map(function (i) {
+    var slots = (!mine ? keys.map(function (_, i) { return i; }) : cap === 7 ? [0, 1, 2, 3, 4, 5, 6] : cap === 5 ? [0, 1, 2, 3, 4] : [0, 1, 2]).map(function (i) {
       var key = keys[i], k = key && cardByKey(C, key);
+      if (key && !k && !mine) return '<div class="wk-sc-s wk-sh3-it wk-sc-lock" title="Откроется, когда ты дойдёшь до этой арки"><div class="wk-dk-slot"><span aria-hidden="true">🔒</span><small>Скрыто по сюжету</small></div><i class="wk-sh3-stand" aria-hidden="true"></i></div>';
       if (k && wl && !(!mine && spareOf(key))) return '<div class="wk-sc-s wk-sh3-it r-' + k.r + '">' + wlSil(k) + '<i class="wk-sh3-stand" aria-hidden="true"></i></div>';
       if (k) return '<div class="wk-sc-s wk-sh3-it r-' + k.r + '"><div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + '</div>' + (wl && !mine && spareOf(key) ? '<em class="wk-wl-have">есть у тебя</em>' : '') + '<i class="wk-sh3-stand" aria-hidden="true"></i></div>';
       return mine ? '<button type="button" class="wk-sc-s wk-sc-e" data-tx="' + (wl ? 'wantedit' : 'showedit') + '" aria-label="Добавить карточку в витрину"><b>+</b><span>Добавить</span></button>' : '';
