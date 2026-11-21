@@ -9033,6 +9033,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         active:()=>{curSP();if(!vasActive||!vasSel)return null;const a=vasArcRec(vasSel.arc);return {arc:vasSel.arc,pos:vasSel.pos,name:a?String(rawValue(a,'name')||vasSel.arc):vasSel.arc,chapter:vasActive.chapter,episode:vasActive.episode};},
         set:(arc,pos)=>{
             if(!vasRole())return false;
+            try{if(!arc&&vasSel)console.warn('[view-as] сброс выбора арки',new Error().stack);}catch(e){}
             vasSel=arc?{arc:String(arc),pos:pos==='start'?'start':'end'}:null;
             try{if(vasSel)localStorage.setItem(VAS_KEY,JSON.stringify(vasSel));else localStorage.removeItem(VAS_KEY);}catch(e){}
             vasDirty=true;vasReeval(true);vasEvent();return true;
@@ -46103,6 +46104,10 @@ html body .character-item.character-item.character-item.character-item:has(> i.w
   function now() { var a = api().active(); return a ? 'Сейчас каталог показан так, как его видит участник на ' + (a.pos === 'start' ? 'начале' : 'конце') + ' арки «' + esc(a.name) + '»: ' + (a.chapter ? 'глава <b>' + a.chapter + '</b>' : '') + (a.chapter && a.episode ? ' · ' : '') + (a.episode ? 'серия <b>' + a.episode + '</b>' : '') + '.' : 'Сейчас показано по твоему обычному прогрессу.'; }
   function fill(box) {
     var sel = api().get(); if (sel) lastPos = sel.pos;
+    var oldSel = box.querySelector('select.wk-vas-arc');
+    if (oldSel && document.activeElement === oldSel) return;
+    var sig = JSON.stringify([sel, lastPos, api().active(), api().arcs().length]);
+    if (box.__sig === sig && box.firstChild) return; box.__sig = sig;
     box.innerHTML = '<div class="wk-vas-h"><b>👁 Смотреть как на арке</b><small>Для админа и редактора. Колода, Каюта и медали остаются по твоему прогрессу из Каюты.</small></div>' +
       '<div class="wk-vas-row"><select class="wk-vas-arc" aria-label="Арка для просмотра">' + options(sel) + '</select>' +
       '<span class="wk-vas-seg" role="group" aria-label="Момент арки"><button type="button" data-pos="end" aria-pressed="' + (lastPos === 'end') + '">Конец арки</button><button type="button" data-pos="start" aria-pressed="' + (lastPos === 'start') + '">Начало</button></span></div>' +
@@ -46112,7 +46117,10 @@ html body .character-item.character-item.character-item.character-item:has(> i.w
     var panel = document.getElementById(name + 'FiltersPanel'); if (!panel) return;
     var box = panel.querySelector(':scope > .wk-vas');
     if (!allowed()) { if (box) box.remove(); return; }
-    if (!box) { box = document.createElement('div'); box.className = 'wk-vas'; }
+    if (!box) {
+      box = document.createElement('div'); box.className = 'wk-vas';
+      ['click', 'mousedown', 'pointerdown', 'touchstart', 'focusin'].forEach(function (ev) { box.addEventListener(ev, function (e) { e.stopPropagation(); }); });
+    }
     var head = panel.querySelector(':scope > .ios-sheet-head'), want = head ? head.nextSibling : panel.firstChild;
     if (box.parentNode !== panel || (head && box.previousElementSibling !== head) || (!head && panel.firstElementChild !== box)) panel.insertBefore(box, want === box ? box.nextSibling : want);
     fill(box);
@@ -46134,7 +46142,16 @@ html body .character-item.character-item.character-item.character-item:has(> i.w
   }, true);
   document.addEventListener('change', function (e) {
     var t = e.target; if (!t || !t.classList || !t.classList.contains('wk-vas-arc')) return;
-    api().set(t.value, lastPos);
+    var v = t.value, panel = t.closest('.section-filters-panel'), keep = !!(panel && !panel.hidden);
+    setTimeout(function () {
+      api().set(v, lastPos);
+      if (keep && panel) setTimeout(function () {
+        if (!panel.hidden) return;
+        panel.style.removeProperty('display'); panel.hidden = false;
+        var sec = panel.closest('.section'), btn = sec && sec.querySelector('.section-filters-button'); if (btn) btn.setAttribute('aria-expanded', 'true');
+        syncAll();
+      }, 80);
+    }, 0);
   });
   window.addEventListener('wiki:view-as-changed', syncAll);
   window.addEventListener('wiki:cloud-ready', function () { setTimeout(syncAll, 200); });
