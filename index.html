@@ -593,6 +593,13 @@ html body .wk-sc-lock .wk-dk-slot.wk-dk-slot{aspect-ratio:3/4.3!important;width:
 html body .wk-sc-lock .wk-dk-slot span{font-size:28px;line-height:1}
 html body .wk-sc-lock .wk-dk-slot small{font-size:12px;line-height:1.25}
 </style>
+<style id="wk-cf-above-shade">
+/* Нижнее затемнение под названием не заходит на рамку: блок поднят над нижним кольцом рамки (3.5%) и обрезан по бокам (5%) по внутреннему краю кольца */
+html body .character-grid-card:has(> .wk-cf) > .character-grid-content.character-grid-content{
+  bottom:3.5%!important;
+  clip-path:inset(-40px 5% 0 5% round 0 0 10px 10px)!important;
+  -webkit-clip-path:inset(-40px 5% 0 5% round 0 0 10px 10px)!important}
+</style>
 </head>
 <body data-theme="mugiwara" data-active-tab="characters">
 <script id="wiki-cloud-config">
