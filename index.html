@@ -557,9 +557,11 @@ html body #wkCabinPaneDeck .wk-sc:has(.wk-sh3-it) .wk-sc-row{padding-top:16px!im
 <style id="wk-al-back-layout">
 /* Рубашка в альбоме: название сверху между угловыми орнаментами, компас по центру, кнопки внизу — всё на своих местах и не лезет на орнаменты */
 html body .wk-al-fb.wk-al-fb .wk-dk-back.wk-dk-back{position:relative!important;padding:0!important;display:block!important}
-html body .wk-al-fb.wk-al-fb .wk-dk-back .wk-bkm.wk-bkc{position:absolute!important;left:50%!important;top:50%!important;margin:0!important;width:48%!important;transform:translate(-50%,-50%)!important}
-html body .wk-al-fb.wk-al-fb .wk-dk-back .wk-al-bi{position:absolute!important;z-index:4;left:21%;right:21%;top:11%;bottom:16%;width:auto!important;display:flex!important;flex-direction:column!important;align-items:center;justify-content:flex-start;gap:2px}
-html body .wk-al-fb.wk-al-fb .wk-dk-back .wk-al-bi .wk-al-ic{margin-top:auto!important;padding-bottom:0;gap:10px}
+html body .wk-al-fb.wk-al-fb .wk-dk-back .wk-bkm.wk-bkc{position:absolute!important;left:50%!important;top:45%!important;margin:0!important;width:44%!important;transform:translate(-50%,-50%)!important}
+html body .wk-al-fb.wk-al-fb .wk-dk-back .wk-al-bi{position:absolute!important;z-index:4;left:21%;right:21%;top:11%;bottom:9%;width:auto!important;display:flex!important;flex-direction:column!important;align-items:center;justify-content:flex-start;gap:2px}
+html body .wk-al-fb.wk-al-fb .wk-dk-back .wk-al-bi em{margin-top:auto!important}
+html body .wk-al-fb.wk-al-fb .wk-dk-back .wk-al-bi .wk-al-pp{display:block;font-style:normal;font-size:var(--fs-xs);line-height:1;letter-spacing:2px;margin-top:3px;color:inherit}
+html body .wk-al-fb.wk-al-fb .wk-dk-back .wk-al-bi .wk-al-ic{margin-top:8px!important;padding-bottom:0;gap:10px}
 /* Чёрная обводка вокруг рубашки: подложка выступала за контур рамки; обрезаем ровно по внешнему краю рамки, как на лицевой стороне */
 html body .wk-pk.wk-pk .wk-pk-bk.wk-pk-bk,html body .wk-al-fb.wk-al-fb .wk-dk-back.wk-dk-back{clip-path:inset(.65% .9% round 10.38% / 7.22%)!important;-webkit-clip-path:inset(.65% .9% round 10.38% / 7.22%)!important}
 </style>
@@ -36860,7 +36862,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       if (n) {
         var fl = !!DK.alBack[k.key], rn = k.v ? VAR[k.v].n : RN4[k.r], arcN = k.kind === 'wanted' ? k.sub : (k.arc && k.arc.name) || '';
         return '<div class="wk-al-s has' + (fl ? ' flipped' : '') + '">' + no + '<div class="wk-al-fi"><div class="wk-al-ff"><div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + (n > 1 ? '<em class="wk-dk-x">×' + n + '</em>' : '') + '</div></div>' +
-          '<div class="wk-al-fb r-' + k.r + (k.v ? ' v-' + k.v : '') + '" data-bkr="' + k.r + '" data-bkv="' + (k.v || '') + '" data-bkc="' + esc(k.kind === 'char' ? k.c.id : k.kind + ':' + k.c.id) + '" title="Открыть рубашку крупно"><div class="wk-dk-back">' + backInner(k.r, '') + '<div class="wk-al-bi"><b>' + esc(cName(k)) + '</b><span>' + esc(srcOf(k)) + '</span>' + (arcN ? '<span>' + esc(arcN) + '</span>' : '') + '<em>' + esc(rn) + (n > 1 ? ' · ×' + n : '') + '</em>' + alIcons(k) + '</div></div></div></div>' +
+          '<div class="wk-al-fb r-' + k.r + (k.v ? ' v-' + k.v : '') + '" data-bkr="' + k.r + '" data-bkv="' + (k.v || '') + '" data-bkc="' + esc(k.kind === 'char' ? k.c.id : k.kind + ':' + k.c.id) + '" title="Открыть рубашку крупно"><div class="wk-dk-back">' + backInner(k.r, '', true) + '<div class="wk-al-bi"><b>' + esc(cName(k)) + '</b><span>' + esc(srcOf(k)) + '</span>' + (arcN ? '<span>' + esc(arcN) + '</span>' : '') + '<em>' + esc(rn) + (n > 1 ? ' · ×' + n : '') + pipBlk(k.r) + '</em>' + alIcons(k) + '</div></div></div></div>' +
           '<button type="button" class="wk-al-flip" data-alflip="' + esc(k.key) + '" aria-pressed="' + fl + '" title="Перевернуть карточку" aria-label="Перевернуть карточку">⟲</button></div>';
       }
       var wOn = !isC && !k.v && !st.__fake ? alWantBtn(k, st) : '';
@@ -36906,6 +36908,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     DK.alQ = String(v || ''); var cc = document.querySelector('#wkDkColl'); if (!cc) return; if (!DK.alQ.trim() && DK.apId === '__q') DK.apId = '';
     alPaint(document, 0); var i = cc.querySelector('[data-alq]'); if (i) { i.focus(); try { i.setSelectionRange(i.value.length, i.value.length); } catch (e) {} }
   };
+  function pipBlk(r) { var n = PIPS[r] || 0, t = ''; while (n-- > 0) t += '◆'; return t ? '<span class="wk-al-pp" aria-hidden="true">' + t + '</span>' : ''; }
   function alIcons(k) {
     var spec = k.kind === 'char' ? k.c.id : k.kind + ':' + k.c.id, st = load(), g = '';
     try { if (!DK.inF && !st.__fake && freeCnt(st, k.key) > 0 && txApi()) g = '<button type="button" class="wk-dk-bka wk-bic" data-bk="gift" data-key="' + esc(k.key) + '" title="Подарить" aria-label="Подарить">' + IC_GIFT + '</button>'; } catch (e) {}
