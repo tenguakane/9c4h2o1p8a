@@ -19746,7 +19746,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
   /* Что хранится в tops/{uid}.deck. Это же видят другие участники в «Колоде друга». */
   function slimDeck(d) {
   var slim = { packs: d.packs || 0, pity: d.pity || 0, last: d.last || 0, open: d.open || null, owned: d.owned, tr: d.tr || {}, got: d.got || {}, show: d.show || [], showCap: d.showCap || 3, cos: d.cos || {}, frame: d.frame || '', bg: d.bg || '', alb: d.alb || '', back: d.back || '', hold: d.hold || {}, ev: d.ev || [], belli: d.belli || 0, ach: d.ach || {}, achB: d.achB || {}, daily: d.daily || null, shield: d.shield || 0, bless: d.bless || 0, pig: d.pig || null, ttl: d.ttl || null, inc: d.inc || {}, incD: d.incD || {}, incLog: d.incLog || [], spent: d.spent || 0, bought: d.bought || 0, crafted: d.crafted || 0, sold: d.sold || 0, qpay: d.qpay || 0, want: d.want || [], pages: d.pages || [], rev: d.rev || 0 };
-    ['pick', 'achOpen', 'feedSeen', 'maxBuy', 'mk', 'sld', 'spd', 'vBoost', 'vpity', 'lk', 'dl', 'pigX', 'pigE', 'auto', 'autoN', 'autoOff', 'autoLog','autoSeen'].forEach(function (k) { if (d[k] !== undefined && d[k] !== null) slim[k] = d[k]; });
+    ['pick', 'achOpen', 'feedSeen', 'maxBuy', 'mk', 'sld', 'spd', 'vBoost', 'vpity', 'lk', 'dl', 'pigX', 'pigE', 'auto', 'autoN', 'autoOff', 'autoLog','autoSeen', 'orn', 'bgt', 'avf', 'nkc', 'qsw', 'prof'].forEach(function (k) { if (d[k] !== undefined && d[k] !== null) slim[k] = d[k]; });
     return slim;
   }
   function parseDeckDoc(x) { if (!x || !x.deck) return null; try { return JSON.parse(x.deck); } catch (e) { return null; } }
@@ -44377,9 +44377,9 @@ html body #favoritesSection#favoritesSection#favoritesSection #wkProgressCard{di
       if (!cats.length) return null;
       var sel = D.edit ? '<div class="pf-tsel"><span class="pf-muted">Показывать:</span>' + D.tops.map(function (c) { return '<button type="button" class="pf-btn" data-pf="tcat" data-c="' + esc(c.key) + '" aria-pressed="' + (D.lay.tx.indexOf(c.key) < 0) + '">' + esc(c.icon) + ' ' + esc(c.title) + '</button>'; }).join('') + '</div>' : '';
       return sel + '<div class="pf-tops">' + cats.map(function (c) {
-        return '<div class="pf-top' + (D.lay.tx.indexOf(c.key) >= 0 ? ' off' : '') + '"><h4>' + esc(c.icon) + ' ' + esc(c.title) + '</h4><ol>' + c.items.slice(0, 5).map(function (i, n) {
+        return '<div class="pf-top' + (D.lay.tx.indexOf(c.key) >= 0 ? ' off' : '') + '"><h4>' + esc(c.icon) + ' ' + esc(c.title) + '</h4><ol>' + c.items.slice(0, topOpen[c.key] ? 10 : 5).map(function (i, n) {
           return '<li><em>' + (n + 1) + '</em>' + (i.img ? '<img alt="" loading="lazy" src="' + esc(i.img) + '" style="object-position:' + esc(i.pos) + '">' : '<span class="ph">' + esc(i.icon || '·') + '</span>') + '<span title="' + esc(i.name || i.sub) + '">' + esc(i.locked ? lockTxt(i.sub) : i.name) + '</span></li>';
-        }).join('') + '</ol>' + (c.items.length > 5 ? '<p class="pf-muted" style="margin:8px 0 0">и ещё ' + (c.items.length - 5) + '</p>' : '') + '</div>';
+        }).join('') + '</ol>' + (c.items.length > 5 ? '<button type="button" class="pf-btn pf-topmore" data-pf="topmore" data-c="' + esc(c.key) + '" aria-expanded="' + (topOpen[c.key] ? 'true' : 'false') + '" style="margin:8px 0 0">' + (topOpen[c.key] ? 'Свернуть' : 'Раскрыть (ещё ' + (Math.min(10, c.items.length) - 5) + ')') + '</button>' : '') + '</div>';
       }).join('') + '</div>';
     }
     if (k === 'deck') {
@@ -44392,7 +44392,7 @@ html body #favoritesSection#favoritesSection#favoritesSection #wkProgressCard{di
   }
 
   var PHK = { ach: 'arcs', tops: 'tops', pr: 'storyline', chrono: 'timeline', stats: 'stats', edits: 'edits', hist: 'history', atlas: 'atlas' };
-  var apOpen = false, menuNeed = [], NAVB = { pr: ['pr', 'Открыть сетку прогресса'], ach: ['ach', 'Открыть достижения'], tops: ['tops', 'Открыть топы'] };
+  var topOpen = {}, apOpen = false, menuNeed = [], NAVB = { pr: ['pr', 'Открыть сетку прогресса'], ach: ['ach', 'Открыть достижения'], tops: ['tops', 'Открыть топы'] };
   var NAVSEL = { pr: '#cabinTabStoryline', ach: '#cabinTabArcStats', chrono: '[data-wk-cabin-tab="timeline"]', tops: '[data-wk-cabin-tab="tops"]', stats: '[data-wk-cabin-tab="stats"]', edits: '[data-wk-cabin-tab="edits"]', quiz: '[data-wk-cabin-tab="quiz"]', help: '[data-wk-cabin-tab="help"]', hist: '[data-cabin-tab="history"]', atlas: '[data-wk-cabin-tab="atlas"]' };
   function navEl(k) { return document.querySelector('.wk-cab-side ' + NAVSEL[k]); }
   function navHas(k) { var e = navEl(k); if (!e) return false; var h = e.classList.contains('pf-nv-h'); if (h) e.classList.remove('pf-nv-h'); var ok = getComputedStyle(e).display !== 'none'; if (h) e.classList.add('pf-nv-h'); return ok; }
@@ -44520,6 +44520,7 @@ html body #favoritesSection#favoritesSection#favoritesSection #wkProgressCard{di
       saveLayout(la); return tick(true);
     }
     if (k === 'apick') { apOpen = !apOpen; return tick(true); }
+    if (k === 'topmore') { var tc = b.getAttribute('data-c'); topOpen[tc] = !topOpen[tc]; return tick(true); }
     if (k === 'showedit') { try { window.__wkShowEdit && window.__wkShowEdit(); } catch (x) {} return; }
     if (k === 'apreset') { var Dr = collect(), lr = Dr.lay; lr.ap = []; saveLayout(lr); return tick(true); }
     if (k === 'nav') { var nk = b.getAttribute('data-k'); if (mobile() && PHK[nk]) { try { window.__wkCabOpen(PHK[nk]); } catch (e) {} return; } var ne = navEl(nk); if (ne) ne.click(); return; }
