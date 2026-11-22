@@ -38967,12 +38967,15 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   function ornCSS() {
     var el = document.getElementById('wk-custom-orn-css');
     if (!el) { el = document.createElement('style'); el.id = 'wk-custom-orn-css'; document.head.appendChild(el); }
+    // Каждая карточка витрины должна брать СВОЙ орнамент, а не активный у игрока.
+    // Повышенная специфичность селектора preview не даёт глобальному html[data-wk-orn]
+    // перезаписать маску в чужом превью независимо от порядка записей из Firestore.
     el.textContent = ORNS.filter(ornValid).map(function (q) {
       var mask = 'url(' + q.d + ')', sel = 'html[data-wk-orn="' + q.id + '"] body :is(.wk-pk,.wk-al-fb)',
-          prev = 'html body [data-wk-orn-preview="' + q.id + '"] :is(.wk-pk,.wk-al-fb)';
+          prev = 'html body [data-wk-orn-preview="' + q.id + '"] :is(.wk-pk.wk-pk,.wk-al-fb.wk-al-fb)';
       var sc = Number(q.s)>=60&&Number(q.s)<=110?Number(q.s):100, sy = Number(q.sy)>=90&&Number(q.sy)<=130?Number(q.sy):100, sx = Number(q.sx)>=90&&Number(q.sx)<=130?Number(q.sx):100;
       return sel + ',' + prev + '{--wk-cf-b:' + mask + '!important;--wk-orn-scale:' + sc + '%!important;--wk-orn-width:' + (sc * sx / 100) + '%!important;--wk-orn-height:' + (sc * sy / 100) + '%!important;}';
-    }).join('\n');
+    }).join('\n') + '\nhtml body [data-wk-orn-preview="classic"] :is(.wk-pk.wk-pk,.wk-al-fb.wk-al-fb){--wk-cf-b:var(--wk-orn-classic)!important;}';
   }
   function refreshOrnaments(pane, force) {
     var api = window.__wkOrnaments; if (!api || !api.enabled() || ORS.loading) return;
