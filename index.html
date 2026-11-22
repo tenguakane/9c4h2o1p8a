@@ -607,6 +607,61 @@ html body .wk-wl-pv{flex:1 1 260px;min-height:110px;aspect-ratio:16/6;max-width:
 html body .wk-wl-pv[style*="url"] span{display:none}
 html body .wk-wl-up .wk-bk-form{flex:1 1 260px}
 </style>
+<style id="wk-al-emblem-center">
+/* Знак купленной рубашки (картинка) и любые другие знаки стоят по центру, как стандартный вензель */
+html body .wk-al-fb.wk-al-fb .wk-dk-back .wk-bkm.wk-bkimg,
+html body .wk-al-fb.wk-al-fb .wk-dk-back .wk-bkm:not(.wk-bkc){position:absolute!important;left:50%!important;top:47%!important;right:auto!important;bottom:auto!important;margin:0!important;width:40%!important;max-width:none!important;height:auto!important;aspect-ratio:1!important;transform:translate(-50%,-50%)!important}
+html body .wk-al-fb.wk-al-fb .wk-dk-back .wk-bkimg i{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important}
+</style>
+<style id="wk-cf-corner-fix">
+/* Фото заходит под кольцо рамки (запас ~0.5%) и имеет меньший радиус углов, чем отверстие рамки: между картинкой и рамкой не остаётся просветов */
+html body .character-item:has(> i.wk-cf) > .character-grid-image-wrap.character-grid-image-wrap,
+html body .character-item[data-wk-pin] > .character-grid-image-wrap.character-grid-image-wrap,
+html body .wk-dk-zoombox .character-item[data-wk-pin] > .character-grid-image-wrap.character-grid-image-wrap,
+html body .wk-sc .character-item[data-wk-pin] > .character-grid-image-wrap.character-grid-image-wrap,
+html body .wk-sc .wk-sh3-it .character-item[data-wk-pin] > .character-grid-image-wrap.character-grid-image-wrap{
+  -webkit-clip-path:inset(3.6% 5.2% round 5.2% / 3.7%)!important;
+  clip-path:inset(3.6% 5.2% round 5.2% / 3.7%)!important}
+</style>
+<style id="wk-prof-alb">
+/* Блоки профиля в палитре выбранного альбома (того участника, чей профиль открыт) */
+html body #wkProf[data-alb="captain"],html body #wkProf[data-alb="_def"]{--al-outer:#322117;--al-nav:#e3cfaa;--al-nav2:#efe0bc;--al-paper:#ead8b4;--al-ink:#3d2b18;--al-muted:#79664c;--al-metal:#a77b3e;--al-border:#ac8a58;--al-top:#251911;--al-toptext:#f6dfb9}
+html body #wkProf[data-alb="captain"]{--al-outer:#56371f;--al-nav:#d6bd8e;--al-nav2:#eddcb7;--al-paper:#eaddb9;--al-ink:#342616;--al-muted:#795d37;--al-metal:#ae8651;--al-border:#a58555;--al-top:#2e1c14;--al-toptext:#ffdfab}
+html body #wkProf[data-alb="leather"]{--al-outer:#281508;--al-nav:#87613a;--al-nav2:#a47b4f;--al-paper:#d7b982;--al-ink:#3c230d;--al-muted:#68461e;--al-metal:#f0c77d;--al-border:#9a672f;--al-top:#231308;--al-toptext:#fce1a5}
+html body #wkProf[data-alb="atlas"],html body #wkProf[data-alb="chart"]{--al-outer:#092035;--al-nav:#0d3043;--al-nav2:#173e50;--al-paper:#0e334a;--al-ink:#e1f5fa;--al-muted:#96c0d1;--al-metal:#6ac4e2;--al-border:#397b99;--al-top:#0b1f30;--al-toptext:#d7f4ff}
+html body #wkProf[data-alb="trophies"]{--al-outer:#1c1320;--al-nav:#2d2030;--al-nav2:#2a212e;--al-paper:#231925;--al-ink:#f9e2ae;--al-muted:#baa68c;--al-metal:#e0b663;--al-border:#927448;--al-top:#251823;--al-toptext:#ffdfa6}
+html body #wkProf[data-alb="velvet"]{--al-outer:#380d21;--al-nav:#4b1930;--al-nav2:#512137;--al-paper:#3a1227;--al-ink:#ffe9bd;--al-muted:#dfb7c0;--al-metal:#ddb665;--al-border:#a05b70;--al-top:#2a0c20;--al-toptext:#ffe5b5}
+html body #wkProf[data-alb="dossier"],html body #wkProf[data-alb="logbook"],html body #wkProf[data-alb="wanted"]{--al-outer:#3d3830;--al-nav:#ceb994;--al-nav2:#d8c6a6;--al-paper:#dcc8a2;--al-ink:#3b3024;--al-muted:#796750;--al-metal:#a45c48;--al-border:#987c5b;--al-top:#41443c;--al-toptext:#f6e6c7}
+html body #wkProf[data-alb="logbook"]{--al-outer:#4c3a21;--al-nav:#e0d5b8;--al-nav2:#e8ddc1;--al-paper:#f0e5c9;--al-metal:#a78148;--al-border:#b6a078}
+html body #wkProf[data-alb="wanted"]{--al-outer:#5a3920;--al-nav:#c59d64;--al-nav2:#d7b887;--al-paper:#dcc49b;--al-metal:#8c502c;--al-border:#8c603b}
+html body #wkProf[data-alb="holoarchive"],html body #wkProf[data-alb="pearl"]{--al-outer:#0b0c23;--al-nav:#101939;--al-nav2:#17193e;--al-paper:#111431;--al-ink:#eeeaff;--al-muted:#a9b1e4;--al-metal:#ac8cff;--al-border:#6765a9;--al-top:#0e1230;--al-toptext:#e8e4ff}
+html body #wkProf[data-alb="pearl"]{--al-outer:#05070f;--al-nav:#121521;--al-nav2:#171b2d;--al-paper:#0e111d;--al-metal:#79e5e6;--al-border:#8167b8}
+html body #wkProf[data-alb="cabinet"]{--al-outer:#3c2616;--al-nav:#302012;--al-nav2:#49331b;--al-paper:#291b12;--al-ink:#ffe5b8;--al-muted:#d0b48b;--al-metal:#e0ae61;--al-border:#957141;--al-top:#352211;--al-toptext:#ffdb9a}
+html body #wkProf[data-alb="jade"]{--al-outer:#15372b;--al-nav:#214737;--al-nav2:#2e5942;--al-paper:#153d31;--al-ink:#e6fbd2;--al-muted:#a5d4bd;--al-metal:#ebc978;--al-border:#b99a50;--al-top:#173027;--al-toptext:#f4e1ad}
+html body #wkProf[data-alb="wave"]{--al-outer:#152244;--al-nav:#213460;--al-nav2:#1d345f;--al-paper:#1a294e;--al-ink:#e8eefe;--al-muted:#b9c9eb;--al-metal:#d7ab73;--al-border:#9a7c74;--al-top:#111b38;--al-toptext:#ffebc7}
+html body #wkProf[data-alb="obsidian"]{--al-outer:#0b0c0e;--al-nav:#17191d;--al-nav2:#242320;--al-paper:#1b1c1d;--al-ink:#f5e7ce;--al-muted:#c6b6a0;--al-metal:#d4a861;--al-border:#816e50;--al-top:#0d0e11;--al-toptext:#ffe2a9}
+html body #wkProf[data-alb="nocturne"]{--al-outer:#080c20;--al-nav:#0e1834;--al-nav2:#17264a;--al-paper:#101e3d;--al-ink:#e4edff;--al-muted:#adbfe3;--al-metal:#8bb9f7;--al-border:#577dab;--al-top:#080e28;--al-toptext:#e3f2ff}
+html body #wkProf[data-alb="ember"]{--al-outer:#170f0e;--al-nav:#2b1b19;--al-nav2:#3b2420;--al-paper:#241916;--al-ink:#ffe8cd;--al-muted:#dbb5a2;--al-metal:#ea915f;--al-border:#8c4b38;--al-top:#200e0d;--al-toptext:#ffd6a7}
+html body #wkProf[data-alb="glacier"]{--al-outer:#0a1623;--al-nav:#132639;--al-nav2:#1c3548;--al-paper:#102638;--al-ink:#e7faff;--al-muted:#a6cbd5;--al-metal:#8de2f5;--al-border:#4c91ac;--al-top:#0a1b2a;--al-toptext:#e2faff}
+html body #wkProf[data-alb="bloodmoon"]{--al-outer:#180c16;--al-nav:#2b1526;--al-nav2:#411c2a;--al-paper:#281521;--al-ink:#ffe1df;--al-muted:#d7adb7;--al-metal:#e4a3a3;--al-border:#93566b;--al-top:#220d1c;--al-toptext:#ffe0e0}
+html body #wkProf[data-alb="abyssal"]{--al-outer:#071b20;--al-nav:#112e30;--al-nav2:#174042;--al-paper:#102c30;--al-ink:#d5fff2;--al-muted:#a1d0c1;--al-metal:#83dec5;--al-border:#46897f;--al-top:#0a2026;--al-toptext:#d7fbe9}
+html body #wkProf[data-alb] .pf-hero,html body #wkProf[data-alb] .pf-sc,html body #wkProf[data-alb] .pf-offer,html body #wkProf[data-alb] .pf-hint{
+ --c-surface:var(--al-paper);--c-surface-2:color-mix(in srgb,var(--al-ink) 8%,var(--al-paper));--c-line:color-mix(in srgb,var(--al-border) 75%,transparent);
+ --c-text:var(--al-ink);--c-text-soft:color-mix(in srgb,var(--al-ink) 72%,var(--al-muted));--c-muted:var(--al-muted);
+ --c-accent:var(--al-metal);--c-on-accent:var(--al-top);color:var(--al-ink)}
+html body #wkProf[data-alb] .pf-hero.pf-hero{border:2px solid var(--al-border);background:radial-gradient(120% 90% at 0% 0%,color-mix(in srgb,var(--al-metal) 22%,transparent),transparent 60%),linear-gradient(135deg,var(--al-nav2),var(--al-paper));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--al-metal) 35%,transparent),0 14px 30px -20px #000}
+html body #wkProf[data-alb] .pf-sc.pf-sc{border:2px solid var(--al-border);background:radial-gradient(110% 70% at 100% 0%,color-mix(in srgb,var(--al-metal) 14%,transparent),transparent 60%),var(--al-paper);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--al-metal) 25%,transparent),0 12px 26px -20px #000}
+html body #wkProf[data-alb] .pf-sh h3{color:var(--al-ink);border-bottom:1px solid color-mix(in srgb,var(--al-metal) 45%,transparent);padding-bottom:6px;flex:1}
+html body #wkProf[data-alb] .pf-name{color:var(--al-ink)}
+html body #wkProf[data-alb] .pf-btn.pri{background:var(--al-top);border-color:var(--al-metal);color:var(--al-toptext)}
+html body #wkProf[data-alb] .pf-hint{border:1px solid var(--c-line)}
+/* крупнее иконки достижений и персонажей в топах */
+html body #wkProf .pf-ai.pf-ai{width:44px;height:44px}
+html body #wkProf .pf-dot.pf-dot{width:20px;height:20px}
+html body #wkProf .pf-ach li{gap:12px;padding:8px 12px}
+html body #wkProf .pf-top li img,html body #wkProf .pf-top li .ph{width:44px!important;height:44px!important;font-size:var(--fs-sm)}
+html body #wkProf .pf-top ol{gap:8px}
+</style>
 </head>
 <body data-theme="mugiwara" data-active-tab="characters">
 <script id="wiki-cloud-config">
@@ -19545,7 +19600,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
           if (!/^o[a-z0-9]{3,14}$/.test(doc.id)) return;
           var d = doc.data() || {};
           out.push({ id: doc.id, n: String(d.name || ''), price: Number(d.price) || 0,
-            d: String(d.d || ''), s: Number(d.s) >= 60 && Number(d.s) <= 110 ? Number(d.s) : 100, sy: Number(d.sy) >= 90 && Number(d.sy) <= 130 ? Number(d.sy) : 100, at: String(d.at || '') });
+            d: String(d.d || ''), s: Number(d.s) >= 60 && Number(d.s) <= 110 ? Number(d.s) : 100, sy: Number(d.sy) >= 90 && Number(d.sy) <= 130 ? Number(d.sy) : 100, sx: Number(d.sx) >= 90 && Number(d.sx) <= 130 ? Number(d.sx) : 100, at: String(d.at || '') });
         }); return out;
       });
     },
@@ -19556,7 +19611,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
         return Promise.reject(new Error('invalid-ornament'));
       return fb.fs.setDoc(fb.fs.doc(db, 'backs', orn.id), {
         kind: 'ornament', name: String(orn.n || '').slice(0, 40), price: orn.price,
-        d: String(orn.d), s: Math.min(110, Math.max(60, Number(orn.s) || 100)), sy: Math.min(130, Math.max(90, Number(orn.sy) || 100)), by: me.login, at: new Date().toISOString()
+        d: String(orn.d), s: Math.min(110, Math.max(60, Number(orn.s) || 100)), sy: Math.min(130, Math.max(90, Number(orn.sy) || 100)), sx: Math.min(130, Math.max(90, Number(orn.sx) || 100)), by: me.login, at: new Date().toISOString()
       });
     },
     remove: function (id) {
@@ -38636,7 +38691,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   var ORNS = [], OR_NO = { id: 'none', n: 'Без орнамента', price: 1 };
   /* Постоянный товар: убирает только угловые вензеля. Не хранится в Firestore backs и не редактируется в загрузчике. */
   function ornGoods() { return (ornDefId() ? [OR_CL] : []).concat([OR_NO], ORNS.filter(ornValid)); }
-  var ORP = { id: '', name: '', price: 15000, d: '', file: null, mode: 'corners', s: 100, sy: 100, busy: false };
+  var ORP = { id: '', name: '', price: 15000, d: '', file: null, mode: 'corners', s: 100, sy: 100, sx: 100, busy: false };
   var ORS = { at: 0, loading: false };
   function ornValid(q) {
     return !!(q && /^o[a-z0-9]{3,14}$/.test(String(q.id)) &&
@@ -38667,8 +38722,8 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     el.textContent = ORNS.filter(ornValid).map(function (q) {
       var mask = 'url(' + q.d + ')', sel = 'html[data-wk-orn="' + q.id + '"] body :is(.wk-pk,.wk-al-fb)',
           prev = 'html body [data-wk-orn-preview="' + q.id + '"] :is(.wk-pk,.wk-al-fb)';
-      var sc = Number(q.s)>=60&&Number(q.s)<=110?Number(q.s):100, sy = Number(q.sy)>=90&&Number(q.sy)<=130?Number(q.sy):100;
-      return sel + ',' + prev + '{--wk-cf-b:' + mask + '!important;--wk-orn-scale:' + sc + '%!important;--wk-orn-height:' + (sc * sy / 100) + '%!important;}';
+      var sc = Number(q.s)>=60&&Number(q.s)<=110?Number(q.s):100, sy = Number(q.sy)>=90&&Number(q.sy)<=130?Number(q.sy):100, sx = Number(q.sx)>=90&&Number(q.sx)<=130?Number(q.sx):100;
+      return sel + ',' + prev + '{--wk-cf-b:' + mask + '!important;--wk-orn-scale:' + sc + '%!important;--wk-orn-width:' + (sc * sx / 100) + '%!important;--wk-orn-height:' + (sc * sy / 100) + '%!important;}';
     }).join('\n');
   }
   function refreshOrnaments(pane, force) {
@@ -38688,7 +38743,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       if (force && isDima()) txToast('Не получилось загрузить орнаменты из облака');
     }).then(function () { ORS.loading = false; });
   }
-  function ornReset() { ORP = { id: '', name: '', price: 15000, d: '', file: null, mode: 'corners', s: 100, sy: 100, busy: false }; }
+  function ornReset() { ORP = { id: '', name: '', price: 15000, d: '', file: null, mode: 'corners', s: 100, sy: 100, sx: 100, busy: false }; }
   function allBacks() { return BACKS.concat(CB.filter(cbOk).map(function (q) { return { id: q.id, n: q.n || 'Рубашка', price: FREE() ? 0 : (q.price || 30000), ch: q.ch, ep: q.ep, cu: 1 }; })); }
   var BKP = { d: '', name: '', price: 30000, inv: false, file: null };
   var BKS = { at: 0, loading: false };
@@ -38875,7 +38930,11 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       return '<div class="wk-pick-c"><div class="wk-dk-slot has r-' + k.r + '">' + cardHTML(k) + '<em class="wk-dk-new' + (st.owned[key] ? ' dup' : '') + '">' + (st.owned[key] ? 'повтор' : 'НОВАЯ') + '</em></div><button type="button" class="wk-tx-btn pri" data-tx="pickup" data-i="' + i + '">Забрать</button></div>';
     }).join('') + '</div></div>';
   }
-  var PIG_DAYS = 7, PIG_RATES = [0.10, 0.15, 0.20], PIG_MIN = 1000, PIG_MAX = 200000;
+  var PIG_DAYS = 7, PIG_OPEN = 3, PIG_CAP = 14, PIG_RATES = [0.10, 0.15, 0.20], PIG_MIN = 1000, PIG_MAX = 200000;
+  /* Копилка v2: забрать можно после 3-го дня, бонус растёт с каждым полным днём: ставка копилки / 7 за день (за неделю как раньше: +10% / +15% / +20%), до 14-го дня. */
+  function pigDays(pg) { return Math.max(0, Math.min(PIG_CAP, Math.floor((Date.now() - (pg.t0 || Date.now())) / 864e5))); }
+  function pigBonusAt(i, pg, d) { return Math.floor(pg.amt * pigRate(i, pg) * d / PIG_DAYS); }
+  function pigPctAt(i, pg, d) { return String(Math.round(pigRate(i, pg) * d / PIG_DAYS * 1000) / 10).replace('.', ','); }
   /* v581: процент зависит от копилки: первая +10%, вторая +15%, третья +20%. Ставка фиксируется в момент вклада (pg.r) */
   /* v584: вместо «Нужно N» показываем цену и рядом, сколько ещё накопить */
   function needTxt(price, bel) { return 'Купить · ' + fmtB(price) + ' <span class="wk-need">ещё ' + fmtB(Math.max(0, price - bel)) + '</span>'; }
@@ -38890,7 +38949,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     for (var i = 0; i < n; i++) out += piggyHTML(st, bel, i);
     if (n < 3) {
       var pr = FREE() ? 0 : PIG_SLOT[n], can = bel >= pr;
-      out += '<article class="wk-sh-pk p-x p-pig wk-pig-lock"><div class="wk-sh-art wk-sh-ico" aria-hidden="true">' + itemSVG('piggy') + '</div><div class="wk-sh-info"><h4>Копилка №' + (n + 1) + '</h4><p class="wk-sh-what">Ещё один вклад одновременно</p><p class="wk-sh-note">Каждая копилка работает отдельно: своя сумма, свой срок. Эта даёт +' + pigPct(n) + '% за 7 дней. Покупается один раз и навсегда.</p></div><span class="wk-sh-bw"><button type="button" class="wk-tx-btn' + (can ? ' pri' : '') + '" data-tx="pigbuy"' + (can ? '' : ' disabled') + '>' + (pr ? 'Купить · ' + fmtB(pr) : 'Забрать бесплатно') + '</button></span></article>';
+      out += '<article class="wk-sh-pk p-x p-pig wk-pig-lock"><div class="wk-sh-art wk-sh-ico" aria-hidden="true">' + itemSVG('piggy') + '</div><div class="wk-sh-info"><h4>Копилка №' + (n + 1) + '</h4><p class="wk-sh-what">Ещё один вклад одновременно</p><p class="wk-sh-note">Каждая копилка работает отдельно: своя сумма, свой срок. Бонус растёт каждый день и за неделю достигает +' + pigPct(n) + '%. Покупается один раз и навсегда.</p></div><span class="wk-sh-bw"><button type="button" class="wk-tx-btn' + (can ? ' pri' : '') + '" data-tx="pigbuy"' + (can ? '' : ' disabled') + '>' + (pr ? 'Купить · ' + fmtB(pr) : 'Забрать бесплатно') + '</button></span></article>';
     }
     return out;
   }
@@ -38898,10 +38957,16 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     i = i || 0;
     var pg = pigGet(st, i), art = '<div class="wk-sh-art wk-sh-ico" aria-hidden="true">' + itemSVG('piggy') + '</div>', nm = 'Копилка' + (i ? ' №' + (i + 1) : ''), idx = ' data-pi="' + i + '"';
     if (pg && pg.amt) {
-      var left = pg.until - Date.now(), due = left <= 0, bonus = Math.floor(pg.amt * pigRate(i, pg)), pc = Math.max(0, Math.min(100, Math.round((Date.now() - pg.t0) / Math.max(1, pg.until - pg.t0) * 100)));
-      return '<article class="wk-sh-pk p-x p-pig">' + art + '<div class="wk-sh-info"><h4>' + nm + '</h4><p class="wk-sh-what">В копилке: ' + fmtB(pg.amt) + '</p><p class="wk-sh-note">' + (due ? 'Срок вышел: можно забрать ' + fmtB(pg.amt + bonus) + ' (с процентами ' + fmtB(bonus) + ').' : 'Откроется через ' + leftTxt(left) + '. Вернётся ' + fmtB(pg.amt + bonus) + ' (+' + pigPct(i, pg) + '%). Раньше срока достать нельзя.') + '</p><span class="wk-pig-bar" aria-hidden="true"><em style="width:' + pc + '%"></em></span></div><span class="wk-sh-bw"><button type="button" class="wk-tx-btn' + (due ? ' pri' : '') + '" data-tx="pigget"' + idx + (due ? '' : ' disabled') + '>' + (due ? 'Забрать · ' + fmtB(pg.amt + bonus) : 'Запечатана') + '</button></span></article>';
+      var dd = pigDays(pg), due = dd >= PIG_OPEN, bonus = pigBonusAt(i, pg, dd), now = Date.now(),
+          pc = Math.max(0, Math.min(100, Math.round((now - pg.t0) / (PIG_CAP * 864e5) * 100))),
+          openIn = pg.t0 + PIG_OPEN * 864e5 - now, nextIn = pg.t0 + (dd + 1) * 864e5 - now,
+          at3 = pigBonusAt(i, pg, PIG_OPEN), nxt = pigBonusAt(i, pg, Math.min(PIG_CAP, dd + 1));
+      var note = due
+        ? 'Можно забрать ' + fmtB(pg.amt + bonus) + ' (бонус ' + fmtB(bonus) + ', +' + pigPctAt(i, pg, dd) + '%).' + (dd < PIG_CAP ? ' Подождёшь ещё ' + leftTxt(nextIn) + ': получишь ' + fmtB(pg.amt + nxt) + '. Бонус растёт каждый день до ' + PIG_CAP + '-го.' : ' Бонус достиг максимума.')
+        : 'Достать можно после ' + PIG_OPEN + '-го дня: через ' + leftTxt(openIn) + ' вернётся ' + fmtB(pg.amt + at3) + ' (+' + pigPctAt(i, pg, PIG_OPEN) + '%). Чем дольше лежит, тем больше бонус.';
+      return '<article class="wk-sh-pk p-x p-pig">' + art + '<div class="wk-sh-info"><h4>' + nm + '</h4><p class="wk-sh-what">В копилке: ' + fmtB(pg.amt) + '</p><p class="wk-sh-note">' + note + '</p><span class="wk-pig-bar" aria-hidden="true"><em style="width:' + pc + '%"></em></span></div><span class="wk-sh-bw"><button type="button" class="wk-tx-btn' + (due ? ' pri' : '') + '" data-tx="pigget"' + idx + (due ? '' : ' disabled') + '>' + (due ? 'Забрать · ' + fmtB(pg.amt + bonus) : 'Запечатана') + '</button></span></article>';
     }
-    return '<article class="wk-sh-pk p-x p-pig">' + art + '<div class="wk-sh-info"><h4>' + nm + '</h4><p class="wk-sh-what">Отложи белли на 7 дней и получи +' + pigPct(i) + '%</p><p class="wk-sh-note">От ' + fmtB(PIG_MIN) + ' до ' + fmtB(PIG_MAX) + '. Пока копилка запечатана, достать белли нельзя. После срока вернётся вся сумма и проценты.</p><input id="wkPigAmt' + i + '" class="wk-pig-in" type="number" inputmode="numeric" min="' + PIG_MIN + '" max="' + PIG_MAX + '" step="500" value="' + Math.min(Math.max(PIG_MIN, Math.floor((bel || 0) / 2 / 500) * 500), PIG_MAX) + '" aria-label="Сколько белли отложить"></div><span class="wk-sh-bw"><button type="button" class="wk-tx-btn' + (bel >= PIG_MIN ? ' pri' : '') + '" data-tx="pigput"' + idx + (bel >= PIG_MIN ? '' : ' disabled') + '>' + (bel >= PIG_MIN ? 'Отложить' : 'Отложить · от ' + fmtB(PIG_MIN) + ' <span class="wk-need">ещё ' + fmtB(PIG_MIN - bel) + '</span>') + '</button></span></article>';
+    return '<article class="wk-sh-pk p-x p-pig">' + art + '<div class="wk-sh-info"><h4>' + nm + '</h4><p class="wk-sh-what">Отложи белли: бонус растёт каждый день, до +' + pigPct(i) + '% за неделю</p><p class="wk-sh-note">От ' + fmtB(PIG_MIN) + ' до ' + fmtB(PIG_MAX) + '. Забрать можно после ' + PIG_OPEN + '-го дня, и чем дольше вклад лежит, тем больше бонус (до ' + PIG_CAP + '-го дня).</p><input id="wkPigAmt' + i + '" class="wk-pig-in" type="number" inputmode="numeric" min="' + PIG_MIN + '" max="' + PIG_MAX + '" step="500" value="' + Math.min(Math.max(PIG_MIN, Math.floor((bel || 0) / 2 / 500) * 500), PIG_MAX) + '" aria-label="Сколько белли отложить"></div><span class="wk-sh-bw"><button type="button" class="wk-tx-btn' + (bel >= PIG_MIN ? ' pri' : '') + '" data-tx="pigput"' + idx + (bel >= PIG_MIN ? '' : ' disabled') + '>' + (bel >= PIG_MIN ? 'Отложить' : 'Отложить · от ' + fmtB(PIG_MIN) + ' <span class="wk-need">ещё ' + fmtB(PIG_MIN - bel) + '</span>') + '</button></span></article>';
   }
   function extrasHTML(C, st, bel) {
     var pages = alPages(C), arcSel = '';
@@ -38944,7 +39009,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     return {
       boost: '<h3 class="wk-dk-h">Усиления</h3><p class="wk-sh-hint">Расходуются сами, когда пригодятся: щит спасает серию входов, благословение добавляет шанс переработке.</p><div class="wk-sh-pks">' + pick(['sand', 'auto', 'shield', 'bless', 'fake']) + '</div>' +
         '<h3 class="wk-dk-h">Особые находки</h3><p class="wk-sh-hint">Наборы и выбор карточек под конкретную цель.</p><div class="wk-sh-pks">' + pick(['compass', 'map', 'key', 'warrant']) + '</div>',
-      save: '<h3 class="wk-dk-h">Сбережения</h3><p class="wk-sh-hint">Копилка запирает белли на 7 дней и возвращает их с процентами: первая даёт +10%, вторая +15%, третья +20%. Пока белли лежат в копилке, потратить их нельзя. Вторую и третью копилку можно докупить, чтобы вклады шли одновременно и приносили больше.</p><div class="wk-sh-pks">' + piggyAll(st, bel) + '</div>',
+      save: '<h3 class="wk-dk-h">Сбережения</h3><p class="wk-sh-hint">Копилка запечатывает белли минимум на 3 дня. После 3-го дня вклад можно забрать, но чем дольше он лежит, тем больше бонус: он растёт каждый день до 14-го. За неделю первая копилка даёт +10%, вторая +15%, третья +20%, а за 14 дней вдвое больше. Пока белли лежат в копилке, потратить их нельзя. Вторую и третью копилку можно докупить, чтобы вклады шли одновременно и приносили больше.</p><div class="wk-sh-pks">' + piggyAll(st, bel) + '</div>',
       des: '<h3 class="wk-dk-h">Фон витрины</h3><p class="wk-sh-hint">Дополнительное оформление окружения витрины: меняет фон и полку, не отменяя стиль выбранного альбома. Можно снять или сменить в любой момент; фон виден другим участникам.</p><div class="wk-sh-pks">' + cosRow('bg', BGS, 'b_') + '</div>' + wallAdminHTML() + '<h3 class="wk-dk-h">Дизайн альбома</h3><p class="wk-sh-hint">Каждый альбом включает собственную витрину избранных карточек в том же стиле. Навигация по аркам слева, страницы и фильтры остаются прежними. «Капитанский фолиант» бесплатный.</p><div class="wk-sh-pks">' + '<article class="wk-sh-pk p-x p-cos' + (!st.alb ? ' is-on' : '') + '">' + albPreview(C, st, 'captain') + '<div class="wk-sh-info"><h4>Капитанский фолиант <em class="wk-sh-st' + (!st.alb ? ' on' : '') + '">' + (!st.alb ? 'Выбрано' : 'Бесплатно') + '</em></h4><p class="wk-sh-note">Классический переплёт, страницы пергамента, боковая навигация и витрина в стиле капитанской книги.</p></div><span class="wk-sh-bw"><button type="button" class="wk-tx-btn' + (!st.alb ? '' : ' pri') + '" data-tx="cossel" data-kind="alb" data-id="captain">' + (!st.alb ? 'Выбрано' : 'Выбрать бесплатно') + '</button></span></article>' + cosRow('alb', ALBS, 'a_') + '</div><h3 class="wk-dk-h">Рамки аватара</h3><p class="wk-sh-hint">Эффект вокруг твоего аватара везде, где он показан: в обмене, в списках участников, в колоде. Другие участники тоже его видят.</p><div class="wk-sh-pks">' + cosRow('avf', AVF, 'v_') + '</div><h3 class="wk-dk-h">Эффект имени и титула</h3><p class="wk-sh-hint">Цвет или свечение для имени, для титула или для обоих сразу: в обменах, списках, колоде и профиле. Покупается один раз, выбрать или снять можно в любой момент. Титул выбирается в профиле.</p>' + nkTgtHTML(st) + '<div class="wk-sh-pks">' + cosRow('nkc', NKC, 'n_') + '</div>',
       bk: '<h3 class="wk-dk-h">Авторские орнаменты рубашек</h3><p class="wk-sh-hint">Выбирай авторские орнаменты или вариант «Без орнамента» за 1 белли. Классические вензеля остаются стандартным бесплатным оформлением. Нажми на изображение для увеличения.</p>' + (st.orn && st.orn !== 'classic' ? '<button type="button" class="wk-tx-btn" data-tx="ornreset">Вернуть орнамент по умолчанию</button>' : '') + '<div class="wk-sh-pks">' + cosRow('orn', ornGoods(), 'o_') + '</div>' + ornAdminHTML() + '<h3 class="wk-dk-h">Рубашки карточек</h3><p class="wk-sh-hint">Другой знак на обороте карточек: в наборах, в колоде и в альбоме. Цвет и свечение по-прежнему зависят от редкости. Покупается один раз.</p><div class="wk-sh-pks">' + cosRow('back', allBacks().filter(function (q) { return (!/^(skull|fruit|bolt|blades)$/.test(q.id) || cos['k_' + q.id]) && (!q.cu || bkOk(q)); }), 'k_') + '</div>' + bkAdminHTML()
     };
@@ -38960,7 +39025,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       return '<li><span>' + esc(r[1]) + (cur ? ' · <b>сейчас по умолчанию</b>' : '') + '</span><span class="wk-bk-lb">' + (cur ? '<button type="button" class="wk-tx-btn" disabled>Назначен</button>' : '<button type="button" class="wk-tx-btn" data-tx="orndef" data-id="' + esc(r[0]) + '">Сделать по умолчанию</button>') + '</span></li>';
     }).join('');
     var defBlock = '<h3 class="wk-dk-h">Орнамент по умолчанию</h3><p class="wk-sh-hint">Его получают все игроки, которые не выбрали свой: он сразу надет и в магазине бесплатный. Тем, кто купил или выбрал другой, ничего не меняется. Игрок всегда может вернуть классические вензеля.</p><ul class="wk-bk-list">' + defRows + '</ul>';
-    var preview = '<div class="wk-sh-art wk-sh-orn-art" id="wkOrnDraft" style="--wk-orn-draft:' + (ORP.d ? 'url(' + ORP.d + ')' : 'none') + ';--wk-orn-scale:' + (ORP.s || 100) + '%;--wk-orn-height:' + ((ORP.s || 100)*(ORP.sy || 100)/100) + '%">' +
+    var preview = '<div class="wk-sh-art wk-sh-orn-art" id="wkOrnDraft" style="--wk-orn-draft:' + (ORP.d ? 'url(' + ORP.d + ')' : 'none') + ';--wk-orn-scale:' + (ORP.s || 100) + '%;--wk-orn-width:' + ((ORP.s || 100)*(ORP.sx || 100)/100) + '%;--wk-orn-height:' + ((ORP.s || 100)*(ORP.sy || 100)/100) + '%">' +
       '<div class="wk-pk r-legendary wk-dk-sbin wk-sh-orn-card"><div class="wk-pk-bk">' + backInner('legendary', '') + '</div></div></div>';
     return defBlock + '<h3 class="wk-dk-h" id="wkOrnHead">' + (ORP.id ? 'Редактирование орнамента' : 'Добавить свой орнамент') + '</h3>' +
       '<p class="wk-sh-hint">Загрузи PNG с прозрачным фоном или вставь ссылку на картинку. Можно использовать готовый рисунок из четырёх углов или один угол — он отразится на остальные три. Орнамент будет окрашен в цвет редкости карты, компас и рамка останутся прежними. Новый товар появится у всех игроков после сохранения.</p>' +
@@ -38972,6 +39037,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       '<label class="wk-bk-row">Цена, белли <input id="wkOrnPrice" type="number" min="0" max="10000000" step="500" value="' + esc(ORP.price) + '"></label>' +
       '<label class="wk-bk-row">Изображение <select id="wkOrnMode"><option value="corners"' + (ORP.mode === 'corners' ? ' selected' : '') + '>Все четыре угла</option><option value="single"' + (ORP.mode === 'single' ? ' selected' : '') + '>Один угол (зеркально)</option></select></label>' +
       '<label class="wk-bk-row wk-bk-zr">Масштаб орнамента <input type="range" id="wkOrnScale" min="60" max="110" step="5" value="' + (ORP.s || 100) + '"><b id="wkOrnScaleVal">' + (ORP.s || 100) + '%</b></label>' +
+      '<label class="wk-bk-row wk-bk-zr">Растяжение по горизонтали <input type="range" id="wkOrnScaleX" min="90" max="130" step="5" value="' + (ORP.sx || 100) + '"><b id="wkOrnScaleXVal">' + (ORP.sx || 100) + '%</b></label>' +
       '<label class="wk-bk-row wk-bk-zr">Растяжение по вертикали <input type="range" id="wkOrnScaleY" min="90" max="130" step="5" value="' + (ORP.sy || 100) + '"><b id="wkOrnScaleYVal">' + (ORP.sy || 100) + '%</b></label>' +
       '<p class="wk-sh-hint" id="wkOrnStatus">' + (ORP.d ? 'Изображение готово к публикации.' : 'Файл или ссылка ещё не выбраны.') + '</p>' +
       '<span class="wk-bk-lb"><button type="button" class="wk-tx-btn pri" data-tx="ornadd">' + (ORP.id ? 'Сохранить изменения' : 'Опубликовать в магазине') + '</button>' +
@@ -39038,7 +39104,12 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (e.target.id==='wkOrnScale') {
       ORP.s=Math.max(60,Math.min(110,Number(e.target.value)||100));
       var out=document.getElementById('wkOrnScaleVal');if(out)out.textContent=ORP.s+'%';
-      var draft=document.getElementById('wkOrnDraft');if(draft){draft.style.setProperty('--wk-orn-scale',ORP.s+'%');draft.style.setProperty('--wk-orn-height',(ORP.s*(ORP.sy||100)/100)+'%');}
+      var draft=document.getElementById('wkOrnDraft');if(draft){draft.style.setProperty('--wk-orn-scale',ORP.s+'%');draft.style.setProperty('--wk-orn-width',(ORP.s*(ORP.sx||100)/100)+'%');draft.style.setProperty('--wk-orn-height',(ORP.s*(ORP.sy||100)/100)+'%');}
+    }
+    if (e.target.id==='wkOrnScaleX') {
+      ORP.sx=Math.max(90,Math.min(130,Number(e.target.value)||100));
+      var xout=document.getElementById('wkOrnScaleXVal');if(xout)xout.textContent=ORP.sx+'%';
+      var xdraft=document.getElementById('wkOrnDraft');if(xdraft)xdraft.style.setProperty('--wk-orn-width',((ORP.s||100)*ORP.sx/100)+'%');
     }
     if (e.target.id==='wkOrnScaleY') {
       ORP.sy=Math.max(90,Math.min(130,Number(e.target.value)||100));
@@ -39451,7 +39522,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (a === 'ornedit') {
       var old = ORNS.filter(function (q) { return q.id === b.getAttribute('data-id'); })[0];
       if (!old || !isDima()) return;
-      ORP = { id: old.id, name: old.n, price: old.price, d: old.d, file: null, mode: 'corners', s: Number(old.s) >= 60 && Number(old.s) <= 110 ? Number(old.s) : 100, sy: Number(old.sy) >= 90 && Number(old.sy) <= 130 ? Number(old.sy) : 100, busy: false };
+      ORP = { id: old.id, name: old.n, price: old.price, d: old.d, file: null, mode: 'corners', s: Number(old.s) >= 60 && Number(old.s) <= 110 ? Number(old.s) : 100, sy: Number(old.sy) >= 90 && Number(old.sy) <= 130 ? Number(old.sy) : 100, sx: Number(old.sx) >= 90 && Number(old.sx) <= 130 ? Number(old.sx) : 100, busy: false };
       repaint(); var head = pane.querySelector('#wkOrnHead'); if (head) head.scrollIntoView({ block:'start', behavior:'smooth' }); return;
     }
     if (a === 'walledit') {
@@ -39492,7 +39563,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       if (!Number.isSafeInteger(price) || price < 0 || price > 10000000) { txToast('Цена от 0 до 10 000 000 белли'); return; }
       var id = ORP.id || ('o' + Date.now().toString(36)), ed = !!ORP.id;
       b.disabled = true;
-      api.save({ id:id, n:name, price:price, d:ORP.d, s: Math.min(110,Math.max(60,Number(ORP.s)||100)), sy: Math.min(130,Math.max(90,Number(ORP.sy)||100)) }).then(function(){
+      api.save({ id:id, n:name, price:price, d:ORP.d, s: Math.min(110,Math.max(60,Number(ORP.s)||100)), sy: Math.min(130,Math.max(90,Number(ORP.sy)||100)), sx: Math.min(130,Math.max(90,Number(ORP.sx)||100)) }).then(function(){
         ornReset(); txToast(ed ? 'Орнамент обновлён' : 'Орнамент появился в магазине');
         ORS.at = 0; refreshOrnaments(pane, true);
       },function(err){ b.disabled=false; txToast((err && err.code)==='permission-denied' ? 'Firebase запретил запись в backs: проверь правила доступа' : 'Не удалось сохранить орнамент'); });
@@ -39551,14 +39622,15 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       if (pam < PIG_MIN) { txToast('Минимум ' + fmtB(PIG_MIN)); return; }
       if (pam > PIG_MAX) pam = PIG_MAX;
       if ((st.belli || 0) < pam) { txToast('Не хватает белли'); return; }
-      var bPu = st.belli || 0; st.belli -= pam; pigSet(st, pI, { amt: pam, r: pigRate(pI), t0: Date.now(), until: Date.now() + PIG_DAYS * 864e5 }); save(st); repaint(); belliAnim(pane, bPu);
-      txToast('Копилка запечатана на 7 дней: ' + fmtB(pam)); return;
+      var bPu = st.belli || 0; st.belli -= pam; pigSet(st, pI, { amt: pam, r: pigRate(pI), t0: Date.now(), until: Date.now() + PIG_OPEN * 864e5 }); save(st); repaint(); belliAnim(pane, bPu);
+      txToast('Копилка запечатана: ' + fmtB(pam) + '. Забрать можно после ' + PIG_OPEN + '-го дня'); return;
     }
     if (a === 'pigget') {
       var gI = Number(b.getAttribute('data-pi')) || 0, pg2 = pigGet(st, gI); if (!pg2 || !pg2.amt) return;
-      if (Date.now() < pg2.until) { txToast('Ещё рано: откроется через ' + leftTxt(pg2.until - Date.now())); return; }
-      var pbn = Math.floor(pg2.amt * pigRate(gI, pg2)), bGt = st.belli || 0; st.belli = bGt + pg2.amt + pbn; income(st, 'pig', pbn); pigSet(st, gI, null); save(st); repaint(); belliAnim(pane, bGt);
-      txToast('Из копилки: ' + fmtB(pg2.amt + pbn) + ' (проценты ' + fmtB(pbn) + ')'); return;
+      var gd = pigDays(pg2);
+      if (gd < PIG_OPEN) { txToast('Ещё рано: откроется через ' + leftTxt(pg2.t0 + PIG_OPEN * 864e5 - Date.now())); return; }
+      var pbn = pigBonusAt(gI, pg2, gd), bGt = st.belli || 0; st.belli = bGt + pg2.amt + pbn; income(st, 'pig', pbn); pigSet(st, gI, null); save(st); repaint(); belliAnim(pane, bGt);
+      txToast('Из копилки: ' + fmtB(pg2.amt + pbn) + ' (бонус за ' + gd + ' дн.: ' + fmtB(pbn) + ')'); return;
     }
     if (a === 'buy2') {
       var u2 = SHOP2.filter(function (q) { return q.id === b.getAttribute('data-u2'); })[0]; if (u2 && u2.id === 'auto') u2.price = autoPrice(st); if (!u2 || (st.belli || 0) < u2.price) return;
@@ -43565,7 +43637,7 @@ html body #favoritesSection#favoritesSection#favoritesSection #wkProgressCard{di
     D.lay = layoutOf(d, mine);
     D.belli = d ? +d.belli || 0 : null;
     D.ttl = a && v ? a.ttlText(v) : '';
-    D.has = !!d;
+    D.has = !!d; D.alb = (d && d.alb) || '';
     var tt = mine && a && a.ready() ? a.titles() : [];
     D.titles = tt; D.cur = mine && d && d.ttl ? d.ttl.id || '' : '';
     D.daily = mine && a && a.ready() ? a.daily() : null;
@@ -43703,7 +43775,7 @@ html body #favoritesSection#favoritesSection#favoritesSection #wkProgressCard{di
       menuH = md.innerHTML;
     }
     if (menuH) h += '<div class="pf-secs"><h3 class="pf-secs-h">Разделы Каюты</h3><nav class="pf-cabmenu" aria-label="Разделы каюты">' + menuH + '</nav></div>';
-    root.innerHTML = h;
+    root.innerHTML = h; root.setAttribute('data-alb', D.alb || 'captain');
     try { navSync(); } catch (e) {}
     try { if (window.__wkCosApply) window.__wkCosApply(root); } catch (e) {}
   }
@@ -45855,18 +45927,19 @@ html body .wk-sc .wk-sh3-it .wk-dk-slot{filter:drop-shadow(0 10px 9px rgba(0,0,0
 /* Horizontal scale and optional per-product vertical stretch are independent.
    Existing products without sy keep the original height (100%). */
 html body :is(.wk-pk-bk,.wk-dk-back) > .wk-bkf{
- -webkit-mask:var(--wk-cf-b) center center / var(--wk-orn-scale,100%) var(--wk-orn-height,var(--wk-orn-scale,100%)) no-repeat!important;
- mask:var(--wk-cf-b) center center / var(--wk-orn-scale,100%) var(--wk-orn-height,var(--wk-orn-scale,100%)) no-repeat!important;
+ -webkit-mask:var(--wk-cf-b) center center / var(--wk-orn-width,var(--wk-orn-scale,100%)) var(--wk-orn-height,var(--wk-orn-scale,100%)) no-repeat!important;
+ mask:var(--wk-cf-b) center center / var(--wk-orn-width,var(--wk-orn-scale,100%)) var(--wk-orn-height,var(--wk-orn-scale,100%)) no-repeat!important;
 }
 /* Draft art overrides whatever ornament is currently equipped by the user. */
 html body #wkOrnDraft.wk-sh-orn-art .wk-pk.wk-sh-orn-card .wk-pk-bk > .wk-bkf{
- -webkit-mask:var(--wk-orn-draft,none) center center / var(--wk-orn-scale,100%) var(--wk-orn-height,var(--wk-orn-scale,100%)) no-repeat!important;
- mask:var(--wk-orn-draft,none) center center / var(--wk-orn-scale,100%) var(--wk-orn-height,var(--wk-orn-scale,100%)) no-repeat!important;
+ -webkit-mask:var(--wk-orn-draft,none) center center / var(--wk-orn-width,var(--wk-orn-scale,100%)) var(--wk-orn-height,var(--wk-orn-scale,100%)) no-repeat!important;
+ mask:var(--wk-orn-draft,none) center center / var(--wk-orn-width,var(--wk-orn-scale,100%)) var(--wk-orn-height,var(--wk-orn-scale,100%)) no-repeat!important;
 }
 /* Draft must use the admin's live slider values even if a different bought
    ornament is currently equipped on the account. */
 html body #wkOrnDraft .wk-pk{
  --wk-orn-scale:inherit!important;
+ --wk-orn-width:inherit!important;
  --wk-orn-height:inherit!important;
 }
 /* Fix the shifted compass/emblem on backs; independent of ornament size. */
