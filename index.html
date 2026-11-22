@@ -735,6 +735,32 @@ html body [data-bgt^="ut"] :is(.wk-pk.wk-pk.wk-pk .wk-pk-bk,.wk-al-fb.wk-al-fb.w
   opacity:.88!important;
   animation:none!important;
 }
+/* v633 — Legendary custom images retain the same DARK NAVY backing as the standard
+   legendary card (#1f2f6e → #0a1232). Gold is reserved for the border,
+   compass and rarity diamonds, not used to color the entire photo layer.
+   The texture remains recognizable; only its tonal detail is blended into blue.
+   Exception: holographic, fiery and negative variants retain their own treatments. */
+html[data-wk-bgt^="ut"] body :is(
+  .wk-pk.r-legendary:not(.v-gold):not(.v-holo):not(.v-neg) .wk-pk-bk,
+  .wk-al-fb.r-legendary:not(.v-gold):not(.v-holo):not(.v-neg) .wk-dk-back
+) .wk-bkt,
+html body [data-bgt^="ut"] :is(
+  .wk-pk.r-legendary:not(.v-gold):not(.v-holo):not(.v-neg) .wk-pk-bk,
+  .wk-al-fb.r-legendary:not(.v-gold):not(.v-holo):not(.v-neg) .wk-dk-back
+) .wk-bkt {
+  --wk-bgtex-ink:#0a1232;
+  background-image:
+    linear-gradient(160deg,rgba(56,92,166,.18),rgba(24,48,120,.12)),
+    var(--wk-bgtex-src,none),
+    linear-gradient(165deg,#1f2f6e,#0a1232)!important;
+  background-size:100% 100%,cover,100% 100%!important;
+  background-position:center,center,center!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:screen,luminosity,normal!important;
+  filter:contrast(1.08) brightness(.96)!important;
+  mix-blend-mode:normal!important;
+  opacity:.85!important;
+}
 /* Special variants retain their own palette and effects. */
 html[data-wk-bgt^="ut"] body :is(.wk-pk.wk-pk.wk-pk.v-gold,.wk-al-fb.wk-al-fb.wk-al-fb.v-gold) :is(.wk-pk-bk,.wk-dk-back) .wk-bkt,
 html body [data-bgt^="ut"] :is(.wk-pk.wk-pk.wk-pk.v-gold,.wk-al-fb.wk-al-fb.wk-al-fb.v-gold) :is(.wk-pk-bk,.wk-dk-back) .wk-bkt {
@@ -778,11 +804,44 @@ html.wk-mobile-no-motion body [data-bgt^="ut"] .v-holo .wk-dk-back .wk-bkt{anima
 @media(max-width:620px){.wk-bgtex-form{grid-template-columns:1fr}.wk-bgtex-preview{min-height:280px}.wk-bgtex-preview>.wk-pk{width:180px!important;height:258px!important}}
 </style>
 
-<style id="wk-bkx-admin-categories-v631">
-/* Редакторы товара относятся только к выбранной вкладке примерочной. */
-html body .wk-bkx>.wk-bkx-admin { grid-column:1 / -1; min-width:0; width:100%; }
-html body .wk-bkx>.wk-bkx-admin>:first-child { margin-top:14px; }
+<style id="wk-bkx-admin-categories-v632">
+/* v632: The v631 full-width editor occupied both grid columns, while the left
+   sticky card preview remained visible over it on scroll. Keep editing entirely
+   in the right column and let the preview occupy the left track only. */
+html body .wk-bkx > .wk-bkx-stage {
+  grid-column:1;
+  grid-row:1 / span 2;
+  align-self:start;
+  min-width:0;
+  max-width:100%;
+}
+html body .wk-bkx > .wk-bkx-pick {
+  grid-column:2;
+  grid-row:1;
+  min-width:0;
+}
+html body .wk-bkx > .wk-bkx-admin {
+  grid-column:2;
+  grid-row:2;
+  min-width:0;
+  width:100%;
+}
+html body .wk-bkx > .wk-bkx-admin > :first-child { margin-top:14px; }
 html body .wk-bkx-admin :is(.wk-bk-up,.wk-bgtex-form,.wk-bk-form) { max-width:100%; }
+/* One column on narrow devices: preview first, items second, editor third. */
+@media (max-width:760px) {
+  html body .wk-bkx > .wk-bkx-stage,
+  html body .wk-bkx > .wk-bkx-pick,
+  html body .wk-bkx > .wk-bkx-admin {
+    grid-column:1;
+    grid-row:auto;
+  }
+  html body .wk-bkx > .wk-bkx-stage { position:static; }
+}
+/* For short laptop windows, avoid a tall sticky card covering the page header. */
+@media (min-width:761px) and (max-height:700px) {
+  html body .wk-bkx > .wk-bkx-stage { position:static; }
+}
 </style>
 </head>
 <body data-theme="mugiwara" data-active-tab="characters">
