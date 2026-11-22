@@ -902,6 +902,15 @@ html body #storyList .story-saga-folder:has(> .wk-saga-tag) > .character-name{pa
 /* Плитки статистики в фильтрах: «Филлерных» не помещалось в плитку */
 html body #storyFiltersPanel .story-stats .stat{padding-left:8px!important;padding-right:8px!important;-webkit-hyphens:auto;hyphens:auto;overflow-wrap:break-word}
 </style>
+<style id="wk-list-fv-fix">
+/* Режим «Список»: звёздочка избранного (абсолютная, справа) закрывалась значком статуса. Даём ей место и ставим по центру строки. */
+html body .character-list:not([class*="display-grid"]) .catalog-item-shell > .wk-has-fv{padding-right:46px!important}
+html body #charactersSection#charactersSection#charactersSection .character-list:not([class*="display-grid"]) .catalog-item-shell > .wk-has-fv.wk-has-fv,
+html body #fruitsSection#fruitsSection#fruitsSection .character-list:not([class*="display-grid"]) .catalog-item-shell > .wk-has-fv.wk-has-fv,
+html body #usefulSection#usefulSection#usefulSection .character-list:not([class*="display-grid"]) .catalog-item-shell > .wk-has-fv.wk-has-fv,
+html body #rewardsSection#rewardsSection#rewardsSection .character-list:not([class*="display-grid"]) .catalog-item-shell > .wk-has-fv.wk-has-fv{padding-right:46px!important}
+html body .character-list:not([class*="display-grid"]) .catalog-item-shell > .wk-has-fv > .wk-fv{top:50%!important;transform:translateY(-50%)!important}
+</style>
 </head>
 <body data-theme="mugiwara" data-active-tab="characters">
 <script id="wiki-cloud-config">
@@ -15394,8 +15403,10 @@ setInterval(function(){if(overlayOpen())exportInfo();},60000);
       const head=document.createElement('div');head.className='ch-filter-heading';
       head.innerHTML='<span class="ch-filter-heading-title">Статус</span><button type="button" class="ch-filter-reset" id="chFilterReset">↺ Сбросить фильтры</button>';
       stats.parentElement.insertBefore(head,stats);
-      head.querySelector('#chFilterReset').addEventListener('click',resetFilters);
+      head.querySelector('#chFilterReset').__wkRb=1;head.querySelector('#chFilterReset').addEventListener('click',resetFilters);
     }
+    /* То же для кнопки, сохранённой в HTML без обработчика */
+    {const rb=document.getElementById('chFilterReset');if(rb&&!rb.__wkRb){rb.__wkRb=1;rb.addEventListener('click',resetFilters);}}
   }
   function activeCount(){
     let n=0;
@@ -15599,10 +15610,12 @@ setInterval(function(){if(overlayOpen())exportInfo();},60000);
     if(!panel.querySelector(':scope>.ch-filter-footer')){
       const foot=document.createElement('div');foot.className='ch-filter-footer';
       foot.innerHTML='<button type="button" class="ch-filter-reset">↺ Сбросить фильтры</button>';
-      panel.appendChild(foot);foot.firstChild.addEventListener('click',()=>reset(key));
+      panel.appendChild(foot);foot.firstChild.__wkRb=1;foot.firstChild.addEventListener('click',()=>reset(key));
     }else if(panel.lastElementChild&&!panel.lastElementChild.classList.contains('ch-filter-footer')){
       panel.appendChild(panel.querySelector(':scope>.ch-filter-footer'));
     }
+    /* Кнопка могла попасть в HTML из сохранённой страницы — тогда обработчика у неё нет. Подключаем один раз. */
+    {const rb=panel.querySelector(':scope>.ch-filter-footer .ch-filter-reset');if(rb&&!rb.__wkRb){rb.__wkRb=1;rb.addEventListener('click',()=>reset(key));}}
     tidyChips(panel);
     panel.querySelectorAll('.story-stats .stat').forEach(st=>{[...st.childNodes].forEach(n=>{if(n.nodeType===3&&/:/.test(n.textContent))n.textContent=n.textContent.replace(/\u00a0/g,' ').replace(/:\s*$/,'').trim();});});
   }
@@ -23820,6 +23833,8 @@ html.ios-app body .container :is(button,.back-button):active{opacity:.6}
   function nums(v) { return (String(v == null ? '' : v).split('(')[0].match(/\d+/g) || []).map(Number).filter(function (n) { return n > 0; }); }
   function raw(rec, k) { return rec && rec.__wikiRaw && Object.prototype.hasOwnProperty.call(rec.__wikiRaw, k) ? rec.__wikiRaw[k] : (rec ? rec[k] : ''); }
   function progress() {
+    /* Админ/редактор смотрит каталог «как на арке» — статьи открываются по тому же прогрессу, что и список */
+    try { var va = window.__wikiViewAs && window.__wikiViewAs.active && window.__wikiViewAs.active(); if (va && (va.chapter || va.episode)) return { chapter: Number(va.chapter) || 0, episode: Number(va.episode) || 0 }; } catch (e) {}
     var p = window.__wikiSpoilerProgress;
     if (!p) { try { p = JSON.parse(localStorage.getItem('onePieceWikiSpoilerProgressV1') || '{}'); } catch (e) { p = {}; } }
     return { chapter: Number(p.chapter) || 0, episode: Number(p.episode) || 0 };
@@ -23877,7 +23892,7 @@ html.ios-app body .container :is(button,.back-button):active{opacity:.6}
     tick();
     var list = document.getElementById('storyList') || document.body;
     new MutationObserver(schedule).observe(list, { childList: true, subtree: true });
-    ['wiki:spoiler-progress-changed', 'wiki:spoiler-progress-restored', 'spoiler-audit-mode-changed', 'wiki:cloud-ready'].forEach(function (ev) { window.addEventListener(ev, schedule); document.addEventListener(ev, schedule); });
+    ['wiki:spoiler-progress-changed', 'wiki:spoiler-progress-restored', 'spoiler-audit-mode-changed', 'wiki:cloud-ready', 'wiki:view-as-changed'].forEach(function (ev) { window.addEventListener(ev, schedule); document.addEventListener(ev, schedule); });
     setInterval(tick, 2000);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
@@ -34622,6 +34637,14 @@ html body #storyList[data-wk-size="l"]{--sg-ac:repeat(auto-fill,minmax(300px,1fr
       if (p2 && p2 !== String(r.person_link || '').trim() && p2 === (img.getAttribute('src') || '').trim()) { k = { y: 'person2_image_position', x: 'person2_image_position_x', z: 'person2_image_zoom' }; second = true; }
     }
     var hz = hzOn(type);
+    /* Полоса-баннер арки в «Сюжете» читает strip_position / strip_position_x / strip_zoom, если у арки есть свой баннер
+       или уже заданы поля полосы, и никогда не читает hz_crop. Раньше правка писала в поля фото и возвращалась обратно. */
+    if (type === 'story' && card.querySelector(':scope > .story-card-thumb')) {
+      hz = false;
+      var su = String(r.strip_image == null ? '' : r.strip_image).trim();
+      var ownStrip = ['strip_position_x', 'strip_position', 'strip_zoom'].some(function (f) { return String(r[f] == null ? '' : r[f]).trim() !== ''; });
+      if ((su && su !== 'Нет' && su === String(img.getAttribute('src') || '').trim()) || ownStrip) k = { y: 'strip_position', x: 'strip_position_x', z: 'strip_zoom' };
+    }
     return { poster: false, type: type, id: rec.id, rec: rec, k: k, hz: hz, second: second, key: type + ':' + rec.id + ':' + k.x + (hz ? ':hz' : '') };
   }
   function peRange(it) { return it.poster ? [30, 300] : [100, 250]; }
