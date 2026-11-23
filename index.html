@@ -912,6 +912,12 @@ html body #rewardsSection#rewardsSection#rewardsSection .character-list:not([cla
 html body .character-list:not([class*="display-grid"]) .catalog-item-shell > .wk-has-fv > .wk-fv{top:50%!important;transform:translateY(-50%)!important}
 </style>
 <style id="wk-clear-history-fix">html body .wiki-clear-history:disabled{opacity:.45;cursor:default;pointer-events:none}</style>
+<style id="wk-story-poster-grad">/* Фильмы и обложки: карточки вертикальные, затемнение снизу, а не сбоку */
+html body #storyList.sg-on[data-wk-size="l"] :is(.saga-movies,.saga-covers).story-saga-item.has-story-image .story-card-thumb::after{background:linear-gradient(to top,rgba(4,6,10,.9) 0%,rgba(4,6,10,.62) 34%,rgba(4,6,10,.16) 58%,rgba(4,6,10,0) 72%)!important}
+</style>
+<style id="wk-story-few-arcs">/* Мало арок в саге: строки не растягиваются на всю высоту, расстояние как при большом числе арок */
+html body #storyList.sg-on .story-saga-group.sg-sel>.story-saga-arcs{align-content:start!important;align-items:start!important;grid-auto-rows:max-content!important;min-height:0!important}
+</style>
 </head>
 <body data-theme="mugiwara" data-active-tab="characters">
 <script id="wiki-cloud-config">
@@ -7302,6 +7308,12 @@ function storyArcProgressMarkup(arc) {
     `;
 }
 
+function storyKindLabel(arc) {
+    const saga = String((arc && arc.saga) || '').trim().replace(/ё/g, 'е').toLowerCase();
+    const mv = arc && (arc.movie === true || String(arc.movie).toLowerCase() === 'true' || saga === 'полнометражные фильмы');
+    return mv ? 'Фильм' : saga === 'обложки' ? 'Обложка' : 'Арка';
+}
+
 function openStoryArticle(id, source = "story") {
 
     storyArticleBackTarget =
@@ -7328,7 +7340,7 @@ function openStoryArticle(id, source = "story") {
 
         <h1>
 
-            Арка:
+            ${storyKindLabel(arc)}:
             ${escapeHTML(
                 arc.name
             )}
@@ -8729,7 +8741,7 @@ openStoryArticle=function(id,source='story'){
         __osa(id,source);
         setArticleState('story',id);
         const x=storyArcs.find(a=>a.id===id);
-        setCrumb('storyArticleBreadcrumbs',[{label:'Сюжет',action:"switchTab('story')"},{label:x?.saga||'Сюжет'},{label:x?`Арка: ${x.name}`:id}]);
+        setCrumb('storyArticleBreadcrumbs',[{label:'Сюжет',action:"switchTab('story')"},{label:x?.saga||'Сюжет'},{label:x?`${storyKindLabel(x)}: ${x.name}`:id}]);
         renderRelated('story',id);
         setArticleNav('storyArticleNav','story',id);
     };
@@ -12580,7 +12592,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     const safeSet = (key, value) => { try { localStorage.setItem(key, value); } catch (_) {} };
     const validMode = (key) => safeGet(key) === 'list' ? 'list' : 'grid';
 
-    let storyCatalogViewMode = validMode('onePieceWikiStoryCatalogViewModeV1');
+    let storyCatalogViewMode = 'grid'; /* Сюжет: только карточки */
     let usefulCatalogViewMode = validMode('onePieceWikiUsefulCatalogViewModeV1');
     let cabinCatalogViewMode = validMode('onePieceWikiCabinCatalogViewModeV1');
 
@@ -12669,8 +12681,7 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     }
 
     window.setStoryCatalogViewMode = function(mode) {
-        storyCatalogViewMode = mode === 'list' ? 'list' : 'grid';
-        safeSet('onePieceWikiStoryCatalogViewModeV1', storyCatalogViewMode);
+        storyCatalogViewMode = 'grid';
         applyStoryMode();
         if (typeof renderStoryAccordionFinal === 'function') renderStoryAccordionFinal();
     };
@@ -14767,7 +14778,7 @@ setInterval(function(){if(overlayOpen())exportInfo();},60000);
         if (match) id = match[1];
       }
       if (!id) {
-        const title = String(card.querySelector('.character-name')?.textContent || '').replace(/^Арка\s*:\s*/i, '').trim();
+        const title = String(card.querySelector('.character-name')?.textContent || '').replace(/^(?:Арка|Фильм|Обложка)\s*:\s*/i, '').trim();
         const found = storyArcs.find(a => String(a.name || '').trim() === title);
         if (found) id = String(found.id);
       }
@@ -14865,7 +14876,7 @@ setInterval(function(){if(overlayOpen())exportInfo();},60000);
       const arc = arcById(id);
       const article = document.getElementById('storyArticle');
       const heading = document.querySelector('#storyArticleContent h1');
-      const shownTitle = String(heading?.textContent || '').replace(/^Арка\s*:\s*/i, '').replace(/\s+/g, ' ').trim();
+      const shownTitle = String(heading?.textContent || '').replace(/^(?:Арка|Фильм|Обложка)\s*:\s*/i, '').replace(/\s+/g, ' ').trim();
       const expectedTitle = String(arc?.name || '').replace(/\s+/g, ' ').trim();
       if (arc && article && getComputedStyle(article).display !== 'none' && shownTitle === expectedTitle) {
         window.__wikiStoryPhotoCurrentId = String(id || '');
@@ -15042,7 +15053,7 @@ setInterval(function(){if(overlayOpen())exportInfo();},60000);
     const sagaStats={};
     all.forEach(record=>{if(isCover(record))return;const saga=sagaName(record),m=trackState(record,'manga',mangaNow),a=trackState(record,'anime',animeNow);const rel=[];if(a.known)rel.push(a);if(m.known&&!isFiller(record)&&!isCover(record))rel.push(m);const st=sagaStats[saga]||(sagaStats[saga]={total:0,done:0});st.total++;if(rel.length&&rel.every(x=>x.complete))st.done++;});
     const rows=all.map(record=>{
-      const id=String(value(record,'id')||''),name=String(value(record,'name')||id||'Арка').replace(/^Арка:\s*/i,'');
+      const id=String(value(record,'id')||''),name=String(value(record,'name')||id||'Арка').replace(/^(?:Арка|Фильм|Обложка):\s*/i,'');
       const saga=sagaName(record),cover=isCover(record),isNewSaga=!cover&&saga!==previousSaga;if(!cover)previousSaga=saga;
       const manga=trackState(record,'manga',mangaNow),anime=trackState(record,'anime',animeNow);
       const relevant=[];if(anime.known)relevant.push(anime);if(manga.known&&!isFiller(record)&&!isCover(record))relevant.push(manga);
@@ -16370,7 +16381,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
     var k = KINDS[type], all = list(k.list);
     var h1 = document.querySelector('#' + k.content + ' h1');
     var title = h1 ? h1.textContent.replace(/\s+/g, ' ').trim() : '';
-    if (type === 'story') title = title.replace(/^Арка:\s*/, '');
+    if (type === 'story') title = title.replace(/^(?:Арка|Фильм|Обложка):\s*/, '');
     var rec = currentIds[type] && all.find(function (c) { return String(c.id) === currentIds[type]; });
     if (!title) return null;
     if (rec && String(rec.name).replace(/\s+/g, ' ').trim() === title) return hidden(rec, type) ? null : rec;
@@ -22952,7 +22963,7 @@ html.wk-tilt-off.wk-gyro-on:not(.wk-cardfx-off) .character-item:not(.story-saga-
   function isPhone() { try { return /iPhone|iPod|Android.*Mobile|Windows Phone|IEMobile|Opera Mini/i.test(navigator.userAgent) || (window.matchMedia('(max-width:700px)').matches && window.matchMedia('(pointer:coarse)').matches); } catch (e) { return false; } }
   function mobileStill() { try { return isPhone() && localStorage.getItem(K.mobileStill) === 'on'; } catch (e) { return false; } }
   window.__wkMobileNoMotion = mobileStill;
-  var SCV = [['c', 'Персонажи'], ['s', 'Сюжет'], ['f', 'Плоды'], ['u', 'Полезное'], ['v', 'Избранное'], ['h', 'История']];
+  var SCV = [['c', 'Персонажи'], ['f', 'Плоды'], ['u', 'Полезное'], ['v', 'Избранное'], ['h', 'История']];
   function vget(k) { try { return localStorage.getItem(K.scv + k) === 'on'; } catch (e) { return false; } }
   function get(k) { try { return localStorage.getItem(k) !== 'off'; } catch (e) { return true; } }
   function put(k, on) { try { localStorage.setItem(k, on ? 'on' : 'off'); } catch (e) {} }
@@ -22963,6 +22974,7 @@ html.wk-tilt-off.wk-gyro-on:not(.wk-cardfx-off) .character-item:not(.story-saga-
     root.classList.toggle('wk-tilt-off', !get(K.tilt) || mobileStill());
     root.classList.toggle('wk-sc-off', !get(K.sc));
     SCV.forEach(function (t) { root.classList.toggle('wk-hz-' + t[0], vget(t[0])); });
+    root.classList.remove('wk-hz-s'); /* Сюжет: форма карточек больше не выбирается */
     try { window.dispatchEvent(new Event('wk-settings')); } catch (e) {}
   }
   applyAll();
@@ -31848,7 +31860,7 @@ html body .catalog-item-shell:has(>.wk-flip-btn,>.wk-flip2) .character-item>.wk-
 
   /* ---------- Сюжет: S / M / L ---------- */
   var SKEY = 'wkStorySizeV1';
-  function sSize() { try { var v = localStorage.getItem(SKEY); return v === 's' || v === 'l' ? v : 'm'; } catch (e) { return 'm'; } }
+  function sSize() { return 'l'; } /* Сюжет: размер всегда крупный */
   function storyControls() {
     var sec = document.getElementById('storySection'), list = document.getElementById('storyList'); if (!sec || !list) return;
     if (list.getAttribute('data-wk-size') !== sSize()) list.setAttribute('data-wk-size', sSize());
@@ -31861,7 +31873,7 @@ html body .catalog-item-shell:has(>.wk-flip-btn,>.wk-flip2) .character-item>.wk-
     }
     if (!box.__wkBound) { box.__wkBound = true; box.addEventListener('click', function (e) { var b = e.target.closest('[data-ssize]'); if (!b) return; try { localStorage.setItem(SKEY, b.getAttribute('data-ssize')); } catch (er) {} storyControls(); try { if (window.__wkHaptic) window.__wkHaptic(5); } catch (er) {} }); }
     var s = sSize(), grid = /display-grid/.test(list.className);
-    box.hidden = !grid;
+    box.hidden = true;
     box.querySelectorAll('[data-ssize]').forEach(function (b) { var on = b.getAttribute('data-ssize') === s; b.classList.toggle('active', on); b.setAttribute('aria-pressed', String(on)); });
   }
 
@@ -34931,6 +34943,7 @@ html body #storyList[data-wk-size="l"]{--sg-ac:repeat(auto-fill,minmax(300px,1fr
   function txt(b) { return (b.getAttribute('title') || b.getAttribute('aria-label') || b.textContent || '').trim(); }
   function summary(sec) {
     var row = rowOf(sec); if (!row) return '';
+    if (sec.id === 'storySection') return '';
     var m = row.querySelector('.character-view-mode-button.active'), s = row.querySelector('[data-size].active,[data-ssize].active');
     var a = []; if (m) a.push(m.textContent.trim()); if (s) a.push(s.textContent.trim()); return a.join(' · ');
   }
@@ -34981,7 +34994,8 @@ html body #storyList[data-wk-size="l"]{--sg-ac:repeat(auto-fill,minmax(300px,1fr
     var sizes = [].slice.call(row.querySelectorAll('[data-size],[data-ssize]')).map(function (b) { return reg(b, txt(b) || b.textContent, b.classList.contains('active'), false); });
     var fx = [].slice.call(row.querySelectorAll('[data-fxmode]')).map(function (b) { var on = b.classList.contains('active'); return reg(b, '✨ Эффекты: ' + (on ? 'всегда' : 'при наведении'), on, false); });
     var sc = [].slice.call(sec.querySelectorAll('.wk-sc-toggle')).slice(0, 1).map(function (b) { var hide = /Скрыть/i.test(b.textContent); return reg(b, hide ? 'Скрыть витрину' : 'Показать витрину', !hide, false); });
-    var HK = { charactersSection: 'c', storySection: 's', fruitsSection: 'f', usefulSection: 'u' }[cur], form = [];
+    var HK = { charactersSection: 'c', fruitsSection: 'f', usefulSection: 'u' }[cur], form = [];
+    if (cur === 'storySection') { modes = []; sizes = []; }
     if (HK) {
       var hzNow = document.documentElement.classList.contains('wk-hz-' + HK);
       var setHz = function (on) { try { localStorage.setItem('onePieceWikiHorizV1_' + HK, on ? 'on' : 'off'); } catch (e) {} document.documentElement.classList.toggle('wk-hz-' + HK, on); try { window.dispatchEvent(new Event('wk-settings')); } catch (e) {} };
