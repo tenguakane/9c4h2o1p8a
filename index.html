@@ -918,6 +918,90 @@ html body #storyList.sg-on[data-wk-size="l"] :is(.saga-movies,.saga-covers).stor
 <style id="wk-story-few-arcs">/* Мало арок в саге: строки не растягиваются на всю высоту, расстояние как при большом числе арок */
 html body #storyList.sg-on .story-saga-group.sg-sel>.story-saga-arcs{align-content:start!important;align-items:start!important;grid-auto-rows:max-content!important;min-height:0!important}
 </style>
+<style id="wk-ship-css">/* Верфь: свой корабль */
+.wk-shp{--shp-b:rgba(148,163,184,.2);--shp-bg:rgba(10,14,26,.55)}
+.wk-shp-intro{margin:0 0 12px}
+.wk-shp-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px}
+.wk-shp-nm{display:inline-flex;align-items:center;gap:8px;font:italic 700 var(--fs-xl)/1.2 Georgia,'Times New Roman',serif;color:#f1d27c}
+.wk-shp-nm em{font-style:italic;color:#8b97ab;font-weight:600}
+.wk-shp-ed{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;border:1px solid var(--shp-b);background:var(--shp-bg);color:#cbd5e1;font:600 14px/1 inherit;cursor:pointer}
+.wk-shp-ed:hover{border-color:#f1d27c;color:#f1d27c}
+.wk-shp-nmf{display:flex;gap:6px;flex-wrap:wrap;align-items:center;flex:1 1 320px}
+.wk-shp-nmf input{flex:1 1 180px;min-width:0;height:38px;padding:0 12px;border-radius:var(--r-md,10px);border:1px solid var(--shp-b);background:#0b1220;color:#f1f5f9;font:600 var(--fs-md,15px)/1 inherit}
+.wk-shp-nmf input:focus{outline:2px solid #f1d27c;outline-offset:1px}
+.wk-shp-lv{font:700 var(--fs-xs)/1 inherit;letter-spacing:.06em;color:#9fb0c8;padding:7px 11px;border-radius:999px;border:1px solid var(--shp-b);background:var(--shp-bg)}
+.wk-shp-scene{max-width:860px;margin:0 auto;border-radius:16px;overflow:hidden;border:1px solid var(--shp-b);box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.wk-shp-svg{display:block;width:100%;height:auto}
+.wk-shp-bp *{fill:none!important;stroke:#7cc4ff!important;stroke-opacity:.55!important;stroke-width:.9px!important;stroke-dasharray:3 3}
+.wk-shp-bp text{display:none}
+.wk-shp-bld{animation:wkShpPulse 1.8s ease-in-out infinite}
+@keyframes wkShpPulse{0%,100%{opacity:.35}50%{opacity:.8}}
+.wk-shp-bob{animation:wkShpBob 6s ease-in-out infinite}
+@keyframes wkShpBob{0%,100%{transform:translateY(0) rotate(-.6deg)}50%{transform:translateY(1.6px) rotate(.6deg)}}
+.wk-shp-wave{animation:wkShpWave 7s linear infinite}
+@keyframes wkShpWave{to{transform:translateX(-36px)}}
+.wk-shp-still .wk-shp-bob,.wk-shp-still .wk-shp-wave,html.wk-mobile-no-motion .wk-shp-bob,html.wk-mobile-no-motion .wk-shp-wave{animation:none}
+@media (prefers-reduced-motion:reduce){.wk-shp-bob,.wk-shp-wave,.wk-shp-bld{animation:none}.wk-shp-bld{opacity:.6}}
+.wk-shp-lad{display:flex;gap:4px;list-style:none;margin:12px 0 0;padding:0;counter-reset:none}
+.wk-shp-lad li{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:5px;font:600 var(--fs-xs)/1.15 inherit;color:#7c8aa0;text-align:center;position:relative}
+.wk-shp-lad li span{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;border:1px solid var(--shp-b);background:#0b1220;font-weight:800;z-index:1}
+.wk-shp-lad li:not(:last-child)::after{content:"";position:absolute;top:13px;left:calc(50% + 15px);right:calc(-50% + 15px);height:2px;background:rgba(148,163,184,.18)}
+.wk-shp-lad li.done{color:#86efac}.wk-shp-lad li.done span{background:#14532d;border-color:#22c55e;color:#dcfce7}
+.wk-shp-lad li.done:not(:last-child)::after{background:#22c55e}
+.wk-shp-lad li.cur{color:#f1d27c}.wk-shp-lad li.cur span{border-color:#f1d27c;color:#f1d27c;box-shadow:0 0 0 3px rgba(241,210,124,.15)}
+.wk-shp-job{margin:16px 0 0;padding:14px;border-radius:var(--r-lg,14px);border:1px solid rgba(241,210,124,.35);background:linear-gradient(180deg,rgba(241,210,124,.08),rgba(10,14,26,.55))}
+.wk-shp-job-h{display:flex;gap:12px;align-items:center}
+.wk-shp-job-h b{display:block;font-size:var(--fs-md,15px);color:#f8fafc}
+.wk-shp-job-h small{color:#cbd5e1;font-size:var(--fs-sm)}
+.wk-shp-saw{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:50%;background:rgba(241,210,124,.15);color:#f1d27c;font-size:20px;animation:wkShpSaw 1.2s ease-in-out infinite}
+@keyframes wkShpSaw{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(12deg)}}
+@media (prefers-reduced-motion:reduce){.wk-shp-saw{animation:none}}
+.wk-shp-bar{height:8px;margin:12px 0;border-radius:999px;background:rgba(148,163,184,.15);overflow:hidden}
+.wk-shp-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#c99a3a,#f1d27c);transition:width .9s linear}
+.wk-shp-job-a{display:flex;gap:8px;flex-wrap:wrap}
+.wk-shp-pts{display:flex;flex-direction:column;gap:8px}
+.wk-shp-pt{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r-lg,14px);border:1px solid var(--shp-b);background:var(--shp-bg)}
+.wk-shp-pt-b{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.wk-shp-pt-b b{color:#f1f5f9;font-size:var(--fs-md,15px)}
+.wk-shp-pt-b small{color:#8b97ab;font-size:var(--fs-xs)}
+.wk-shp-pt-a{flex:none;text-align:right;max-width:46%}
+.wk-shp-pt.done{opacity:.72}.wk-shp-pt.done .wk-shp-pt-b b{color:#bbf7d0}
+.wk-shp-pt.bld{border-color:rgba(241,210,124,.45)}
+.wk-shp-pt.can{border-color:rgba(34,197,94,.4)}
+.wk-shp-st{font:700 var(--fs-xs)/1.3 inherit;color:#8b97ab}
+.wk-shp-st.ok{color:#86efac}.wk-shp-st.bld{color:#f1d27c}
+.wk-shp-ms{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.wk-shp-m{display:inline-flex;align-items:center;gap:4px;padding:3px 8px 3px 4px;border-radius:999px;font:700 var(--fs-xs)/1 inherit;border:1px solid}
+.wk-shp-m.ok{color:#bbf7d0;border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.08)}
+.wk-shp-m.no{color:#fecaca;border-color:rgba(239,68,68,.35);background:rgba(239,68,68,.08)}
+.wk-shp-ic{flex:none;display:block}
+.wk-shp-inv{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.wk-shp-iv{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:var(--r-md,10px);border:1px solid var(--shp-b);background:var(--shp-bg)}
+.wk-shp-iv b{display:block;font-size:var(--fs-md,15px);color:#f8fafc;font-variant-numeric:tabular-nums}
+.wk-shp-iv small{display:block;font-size:var(--fs-xs);color:#8b97ab}
+.wk-shp-iv.zero{opacity:.5}
+.wk-shp-lots{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.wk-shp-lot{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 12px 12px;border-radius:var(--r-lg,14px);border:1px solid var(--shp-b);background:var(--shp-bg);text-align:center}
+.wk-shp-lot.need{border-color:rgba(241,210,124,.4)}
+.wk-shp-lot.got{opacity:.5}
+.wk-shp-lot b{color:#f1f5f9;font-size:var(--fs-md,15px);margin-top:4px}
+.wk-shp-q{font:800 var(--fs-lg)/1 inherit;color:#f1d27c;font-variant-numeric:tabular-nums}
+.wk-shp-nd{font-size:var(--fs-xs);color:#f1d27c;min-height:1.2em}
+.wk-shp-lot .wk-tx-btn{width:100%;margin-top:6px}
+.wk-shp-tag{position:absolute;top:8px;right:8px;font:800 10px/1 inherit;font-style:normal;padding:4px 6px;border-radius:6px}
+.wk-shp-tag.sale{background:#14532d;color:#bbf7d0}.wk-shp-tag.hi{background:#4c1d1d;color:#fecaca}
+.wk-shp-roll{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+.wk-shp-roll small{color:#8b97ab;font-size:var(--fs-xs)}
+.wk-shp-max{margin-top:16px}
+@media (max-width:600px){
+  .wk-shp-pt{flex-direction:column;align-items:stretch;gap:8px}
+  .wk-shp-pt-a{max-width:none;text-align:left}.wk-shp-pt-a .wk-tx-btn{width:100%}
+  .wk-shp-lad li{font-size:10px}.wk-shp-lad li span{width:22px;height:22px}
+  .wk-shp-lad li:not(:last-child)::after{top:11px}
+  .wk-shp-lots{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .wk-shp-job-a .wk-tx-btn{flex:1 1 100%}
+}
+</style>
 </head>
 <body data-theme="mugiwara" data-active-tab="characters">
 <script id="wiki-cloud-config">
@@ -19751,7 +19835,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
   /* Что хранится в tops/{uid}.deck. Это же видят другие участники в «Колоде друга». */
   function slimDeck(d) {
   var slim = { packs: d.packs || 0, pity: d.pity || 0, last: d.last || 0, open: d.open || null, owned: d.owned, tr: d.tr || {}, got: d.got || {}, show: d.show || [], showCap: d.showCap || 3, cos: d.cos || {}, frame: d.frame || '', bg: d.bg || '', alb: d.alb || '', back: d.back || '', hold: d.hold || {}, ev: d.ev || [], belli: d.belli || 0, ach: d.ach || {}, achB: d.achB || {}, daily: d.daily || null, shield: d.shield || 0, bless: d.bless || 0, pig: d.pig || null, ttl: d.ttl || null, inc: d.inc || {}, incD: d.incD || {}, incLog: d.incLog || [], spent: d.spent || 0, bought: d.bought || 0, crafted: d.crafted || 0, sold: d.sold || 0, qpay: d.qpay || 0, want: d.want || [], pages: d.pages || [], rev: d.rev || 0 };
-    ['pick', 'achOpen', 'feedSeen', 'maxBuy', 'mk', 'sld', 'spd', 'vBoost', 'vpity', 'lk', 'dl', 'pigX', 'pigE', 'auto', 'autoN', 'autoOff', 'autoLog','autoSeen', 'orn', 'bgt', 'avf', 'nkc', 'qsw', 'prof'].forEach(function (k) { if (d[k] !== undefined && d[k] !== null) slim[k] = d[k]; });
+    ['pick', 'achOpen', 'feedSeen', 'maxBuy', 'mk', 'sld', 'spd', 'vBoost', 'vpity', 'lk', 'dl', 'pigX', 'pigE', 'auto', 'autoN', 'autoOff', 'autoLog','autoSeen', 'orn', 'bgt', 'avf', 'nkc', 'qsw', 'prof', 'ship'].forEach(function (k) { if (d[k] !== undefined && d[k] !== null) slim[k] = d[k]; });
     return slim;
   }
   function parseDeckDoc(x) { if (!x || !x.deck) return null; try { return JSON.parse(x.deck); } catch (e) { return null; } }
@@ -36779,7 +36863,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     return cleanSH(v);
   }
   /* ===== Колода в облаке: tops/{uid}.deck. Правило одно: пишем только поверх той версии, которую видели; иначе действие отклоняется. ===== */
-  var CLOUD_KEYS = ['packs', 'pity', 'vpity', 'last', 'open', 'owned', 'tr', 'got', 'show', 'showCap', 'cos', 'frame', 'bg', 'alb', 'back', 'orn', 'hold', 'ev', 'belli', 'ach', 'achB', 'daily', 'shield', 'bless', 'pig', 'ttl', 'inc', 'incD', 'incLog', 'spent', 'bought', 'crafted', 'sold', 'qpay', 'want', 'pages', 'pick', 'achOpen', 'feedSeen', 'maxBuy', 'mk', 'sld', 'spd', 'vBoost', 'lk', 'dl', 'pigX', 'pigE', 'avf', 'nkc', 'qsw', 'prof', 'auto', 'autoN', 'autoOff', 'autoLog','autoSeen','bgt'];
+  var CLOUD_KEYS = ['packs', 'pity', 'vpity', 'last', 'open', 'owned', 'tr', 'got', 'show', 'showCap', 'cos', 'frame', 'bg', 'alb', 'back', 'orn', 'hold', 'ev', 'belli', 'ach', 'achB', 'daily', 'shield', 'bless', 'pig', 'ttl', 'inc', 'incD', 'incLog', 'spent', 'bought', 'crafted', 'sold', 'qpay', 'want', 'pages', 'pick', 'achOpen', 'feedSeen', 'maxBuy', 'mk', 'sld', 'spd', 'vBoost', 'lk', 'dl', 'pigX', 'pigE', 'avf', 'nkc', 'qsw', 'prof', 'auto', 'autoN', 'autoOff', 'autoLog','autoSeen','bgt','ship'];
   function cloudSig(o) { try { return JSON.stringify(CLOUD_KEYS.map(function (k) { return o[k] === undefined ? null : o[k]; })); } catch (e) { return ''; } }
   function deckRaw() { return CLOUD.ready ? CLOUD.json : '{}'; }
   function setOrn(v) { var de = document.documentElement, x = String(v); if (de.getAttribute('data-wk-orn') !== x) de.setAttribute('data-wk-orn', x); }
@@ -38929,7 +39013,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (a === 'compose') { compOpen(pane); return true; }
     if (a === 'showedit') { compOpen(pane, 'show'); return true; }
     if (a === 'wantedit') { compOpen(pane, 'want'); return true; }
-    if (a === 'priceeditor' || a === 'shtab' || a === 'sellall' || a === 'sell1' || a === 'buy' || a === 'mklist' || a === 'mkbuy' || a === 'mkcancel' || a === 'buyup' || a === 'daybuy' || a === 'dayroll' || a === 'buy2' || a === 'pigput' || a === 'pigbuy' || a === 'pigget' || a === 'pickup' || a === 'cosbuy' || a === 'cossel' || a === 'bkxbuy' || a === 'bkxwear' || a === 'nktgt' || a === 'bkadd' || a === 'bkedit' || a === 'bkcancel' || a === 'bkdel' || a === 'ornadd' || a === 'ornedit' || a === 'orncancel' || a === 'orndel' || a === 'ornreset' || a === 'orndef' || a === 'walladd' || a === 'walledit' || a === 'wallcancel' || a === 'walldel' || a === 'bgtexadd' || a === 'bgtexedit' || a === 'bgtexcancel' || a === 'bgtexdel' || a === 'giftpack' || a === 'giftbuy' || a === 'hold' || a === 'unhold') { shopClick(pane, a, b); return true; }
+    if (a === 'priceeditor' || a === 'shtab' || a === 'sellall' || a === 'sell1' || a === 'buy' || a === 'mklist' || a === 'mkbuy' || a === 'mkcancel' || a === 'buyup' || a === 'daybuy' || a === 'dayroll' || a === 'buy2' || a === 'pigput' || a === 'pigbuy' || a === 'pigget' || a === 'pickup' || a === 'cosbuy' || a === 'cossel' || a === 'bkxbuy' || a === 'bkxwear' || a === 'nktgt' || a === 'bkadd' || a === 'bkedit' || a === 'bkcancel' || a === 'bkdel' || a === 'ornadd' || a === 'ornedit' || a === 'orncancel' || a === 'orndel' || a === 'ornreset' || a === 'orndef' || a === 'walladd' || a === 'walledit' || a === 'wallcancel' || a === 'walldel' || a === 'bgtexadd' || a === 'bgtexedit' || a === 'bgtexcancel' || a === 'bgtexdel' || a === 'giftpack' || a === 'giftbuy' || a === 'hold' || a === 'unhold' || a === 'shipbuy' || a === 'shiproll' || a === 'shipbuild' || a === 'shipfast' || a === 'shipcancel' || a === 'shipname' || a === 'shipnameedit') { shopClick(pane, a, b); return true; }
     if (a === 'accept' || a === 'decline' || a === 'cancel') { if (a !== 'accept' || (TX.trades.filter(function (x) { return x.id === b.getAttribute('data-id'); })[0] || {}).gift || window.confirm('Принять обмен? Карточки сразу перейдут.')) txAction(pane, a, b.getAttribute('data-id'), b); return true; }
     return false;
   }
@@ -40105,9 +40189,10 @@ document.addEventListener('change',function(e) {
       save: '<ellipse cx="12" cy="7" rx="7" ry="3"/><path d="M5 7v5c0 1.700 3.100 3 7 3s7-1.300 7-3V7M5 12v5c0 1.700 3.100 3 7 3s7-1.300 7-3v-5"/>',
       sell: '<path d="M3 12V4h8l10 10-8 8z"/><path d="M7.500 8h.01"/>',
       auc: '<path d="M13 4l7 7M10.500 6.500l7 7M12 5.500l-5.500 5.500 3.500 3.500 5.500-5.500M8.500 13 3 18.500 5.500 21 11 15.500M13 21h8"/>',
-      stat: '<path d="M4 20V11M10 20V4M16 20v-7M21 20H3"/>'
+      stat: '<path d="M4 20V11M10 20V4M16 20v-7M21 20H3"/>',
+      ship: '<path d="M3 16h18l-2.5 4.5h-13z"/><path d="M12 3v13M12 4l6.5 9.5H12M11 6.5 6 13.5h5"/>'
     };
-    var TB = [['day', 'Лавка дня'], ['packs', 'Наборы'], ['boost', 'Усиления'], ['design', 'Оформление'], ['back', 'Рубашки'], ['save', 'Сбережения'], ['sell', 'Продажа'], ['auc', 'Аукцион'], ['stat', 'Итоги']];
+    var TB = [['day', 'Лавка дня'], ['packs', 'Наборы'], ['boost', 'Усиления'], ['design', 'Оформление'], ['back', 'Рубашки'], ['ship', 'Верфь'], ['save', 'Сбережения'], ['sell', 'Продажа'], ['auc', 'Аукцион'], ['stat', 'Итоги']];
     var curTab = TB.some(function (t) { return t[0] === DK.shTab; }) ? DK.shTab : 'day';
     var dayN = 0; try { dayN = dayShop(st, C).filter(function (q) { return q.k && !q.bought; }).length; } catch (e) { dayN = 0; }
     var ex = extrasHTML(C, st, bel);
@@ -40116,16 +40201,496 @@ document.addEventListener('change',function(e) {
       sell: sellBlock,
       packs: '<h3 class="wk-dk-h">Купить набор</h3><div class="wk-sh-pks">' + packs + '</div>' +
         '<p class="wk-sh-hint">Купленные наборы не ждут таймера, не сдвигают гарантию легенды и не превращают повторки в особые версии. Цена набора равна средней стоимости карточек в нём.</p>',
-      boost: ex.boost, back: ex.bk, save: ex.save, design: '<h3 class="wk-dk-h">Расширения витрины</h3><div class="wk-sh-pks">' + ups + '</div><p class="wk-sh-hint">Покупается один раз и навсегда. Другие участники тоже увидят все твои слоты.</p>' + ex.des, auc: auctionHTML(C, st), stat: shopStatsHTML(st)
+      boost: ex.boost, back: ex.bk, save: ex.save, design: '<h3 class="wk-dk-h">Расширения витрины</h3><div class="wk-sh-pks">' + ups + '</div><p class="wk-sh-hint">Покупается один раз и навсегда. Другие участники тоже увидят все твои слоты.</p>' + ex.des, auc: auctionHTML(C, st), stat: shopStatsHTML(st), ship: shipHTML(st)
     };
     var tabBar = '<div class="wk-sht" role="tablist" aria-label="Разделы магазина">' + TB.map(function (t) {
-      var on = t[0] === curTab, badge = t[0] === 'sell' && list.length ? '<i>' + list.length + '</i>' : t[0] === 'day' && dayN ? '<i>' + dayN + '</i>' : '';
+      var on = t[0] === curTab, badge = t[0] === 'sell' && list.length ? '<i>' + list.length + '</i>' : t[0] === 'day' && dayN ? '<i>' + dayN + '</i>' : t[0] === 'ship' ? shipBadge(st) : '';
       return '<button type="button" role="tab" class="wk-sht-b' + (on ? ' on' : '') + '" aria-selected="' + on + '" data-tx="shtab" data-t="' + t[0] + '"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + (TBI[t[0]] || '') + '</svg><span>' + t[1] + '</span>' + badge + '</button>';
     }).join('') + '</div>';
     return '<div class="wk-sh-bal"><span>Твой кошелёк</span><b><span class="berry-symbol" aria-hidden="true" title="Белли"></span><span class="wk-sh-num">' + String(Math.round(bel)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0') + '</span></b></div>' +
       (canEditPrices() ? '<div class="wk-pr-launch"><button type="button" data-tx="priceeditor">✎ Изменить цены товаров</button><span>Для администратора · цены для всех игроков</span></div>' : '') +
       (FREE() ? '<p class="wk-sh-free">Режим админа: всё в магазине для тебя бесплатно. Выключается в «Инструменты Димы».</p>' : '') + dealBar() + pickHTML(C, st) + tabBar + TB.map(function (t) { return '<div class="wk-sht-p' + (t[0] === curTab ? ' on' : '') + '" data-shp="' + t[0] + '">' + PN[t[0]] + '</div>'; }).join('');
   }
+  /* ======== Верфь: отрисовка корабля (SVG) ======== */
+  var SHP_PAINT = { hull: '#7a4a2a', trim: '#2e1d12', wale: '#c9a24a', bottom: '#8e3b2c', sail: '#efe5cc', flag: '#b8322a' };
+  var SHP_T = [
+    { id: 'boat', n: 'Лодка', L: 150, H: 22, D: 13, sr: 5, br: 9, masts: [{ x: .06, h: 100 }], rig: 'lug', ports: 0, rows: 0 },
+    { id: 'sloop', n: 'Шлюп', L: 215, H: 30, D: 17, sr: 9, br: 13, masts: [{ x: .1, h: 150 }], rig: 'sloop', ports: 0, rows: 0 },
+    { id: 'brig', n: 'Бриг', L: 268, H: 38, D: 21, sr: 13, br: 15, masts: [{ x: .2, h: 150 }, { x: -.14, h: 162 }], rig: 'square', ports: 4, rows: 1, cab: { w: .2, h: 15, win: 1 } },
+    { id: 'frigate', n: 'Фрегат', L: 318, H: 44, D: 25, sr: 15, br: 17, masts: [{ x: .27, h: 152 }, { x: .01, h: 170 }, { x: -.25, h: 146 }], rig: 'square', ports: 6, rows: 1, cab: { w: .19, h: 18, win: 1 }, bs: 58 },
+    { id: 'galleon', n: 'Галеон', L: 356, H: 50, D: 28, sr: 26, br: 20, masts: [{ x: .28, h: 156 }, { x: .02, h: 170 }, { x: -.25, h: 142 }], rig: 'square', ports: 7, rows: 2, cab: { w: .25, h: 30, win: 2 }, fore: { w: .15, h: 14 }, bs: 68 }
+  ];
+  var shpUid = 0;
+  function shpF(n) { return (Math.round(n * 10) / 10).toString(); }
+  function shpShade(hex, k) {
+    var m = /^#?([\da-f]{6})$/i.exec(String(hex || '')); if (!m) return hex;
+    var v = parseInt(m[1], 16), r = v >> 16, g = v >> 8 & 255, b = v & 255;
+    var f = function (c) { return Math.max(0, Math.min(255, Math.round(k < 0 ? c * (1 + k) : c + (255 - c) * k))); };
+    return '#' + ((1 << 24) | (f(r) << 16) | (f(g) << 8) | f(b)).toString(16).slice(1);
+  }
+  /* o: { t: уровень, built: {часть:1}, bld: строится, all: всё построено, paint, name, bg, still } */
+  function shpSVG(o) {
+    o = o || {};
+    var T = SHP_T[Math.max(0, Math.min(4, +o.t || 0))], P = {}, u = 'shp' + (++shpUid);
+    Object.keys(SHP_PAINT).forEach(function (k) { P[k] = (o.paint && /^#[\da-f]{6}$/i.test(o.paint[k] || '')) ? o.paint[k] : SHP_PAINT[k]; });
+    var W = 480, Hh = 300, wl = 246, cx = 232, L = T.L, sx = cx - L / 2, bx = cx + L / 2, dy = wl - T.H, ys = dy - T.sr, yb = dy - T.br, yc = dy + 4, D = T.D;
+    var has = function (p) { return o.all || !!(o.built && o.built[p]); };
+    var mode = function (p) { return has(p) ? 'ok' : o.bld === p ? 'bld' : 'bp'; };
+    var grp = function (p, inner) { if (!inner) return ''; var m = mode(p); return '<g class="wk-shp-' + m + '" data-part="' + p + '">' + inner + '</g>'; };
+    var deckAt = function (x) { var t = (x - sx) / L; t = Math.max(0, Math.min(1, t)); return (1 - t) * (1 - t) * ys + 2 * (1 - t) * t * yc + t * t * yb; };
+    var curve = function (off) { return 'M' + shpF(sx) + ' ' + shpF(ys + off) + 'Q' + shpF(cx) + ' ' + shpF(yc + off) + ' ' + shpF(bx) + ' ' + shpF(yb + off); };
+    var hullD = 'M' + shpF(sx) + ' ' + shpF(ys) + 'Q' + shpF(cx) + ' ' + shpF(yc) + ' ' + shpF(bx) + ' ' + shpF(yb) +
+      'C' + shpF(bx - 3) + ' ' + shpF(wl - T.H * .2) + ' ' + shpF(bx - L * .07) + ' ' + shpF(wl + D) + ' ' + shpF(bx - L * .22) + ' ' + shpF(wl + D) +
+      'L' + shpF(sx + L * .12) + ' ' + shpF(wl + D) + 'C' + shpF(sx + 3) + ' ' + shpF(wl + D * .7) + ' ' + shpF(sx - 5) + ' ' + shpF(wl - T.H * .35) + ' ' + shpF(sx) + ' ' + shpF(ys) + 'Z';
+    var s = '';
+    var vw = [320, 410, 450, 480, 480][SHP_T.indexOf(T)], vx = Math.max(0, Math.min(W - vw, cx - vw / 2 + (T.bs ? 20 : 0))), vh = vw * .625, mx = vx + vw * .82, my = Hh - vh + vh * .2, mr = vw / 24;
+    /* --- фон --- */
+    var bg = '<defs><linearGradient id="' + u + 'sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1630"/><stop offset=".62" stop-color="#29406b"/><stop offset="1" stop-color="#e3a45f"/></linearGradient>' +
+      '<linearGradient id="' + u + 'se" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d3a63"/><stop offset="1" stop-color="#081529"/></linearGradient>' +
+      '<linearGradient id="' + u + 'sl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".16"/><stop offset=".5" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#000" stop-opacity=".2"/></linearGradient>' +
+      '<linearGradient id="' + u + 'hl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient>' +
+      '<radialGradient id="' + u + 'gl"><stop offset="0" stop-color="#ffe7a3" stop-opacity=".95"/><stop offset="1" stop-color="#ffb84a" stop-opacity="0"/></radialGradient>' +
+      '<clipPath id="' + u + 'hc"><path d="' + hullD + '"/></clipPath></defs>' +
+      '<rect width="' + W + '" height="' + Hh + '" fill="url(#' + u + 'sk)"/>' +
+      '<circle cx="' + shpF(mx) + '" cy="' + shpF(my) + '" r="' + shpF(mr) + '" fill="#fbe6b4" opacity=".9"/><circle cx="' + shpF(mx) + '" cy="' + shpF(my) + '" r="' + shpF(mr * 1.7) + '" fill="#fbe6b4" opacity=".08"/>' +
+      [[40, 30], [92, 58], [150, 22], [210, 48], [300, 30], [440, 26], [60, 98], [262, 88], [452, 120], [120, 130], [130, 160], [104, 118], [330, 150], [356, 112], [176, 104], [236, 128], [380, 176], [300, 186]].map(function (q, i) { return '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="' + (i % 3 ? .9 : 1.3) + '" fill="#fff" opacity=".7"/>'; }).join('') +
+      '<rect y="' + (wl - 6) + '" width="' + W + '" height="' + (Hh - wl + 6) + '" fill="url(#' + u + 'se)"/>' +
+      '<path d="M0 ' + (wl - 6) + 'H' + W + '" stroke="#f3c27c" stroke-opacity=".35" stroke-width="1"/>' +
+      '<path d="M' + shpF(mx - 32) + ' ' + (wl - 3) + 'h64M' + shpF(mx - 18) + ' ' + (wl + 3) + 'h40M' + shpF(mx - 8) + ' ' + (wl + 9) + 'h22" stroke="#fbe6b4" stroke-opacity=".35" stroke-width="1.4" stroke-linecap="round"/>';
+    /* --- такелаж и мачты --- */
+    var mastX = T.masts.map(function (m) { return cx + m.x * L; });
+    var mastTop = T.masts.map(function (m, i) { return deckAt(mastX[i]) - m.h; });
+    var rig = '', masts = '', sails = '', flag = '', jib = '';
+    var sailFill = 'fill="' + P.sail + '"', sailLine = shpShade(P.sail, -.35);
+    function sq(x, yt, yb2, w) {
+      var w2 = w * 1.1;
+      return '<path d="M' + shpF(x - w / 2) + ' ' + shpF(yt) + 'L' + shpF(x + w / 2) + ' ' + shpF(yt) + 'Q' + shpF(x + w2 / 2 + 4) + ' ' + shpF((yt + yb2) / 2) + ' ' + shpF(x + w2 / 2) + ' ' + shpF(yb2) + 'Q' + shpF(x) + ' ' + shpF(yb2 + 5) + ' ' + shpF(x - w2 / 2) + ' ' + shpF(yb2) + 'Q' + shpF(x - w2 / 2 - 4) + ' ' + shpF((yt + yb2) / 2) + ' ' + shpF(x - w / 2) + ' ' + shpF(yt) + 'Z" ' + sailFill + ' stroke="' + sailLine + '" stroke-width=".8"/>' +
+        '<path d="M' + shpF(x - w / 2) + ' ' + shpF(yt) + 'L' + shpF(x + w / 2) + ' ' + shpF(yt) + 'Q' + shpF(x + w2 / 2 + 4) + ' ' + shpF((yt + yb2) / 2) + ' ' + shpF(x + w2 / 2) + ' ' + shpF(yb2) + 'Q' + shpF(x) + ' ' + shpF(yb2 + 5) + ' ' + shpF(x - w2 / 2) + ' ' + shpF(yb2) + 'Q' + shpF(x - w2 / 2 - 4) + ' ' + shpF((yt + yb2) / 2) + ' ' + shpF(x - w / 2) + ' ' + shpF(yt) + 'Z" fill="url(#' + u + 'sl)"/>' +
+        '<path d="M' + shpF(x - w * .17) + ' ' + shpF(yt + 1) + 'V' + shpF(yb2 + 2) + 'M' + shpF(x + w * .17) + ' ' + shpF(yt + 1) + 'V' + shpF(yb2 + 2) + '" stroke="' + sailLine + '" stroke-opacity=".35" stroke-width=".6"/>';
+    }
+    function yard(x, y, w) { return '<path d="M' + shpF(x - w / 2 - 3) + ' ' + shpF(y) + 'H' + shpF(x + w / 2 + 3) + '" stroke="#3b2516" stroke-width="2.2" stroke-linecap="round"/>'; }
+    T.masts.forEach(function (m, i) {
+      var x = mastX[i], y0 = deckAt(x), top = mastTop[i], h = m.h;
+      masts += '<path d="M' + shpF(x) + ' ' + shpF(y0 + 4) + 'V' + shpF(top) + '" stroke="#4a2e1b" stroke-width="' + (T.rig === 'lug' ? 2.6 : 3.6) + '" stroke-linecap="round"/>' +
+        '<path d="M' + shpF(x - .8) + ' ' + shpF(y0) + 'V' + shpF(top + 2) + '" stroke="#8a5a35" stroke-width="1" stroke-opacity=".7"/>';
+      if (T.rig === 'square' && !(T.masts.length > 2 && i === T.masts.length - 1)) {
+        rig += '<path d="M' + shpF(x) + ' ' + shpF(top + 4) + 'L' + shpF(x - L * .09) + ' ' + shpF(deckAt(x - L * .09)) + 'M' + shpF(x) + ' ' + shpF(top + 4) + 'L' + shpF(x + L * .09) + ' ' + shpF(deckAt(x + L * .09)) + 'M' + shpF(x) + ' ' + shpF(top + h * .3) + 'L' + shpF(x - L * .07) + ' ' + shpF(deckAt(x - L * .07)) + '" stroke="#1b120c" stroke-opacity=".7" stroke-width=".7"/>';
+        var lv = [[.2, .47], [.5, .72], [.75, .9]], ww = L * (T.L > 300 ? .16 : .19);
+        masts += lv.map(function (q, j) { return yard(x, y0 - h * q[1], ww * [1, .84, .66][j]); }).join('') + yard(x, y0 - h * .2, ww * 1.06);
+        sails += lv.map(function (q, j) { return sq(x, y0 - h * q[1] + 1, y0 - h * q[0] - (j ? 2 : 0), ww * [1, .84, .66][j]); }).join('');
+        masts += '<path d="M' + shpF(x - 5) + ' ' + shpF(y0 - h * .5) + 'h10" stroke="#3b2516" stroke-width="2.6"/>';
+      }
+    });
+    var mi = T.masts.length > 1 ? 1 : 0, fx = mastX[0], ftop = mastTop[0];
+    if (T.rig === 'lug') {
+      var x0 = mastX[0], y00 = deckAt(x0);
+      sails += '<path d="M' + shpF(x0 - 30) + ' ' + shpF(ftop + 22) + 'L' + shpF(x0 + 18) + ' ' + shpF(ftop + 4) + 'Q' + shpF(x0 + 34) + ' ' + shpF(y00 - 46) + ' ' + shpF(x0 + 36) + ' ' + shpF(y00 - 16) + 'L' + shpF(x0 - 34) + ' ' + shpF(y00 - 14) + 'Q' + shpF(x0 - 26) + ' ' + shpF(y00 - 50) + ' ' + shpF(x0 - 30) + ' ' + shpF(ftop + 22) + 'Z" ' + sailFill + ' stroke="' + sailLine + '" stroke-width=".8"/>' +
+        '<path d="M' + shpF(x0 - 30) + ' ' + shpF(ftop + 22) + 'L' + shpF(x0 + 18) + ' ' + shpF(ftop + 4) + 'Q' + shpF(x0 + 34) + ' ' + shpF(y00 - 46) + ' ' + shpF(x0 + 36) + ' ' + shpF(y00 - 16) + 'L' + shpF(x0 - 34) + ' ' + shpF(y00 - 14) + 'Q' + shpF(x0 - 26) + ' ' + shpF(y00 - 50) + ' ' + shpF(x0 - 30) + ' ' + shpF(ftop + 22) + 'Z" fill="url(#' + u + 'sl)"/>' +
+        '<path d="M' + shpF(x0 - 33) + ' ' + shpF(ftop + 24) + 'L' + shpF(x0 + 21) + ' ' + shpF(ftop + 3) + 'M' + shpF(x0 - 36) + ' ' + shpF(y00 - 14) + 'H' + shpF(x0 + 38) + '" stroke="#3b2516" stroke-width="1.8" stroke-linecap="round"/>';
+      rig += '<path d="M' + shpF(x0) + ' ' + shpF(ftop + 2) + 'L' + shpF(bx - 6) + ' ' + shpF(yb + 2) + 'M' + shpF(x0) + ' ' + shpF(ftop + 2) + 'L' + shpF(sx + 8) + ' ' + shpF(ys + 2) + '" stroke="#1b120c" stroke-opacity=".6" stroke-width=".7"/>';
+    } else if (T.rig === 'sloop') {
+      var x1 = mastX[0], y1 = deckAt(x1), tp = mastTop[0];
+      sails += '<path d="M' + shpF(x1 - 3) + ' ' + shpF(tp + 14) + 'L' + shpF(x1 - L * .3) + ' ' + shpF(tp + 4) + 'Q' + shpF(x1 - L * .36) + ' ' + shpF(y1 - 60) + ' ' + shpF(x1 - L * .4) + ' ' + shpF(y1 - 18) + 'L' + shpF(x1 - 3) + ' ' + shpF(y1 - 16) + 'Z" ' + sailFill + ' stroke="' + sailLine + '" stroke-width=".8"/>' +
+        '<path d="M' + shpF(x1 - 3) + ' ' + shpF(tp + 14) + 'L' + shpF(x1 - L * .3) + ' ' + shpF(tp + 4) + 'Q' + shpF(x1 - L * .36) + ' ' + shpF(y1 - 60) + ' ' + shpF(x1 - L * .4) + ' ' + shpF(y1 - 18) + 'L' + shpF(x1 - 3) + ' ' + shpF(y1 - 16) + 'Z" fill="url(#' + u + 'sl)"/>' +
+        '<path d="M' + shpF(x1 + 3) + ' ' + shpF(tp + 8) + 'L' + shpF(bx + 2) + ' ' + shpF(yb - 2) + 'Q' + shpF(x1 + L * .2) + ' ' + shpF(y1 - 14) + ' ' + shpF(x1 + 4) + ' ' + shpF(y1 - 16) + 'Q' + shpF(x1 + 14) + ' ' + shpF(tp + 60) + ' ' + shpF(x1 + 3) + ' ' + shpF(tp + 8) + 'Z" ' + sailFill + ' stroke="' + sailLine + '" stroke-width=".8"/>' +
+        '<path d="M' + shpF(x1 - 2) + ' ' + shpF(tp + 14) + 'L' + shpF(x1 - L * .31) + ' ' + shpF(tp + 3) + 'M' + shpF(x1) + ' ' + shpF(y1 - 16) + 'L' + shpF(x1 - L * .42) + ' ' + shpF(y1 - 18) + '" stroke="#3b2516" stroke-width="2" stroke-linecap="round"/>';
+      rig += '<path d="M' + shpF(x1) + ' ' + shpF(tp + 3) + 'L' + shpF(bx + 2) + ' ' + shpF(yb - 2) + 'M' + shpF(x1) + ' ' + shpF(tp + 3) + 'L' + shpF(sx + 10) + ' ' + shpF(ys + 1) + '" stroke="#1b120c" stroke-opacity=".7" stroke-width=".7"/>';
+    } else {
+      var bsx = bx + (T.bs || 0) * .92, bsy = yb - (T.bs || 0) * .36;
+      if (T.bs) {
+        jib += '<path d="M' + shpF(fx + 2) + ' ' + shpF(ftop + 26) + 'L' + shpF(bsx - 4) + ' ' + shpF(bsy + 2) + 'Q' + shpF(fx + (bsx - fx) * .55) + ' ' + shpF(yb - 10) + ' ' + shpF(fx + 10) + ' ' + shpF(deckAt(fx) - 40) + 'Z" ' + sailFill + ' stroke="' + sailLine + '" stroke-width=".8"/>' +
+          '<path d="M' + shpF(fx + 2) + ' ' + shpF(ftop + 52) + 'L' + shpF(bx + (T.bs || 0) * .5) + ' ' + shpF(yb - (T.bs || 0) * .2) + 'Q' + shpF(fx + (bx - fx) * .6) + ' ' + shpF(yb - 4) + ' ' + shpF(fx + 12) + ' ' + shpF(deckAt(fx) - 24) + 'Z" ' + sailFill + ' stroke="' + sailLine + '" stroke-width=".8"/>';
+        rig += '<path d="M' + shpF(fx) + ' ' + shpF(ftop + 3) + 'L' + shpF(bsx) + ' ' + shpF(bsy) + 'M' + shpF(bsx) + ' ' + shpF(bsy) + 'L' + shpF(bx - 6) + ' ' + shpF(wl - 4) + '" stroke="#1b120c" stroke-opacity=".7" stroke-width=".7"/>';
+      } else {
+        jib += '<path d="M' + shpF(fx + 2) + ' ' + shpF(ftop + 30) + 'L' + shpF(bx + 2) + ' ' + shpF(yb - 2) + 'Q' + shpF(fx + (bx - fx) * .5) + ' ' + shpF(yb - 6) + ' ' + shpF(fx + 8) + ' ' + shpF(deckAt(fx) - 30) + 'Z" ' + sailFill + ' stroke="' + sailLine + '" stroke-width=".8"/>';
+        rig += '<path d="M' + shpF(fx) + ' ' + shpF(ftop + 3) + 'L' + shpF(bx + 2) + ' ' + shpF(yb - 2) + '" stroke="#1b120c" stroke-opacity=".7" stroke-width=".7"/>';
+      }
+      if (T.masts.length > 2) {
+        var ax = mastX[T.masts.length - 1], ay = deckAt(ax), at = mastTop[T.masts.length - 1];
+        sails += '<path d="M' + shpF(ax - 3) + ' ' + shpF(at + 12) + 'L' + shpF(ax - L * .17) + ' ' + shpF(at + 2) + 'Q' + shpF(ax - L * .2) + ' ' + shpF(ay - 60) + ' ' + shpF(ax - L * .22) + ' ' + shpF(ay - 26) + 'L' + shpF(ax - 3) + ' ' + shpF(ay - 24) + 'Z" ' + sailFill + ' stroke="' + sailLine + '" stroke-width=".8"/>' +
+          '<path d="M' + shpF(ax) + ' ' + shpF(ay - 24) + 'L' + shpF(ax - L * .24) + ' ' + shpF(ay - 26) + 'M' + shpF(ax - 2) + ' ' + shpF(at + 12) + 'L' + shpF(ax - L * .18) + ' ' + shpF(at + 1) + '" stroke="#3b2516" stroke-width="1.8" stroke-linecap="round"/>';
+      }
+      for (var k = 0; k < T.masts.length - 1; k++) rig += '<path d="M' + shpF(mastX[k + 1]) + ' ' + shpF(mastTop[k + 1] + 3) + 'L' + shpF(mastX[k]) + ' ' + shpF(mastTop[k] + 30) + '" stroke="#1b120c" stroke-opacity=".6" stroke-width=".6"/>';
+    }
+    sails = jib + sails;
+    var tallest = 0; mastTop.forEach(function (t, i) { if (t < mastTop[tallest]) tallest = i; });
+    var flx = mastX[tallest], fly = mastTop[tallest];
+    flag = '<path d="M' + shpF(flx) + ' ' + shpF(fly) + 'v-10" stroke="#4a2e1b" stroke-width="1.6"/><path d="M' + shpF(flx) + ' ' + shpF(fly - 10) + 'q7 -3 13 0t13 0l-3 4 3 4q-6 -3 -13 0t-13 0z" fill="' + P.flag + '" stroke="' + shpShade(P.flag, -.4) + '" stroke-width=".6"/>';
+    /* --- корпус --- */
+    var planks = '';
+    for (var off = 5; off < T.H + D; off += 5.5) planks += '<path d="' + curve(off) + '" fill="none" stroke="#000" stroke-opacity=".22" stroke-width=".7"/>';
+    var butt = ''; for (var q = 0; q < 9; q++) { var px = sx + L * (.08 + q * .1), po = 5.5 * (1 + q % 4); butt += '<path d="M' + shpF(px) + ' ' + shpF(deckAt(px) + po) + 'v5.5" stroke="#000" stroke-opacity=".18" stroke-width=".6"/>'; }
+    var band = T.rows ? 15 + (T.rows - 1) * 13 : 9;
+    var hull = '<path d="' + hullD + '" fill="' + P.hull + '"/>' +
+      '<g clip-path="url(#' + u + 'hc)">' + planks + butt +
+      '<path d="' + curve(3) + 'L' + shpF(bx) + ' ' + shpF(yb + 3 + band) + 'Q' + shpF(cx) + ' ' + shpF(yc + 3 + band) + ' ' + shpF(sx) + ' ' + shpF(ys + 3 + band) + 'Z" fill="' + P.trim + '"/>' +
+      '<path d="' + curve(4 + band) + '" fill="none" stroke="' + P.wale + '" stroke-width="2"/>' +
+      '<path d="' + curve(2.2) + '" fill="none" stroke="' + P.wale + '" stroke-width="1" stroke-opacity=".8"/>' +
+      '<rect x="0" y="' + shpF(wl - 2) + '" width="' + W + '" height="60" fill="' + P.bottom + '"/>' +
+      '<path d="M0 ' + shpF(wl - 2) + 'H' + W + '" stroke="#f4e3c2" stroke-width="1.2" stroke-opacity=".8"/>' +
+      '<path d="' + hullD + '" fill="url(#' + u + 'hl)"/></g>' +
+      '<path d="' + hullD + '" fill="none" stroke="#1a0f08" stroke-width="1.1"/>';
+    if (T.ports) {
+      for (var r = 0; r < T.rows; r++) for (var n = 0; n < T.ports - r; n++) {
+        var gx = sx + L * (.2 + .6 * (n + r * .5) / Math.max(1, T.ports - 1)), gy = deckAt(gx) + 6 + r * 13;
+        hull += '<rect x="' + shpF(gx - 3.4) + '" y="' + shpF(gy) + '" width="6.8" height="6" rx=".8" fill="' + shpShade(P.trim, .25) + '" stroke="' + P.wale + '" stroke-width=".6" data-port="1"/>';
+      }
+    }
+    if (o.name && (has('hull') || o.all)) {
+      var nx = bx - L * .16, ny = deckAt(nx) + band + 12;
+      hull += '<text x="' + shpF(nx) + '" y="' + shpF(Math.min(ny, wl - 5)) + '" text-anchor="middle" font-size="' + (L > 250 ? 8 : 6.5) + '" font-family="Georgia,serif" font-style="italic" font-weight="700" fill="' + P.wale + '" letter-spacing=".4">' + String(o.name).replace(/[<>&"]/g, '') + '</text>';
+    }
+    var frame = '<path d="M' + shpF(sx + L * .1) + ' ' + shpF(wl + D) + 'H' + shpF(bx - L * .2) + 'C' + shpF(bx - L * .07) + ' ' + shpF(wl + D) + ' ' + shpF(bx - 3) + ' ' + shpF(wl - T.H * .2) + ' ' + shpF(bx) + ' ' + shpF(yb) + 'M' + shpF(sx + L * .12) + ' ' + shpF(wl + D) + 'C' + shpF(sx + 3) + ' ' + shpF(wl + D * .7) + ' ' + shpF(sx - 5) + ' ' + shpF(wl - T.H * .35) + ' ' + shpF(sx) + ' ' + shpF(ys) + '" fill="none" stroke="#9c6a3c" stroke-width="3.2" stroke-linecap="round"/>';
+    for (var f = 1; f < 12; f++) { var rx = sx + L * f / 12, rt = deckAt(rx); frame += '<path d="M' + shpF(rx) + ' ' + shpF(rt) + 'Q' + shpF(rx - 4) + ' ' + shpF((rt + wl + D) / 2) + ' ' + shpF(rx) + ' ' + shpF(wl + D - 1) + '" fill="none" stroke="#b07c4a" stroke-width="1.8"/>'; }
+    frame += '<path d="' + curve(0) + '" fill="none" stroke="#b07c4a" stroke-width="2"/>';
+    /* --- палуба, надстройки --- */
+    var deck = '<path d="' + curve(0) + 'L' + shpF(bx) + ' ' + shpF(yb - 6) + 'Q' + shpF(cx) + ' ' + shpF(yc - 6) + ' ' + shpF(sx) + ' ' + shpF(ys - 6) + 'Z" fill="' + shpShade(P.trim, .12) + '" stroke="#1a0f08" stroke-width=".8"/>' +
+      '<path d="' + curve(-6) + '" fill="none" stroke="' + P.wale + '" stroke-width="1.2"/>';
+    for (var d2 = 1; d2 < 16; d2++) { var dx = sx + L * d2 / 16; deck += '<path d="M' + shpF(dx) + ' ' + shpF(deckAt(dx) - 6) + 'v6" stroke="' + P.wale + '" stroke-opacity=".55" stroke-width=".7"/>'; }
+    var cab = '';
+    if (T.cab) {
+      var cw = L * T.cab.w, ch = T.cab.h, c0 = sx - 3, c1 = sx + cw, ct = ys - ch;
+      cab = '<path d="M' + shpF(c0) + ' ' + shpF(ys + 2) + 'L' + shpF(c0 - 4) + ' ' + shpF(ct) + 'H' + shpF(c1 - 4) + 'L' + shpF(c1) + ' ' + shpF(deckAt(c1)) + 'Z" fill="' + P.hull + '" stroke="#1a0f08" stroke-width=".9"/>' +
+        '<path d="M' + shpF(c0 - 5) + ' ' + shpF(ct) + 'H' + shpF(c1 - 3) + '" stroke="' + P.wale + '" stroke-width="2"/>' +
+        '<path d="M' + shpF(c0 - 4) + ' ' + shpF(ct - 5) + 'H' + shpF(c1 - 5) + 'M' + shpF(c0 - 4) + ' ' + shpF(ct - 5) + 'v5M' + shpF(c1 - 5) + ' ' + shpF(ct - 5) + 'v5" stroke="' + P.wale + '" stroke-width="1" fill="none"/>';
+      for (var wr = 0; wr < T.cab.win; wr++) for (var wi = 0; wi < 4; wi++) {
+        var wx = c0 + 4 + wi * (cw - 6) / 4, wy = ct + 4 + wr * 12;
+        cab += '<rect x="' + shpF(wx) + '" y="' + shpF(wy) + '" width="' + shpF((cw - 6) / 4 - 3) + '" height="6" rx="1.2" fill="#ffd56b" stroke="#5a3a1c" stroke-width=".6"/>';
+      }
+    }
+    var fore = '';
+    if (T.fore) {
+      var fw = L * T.fore.w, f1 = bx - 4, f0 = bx - fw, ft = yb - T.fore.h;
+      fore = '<path d="M' + shpF(f0) + ' ' + shpF(deckAt(f0)) + 'L' + shpF(f0 + 3) + ' ' + shpF(ft) + 'H' + shpF(f1 + 2) + 'L' + shpF(f1) + ' ' + shpF(yb + 2) + 'Z" fill="' + P.hull + '" stroke="#1a0f08" stroke-width=".9"/>' +
+        '<path d="M' + shpF(f0 + 2) + ' ' + shpF(ft) + 'H' + shpF(f1 + 3) + '" stroke="' + P.wale + '" stroke-width="2"/>' +
+        '<path d="M' + shpF(f0 + 8) + ' ' + shpF(ft + 5) + 'h' + shpF(fw - 16) + '" stroke="' + P.wale + '" stroke-width="1" stroke-dasharray="3 3"/>';
+    }
+    var guns = '';
+    if (T.ports) {
+      for (var r2 = 0; r2 < T.rows; r2++) for (var n2 = 0; n2 < T.ports - r2; n2++) {
+        var gx2 = sx + L * (.2 + .6 * (n2 + r2 * .5) / Math.max(1, T.ports - 1)), gy2 = deckAt(gx2) + 6 + r2 * 13;
+        guns += '<rect x="' + shpF(gx2 - 3.4) + '" y="' + shpF(gy2) + '" width="6.8" height="6" rx=".8" fill="#0b0805"/><path d="M' + shpF(gx2 - 1) + ' ' + shpF(gy2 + 3) + 'h7" stroke="#26282c" stroke-width="2.6" stroke-linecap="round"/>';
+      }
+    }
+    var rudder = '<path d="M' + shpF(sx + 2) + ' ' + shpF(wl - T.H * .45) + 'L' + shpF(sx - 7) + ' ' + shpF(wl - T.H * .3) + 'L' + shpF(sx - 9) + ' ' + shpF(wl + D * .85) + 'L' + shpF(sx + 6) + ' ' + shpF(wl + D * .85) + 'Z" fill="' + shpShade(P.hull, -.25) + '" stroke="#1a0f08" stroke-width=".8"/>';
+    var oars = '';
+    if (T.id === 'boat') [-.14, .16].forEach(function (k2) { var ox = cx + k2 * L, oy = deckAt(ox); oars += '<path d="M' + shpF(ox + 8) + ' ' + shpF(oy - 6) + 'L' + shpF(ox - 18) + ' ' + shpF(wl + 6) + '" stroke="#8a5a35" stroke-width="2" stroke-linecap="round"/><ellipse cx="' + shpF(ox - 20) + '" cy="' + shpF(wl + 7) + '" rx="5" ry="2" transform="rotate(-55 ' + shpF(ox - 20) + ' ' + shpF(wl + 7) + ')" fill="#8a5a35"/>'; });
+    var bows = T.bs ? '<path d="M' + shpF(bx - 10) + ' ' + shpF(yb + 4) + 'L' + shpF(bx + T.bs * .92) + ' ' + shpF(yb - T.bs * .36) + '" stroke="#4a2e1b" stroke-width="3" stroke-linecap="round"/>' : '';
+    var lamps = '';
+    if (T.cab) {
+      var lx = sx - 6, ly = ys - T.cab.h - 10;
+      lamps = '<circle cx="' + shpF(lx) + '" cy="' + shpF(ly) + '" r="11" fill="url(#' + u + 'gl)"/><path d="M' + shpF(lx) + ' ' + shpF(ly + 5) + 'v4" stroke="#3b2516" stroke-width="1.4"/><path d="M' + shpF(lx - 2.6) + ' ' + shpF(ly - 4) + 'h5.2l1 8h-7.2z" fill="#ffd56b" stroke="#5a3a1c" stroke-width=".8"/><path d="M' + shpF(lx - 2) + ' ' + shpF(ly - 6) + 'h4l-2 -2z" fill="#5a3a1c"/>';
+    }
+    /* --- сборка по частям --- */
+    var P2 = {}; (o.parts || []).forEach(function (p) { P2[p] = 1; });
+    var on = function (p) { return !o.parts || P2[p]; };
+    var showFrame = !has('hull') && (has('keel') || o.bld === 'keel' || o.bld === 'hull');
+    var ship = '';
+    ship += grp('mast', on('mast') ? rig + masts : '');
+    ship += on('bowsprit') ? grp('bowsprit', bows) : '';
+    ship += grp('sail', on('sail') ? sails : '');
+    ship += grp('mast', on('mast') ? flag : '');
+    ship += on('cabin') ? grp('cabin', cab) : '';
+    ship += on('fore') ? grp('fore', fore) : '';
+    if (showFrame) ship += '<g class="wk-shp-' + (has('keel') ? 'ok' : 'bld') + '">' + frame + '</g>';
+    ship += grp('hull', hull);
+    ship += on('deck') ? grp('deck', deck) : '';
+    ship += on('guns') ? grp('guns', guns) : '';
+    ship += on('rudder') ? grp('rudder', rudder) : '';
+    ship += on('oars') ? grp('oars', oars) : '';
+    ship += on('lamps') ? grp('lamps', lamps) : '';
+    var still = o.still ? ' wk-shp-still' : '';
+    s = '<svg class="wk-shp-svg' + still + '" viewBox="' + shpF(vx) + ' ' + shpF(Hh - vh) + ' ' + vw + ' ' + shpF(vh) + '" role="img" aria-label="' + (o.label || T.n) + '" xmlns="http://www.w3.org/2000/svg">' + bg +
+      '<g class="wk-shp-bob" style="transform-origin:' + cx + 'px ' + wl + 'px">' + ship + '</g>' +
+      '<g class="wk-shp-wave"><path d="M-40 ' + (wl + 2) + (function () { var p = ''; for (var i = 0; i < 16; i++) p += 'q' + 18 + ' ' + -4 + ' ' + 36 + ' 0'; return p; })() + 'V' + Hh + 'H-40Z" fill="#12305a" fill-opacity=".72"/>' +
+      '<path d="M-40 ' + (wl + 2) + (function () { var p = ''; for (var i = 0; i < 16; i++) p += 'q18 -4 36 0'; return p; })() + '" fill="none" stroke="#9cc6ff" stroke-opacity=".35" stroke-width="1"/>' +
+      '<path d="M-20 ' + (wl + 18) + (function () { var p = ''; for (var i = 0; i < 16; i++) p += 'q16 -3 32 0'; return p; })() + '" fill="none" stroke="#9cc6ff" stroke-opacity=".14" stroke-width="1"/></g></svg>';
+    return s;
+  }
+  /* ======== Верфь: материалы, этапы постройки, рынок ======== */
+  var SHP_MAT = {
+    wood: { n: 'Доски', p: 400 }, tar: { n: 'Смола', p: 600 }, rope: { n: 'Канаты', p: 500 },
+    canvas: { n: 'Парусина', p: 700 }, iron: { n: 'Железо', p: 900 }, bronze: { n: 'Бронза', p: 3000 }
+  };
+  var SHP_MAT_ORDER = ['wood', 'tar', 'rope', 'canvas', 'iron', 'bronze'];
+  var SHP_ICO = {
+    wood: '<rect x="3" y="14" width="18" height="4" rx="1" fill="#a8703f"/><rect x="4" y="9.5" width="16" height="4" rx="1" fill="#c08550"/><rect x="5" y="5" width="14" height="4" rx="1" fill="#d39a62"/><path d="M7 7h5M8 11.5h7M6 16h9" stroke="#6e4524" stroke-width=".8"/>',
+    tar: '<path d="M6 5h12l1 7-1 7H6l-1-7z" fill="#3d2e25" stroke="#1d1410"/><path d="M5.4 9h13.2M5.4 15h13.2" stroke="#8a6a4a" stroke-width="1.2"/><path d="M10 4.5c0-1 4-1 4 0" stroke="#1d1410" fill="none"/><path d="M12 12.5c1.2 1.4 1.2 2.6 0 3.2-1.2-.6-1.2-1.8 0-3.2z" fill="#0d0907"/>',
+    rope: '<circle cx="12" cy="12" r="8" fill="none" stroke="#c9a36a" stroke-width="2.6"/><circle cx="12" cy="12" r="4.4" fill="none" stroke="#b08a52" stroke-width="2.4"/><circle cx="12" cy="12" r="1.4" fill="#8a6a3a"/><path d="M19 15c2 1 2 4 0 5" stroke="#c9a36a" stroke-width="2" fill="none" stroke-linecap="round"/>',
+    canvas: '<rect x="4" y="7" width="13" height="10" rx="5" fill="#e8dcc0"/><ellipse cx="17" cy="12" rx="3" ry="5" fill="#f5ecd6" stroke="#b9a77f"/><ellipse cx="17" cy="12" rx="1" ry="1.8" fill="#b9a77f"/><path d="M7 7.5v9M10 7v10M13 7v10" stroke="#c9b892" stroke-width=".7"/>',
+    iron: '<path d="M5 17l2.5-8h9l2.5 8z" fill="#8a96a8" stroke="#4e5868"/><path d="M7.5 9l1.2-3h6.6l1.2 3" fill="#aab4c4" stroke="#4e5868"/><path d="M8 14h8" stroke="#cdd5e0" stroke-width=".8"/>',
+    bronze: '<path d="M5 17l2.5-8h9l2.5 8z" fill="#c9823a" stroke="#7a4a1c"/><path d="M7.5 9l1.2-3h6.6l1.2 3" fill="#e2a45c" stroke="#7a4a1c"/><path d="M8 14h8" stroke="#f6cf94" stroke-width=".8"/>'
+  };
+  function shpIco(m, sz) { return '<svg class="wk-shp-ic" viewBox="0 0 24 24" width="' + (sz || 18) + '" height="' + (sz || 18) + '" aria-hidden="true">' + (SHP_ICO[m] || '') + '</svg>'; }
+  var SHP_PARTS = [
+    [ { id: 'keel', n: 'Киль и шпангоуты', m: { wood: 4 }, h: 1 },
+      { id: 'hull', n: 'Обшивка', m: { wood: 6, tar: 2 }, h: 2, req: ['keel'] },
+      { id: 'oars', n: 'Вёсла', m: { wood: 2 }, h: 1, req: ['hull'] },
+      { id: 'mast', n: 'Мачта', m: { wood: 2, rope: 2 }, h: 2, req: ['hull'] },
+      { id: 'sail', n: 'Парус', m: { canvas: 3, rope: 1 }, h: 2, req: ['mast'] } ],
+    [ { id: 'keel', n: 'Киль и шпангоуты', m: { wood: 8, iron: 2 }, h: 3 },
+      { id: 'hull', n: 'Обшивка корпуса', m: { wood: 14, tar: 4 }, h: 5, req: ['keel'] },
+      { id: 'deck', n: 'Палуба и фальшборт', m: { wood: 10, iron: 2 }, h: 4, req: ['hull'] },
+      { id: 'rudder', n: 'Руль', m: { wood: 3, iron: 3 }, h: 3, req: ['hull'] },
+      { id: 'mast', n: 'Мачта и гик', m: { wood: 6, rope: 4 }, h: 4, req: ['deck'] },
+      { id: 'sail', n: 'Паруса', m: { canvas: 8, rope: 4 }, h: 5, req: ['mast'] } ],
+    [ { id: 'keel', n: 'Киль и шпангоуты', m: { wood: 14, iron: 6 }, h: 6 },
+      { id: 'hull', n: 'Обшивка корпуса', m: { wood: 24, tar: 8, iron: 4 }, h: 10, req: ['keel'] },
+      { id: 'deck', n: 'Палуба и фальшборт', m: { wood: 16, iron: 4 }, h: 6, req: ['hull'] },
+      { id: 'cabin', n: 'Капитанская каюта', m: { wood: 12, iron: 4 }, h: 8, req: ['deck'] },
+      { id: 'rudder', n: 'Руль', m: { wood: 4, iron: 4 }, h: 4, req: ['hull'] },
+      { id: 'mast', n: 'Две мачты и реи', m: { wood: 14, rope: 10 }, h: 8, req: ['deck'] },
+      { id: 'sail', n: 'Прямые паруса', m: { canvas: 18, rope: 8 }, h: 10, req: ['mast'] },
+      { id: 'guns', n: 'Пушки', m: { iron: 14, bronze: 2 }, h: 8, req: ['deck'] } ],
+    [ { id: 'keel', n: 'Киль и шпангоуты', m: { wood: 20, iron: 10 }, h: 10 },
+      { id: 'hull', n: 'Обшивка корпуса', m: { wood: 36, tar: 12, iron: 8 }, h: 16, req: ['keel'] },
+      { id: 'deck', n: 'Палуба и фальшборт', m: { wood: 24, iron: 8 }, h: 10, req: ['hull'] },
+      { id: 'cabin', n: 'Капитанская каюта', m: { wood: 18, iron: 6 }, h: 12, req: ['deck'] },
+      { id: 'rudder', n: 'Руль', m: { wood: 6, iron: 6 }, h: 6, req: ['hull'] },
+      { id: 'bowsprit', n: 'Бушприт', m: { wood: 6, rope: 4 }, h: 6, req: ['deck'] },
+      { id: 'mast', n: 'Три мачты и реи', m: { wood: 24, rope: 16 }, h: 14, req: ['deck'] },
+      { id: 'sail', n: 'Паруса и кливера', m: { canvas: 30, rope: 14 }, h: 16, req: ['mast', 'bowsprit'] },
+      { id: 'guns', n: 'Пушечная батарея', m: { iron: 24, bronze: 6 }, h: 14, req: ['deck'] } ],
+    [ { id: 'keel', n: 'Киль и шпангоуты', m: { wood: 30, iron: 16 }, h: 18 },
+      { id: 'hull', n: 'Обшивка корпуса', m: { wood: 50, tar: 18, iron: 12 }, h: 40, req: ['keel'] },
+      { id: 'deck', n: 'Палубы и фальшборт', m: { wood: 34, iron: 10 }, h: 20, req: ['hull'] },
+      { id: 'cabin', n: 'Кормовая надстройка', m: { wood: 30, iron: 10, bronze: 2 }, h: 30, req: ['deck'] },
+      { id: 'fore', n: 'Бак', m: { wood: 20, iron: 6 }, h: 16, req: ['deck'] },
+      { id: 'rudder', n: 'Руль', m: { wood: 8, iron: 8 }, h: 10, req: ['hull'] },
+      { id: 'bowsprit', n: 'Бушприт', m: { wood: 10, rope: 6 }, h: 10, req: ['fore'] },
+      { id: 'mast', n: 'Три мачты и реи', m: { wood: 36, rope: 24 }, h: 24, req: ['deck'] },
+      { id: 'sail', n: 'Паруса и кливера', m: { canvas: 48, rope: 20 }, h: 36, req: ['mast', 'bowsprit'] },
+      { id: 'guns', n: 'Две пушечные палубы', m: { iron: 36, bronze: 12 }, h: 30, req: ['deck'] },
+      { id: 'lamps', n: 'Кормовые фонари', m: { iron: 4, bronze: 4 }, h: 8, req: ['cabin'] } ]
+  ];
+  var SHP_FAST = 1200, SHP_ROLL = 1500, SHP_ROLL_MAX = 3, SHP_LOTS = 5, SHP_SLOT = 21600;
+  function shpGet(st) { var s = st && st.ship; return s && typeof s === 'object' ? s : {}; }
+  function shpPart(t, id) { return (SHP_PARTS[t] || []).filter(function (p) { return p.id === id; })[0] || null; }
+  /* Состояние «как есть сейчас»: если таймер детали истёк, она считается готовой. */
+  function shpView(sh, now) {
+    now = now || Date.now(); sh = sh || {};
+    var lv = Math.max(0, Math.min(5, +sh.lv || 0)), done = {}, job = sh.job && sh.job.p ? sh.job : null, fin = null, up = false;
+    Object.keys(sh.done || {}).forEach(function (k) { if (sh.done[k]) done[k] = 1; });
+    if (job && job.tr !== lv) job = null;
+    if (job && +job.t1 <= now) { done[job.p] = 1; fin = job.p; job = null; }
+    if (lv < 5 && SHP_PARTS[lv].every(function (p) { return done[p.id]; })) { lv++; done = {}; up = true; }
+    return { lv: lv, done: done, job: job, fin: fin, up: up };
+  }
+  function shpSettle(st) {
+    var sh = st.ship = st.ship && typeof st.ship === 'object' ? st.ship : {}, v = shpView(sh);
+    if (!v.fin && !v.up && !(sh.job && !v.job)) return null;
+    sh.lv = v.lv; sh.done = v.done; sh.job = v.job; return v;
+  }
+  /* Что показать на сцене: строящийся уровень или последний готовый корабль. */
+  function shpScene(v) {
+    var building = v.lv < 5 && (Object.keys(v.done).length > 0 || !!v.job);
+    if (building) return { t: v.lv, built: v.done, bld: v.job && v.job.p, all: false };
+    if (v.lv > 0) return { t: v.lv - 1, built: {}, all: true };
+    return { t: 0, built: {}, all: false };
+  }
+  function shpPartIds(t) { return (SHP_PARTS[t] || []).map(function (p) { return p.id; }); }
+  function shpShipSVG(sh, opt) {
+    var v = shpView(sh), sc = shpScene(v); opt = opt || {};
+    return shpSVG({ t: sc.t, built: sc.built, bld: sc.bld, all: sc.all, parts: shpPartIds(sc.t), name: sh.name || '', paint: sh.paint, still: opt.still, label: (sh.name ? '«' + sh.name + '» — ' : '') + SHP_T[sc.t].n });
+  }
+  function shpInv(sh) { var o = {}; SHP_MAT_ORDER.forEach(function (m) { o[m] = Math.max(0, +(sh.inv && sh.inv[m]) || 0); }); return o; }
+  function shpNeed(v, inv) {
+    var need = {}; if (v.lv >= 5) return need;
+    SHP_PARTS[v.lv].forEach(function (p) { if (v.done[p.id] || (v.job && v.job.p === p.id)) return; Object.keys(p.m).forEach(function (m) { need[m] = (need[m] || 0) + p.m[m]; }); });
+    Object.keys(need).forEach(function (m) { need[m] = Math.max(0, need[m] - (inv[m] || 0)); if (!need[m]) delete need[m]; });
+    return need;
+  }
+  function shpCanBuild(v, inv, p) {
+    if (v.job || v.done[p.id]) return { ok: false };
+    var lack = (p.req || []).filter(function (r) { return !v.done[r]; });
+    if (lack.length) return { ok: false, req: lack };
+    var miss = Object.keys(p.m).filter(function (m) { return (inv[m] || 0) < p.m[m]; });
+    return { ok: !miss.length, miss: miss };
+  }
+  function shpDur(ms) {
+    var s = Math.max(0, Math.ceil(ms / 1000)), d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), x = s % 60;
+    if (d) return d + ' д ' + h + ' ч';
+    if (h) return h + ' ч ' + ('0' + m).slice(-2) + ' мин';
+    if (m) return m + ' мин ' + ('0' + x).slice(-2) + ' с';
+    return x + ' с';
+  }
+  function shpHours(h) { return h >= 24 ? Math.floor(h / 24) + ' д' + (h % 24 ? ' ' + (h % 24) + ' ч' : '') : h + ' ч'; }
+  function shpFastPrice(job) { return FREE() ? 0 : Math.max(1, Math.ceil((+job.t1 - Date.now()) / 3600000)) * SHP_FAST; }
+  /* ----- рынок материалов: новая поставка каждые 6 часов (по Киеву) ----- */
+  function shpSlot() { var k = kyiv(), i = Math.floor(k.s / SHP_SLOT); return { k: k.d + '#' + i, left: (SHP_SLOT - k.s % SHP_SLOT) * 1000 }; }
+  function shpRng(seed) {
+    var h = 1779033703 ^ seed.length;
+    for (var i = 0; i < seed.length; i++) { h = Math.imul(h ^ seed.charCodeAt(i), 3432918353); h = h << 13 | h >>> 19; }
+    return function () { h = Math.imul(h ^ h >>> 16, 2246822507); h = Math.imul(h ^ h >>> 13, 3266489909); h ^= h >>> 16; return (h >>> 0) / 4294967296; };
+  }
+  function shpGen(sh, key, r) {
+    var v = shpView(sh), inv = shpInv(sh), need = shpNeed(v, inv), t = Math.min(v.lv, 4), rnd = shpRng(key + '|' + myLogin() + '|' + (r || 0));
+    var pool = {}; SHP_PARTS[t].forEach(function (p) { Object.keys(p.m).forEach(function (m) { pool[m] = 1; }); });
+    if (v.lv >= 5) SHP_MAT_ORDER.forEach(function (m) { pool[m] = 1; });
+    var poolL = SHP_MAT_ORDER.filter(function (m) { return pool[m]; }), needL = SHP_MAT_ORDER.filter(function (m) { return need[m]; });
+    var lots = [], cnt = {}, scale = [3, 5, 7, 10, 13][t];
+    var add = function (m, q) {
+      var fs = [.8, .9, 1, 1, 1, 1.1, 1.2], f = fs[Math.floor(rnd() * fs.length)];
+      q = Math.max(1, Math.min(60, Math.round(q)));
+      lots.push({ m: m, q: q, f: f, pr: Math.max(10, Math.round(q * SHP_MAT[m].p * f / 10) * 10) }); cnt[m] = (cnt[m] || 0) + 1;
+    };
+    for (var i = 0; i < 2 && needL.length; i++) {
+      var tot = 0; needL.forEach(function (m) { tot += need[m]; }); var x = rnd() * tot, pick = needL[0];
+      for (var j = 0; j < needL.length; j++) { x -= need[needL[j]]; if (x <= 0) { pick = needL[j]; break; } }
+      add(pick, need[pick] * (.5 + rnd() * .5)); needL = needL.filter(function (m) { return m !== pick; });
+    }
+    var guard = 0;
+    while (lots.length < SHP_LOTS && guard++ < 40) {
+      var m2 = poolL[Math.floor(rnd() * poolL.length)]; if ((cnt[m2] || 0) >= 2) continue;
+      var q2 = scale * (.6 + rnd() * .8); if (m2 === 'bronze') q2 = q2 / 4;
+      add(m2, q2);
+    }
+    return { k: key, r: r || 0, l: lots, b: [] };
+  }
+  var SHP_MK = null;
+  function shpMarket(sh) {
+    var sl = shpSlot(), mk = sh.mk;
+    if (mk && mk.k === sl.k && Array.isArray(mk.l)) return mk;
+    if (SHP_MK && SHP_MK.k === sl.k && SHP_MK.u === myLogin()) return SHP_MK.mk;
+    var gen = shpGen(sh, sl.k, 0); SHP_MK = { k: sl.k, u: myLogin(), mk: gen };
+    setTimeout(function () {
+      var st = load(); if (st.__fake || !CLOUD.ready) return;
+      var s2 = st.ship = st.ship && typeof st.ship === 'object' ? st.ship : {};
+      if (s2.mk && s2.mk.k === gen.k) return;
+      s2.mk = gen; save(st);
+    }, 0);
+    return gen;
+  }
+  function shpPrice(lot) { return FREE() ? 0 : lot.pr; }
+  /* ----- разметка вкладки «Верфь» ----- */
+  var SHP_EDIT = false;
+  function shpMatChip(m, have, need) {
+    var ok = have >= need;
+    return '<span class="wk-shp-m' + (ok ? ' ok' : ' no') + '" title="' + SHP_MAT[m].n + ': есть ' + have + ', нужно ' + need + '">' + shpIco(m, 16) + '<b>' + Math.min(have, need) + '/' + need + '</b></span>';
+  }
+  function shipBadge(st) {
+    var sh = shpGet(st), v = shpView(sh); if (v.job || v.lv >= 5) return '';
+    var inv = shpInv(sh), any = SHP_PARTS[v.lv].some(function (p) { return shpCanBuild(v, inv, p).ok; });
+    return any ? '<i>!</i>' : '';
+  }
+  function shipHTML(st) {
+    var sh = shpGet(st), v = shpView(sh), inv = shpInv(sh), now = Date.now(), sc = shpScene(v), bel = st.belli || 0;
+    var T = SHP_T[sc.t], maxed = v.lv >= 5;
+    var nameBox = SHP_EDIT
+      ? '<span class="wk-shp-nmf"><input id="wkShipNameIn" type="text" maxlength="24" value="' + esc(sh.name || '') + '" placeholder="Например, «Мерри»" aria-label="Имя корабля" autocomplete="off"><button type="button" class="wk-tx-btn pri" data-tx="shipname">Сохранить</button><button type="button" class="wk-tx-btn" data-tx="shipnameedit">Отмена</button></span>'
+      : '<span class="wk-shp-nm">' + (sh.name ? '«' + esc(sh.name) + '»' : '<em>Без имени</em>') + '<button type="button" class="wk-shp-ed" data-tx="shipnameedit" title="Назвать корабль" aria-label="Назвать корабль">✎</button></span>';
+    var stage = maxed ? 'Галеон построен полностью' : sc.all ? T.n + ' на плаву' : (Object.keys(v.done).length || v.job) ? 'Строится: ' + SHP_T[v.lv].n.toLowerCase() : 'Чертёж: ' + SHP_T[0].n.toLowerCase();
+    var ladder = '<ol class="wk-shp-lad" aria-label="Уровни корабля">' + SHP_T.map(function (t, i) {
+      var cls = i < v.lv ? 'done' : i === v.lv ? 'cur' : '';
+      return '<li class="' + cls + '"><span>' + (i < v.lv ? '✓' : i + 1) + '</span>' + t.n + '</li>';
+    }).join('') + '</ol>';
+    var job = '';
+    if (v.job) {
+      var jp = shpPart(v.lv, v.job.p) || { n: v.job.p }, tot = Math.max(1, v.job.t1 - v.job.t0), pc = Math.max(0, Math.min(100, (now - v.job.t0) / tot * 100)), fp = shpFastPrice(v.job);
+      job = '<div class="wk-shp-job" role="status"><div class="wk-shp-job-h"><span class="wk-shp-saw" aria-hidden="true">⚒</span><div><b>' + esc(jp.n) + '</b><small>Мастера за работой · осталось <span data-shp-end="' + v.job.t1 + '">' + shpDur(v.job.t1 - now) + '</span></small></div></div>' +
+        '<div class="wk-shp-bar"><i data-shp-pb="' + v.job.t0 + ':' + v.job.t1 + '" style="width:' + pc.toFixed(1) + '%"></i></div>' +
+        '<div class="wk-shp-job-a"><button type="button" class="wk-tx-btn' + (bel >= fp ? ' pri' : '') + '" data-tx="shipfast"' + (bel >= fp ? '' : ' disabled') + '>Ускорить · ' + fmtB(fp) + '</button><button type="button" class="wk-tx-btn" data-tx="shipcancel">Остановить и вернуть материалы</button></div></div>';
+    }
+    var parts = '';
+    if (!maxed) {
+      var nextT = SHP_T[v.lv], started = Object.keys(v.done).length || v.job;
+      parts = '<h3 class="wk-dk-h">' + (started ? 'Этапы: ' + nextT.n.toLowerCase() : v.lv ? 'Следующий уровень: ' + nextT.n.toLowerCase() : 'Этапы: ' + nextT.n.toLowerCase()) + '</h3>' +
+        (v.lv && !started ? '<p class="wk-sh-hint">Начни любой этап — и на стапеле заложат ' + ['лодку', 'шлюп', 'бриг', 'фрегат', 'галеон'][v.lv] + '. Пока он строится, в профиле остаётся твой нынешний корабль.</p>' : '') +
+        '<div class="wk-shp-pts">' + SHP_PARTS[v.lv].map(function (p) {
+          var done = v.done[p.id], bld = v.job && v.job.p === p.id, c = shpCanBuild(v, inv, p), act, cls;
+          if (done) { cls = 'done'; act = '<span class="wk-shp-st ok">✓ Готово</span>'; }
+          else if (bld) { cls = 'bld'; act = '<span class="wk-shp-st bld">Строится</span>'; }
+          else if (c.req) { cls = 'lock'; act = '<span class="wk-shp-st">Сначала: ' + c.req.map(function (r) { return esc((shpPart(v.lv, r) || {}).n || r).toLowerCase(); }).join(', ') + '</span>'; }
+          else if (v.job) { cls = 'wait'; act = '<button type="button" class="wk-tx-btn" disabled>Стапель занят</button>'; }
+          else { cls = c.ok ? 'can' : 'wait'; act = '<button type="button" class="wk-tx-btn' + (c.ok ? ' pri' : '') + '" data-tx="shipbuild" data-p="' + p.id + '"' + (c.ok ? '' : ' disabled') + '>' + (c.ok ? 'Строить' : 'Не хватает материалов') + '</button>'; }
+          var mats = done ? '' : '<span class="wk-shp-ms">' + Object.keys(p.m).map(function (m) { return shpMatChip(m, inv[m], p.m[m]); }).join('') + '</span>';
+          return '<div class="wk-shp-pt ' + cls + '"><div class="wk-shp-pt-b"><b>' + esc(p.n) + '</b><small>' + (done ? 'построено' : 'время работы: ' + shpHours(p.h)) + '</small>' + mats + '</div><div class="wk-shp-pt-a">' + act + '</div></div>';
+        }).join('') + '</div>';
+    } else parts = '<p class="wk-sh-hint wk-shp-max">Самый большой корабль в Гранд Лайн готов. Скоро на верфи появятся покраска, носовые фигуры и украшения.</p>';
+    var store = '<h3 class="wk-dk-h">Склад</h3><div class="wk-shp-inv">' + SHP_MAT_ORDER.map(function (m) { return '<span class="wk-shp-iv' + (inv[m] ? '' : ' zero') + '">' + shpIco(m, 22) + '<span><b>' + inv[m] + '</b><small>' + SHP_MAT[m].n + '</small></span></span>'; }).join('') + '</div>';
+    var mk = shpMarket(sh), sl = shpSlot(), bought = mk.b || [], rp = FREE() ? 0 : SHP_ROLL * ((mk.r || 0) + 1), rl = SHP_ROLL_MAX - (mk.r || 0);
+    var need = shpNeed(v, inv);
+    var market = '<h3 class="wk-dk-h">Поставки материалов</h3><p class="wk-sh-hint">Купцы привозят случайный товар. Новая поставка через <span data-shp-end="' + (now + sl.left) + '" data-shp-mk="1">' + shpDur(sl.left) + '</span>. Нужное для текущих этапов попадается чаще.</p>' +
+      '<div class="wk-shp-lots">' + mk.l.map(function (l, i) {
+        var got = bought.indexOf(i) >= 0, pr = shpPrice(l), can = !got && bel >= pr;
+        var tag = l.f < 1 ? '<em class="wk-shp-tag sale">−' + Math.round((1 - l.f) * 100) + '%</em>' : l.f > 1 ? '<em class="wk-shp-tag hi">+' + Math.round((l.f - 1) * 100) + '%</em>' : '';
+        return '<article class="wk-shp-lot' + (got ? ' got' : '') + (need[l.m] ? ' need' : '') + '">' + tag + shpIco(l.m, 34) + '<b>' + SHP_MAT[l.m].n + '</b><span class="wk-shp-q">×' + l.q + '</span>' + (need[l.m] && !got ? '<small class="wk-shp-nd">нужно ещё ' + need[l.m] + '</small>' : '<small class="wk-shp-nd">&nbsp;</small>') +
+          '<button type="button" class="wk-tx-btn' + (can ? ' pri' : '') + '" data-tx="shipbuy" data-i="' + i + '"' + (can ? '' : ' disabled') + '>' + (got ? 'Куплено' : fmtB(pr)) + '</button></article>';
+      }).join('') + '</div>' +
+      '<div class="wk-shp-roll"><button type="button" class="wk-tx-btn" data-tx="shiproll"' + (rl > 0 && bel >= rp ? '' : ' disabled') + '>' + (rl > 0 ? 'Позвать других купцов · ' + fmtB(rp) : 'Купцы на сегодня закончились') + '</button><small>' + (rl > 0 ? 'Осталось ' + rl + ' из ' + SHP_ROLL_MAX + ' до следующей поставки' : 'Новые придут с поставкой') + '</small></div>';
+    var intro = !v.lv && !Object.keys(v.done).length && !v.job && !SHP_MAT_ORDER.some(function (m) { return inv[m]; })
+      ? '<p class="wk-sh-hint wk-shp-intro">Собери свой корабль: покупай материалы у купцов, закладывай этапы на стапеле и жди, пока мастера закончат. Начни с лодки и дорасти до галеона.</p>' : '';
+    return '<div class="wk-shp">' + intro +
+      '<div class="wk-shp-top">' + nameBox + '<span class="wk-shp-lv">' + stage + '</span></div>' +
+      '<div class="wk-shp-scene">' + shpShipSVG(sh) + '</div>' + ladder + job + parts + store + market + '</div>';
+  }
+  function shpRepaint() {
+    var p = document.querySelector('.wk-sht-p[data-shp="ship"]'); if (!p) return;
+    var y = window.scrollY; p.innerHTML = shipHTML(load()); if (Math.abs(window.scrollY - y) > 2) window.scrollTo(0, y);
+  }
+  function shipClick(pane, a, b, repaint) {
+    var st = load(); if (st.__fake) return;
+    var ev = shpSettle(st), sh = st.ship, v = shpView(sh), inv = shpInv(sh), b0 = st.belli || 0;
+    sh.inv = inv;
+    if (a === 'shipnameedit') { SHP_EDIT = !SHP_EDIT; if (ev) save(st); repaint(); if (SHP_EDIT) setTimeout(function () { var i = document.getElementById('wkShipNameIn'); if (i) { i.focus(); i.select(); } }, 30); return; }
+    if (a === 'shipname') {
+      var inp = document.getElementById('wkShipNameIn'), nm = String(inp ? inp.value : '').replace(/[<>"&\u0000-\u001f]/g, '').replace(/\s+/g, ' ').trim().slice(0, 24);
+      sh.name = nm; SHP_EDIT = false; save(st); repaint(); txToast(nm ? 'Корабль назван: «' + esc(nm) + '»' : 'Имя корабля убрано'); return;
+    }
+    if (a === 'shipbuy') {
+      var mk = shpMarket(sh), i = Number(b.getAttribute('data-i')), lot = mk.l[i]; if (!lot) return;
+      mk = sh.mk = JSON.parse(JSON.stringify(mk)); mk.b = mk.b || [];
+      if (mk.b.indexOf(i) >= 0) return;
+      var pr = shpPrice(lot); if (b0 < pr) { txToast('Не хватает белли'); return; }
+      st.belli = b0 - pr; st.spent = (st.spent || 0) + pr; if (pr) track(st, 'spend', pr);
+      inv[lot.m] = (inv[lot.m] || 0) + lot.q; mk.b.push(i); save(st); repaint(); belliAnim(pane, b0);
+      txToast('На склад: ' + SHP_MAT[lot.m].n.toLowerCase() + ' ×' + lot.q); return;
+    }
+    if (a === 'shiproll') {
+      var mk2 = shpMarket(sh), r = mk2.r || 0; if (r >= SHP_ROLL_MAX) return;
+      var rp = FREE() ? 0 : SHP_ROLL * (r + 1); if (b0 < rp) { txToast('Не хватает белли'); return; }
+      st.belli = b0 - rp; st.spent = (st.spent || 0) + rp; if (rp) track(st, 'spend', rp);
+      var nm2 = shpGen(sh, mk2.k, r + 1); nm2.r = r + 1; sh.mk = nm2; SHP_MK = null; save(st); repaint(); belliAnim(pane, b0);
+      txToast('Пришли другие купцы'); return;
+    }
+    if (a === 'shipbuild') {
+      if (v.lv >= 5 || v.job) return;
+      var p = shpPart(v.lv, b.getAttribute('data-p')); if (!p) return;
+      if (!shpCanBuild(v, inv, p).ok) { txToast('Не хватает материалов'); return; }
+      Object.keys(p.m).forEach(function (m) { inv[m] -= p.m[m]; });
+      var t0 = Date.now(); sh.lv = v.lv; sh.done = v.done; sh.job = { p: p.id, tr: v.lv, t0: t0, t1: t0 + p.h * 3600000 };
+      save(st); repaint(); txToast('Мастера взялись за работу: «' + esc(p.n) + '»'); return;
+    }
+    if (a === 'shipfast') {
+      if (!v.job) { if (ev) { save(st); repaint(); } return; }
+      var fp = shpFastPrice(v.job); if (b0 < fp) { txToast('Не хватает белли'); return; }
+      st.belli = b0 - fp; st.spent = (st.spent || 0) + fp; if (fp) track(st, 'spend', fp);
+      sh.job.t1 = Date.now() - 1; var e2 = shpSettle(st); save(st); repaint(); belliAnim(pane, b0); shpAnnounce(e2); return;
+    }
+    if (a === 'shipcancel') {
+      if (!v.job) return;
+      var cp = shpPart(v.lv, v.job.p); if (!window.confirm('Остановить работу над «' + (cp ? cp.n : '') + '»? Материалы вернутся на склад, потраченное время пропадёт.')) return;
+      if (cp) Object.keys(cp.m).forEach(function (m) { inv[m] = (inv[m] || 0) + cp.m[m]; });
+      sh.job = null; save(st); repaint(); txToast('Работа остановлена, материалы на складе'); return;
+    }
+  }
+  function shpAnnounce(e) {
+    if (!e) return;
+    if (e.up) { var t = SHP_T[e.lv - 1]; txToast(e.lv >= 5 ? 'Галеон спущен на воду! Это вершина верфи.' : t.n + ' спущен' + (e.lv === 1 ? 'а' : '') + ' на воду!'); return; }
+    if (e.fin) { var p = shpPart(e.lv, e.fin); if (p) txToast('Готово: «' + esc(p.n) + '»'); }
+  }
+  setInterval(function () {
+    var els = document.querySelectorAll('[data-shp-end]'); if (!els.length) return;
+    var now = Date.now(), due = false;
+    [].forEach.call(els, function (el) { var t = +el.getAttribute('data-shp-end'); if (t <= now) due = true; el.textContent = shpDur(t - now); });
+    [].forEach.call(document.querySelectorAll('[data-shp-pb]'), function (el) { var q = el.getAttribute('data-shp-pb').split(':'), a = +q[0], z = +q[1]; el.style.width = Math.max(0, Math.min(100, (now - a) / Math.max(1, z - a) * 100)).toFixed(1) + '%'; });
+    if (!due || SHP_EDIT) return;
+    var st = load(); if (st.__fake) { shpRepaint(); return; }
+    var e = shpSettle(st); if (e) save(st);
+    shpRepaint(); shpAnnounce(e);
+  }, 1000);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Enter' && e.target && e.target.id === 'wkShipNameIn') { e.preventDefault(); var b = document.querySelector('[data-tx="shipname"]'); if (b) b.click(); } else if (e.key === 'Escape' && e.target && e.target.id === 'wkShipNameIn') { var c = document.querySelector('[data-tx="shipnameedit"]'); if (c) c.click(); } });
+  window.__wkShip = { svg: shpSVG, shipSVG: shpShipSVG, view: shpView, tiers: SHP_T, repaint: shpRepaint };
   function belliAnim(pane, from) {
     var bal = pane.querySelector('.wk-sh-bal'), el = bal && bal.querySelector('.wk-sh-num'); if (!el) return;
     var to = load().belli || 0, d = to - from; if (!d) return;
@@ -40150,6 +40715,7 @@ document.addEventListener('change',function(e) {
     var C = allCards(), st = load(); if (st.__fake) return;
     var body = pane.querySelector('#wkTxBody'), repaint = function () { if (body) body.innerHTML = shopHTML(allCards(), load()); };
     if (a === 'priceeditor') { priceEditorOpen(); return; }
+    if (a.indexOf('ship') === 0) { shipClick(pane, a, b, repaint); return; }
     if (a === 'ornreset') { st.orn = 'classic'; save(st); repaint(); return; }
     if (a === 'orndef') {
       var dapi = window.__wkShopPrices, did = String(b.getAttribute('data-id') || '');
