@@ -1,8 +1,11 @@
 /* One Piece Wiki — кеш для повторных заходов и работы без сети.
-   Положи рядом с index.html (корень сайта). Пуши живут отдельно, в firebase-messaging-sw.js. */
-const PAGE = 'wk-page-v2', IMG = 'wk-img-v1', STATIC = 'wk-static-v1';
+   Положи рядом с index.html (корень сайта). Пуши живут отдельно, в firebase-messaging-sw.js.
+   v2: страница всегда проверяется на сервере (no-cache), а не берётся из HTTP-кеша браузера;
+   старый кеш страниц (wk-page-v2) сбрасывается при установке. */
+const PAGE = 'wk-page-v3', IMG = 'wk-img-v1', STATIC = 'wk-static-v1';
 const KEEP = [PAGE, IMG, STATIC];
 const IMG_LIMIT = 900;
+const WAIT = 9000;
 
 self.addEventListener('install', (e) => { self.skipWaiting(); });
 self.addEventListener('activate', (e) => {
@@ -18,20 +21,21 @@ async function trim(cache, limit) {
   if (keys.length > limit) await Promise.all(keys.slice(0, keys.length - limit).map((k) => cache.delete(k)));
 }
 
-/* страница: сначала сеть (новая версия приходит сразу; без изменений сервер отвечает 304).
-   Если сеть отвечает дольше 6 секунд или не отвечает, показываем кеш, но запрос не бросаем:
-   когда свежая версия догрузится, она ляжет в кеш и страница получит сообщение wk-update. */
+/* страница: сначала сеть, с обязательной проверкой на сервере (без изменений он отвечает 304).
+   Если сеть отвечает дольше 9 секунд или не отвечает, показываем кеш, но запрос не бросаем:
+   когда свежая версия догрузится, она ляжет в кеш и страница получит сообщение wk-update
+   (страница сама перезагрузится и не будет писать в облако, пока не обновится). */
 async function page(req, evt) {
   const cache = await caches.open(PAGE);
   const old = (await cache.match(req)) || (await cache.match(req, { ignoreSearch: true })) || (await cache.match('./')) || (await cache.match('index.html'));
   const oldTag = old ? (old.headers.get('etag') || old.headers.get('last-modified') || old.headers.get('content-length') || '') : '';
-  const net = fetch(req).then(async (res) => {
+  const net = fetch(req, { cache: 'no-cache' }).then(async (res) => {
     if (res && res.ok) await cache.put(req, res.clone());
     return res;
   });
   const first = await Promise.race([
     net.then((r) => ({ r }), () => ({ r: null })),
-    new Promise((ok) => setTimeout(() => ok({ late: true }), 6000))
+    new Promise((ok) => setTimeout(() => ok({ late: true }), WAIT))
   ]);
   if (first.r) return first.r;
   if (!old) return net;
