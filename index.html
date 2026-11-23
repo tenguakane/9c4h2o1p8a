@@ -2284,9 +2284,7 @@ let characterSagaFilter = "__all__";
 let characterDisplayMode = "grid";
 try {
     const savedCharacterDisplayMode = localStorage.getItem("onePieceWikiCharacterDisplayModeV2");
-    if (savedCharacterDisplayMode === "list" || savedCharacterDisplayMode === "grid") {
-        characterDisplayMode = savedCharacterDisplayMode;
-    }
+    /* Режим «Список» убран: всегда карточки. */
 } catch (error) {
     // The display switch still works when localStorage is unavailable.
 }
@@ -3909,7 +3907,7 @@ function updateCharacterDisplayModeButtons() {
 }
 
 function setCharacterDisplayMode(mode) {
-    characterDisplayMode = mode === "grid" ? "grid" : "list";
+    characterDisplayMode = "grid";
     try {
         localStorage.setItem("onePieceWikiCharacterDisplayModeV2", characterDisplayMode);
     } catch (error) {
@@ -5177,11 +5175,10 @@ function updateRewardDisplayModeButtons() {
 let rewardDisplayMode = "posters";
 try {
     const savedRewardDisplayMode = localStorage.getItem("onePieceWikiRewardDisplayModeV2");
-    if (savedRewardDisplayMode === "list") rewardDisplayMode = "list";
 } catch (error) {}
 
 function setRewardDisplayMode(mode) {
-    rewardDisplayMode = mode === "list" ? "list" : "posters";
+    rewardDisplayMode = "posters";
     try { localStorage.setItem("onePieceWikiRewardDisplayModeV2", rewardDisplayMode); } catch (error) {}
     rewardCurrentPage = 1;
     updateRewardDisplayModeButtons();
@@ -5790,11 +5787,10 @@ function updateFruitDisplayModeButtons() {
 let fruitDisplayMode = "grid";
 try {
     const savedFruitDisplayMode = localStorage.getItem("onePieceWikiFruitDisplayModeV2");
-    if (savedFruitDisplayMode === "grid" || savedFruitDisplayMode === "list") fruitDisplayMode = savedFruitDisplayMode;
 } catch (error) {}
 
 function setFruitDisplayMode(mode) {
-    fruitDisplayMode = mode === "grid" ? "grid" : "list";
+    fruitDisplayMode = "grid";
     try { localStorage.setItem("onePieceWikiFruitDisplayModeV2", fruitDisplayMode); } catch (error) {}
     fruitCurrentPage = 1;
     updateFruitDisplayModeButtons();
@@ -12593,8 +12589,8 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
     const validMode = (key) => safeGet(key) === 'list' ? 'list' : 'grid';
 
     let storyCatalogViewMode = 'grid'; /* Сюжет: только карточки */
-    let usefulCatalogViewMode = validMode('onePieceWikiUsefulCatalogViewModeV1');
-    let cabinCatalogViewMode = validMode('onePieceWikiCabinCatalogViewModeV1');
+    let usefulCatalogViewMode = 'grid';
+    let cabinCatalogViewMode = 'grid';
 
     function switchMarkup(scope, label, mode, fn) {
         return `<div class="character-view-mode-row story-useful-view-switch" role="group" aria-label="Режим отображения: ${label}">
@@ -12686,15 +12682,13 @@ setTimeout(positionGlobalSearchNextToTabs, 0);
         if (typeof renderStoryAccordionFinal === 'function') renderStoryAccordionFinal();
     };
     window.setUsefulCatalogViewMode = function(mode) {
-        usefulCatalogViewMode = mode === 'list' ? 'list' : 'grid';
-        safeSet('onePieceWikiUsefulCatalogViewModeV1', usefulCatalogViewMode);
+        usefulCatalogViewMode = 'grid';
         applyUsefulMode();
         if (typeof renderUsefulList === 'function') renderUsefulList();
         applyUsefulMode();
     };
     window.setCabinCatalogViewMode = function(mode) {
-        cabinCatalogViewMode = mode === 'list' ? 'list' : 'grid';
-        safeSet('onePieceWikiCabinCatalogViewModeV1', cabinCatalogViewMode);
+        cabinCatalogViewMode = 'grid';
         applyCabinMode();
     };
 
@@ -21670,7 +21664,8 @@ window.__wkBackTextures = {
   // Режим «Список»: строки не наклоняются (наклон остаётся только у карточек-сетки и постеров)
   var GRID_SEL = '.character-display-grid, .story-display-grid, .reward-display-grid, .reward-display-posters, .fruit-display-grid, .useful-display-grid';
   function inListMode(c) { var l = c.closest('.character-list'); return !!(l && !l.matches(GRID_SEL)); }
-  function noCardTilt(c) { return !!(c.closest(CARD_EXCLUDE) || isOpenSaga(c) || inListMode(c)); }
+  function storyArcCard(c) { return !!(c.closest('#storyList') && c.classList.contains('story-saga-item') && !c.classList.contains('story-saga-folder')); } /* арки, фильмы и обложки в Сюжете: без 3D-наклона */
+  function noCardTilt(c) { return !!(c.closest(CARD_EXCLUDE) || isOpenSaga(c) || inListMode(c) || storyArcCard(c)); }
   document.addEventListener('click', function (e) {
     var f = e.target && e.target.closest ? e.target.closest('.story-saga-folder') : null;
     if (f) setTimeout(function () { if (isOpenSaga(f)) { cardReset(f); if (curCard === f) curCard = null; } }, 0);
@@ -34944,8 +34939,8 @@ html body #storyList[data-wk-size="l"]{--sg-ac:repeat(auto-fill,minmax(300px,1fr
   function summary(sec) {
     var row = rowOf(sec); if (!row) return '';
     if (sec.id === 'storySection') return '';
-    var m = row.querySelector('.character-view-mode-button.active'), s = row.querySelector('[data-size].active,[data-ssize].active');
-    var a = []; if (m) a.push(m.textContent.trim()); if (s) a.push(s.textContent.trim()); return a.join(' · ');
+    var s = row.querySelector('[data-size].active,[data-ssize].active');
+    var a = []; if (s) a.push(s.textContent.trim()); return a.join(' · ');
   }
   function ensure() {
     SECS.forEach(function (s) {
@@ -34990,7 +34985,7 @@ html body #storyList[data-wk-size="l"]{--sg-ac:repeat(auto-fill,minmax(300px,1fr
     var sec = document.getElementById(cur); if (!sec) return;
     var row = rowOf(sec), id = 0; map = {};
     function reg(el, label, on, close) { var k = 'i' + (id++); map[k] = { el: el, close: close }; return { id: k, label: label, on: on }; }
-    var modes = [].slice.call(row.querySelectorAll('.character-view-mode-button')).map(function (b) { return reg(b, b.textContent.trim(), b.classList.contains('active'), true); });
+    var modes = [].slice.call(row.querySelectorAll('.character-view-mode-button')).filter(function (b) { return !/view-mode/i.test(b.getAttributeNames().join(' ')); }).map(function (b) { return reg(b, b.textContent.trim(), b.classList.contains('active'), true); });
     var sizes = [].slice.call(row.querySelectorAll('[data-size],[data-ssize]')).map(function (b) { return reg(b, txt(b) || b.textContent, b.classList.contains('active'), false); });
     var fx = [].slice.call(row.querySelectorAll('[data-fxmode]')).map(function (b) { var on = b.classList.contains('active'); return reg(b, '✨ Эффекты: ' + (on ? 'всегда' : 'при наведении'), on, false); });
     var sc = [].slice.call(sec.querySelectorAll('.wk-sc-toggle')).slice(0, 1).map(function (b) { var hide = /Скрыть/i.test(b.textContent); return reg(b, hide ? 'Скрыть витрину' : 'Показать витрину', !hide, false); });
