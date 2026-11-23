@@ -1030,6 +1030,13 @@ html body #storyList.sg-on .story-saga-group.sg-sel>.story-saga-arcs{align-conte
 .wk-shp-mini{display:block;width:100%;height:auto;border-radius:6px}
 @media (max-width:860px){.wk-shp-dz{grid-template-columns:1fr}.wk-shp-dpv{position:sticky;top:56px;z-index:5;background:var(--page-bg,#0b1120);padding:4px 0 6px}.wk-shp-dpv .wk-shp-scene{max-height:26vh;overflow:hidden}.wk-shp-dpv .wk-shp-scene svg{max-height:26vh;width:100%;object-fit:contain}}
 </style>
+<style id="wk-ship-prof-css">#wkProf .pf-ship{display:flex;flex-direction:column;gap:10px}
+#wkProf .pf-ship-sc{border-radius:var(--r-md,12px);overflow:hidden;border:1px solid rgba(148,163,184,.18);max-width:760px}
+#wkProf .pf-ship-sc svg{display:block;width:100%;height:auto}
+#wkProf .pf-ship-cap{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;max-width:760px}
+#wkProf .pf-ship-cap b{display:inline-block;font:italic 700 var(--fs-lg)/1.25 Georgia,'Times New Roman',serif;color:inherit;border-bottom:2px solid #c9952e;padding-bottom:1px;margin-bottom:3px}
+#wkProf .pf-ship-cap span{display:block;font-size:var(--fs-sm);opacity:.75}
+</style>
 </head>
 <body data-theme="mugiwara" data-active-tab="characters">
 <script id="wiki-cloud-config">
@@ -40273,18 +40280,12 @@ document.addEventListener('change',function(e) {
     var s = '';
     var vw = [320, 410, 450, 480, 480][SHP_T.indexOf(T)], vx = Math.max(0, Math.min(W - vw, cx - vw / 2 + (T.bs ? 20 : 0))), vh = vw * .625, mx = vx + vw * .82, my = Hh - vh + vh * .2, mr = vw / 24;
     /* --- фон --- */
-    var bg = '<defs><linearGradient id="' + u + 'sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1630"/><stop offset=".62" stop-color="#29406b"/><stop offset="1" stop-color="#e3a45f"/></linearGradient>' +
-      '<linearGradient id="' + u + 'se" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d3a63"/><stop offset="1" stop-color="#081529"/></linearGradient>' +
+    var BG = shpBg(o.bg, { u: u, W: W, Hh: Hh, wl: wl, vx: vx, vw: vw, vh: vh, mx: mx, my: my, mr: mr });
+    var bg = '<defs>' + BG.defs +
       '<linearGradient id="' + u + 'sl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".16"/><stop offset=".5" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#000" stop-opacity=".2"/></linearGradient>' +
       '<linearGradient id="' + u + 'hl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient>' +
       '<radialGradient id="' + u + 'gl"><stop offset="0" stop-color="#ffe7a3" stop-opacity=".95"/><stop offset="1" stop-color="#ffb84a" stop-opacity="0"/></radialGradient>' +
-      '<clipPath id="' + u + 'hc"><path d="' + hullD + '"/></clipPath></defs>' +
-      '<rect width="' + W + '" height="' + Hh + '" fill="url(#' + u + 'sk)"/>' +
-      '<circle cx="' + shpF(mx) + '" cy="' + shpF(my) + '" r="' + shpF(mr) + '" fill="#fbe6b4" opacity=".9"/><circle cx="' + shpF(mx) + '" cy="' + shpF(my) + '" r="' + shpF(mr * 1.7) + '" fill="#fbe6b4" opacity=".08"/>' +
-      [[40, 30], [92, 58], [150, 22], [210, 48], [300, 30], [440, 26], [60, 98], [262, 88], [452, 120], [120, 130], [130, 160], [104, 118], [330, 150], [356, 112], [176, 104], [236, 128], [380, 176], [300, 186]].map(function (q, i) { return '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="' + (i % 3 ? .9 : 1.3) + '" fill="#fff" opacity=".7"/>'; }).join('') +
-      '<rect y="' + (wl - 6) + '" width="' + W + '" height="' + (Hh - wl + 6) + '" fill="url(#' + u + 'se)"/>' +
-      '<path d="M0 ' + (wl - 6) + 'H' + W + '" stroke="#f3c27c" stroke-opacity=".35" stroke-width="1"/>' +
-      '<path d="M' + shpF(mx - 32) + ' ' + (wl - 3) + 'h64M' + shpF(mx - 18) + ' ' + (wl + 3) + 'h40M' + shpF(mx - 8) + ' ' + (wl + 9) + 'h22" stroke="#fbe6b4" stroke-opacity=".35" stroke-width="1.4" stroke-linecap="round"/>';
+      '<clipPath id="' + u + 'hc"><path d="' + hullD + '"/></clipPath></defs>' + BG.body;
     /* --- такелаж и мачты --- */
     var mastX = T.masts.map(function (m) { return cx + m.x * L; });
     var mastTop = T.masts.map(function (m, i) { return deckAt(mastX[i]) - m.h; });
@@ -40460,9 +40461,9 @@ document.addEventListener('change',function(e) {
     var still = o.still ? ' wk-shp-still' : '';
     s = '<svg class="wk-shp-svg' + still + '" viewBox="' + shpF(vx) + ' ' + shpF(Hh - vh) + ' ' + vw + ' ' + shpF(vh) + '" role="img" aria-label="' + (o.label || T.n) + '" xmlns="http://www.w3.org/2000/svg">' + bg +
       '<g class="wk-shp-bob" style="transform-origin:' + cx + 'px ' + wl + 'px">' + ship + '</g>' +
-      '<g class="wk-shp-wave"><path d="M-40 ' + (wl + 2) + (function () { var p = ''; for (var i = 0; i < 16; i++) p += 'q' + 18 + ' ' + -4 + ' ' + 36 + ' 0'; return p; })() + 'V' + Hh + 'H-40Z" fill="#12305a" fill-opacity=".72"/>' +
-      '<path d="M-40 ' + (wl + 2) + (function () { var p = ''; for (var i = 0; i < 16; i++) p += 'q18 -4 36 0'; return p; })() + '" fill="none" stroke="#9cc6ff" stroke-opacity=".35" stroke-width="1"/>' +
-      '<path d="M-20 ' + (wl + 18) + (function () { var p = ''; for (var i = 0; i < 16; i++) p += 'q16 -3 32 0'; return p; })() + '" fill="none" stroke="#9cc6ff" stroke-opacity=".14" stroke-width="1"/></g></svg>';
+      '<g class="wk-shp-wave"><path d="M-40 ' + (wl + 2) + (function () { var p = ''; for (var i = 0; i < 16; i++) p += 'q' + 18 + ' ' + -4 + ' ' + 36 + ' 0'; return p; })() + 'V' + Hh + 'H-40Z" fill="' + BG.sea + '" fill-opacity="' + BG.so + '"/>' +
+      '<path d="M-40 ' + (wl + 2) + (function () { var p = ''; for (var i = 0; i < 16; i++) p += 'q18 -4 36 0'; return p; })() + '" fill="none" stroke="' + BG.hl + '" stroke-opacity=".35" stroke-width="1"/>' +
+      '<path d="M-20 ' + (wl + 18) + (function () { var p = ''; for (var i = 0; i < 16; i++) p += 'q16 -3 32 0'; return p; })() + '" fill="none" stroke="' + BG.hl + '" stroke-opacity=".14" stroke-width="1"/>' + (BG.front || '') + '</g></svg>';
     return s;
   }
 
@@ -40507,6 +40508,47 @@ document.addEventListener('change',function(e) {
     if (id === 'whale') return base + '<path d="M0 1C3 -9 19 -10 24 -2C25.5 2 21 6 13 6C7 6 2 4.5 0 1Z" fill="#3a6f8f" stroke="#15303f" stroke-width=".8"/><path d="M4 3C10 5.5 18 5 23 1" fill="none" stroke="#cfe3ee" stroke-width="1.2"/><path d="M12 -8C11 -12 9 -13 8 -14M12 -8C13 -12 15 -13 16 -14" fill="none" stroke="#9cc6ff" stroke-width=".9" stroke-linecap="round"/>' + E(19, -2.5);
     if (id === 'serpent') return base + '<path d="M0 4C7 2 3 -10 11 -12C16 -13.5 20 -12 23 -10L26 -8.5 22 -7C18 -6.5 15 -7.5 13 -5C10 -1 9 6 0 6Z" fill="#7a3fa0" stroke="#2c1240" stroke-width=".8" stroke-linejoin="round"/><path d="M3 4.5C8 2 6 -6 11 -9" fill="none" stroke="#d4a944" stroke-width=".9" stroke-dasharray="1.6 1.4"/><path d="M14 -12.5l-2 -3.5 3.5 2.5" fill="#d4a944" stroke="#2c1240" stroke-width=".5"/>' + E(19, -10);
     return '';
+  }
+
+  var SHP_BGN = { '': 'Ночное море', day: 'Ясный день', sunset: 'Закат', storm: 'Шторм', aurora: 'Северное сияние', tropic: 'Тропический остров' };
+  function shpBg(id, B) {
+    var f = shpF, u = B.u, W = B.W, Hh = B.Hh, wl = B.wl, mx = B.mx, my = B.my, mr = B.mr;
+    var grad = function (gid, stops, x2, y2) { return '<linearGradient id="' + u + gid + '" x1="0" y1="0" x2="' + (x2 || 0) + '" y2="' + (y2 == null ? 1 : y2) + '">' + stops.map(function (s) { return '<stop offset="' + s[0] + '" stop-color="' + s[1] + '"' + (s[2] != null ? ' stop-opacity="' + s[2] + '"' : '') + '/>'; }).join('') + '</linearGradient>'; };
+    var sky = function () { return '<rect width="' + W + '" height="' + Hh + '" fill="url(#' + u + 'sk)"/>'; };
+    var sea = function () { return '<rect y="' + (wl - 6) + '" width="' + W + '" height="' + (Hh - wl + 6) + '" fill="url(#' + u + 'se)"/>'; };
+    var stars = function (op) { return [[40, 30], [92, 58], [150, 22], [210, 48], [300, 30], [440, 26], [60, 98], [262, 88], [452, 120], [120, 130], [130, 160], [104, 118], [330, 150], [356, 112], [176, 104], [236, 128], [380, 176], [300, 186]].map(function (q, i) { return '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="' + (i % 3 ? .9 : 1.3) + '" fill="#fff" opacity="' + (op || .7) + '"/>'; }).join(''); };
+    var glint = function (c, op) { return '<path d="M' + f(mx - 32) + ' ' + (wl - 3) + 'h64M' + f(mx - 18) + ' ' + (wl + 3) + 'h40M' + f(mx - 8) + ' ' + (wl + 9) + 'h22" stroke="' + c + '" stroke-opacity="' + op + '" stroke-width="1.4" stroke-linecap="round"/>'; };
+    var cloud = function (x, y, k, c, op) { return '<g opacity="' + op + '" fill="' + c + '"><ellipse cx="' + f(x) + '" cy="' + f(y) + '" rx="' + f(26 * k) + '" ry="' + f(9 * k) + '"/><ellipse cx="' + f(x - 12 * k) + '" cy="' + f(y - 6 * k) + '" rx="' + f(13 * k) + '" ry="' + f(10 * k) + '"/><ellipse cx="' + f(x + 8 * k) + '" cy="' + f(y - 9 * k) + '" rx="' + f(15 * k) + '" ry="' + f(12 * k) + '"/></g>'; };
+    var X = function (k) { return B.vx + B.vw * k; }, Y = function (k) { return Hh - B.vh + B.vh * k; };
+    if (id === 'day') return { defs: grad('sk', [[0, '#4f9ad6'], [.7, '#9fd0f0'], [1, '#e6f5fc']]) + grad('se', [[0, '#2f7fb8'], [1, '#123f66']]),
+      body: sky() + '<circle cx="' + f(mx) + '" cy="' + f(my) + '" r="' + f(mr * 2.2) + '" fill="#fff7d6" opacity=".25"/><circle cx="' + f(mx) + '" cy="' + f(my) + '" r="' + f(mr * 1.1) + '" fill="#fff6cf"/>' + cloud(X(.18), Y(.2), 1, '#fff', .95) + cloud(X(.5), Y(.12), .8, '#fff', .9) + cloud(X(.62), Y(.36), .6, '#fff', .8) + sea() + '<path d="M0 ' + (wl - 6) + 'H' + W + '" stroke="#e6f5fc" stroke-opacity=".7"/>' + glint('#ffffff', .5),
+      sea: '#1f5f93', so: .62, hl: '#e8f6ff' };
+    if (id === 'sunset') return { defs: grad('sk', [[0, '#24173f'], [.45, '#7a3366'], [.78, '#d9616a'], [1, '#f8b062']]) + grad('se', [[0, '#5a2f52'], [1, '#160f26']]),
+      body: sky() + stars(.35) + '<circle cx="' + f(mx - B.vw * .05) + '" cy="' + (wl - 8) + '" r="' + f(mr * 1.9) + '" fill="#ffd27a"/><circle cx="' + f(mx - B.vw * .05) + '" cy="' + (wl - 8) + '" r="' + f(mr * 3.2) + '" fill="#ffb15a" opacity=".22"/>' + cloud(X(.22), Y(.42), .9, '#3b2150', .55) + cloud(X(.7), Y(.3), .7, '#4a2556', .5) + sea() +
+        '<path d="M' + f(mx - B.vw * .05 - 40) + ' ' + (wl - 2) + 'h80M' + f(mx - B.vw * .05 - 26) + ' ' + (wl + 5) + 'h52M' + f(mx - B.vw * .05 - 14) + ' ' + (wl + 12) + 'h28M' + f(mx - B.vw * .05 - 6) + ' ' + (wl + 20) + 'h12" stroke="#ffbf6a" stroke-opacity=".6" stroke-width="2" stroke-linecap="round"/>',
+      sea: '#3a2448', so: .7, hl: '#ffc58a' };
+    if (id === 'storm') {
+      var rain = ''; for (var i = 0; i < 46; i++) { var rx = (i * 53) % W, ry = (i * 37) % (wl - 20); rain += 'M' + rx + ' ' + ry + 'l-6 16'; }
+      var caps = ''; for (var j = 0; j < 14; j++) { var cx = (j * 71 + 20) % W, cy = wl + 8 + (j * 13) % 40; caps += 'M' + cx + ' ' + cy + 'q4 -3 8 0'; }
+      return { defs: grad('sk', [[0, '#151a21'], [.7, '#2f3843'], [1, '#56616c']]) + grad('se', [[0, '#26343e'], [1, '#090e12']]),
+        body: sky() + cloud(X(.2), Y(.16), 1.6, '#0f1318', .9) + cloud(X(.55), Y(.1), 1.9, '#12171d', .92) + cloud(X(.85), Y(.2), 1.4, '#0f1318', .9) + cloud(X(.4), Y(.3), 1.2, '#1b222a', .8) +
+          '<path d="M' + f(X(.74)) + ' ' + f(Y(.22)) + 'l-9 22h8l-12 26 22-32h-9l8-16z" fill="#fff3a8" opacity=".9"/><path d="' + rain + '" stroke="#b9c6d3" stroke-opacity=".22" stroke-width=".8"/>' + sea() + '<path d="' + caps + '" fill="none" stroke="#e6eef5" stroke-opacity=".45" stroke-width="1.2" stroke-linecap="round"/>',
+        sea: '#22313b', so: .78, hl: '#dfe8ef' };
+    }
+    if (id === 'aurora') return { defs: grad('sk', [[0, '#030814'], [.7, '#0b2133'], [1, '#14384a']]) + grad('se', [[0, '#0e2a3a'], [1, '#03101a']]) + grad('au', [[0, '#3df2a3', 0], [.5, '#3df2a3', .55], [1, '#7a5cff', 0]]) + grad('ic', [[0, '#f4fbff'], [1, '#9ec9de']]),
+      body: sky() + stars(.8) + '<path d="M' + f(X(-.05)) + ' ' + f(Y(.35)) + 'C' + f(X(.25)) + ' ' + f(Y(.05)) + ' ' + f(X(.55)) + ' ' + f(Y(.45)) + ' ' + f(X(1.05)) + ' ' + f(Y(.12)) + '" fill="none" stroke="url(#' + u + 'au)" stroke-width="' + f(B.vh * .14) + '" opacity=".75"/><path d="M' + f(X(.1)) + ' ' + f(Y(.5)) + 'C' + f(X(.35)) + ' ' + f(Y(.25)) + ' ' + f(X(.7)) + ' ' + f(Y(.55)) + ' ' + f(X(1)) + ' ' + f(Y(.3)) + '" fill="none" stroke="url(#' + u + 'au)" stroke-width="' + f(B.vh * .07) + '" opacity=".5"/>' +
+        sea() + '<path d="M' + f(X(.02)) + ' ' + (wl - 4) + 'l14 -26 10 8 12 -18 16 36z" fill="url(#' + u + 'ic)"/><path d="M' + f(X(.84)) + ' ' + (wl - 4) + 'l10 -16 8 4 9 -12 15 24z" fill="url(#' + u + 'ic)"/>' + glint('#bfffe4', .25),
+      sea: '#0f3346', so: .74, hl: '#bfffe4' };
+    if (id === 'tropic') {
+      var ix = X(.93), palm = function (x, y, h, lean) { var tx = x + lean, ty = y - h; var fr = ''; [-150, -110, -60, -20, 20].forEach(function (a) { var r = a * Math.PI / 180; fr += '<path d="M' + f(tx) + ' ' + f(ty) + 'q' + f(Math.cos(r) * 10) + ' ' + f(Math.sin(r) * 10 - 6) + ' ' + f(Math.cos(r) * 20) + ' ' + f(Math.sin(r) * 20 + 4) + '" fill="none" stroke="#2f8a4a" stroke-width="3.4" stroke-linecap="round"/>'; }); return '<path d="M' + f(x) + ' ' + f(y) + 'Q' + f(x + lean * .2) + ' ' + f(y - h * .6) + ' ' + f(tx) + ' ' + f(ty) + '" fill="none" stroke="#8a5a32" stroke-width="3"/>' + fr; };
+      return { defs: grad('sk', [[0, '#5cb8ea'], [.75, '#aee0f5'], [1, '#f1fbff']]) + grad('se', [[0, '#25b7c4'], [1, '#0b5f78']]),
+        body: sky() + '<circle cx="' + f(mx) + '" cy="' + f(my) + '" r="' + f(mr * 1.1) + '" fill="#fff4c2"/><circle cx="' + f(mx) + '" cy="' + f(my) + '" r="' + f(mr * 2.3) + '" fill="#fff4c2" opacity=".25"/>' + cloud(X(.45), Y(.16), .8, '#fff', .9) + cloud(X(.7), Y(.3), .55, '#fff', .8) + sea() +
+          '<ellipse cx="' + f(ix) + '" cy="' + (wl - 2) + '" rx="' + f(B.vw * .085) + '" ry="8" fill="#e9cf8d"/><ellipse cx="' + f(ix) + '" cy="' + (wl + 1) + '" rx="' + f(B.vw * .1) + '" ry="4" fill="#7fe0d6" opacity=".6"/>' + palm(ix - 8, wl - 7, 34, 8) + palm(ix + 6, wl - 6, 25, -6) + glint('#ffffff', .5),
+        sea: '#1aa0b0', so: .58, hl: '#ffffff' };
+    }
+    return { defs: grad('sk', [[0, '#0b1630'], [.62, '#29406b'], [1, '#e3a45f']]) + grad('se', [[0, '#1d3a63'], [1, '#081529']]),
+      body: sky() + '<circle cx="' + f(mx) + '" cy="' + f(my) + '" r="' + f(mr) + '" fill="#fbe6b4" opacity=".9"/><circle cx="' + f(mx) + '" cy="' + f(my) + '" r="' + f(mr * 1.7) + '" fill="#fbe6b4" opacity=".08"/>' + stars() + sea() + '<path d="M0 ' + (wl - 6) + 'H' + W + '" stroke="#f3c27c" stroke-opacity=".35" stroke-width="1"/>' + glint('#fbe6b4', .35),
+      sea: '#12305a', so: .72, hl: '#9cc6ff' };
   }
   /* ======== Верфь: материалы, этапы постройки, рынок ======== */
   var SHP_MAT = {
@@ -40792,7 +40834,7 @@ document.addEventListener('change',function(e) {
     shpRepaint(); shpAnnounce(e);
   }, 1000);
   document.addEventListener('keydown', function (e) { if (e.key === 'Enter' && e.target && e.target.id === 'wkShipNameIn') { e.preventDefault(); var b = document.querySelector('[data-tx="shipname"]'); if (b) b.click(); } else if (e.key === 'Escape' && e.target && e.target.id === 'wkShipNameIn') { var c = document.querySelector('[data-tx="shipnameedit"]'); if (c) c.click(); } });
-  window.__wkShip = { svg: shpSVG, shipSVG: shpShipSVG, view: shpView, tiers: SHP_T, repaint: shpRepaint };
+  window.__wkShip = { svg: shpSVG, shipSVG: shpShipSVG, view: shpView, tiers: SHP_T, repaint: shpRepaint, showcase: function (sh) { return shpShowcase(sh); }, open: function () { shpOpenYard(); } };
   /* ======== Верфь: оформление корабля (примерка как у рубашек) ======== */
   var SHP_PAINT_PRICE = 1500;
   var SHP_PSLOTS = [
@@ -40808,17 +40850,18 @@ document.addEventListener('change',function(e) {
     sorn: { n: 'Эмблема на парусе', req: 'sail', l: [{ id: '', n: 'Без эмблемы', p: 0 }, { id: 'jolly', n: 'Весёлый Роджер', p: 20000 }, { id: 'sun', n: 'Солнце', p: 14000 }, { id: 'anchor', n: 'Якорь', p: 10000 }, { id: 'rose', n: 'Роза ветров', p: 14000 }] },
     fig: { n: 'Носовая фигура', req: 'hull', l: [{ id: '', n: 'Без фигуры', p: 0 }, { id: 'ram', n: 'Баран', p: 18000 }, { id: 'lion', n: 'Лев', p: 30000 }, { id: 'eagle', n: 'Орёл', p: 24000 }, { id: 'whale', n: 'Кит', p: 24000 }, { id: 'serpent', n: 'Морской змей', p: 36000 }, { id: 'dragon', n: 'Дракон', p: 45000 }] },
     flag: { n: 'Флаг', req: 'mast', l: [{ id: '', n: 'Вымпел', p: 0 }, { id: 'jolly', n: 'Весёлый Роджер', p: 8000 }, { id: 'navy', n: 'Морской', p: 6000 }, { id: 'swords', n: 'Скрещённые сабли', p: 10000 }, { id: 'stars', n: 'Звёздный', p: 8000 }] },
+    bg: { n: 'Фон', l: [{ id: '', n: 'Ночное море', p: 0 }, { id: 'day', n: 'Ясный день', p: 10000 }, { id: 'sunset', n: 'Закат', p: 12000 }, { id: 'tropic', n: 'Тропический остров', p: 25000 }, { id: 'storm', n: 'Шторм', p: 18000 }, { id: 'aurora', n: 'Северное сияние', p: 22000 }] },
     dec: { n: 'Декор', l: [{ id: 'lights', n: 'Гирлянда огней', p: 15000, req: 'deck' }, { id: 'bunting', n: 'Флажки расцвечивания', p: 9000, req: 'mast' }, { id: 'rings', n: 'Спасательные круги', p: 6000, req: 'hull' }, { id: 'gilt', n: 'Золочёная корма', p: 20000, req: 'hull' }] }
   };
   var SHP_REQN = { hull: 'обшивку', sail: 'паруса', mast: 'мачту', deck: 'палубу' };
-  var SHP_DTABS = [['paint', 'Покраска'], ['orn', 'Узоры'], ['fig', 'Носовая фигура'], ['flag', 'Флаг'], ['dec', 'Декор']];
+  var SHP_DTABS = [['paint', 'Покраска'], ['orn', 'Узоры'], ['fig', 'Носовая фигура'], ['flag', 'Флаг'], ['dec', 'Декор'], ['bg', 'Фон']];
   var SHP_D = { paint: {} }, SHP_DT = 'paint';
-  function shpCos(sh) { return { paint: sh.paint && typeof sh.paint === 'object' ? sh.paint : {}, orn: sh.orn || '', sorn: sh.sorn || '', fig: sh.fig || '', flag: sh.flag || '', dec: Array.isArray(sh.dec) ? sh.dec : [] }; }
+  function shpCos(sh) { return { paint: sh.paint && typeof sh.paint === 'object' ? sh.paint : {}, orn: sh.orn || '', sorn: sh.sorn || '', fig: sh.fig || '', flag: sh.flag || '', bg: sh.bg || '', dec: Array.isArray(sh.dec) ? sh.dec : [] }; }
   function shpEffCos(sh) {
-    var c = shpCos(sh), e = { paint: {}, orn: c.orn, sorn: c.sorn, fig: c.fig, flag: c.flag, dec: c.dec.slice() };
+    var c = shpCos(sh), e = { paint: {}, orn: c.orn, sorn: c.sorn, fig: c.fig, flag: c.flag, bg: c.bg, dec: c.dec.slice() };
     Object.keys(c.paint).forEach(function (k) { e.paint[k] = c.paint[k]; });
     Object.keys(SHP_D.paint || {}).forEach(function (k) { e.paint[k] = SHP_D.paint[k]; });
-    ['orn', 'sorn', 'fig', 'flag'].forEach(function (k) { if (SHP_D[k] != null) e[k] = SHP_D[k]; });
+    ['orn', 'sorn', 'fig', 'flag', 'bg'].forEach(function (k) { if (SHP_D[k] != null) e[k] = SHP_D[k]; });
     if (SHP_D.dec) e.dec = SHP_D.dec.slice();
     return e;
   }
@@ -40833,12 +40876,13 @@ document.addEventListener('change',function(e) {
   function shpDiff(sh) {
     var c = shpCos(sh), e = shpEffCos(sh), list = [], sum = 0, pp = FREE() ? 0 : SHP_PAINT_PRICE;
     SHP_PSLOTS.forEach(function (s) { var a = c.paint[s.k] || SHP_PAINT[s.k], b = e.paint[s.k] || SHP_PAINT[s.k]; if (a !== b) { list.push({ t: 'paint', k: s.k, v: b, req: s.req, p: pp }); sum += pp; } });
-    ['orn', 'sorn', 'fig', 'flag'].forEach(function (k) { if (c[k] !== e[k]) { var it = shpItem(k, e[k]), p = it && !shpOwn(sh, k, e[k]) ? (FREE() ? 0 : it.p) : 0; list.push({ t: k, v: e[k], req: SHP_DZ[k].req, p: p }); sum += p; } });
+    ['orn', 'sorn', 'fig', 'flag', 'bg'].forEach(function (k) { if (c[k] !== e[k]) { var it = shpItem(k, e[k]), p = it && !shpOwn(sh, k, e[k]) ? (FREE() ? 0 : it.p) : 0; list.push({ t: k, v: e[k], req: SHP_DZ[k].req, p: p }); sum += p; } });
     e.dec.forEach(function (id) { if (c.dec.indexOf(id) < 0) { var it = shpItem('dec', id), p = it && !shpOwn(sh, 'dec', id) ? (FREE() ? 0 : it.p) : 0; list.push({ t: 'dec', v: id, on: true, req: it && it.req, p: p }); sum += p; } });
     c.dec.forEach(function (id) { if (e.dec.indexOf(id) < 0) list.push({ t: 'dec', v: id, on: false, p: 0 }); });
     return { list: list, sum: sum };
   }
   function shpMini(kind, id) {
+    if (kind === 'bg') { var B = shpBg(id, { u: 'shpm' + (++shpUid), W: 480, Hh: 300, wl: 200, vx: 0, vw: 480, vh: 300, mx: 390, my: 70, mr: 26 }); return '<svg viewBox="0 0 480 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" class="wk-shp-mini"><defs>' + B.defs + '</defs>' + B.body + '<path d="M0 210h480V300H0z" fill="' + B.sea + '" fill-opacity=".35"/></svg>'; }
     var w = '<svg viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini">';
     if (kind === 'fig') return w + '<rect width="60" height="36" fill="#13213b"/>' + (id ? '<g transform="translate(14 22) scale(1.25)">' + shpFig(id) + '</g>' : '<path d="M22 18h16" stroke="#5b6b85" stroke-width="2" stroke-linecap="round"/>') + '</svg>';
     if (kind === 'flag') return w + '<rect width="60" height="36" fill="#13213b"/><g transform="translate(-11 -14) scale(2)">' + shpFlag(id, 12, 20, '#b8322a') + '</g></svg>';
@@ -40854,7 +40898,7 @@ document.addEventListener('change',function(e) {
     var sc = shpScene(v); if (!(sc.all || sc.built.hull)) return '';
     var c = shpCos(sh), e = shpEffCos(sh), df = shpDiff(sh), bel = st.belli || 0;
     var lockNote = function (req) { return shpReqOk(sc, req) ? '' : '<small class="wk-shp-lk">Сначала построй ' + (SHP_REQN[req] || req) + '</small>'; };
-    var pv = shpSVG({ t: sc.t, built: sc.built, bld: sc.bld, all: sc.all, parts: shpPartIds(sc.t), name: sh.name || '', paint: e.paint, orn: e.orn, sorn: e.sorn, fig: e.fig, flag: e.flag, dec: e.dec, still: true, label: 'Примерка оформления' });
+    var pv = shpSVG({ t: sc.t, built: sc.built, bld: sc.bld, all: sc.all, parts: shpPartIds(sc.t), name: sh.name || '', paint: e.paint, orn: e.orn, sorn: e.sorn, fig: e.fig, flag: e.flag, dec: e.dec, bg: e.bg, still: true, label: 'Примерка оформления' });
     var tabs = '<div class="wk-shp-dtabs" role="tablist">' + SHP_DTABS.map(function (t) { var on = t[0] === SHP_DT; return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? 'on' : '') + '" data-tx="shipdzt" data-t="' + t[0] + '">' + t[1] + '</button>'; }).join('') + '</div>';
     var card = function (kind, it, sel, req) {
       var own = shpOwn(sh, kind, it.id), lock = !shpReqOk(sc, req || it.req), p = FREE() ? 0 : it.p;
@@ -40867,6 +40911,7 @@ document.addEventListener('change',function(e) {
       return '<div class="wk-shp-pr' + (lock ? ' lock' : '') + '"><span class="wk-shp-prn">' + s.n + lockNote(s.req) + '</span><span class="wk-shp-sw">' + s.c.map(function (col) { var on = col.toLowerCase() === cur.toLowerCase(); return '<button type="button" style="--c:' + col + '" class="' + (on ? 'on' : '') + '" data-tx="shipdz" data-k="paint" data-s="' + s.k + '" data-v="' + col + '"' + (lock ? ' disabled' : '') + ' aria-pressed="' + on + '" aria-label="' + s.n + ': ' + col + '"></button>'; }).join('') + '</span></div>';
     }).join('');
     else if (SHP_DT === 'orn') body = ['orn', 'sorn'].map(function (k) { return '<h4 class="wk-shp-h4">' + SHP_DZ[k].n + '</h4><div class="wk-shp-its">' + SHP_DZ[k].l.map(function (it) { return card(k, it, e[k] === it.id, SHP_DZ[k].req); }).join('') + '</div>'; }).join('');
+    else if (SHP_DT === 'bg') body = '<p class="wk-sh-hint">Фон виден на верфи и в витрине корабля в Профиле.</p><div class="wk-shp-its">' + SHP_DZ.bg.l.map(function (it) { return card('bg', it, e.bg === it.id, null); }).join('') + '</div>';
     else if (SHP_DT === 'dec') body = '<p class="wk-sh-hint">Украшения можно сочетать: выбирай сколько угодно.</p><div class="wk-shp-its">' + SHP_DZ.dec.l.map(function (it) { return card('dec', it, e.dec.indexOf(it.id) >= 0, it.req); }).join('') + '</div>';
     else body = '<div class="wk-shp-its">' + SHP_DZ[SHP_DT].l.map(function (it) { return card(SHP_DT, it, e[SHP_DT] === it.id, SHP_DZ[SHP_DT].req); }).join('') + '</div>';
     var n = df.list.length, can = n && bel >= df.sum;
@@ -40894,11 +40939,25 @@ document.addEventListener('change',function(e) {
       var e = shpEffCos(sh); sh.own = sh.own || {};
       df.list.forEach(function (x) { if (x.t !== 'paint' && x.v && (x.t !== 'dec' || x.on)) sh.own[x.t + ':' + x.v] = 1; });
       var pnt = {}; Object.keys(e.paint).forEach(function (q) { if (e.paint[q] && e.paint[q] !== SHP_PAINT[q]) pnt[q] = e.paint[q]; });
-      sh.paint = pnt; sh.orn = e.orn; sh.sorn = e.sorn; sh.fig = e.fig; sh.flag = e.flag; sh.dec = e.dec;
+      sh.paint = pnt; sh.orn = e.orn; sh.sorn = e.sorn; sh.fig = e.fig; sh.flag = e.flag; sh.bg = e.bg; sh.dec = e.dec;
       SHP_D = { paint: {} }; save(st); repaint(); if (df.sum) belliAnim(pane, b0);
       txToast('Корабль преобразился'); return true;
     }
     return false;
+  }
+
+  /* Витрина в Профиле: последний спущенный на воду корабль со всем оформлением. */
+  function shpShowcase(sh) {
+    sh = sh && typeof sh === 'object' ? sh : {}; var v = shpView(sh); if (v.lv < 1) return null;
+    var t = v.lv - 1, building = v.lv < 5 && (Object.keys(v.done).length || v.job);
+    return { t: t, n: SHP_T[t].n, name: sh.name || '', next: building ? SHP_T[v.lv].n : '', max: v.lv >= 5,
+      svg: shpSVG({ t: t, all: true, parts: shpPartIds(t), name: sh.name || '', paint: sh.paint, orn: sh.orn, sorn: sh.sorn, fig: sh.fig, flag: sh.flag, dec: sh.dec, bg: sh.bg, label: (sh.name ? '«' + sh.name + '» — ' : '') + SHP_T[t].n }) };
+  }
+  function shpOpenYard() {
+    DK.shTab = 'ship';
+    var tab = [].filter.call(document.querySelectorAll('.main-tab'), function (b) { return /Колода/.test(b.textContent); })[0];
+    if (tab) tab.click();
+    setTimeout(function () { var s = document.querySelector('[data-t="shop"]'); if (s) s.click(); setTimeout(function () { var y = document.querySelector('.wk-sht-p[data-shp="ship"]'); if (y && y.scrollIntoView) y.scrollIntoView({ block: 'start' }); }, 300); }, 350);
   }
   function belliAnim(pane, from) {
     var bal = pane.querySelector('.wk-sh-bal'), el = bal && bal.querySelector('.wk-sh-num'); if (!el) return;
@@ -45053,8 +45112,8 @@ html body #favoritesSection#favoritesSection#favoritesSection #wkProgressCard{di
 /* v512: личная страница в «Обзоре» Каюты */
 (function () {
   'use strict'; var arr = __wkU.gArr; var esc = __wkU.esc; var $ = __wkU.q;
-  var SH = { pr: 'Прогресс в аниме и манге', ach: 'Последние достижения', tops: 'Топы', deck: 'Избранные карточки' };
-  var WIDE = { tops: 1, deck: 1 }, DEF_ORDER = ['pr', 'ach', 'tops', 'deck'], DEF_OFF = [];
+  var SH = { pr: 'Прогресс в аниме и манге', ship: 'Корабль', ach: 'Последние достижения', tops: 'Топы', deck: 'Избранные карточки' };
+  var WIDE = { tops: 1, deck: 1, ship: 1 }, DEF_ORDER = ['pr', 'ship', 'ach', 'tops', 'deck'], DEF_OFF = [];
   var viewing = '', edit = false, sig = '', topsAsked = false;
   
   
@@ -45108,7 +45167,7 @@ html body #favoritesSection#favoritesSection#favoritesSection #wkProgressCard{di
     var pick = function (k) { return Array.isArray(p[k]) ? p[k] : (Array.isArray(loc[k]) ? loc[k] : null); };
     var apSrc = Array.isArray(p.ap) && p.ap.length ? p.ap : (Array.isArray(loc.ap) ? loc.ap : []);
     var order = (pick('order') || []).filter(function (k) { return SH[k]; });
-    DEF_ORDER.forEach(function (k) { if (order.indexOf(k) < 0) order.push(k); });
+    DEF_ORDER.forEach(function (k) { if (order.indexOf(k) < 0) { if (k === 'ship') order.splice(Math.min(1, order.length), 0, k); else order.push(k); } });
     var off = pick('off'), tx = pick('tx');
     return { order: order, off: off ? off.filter(function (k) { return SH[k]; }) : DEF_OFF.slice(), tx: tx ? tx.slice() : [], ap: apSrc.slice(0, 6), lt: +p.lt || +loc.lt || 0 };
   }
@@ -45132,6 +45191,8 @@ html body #favoritesSection#favoritesSection#favoritesSection #wkProgressCard{di
     else { var pp = (d && d.prof) || {}; D.pr = pp.pr || null; D.ach = pp.ach || []; D.am = pp.am || null; D.apicked = !!(pp.ap && pp.ap.length); }
     var tp = null; try { tp = window.__wkTopsOf ? window.__wkTopsOf(v) : null; } catch (e) {} D.tops = tp && tp.cats ? tp.cats : [];
     D.show = d && d.show ? (d.show.length | 0) + ':' + d.show.join(',') + ':' + (d.frame || '') + (d.bg || '') + (d.showCap || '') : '';
+    var SW = window.__wkShip, shd = d && d.ship; D.ship = '';
+    if (SW && shd && typeof shd === 'object') { var shv = SW.view(shd); if (shv.lv >= 1) D.ship = JSON.stringify([shv.lv, Object.keys(shv.done).length, !!shv.job, shd.name || '', shd.paint || {}, shd.orn || '', shd.sorn || '', shd.fig || '', shd.flag || '', shd.dec || [], shd.bg || '']); }
     D.cnt = accs().map(function (x) { return x.login; }).join(',');
     D.menu = mobile() && mine ? cleanMenu(window.__wkCabMenuHTML ? window.__wkCabMenuHTML() : '') : '';
     D.desk = !!(window.matchMedia && matchMedia('(min-width:761px)').matches);
@@ -45165,6 +45226,13 @@ html body #favoritesSection#favoritesSection#favoritesSection #wkProgressCard{di
           return '<li><em>' + (n + 1) + '</em>' + (i.img ? '<img alt="" loading="lazy" src="' + esc(i.img) + '" style="object-position:' + esc(i.pos) + '">' : '<span class="ph">' + esc(i.icon || '·') + '</span>') + '<span title="' + esc(i.name || i.sub) + '">' + esc(i.locked ? lockTxt(i.sub) : i.name) + '</span></li>';
         }).join('') + '</ol>' + (c.items.length > 5 ? '<button type="button" class="pf-btn pf-topmore" data-pf="topmore" data-c="' + esc(c.key) + '" aria-expanded="' + (topOpen[c.key] ? 'true' : 'false') + '" style="margin:8px 0 0">' + (topOpen[c.key] ? 'Свернуть' : 'Раскрыть (ещё ' + (Math.min(10, c.items.length) - 5) + ')') + '</button>' : '') + '</div>';
       }).join('') + '</div>';
+    }
+    if (k === 'ship') {
+      var yb = D.mine ? '<button type="button" class="pf-btn" data-pf="yard">Открыть верфь</button>' : '';
+      if (!D.ship) return D.mine && D.edit ? '<p class="pf-muted">Витрина появится, когда на Верфи в магазине Колоды будет спущена на воду хотя бы лодка.</p>' + yb : null;
+      var aa = A(), dd = aa && aa.deck(D.v), sc = dd && window.__wkShip ? window.__wkShip.showcase(dd.ship) : null; if (!sc) return null;
+      var sub = sc.n + (sc.max ? ' · вершина верфи' : sc.next ? ' · на верфи строится ' + sc.next.toLowerCase() : '');
+      return '<div class="pf-ship"><div class="pf-ship-sc">' + sc.svg + '</div><div class="pf-ship-cap"><div><b>' + (sc.name ? '«' + esc(sc.name) + '»' : 'Корабль без имени') + '</b><span>' + esc(sub) + '</span></div>' + yb + '</div></div>';
     }
     if (k === 'deck') {
       var a = A(), h = a ? a.show(D.v) : '', eb = D.mine && D.edit ? '<button type="button" class="pf-btn" data-pf="showedit" style="margin:0 0 10px">' + (h ? 'Изменить витрину' : 'Выбрать карточки') + '</button>' : '';
@@ -45297,6 +45365,7 @@ html body #favoritesSection#favoritesSection#favoritesSection #wkProgressCard{di
   document.addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('#wkProf [data-pf]'); if (!b || b.tagName === 'SELECT') return;
     var k = b.getAttribute('data-pf'), a = A();
+    if (k === 'yard') { try { window.__wkShip && window.__wkShip.open(); } catch (x) {} return; }
     if (k === 'view') { viewing = b.getAttribute('data-l') || ''; if (viewing === me()) viewing = ''; edit = false; if (viewing && !topsAsked) { topsAsked = true; try { window.__wkTopsLoad && window.__wkTopsLoad().then(function () { tick(true); }); } catch (x) {} } return tick(true); }
     if (k === 'apset') {
       var Da = collect(), la = Da.lay, id = b.getAttribute('data-id'), ia = la.ap.indexOf(id);
