@@ -930,7 +930,7 @@ html body #storyList.sg-on .story-saga-group.sg-sel>.story-saga-arcs{align-conte
 .wk-shp-nmf input{flex:1 1 180px;min-width:0;height:38px;padding:0 12px;border-radius:var(--r-md,10px);border:1px solid var(--shp-b);background:#0b1220;color:#f1f5f9;font:600 var(--fs-md,15px)/1 inherit}
 .wk-shp-nmf input:focus{outline:2px solid #f1d27c;outline-offset:1px}
 .wk-shp-lv{font:700 var(--fs-xs)/1 inherit;letter-spacing:.06em;color:#9fb0c8;padding:7px 11px;border-radius:999px;border:1px solid var(--shp-b);background:var(--shp-bg)}
-.wk-shp-scene{max-width:860px;margin:0 auto;border-radius:16px;overflow:hidden;border:1px solid var(--shp-b);box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.wk-shp-scene{border-radius:16px;overflow:hidden;border:1px solid var(--shp-b);box-shadow:0 18px 40px rgba(0,0,0,.35)}
 .wk-shp-svg{display:block;width:100%;height:auto}
 .wk-shp-bp *{fill:none!important;stroke:#7cc4ff!important;stroke-opacity:.55!important;stroke-width:.9px!important;stroke-dasharray:3 3}
 .wk-shp-bp text{display:none}
@@ -1001,6 +1001,34 @@ html body #storyList.sg-on .story-saga-group.sg-sel>.story-saga-arcs{align-conte
   .wk-shp-lots{grid-template-columns:repeat(2,minmax(0,1fr))}
   .wk-shp-job-a .wk-tx-btn{flex:1 1 100%}
 }
+.wk-shp-dz{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;align-items:start}
+.wk-shp-dpv{position:sticky;top:76px;display:flex;flex-direction:column;gap:10px}
+.wk-shp-dpv .wk-shp-scene{max-width:none}
+.wk-shp-dbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px;border-radius:var(--r-lg,14px);border:1px dashed var(--shp-b);background:var(--shp-bg);font-size:var(--fs-sm);color:#9fb0c8}
+.wk-shp-dbar span{flex:1 1 200px}
+.wk-shp-dbar.on{border-style:solid;border-color:rgba(241,210,124,.45);color:#e2e8f0}
+.wk-shp-dbar b{color:#f1d27c}
+.wk-shp-dtabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
+.wk-shp-dtabs button{padding:8px 12px;border-radius:999px;border:1px solid var(--shp-b);background:var(--shp-bg);color:#cbd5e1;font:600 var(--fs-sm)/1 inherit;cursor:pointer}
+.wk-shp-dtabs button.on{border-color:#f1d27c;color:#f1d27c;background:rgba(241,210,124,.1)}
+.wk-shp-pr{display:flex;flex-direction:column;gap:7px;padding:10px 0;border-bottom:1px solid rgba(148,163,184,.1)}
+.wk-shp-prn{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font:700 var(--fs-sm)/1.2 inherit;color:#e2e8f0}
+.wk-shp-lk{font-weight:600;color:#f1a77c;font-size:var(--fs-xs)}
+.wk-shp-sw{display:flex;flex-wrap:wrap;gap:7px}
+.wk-shp-sw button{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,.18);background:var(--c);cursor:pointer;box-shadow:inset 0 -3px 6px rgba(0,0,0,.25);transition:transform .12s}
+.wk-shp-sw button:hover:not(:disabled){transform:scale(1.1)}
+.wk-shp-sw button.on{border-color:#f1d27c;box-shadow:0 0 0 3px rgba(241,210,124,.35),inset 0 -3px 6px rgba(0,0,0,.25)}
+.wk-shp-sw button:disabled,.wk-shp-it:disabled{cursor:not-allowed;opacity:.4}
+.wk-shp-h4{margin:12px 0 8px;font:700 var(--fs-sm)/1.2 inherit;color:#cbd5e1}
+.wk-shp-its{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.wk-shp-it{display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 8px 10px;border-radius:var(--r-md,10px);border:1px solid var(--shp-b);background:var(--shp-bg);color:#e2e8f0;cursor:pointer;text-align:center;font:inherit}
+.wk-shp-it:hover:not(:disabled){border-color:rgba(241,210,124,.5)}
+.wk-shp-it.on{border-color:#f1d27c;box-shadow:0 0 0 2px rgba(241,210,124,.25);background:rgba(241,210,124,.07)}
+.wk-shp-it b{font-size:var(--fs-xs);line-height:1.2}
+.wk-shp-it small{font-size:11px;color:#8b97ab}
+.wk-shp-it.on small{color:#f1d27c}
+.wk-shp-mini{display:block;width:100%;height:auto;border-radius:6px}
+@media (max-width:860px){.wk-shp-dz{grid-template-columns:1fr}.wk-shp-dpv{position:sticky;top:56px;z-index:5;background:var(--page-bg,#0b1120);padding:4px 0 6px}.wk-shp-dpv .wk-shp-scene{max-height:26vh;overflow:hidden}.wk-shp-dpv .wk-shp-scene svg{max-height:26vh;width:100%;object-fit:contain}}
 </style>
 </head>
 <body data-theme="mugiwara" data-active-tab="characters">
@@ -39013,7 +39041,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (a === 'compose') { compOpen(pane); return true; }
     if (a === 'showedit') { compOpen(pane, 'show'); return true; }
     if (a === 'wantedit') { compOpen(pane, 'want'); return true; }
-    if (a === 'priceeditor' || a === 'shtab' || a === 'sellall' || a === 'sell1' || a === 'buy' || a === 'mklist' || a === 'mkbuy' || a === 'mkcancel' || a === 'buyup' || a === 'daybuy' || a === 'dayroll' || a === 'buy2' || a === 'pigput' || a === 'pigbuy' || a === 'pigget' || a === 'pickup' || a === 'cosbuy' || a === 'cossel' || a === 'bkxbuy' || a === 'bkxwear' || a === 'nktgt' || a === 'bkadd' || a === 'bkedit' || a === 'bkcancel' || a === 'bkdel' || a === 'ornadd' || a === 'ornedit' || a === 'orncancel' || a === 'orndel' || a === 'ornreset' || a === 'orndef' || a === 'walladd' || a === 'walledit' || a === 'wallcancel' || a === 'walldel' || a === 'bgtexadd' || a === 'bgtexedit' || a === 'bgtexcancel' || a === 'bgtexdel' || a === 'giftpack' || a === 'giftbuy' || a === 'hold' || a === 'unhold' || a === 'shipbuy' || a === 'shiproll' || a === 'shipbuild' || a === 'shipfast' || a === 'shipcancel' || a === 'shipname' || a === 'shipnameedit') { shopClick(pane, a, b); return true; }
+    if (a === 'priceeditor' || a === 'shtab' || a === 'sellall' || a === 'sell1' || a === 'buy' || a === 'mklist' || a === 'mkbuy' || a === 'mkcancel' || a === 'buyup' || a === 'daybuy' || a === 'dayroll' || a === 'buy2' || a === 'pigput' || a === 'pigbuy' || a === 'pigget' || a === 'pickup' || a === 'cosbuy' || a === 'cossel' || a === 'bkxbuy' || a === 'bkxwear' || a === 'nktgt' || a === 'bkadd' || a === 'bkedit' || a === 'bkcancel' || a === 'bkdel' || a === 'ornadd' || a === 'ornedit' || a === 'orncancel' || a === 'orndel' || a === 'ornreset' || a === 'orndef' || a === 'walladd' || a === 'walledit' || a === 'wallcancel' || a === 'walldel' || a === 'bgtexadd' || a === 'bgtexedit' || a === 'bgtexcancel' || a === 'bgtexdel' || a === 'giftpack' || a === 'giftbuy' || a === 'hold' || a === 'unhold' || a === 'shipbuy' || a === 'shiproll' || a === 'shipbuild' || a === 'shipfast' || a === 'shipcancel' || a === 'shipname' || a === 'shipnameedit' || a === 'shipdz' || a === 'shipdzt' || a === 'shipdzok' || a === 'shipdzx') { shopClick(pane, a, b); return true; }
     if (a === 'accept' || a === 'decline' || a === 'cancel') { if (a !== 'accept' || (TX.trades.filter(function (x) { return x.id === b.getAttribute('data-id'); })[0] || {}).gift || window.confirm('Принять обмен? Карточки сразу перейдут.')) txAction(pane, a, b.getAttribute('data-id'), b); return true; }
     return false;
   }
@@ -40313,9 +40341,16 @@ document.addEventListener('change',function(e) {
       for (var k = 0; k < T.masts.length - 1; k++) rig += '<path d="M' + shpF(mastX[k + 1]) + ' ' + shpF(mastTop[k + 1] + 3) + 'L' + shpF(mastX[k]) + ' ' + shpF(mastTop[k] + 30) + '" stroke="#1b120c" stroke-opacity=".6" stroke-width=".6"/>';
     }
     sails = jib + sails;
+    if (o.sorn) {
+      var ec, er;
+      if (T.rig === 'lug') { ec = [mastX[0] + 2, (mastTop[0] + 12 + deckAt(mastX[0]) - 15) / 2]; er = 11; }
+      else if (T.rig === 'sloop') { ec = [mastX[0] - L * .19, (mastTop[0] + 10 + deckAt(mastX[0]) - 17) / 2 + 6]; er = L * .07; }
+      else { var mt = 0; T.masts.forEach(function (m, i) { if (i < T.masts.length - (T.masts.length > 2 ? 1 : 0) && m.h > T.masts[mt].h) mt = i; }); var mh = T.masts[mt].h, my0 = deckAt(mastX[mt]); ec = [mastX[mt], my0 - mh * .335]; er = Math.min(L * .055, mh * .1); }
+      sails += shpEmblem(o.sorn, ec[0], ec[1], er, shpShade(P.sail, -.78), P.sail);
+    }
     var tallest = 0; mastTop.forEach(function (t, i) { if (t < mastTop[tallest]) tallest = i; });
     var flx = mastX[tallest], fly = mastTop[tallest];
-    flag = '<path d="M' + shpF(flx) + ' ' + shpF(fly) + 'v-10" stroke="#4a2e1b" stroke-width="1.6"/><path d="M' + shpF(flx) + ' ' + shpF(fly - 10) + 'q7 -3 13 0t13 0l-3 4 3 4q-6 -3 -13 0t-13 0z" fill="' + P.flag + '" stroke="' + shpShade(P.flag, -.4) + '" stroke-width=".6"/>';
+    flag = shpFlag(o.flag, flx, fly, P.flag);
     /* --- корпус --- */
     var planks = '';
     for (var off = 5; off < T.H + D; off += 5.5) planks += '<path d="' + curve(off) + '" fill="none" stroke="#000" stroke-opacity=".22" stroke-width=".7"/>';
@@ -40340,6 +40375,7 @@ document.addEventListener('change',function(e) {
       var nx = bx - L * .16, ny = deckAt(nx) + band + 12;
       hull += '<text x="' + shpF(nx) + '" y="' + shpF(Math.min(ny, wl - 5)) + '" text-anchor="middle" font-size="' + (L > 250 ? 8 : 6.5) + '" font-family="Georgia,serif" font-style="italic" font-weight="700" fill="' + P.wale + '" letter-spacing=".4">' + String(o.name).replace(/[<>&"]/g, '') + '</text>';
     }
+    if (o.orn) hull += '<g clip-path="url(#' + u + 'hc)">' + shpOrn(o.orn, function (x) { return deckAt(x) + band + 9; }, sx + L * .06, bx - L * (o.name ? .3 : .12), P, Math.max(2.4, T.H / 11)) + '</g>';
     var frame = '<path d="M' + shpF(sx + L * .1) + ' ' + shpF(wl + D) + 'H' + shpF(bx - L * .2) + 'C' + shpF(bx - L * .07) + ' ' + shpF(wl + D) + ' ' + shpF(bx - 3) + ' ' + shpF(wl - T.H * .2) + ' ' + shpF(bx) + ' ' + shpF(yb) + 'M' + shpF(sx + L * .12) + ' ' + shpF(wl + D) + 'C' + shpF(sx + 3) + ' ' + shpF(wl + D * .7) + ' ' + shpF(sx - 5) + ' ' + shpF(wl - T.H * .35) + ' ' + shpF(sx) + ' ' + shpF(ys) + '" fill="none" stroke="#9c6a3c" stroke-width="3.2" stroke-linecap="round"/>';
     for (var f = 1; f < 12; f++) { var rx = sx + L * f / 12, rt = deckAt(rx); frame += '<path d="M' + shpF(rx) + ' ' + shpF(rt) + 'Q' + shpF(rx - 4) + ' ' + shpF((rt + wl + D) / 2) + ' ' + shpF(rx) + ' ' + shpF(wl + D - 1) + '" fill="none" stroke="#b07c4a" stroke-width="1.8"/>'; }
     frame += '<path d="' + curve(0) + '" fill="none" stroke="#b07c4a" stroke-width="2"/>';
@@ -40399,6 +40435,28 @@ document.addEventListener('change',function(e) {
     ship += on('rudder') ? grp('rudder', rudder) : '';
     ship += on('oars') ? grp('oars', oars) : '';
     ship += on('lamps') ? grp('lamps', lamps) : '';
+    var ok = function (p) { return o.all || has(p) || (o.parts && o.parts.indexOf(p) < 0 && has('hull')); };
+    var dec = o.dec || [];
+    if (dec.indexOf('gilt') >= 0 && ok('hull')) ship += '<g data-dec="gilt">' + '<path d="M' + shpF(sx + 1) + ' ' + shpF(ys + 1) + 'C' + shpF(sx - 4) + ' ' + shpF(wl - T.H * .35) + ' ' + shpF(sx + 3) + ' ' + shpF(wl - 2) + ' ' + shpF(sx + 8) + ' ' + shpF(wl - 2) + '" fill="none" stroke="#e7c35a" stroke-width="2.2"/>' + '<path d="' + curve(1) + '" fill="none" stroke="#e7c35a" stroke-width="1.4"/>' + [[sx + 3, ys + 5], [bx - 6, yb + 5]].map(function (q) { return '<path d="M' + shpF(q[0]) + ' ' + shpF(q[1]) + 'c3 -4 8 -1 5 2 -2 2 -5 0 -3 -1" fill="none" stroke="#f3d98a" stroke-width="1.2"/>'; }).join('') + (T.cab && ok('cabin') ? '<path d="M' + shpF(sx - 7) + ' ' + shpF(ys - T.cab.h - 1) + 'h' + shpF(L * T.cab.w + 3) + '" stroke="#f3d98a" stroke-width="2.6"/>' : '') + '</g>';
+    if (dec.indexOf('rings') >= 0 && ok('hull')) [.4, .62].forEach(function (k) { var rx = sx + L * k, top = deckAt(rx) + band + 4, rr = Math.max(3, Math.min(6, (wl - top) / 2 - 1)); var ry = top + rr + 1; if (T.ports && ok('deck')) ry = deckAt(rx) - 1 - rr, rx += L * .05; ship += '<g data-dec="rings"><circle cx="' + shpF(rx) + '" cy="' + shpF(ry) + '" r="' + shpF(rr) + '" fill="none" stroke="#f4efe6" stroke-width="' + shpF(rr * .55) + '"/><circle cx="' + shpF(rx) + '" cy="' + shpF(ry) + '" r="' + shpF(rr) + '" fill="none" stroke="#c0392b" stroke-width="' + shpF(rr * .55) + '" stroke-dasharray="' + shpF(rr * .8) + ' ' + shpF(rr * .77) + '"/></g>'; });
+    if (dec.indexOf('lights') >= 0 && ok('deck')) {
+      var lt = '', pts = [];
+      var hang = function (x1, y1, x2, y2, sag, n) { for (var i = 0; i <= n; i++) { var t = i / n, x = x1 + (x2 - x1) * t, y = y1 + (y2 - y1) * t + sag * 4 * t * (1 - t); pts.push([x, y]); } lt += '<path d="M' + shpF(x1) + ' ' + shpF(y1) + 'Q' + shpF((x1 + x2) / 2) + ' ' + shpF((y1 + y2) / 2 + sag * 2) + ' ' + shpF(x2) + ' ' + shpF(y2) + '" fill="none" stroke="#1b120c" stroke-width=".6"/>'; };
+      var mx0 = mastX[0], my0t = deckAt(mx0) - T.masts[0].h * .55;
+      hang(bx - 2, yb - 7, mx0, my0t, 6, 6); hang(mx0, my0t, sx + 4, ys - 7 - (T.cab ? T.cab.h : 0), 8, 8);
+      pts.forEach(function (q, i) { lt += '<circle cx="' + shpF(q[0]) + '" cy="' + shpF(q[1] + 1.6) + '" r="3.2" fill="url(#' + u + 'gl)" opacity=".7"/><circle cx="' + shpF(q[0]) + '" cy="' + shpF(q[1] + 1.6) + '" r="1.3" fill="' + ['#ffd56b', '#ffb36b', '#fff1b8'][i % 3] + '"/>'; });
+      ship += '<g data-dec="lights">' + lt + '</g>';
+    }
+    if (dec.indexOf('bunting') >= 0 && ok('mast')) {
+      var bt = '', cols = ['#c0392b', '#f1c40f', '#2e86de', '#f4efe6', '#27ae60'], ci = 0;
+      var line = function (x1, y1, x2, y2, n) { bt += '<path d="M' + shpF(x1) + ' ' + shpF(y1) + 'L' + shpF(x2) + ' ' + shpF(y2) + '" stroke="#1b120c" stroke-width=".5"/>'; for (var i = 0; i < n; i++) { var t = (i + .5) / n, x = x1 + (x2 - x1) * t, y = y1 + (y2 - y1) * t, d = Math.hypot(x2 - x1, y2 - y1) / n * .38; var ang = Math.atan2(y2 - y1, x2 - x1); var ax = x - Math.cos(ang) * d, ay = y - Math.sin(ang) * d, bx2 = x + Math.cos(ang) * d, by2 = y + Math.sin(ang) * d; bt += '<path d="M' + shpF(ax) + ' ' + shpF(ay) + 'L' + shpF(bx2) + ' ' + shpF(by2) + 'L' + shpF(x) + ' ' + shpF(y + d * 1.5) + 'Z" fill="' + cols[ci++ % cols.length] + '"/>'; } };
+      var front = T.bs ? [bx + T.bs * .92, yb - T.bs * .36] : [bx - 2, yb - 4];
+      line(front[0], front[1], mastX[0], mastTop[0] + 4, 7);
+      for (var mm = 0; mm < T.masts.length - 1; mm++) line(mastX[mm], mastTop[mm] + 4, mastX[mm + 1], mastTop[mm + 1] + 4, 4);
+      var lastM = T.masts.length - 1; line(mastX[lastM], mastTop[lastM] + 4, sx + 3, ys - 4 - (T.cab ? T.cab.h : 0), 7);
+      ship = ship.replace('<g class="wk-shp-', '<g data-dec="bunting">' + bt + '</g><g class="wk-shp-');
+    }
+    if (o.fig && ok('hull')) { var fk = Math.max(.55, T.H / 34); ship += '<g data-fig="' + o.fig + '" transform="translate(' + shpF(bx - 3) + ' ' + shpF(yb + 3 * fk) + ') scale(' + shpF(fk) + ')">' + shpFig(o.fig) + '</g>'; }
     var still = o.still ? ' wk-shp-still' : '';
     s = '<svg class="wk-shp-svg' + still + '" viewBox="' + shpF(vx) + ' ' + shpF(Hh - vh) + ' ' + vw + ' ' + shpF(vh) + '" role="img" aria-label="' + (o.label || T.n) + '" xmlns="http://www.w3.org/2000/svg">' + bg +
       '<g class="wk-shp-bob" style="transform-origin:' + cx + 'px ' + wl + 'px">' + ship + '</g>' +
@@ -40406,6 +40464,49 @@ document.addEventListener('change',function(e) {
       '<path d="M-40 ' + (wl + 2) + (function () { var p = ''; for (var i = 0; i < 16; i++) p += 'q18 -4 36 0'; return p; })() + '" fill="none" stroke="#9cc6ff" stroke-opacity=".35" stroke-width="1"/>' +
       '<path d="M-20 ' + (wl + 18) + (function () { var p = ''; for (var i = 0; i < 16; i++) p += 'q16 -3 32 0'; return p; })() + '" fill="none" stroke="#9cc6ff" stroke-opacity=".14" stroke-width="1"/></g></svg>';
     return s;
+  }
+
+  function shpEmblem(id, x, y, r, ink, paper) {
+    var f = function (n) { return shpF(n); };
+    if (id === 'jolly') return '<g data-emb="jolly"><path d="M' + f(x - r) + ' ' + f(y + r * .55) + 'L' + f(x + r) + ' ' + f(y + r * 1.05) + 'M' + f(x + r) + ' ' + f(y + r * .55) + 'L' + f(x - r) + ' ' + f(y + r * 1.05) + '" stroke="' + ink + '" stroke-width="' + f(r * .22) + '" stroke-linecap="round"/>' +
+      '<circle cx="' + f(x) + '" cy="' + f(y - r * .15) + '" r="' + f(r * .62) + '" fill="' + ink + '"/><rect x="' + f(x - r * .34) + '" y="' + f(y + r * .25) + '" width="' + f(r * .68) + '" height="' + f(r * .32) + '" rx="' + f(r * .08) + '" fill="' + ink + '"/>' +
+      '<circle cx="' + f(x - r * .24) + '" cy="' + f(y - r * .2) + '" r="' + f(r * .15) + '" fill="' + paper + '"/><circle cx="' + f(x + r * .24) + '" cy="' + f(y - r * .2) + '" r="' + f(r * .15) + '" fill="' + paper + '"/><path d="M' + f(x) + ' ' + f(y + r * .02) + 'l' + f(r * .07) + ' ' + f(r * .14) + 'h' + f(-r * .14) + 'z" fill="' + paper + '"/></g>';
+    if (id === 'sun') { var rays = ''; for (var i = 0; i < 12; i++) { var a = i * Math.PI / 6; rays += 'M' + f(x + Math.cos(a) * r * .62) + ' ' + f(y + Math.sin(a) * r * .62) + 'L' + f(x + Math.cos(a) * r) + ' ' + f(y + Math.sin(a) * r); } return '<g data-emb="sun"><path d="' + rays + '" stroke="#c98a1c" stroke-width="' + f(r * .14) + '" stroke-linecap="round"/><circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(r * .48) + '" fill="#e2a52b"/></g>'; }
+    if (id === 'anchor') return '<g data-emb="anchor" fill="none" stroke="' + ink + '" stroke-width="' + f(r * .16) + '" stroke-linecap="round"><circle cx="' + f(x) + '" cy="' + f(y - r * .78) + '" r="' + f(r * .18) + '"/><path d="M' + f(x) + ' ' + f(y - r * .6) + 'V' + f(y + r * .85) + 'M' + f(x - r * .4) + ' ' + f(y - r * .38) + 'H' + f(x + r * .4) + 'M' + f(x - r * .72) + ' ' + f(y + r * .2) + 'Q' + f(x - r * .6) + ' ' + f(y + r * .9) + ' ' + f(x) + ' ' + f(y + r * .85) + 'Q' + f(x + r * .6) + ' ' + f(y + r * .9) + ' ' + f(x + r * .72) + ' ' + f(y + r * .2) + '"/></g>';
+    if (id === 'rose') { var p = ''; for (var j = 0; j < 8; j++) { var b = j * Math.PI / 4 - Math.PI / 2, rr = j % 2 ? r * .55 : r; p += 'M' + f(x) + ' ' + f(y) + 'L' + f(x + Math.cos(b - .22) * rr * .32) + ' ' + f(y + Math.sin(b - .22) * rr * .32) + 'L' + f(x + Math.cos(b) * rr) + ' ' + f(y + Math.sin(b) * rr) + 'L' + f(x + Math.cos(b + .22) * rr * .32) + ' ' + f(y + Math.sin(b + .22) * rr * .32) + 'Z'; } return '<g data-emb="rose"><circle cx="' + f(x) + '" cy="' + f(y) + '" r="' + f(r * .72) + '" fill="none" stroke="' + ink + '" stroke-width="' + f(r * .06) + '"/><path d="' + p + '" fill="#8e2a22" stroke="' + ink + '" stroke-width="' + f(r * .04) + '"/></g>'; }
+    return '';
+  }
+  function shpFlag(id, x, y, col) {
+    var f = shpF, F = 'M' + f(x) + ' ' + f(y - 10) + 'q7 -3 13 0t13 0l-3 4 3 4q-6 -3 -13 0t-13 0z';
+    var pole = '<path d="M' + f(x) + ' ' + f(y) + 'v-10" stroke="#4a2e1b" stroke-width="1.6"/>';
+    var bg = { jolly: '#16161a', navy: '#1f3f7a', swords: '#8e1f1f', stars: '#3a2a6a' }[id] || col;
+    var s = pole + '<path d="' + F + '" fill="' + bg + '" stroke="' + shpShade(bg, -.4) + '" stroke-width=".6"/>';
+    var cx = x + 11, cy = y - 6.2;
+    if (id === 'jolly') s += '<path d="M' + f(cx - 3.4) + ' ' + f(cy + 1.4) + 'l6.8 2.4M' + f(cx + 3.4) + ' ' + f(cy + 1.4) + 'l-6.8 2.4" stroke="#f4efe6" stroke-width=".9" stroke-linecap="round"/><circle cx="' + f(cx) + '" cy="' + f(cy - .4) + '" r="2.1" fill="#f4efe6"/><circle cx="' + f(cx - .8) + '" cy="' + f(cy - .6) + '" r=".5" fill="#16161a"/><circle cx="' + f(cx + .8) + '" cy="' + f(cy - .6) + '" r=".5" fill="#16161a"/>';
+    else if (id === 'navy') s += '<path d="M' + f(cx) + ' ' + f(cy - 2.6) + 'v5M' + f(cx - 1.6) + ' ' + f(cy - 1.4) + 'h3.2M' + f(cx - 2.6) + ' ' + f(cy + .8) + 'q1 2 2.6 1.6 1.6.4 2.6-1.6" stroke="#f4efe6" stroke-width=".8" fill="none" stroke-linecap="round"/>';
+    else if (id === 'swords') s += '<path d="M' + f(cx - 3.4) + ' ' + f(cy - 2.6) + 'l6.8 5.4M' + f(cx + 3.4) + ' ' + f(cy - 2.6) + 'l-6.8 5.4" stroke="#e8e2d4" stroke-width="1" stroke-linecap="round"/><path d="M' + f(cx - 4) + ' ' + f(cy + 1.4) + 'l1.6 1.6M' + f(cx + 4) + ' ' + f(cy + 1.4) + 'l-1.6 1.6" stroke="#e7c35a" stroke-width="1"/>';
+    else if (id === 'stars') s += [[-4, -1.5], [0, .8], [4, -1.5]].map(function (q) { return '<circle cx="' + f(cx + q[0]) + '" cy="' + f(cy + q[1]) + '" r="1.1" fill="#f6d27a"/>'; }).join('');
+    return s;
+  }
+  function shpOrn(id, yAt, x0, x1, P, h) {
+    var s = '', f = shpF, n, i, x, y, w = P.wale;
+    if (id === 'chess') { n = Math.round((x1 - x0) / (h * 1.6)); for (i = 0; i < n; i++) { x = x0 + (x1 - x0) * i / n; y = yAt(x); s += '<rect x="' + f(x) + '" y="' + f(y - h / 2 + (i % 2 ? 0 : 0)) + '" width="' + f((x1 - x0) / n + .3) + '" height="' + f(h) + '" fill="' + (i % 2 ? w : shpShade(P.hull, -.55)) + '" transform="rotate(0)"/>'; } return '<g data-orn="chess">' + s + '</g>'; }
+    if (id === 'waves') { var d = 'M' + f(x0) + ' ' + f(yAt(x0)); n = Math.round((x1 - x0) / (h * 2.4)); for (i = 0; i < n; i++) { var xa = x0 + (x1 - x0) * i / n, xb = x0 + (x1 - x0) * (i + 1) / n; d += 'Q' + f((xa + xb) / 2) + ' ' + f(yAt((xa + xb) / 2) - h * .9) + ' ' + f(xb) + ' ' + f(yAt(xb)); d += 'm0 0'; } return '<g data-orn="waves"><path d="' + d + '" fill="none" stroke="' + w + '" stroke-width="' + f(h * .4) + '" stroke-linecap="round"/><path d="' + d.replace(/(\d+(\.\d+)?) (\d+(\.\d+)?)/g, function (m, a, b, c) { return a + ' ' + f(+c + h * .9); }) + '" fill="none" stroke="' + w + '" stroke-opacity=".5" stroke-width="' + f(h * .25) + '"/></g>'; }
+    if (id === 'scroll') { n = Math.round((x1 - x0) / (h * 3.2)); for (i = 0; i < n; i++) { x = x0 + (x1 - x0) * (i + .5) / n; y = yAt(x); var r = h * .7; s += '<path d="M' + f(x - h * 1.5) + ' ' + f(y) + 'C' + f(x - h * .8) + ' ' + f(y - r * 1.6) + ' ' + f(x + h * .3) + ' ' + f(y - r * 1.2) + ' ' + f(x + h * .1) + ' ' + f(y - r * .2) + 'C' + f(x) + ' ' + f(y + r * .5) + ' ' + f(x - h * .6) + ' ' + f(y + r * .2) + ' ' + f(x - h * .4) + ' ' + f(y - r * .3) + 'M' + f(x + h * .1) + ' ' + f(y - r * .2) + 'C' + f(x + h * .4) + ' ' + f(y + r * 1.2) + ' ' + f(x + h * 1.3) + ' ' + f(y + r * .8) + ' ' + f(x + h * 1.6) + ' ' + f(y) + '" fill="none" stroke="' + w + '" stroke-width="' + f(h * .26) + '" stroke-linecap="round"/>'; } return '<g data-orn="scroll">' + s + '</g>'; }
+    if (id === 'stars') { n = Math.round((x1 - x0) / (h * 2.6)); for (i = 0; i < n; i++) { x = x0 + (x1 - x0) * (i + .5) / n; y = yAt(x); var p = ''; for (var k = 0; k < 10; k++) { var a = k * Math.PI / 5 - Math.PI / 2, rr = k % 2 ? h * .32 : h * .78; p += (k ? 'L' : 'M') + f(x + Math.cos(a) * rr) + ' ' + f(y + Math.sin(a) * rr); } s += '<path d="' + p + 'Z" fill="' + w + '"/>'; } return '<g data-orn="stars">' + s + '</g>'; }
+    if (id === 'diam') { n = Math.round((x1 - x0) / (h * 2)); for (i = 0; i < n; i++) { x = x0 + (x1 - x0) * (i + .5) / n; y = yAt(x); s += '<path d="M' + f(x) + ' ' + f(y - h * .75) + 'L' + f(x + h * .6) + ' ' + f(y) + 'L' + f(x) + ' ' + f(y + h * .75) + 'L' + f(x - h * .6) + ' ' + f(y) + 'Z" fill="' + (i % 2 ? w : 'none') + '" stroke="' + w + '" stroke-width="' + f(h * .16) + '"/>'; } return '<g data-orn="diam"><path d="M' + f(x0) + ' ' + f(yAt(x0)) + '" />' + s + '</g>'; }
+    return '';
+  }
+  function shpFig(id) {
+    var G = 'fill="#d4a944" stroke="#5a3a12" stroke-width=".8" stroke-linejoin="round"', E = function (x, y) { return '<circle cx="' + x + '" cy="' + y + '" r="1.1" fill="#2a1a08"/>'; };
+    var base = '<path d="M-2 4 C2 6 5 9 6 12" fill="none" stroke="#5a3a12" stroke-width="2.2" stroke-linecap="round"/>';
+    if (id === 'ram') return base + '<path d="M0 3C3 -6 12 -9 18 -5C22 -2 22 3 18 4.5L11 6.5C6 7.5 2 6 0 3Z" ' + G + '/><circle cx="7" cy="-3.5" r="5" ' + G + '/><circle cx="7" cy="-3.5" r="2.4" fill="none" stroke="#5a3a12" stroke-width=".8"/>' + E(14, -2) + '<path d="M19 2.5h2" stroke="#5a3a12" stroke-width=".7"/>';
+    if (id === 'lion') { var m = ''; for (var i = 0; i < 14; i++) { var a = i * Math.PI / 7, r = i % 2 ? 7.5 : 10; m += (i ? 'L' : 'M') + shpF(8 + Math.cos(a) * r) + ' ' + shpF(-2 + Math.sin(a) * r); } return base + '<path d="' + m + 'Z" fill="#b8741e" stroke="#5a3a12" stroke-width=".8"/><circle cx="10" cy="-1.5" r="6" ' + G + '/><path d="M14 0.5l2.4 .6-1.4 1.6z" fill="#5a3a12"/>' + E(12, -3.5) + '<path d="M12 3c1 1 2.5 1 3.5 0" fill="none" stroke="#5a3a12" stroke-width=".7"/>'; }
+    if (id === 'dragon') return base + '<path d="M0 2C5 -5 12 -9 19 -8L26 -6.5 20.5 -3.5 25.5 -.5 19 1C13 4 6 5 0 2Z" fill="#3f8f5a" stroke="#173b25" stroke-width=".8" stroke-linejoin="round"/><path d="M8 -6L3 -13M12 -8L9 -15" stroke="#d4a944" stroke-width="1.4" stroke-linecap="round"/><path d="M20.5 -3.5l2 .3" stroke="#173b25" stroke-width=".6"/>' + '<circle cx="15" cy="-5" r="1.2" fill="#f1c40f"/><path d="M2 2l2 3 2-2.5 2 3 2-2.6" fill="none" stroke="#d4a944" stroke-width=".8"/>';
+    if (id === 'eagle') return base + '<path d="M0 3C1 -7 9 -12 15 -9C19 -7 23 -5 25 -1C22 -2 20 -.5 18.5 1.5C12 5 6 6 0 3Z" fill="#f4efe6" stroke="#5a3a12" stroke-width=".8" stroke-linejoin="round"/><path d="M18.5 1.5C20 -1 22.5 -2 25 -1L23 2.5C21.5 2 20 2 18.5 1.5Z" fill="#e2a52b" stroke="#5a3a12" stroke-width=".7"/><path d="M0 3C2 8 6 9 9 7" fill="#8a5a2a" stroke="#5a3a12" stroke-width=".7"/>' + E(15, -5);
+    if (id === 'whale') return base + '<path d="M0 1C3 -9 19 -10 24 -2C25.5 2 21 6 13 6C7 6 2 4.5 0 1Z" fill="#3a6f8f" stroke="#15303f" stroke-width=".8"/><path d="M4 3C10 5.5 18 5 23 1" fill="none" stroke="#cfe3ee" stroke-width="1.2"/><path d="M12 -8C11 -12 9 -13 8 -14M12 -8C13 -12 15 -13 16 -14" fill="none" stroke="#9cc6ff" stroke-width=".9" stroke-linecap="round"/>' + E(19, -2.5);
+    if (id === 'serpent') return base + '<path d="M0 4C7 2 3 -10 11 -12C16 -13.5 20 -12 23 -10L26 -8.5 22 -7C18 -6.5 15 -7.5 13 -5C10 -1 9 6 0 6Z" fill="#7a3fa0" stroke="#2c1240" stroke-width=".8" stroke-linejoin="round"/><path d="M3 4.5C8 2 6 -6 11 -9" fill="none" stroke="#d4a944" stroke-width=".9" stroke-dasharray="1.6 1.4"/><path d="M14 -12.5l-2 -3.5 3.5 2.5" fill="#d4a944" stroke="#2c1240" stroke-width=".5"/>' + E(19, -10);
+    return '';
   }
   /* ======== Верфь: материалы, этапы постройки, рынок ======== */
   var SHP_MAT = {
@@ -40491,7 +40592,7 @@ document.addEventListener('change',function(e) {
   function shpPartIds(t) { return (SHP_PARTS[t] || []).map(function (p) { return p.id; }); }
   function shpShipSVG(sh, opt) {
     var v = shpView(sh), sc = shpScene(v); opt = opt || {};
-    return shpSVG({ t: sc.t, built: sc.built, bld: sc.bld, all: sc.all, parts: shpPartIds(sc.t), name: sh.name || '', paint: sh.paint, still: opt.still, label: (sh.name ? '«' + sh.name + '» — ' : '') + SHP_T[sc.t].n });
+    return shpSVG({ t: sc.t, built: sc.built, bld: sc.bld, all: sc.all, parts: shpPartIds(sc.t), name: sh.name || '', paint: sh.paint, orn: sh.orn, sorn: sh.sorn, fig: sh.fig, flag: sh.flag, dec: sh.dec, bg: sh.bg, still: opt.still, label: (sh.name ? '«' + sh.name + '» — ' : '') + SHP_T[sc.t].n });
   }
   function shpInv(sh) { var o = {}; SHP_MAT_ORDER.forEach(function (m) { o[m] = Math.max(0, +(sh.inv && sh.inv[m]) || 0); }); return o; }
   function shpNeed(v, inv) {
@@ -40606,7 +40707,7 @@ document.addEventListener('change',function(e) {
           var mats = done ? '' : '<span class="wk-shp-ms">' + Object.keys(p.m).map(function (m) { return shpMatChip(m, inv[m], p.m[m]); }).join('') + '</span>';
           return '<div class="wk-shp-pt ' + cls + '"><div class="wk-shp-pt-b"><b>' + esc(p.n) + '</b><small>' + (done ? 'построено' : 'время работы: ' + shpHours(p.h)) + '</small>' + mats + '</div><div class="wk-shp-pt-a">' + act + '</div></div>';
         }).join('') + '</div>';
-    } else parts = '<p class="wk-sh-hint wk-shp-max">Самый большой корабль в Гранд Лайн готов. Скоро на верфи появятся покраска, носовые фигуры и украшения.</p>';
+    } else parts = '<p class="wk-sh-hint wk-shp-max">Самый большой корабль на Гранд Лайн готов. Теперь можно украшать его сколько душе угодно.</p>';
     var store = '<h3 class="wk-dk-h">Склад</h3><div class="wk-shp-inv">' + SHP_MAT_ORDER.map(function (m) { return '<span class="wk-shp-iv' + (inv[m] ? '' : ' zero') + '">' + shpIco(m, 22) + '<span><b>' + inv[m] + '</b><small>' + SHP_MAT[m].n + '</small></span></span>'; }).join('') + '</div>';
     var mk = shpMarket(sh), sl = shpSlot(), bought = mk.b || [], rp = FREE() ? 0 : SHP_ROLL * ((mk.r || 0) + 1), rl = SHP_ROLL_MAX - (mk.r || 0);
     var need = shpNeed(v, inv);
@@ -40622,7 +40723,7 @@ document.addEventListener('change',function(e) {
       ? '<p class="wk-sh-hint wk-shp-intro">Собери свой корабль: покупай материалы у купцов, закладывай этапы на стапеле и жди, пока мастера закончат. Начни с лодки и дорасти до галеона.</p>' : '';
     return '<div class="wk-shp">' + intro +
       '<div class="wk-shp-top">' + nameBox + '<span class="wk-shp-lv">' + stage + '</span></div>' +
-      '<div class="wk-shp-scene">' + shpShipSVG(sh) + '</div>' + ladder + job + parts + store + market + '</div>';
+      '<div class="wk-shp-scene">' + shpShipSVG(sh) + '</div>' + ladder + job + parts + store + market + shpDzHTML(st, sh, v) + '</div>';
   }
   function shpRepaint() {
     var p = document.querySelector('.wk-sht-p[data-shp="ship"]'); if (!p) return;
@@ -40632,6 +40733,7 @@ document.addEventListener('change',function(e) {
     var st = load(); if (st.__fake) return;
     var ev = shpSettle(st), sh = st.ship, v = shpView(sh), inv = shpInv(sh), b0 = st.belli || 0;
     sh.inv = inv;
+    if (a.indexOf('shipdz') === 0) { if (ev) save(st); shpDzClick(a, b, st, sh, v, pane, repaint); return; }
     if (a === 'shipnameedit') { SHP_EDIT = !SHP_EDIT; if (ev) save(st); repaint(); if (SHP_EDIT) setTimeout(function () { var i = document.getElementById('wkShipNameIn'); if (i) { i.focus(); i.select(); } }, 30); return; }
     if (a === 'shipname') {
       var inp = document.getElementById('wkShipNameIn'), nm = String(inp ? inp.value : '').replace(/[<>"&\u0000-\u001f]/g, '').replace(/\s+/g, ' ').trim().slice(0, 24);
@@ -40691,6 +40793,113 @@ document.addEventListener('change',function(e) {
   }, 1000);
   document.addEventListener('keydown', function (e) { if (e.key === 'Enter' && e.target && e.target.id === 'wkShipNameIn') { e.preventDefault(); var b = document.querySelector('[data-tx="shipname"]'); if (b) b.click(); } else if (e.key === 'Escape' && e.target && e.target.id === 'wkShipNameIn') { var c = document.querySelector('[data-tx="shipnameedit"]'); if (c) c.click(); } });
   window.__wkShip = { svg: shpSVG, shipSVG: shpShipSVG, view: shpView, tiers: SHP_T, repaint: shpRepaint };
+  /* ======== Верфь: оформление корабля (примерка как у рубашек) ======== */
+  var SHP_PAINT_PRICE = 1500;
+  var SHP_PSLOTS = [
+    { k: 'hull', n: 'Корпус', req: 'hull', c: ['#7a4a2a', '#4a2c18', '#1d1f24', '#1f2a44', '#8e2a22', '#1f4a3a', '#d9d3c4', '#4a2a55', '#b8892e', '#3a6f8f'] },
+    { k: 'trim', n: 'Пояс бортов', req: 'hull', c: ['#2e1d12', '#111216', '#0d1220', '#5a1a16', '#123326', '#e8e2d4', '#c8a03a', '#7a4a2a'] },
+    { k: 'wale', n: 'Кант и резьба', req: 'hull', c: ['#c9a24a', '#c0c7d1', '#b06a3a', '#e8e2d4', '#1a1a1a', '#b8322a', '#3a6fb0', '#3f8f5a'] },
+    { k: 'bottom', n: 'Днище', req: 'hull', c: ['#8e3b2c', '#b0703a', '#1a1a1a', '#2c5d4f', '#e8e2d4', '#2c4a7a'] },
+    { k: 'sail', n: 'Паруса', req: 'sail', c: ['#efe5cc', '#ffffff', '#2a2a2e', '#b8322a', '#2c4a7a', '#c9a24a', '#6b8e4e', '#e8b4b8', '#7d5a3a', '#5b3a7a'] },
+    { k: 'flag', n: 'Вымпел', req: 'mast', c: ['#b8322a', '#16161a', '#f4efe6', '#2c4a7a', '#2f7d4a', '#c9a24a', '#5b3a7a', '#d9752b'] }
+  ];
+  var SHP_DZ = {
+    orn: { n: 'Орнамент на борту', req: 'hull', l: [{ id: '', n: 'Без орнамента', p: 0 }, { id: 'scroll', n: 'Золотые завитки', p: 12000 }, { id: 'chess', n: 'Шахматный пояс', p: 9000 }, { id: 'waves', n: 'Морская волна', p: 9000 }, { id: 'stars', n: 'Звёздный пояс', p: 12000 }, { id: 'diam', n: 'Ромбы', p: 8000 }] },
+    sorn: { n: 'Эмблема на парусе', req: 'sail', l: [{ id: '', n: 'Без эмблемы', p: 0 }, { id: 'jolly', n: 'Весёлый Роджер', p: 20000 }, { id: 'sun', n: 'Солнце', p: 14000 }, { id: 'anchor', n: 'Якорь', p: 10000 }, { id: 'rose', n: 'Роза ветров', p: 14000 }] },
+    fig: { n: 'Носовая фигура', req: 'hull', l: [{ id: '', n: 'Без фигуры', p: 0 }, { id: 'ram', n: 'Баран', p: 18000 }, { id: 'lion', n: 'Лев', p: 30000 }, { id: 'eagle', n: 'Орёл', p: 24000 }, { id: 'whale', n: 'Кит', p: 24000 }, { id: 'serpent', n: 'Морской змей', p: 36000 }, { id: 'dragon', n: 'Дракон', p: 45000 }] },
+    flag: { n: 'Флаг', req: 'mast', l: [{ id: '', n: 'Вымпел', p: 0 }, { id: 'jolly', n: 'Весёлый Роджер', p: 8000 }, { id: 'navy', n: 'Морской', p: 6000 }, { id: 'swords', n: 'Скрещённые сабли', p: 10000 }, { id: 'stars', n: 'Звёздный', p: 8000 }] },
+    dec: { n: 'Декор', l: [{ id: 'lights', n: 'Гирлянда огней', p: 15000, req: 'deck' }, { id: 'bunting', n: 'Флажки расцвечивания', p: 9000, req: 'mast' }, { id: 'rings', n: 'Спасательные круги', p: 6000, req: 'hull' }, { id: 'gilt', n: 'Золочёная корма', p: 20000, req: 'hull' }] }
+  };
+  var SHP_REQN = { hull: 'обшивку', sail: 'паруса', mast: 'мачту', deck: 'палубу' };
+  var SHP_DTABS = [['paint', 'Покраска'], ['orn', 'Узоры'], ['fig', 'Носовая фигура'], ['flag', 'Флаг'], ['dec', 'Декор']];
+  var SHP_D = { paint: {} }, SHP_DT = 'paint';
+  function shpCos(sh) { return { paint: sh.paint && typeof sh.paint === 'object' ? sh.paint : {}, orn: sh.orn || '', sorn: sh.sorn || '', fig: sh.fig || '', flag: sh.flag || '', dec: Array.isArray(sh.dec) ? sh.dec : [] }; }
+  function shpEffCos(sh) {
+    var c = shpCos(sh), e = { paint: {}, orn: c.orn, sorn: c.sorn, fig: c.fig, flag: c.flag, dec: c.dec.slice() };
+    Object.keys(c.paint).forEach(function (k) { e.paint[k] = c.paint[k]; });
+    Object.keys(SHP_D.paint || {}).forEach(function (k) { e.paint[k] = SHP_D.paint[k]; });
+    ['orn', 'sorn', 'fig', 'flag'].forEach(function (k) { if (SHP_D[k] != null) e[k] = SHP_D[k]; });
+    if (SHP_D.dec) e.dec = SHP_D.dec.slice();
+    return e;
+  }
+  function shpItem(kind, id) { return (SHP_DZ[kind].l.filter(function (q) { return q.id === id; })[0]) || null; }
+  function shpOwn(sh, kind, id) { return !id || !!(sh.own && sh.own[kind + ':' + id]); }
+  function shpReqOk(sc, part) {
+    if (!part || sc.all) return true;
+    if (sc.built[part]) return true;
+    return shpPartIds(sc.t).indexOf(part) < 0 && !!sc.built.hull;
+  }
+  /* Что изменено в примерке и сколько это стоит. */
+  function shpDiff(sh) {
+    var c = shpCos(sh), e = shpEffCos(sh), list = [], sum = 0, pp = FREE() ? 0 : SHP_PAINT_PRICE;
+    SHP_PSLOTS.forEach(function (s) { var a = c.paint[s.k] || SHP_PAINT[s.k], b = e.paint[s.k] || SHP_PAINT[s.k]; if (a !== b) { list.push({ t: 'paint', k: s.k, v: b, req: s.req, p: pp }); sum += pp; } });
+    ['orn', 'sorn', 'fig', 'flag'].forEach(function (k) { if (c[k] !== e[k]) { var it = shpItem(k, e[k]), p = it && !shpOwn(sh, k, e[k]) ? (FREE() ? 0 : it.p) : 0; list.push({ t: k, v: e[k], req: SHP_DZ[k].req, p: p }); sum += p; } });
+    e.dec.forEach(function (id) { if (c.dec.indexOf(id) < 0) { var it = shpItem('dec', id), p = it && !shpOwn(sh, 'dec', id) ? (FREE() ? 0 : it.p) : 0; list.push({ t: 'dec', v: id, on: true, req: it && it.req, p: p }); sum += p; } });
+    c.dec.forEach(function (id) { if (e.dec.indexOf(id) < 0) list.push({ t: 'dec', v: id, on: false, p: 0 }); });
+    return { list: list, sum: sum };
+  }
+  function shpMini(kind, id) {
+    var w = '<svg viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini">';
+    if (kind === 'fig') return w + '<rect width="60" height="36" fill="#13213b"/>' + (id ? '<g transform="translate(14 22) scale(1.25)">' + shpFig(id) + '</g>' : '<path d="M22 18h16" stroke="#5b6b85" stroke-width="2" stroke-linecap="round"/>') + '</svg>';
+    if (kind === 'flag') return w + '<rect width="60" height="36" fill="#13213b"/><g transform="translate(-11 -14) scale(2)">' + shpFlag(id, 12, 20, '#b8322a') + '</g></svg>';
+    if (kind === 'sorn') return w + '<rect width="60" height="36" fill="#13213b"/><path d="M14 5h32q3 13 1 26H13q-2-13 1-26z" fill="#efe5cc"/>' + (id ? shpEmblem(id, 30, 17, 9, '#2a2219', '#efe5cc') : '') + '</svg>';
+    if (kind === 'orn') return w + '<rect width="60" height="36" fill="#13213b"/><rect x="2" y="9" width="56" height="18" rx="3" fill="#7a4a2a"/>' + (id ? shpOrn(id, function () { return 18; }, 4, 56, SHP_PAINT, 4) : '') + '</svg>';
+    var ic = { lights: '<path d="M4 10Q30 26 56 10" fill="none" stroke="#5b6b85"/>' + [10, 18, 26, 34, 42, 50].map(function (x) { var y = 10 + 16 * (1 - Math.pow((x - 30) / 26, 2)) * .5; return '<circle cx="' + x + '" cy="' + (y + 2) + '" r="2.4" fill="#ffd56b"/>'; }).join(''),
+      bunting: '<path d="M4 8L56 8" stroke="#5b6b85"/>' + [0, 1, 2, 3, 4].map(function (i) { var x = 8 + i * 10; return '<path d="M' + x + ' 8h8l-4 9z" fill="' + ['#c0392b', '#f1c40f', '#2e86de', '#f4efe6', '#27ae60'][i] + '"/>'; }).join(''),
+      rings: '<circle cx="30" cy="18" r="9" fill="none" stroke="#f4efe6" stroke-width="5"/><circle cx="30" cy="18" r="9" fill="none" stroke="#c0392b" stroke-width="5" stroke-dasharray="7 7.1"/>',
+      gilt: '<path d="M10 28C6 18 10 10 18 8M18 8c4-4 10 0 6 4-3 3-6 0-4-2" fill="none" stroke="#e7c35a" stroke-width="2.2"/><path d="M24 26h28" stroke="#e7c35a" stroke-width="2"/><path d="M46 20c3-4 8-1 5 2-2 2-5 0-3-1" fill="none" stroke="#f3d98a" stroke-width="1.4"/>' }[id] || '';
+    return w + '<rect width="60" height="36" fill="#13213b"/>' + ic + '</svg>';
+  }
+  function shpDzHTML(st, sh, v) {
+    var sc = shpScene(v); if (!(sc.all || sc.built.hull)) return '';
+    var c = shpCos(sh), e = shpEffCos(sh), df = shpDiff(sh), bel = st.belli || 0;
+    var lockNote = function (req) { return shpReqOk(sc, req) ? '' : '<small class="wk-shp-lk">Сначала построй ' + (SHP_REQN[req] || req) + '</small>'; };
+    var pv = shpSVG({ t: sc.t, built: sc.built, bld: sc.bld, all: sc.all, parts: shpPartIds(sc.t), name: sh.name || '', paint: e.paint, orn: e.orn, sorn: e.sorn, fig: e.fig, flag: e.flag, dec: e.dec, still: true, label: 'Примерка оформления' });
+    var tabs = '<div class="wk-shp-dtabs" role="tablist">' + SHP_DTABS.map(function (t) { var on = t[0] === SHP_DT; return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? 'on' : '') + '" data-tx="shipdzt" data-t="' + t[0] + '">' + t[1] + '</button>'; }).join('') + '</div>';
+    var card = function (kind, it, sel, req) {
+      var own = shpOwn(sh, kind, it.id), lock = !shpReqOk(sc, req || it.req), p = FREE() ? 0 : it.p;
+      var price = own ? (it.id ? 'есть' : 'бесплатно') : fmtB(p);
+      return '<button type="button" class="wk-shp-it' + (sel ? ' on' : '') + (lock ? ' lock' : '') + '" data-tx="shipdz" data-k="' + kind + '" data-v="' + it.id + '"' + (lock ? ' disabled' : '') + ' aria-pressed="' + sel + '">' + shpMini(kind, it.id) + '<b>' + it.n + '</b><small>' + (lock ? 'нужна ' + ({ hull: 'обшивка', sail: 'паруса', mast: 'мачта', deck: 'палуба' }[req || it.req] || '') : price) + '</small></button>';
+    };
+    var body = '';
+    if (SHP_DT === 'paint') body = '<p class="wk-sh-hint">Краска остаётся и при переходе на следующий корабль. Один перекрашенный слой — ' + fmtB(FREE() ? 0 : SHP_PAINT_PRICE) + '</p>' + SHP_PSLOTS.map(function (s) {
+      var cur = e.paint[s.k] || SHP_PAINT[s.k], lock = !shpReqOk(sc, s.req);
+      return '<div class="wk-shp-pr' + (lock ? ' lock' : '') + '"><span class="wk-shp-prn">' + s.n + lockNote(s.req) + '</span><span class="wk-shp-sw">' + s.c.map(function (col) { var on = col.toLowerCase() === cur.toLowerCase(); return '<button type="button" style="--c:' + col + '" class="' + (on ? 'on' : '') + '" data-tx="shipdz" data-k="paint" data-s="' + s.k + '" data-v="' + col + '"' + (lock ? ' disabled' : '') + ' aria-pressed="' + on + '" aria-label="' + s.n + ': ' + col + '"></button>'; }).join('') + '</span></div>';
+    }).join('');
+    else if (SHP_DT === 'orn') body = ['orn', 'sorn'].map(function (k) { return '<h4 class="wk-shp-h4">' + SHP_DZ[k].n + '</h4><div class="wk-shp-its">' + SHP_DZ[k].l.map(function (it) { return card(k, it, e[k] === it.id, SHP_DZ[k].req); }).join('') + '</div>'; }).join('');
+    else if (SHP_DT === 'dec') body = '<p class="wk-sh-hint">Украшения можно сочетать: выбирай сколько угодно.</p><div class="wk-shp-its">' + SHP_DZ.dec.l.map(function (it) { return card('dec', it, e.dec.indexOf(it.id) >= 0, it.req); }).join('') + '</div>';
+    else body = '<div class="wk-shp-its">' + SHP_DZ[SHP_DT].l.map(function (it) { return card(SHP_DT, it, e[SHP_DT] === it.id, SHP_DZ[SHP_DT].req); }).join('') + '</div>';
+    var n = df.list.length, can = n && bel >= df.sum;
+    var bar = '<div class="wk-shp-dbar' + (n ? ' on' : '') + '"><span>' + (n ? 'Изменений в примерке: ' + n + ' · итого <b>' + fmtB(df.sum) + '</b>' : 'Выбери цвет или украшение — корабль в примерке сразу покажет, как это будет выглядеть') + '</span>' +
+      (n ? '<button type="button" class="wk-tx-btn' + (can ? ' pri' : '') + '" data-tx="shipdzok"' + (can ? '' : ' disabled') + '>' + (df.sum ? 'Купить и применить' : 'Применить') + '</button><button type="button" class="wk-tx-btn" data-tx="shipdzx">Сбросить</button>' : '') + '</div>';
+    return '<h3 class="wk-dk-h" id="wkShipDz">Оформление корабля</h3><div class="wk-shp-dz"><div class="wk-shp-dpv"><div class="wk-shp-scene">' + pv + '</div>' + bar + '</div><div class="wk-shp-dop">' + tabs + body + '</div></div>';
+  }
+  function shpDzClick(a, b, st, sh, v, pane, repaint) {
+    if (a === 'shipdzt') { SHP_DT = b.getAttribute('data-t'); shpRepaint(); return true; }
+    if (a === 'shipdz') {
+      var k = b.getAttribute('data-k'), val = b.getAttribute('data-v') || '';
+      if (k === 'paint') { var s = b.getAttribute('data-s'); SHP_D.paint = SHP_D.paint || {}; SHP_D.paint[s] = val; }
+      else if (k === 'dec') { var cur = shpEffCos(sh).dec; SHP_D.dec = cur.indexOf(val) >= 0 ? cur.filter(function (x) { return x !== val; }) : cur.concat([val]); }
+      else if (SHP_DZ[k]) SHP_D[k] = val;
+      shpRepaint(); return true;
+    }
+    if (a === 'shipdzx') { SHP_D = { paint: {} }; shpRepaint(); return true; }
+    if (a === 'shipdzok') {
+      var sc = shpScene(v), df = shpDiff(sh), b0 = st.belli || 0;
+      var bad = df.list.filter(function (x) { return x.req && (x.t !== 'dec' || x.on) && !shpReqOk(sc, x.req); });
+      if (bad.length) { txToast('Сначала построй ' + (SHP_REQN[bad[0].req] || bad[0].req)); return true; }
+      if (!df.list.length) return true;
+      if (b0 < df.sum) { txToast('Не хватает белли'); return true; }
+      st.belli = b0 - df.sum; if (df.sum) { st.spent = (st.spent || 0) + df.sum; track(st, 'spend', df.sum); }
+      var e = shpEffCos(sh); sh.own = sh.own || {};
+      df.list.forEach(function (x) { if (x.t !== 'paint' && x.v && (x.t !== 'dec' || x.on)) sh.own[x.t + ':' + x.v] = 1; });
+      var pnt = {}; Object.keys(e.paint).forEach(function (q) { if (e.paint[q] && e.paint[q] !== SHP_PAINT[q]) pnt[q] = e.paint[q]; });
+      sh.paint = pnt; sh.orn = e.orn; sh.sorn = e.sorn; sh.fig = e.fig; sh.flag = e.flag; sh.dec = e.dec;
+      SHP_D = { paint: {} }; save(st); repaint(); if (df.sum) belliAnim(pane, b0);
+      txToast('Корабль преобразился'); return true;
+    }
+    return false;
+  }
   function belliAnim(pane, from) {
     var bal = pane.querySelector('.wk-sh-bal'), el = bal && bal.querySelector('.wk-sh-num'); if (!el) return;
     var to = load().belli || 0, d = to - from; if (!d) return;
