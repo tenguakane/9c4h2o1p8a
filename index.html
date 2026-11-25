@@ -1,5 +1,5 @@
 <!doctype html>
-<!--wk-ver:25.11.2026 · 856-->
+<!--wk-ver:25.11.2026 · 857-->
 <script id="wk-v616-pre">try{var K='wkExtrasKeepV616',old={},ca=[],ma={},cc=null,cca=[],cma={};try{old=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}try{ca=JSON.parse(localStorage.getItem('onePieceWikiCustomAchievementsV1')||'[]')}catch(e){}try{ma=JSON.parse(localStorage.getItem('onePieceWikiMedalArtV1')||'{}')}catch(e){}try{cc=JSON.parse(localStorage.getItem('wkCloudContentV1')||'null');if(cc&&cc.data){cca=Array.isArray(cc.data.customAchievements)?cc.data.customAchievements:[];cma=cc.data.medalArt&&typeof cc.data.medalArt==='object'?cc.data.medalArt:{}}}catch(e){}cc=null;var oc=Array.isArray(old.ca)?old.ca:[],om=old.ma&&typeof old.ma==='object'?old.ma:{},ids={},cids={};oc.forEach(function(a){if(a&&a.id!=null)ids[a.id]=1});cca.forEach(function(a){if(a&&a.id!=null)cids[a.id]=1});(Array.isArray(ca)?ca:[]).forEach(function(a){if(a&&a.id!=null&&!ids[a.id]&&!cids[a.id]){oc.push(a);ids[a.id]=1}});if(ma&&typeof ma==='object')Object.keys(ma).forEach(function(k){if(!(k in om)&&!(k in cma)&&ma[k]!=null&&ma[k]!=='')om[k]=ma[k]});if(oc.length||Object.keys(om).length)localStorage.setItem(K,JSON.stringify({ca:oc,ma:om}));else localStorage.removeItem(K)}catch(e){}</script>
 <html data-wiki-portable-baked="true" data-wiki-portable-id="2026-11-11T03:23:00.970Z" lang="ru" style="--reward-rank-first: #ffda75; --reward-rank-second: #d9d9d9; --reward-rank-third: #ffd285; --reward-rank-other: #4f4860; --wiki-progress-manga: #efc66b; --wiki-progress-anime: #60d9ff; --wk-title-font: 'Days One'; --wk-title-fw: 400; --wk-wp-tpl: url(&quot;./assets/webp/ui/wanted_template.webp&quot;); --wk-fg-manga: #0b0f17; --wk-fg-anime: #0b0f17; --wk-accent: #a78bfa; --wk-accent-soft: #d3c5fd; --fruit-type-param-color: #bb9eff !important; --fruit-type-param-rgb: 187, 158, 255 !important; --fruit-type-logia-color: #f967ae !important; --fruit-type-logia-rgb: 249, 103, 174 !important; --fruit-type-zoan-color: #65f6b7 !important; --fruit-type-zoan-rgb: 101, 246, 183 !important; --wk-tz-card: 1.15;" class="wk-sc-off wk-hz-c wk-hz-f wk-hz-u wk-hz-v wk-hz-h wk-calm wk-tfx-off wk-tfx-still wk-gpu wk-hdr-min" data-wk-role="admin" data-wk-title-font="g:Days One|"><head>
 <script id="wk-v596-early">try{var q=new URLSearchParams(location.search);if(q.get("tab")==="favorites"&&/^[a-z]+$/.test(q.get("cab")||"")){var cb=q.get("cab");localStorage.setItem("onePieceWikiCabinSubtabV3",cb==="overview"?"favorites":cb);localStorage.setItem("onePieceWikiCabinExtraTabV1",/^(watchgrid|timeline|deck|tops|stats|edits|quiz|atlas|help)$/.test(cb)?cb:"");}}catch(e){}</script>
@@ -3623,7 +3623,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "25.11.2026 · 856";
+const WIKI_VERSION = "25.11.2026 · 857";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -42321,7 +42321,16 @@ document.addEventListener('change',function(e) {
       return '<defs><filter id="'+id+'" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="'+mat.map(function(n){return n.toFixed(4);}).join(' ')+'"/></filter></defs><g filter="url(#'+id+')">'+svg+'</g>';
     }
     function boatClip855(d,svg){var id=u+'b855c'+(++boatArtN855);return '<defs><clipPath id="'+id+'"><path d="'+d+'"/></clipPath></defs><g clip-path="url(#'+id+')">'+svg+'</g>';}
-    function boatHull855(){var b=boatImg855('hull_base',153,207,158,58), refs={hull:.39,trim:.20,wale:.65,bottom:.27};Object.keys(refs).forEach(function(k){if(P[k].toLowerCase()!==SHP_PAINT[k].toLowerCase())b+=boatTint855(boatImg855('mask_'+k,153,207,158,58),P[k],refs[k]);});return b;}
+    // v857: continuous material masks and bounded tone mapping (boat only).
+    function boatTint857(svg,col,ref){
+      var m=/^#([0-9a-f]{6})$/i.exec(col||'');if(!m)return svg;
+      var v=parseInt(m[1],16),rgb=[v>>16,(v>>8)&255,v&255],id=u+'b857t'+(++boatArtN855);ref=Math.max(.13,Math.min(.90,ref));
+      function curve(c){var t=c/255, mid=.045+.91*t, lo=.018+.24*t, hi=mid+(1-mid)*.43,vals=[];
+        for(var i=0;i<=32;i++){var x=i/32,y=x<=ref?lo+(mid-lo)*Math.pow(x/ref,.92):mid+(hi-mid)*Math.pow((x-ref)/(1-ref),1.12); vals.push(y.toFixed(4));}return vals.join(' ');}
+      return '<defs><filter id="'+id+'" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values=".2126 .7152 .0722 0 0 .2126 .7152 .0722 0 0 .2126 .7152 .0722 0 0 0 0 0 1 0"/><feComponentTransfer><feFuncR type="table" tableValues="'+curve(rgb[0])+'"/><feFuncG type="table" tableValues="'+curve(rgb[1])+'"/><feFuncB type="table" tableValues="'+curve(rgb[2])+'"/></feComponentTransfer></filter></defs><g filter="url(#'+id+')">'+svg+'</g>';
+    }
+    function boatHull855(){var b=boatImg855('hull_base',153,207,158,58), refs={'hull': 0.221, 'trim': 0.279, 'wale': 0.359, 'bottom': 0.156};Object.keys(refs).forEach(function(k){if(P[k].toLowerCase()!==SHP_PAINT[k].toLowerCase())b+=boatTint857(boatImg855('mask_'+k,153,207,158,58),P[k],refs[k]);});return boatClip855(hullD,b);}
+
     /* v856: modular painted sloop. Geometry, paint slots, construction and decorations remain independent. */
     function sloopImg856(file,x,y,w,h){return '<image href="assets/webp/ships/sloop/'+file+'.webp" x="'+shpF(x)+'" y="'+shpF(y)+'" width="'+shpF(w)+'" height="'+shpF(h)+'" preserveAspectRatio="none"/>';}
     function sloopPaint856(file,x,y,w,h,key,ref){var a=sloopImg856(file,x,y,w,h);return P[key].toLowerCase()===SHP_PAINT[key].toLowerCase()?a:boatTint855(a,P[key],ref);}
@@ -42426,11 +42435,11 @@ document.addEventListener('change',function(e) {
         var f=bF, sD='M'+f(YLx)+' '+f(YLy)+'L'+f(YRx)+' '+f(YRy)+'C'+f(x0+36)+' '+f(YRy+19)+' '+f(br2+4)+' '+f(by0-26)+' '+f(br2)+' '+f(by0+1)+'Q'+f(x0+3)+' '+f(by0+10)+' '+f(bl)+' '+f(by0+1)+'C'+f(bl+7)+' '+f(by0-28)+' '+f(YLx+5)+' '+f(YLy+20)+' '+f(YLx)+' '+f(YLy)+'Z';
         var cloth='<clipPath id="'+u+'790cloth"><path d="'+sD+'"/></clipPath><path d="'+sD+'" '+sailPl+' stroke="'+sailLine+'" stroke-width="1"/>';
         var boatCanvas855=boatImg855('sail_base',192,120,103,86);
-        if(P.sail.toLowerCase()!==SHP_PAINT.sail.toLowerCase())boatCanvas855=boatTint855(boatCanvas855,P.sail,.76);
+        if(P.sail.toLowerCase()!==SHP_PAINT.sail.toLowerCase())boatCanvas855=boatTint857(boatCanvas855,P.sail,.76);
         var painted855=has('sail');
-        cloth+= '<g clip-path="'+burl('790cloth')+'">'+(painted855?boatCanvas855:'')+clothPaint829(sD,sfi(0),0)+(painted855?(patDef&&sfi(0)===sailPt?'<g style="mix-blend-mode:multiply" opacity=".5">'+boatImg855('sail_shade',192,120,103,86)+'</g>':''):bpath(sD,burl('790sail'))+bpath(sD,burl('790clothV')))+clothFinish831(sD);
+        cloth+= '<g clip-path="'+burl('790cloth')+'">'+(painted855?boatCanvas855:'')+clothPaint829(sD,sfi(0),0)+(painted855?(patDef&&sfi(0)===sailPt?'<g style="mix-blend-mode:multiply" opacity=".5">'+boatImg855('sail_shade',192,120,103,86)+'</g>':''):bpath(sD,burl('790sail'))+bpath(sD,burl('790clothV')))+(painted855&&FUR===1&&(!LY.sf||LY.sf==='plain')?'': '<g opacity="'+(painted855?.44:1)+'">'+clothFinish831(sD)+'</g>');
         // curved canvas gores: shaded seam paired with a narrow reflected highlight
-        for(var si=1;si<5;si++){var t=si/5, ax=YLx+(YRx-YLx)*t, ay=YLy+(YRy-YLy)*t, ex=bl+(br2-bl)*t, ey=by0+1+Math.sin(Math.PI*t)*4.5;
+        for(var si=1;si<5&&!painted855;si++){var t=si/5, ax=YLx+(YRx-YLx)*t, ay=YLy+(YRy-YLy)*t, ex=bl+(br2-bl)*t, ey=by0+1+Math.sin(Math.PI*t)*4.5;
           var seam='M'+f(ax)+' '+f(ay)+'C'+f(ax+5)+' '+f(ay+21)+' '+f(ex+5)+' '+f(ey-19)+' '+f(ex)+' '+f(ey);
           cloth+=bpath(seam,'none','#352b23',1.65,'opacity=".16"')+'<g transform="translate(-1 0)">'+bpath(seam,'none','#fff',.8,'opacity=".31"')+'</g>'+bpath(seam,'none',sailLine,.35,'opacity=".7" stroke-dasharray=".55 1.25"');
         }
@@ -42675,7 +42684,7 @@ document.addEventListener('change',function(e) {
     if(B790 || S791 || B792) {
       var d790=curve(0)+'L'+bF(bx)+' '+bF(yb-6)+'Q'+bF(cx)+' '+bF(yc-6)+' '+bF(sx)+' '+bF(ys-6)+'Z';
       deck=bpath(d790,burl('790deck'),bwood(P.trim,-.58),.8);
-      if(B790&&has('deck')){var rail855=boatImg855('brass_texture',sx,yb-7,L,ys-yb+13);if(P.wale.toLowerCase()!==SHP_PAINT.wale.toLowerCase())rail855=boatTint855(rail855,P.wale,.58);deck=boatClip855(d790,rail855)+bpath(d790,'none',bwood(P.trim,-.58),.65);}
+      if(B790&&has('deck')){var rail855=boatImg855('brass_texture',sx,yb-7,L,ys-yb+13);if(P.wale.toLowerCase()!==SHP_PAINT.wale.toLowerCase())rail855=boatTint857(rail855,P.wale,.58);deck=boatClip855(d790,rail855)+bpath(d790,'none',bwood(P.trim,-.58),.65);}
       if(S791&&has('deck'))deck=boatClip855(d790,sloopPaint856('deck',sx,Math.min(ys,yb)-7,L,Math.max(ys,yb,yc)-Math.min(ys,yb)+8,'trim',.34))+bpath(d790,'none',bwood(P.trim,-.58),.65);
       for(var ds=1;ds<12;ds++){var dx0=sx+L*ds/12,dy0=deckAt(dx0);deck+=bpath(bline(dx0,dy0-5.8,dx0,dy0-.6),'none',bwood(P.trim,-.48),.75)+bpath(bline(dx0+1,dy0-5.5,dx0+1,dy0-.7),'none',bwood(P.hull,.34),.55,'opacity=".7"');}
       deck+=bpath(curve(-6),'none',bwood(P.trim,-.5),2.6)+bpath(curve(-6.5),'none',bwood(P.wale,.52),1.15)+bpath(curve(-.5),'none',bwood(P.trim,-.55),2.3)+bpath(curve(-1.2),'none',bwood(P.wale,.36),.9);
@@ -42748,7 +42757,7 @@ document.addEventListener('change',function(e) {
       }
     }
     var rudder = T.id === 'boat' ? '<path d="M' + shpF(sx + 3) + ' ' + shpF(wl - T.H * .5) + 'L' + shpF(sx - 11) + ' ' + shpF(wl - T.H * .32) + 'L' + shpF(sx - 14) + ' ' + shpF(wl + D * .95) + 'L' + shpF(sx + 8) + ' ' + shpF(wl + D * .95) + 'Z" fill="url(#' + u + 'b5)" stroke="#2a190c" stroke-width="1.2"/><path d="M' + shpF(sx - 8) + ' ' + shpF(wl - T.H * .26) + 'L' + shpF(sx - 10) + ' ' + shpF(wl + D * .8) + '" stroke="#f0c486" stroke-opacity=".55" stroke-width="1.4"/>' : '<path d="M' + shpF(sx + 2) + ' ' + shpF(wl - T.H * .45) + 'L' + shpF(sx - 7) + ' ' + shpF(wl - T.H * .3) + 'L' + shpF(sx - 9) + ' ' + shpF(wl + D * .85) + 'L' + shpF(sx + 6) + ' ' + shpF(wl + D * .85) + 'Z" fill="' + shpShade(P.hull, -.25) + '" stroke="#1a0f08" stroke-width=".8"/>';
-    if(B790&&has('rudder')){var rd855='M'+shpF(sx+3)+' '+shpF(wl-T.H*.5)+'L'+shpF(sx-11)+' '+shpF(wl-T.H*.32)+'L'+shpF(sx-14)+' '+shpF(wl+D*.95)+'L'+shpF(sx+8)+' '+shpF(wl+D*.95)+'Z',rw855=boatImg855('wood_texture',sx-15,wl-T.H*.5,24,D+T.H*.5);if(P.hull.toLowerCase()!==SHP_PAINT.hull.toLowerCase())rw855=boatTint855(rw855,P.hull,.42);rudder=boatClip855(rd855,rw855)+bpath(rd855,'none',bwood(P.trim,-.55),1);}
+    if(B790&&has('rudder')){var rd855='M'+shpF(sx+3)+' '+shpF(wl-T.H*.5)+'L'+shpF(sx-11)+' '+shpF(wl-T.H*.32)+'L'+shpF(sx-14)+' '+shpF(wl+D*.95)+'L'+shpF(sx+8)+' '+shpF(wl+D*.95)+'Z',rw855=boatImg855('wood_texture',sx-15,wl-T.H*.5,24,D+T.H*.5);if(P.hull.toLowerCase()!==SHP_PAINT.hull.toLowerCase())rw855=boatTint857(rw855,P.hull,.42);rudder=boatClip855(rd855,rw855)+bpath(rd855,'none',bwood(P.trim,-.55),1);}
     if(S791&&has('rudder')){var rd856='M'+bF(sx+2)+' '+bF(wl-T.H*.45)+'L'+bF(sx-7)+' '+bF(wl-T.H*.3)+'L'+bF(sx-9)+' '+bF(wl+D*.85)+'L'+bF(sx+6)+' '+bF(wl+D*.85)+'Z';rudder=boatClip855(rd856,sloopPaint856('wood_texture',sx-10,wl-T.H*.45,17,D+T.H*.45,'hull',.34))+bpath(rd856,'none',bwood(P.trim,-.55),.8);}
     var oars = '';
     if (T.id === 'boat') [-.2, .14].forEach(function (k2) { var ox = cx + k2 * L, oy = deckAt(ox), ex = ox - 27, ey = wl + 9; oars += '<path d="M' + shpF(ox + 18) + ' ' + shpF(oy - 6) + 'L' + shpF(ex + 3) + ' ' + shpF(ey + 3) + '" stroke="#1a0800" stroke-opacity=".38" stroke-width="4.4" stroke-linecap="round" style="filter:blur(1.4px)"/><path d="M' + shpF(ox + 16) + ' ' + shpF(oy - 9) + 'L' + shpF(ex) + ' ' + shpF(ey) + '" stroke="#4a2a10" stroke-width="4.4" stroke-linecap="round"/><path d="M' + shpF(ox + 16) + ' ' + shpF(oy - 9) + 'L' + shpF(ex) + ' ' + shpF(ey) + '" stroke="#d99a55" stroke-width="2.8" stroke-linecap="round"/><path d="M' + shpF(ox + 14) + ' ' + shpF(oy - 8.4) + 'L' + shpF(ex + 3) + ' ' + shpF(ey - 2) + '" stroke="#f0c486" stroke-opacity=".8" stroke-width=".9" stroke-linecap="round"/><ellipse cx="' + shpF(ex - 2) + '" cy="' + shpF(ey + 1) + '" rx="8" ry="3.4" transform="rotate(-58 ' + shpF(ex - 2) + ' ' + shpF(ey + 1) + ')" fill="#c98a4d" stroke="#5a3a1c" stroke-width="1"/><ellipse cx="' + shpF(ex - 1) + '" cy="' + shpF(ey) + '" rx="4.6" ry="1.2" transform="rotate(-58 ' + shpF(ex - 1) + ' ' + shpF(ey) + ')" fill="#f0c486" fill-opacity=".6"/>'; });
