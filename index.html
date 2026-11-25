@@ -1,5 +1,5 @@
 <!doctype html>
-<!--wk-ver:25.11.2026 · 857-->
+<!--wk-ver:25.11.2026 · 858-->
 <script id="wk-v616-pre">try{var K='wkExtrasKeepV616',old={},ca=[],ma={},cc=null,cca=[],cma={};try{old=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}try{ca=JSON.parse(localStorage.getItem('onePieceWikiCustomAchievementsV1')||'[]')}catch(e){}try{ma=JSON.parse(localStorage.getItem('onePieceWikiMedalArtV1')||'{}')}catch(e){}try{cc=JSON.parse(localStorage.getItem('wkCloudContentV1')||'null');if(cc&&cc.data){cca=Array.isArray(cc.data.customAchievements)?cc.data.customAchievements:[];cma=cc.data.medalArt&&typeof cc.data.medalArt==='object'?cc.data.medalArt:{}}}catch(e){}cc=null;var oc=Array.isArray(old.ca)?old.ca:[],om=old.ma&&typeof old.ma==='object'?old.ma:{},ids={},cids={};oc.forEach(function(a){if(a&&a.id!=null)ids[a.id]=1});cca.forEach(function(a){if(a&&a.id!=null)cids[a.id]=1});(Array.isArray(ca)?ca:[]).forEach(function(a){if(a&&a.id!=null&&!ids[a.id]&&!cids[a.id]){oc.push(a);ids[a.id]=1}});if(ma&&typeof ma==='object')Object.keys(ma).forEach(function(k){if(!(k in om)&&!(k in cma)&&ma[k]!=null&&ma[k]!=='')om[k]=ma[k]});if(oc.length||Object.keys(om).length)localStorage.setItem(K,JSON.stringify({ca:oc,ma:om}));else localStorage.removeItem(K)}catch(e){}</script>
 <html data-wiki-portable-baked="true" data-wiki-portable-id="2026-11-11T03:23:00.970Z" lang="ru" style="--reward-rank-first: #ffda75; --reward-rank-second: #d9d9d9; --reward-rank-third: #ffd285; --reward-rank-other: #4f4860; --wiki-progress-manga: #efc66b; --wiki-progress-anime: #60d9ff; --wk-title-font: 'Days One'; --wk-title-fw: 400; --wk-wp-tpl: url(&quot;./assets/webp/ui/wanted_template.webp&quot;); --wk-fg-manga: #0b0f17; --wk-fg-anime: #0b0f17; --wk-accent: #a78bfa; --wk-accent-soft: #d3c5fd; --fruit-type-param-color: #bb9eff !important; --fruit-type-param-rgb: 187, 158, 255 !important; --fruit-type-logia-color: #f967ae !important; --fruit-type-logia-rgb: 249, 103, 174 !important; --fruit-type-zoan-color: #65f6b7 !important; --fruit-type-zoan-rgb: 101, 246, 183 !important; --wk-tz-card: 1.15;" class="wk-sc-off wk-hz-c wk-hz-f wk-hz-u wk-hz-v wk-hz-h wk-calm wk-tfx-off wk-tfx-still wk-gpu wk-hdr-min" data-wk-role="admin" data-wk-title-font="g:Days One|"><head>
 <script id="wk-v596-early">try{var q=new URLSearchParams(location.search);if(q.get("tab")==="favorites"&&/^[a-z]+$/.test(q.get("cab")||"")){var cb=q.get("cab");localStorage.setItem("onePieceWikiCabinSubtabV3",cb==="overview"?"favorites":cb);localStorage.setItem("onePieceWikiCabinExtraTabV1",/^(watchgrid|timeline|deck|tops|stats|edits|quiz|atlas|help)$/.test(cb)?cb:"");}}catch(e){}</script>
@@ -3623,7 +3623,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "25.11.2026 · 857";
+const WIKI_VERSION = "25.11.2026 · 858";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -42335,6 +42335,11 @@ document.addEventListener('change',function(e) {
     function sloopImg856(file,x,y,w,h){return '<image href="assets/webp/ships/sloop/'+file+'.webp" x="'+shpF(x)+'" y="'+shpF(y)+'" width="'+shpF(w)+'" height="'+shpF(h)+'" preserveAspectRatio="none"/>';}
     function sloopPaint856(file,x,y,w,h,key,ref){var a=sloopImg856(file,x,y,w,h);return P[key].toLowerCase()===SHP_PAINT[key].toLowerCase()?a:boatTint855(a,P[key],ref);}
     function sloopHull856(){var a='';[['hull_wood','hull',.34],['hull_bottom','bottom',.26],['hull_trim','trim',.17],['hull_wale','wale',.57]].forEach(function(q){a+=sloopPaint856(q[0],sx,200,L,64,q[1],q[2]);});return boatClip855(hullD,a+bpath(hullD,burl('790ends')))+bpath(hullD,'none',bwood(P.trim,-.55),.9);}
+    /* v858: brig art, independent material zones, original geometry and all overlays. */
+    var brig858 = T.id === 'brig';
+    function brigImg858(file,x,y,w,h){return '<image href="assets/webp/ships/brig/'+file+'.webp" x="'+shpF(x)+'" y="'+shpF(y)+'" width="'+shpF(w)+'" height="'+shpF(h)+'" preserveAspectRatio="none"/>';}
+    function brigPaint858(file,x,y,w,h,key,ref){var art=brigImg858(file,x,y,w,h);return P[key].toLowerCase()===SHP_PAINT[key].toLowerCase()?art:boatTint857(art,P[key],ref);}
+    function brigHull858(){var art='';[['hull_wood','hull',.30],['hull_bottom','bottom',.28],['hull_trim','trim',.19],['hull_wale','wale',.55]].forEach(function(q){art+=brigPaint858(q[0],sx,190,L,77,q[1],q[2]);});return boatClip855(hullD,art+bpath(hullD,burl('790ends')))+bpath(hullD,'none',bwood(P.trim,-.48),.9);}
     var B790 = T.id === 'boat', S791 = T.id === 'sloop', G795 = T === shpTShape(5), G796 = T === shpTShape(6), G794 = T === SHP_T[4] || G795 || G796, F793 = T.id === 'frigate' || G794, B792 = T.id === 'brig' || F793, bF = shpF;
     function bgrad(id, stops, horiz) {
       return '<linearGradient id="'+u+id+'" x1="0" y1="0" x2="'+(horiz?'1':'0')+'" y2="'+(horiz?'0':'1')+'">'+stops.map(function(q){return '<stop offset="'+q[0]+'" stop-color="'+q[1]+'"'+(q.length>2?' stop-opacity="'+q[2]+'"':'')+'/>';}).join('')+'</linearGradient>';
@@ -42387,8 +42392,12 @@ document.addEventListener('change',function(e) {
     function clothFinish831(d){return shpCanvas831(d,shpClothSurface(d),u+'cf'+(++finish831),SHP_SFAB[LY.sf]?LY.sf:'plain',FUR,LY.sw);}
     function brigCloth(d, fill, seams, idx) {
       var id='792cloth'+(++brigClothN), out='<clipPath id="'+u+id+'"><path d="'+d+'"/></clipPath><path d="'+d+'" '+sailPl+' stroke="'+sailLine+'" stroke-width=".9"/>';
-      out+='<g clip-path="'+burl(id)+'">'+clothPaint829(d,fill,idx)+bpath(d,burl('792canvas'))+bpath(d,burl('790clothV'))+clothFinish831(d);
-      seams.forEach(function(line){out+=bpath(line,'none','#2d231d',1.5,'opacity=".18"')+'<g transform="translate(-.6 -.5)">'+bpath(line,'none','#fff',.55,'opacity=".48"')+'</g>'+bpath(line,'none',sailLine,.38,'opacity=".65" stroke-dasharray=".65 1.05"');});
+      var painted858=brig858&&has('sail'), S858=painted858?shpClothSurface(d):null, kind858=idx==null?'jib':'main';
+      if(painted858){
+        var tex858=brigPaint858('sail_'+kind858,S858.l,S858.t,S858.w,S858.h,'sail',.71);
+        out+='<g clip-path="'+burl(id)+'">'+tex858+clothPaint829(d,fill,idx)+(fill===sailPt&&patDef?brigImg858('shade_'+kind858,S858.l,S858.t,S858.w,S858.h):'')+(FUR<1||(LY.sf&&LY.sf!=='plain')?'<g opacity=".5">'+clothFinish831(d)+'</g>':'');
+      }else out+='<g clip-path="'+burl(id)+'">'+clothPaint829(d,fill,idx)+bpath(d,burl('792canvas'))+bpath(d,burl('790clothV'))+clothFinish831(d);
+      if(!painted858||FUR<.2)seams.forEach(function(line){out+=bpath(line,'none','#2d231d',1.5,'opacity=".18"')+'<g transform="translate(-.6 -.5)">'+bpath(line,'none','#fff',.55,'opacity=".48"')+'</g>'+bpath(line,'none',sailLine,.38,'opacity=".65" stroke-dasharray=".65 1.05"');});
       if(G795 || G796) out+=bpath(d,'none',bwood(P.sail,-.25),3.4,'opacity=".16" stroke-dasharray="1.3 1.1"');
       return out+bpath(d,'none',sailLine,2.2,'opacity=".34"')+bpath(d,'none','#fff',.65,'opacity=".29"')+'</g>';
     }
@@ -42415,6 +42424,7 @@ document.addEventListener('change',function(e) {
         if(G794){var ty=top+h*.26;masts+=bpath('M'+bF(x-8)+' '+bF(ty)+'H'+bF(x+8)+'L'+bF(x+4)+' '+bF(ty+4)+'H'+bF(x-4)+'Z',burl('794gallery'),bwood(P.trim,-.6),.7)+bpath(bline(x-9,ty-.6,x+9,ty-.6),'none',burl('794gold'),1.5);}
         if(G795 || G796){var py=top+h*.26;for(var jj=0;jj<5;jj++){var xx=x-6+jj*3;masts+=bpath(bline(xx,py-4,xx,py),'none',bwood(P.wale,.25),.75);}masts+=bpath(bline(x-7,py-4,x+7,py-4),'none',burl('794gold'),1.2);}
         [top+7,y0-h*.5,y0-8].forEach(function(y){for(var j=0;j<4;j++)masts+=bpath(bline(x-2.5,y+j*1.2,x+2.5,y+j*1.2+.7),'none','#d3b181',.75);});
+        if(brig858&&has('mast'))masts+=brigImg858('mast',x-3.5,top,7,y0+4-top);
         var left=x-L*.09,right=x+L*.09,ty=top+h*.28;
         rig+=brope(bline(x,top+4,left,deckAt(left)),.85)+brope(bline(x,top+4,right,deckAt(right)),.85)+brope(bline(x,ty,x-L*.06,deckAt(x-L*.06)),.72);
         for(var j=1;j<9;j++){var t=j/9, xx=left+(x-left)*t, yy=deckAt(left)+(top+4-deckAt(left))*t;rig+=bpath(bline(xx,yy,xx+L*.18*(1-t),yy),'none','#9c805c',.55,'opacity=".8"');}
@@ -42652,7 +42662,7 @@ document.addEventListener('change',function(e) {
       h790+='</g>'+bpath(hullD,'none',bwood(P.trim,-.55),1.05);
       // bow/stern structural timbers hug the existing silhouette.
       h790+=bpath('M'+bF(bx-1)+' '+bF(yb+1)+'C'+bF(bx-4)+' '+bF(wl-5)+' '+bF(bx-L*.1)+' '+bF(wl+D-2)+' '+bF(bx-L*.22)+' '+bF(wl+D-1),'none',bwood(P.trim,-.28),2.8)+bpath('M'+bF(bx-2)+' '+bF(yb+2)+'C'+bF(bx-6)+' '+bF(wl-5)+' '+bF(bx-L*.105)+' '+bF(wl+D-3)+' '+bF(bx-L*.22)+' '+bF(wl+D-2),'none',bwood(P.hull,.38),1.05);
-      hull=B790 && has('hull') ? boatHull855()+bpath(hullD,'none',bwood(P.trim,-.55),.7) : S791 && has('hull') ? sloopHull856() : h790;
+      hull=B790 && has('hull') ? boatHull855()+bpath(hullD,'none',bwood(P.trim,-.55),.7) : S791 && has('hull') ? sloopHull856() : brig858 && has('hull') ? brigHull858() : h790;
     }
     var GS = SHP_GUNS[LY.gs] || {};
     if (T.ports) {
@@ -42686,6 +42696,7 @@ document.addEventListener('change',function(e) {
       deck=bpath(d790,burl('790deck'),bwood(P.trim,-.58),.8);
       if(B790&&has('deck')){var rail855=boatImg855('brass_texture',sx,yb-7,L,ys-yb+13);if(P.wale.toLowerCase()!==SHP_PAINT.wale.toLowerCase())rail855=boatTint857(rail855,P.wale,.58);deck=boatClip855(d790,rail855)+bpath(d790,'none',bwood(P.trim,-.58),.65);}
       if(S791&&has('deck'))deck=boatClip855(d790,sloopPaint856('deck',sx,Math.min(ys,yb)-7,L,Math.max(ys,yb,yc)-Math.min(ys,yb)+8,'trim',.34))+bpath(d790,'none',bwood(P.trim,-.58),.65);
+      if(brig858&&has('deck'))deck=boatClip855(d790,brigPaint858('deck',sx,Math.min(ys,yb)-7,L,Math.max(ys,yb,yc)-Math.min(ys,yb)+8,'trim',.30))+bpath(d790,'none',bwood(P.trim,-.58),.65);
       for(var ds=1;ds<12;ds++){var dx0=sx+L*ds/12,dy0=deckAt(dx0);deck+=bpath(bline(dx0,dy0-5.8,dx0,dy0-.6),'none',bwood(P.trim,-.48),.75)+bpath(bline(dx0+1,dy0-5.5,dx0+1,dy0-.7),'none',bwood(P.hull,.34),.55,'opacity=".7"');}
       deck+=bpath(curve(-6),'none',bwood(P.trim,-.5),2.6)+bpath(curve(-6.5),'none',bwood(P.wale,.52),1.15)+bpath(curve(-.5),'none',bwood(P.trim,-.55),2.3)+bpath(curve(-1.2),'none',bwood(P.wale,.36),.9);
       if(S791 || B792) {
@@ -42703,6 +42714,7 @@ document.addEventListener('change',function(e) {
       if(B792){
         var cd='M'+bF(c0)+' '+bF(ys+2)+'L'+bF(c0-4)+' '+bF(ct)+'H'+bF(c1-4)+'L'+bF(c1)+' '+bF(deckAt(c1))+'Z';
         cab=bpath(cd,burl('790p2'),bwood(P.trim,-.6),.9)+'<clipPath id="'+u+'792cab"><path d="'+cd+'"/></clipPath><g clip-path="'+burl('792cab')+'">';
+        if(brig858&&has('cabin'))cab+=brigPaint858('wood_texture',c0-5,ct,cw+8,Math.max(ys,deckAt(c1))+3-ct,'hull',.30);
         for(var cb=0;cb<(G796?9:G795?14:G794?11:6);cb++){var yy=ct+cb*4;cab+=bpath(bline(c0-5,yy,c1+1,yy),'none',bwood(P.hull,-.45),.6)+bpath(bline(c0-5,yy+1,c1+1,yy+1),'none',bwood(P.hull,.32),.45);}
         cab+=bpath(cd,burl('790ends'))+'</g>'+bspar(bline(c0-6,ct,c1-2,ct),3)+bpath(bline(c0-6,ct-1,c1-2,ct-1),'none',P.wale,.9);
         for(var ra=0;ra<7;ra++){var xx=c0-4+(cw-1)*ra/6;cab+=bspar(bline(xx,ct-5,xx,ct),1.1);}
@@ -42759,6 +42771,7 @@ document.addEventListener('change',function(e) {
     var rudder = T.id === 'boat' ? '<path d="M' + shpF(sx + 3) + ' ' + shpF(wl - T.H * .5) + 'L' + shpF(sx - 11) + ' ' + shpF(wl - T.H * .32) + 'L' + shpF(sx - 14) + ' ' + shpF(wl + D * .95) + 'L' + shpF(sx + 8) + ' ' + shpF(wl + D * .95) + 'Z" fill="url(#' + u + 'b5)" stroke="#2a190c" stroke-width="1.2"/><path d="M' + shpF(sx - 8) + ' ' + shpF(wl - T.H * .26) + 'L' + shpF(sx - 10) + ' ' + shpF(wl + D * .8) + '" stroke="#f0c486" stroke-opacity=".55" stroke-width="1.4"/>' : '<path d="M' + shpF(sx + 2) + ' ' + shpF(wl - T.H * .45) + 'L' + shpF(sx - 7) + ' ' + shpF(wl - T.H * .3) + 'L' + shpF(sx - 9) + ' ' + shpF(wl + D * .85) + 'L' + shpF(sx + 6) + ' ' + shpF(wl + D * .85) + 'Z" fill="' + shpShade(P.hull, -.25) + '" stroke="#1a0f08" stroke-width=".8"/>';
     if(B790&&has('rudder')){var rd855='M'+shpF(sx+3)+' '+shpF(wl-T.H*.5)+'L'+shpF(sx-11)+' '+shpF(wl-T.H*.32)+'L'+shpF(sx-14)+' '+shpF(wl+D*.95)+'L'+shpF(sx+8)+' '+shpF(wl+D*.95)+'Z',rw855=boatImg855('wood_texture',sx-15,wl-T.H*.5,24,D+T.H*.5);if(P.hull.toLowerCase()!==SHP_PAINT.hull.toLowerCase())rw855=boatTint857(rw855,P.hull,.42);rudder=boatClip855(rd855,rw855)+bpath(rd855,'none',bwood(P.trim,-.55),1);}
     if(S791&&has('rudder')){var rd856='M'+bF(sx+2)+' '+bF(wl-T.H*.45)+'L'+bF(sx-7)+' '+bF(wl-T.H*.3)+'L'+bF(sx-9)+' '+bF(wl+D*.85)+'L'+bF(sx+6)+' '+bF(wl+D*.85)+'Z';rudder=boatClip855(rd856,sloopPaint856('wood_texture',sx-10,wl-T.H*.45,17,D+T.H*.45,'hull',.34))+bpath(rd856,'none',bwood(P.trim,-.55),.8);}
+    if(brig858&&has('rudder')){var rd858='M'+bF(sx+2)+' '+bF(wl-T.H*.45)+'L'+bF(sx-7)+' '+bF(wl-T.H*.3)+'L'+bF(sx-9)+' '+bF(wl+D*.85)+'L'+bF(sx+6)+' '+bF(wl+D*.85)+'Z';rudder=boatClip855(rd858,brigPaint858('wood_texture',sx-10,wl-T.H*.45,17,D+T.H*.45,'hull',.30))+bpath(rd858,'none',bwood(P.trim,-.55),.8);}
     var oars = '';
     if (T.id === 'boat') [-.2, .14].forEach(function (k2) { var ox = cx + k2 * L, oy = deckAt(ox), ex = ox - 27, ey = wl + 9; oars += '<path d="M' + shpF(ox + 18) + ' ' + shpF(oy - 6) + 'L' + shpF(ex + 3) + ' ' + shpF(ey + 3) + '" stroke="#1a0800" stroke-opacity=".38" stroke-width="4.4" stroke-linecap="round" style="filter:blur(1.4px)"/><path d="M' + shpF(ox + 16) + ' ' + shpF(oy - 9) + 'L' + shpF(ex) + ' ' + shpF(ey) + '" stroke="#4a2a10" stroke-width="4.4" stroke-linecap="round"/><path d="M' + shpF(ox + 16) + ' ' + shpF(oy - 9) + 'L' + shpF(ex) + ' ' + shpF(ey) + '" stroke="#d99a55" stroke-width="2.8" stroke-linecap="round"/><path d="M' + shpF(ox + 14) + ' ' + shpF(oy - 8.4) + 'L' + shpF(ex + 3) + ' ' + shpF(ey - 2) + '" stroke="#f0c486" stroke-opacity=".8" stroke-width=".9" stroke-linecap="round"/><ellipse cx="' + shpF(ex - 2) + '" cy="' + shpF(ey + 1) + '" rx="8" ry="3.4" transform="rotate(-58 ' + shpF(ex - 2) + ' ' + shpF(ey + 1) + ')" fill="#c98a4d" stroke="#5a3a1c" stroke-width="1"/><ellipse cx="' + shpF(ex - 1) + '" cy="' + shpF(ey) + '" rx="4.6" ry="1.2" transform="rotate(-58 ' + shpF(ex - 1) + ' ' + shpF(ey) + ')" fill="#f0c486" fill-opacity=".6"/>'; });
     if(B790){
