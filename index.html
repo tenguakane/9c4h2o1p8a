@@ -42311,6 +42311,17 @@ document.addEventListener('change',function(e) {
         '<filter id="' + u + 'bs" x="-20%" y="-80%" width="140%" height="260%"><feGaussianBlur stdDeviation="3.2"/></filter>' : '') +
       '<clipPath id="' + u + 'hc"><path d="' + hullD + '"/></clipPath></defs>' + ((fS > 1 && o.fig) || vh > Hh ? (function () { var bk = Math.max(1, vw / Math.max(60, W - vx), vh / Hh) * (vh > Hh ? 1.09 : 1.02); return bk > 1.001 ? '<g transform="translate(' + shpF(vx) + ' ' + shpF(Hh) + ') scale(' + shpF(bk) + ') translate(' + shpF(-vx) + ' ' + shpF(-Hh) + ')">' + BG.body + '</g>' : BG.body; })() : BG.body);
     /* v790: локальная векторная графика лодки; никаких внешних ресурсов. */
+    /* v855: painted modular boat assets. Keep SVG geometry, construction and interactive overlays. */
+    var boatArtN855=0, boatPath855='assets/webp/ships/boat/';
+    function boatImg855(file,x,y,w,h){return '<image href="'+boatPath855+file+'.webp" x="'+shpF(x)+'" y="'+shpF(y)+'" width="'+shpF(w)+'" height="'+shpF(h)+'" preserveAspectRatio="none"/>';}
+    function boatTint855(svg,col,ref){
+      var m=/^#([0-9a-f]{6})$/i.exec(col||'');if(!m)return svg;
+      var v=parseInt(m[1],16),rgb=[v>>16,(v>>8)&255,v&255],id=u+'b855t'+(++boatArtN855),mat=[];
+      rgb.forEach(function(c){var t=c/255,k=.58+Math.min(t,1-t)*.74;mat.push(.2126*k,.7152*k,.0722*k,0,t-ref*k);});mat.push(0,0,0,1,0);
+      return '<defs><filter id="'+id+'" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="'+mat.map(function(n){return n.toFixed(4);}).join(' ')+'"/></filter></defs><g filter="url(#'+id+')">'+svg+'</g>';
+    }
+    function boatClip855(d,svg){var id=u+'b855c'+(++boatArtN855);return '<defs><clipPath id="'+id+'"><path d="'+d+'"/></clipPath></defs><g clip-path="url(#'+id+')">'+svg+'</g>';}
+    function boatHull855(){var b=boatImg855('hull_base',153,207,158,58), refs={hull:.39,trim:.20,wale:.65,bottom:.27};Object.keys(refs).forEach(function(k){if(P[k].toLowerCase()!==SHP_PAINT[k].toLowerCase())b+=boatTint855(boatImg855('mask_'+k,153,207,158,58),P[k],refs[k]);});return b;}
     var B790 = T.id === 'boat', S791 = T.id === 'sloop', G795 = T === shpTShape(5), G796 = T === shpTShape(6), G794 = T === SHP_T[4] || G795 || G796, F793 = T.id === 'frigate' || G794, B792 = T.id === 'brig' || F793, bF = shpF;
     function bgrad(id, stops, horiz) {
       return '<linearGradient id="'+u+id+'" x1="0" y1="0" x2="'+(horiz?'1':'0')+'" y2="'+(horiz?'0':'1')+'">'+stops.map(function(q){return '<stop offset="'+q[0]+'" stop-color="'+q[1]+'"'+(q.length>2?' stop-opacity="'+q[2]+'"':'')+'/>';}).join('')+'</linearGradient>';
@@ -42410,7 +42421,10 @@ document.addEventListener('change',function(e) {
       if(B790) {
         var f=bF, sD='M'+f(YLx)+' '+f(YLy)+'L'+f(YRx)+' '+f(YRy)+'C'+f(x0+36)+' '+f(YRy+19)+' '+f(br2+4)+' '+f(by0-26)+' '+f(br2)+' '+f(by0+1)+'Q'+f(x0+3)+' '+f(by0+10)+' '+f(bl)+' '+f(by0+1)+'C'+f(bl+7)+' '+f(by0-28)+' '+f(YLx+5)+' '+f(YLy+20)+' '+f(YLx)+' '+f(YLy)+'Z';
         var cloth='<clipPath id="'+u+'790cloth"><path d="'+sD+'"/></clipPath><path d="'+sD+'" '+sailPl+' stroke="'+sailLine+'" stroke-width="1"/>';
-        cloth+= '<g clip-path="'+burl('790cloth')+'">'+clothPaint829(sD,sfi(0),0)+bpath(sD,burl('790sail'))+bpath(sD,burl('790clothV'))+clothFinish831(sD);
+        var boatCanvas855=boatImg855('sail_base',192,120,103,86);
+        if(P.sail.toLowerCase()!==SHP_PAINT.sail.toLowerCase())boatCanvas855=boatTint855(boatCanvas855,P.sail,.76);
+        var painted855=has('sail');
+        cloth+= '<g clip-path="'+burl('790cloth')+'">'+(painted855?boatCanvas855:'')+clothPaint829(sD,sfi(0),0)+(painted855?(patDef&&sfi(0)===sailPt?'<g style="mix-blend-mode:multiply" opacity=".5">'+boatImg855('sail_shade',192,120,103,86)+'</g>':''):bpath(sD,burl('790sail'))+bpath(sD,burl('790clothV')))+clothFinish831(sD);
         // curved canvas gores: shaded seam paired with a narrow reflected highlight
         for(var si=1;si<5;si++){var t=si/5, ax=YLx+(YRx-YLx)*t, ay=YLy+(YRy-YLy)*t, ex=bl+(br2-bl)*t, ey=by0+1+Math.sin(Math.PI*t)*4.5;
           var seam='M'+f(ax)+' '+f(ay)+'C'+f(ax+5)+' '+f(ay+21)+' '+f(ex+5)+' '+f(ey-19)+' '+f(ex)+' '+f(ey);
@@ -42423,6 +42437,7 @@ document.addEventListener('change',function(e) {
         sails+=cloth;
         masts=bspar(bline(x0,y00+4,x0,ftop),3.5)+bpath(bline(x0-1,y00, x0-1,ftop+2),'none','#ffdaa2',.65,'opacity=".75"');
         for(var kn=0;kn<4;kn++)masts+=bpath(bline(x0-2.3,ftop+7+kn*1.2,x0+2.2,ftop+8+kn*1.2),'none','#c5aa7c',.8);
+        if(has('mast'))masts=boatImg855('mast',x0-3,ftop,6,y00+4-ftop);
       }
       sbox.push([x0 + 2, ftop + 14, by0, 86]); yards.push([YLx - 3, YRx + 3, ftop + 15]); yards.push([bl - 3, br2 + 3, by0 + 1]);
       rig += brope(bline(x0,ftop+2,bx-6,yb+2),.9)+brope(bline(x0,ftop+2,sx+8,ys+2),.9);
@@ -42622,7 +42637,7 @@ document.addEventListener('change',function(e) {
       h790+='</g>'+bpath(hullD,'none',bwood(P.trim,-.55),1.05);
       // bow/stern structural timbers hug the existing silhouette.
       h790+=bpath('M'+bF(bx-1)+' '+bF(yb+1)+'C'+bF(bx-4)+' '+bF(wl-5)+' '+bF(bx-L*.1)+' '+bF(wl+D-2)+' '+bF(bx-L*.22)+' '+bF(wl+D-1),'none',bwood(P.trim,-.28),2.8)+bpath('M'+bF(bx-2)+' '+bF(yb+2)+'C'+bF(bx-6)+' '+bF(wl-5)+' '+bF(bx-L*.105)+' '+bF(wl+D-3)+' '+bF(bx-L*.22)+' '+bF(wl+D-2),'none',bwood(P.hull,.38),1.05);
-      hull=h790;
+      hull=B790 && has('hull') ? boatHull855()+bpath(hullD,'none',bwood(P.trim,-.55),.7) : h790;
     }
     var GS = SHP_GUNS[LY.gs] || {};
     if (T.ports) {
@@ -42654,6 +42669,7 @@ document.addEventListener('change',function(e) {
     if(B790 || S791 || B792) {
       var d790=curve(0)+'L'+bF(bx)+' '+bF(yb-6)+'Q'+bF(cx)+' '+bF(yc-6)+' '+bF(sx)+' '+bF(ys-6)+'Z';
       deck=bpath(d790,burl('790deck'),bwood(P.trim,-.58),.8);
+      if(B790&&has('deck')){var rail855=boatImg855('brass_texture',sx,yb-7,L,ys-yb+13);if(P.wale.toLowerCase()!==SHP_PAINT.wale.toLowerCase())rail855=boatTint855(rail855,P.wale,.58);deck=boatClip855(d790,rail855)+bpath(d790,'none',bwood(P.trim,-.58),.65);}
       for(var ds=1;ds<12;ds++){var dx0=sx+L*ds/12,dy0=deckAt(dx0);deck+=bpath(bline(dx0,dy0-5.8,dx0,dy0-.6),'none',bwood(P.trim,-.48),.75)+bpath(bline(dx0+1,dy0-5.5,dx0+1,dy0-.7),'none',bwood(P.hull,.34),.55,'opacity=".7"');}
       deck+=bpath(curve(-6),'none',bwood(P.trim,-.5),2.6)+bpath(curve(-6.5),'none',bwood(P.wale,.52),1.15)+bpath(curve(-.5),'none',bwood(P.trim,-.55),2.3)+bpath(curve(-1.2),'none',bwood(P.wale,.36),.9);
       if(S791 || B792) {
@@ -42725,6 +42741,7 @@ document.addEventListener('change',function(e) {
       }
     }
     var rudder = T.id === 'boat' ? '<path d="M' + shpF(sx + 3) + ' ' + shpF(wl - T.H * .5) + 'L' + shpF(sx - 11) + ' ' + shpF(wl - T.H * .32) + 'L' + shpF(sx - 14) + ' ' + shpF(wl + D * .95) + 'L' + shpF(sx + 8) + ' ' + shpF(wl + D * .95) + 'Z" fill="url(#' + u + 'b5)" stroke="#2a190c" stroke-width="1.2"/><path d="M' + shpF(sx - 8) + ' ' + shpF(wl - T.H * .26) + 'L' + shpF(sx - 10) + ' ' + shpF(wl + D * .8) + '" stroke="#f0c486" stroke-opacity=".55" stroke-width="1.4"/>' : '<path d="M' + shpF(sx + 2) + ' ' + shpF(wl - T.H * .45) + 'L' + shpF(sx - 7) + ' ' + shpF(wl - T.H * .3) + 'L' + shpF(sx - 9) + ' ' + shpF(wl + D * .85) + 'L' + shpF(sx + 6) + ' ' + shpF(wl + D * .85) + 'Z" fill="' + shpShade(P.hull, -.25) + '" stroke="#1a0f08" stroke-width=".8"/>';
+    if(B790&&has('rudder')){var rd855='M'+shpF(sx+3)+' '+shpF(wl-T.H*.5)+'L'+shpF(sx-11)+' '+shpF(wl-T.H*.32)+'L'+shpF(sx-14)+' '+shpF(wl+D*.95)+'L'+shpF(sx+8)+' '+shpF(wl+D*.95)+'Z',rw855=boatImg855('wood_texture',sx-15,wl-T.H*.5,24,D+T.H*.5);if(P.hull.toLowerCase()!==SHP_PAINT.hull.toLowerCase())rw855=boatTint855(rw855,P.hull,.42);rudder=boatClip855(rd855,rw855)+bpath(rd855,'none',bwood(P.trim,-.55),1);}
     var oars = '';
     if (T.id === 'boat') [-.2, .14].forEach(function (k2) { var ox = cx + k2 * L, oy = deckAt(ox), ex = ox - 27, ey = wl + 9; oars += '<path d="M' + shpF(ox + 18) + ' ' + shpF(oy - 6) + 'L' + shpF(ex + 3) + ' ' + shpF(ey + 3) + '" stroke="#1a0800" stroke-opacity=".38" stroke-width="4.4" stroke-linecap="round" style="filter:blur(1.4px)"/><path d="M' + shpF(ox + 16) + ' ' + shpF(oy - 9) + 'L' + shpF(ex) + ' ' + shpF(ey) + '" stroke="#4a2a10" stroke-width="4.4" stroke-linecap="round"/><path d="M' + shpF(ox + 16) + ' ' + shpF(oy - 9) + 'L' + shpF(ex) + ' ' + shpF(ey) + '" stroke="#d99a55" stroke-width="2.8" stroke-linecap="round"/><path d="M' + shpF(ox + 14) + ' ' + shpF(oy - 8.4) + 'L' + shpF(ex + 3) + ' ' + shpF(ey - 2) + '" stroke="#f0c486" stroke-opacity=".8" stroke-width=".9" stroke-linecap="round"/><ellipse cx="' + shpF(ex - 2) + '" cy="' + shpF(ey + 1) + '" rx="8" ry="3.4" transform="rotate(-58 ' + shpF(ex - 2) + ' ' + shpF(ey + 1) + ')" fill="#c98a4d" stroke="#5a3a1c" stroke-width="1"/><ellipse cx="' + shpF(ex - 1) + '" cy="' + shpF(ey) + '" rx="4.6" ry="1.2" transform="rotate(-58 ' + shpF(ex - 1) + ' ' + shpF(ey) + ')" fill="#f0c486" fill-opacity=".6"/>'; });
     if(B790){
@@ -42733,6 +42750,8 @@ document.addEventListener('change',function(e) {
         oars+=bpath(bline(ox+16,oy-7,ex,ey+2),'none','#160e09',4.9,'opacity=".22"')+bspar(bline(ox+16,oy-9,ex,ey),3.2)+'<g transform="translate('+bF(ex)+' '+bF(ey)+') rotate(-42)">'+bpath(blade,burl('790wood'),'#352013',.85)+bpath('M-17 -1.7Q-9 -1.8 -3 -.8','none','#f6cf93',.65,'opacity=".8"')+bpath('M-17 1.5L-3 .8','none','#55341c',.55,'opacity=".7"')+'</g>';
         for(var wr=0;wr<3;wr++)oars+=bpath(bline(ox-3+wr*1.25,oy+8-wr*1.1,ox+.8+wr*1.25,oy+10-wr*1.1),'none','#cdb48b',.7);
       });
+      if(has('oars')){oars='';[-.2,.14].forEach(function(k){var ox=cx+k*L,oy=deckAt(ox),ax=ox+16,ay=oy-9,ex=ox-36,ey=wl+13,dx=ex-ax,dy=ey-ay,ln=Math.sqrt(dx*dx+dy*dy),ang=Math.atan2(-dx,dy)*180/Math.PI; oars+='<g transform="translate('+shpF(ax)+' '+shpF(ay)+') rotate('+shpF(ang)+')">'+boatImg855('oar',-ln*.10,0,ln*.20,ln)+'</g>';});
+      }
     }
     var bows = T.bs ? '<path d="M' + shpF(bx - 10) + ' ' + shpF(yb + 4) + 'L' + shpF(bx + T.bs * .92) + ' ' + shpF(yb - T.bs * .36) + '" stroke="#4a2e1b" stroke-width="3" stroke-linecap="round"/>' : '';
     if(F793){
