@@ -1,5 +1,5 @@
 <!doctype html>
-<!--wk-ver:25.11.2026 · 852-->
+<!--wk-ver:25.11.2026 · 854-->
 <script id="wk-v616-pre">try{var K='wkExtrasKeepV616',old={},ca=[],ma={},cc=null,cca=[],cma={};try{old=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}try{ca=JSON.parse(localStorage.getItem('onePieceWikiCustomAchievementsV1')||'[]')}catch(e){}try{ma=JSON.parse(localStorage.getItem('onePieceWikiMedalArtV1')||'{}')}catch(e){}try{cc=JSON.parse(localStorage.getItem('wkCloudContentV1')||'null');if(cc&&cc.data){cca=Array.isArray(cc.data.customAchievements)?cc.data.customAchievements:[];cma=cc.data.medalArt&&typeof cc.data.medalArt==='object'?cc.data.medalArt:{}}}catch(e){}cc=null;var oc=Array.isArray(old.ca)?old.ca:[],om=old.ma&&typeof old.ma==='object'?old.ma:{},ids={},cids={};oc.forEach(function(a){if(a&&a.id!=null)ids[a.id]=1});cca.forEach(function(a){if(a&&a.id!=null)cids[a.id]=1});(Array.isArray(ca)?ca:[]).forEach(function(a){if(a&&a.id!=null&&!ids[a.id]&&!cids[a.id]){oc.push(a);ids[a.id]=1}});if(ma&&typeof ma==='object')Object.keys(ma).forEach(function(k){if(!(k in om)&&!(k in cma)&&ma[k]!=null&&ma[k]!=='')om[k]=ma[k]});if(oc.length||Object.keys(om).length)localStorage.setItem(K,JSON.stringify({ca:oc,ma:om}));else localStorage.removeItem(K)}catch(e){}</script>
 <html data-wiki-portable-baked="true" data-wiki-portable-id="2026-11-11T03:23:00.970Z" lang="ru" style="--reward-rank-first: #ffda75; --reward-rank-second: #d9d9d9; --reward-rank-third: #ffd285; --reward-rank-other: #4f4860; --wiki-progress-manga: #efc66b; --wiki-progress-anime: #60d9ff; --wk-title-font: 'Days One'; --wk-title-fw: 400; --wk-wp-tpl: url(&quot;./assets/webp/ui/wanted_template.webp&quot;); --wk-fg-manga: #0b0f17; --wk-fg-anime: #0b0f17; --wk-accent: #a78bfa; --wk-accent-soft: #d3c5fd; --fruit-type-param-color: #bb9eff !important; --fruit-type-param-rgb: 187, 158, 255 !important; --fruit-type-logia-color: #f967ae !important; --fruit-type-logia-rgb: 249, 103, 174 !important; --fruit-type-zoan-color: #65f6b7 !important; --fruit-type-zoan-rgb: 101, 246, 183 !important; --wk-tz-card: 1.15;" class="wk-sc-off wk-hz-c wk-hz-f wk-hz-u wk-hz-v wk-hz-h wk-calm wk-tfx-off wk-tfx-still wk-gpu wk-hdr-min" data-wk-role="admin" data-wk-title-font="g:Days One|"><head>
 <script id="wk-v596-early">try{var q=new URLSearchParams(location.search);if(q.get("tab")==="favorites"&&/^[a-z]+$/.test(q.get("cab")||"")){var cb=q.get("cab");localStorage.setItem("onePieceWikiCabinSubtabV3",cb==="overview"?"favorites":cb);localStorage.setItem("onePieceWikiCabinExtraTabV1",/^(watchgrid|timeline|deck|tops|stats|edits|quiz|atlas|help)$/.test(cb)?cb:"");}}catch(e){}</script>
@@ -3623,7 +3623,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "25.11.2026 · 852";
+const WIKI_VERSION = "25.11.2026 · 854";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -44818,6 +44818,54 @@ document.addEventListener('change',function(e) {
     var a=SHP_SETART847[id]; if(!a)return '';
     return '<image href="'+a.src+'" x="'+shpF(x-w/2)+'" y="'+shpF(y-h/2)+'" width="'+shpF(w)+'" height="'+shpF(h)+'" preserveAspectRatio="xMidYMid meet"/>';
   }
+
+  var SHP_DECART853 = { lights: 'assets/webp/decor/lights.webp', bunting: 'assets/webp/decor/bunting.webp', rings: 'assets/webp/decor/rings.webp', gilt: 'assets/webp/decor/gilt.webp', mikan: 'assets/webp/decor/mikan.webp', bonsai: 'assets/webp/decor/bonsai.webp', chest: 'assets/webp/decor/chest.webp', barrels: 'assets/webp/decor/barrels.webp', shields: 'assets/webp/decor/shields.webp', coils: 'assets/webp/decor/coils.webp', awning: 'assets/webp/decor/awning.webp', lanterns: 'assets/webp/decor/lanterns.webp', fenders: 'assets/webp/decor/fenders.webp', boat_oars: 'assets/webp/decor/boat_oars.webp', boat_fishing: 'assets/webp/decor/boat_fishing.webp', sloop_chart: 'assets/webp/decor/sloop_chart.webp', sloop_bell: 'assets/webp/decor/sloop_bell.webp', brig_powder: 'assets/webp/decor/brig_powder.webp', brig_drum: 'assets/webp/decor/brig_drum.webp', frigate_wheel: 'assets/webp/decor/frigate_wheel.webp', frigate_banners: 'assets/webp/decor/frigate_banners.webp', galleon_drapes: 'assets/webp/decor/galleon_drapes.webp', galleon_reliquary: 'assets/webp/decor/galleon_reliquary.webp', gulls: 'assets/webp/decor/gulls.webp', net: 'assets/webp/decor/net.webp', pole: 'assets/webp/decor/pole.webp', streamer: 'assets/webp/decor/streamer.webp', dinghy: 'assets/webp/decor/dinghy.webp', nest: 'assets/webp/decor/nest.webp', anchor: 'assets/webp/decor/anchor.webp', ensign: 'assets/webp/decor/ensign.webp', bowlamp: 'assets/webp/decor/bowlamp.webp', gallery: 'assets/webp/decor/gallery.webp', streamers: 'assets/webp/decor/streamers.webp', palace: 'assets/webp/decor/palace.webp', mausoleum: 'assets/webp/decor/mausoleum.webp', npagoda: 'assets/webp/decor/npagoda.webp', jpagoda: 'assets/webp/decor/jpagoda.webp', towers: 'assets/webp/decor/towers.webp', house: 'assets/webp/decor/house.webp', lighthouse: 'assets/webp/decor/lighthouse.webp', stairs: 'assets/webp/decor/stairs.webp', torn: 'assets/webp/decor/torn.webp', fog: 'assets/webp/decor/fog.webp', bats: 'assets/webp/decor/bats.webp', pumpkins: 'assets/webp/decor/pumpkins.webp', wisps: 'assets/webp/decor/wisps.webp', cobweb: 'assets/webp/decor/cobweb.webp', xlights: 'assets/webp/decor/xlights.webp', tree: 'assets/webp/decor/tree.webp', gifts: 'assets/webp/decor/gifts.webp', snowman: 'assets/webp/decor/snowman.webp', xstar: 'assets/webp/decor/xstar.webp', snow: 'assets/webp/decor/snow.webp' };
+  function shpDecArt853(id,x,y,w,h) {
+    var src = SHP_DECART853[id]; if(!src) return '';
+    return '<image href="'+src+'" x="'+shpF(x-w/2)+'" y="'+shpF(y-h/2)+'" width="'+shpF(w)+'" height="'+shpF(h)+'" preserveAspectRatio="xMidYMid meet"/>';
+  }
+  function shpApplyDecorWebp853(root) {
+    function applySvg(svg) {
+      if(!svg || !svg.querySelectorAll) return;
+      Array.prototype.forEach.call(svg.querySelectorAll('g[data-dec]'), function(g){
+        var id = g.getAttribute('data-dec'), base = SHP_DECVAR[id] ? SHP_DECVAR[id].b : id, src = SHP_DECART853[base];
+        if (base==='fog' || base==='snow' || base==='torn') return;
+        if(!src || g.getAttribute('data-art853')==='1') return;
+        try {
+          var bb = g.getBBox();
+          if(!bb || !(bb.width>0) || !(bb.height>0)) return;
+          var pad = Math.max(1, Math.min(bb.width, bb.height) * 0.05);
+          var img = document.createElementNS('http://www.w3.org/2000/svg','image');
+          img.setAttribute('href', src);
+          img.setAttributeNS('http://www.w3.org/1999/xlink','href', src);
+          img.setAttribute('x', shpF(bb.x - pad));
+          img.setAttribute('y', shpF(bb.y - pad));
+          img.setAttribute('width', shpF(bb.width + pad*2));
+          img.setAttribute('height', shpF(bb.height + pad*2));
+          img.setAttribute('preserveAspectRatio','xMidYMid meet');
+          while(g.firstChild) g.removeChild(g.firstChild);
+          g.appendChild(img);
+          g.setAttribute('data-art853','1');
+        } catch(e) {}
+      });
+    }
+    if(root && root.tagName && String(root.tagName).toLowerCase()==='svg') applySvg(root);
+    else if(root && root.querySelectorAll) {
+      if(root.matches && root.matches('svg')) applySvg(root);
+      Array.prototype.forEach.call(root.querySelectorAll('svg'), applySvg);
+    } else Array.prototype.forEach.call(document.querySelectorAll('svg'), applySvg);
+  }
+  (function(){
+    var queued=new Set(), frame=0;
+    function run(n){
+      if(!n||!n.querySelectorAll)return;
+      if(n.nodeType===1){var svg=n.closest&&n.closest('svg');if(svg&&svg.querySelector('g[data-dec]'))queued.add(svg);}
+      n.querySelectorAll('svg').forEach(function(svg){if(svg.querySelector('g[data-dec]'))queued.add(svg);});
+      if(!frame&&queued.size)frame=requestAnimationFrame(function(){frame=0;var batch=Array.from(queued);queued.clear();batch.forEach(function(svg){if(svg.isConnected)shpApplyDecorWebp853(svg);});});
+    }
+    if(document.readyState!=='loading')run(document);else document.addEventListener('DOMContentLoaded',function(){run(document);});
+    try{new MutationObserver(function(ms){ms.forEach(function(m){Array.prototype.forEach.call(m.addedNodes||[],function(n){if(n&&n.nodeType===1&&n.getAttribute('data-art853')!=='1')run(n);});});}).observe(document.documentElement,{childList:true,subtree:true});}catch(e){}
+  })();
   /* v648: украшения — чисто визуальные поощрения, поэтому стоят в 5 раз дешевле (сюжетные элементы остаются дорогими) */
   Object.keys(SHP_DZ).forEach(function (k) { SHP_DZ[k].l.forEach(function (x) { if (x.p > 0) x.p = Math.max(1000, Math.round(x.p * .2 / 500) * 500); }); });
   var SHP_REQN = { hull: 'обшивку', sail: 'паруса', mast: 'мачту', deck: 'палубу', cabin: 'каюту', bowsprit: 'бушприт' };
@@ -45227,6 +45275,8 @@ document.addEventListener('change',function(e) {
     if(kind==='fig' && Object.prototype.hasOwnProperty.call(SHP_FIGMIN850,id)) return '<svg viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini"><rect width="60" height="36" fill="#13213b"/><g transform="translate('+shpF(30-SHP_FIGMIN850[id]*.34)+' 1) scale(.34)">'+SHP_SETFIG849[id]+'</g></svg>';
     if(kind==='fig' && SHP_SETFIG849[id]) return '<svg viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini"><rect width="60" height="36" fill="#13213b"/><g transform="translate(13 1) scale(.34)">'+SHP_SETFIG849[id]+'</g></svg>';
     if(kind==='dec' && SHP_SETART847[id]) return '<svg viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini"><rect width="60" height="36" fill="#13213b"/>'+shpSetArt847(id,30,18,56,33)+'</svg>';
+    if(kind==='dec' && SHP_DECVAR[id] && SHP_DECART853[SHP_DECVAR[id].b]) { var dv853=SHP_DECVAR[id]; return '<svg viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini"><rect width="60" height="36" fill="#13213b"/><image href="'+SHP_DECART853[dv853.b]+'" x="2" y="2" width="56" height="32" preserveAspectRatio="xMidYMid meet" style="filter:hue-rotate('+dv853.h+'deg) saturate('+dv853.s+')"/></svg>'; }
+    if(kind==='dec' && SHP_DECART853[id]) return '<svg viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini"><rect width="60" height="36" fill="#13213b"/><image href="'+SHP_DECART853[id]+'" x="2" y="2" width="56" height="32" preserveAspectRatio="xMidYMid meet"/></svg>';
     if (kind === 'wake') { var wq = SHP_WAKES[id] || { c: '#8fb4ff' }; return '<svg viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini"><rect width="60" height="36" fill="#13213b"/><path d="M6 25Q18 15 31 22T55 13" fill="none" stroke="' + wq.c + '" stroke-width="3.4" stroke-linecap="round" opacity=".92"/><path d="M6 29Q20 21 33 27T55 19" fill="none" stroke="' + wq.c + '" stroke-width="1.6" stroke-linecap="round" opacity=".5"/></svg>'; }
     if (kind === 'crest') return '<svg viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini"><rect width="60" height="36" fill="#13213b"/><svg x="14" y="1" width="34" height="34" viewBox="0 0 104 104">' + shpCrest833(id, 52, 52, 48, '', { hull: '#70472b', wale: '#d7ad5c' }, 'crestm' + (++shpUid)) + '</svg></svg>';
     if(kind==='dec' && Object.prototype.hasOwnProperty.call(SHP_MINI845.ship,id)) return shpMini845(SHP_MINI845.ship[id]);
