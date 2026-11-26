@@ -3647,7 +3647,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "26.11.2026 · 976";
+const WIKI_VERSION = "26.11.2026 · 977";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -42162,9 +42162,9 @@ document.addEventListener('change',function(e) {
     return o;
   }
   function shpLootIcon(id) {
-    if(id==='fishdry')return '<path d="M4 7Q30 17 56 7" fill="none" stroke="#b68b5c" stroke-width="1.2"/>'+[12,24,36,48].map(function(x,i){var y=i===0||i===3?11:13;return shpLootImage960(id,x-5,y,10,24,'xMidYMin');}).join('');
-    if(id==='jellies')return shpLootImage960(id,3,3,31,34)+shpLootImage960(id,33,13,23,24);
-    return SHP_LOOTART960[id]?shpLootImage960(id,2,1,56,38):'';
+    if(id==='fishdry')return '<path d="M4 7Q30 17 56 7" fill="none" stroke="#b68b5c" stroke-width="1.2"/>'+[12,24,36,48].map(function(x,i){var y=i===0||i===3?11:13;return shpLootImage960(id,x-5,y,10,22,'xMidYMin');}).join('');
+    if(id==='jellies')return shpLootImage960(id,3,1,31,34)+shpLootImage960(id,33,11,23,24);
+    return SHP_LOOTART960[id]?shpLootImage960(id,2,1,56,34):'';
   }
   /* ----- v634: питомцы корабля (находят в плаваниях, один на флот, повторов нет) ----- */
   var SHP_PETR = { c: { n: 'Обычная', k: 1 }, r: { n: 'Редкая', k: 1.6 }, e: { n: 'Легендарная', k: 2.4 } };
@@ -45881,6 +45881,8 @@ document.addEventListener('change',function(e) {
     return '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini wk-shp-still"><rect width="60" height="36" fill="#13213b"/><svg x="2" y="2" width="56" height="32" viewBox="'+a[0]+'" preserveAspectRatio="xMidYMid meet">'+a[1].split('__M845__').join(uid)+'</svg></svg>';
   }
   function shpMini(kind, id) {
+    /* v977: voyage trophies must precede cached v845 vector thumbnails and generic decor art. */
+    if(kind==='dec' && Object.prototype.hasOwnProperty.call(SHP_LOOTART960,id)) return '<svg viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini"><rect width="60" height="36" fill="#13213b"/>'+shpLootIcon(id)+'</svg>';
     if(kind==='fig' && Object.prototype.hasOwnProperty.call(SHP_FIG938,id)) return '<svg viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini"><rect width="60" height="36" fill="#13213b"/><image href="'+shpFigArtPath938(SHP_FIG938[id])+'" x="2" y="1" width="56" height="34" preserveAspectRatio="xMidYMid meet"/></svg>';
     if(kind==='hpat') return '<svg viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini"><rect width="60" height="36" fill="#13213b"/>'+(Object.prototype.hasOwnProperty.call(SHP_HPAT936,id)?'<image href="assets/webp/ships/custom936/'+id+'.webp" x="3" y="2" width="54" height="32" preserveAspectRatio="xMidYMid slice"/>':'<rect x="5" y="5" width="50" height="26" rx="3" fill="#795132"/><path d="M5 12h50M5 19h50M5 26h50" stroke="#39271c"/>')+'</svg>';
     if(kind==='fig' && Object.prototype.hasOwnProperty.call(SHP_FIGMIN850,id)) return '<svg viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini"><rect width="60" height="36" fill="#13213b"/><g transform="translate('+shpF(30-SHP_FIGMIN850[id]*.34)+' 1) scale(.34)">'+SHP_SETFIG849[id]+'</g></svg>';
