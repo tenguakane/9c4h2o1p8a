@@ -1,5 +1,5 @@
 <!doctype html>
-<!--wk-ver:26.11.2026 · 938-->
+<!--wk-ver:26.11.2026 · 941-->
 <script id="wk-v616-pre">try{var K='wkExtrasKeepV616',old={},ca=[],ma={},cc=null,cca=[],cma={};try{old=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}try{ca=JSON.parse(localStorage.getItem('onePieceWikiCustomAchievementsV1')||'[]')}catch(e){}try{ma=JSON.parse(localStorage.getItem('onePieceWikiMedalArtV1')||'{}')}catch(e){}try{cc=JSON.parse(localStorage.getItem('wkCloudContentV1')||'null');if(cc&&cc.data){cca=Array.isArray(cc.data.customAchievements)?cc.data.customAchievements:[];cma=cc.data.medalArt&&typeof cc.data.medalArt==='object'?cc.data.medalArt:{}}}catch(e){}cc=null;var oc=Array.isArray(old.ca)?old.ca:[],om=old.ma&&typeof old.ma==='object'?old.ma:{},ids={},cids={};oc.forEach(function(a){if(a&&a.id!=null)ids[a.id]=1});cca.forEach(function(a){if(a&&a.id!=null)cids[a.id]=1});(Array.isArray(ca)?ca:[]).forEach(function(a){if(a&&a.id!=null&&!ids[a.id]&&!cids[a.id]){oc.push(a);ids[a.id]=1}});if(ma&&typeof ma==='object')Object.keys(ma).forEach(function(k){if(!(k in om)&&!(k in cma)&&ma[k]!=null&&ma[k]!=='')om[k]=ma[k]});if(oc.length||Object.keys(om).length)localStorage.setItem(K,JSON.stringify({ca:oc,ma:om}));else localStorage.removeItem(K)}catch(e){}</script>
 <html data-wiki-portable-baked="true" data-wiki-portable-id="2026-11-11T03:23:00.970Z" lang="ru" style="--reward-rank-first: #ffda75; --reward-rank-second: #d9d9d9; --reward-rank-third: #ffd285; --reward-rank-other: #4f4860; --wiki-progress-manga: #efc66b; --wiki-progress-anime: #60d9ff; --wk-title-font: 'Days One'; --wk-title-fw: 400; --wk-wp-tpl: url(&quot;./assets/webp/ui/wanted_template.webp&quot;); --wk-fg-manga: #0b0f17; --wk-fg-anime: #0b0f17; --wk-accent: #a78bfa; --wk-accent-soft: #d3c5fd; --fruit-type-param-color: #bb9eff !important; --fruit-type-param-rgb: 187, 158, 255 !important; --fruit-type-logia-color: #f967ae !important; --fruit-type-logia-rgb: 249, 103, 174 !important; --fruit-type-zoan-color: #65f6b7 !important; --fruit-type-zoan-rgb: 101, 246, 183 !important; --wk-tz-card: 1.15;" class="wk-sc-off wk-hz-c wk-hz-f wk-hz-u wk-hz-v wk-hz-h wk-calm wk-tfx-off wk-tfx-still wk-gpu wk-hdr-min" data-wk-role="admin" data-wk-title-font="g:Days One|"><head>
 <script id="wk-v596-early">try{var q=new URLSearchParams(location.search);if(q.get("tab")==="favorites"&&/^[a-z]+$/.test(q.get("cab")||"")){var cb=q.get("cab");localStorage.setItem("onePieceWikiCabinSubtabV3",cb==="overview"?"favorites":cb);localStorage.setItem("onePieceWikiCabinExtraTabV1",/^(watchgrid|timeline|deck|tops|stats|edits|quiz|atlas|help)$/.test(cb)?cb:"");}}catch(e){}</script>
@@ -3647,7 +3647,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "26.11.2026 · 938";
+const WIKI_VERSION = "26.11.2026 · 941";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -42315,7 +42315,7 @@ document.addEventListener('change',function(e) {
     var galleon933H=L*481/1512,galleon933Y=wl+D-galleon933H;
     if(T===shpTShape(6)){ys=galleon933Y+galleon933H*.20;yb=galleon933Y+galleon933H*.19;yc=galleon933Y+galleon933H*.46;}
     var LY = o.lay && typeof o.lay === 'object' ? o.lay : {}, lyn = function (k, d, lo, hi) { var n = +LY[k]; return isFinite(n) && LY[k] !== '' && LY[k] != null ? Math.max(lo, Math.min(hi, n)) : d; };
-    var has = function (p) { return o.all || !!(o.built && o.built[p]); };
+    var has = function (p) { /* v939: the starter boat has no separate deck construction step. */ if(T.id==='boat' && p==='deck')p='hull'; return o.all || !!(o.built && o.built[p]); };
     var mode = function (p) { return has(p) ? 'ok' : o.bld === p ? 'bld' : 'bp'; };
     var grp = function (p, inner) { if (!inner) return ''; var m = mode(p); return '<g class="wk-shp-' + m + '" data-part="' + p + '">' + inner + '</g>'; };
     var deckAt = function (x) { var t = (x - sx) / L; t = Math.max(0, Math.min(1, t)); return (1 - t) * (1 - t) * ys + 2 * (1 - t) * t * yc + t * t * yb; };
@@ -42601,16 +42601,18 @@ document.addEventListener('change',function(e) {
       var lugP = 'M' + shpF(YLx) + ' ' + shpF(YLy) + 'L' + shpF(YRx) + ' ' + shpF(YRy) + 'Q' + shpF(x0 + 40) + ' ' + shpF(by0 - 64) + ' ' + shpF(br2) + ' ' + shpF(by0 + 1) + 'L' + shpF(bl) + ' ' + shpF(by0 + 1) + 'Q' + shpF(x0 - 36) + ' ' + shpF(by0 - 60) + ' ' + shpF(YLx) + ' ' + shpF(YLy) + 'Z';
       if(B790) {
         var f=bF, sw927=112, sh927=sw927*553/657, sl927=x0-sw927*.52, st927=ftop+10;
-        var sailPts927=[[0.1735159817351598,0.26763110307414106],[0.2663622526636225,0.24050632911392406],[0.3561643835616438,0.20795660036166366],[0.4642313546423135,0.17902350813743217],[0.5616438356164384,0.14647377938517178],[0.6605783866057838,0.12115732368896925],[0.7519025875190258,0.08860759493670886],[0.8554033485540334,0.06148282097649186],[0.9497716894977168,0.05786618444846293],[0.908675799086758,0.1410488245931284],[0.8599695585996956,0.2332730560578662],[0.8234398782343988,0.325497287522604],[0.802130898021309,0.42495479204339964],[0.8036529680365296,0.5334538878842676],[0.8295281582952816,0.6365280289330922],[0.8721461187214612,0.759493670886076],[0.9254185692541856,0.8806509945750453],[0.9923896499238964,0.9927667269439421],[0.9178082191780822,0.9349005424954792],[0.8264840182648402,0.895117540687161],[0.7336377473363774,0.8679927667269439],[0.6468797564687976,0.8535262206148282],[0.5555555555555556,0.840867992766727],[0.4596651445966514,0.8372513562386981],[0.350076103500761,0.8462929475587704],[0.2511415525114155,0.8679927667269439],[0.1643835616438356,0.9113924050632911],[0.076103500761035,0.9945750452079566],[0.0289193302891933,0.9023508137432188],[0.0045662100456621,0.7956600361663653],[0.0045662100456621,0.6781193490054249],[0.0258751902587519,0.5786618444846293],[0.060882800608828,0.47920433996383366],[0.1080669710806697,0.37251356238698013]], sD=sailPts927.map(function(q,i){return (i?'L':'M')+f(sl927+q[0]*sw927)+' '+f(st927+q[1]*sh927);}).join('')+'Z';
-        var canvas927=boat927img('sail_base',sl927,st927,sw927,sh927), yard927=boat927img('yard',sl927,st927,sw927,sh927), mid927=u+'boat927canvas';
+        var sailPts927=[[0.1735159817351598,0.26763110307414106],[0.2663622526636225,0.24050632911392406],[0.3561643835616438,0.20795660036166366],[0.4642313546423135,0.17902350813743217],[0.5616438356164384,0.14647377938517178],[0.6605783866057838,0.12115732368896925],[0.7519025875190258,0.08860759493670886],[0.8554033485540334,0.06148282097649186],[0.9497716894977168,0.05786618444846293],[0.908675799086758,0.1410488245931284],[0.8599695585996956,0.2332730560578662],[0.8234398782343988,0.325497287522604],[0.802130898021309,0.42495479204339964],[0.8036529680365296,0.5334538878842676],[0.8295281582952816,0.6365280289330922],[0.8721461187214612,0.759493670886076],[0.9254185692541856,0.8806509945750453],[0.9923896499238964,0.9927667269439421],[0.9178082191780822,0.9349005424954792],[0.8264840182648402,0.895117540687161],[0.7336377473363774,0.8679927667269439],[0.6468797564687976,0.8535262206148282],[0.5555555555555556,0.840867992766727],[0.4596651445966514,0.8372513562386981],[0.350076103500761,0.8462929475587704],[0.2511415525114155,0.8679927667269439],[0.1643835616438356,0.9113924050632911],[0.076103500761035,0.9945750452079566],[0.0289193302891933,0.9023508137432188],[0.0045662100456621,0.7956600361663653],[0.0045662100456621,0.6781193490054249],[0.0258751902587519,0.5786618444846293],[0.060882800608828,0.47920433996383366],[0.1080669710806697,0.37251356238698013]], sD=sailPts927.map(function(q,i){return (i?'L':'M')+f(sl927+(1-q[0])*sw927)+' '+f(st927+q[1]*sh927);}).join('')+'Z';
+        /* v941: face the bow (right). Mirror only painted sail and yard; keep ink and text in normal reading direction. */
+        function sailArt941(k){return '<g data-lug941="'+k+'" transform="translate('+f(2*sl927+sw927)+' 0) scale(-1 1)">'+boat927img(k,sl927,st927,sw927,sh927)+'</g>';}
+        var canvas927=sailArt941('sail_base'), yard927=sailArt941('yard'), mid927=u+'boat927canvas';
         var cloth='';
         if(has('sail')){
           if(P.sail.toLowerCase()!==SHP_PAINT.sail.toLowerCase())canvas927=boatTint857(canvas927,P.sail,.76);
-          cloth='<defs><mask id="'+mid927+'" maskUnits="userSpaceOnUse" x="'+f(sl927)+'" y="'+f(st927)+'" width="'+f(sw927)+'" height="'+f(sh927)+'" style="mask-type:alpha">'+boat927img('sail_base',sl927,st927,sw927,sh927)+'</mask></defs>'+canvas927+'<g mask="url(#'+mid927+')">'+clothPaint829(sD,sfi(0),0)+(patDef&&sfi(0)===sailPt?'<g style="mix-blend-mode:multiply" opacity=".23">'+boat927img('sail_base',sl927,st927,sw927,sh927)+'</g>':'')+(FUR===1&&(!LY.sf||LY.sf==='plain')?'':clothFinish831(sD))+'</g>'+yard927;
-        }else cloth=bpath(sD,P.sail,sailLine,.8)+clothPaint829(sD,sfi(0),0)+bspar(bline(sl927+10,st927+22,sl927+sw927-3,st927+2),2.6);
+          cloth='<defs><mask id="'+mid927+'" maskUnits="userSpaceOnUse" x="'+f(sl927)+'" y="'+f(st927)+'" width="'+f(sw927)+'" height="'+f(sh927)+'" style="mask-type:alpha">'+sailArt941('sail_base')+'</mask></defs>'+canvas927+'<g mask="url(#'+mid927+')">'+clothPaint829(sD,sfi(0),0)+(patDef&&sfi(0)===sailPt?'<g style="mix-blend-mode:multiply" opacity=".23">'+sailArt941('sail_base')+'</g>':'')+(FUR===1&&(!LY.sf||LY.sf==='plain')?'':clothFinish831(sD))+'</g>'+yard927;
+        }else cloth=bpath(sD,P.sail,sailLine,.8)+clothPaint829(sD,sfi(0),0)+bspar(bline(sl927+3,st927+2,sl927+sw927-10,st927+22),2.6);
         sails+=cloth;
-        masts=has('mast')?boat927img('mast',x0-7,ftop,14,y00+4-ftop):bspar(bline(x0,y00+4,x0,ftop),3.5);
-        YLx=sl927+10; YLy=st927+22; YRx=sl927+sw927-3; YRy=st927+2; bl=sl927; br2=sl927+sw927;by0=st927+sh927;
+        var mh939=y00+4-ftop,mw939=mh939*76/596; masts=has('mast')?boat927img('mast',x0-mw939/2,ftop,mw939,mh939):bspar(bline(x0,y00+4,x0,ftop),3.5); // v939: preserve aspect ratio and seat mast foot on deck
+        YLx=sl927+3; YLy=st927+2; YRx=sl927+sw927-10; YRy=st927+22; bl=sl927; br2=sl927+sw927;by0=st927+sh927;
       }
       sbox.push([B790?sl927+sw927/2:x0+2, B790?st927:ftop+14, by0, B790?sw927:86]); yards.push([YLx - 3, YRx + 3, ftop + 15]); yards.push([bl - 3, br2 + 3, by0 + 1]);
       rig += brope(bline(x0,ftop+2,bx-6,yb+2),.9)+brope(bline(x0,ftop+2,sx+8,ys+2),.9);
@@ -42987,7 +42989,7 @@ document.addEventListener('change',function(e) {
     var showFrame = !has('hull') && (has('keel') || o.bld === 'keel' || o.bld === 'hull');
     var ship = '';
     if((B790 || S791 || B792) && has('hull')) ship+='<ellipse cx="'+bF(cx-1)+'" cy="'+bF(wl+3)+'" rx="'+bF(L*.54)+'" ry="5" fill="#071a26" opacity=".22"/>';
-    if(B790&&on('deck')&&has('deck'))ship+=grp('deck',boat927deck());
+    if(B790&&has('hull'))ship+=grp('hull',boat927deck()); // v939: rear hull and interior are integral to the built hull
     if(S791&&on('deck')&&has('deck'))ship+=grp('deck',sloop928Deck());
     if(brig858&&on('deck')&&has('deck'))ship+=grp('deck',brig929Paint('deck',[['hull',.35],['wale',.62]]));
     if(frigate859&&on('deck')&&has('deck'))ship+=grp('deck',frigate930Paint('deck',[['hull',.35],['wale',.62]]));
@@ -43058,7 +43060,7 @@ document.addEventListener('change',function(e) {
     if (showFrame) ship += '<g class="wk-shp-' + (has('keel') ? 'ok' : 'bld') + '">' + frame + '</g>';
     if((B790||S791||brig858||frigate859||galleon860||galleon861||galleon862)&&on('rudder'))ship+=grp('rudder',rudder);
     ship += grp('hull', hull);
-    ship += on('deck') && !((B790||S791||brig858||frigate859||galleon860||galleon861||galleon862)&&has('deck')) ? grp('deck', deck) : '';
+    ship += !B790 && on('deck') && !((S791||brig858||frigate859||galleon860||galleon861||galleon862)&&has('deck')) ? grp('deck', deck) : '';
     ship += on('guns') ? grp('guns', guns) : '';
     ship += on('rudder') && !B790 && !S791 && !brig858 && !frigate859 && !galleon860 && !galleon861 && !galleon862 ? grp('rudder', rudder) : '';
     ship += on('oars') ? grp('oars', oars) : '';
@@ -43071,23 +43073,36 @@ document.addEventListener('change',function(e) {
     else if (dec.indexOf('gilt') >= 0 && ok('hull')) ship += '<g data-dec="gilt"><defs><linearGradient id="' + u + 'd804Gold" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff0b1"/><stop offset=".42" stop-color="#e4b54d"/><stop offset="1" stop-color="#85521f"/></linearGradient></defs><path d="' + curve(1) + '" fill="none" stroke="#583414" stroke-width="3.4" stroke-linecap="round"/>' + '<path d="M' + shpF(sx + 1) + ' ' + shpF(ys + 1) + 'C' + shpF(sx - 4) + ' ' + shpF(wl - T.H * .35) + ' ' + shpF(sx + 3) + ' ' + shpF(wl - 2) + ' ' + shpF(sx + 8) + ' ' + shpF(wl - 2) + '" fill="none" stroke="url(#' + u + 'd804Gold)" stroke-width="2.8"/>' + '<path d="' + curve(1) + '" fill="none" stroke="url(#' + u + 'd804Gold)" stroke-width="2.1"/>' + [[sx + 3, ys + 5], [bx - 6, yb + 5]].map(function (q) { return '<path d="M' + shpF(q[0]) + ' ' + shpF(q[1]) + 'c3 -4 8 -1 5 2 -2 2 -5 0 -3 -1" fill="none" stroke="#f3d98a" stroke-width="1.2"/>'; }).join('') + (T.cab && ok('cabin') ? '<path d="M' + shpF(sx - 7) + ' ' + shpF(ys - T.cab.h - 1) + 'h' + shpF(L * T.cab.w + 3) + '" stroke="#f3d98a" stroke-width="2.6"/>' : '') + '</g>';
     if (dec.indexOf('rings') >= 0 && ok('hull')) [.4, .62].forEach(function (k,i) { var rx = sx + L * k, top = deckAt(rx) + band + 4, rr = Math.max(3, Math.min(6, (wl - top) / 2 - 1)); var ry = top + rr + 1; if (T.ports && ok('deck')) ry = deckAt(rx) - 1 - rr, rx += L * .05;
       var rid=u+'d804Ring'+i; ship += '<g data-dec="rings" data-ax="'+shpF(rx)+'"><g transform="translate('+shpF(rx)+' '+shpF(ry)+') scale('+shpK(rr/10)+')"><defs><linearGradient id="'+rid+'" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fffdf0"/><stop offset=".55" stop-color="#e3ddd0"/><stop offset="1" stop-color="#9e9989"/></linearGradient></defs><circle cy="1" r="10" fill="none" stroke="#3b251d" stroke-width="7.2" opacity=".4"/><circle r="10" fill="none" stroke="#75432b" stroke-width="6.6"/><circle r="10" fill="none" stroke="url(#'+rid+')" stroke-width="5.7"/><circle r="10" fill="none" stroke="#c73d32" stroke-width="5.6" stroke-dasharray="7.85 7.85"/><path d="M-10 0A10 10 0 0 1 10 0" fill="none" stroke="#fff6d9" stroke-width=".85" opacity=".8"/><circle r="13.8" fill="none" stroke="#d1aa70" stroke-width=".85" stroke-dasharray="2 1"/></g></g>'; });
-    if (dec.indexOf('lights') >= 0 && ok('deck')) {
-      var lt = '', pts = [];
-      var hang = function (x1, y1, x2, y2, sag, n) { for (var i = 0; i <= n; i++) { var t = i / n, x = x1 + (x2 - x1) * t, y = y1 + (y2 - y1) * t + sag * 4 * t * (1 - t); pts.push([x, y]); } lt += '<path d="M' + shpF(x1) + ' ' + shpF(y1) + 'Q' + shpF((x1 + x2) / 2) + ' ' + shpF((y1 + y2) / 2 + sag * 2) + ' ' + shpF(x2) + ' ' + shpF(y2) + '" fill="none" stroke="#1b120c" stroke-width=".6"/>'; };
-      var mx0 = mastX[0], my0t = deckAt(mx0) - T.masts[0].h * .55;
-      hang(bx - 2, yb - 7, mx0, my0t, 6, 6); hang(mx0, my0t, sx + 4, ys - 7 - (T.cab ? T.cab.h : 0), 8, 8);
-      pts.forEach(function (q,i) { lt += '<g transform="translate('+shpF(q[0])+' '+shpF(q[1])+')"><circle cy="2" r="4.2" fill="url(#'+u+'gl)" opacity=".64"/><rect x="-.8" y="-.25" width="1.6" height="1.35" rx=".3" fill="#a18355" stroke="#382b20" stroke-width=".25"/><ellipse cy="2" rx="1.3" ry="1.75" fill="'+['#ffd56b','#ffb36b','#fff1b8'][i%3]+'" stroke="#ad793d" stroke-width=".25"/><ellipse cx="-.35" cy="1.5" rx=".35" ry=".7" fill="#fffdf0" opacity=".9"/></g>'; });
-      ship += '<g data-dec="lights">' + lt + '</g>';
+    /* v940: mount painted garlands by their two hardware attachment points,
+       not the bounding box of the old multi-mast SVG ropes. */
+    function railGarland940(id) {
+      if(!has('hull') || !ok('deck'))return '';
+      var model=B790?0:S791?1:brig858?2:frigate859?3:galleon860?4:galleon861?5:6;
+      var ys940=[boat927y,sloop928Y,brig929Y,frigate930Y,galleon931Y,galleon932Y,galleon933Y];
+      var hs940=[boat927h,sloop928H,brig929H,frigate930H,galleon931H,galleon932H,galleon933H];
+      // Each pair is a real front-rail location sampled from the painted ship.
+      var anchors940=[
+        [[.44,.47,.56,.47],[.66,.44,.80,.38],[.23,.42,.35,.46]],
+        [[.42,.56,.54,.56],[.65,.54,.78,.47],[.28,.52,.39,.55]],
+        [[.45,.50,.57,.50],[.64,.48,.77,.45],[.28,.48,.40,.50]],
+        [[.43,.48,.55,.49],[.64,.48,.76,.44],[.29,.45,.40,.48]],
+        [[.45,.51,.57,.51],[.64,.49,.76,.43],[.30,.47,.41,.50]],
+        [[.43,.50,.55,.50],[.59,.49,.70,.43],[.29,.47,.40,.50]],
+        [[.44,.49,.56,.49],[.65,.47,.78,.43],[.29,.46,.40,.49]]
+      ];
+      var slot=id==='lights'?0:id==='bunting'?1:2, a=anchors940[model][slot];
+      var x1=sx+L*a[0],y1=ys940[model]+hs940[model]*a[1],x2=sx+L*a[2],y2=ys940[model]+hs940[model]*a[3];
+      // Original WebP dimensions and the centers of their left/right mounting rings (in pixels).
+      var q=slot===0?[373,286,38,34,336,34]:slot===1?[400,262,38,32,363,32]:[387,384,49,40,337,40];
+      var k=Math.hypot(x2-x1,y2-y1)/Math.hypot(q[4]-q[2],q[5]-q[3]);
+      var angle=(Math.atan2(y2-y1,x2-x1)-Math.atan2(q[5]-q[3],q[4]-q[2]))*180/Math.PI;
+      var clip=u+'rail940'+slot, art='<image href="'+SHP_DECART853[id]+'" x="0" y="0" width="'+q[0]+'" height="'+q[1]+'" preserveAspectRatio="xMidYMid meet"/>';
+      // The seasonal atlas crop has a stray neighboring sprite at its bottom; hide it.
+      if(slot===2)art='<defs><clipPath id="'+clip+'"><rect width="387" height="310"/></clipPath></defs><g clip-path="url(#'+clip+')">'+art+'</g>';
+      return '<g data-dec="'+id+'" data-art853="1" data-rail940="'+model+'" data-ax="'+shpF((x1+x2)/2)+'" data-ay="'+shpF((y1+y2)/2)+'"><g transform="translate('+x1.toFixed(4)+' '+y1.toFixed(4)+') rotate('+angle.toFixed(4)+') scale('+k.toFixed(6)+') translate('+(-q[2])+' '+(-q[3])+')">'+art+'</g></g>';
     }
-    if (dec.indexOf('bunting') >= 0 && ok('mast')) {
-      var bt = '', cols = ['#c0392b', '#f1c40f', '#2e86de', '#f4efe6', '#27ae60'], ci = 0;
-      var line = function (x1,y1,x2,y2,n) { bt += '<path d="M'+shpF(x1)+' '+shpF(y1)+'L'+shpF(x2)+' '+shpF(y2)+'" stroke="#4d321c" stroke-width=".75"/><path d="M'+shpF(x1)+' '+shpF(y1-.15)+'L'+shpF(x2)+' '+shpF(y2-.15)+'" stroke="#d8bd89" stroke-width=".3" stroke-dasharray="1 .7"/>'; for(var i=0;i<n;i++){var t=(i+.5)/n,x=x1+(x2-x1)*t,y=y1+(y2-y1)*t,d=Math.hypot(x2-x1,y2-y1)/n*.38,ang=Math.atan2(y2-y1,x2-x1),ax=x-Math.cos(ang)*d,ay=y-Math.sin(ang)*d,bx2=x+Math.cos(ang)*d,by2=y+Math.sin(ang)*d,col=cols[ci++%cols.length];var f=shpF,tipx=x,tipy=y+d*1.5;bt+='<path d="M'+f(ax)+' '+f(ay)+'L'+f(bx2)+' '+f(by2)+'L'+f(tipx)+' '+f(tipy)+'Z" fill="'+col+'" stroke="'+shpShade(col,-.38)+'" stroke-width=".32"/><path d="M'+f(ax+d*.2)+' '+f(ay+d*.12)+'Q'+f(x-d*.18)+' '+f(y+d*.68)+' '+f(tipx)+' '+f(tipy-d*.18)+'" stroke="#fff5dc" stroke-width=".4" stroke-opacity=".4" fill="none"/>'; }};
-      var front = T.bs ? [bx + T.bs * .92, yb - T.bs * .36] : [bx - 2, yb - 4];
-      line(front[0], front[1], mastX[0], mastTop[0] + 4, 7);
-      for (var mm = 0; mm < T.masts.length - 1; mm++) line(mastX[mm], mastTop[mm] + 4, mastX[mm + 1], mastTop[mm + 1] + 4, 4);
-      var lastM = T.masts.length - 1; line(mastX[lastM], mastTop[lastM] + 4, sx + 3, ys - 4 - (T.cab ? T.cab.h : 0), 7);
-      ship = ship.replace('<g class="wk-shp-', '<g data-dec="bunting">' + bt + '</g><g class="wk-shp-');
-    }
+    if (dec.indexOf('lights') >= 0 && ok('deck')) ship+=railGarland940('lights');
+    if (dec.indexOf('bunting') >= 0 && ok('mast')) ship+=railGarland940('bunting');
     if (dec.indexOf('bonsai') >= 0 && ok('deck')) { var bnh = Math.max(17,T.H*.85), bnx=sx+L*(T.cab?T.cab.w+.2:.42), bny=deckAt(bnx)-(T.id==='boat'?2:6)+1;ship+='<g data-dec="bonsai" data-ax="'+shpF(bnx)+'">'+shpDecor804('bonsai',bnx,bny,bnh/105,u+'d804Bn')+'</g>'; }
     if (dec.indexOf('mikan') >= 0 && ok('deck')) [.2,.3].forEach(function(k,i){var tx=sx+L*k+(T.cab?L*T.cab.w*.9:0),ty=deckAt(tx)-(T.id==='boat'?2:6),th=Math.max(9,T.H*.42);ship+='<g data-dec="mikan" data-ax="'+shpF(tx)+'">'+shpDecor804('mikan',tx,ty,th*1.8/100,u+'d804Mi'+i)+'</g>';});
     if (dec.indexOf('chest') >= 0 && ok('deck')) { var chx=cx-L*.02,chy=deckAt(chx)-(T.id==='boat'?2:6),cw2=Math.max(8,T.H*.34);ship+='<g data-dec="chest" data-ax="'+shpF(chx)+'">'+shpDecor804('chest',chx,chy,cw2*1.7/100,u+'d804Ch')+'</g>'; }
@@ -43232,7 +43247,7 @@ document.addEventListener('change',function(e) {
     if (dec.indexOf('cobweb') >= 0 && ok('mast')) {var wx=mastX[0],wy=mastTop[0]+(T.rig==='square'?T.masts[0].h*.1:8),R=Math.max(10,T.H*.4),web='',drops='';for(var a=0;a<=6;a++){var an=Math.PI/2+a*Math.PI/12;web+='M'+shpF(wx)+' '+shpF(wy)+'l'+shpF(Math.cos(an)*R)+' '+shpF(Math.sin(an)*R);}[.22,.41,.60,.8,.98].forEach(function(k){web+='M'+shpF(wx)+' '+shpF(wy+R*k);for(var a=1;a<=6;a++){var an=Math.PI/2+a*Math.PI/12,pan=an-Math.PI/24,x=wx+Math.cos(an)*R*k,y=wy+Math.sin(an)*R*k;web+='Q'+shpF(wx+Math.cos(pan)*R*k*.86)+' '+shpF(wy+Math.sin(pan)*R*k*.86)+' '+shpF(x)+' '+shpF(y);if((a+Math.round(k*10))%5===0)drops+='<circle cx="'+shpF(x)+'" cy="'+shpF(y)+'" r=".42" fill="#f5fbff"/>';}});var px=wx-R*.5,py=wy+R*.55;ship+='<g data-dec="cobweb"><path d="'+web+'" fill="none" stroke="#394052" stroke-opacity=".65" stroke-width=".9"/><path d="'+web+'" fill="none" stroke="#e3edf4" stroke-opacity=".82" stroke-width=".38"/>'+drops+'<path d="M'+shpF(px)+' '+shpF(py)+'v6" stroke="#ecf4ff" stroke-width=".42"/><g transform="translate('+shpF(px)+' '+shpF(py+7)+')"><path d="M-1 0l-2 -1 -1 1m3 0l-2 1 -1 1m3 -1l-1 2 -1 0m2 -1l0 2 -1 1M1 0l2 -1 1 1m-3 0l2 1 1 1m-3 -1l1 2 1 0m-2 -1l0 2 1 1" fill="none" stroke="#211c2a" stroke-width=".55"/><ellipse cy="1" rx="1.6" ry="2" fill="#252032"/><circle cy="-1" r=".85" fill="#494050"/><path d="M-.6 1l.8 -.5" stroke="#b6a0aa" stroke-width=".4"/></g></g>';}
     if (dec.indexOf('fog') >= 0) {var fid=u+'hw807fog';back+='<radialGradient id="'+fid+'"><stop stop-color="#e4eef5" stop-opacity=".63"/><stop offset=".48" stop-color="#cbd9e2" stop-opacity=".40"/><stop offset="1" stop-color="#a1b6c4" stop-opacity="0"/></radialGradient><radialGradient id="'+fid+'deep"><stop stop-color="#9db4c5" stop-opacity=".4"/><stop offset="1" stop-color="#7d96aa" stop-opacity="0"/></radialGradient>';front+='<g data-dec="fog" class="wk-shp-fog">'+[[.05,6,.34,16],[.35,2,.4,20],[.7,8,.36,15],[.95,0,.3,18],[.2,22,.45,14],[.6,26,.5,16],[.5,-14,.3,10],[.22,-4,.22,8],[.82,14,.24,9],[.45,18,.27,7]].map(function(q,i){return '<ellipse cx="'+shpF(vx+vw*q[0])+'" cy="'+shpF(wl+q[1])+'" rx="'+shpF(vw*q[2])+'" ry="'+q[3]+'" fill="url(#'+fid+(i%3===0?'deep':'')+')"/>';}).join('')+'<rect x="'+shpF(vx)+'" y="'+shpF(Hh-vh)+'" width="'+vw+'" height="'+shpF(vh)+'" fill="#cfd8de" opacity=".06"/></g>';}
     /* --- Новый год --- */
-    if (dec.indexOf('xlights') >= 0 && ok('deck')) { var xl = '', xpts = [], hang2 = function (x1, y1, x2, y2, sag, n) { for (var i = 0; i <= n; i++) { var t = i / n; xpts.push([x1 + (x2 - x1) * t, y1 + (y2 - y1) * t + sag * 4 * t * (1 - t)]); } xl += '<path d="M' + shpF(x1) + ' ' + shpF(y1) + 'Q' + shpF((x1 + x2) / 2) + ' ' + shpF((y1 + y2) / 2 + sag * 2) + ' ' + shpF(x2) + ' ' + shpF(y2) + '" fill="none" stroke="#122c28" stroke-width="1.2"/>'; }; for (var mi2 = 0; mi2 < T.masts.length; mi2++) { var mxx = mastX[mi2], mtt = mastTop[mi2] + 6; hang2(mi2 ? mastX[mi2 - 1] : (T.bs ? bx + T.bs * .9 : bx - 2), mi2 ? mastTop[mi2 - 1] + 6 : (T.bs ? yb - T.bs * .35 : yb - 6), mxx, mtt, 5, 7); } hang2(mastX[T.masts.length - 1], mastTop[T.masts.length - 1] + 6, sx + 3, ys - 6 - (T.cab ? T.cab.h : 0), 6, 7); xpts.forEach(function (q, i) { var c3 = ['#ff4d4d', '#ffd84d', '#4dff88', '#4dc3ff', '#ff7ae0'][i % 5]; xl += '<g transform="translate('+shpF(q[0])+' '+shpF(q[1])+')"><circle cy="2.2" r="4" fill="'+c3+'" opacity=".12"/><circle cy="2.2" r="2.8" fill="'+c3+'" opacity=".23"/><rect x="-.72" y="-.5" width="1.44" height="1.8" rx=".35" fill="#ac9665" stroke="#283334" stroke-width=".35"/><path d="M-.8 1Q-1.65 1.6 -1.4 2.8Q0 5.2 1.4 2.8Q1.65 1.6 .8 1Z" fill="'+c3+'" stroke="#29333e" stroke-opacity=".5" stroke-width=".25"/><ellipse cx="-.43" cy="1.8" rx=".42" ry=".65" fill="#fff" opacity=".85"/></g>'; }); ship += '<g data-dec="xlights">' + xl + '</g>'; }
+    if (dec.indexOf('xlights') >= 0 && ok('deck')) ship+=railGarland940('xlights');
     if (dec.indexOf('tree') >= 0 && ok('deck')) { var tx2 = sx + L * (T.cab ? T.cab.w + .1 : .22), ty2 = dTop(tx2), th2 = Math.max(18, T.H * .95), tk2 = th2 / 35; ship += '<g data-dec="tree" data-ax="' + shpF(tx2) + '"><g transform="translate(' + shpF(tx2 - 18 * tk2) + ' ' + shpF(ty2 + 1 - 35.5 * tk2) + ') scale(' + shpK(tk2) + ')">' + shpNyArt(SHP_XTREE,u+'ny808tree') + '</g></g>'; }
     if (dec.indexOf('gifts') >= 0 && ok('deck')) { var gx2 = sx + L * .57, gy2 = dTop(gx2), gh2 = Math.max(10, T.H * .55), gk2 = gh2 / 58; ship += '<g data-dec="gifts" data-ax="' + shpF(gx2) + '"><g transform="translate(' + shpF(gx2 - 32 * gk2) + ' ' + shpF(gy2 + 1 - 61 * gk2) + ') scale(' + shpK(gk2) + ')">' + shpNyArt(SHP_XGIFT,u+'ny808gift') + '</g></g>'; }
     if (dec.indexOf('snowman') >= 0 && ok('deck')) { var mx2 = sx + L * .76, my2 = dTop(mx2), mh2 = Math.max(16, T.H * .9), mk2 = mh2 / 58; ship += '<g data-dec="snowman" data-ax="' + shpF(mx2) + '"><g transform="translate(' + shpF(mx2 - 32 * mk2) + ' ' + shpF(my2 + 1 - 61 * mk2) + ') scale(' + shpK(mk2) + ')">' + shpNyArt(SHP_XMAN,u+'ny808man') + '</g></g>'; }
