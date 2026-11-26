@@ -3647,7 +3647,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "26.11.2026 · 964";
+const WIKI_VERSION = "26.11.2026 · 969";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -42421,7 +42421,10 @@ document.addEventListener('change',function(e) {
     });
     if(setLeft955<vx||setRight955>vx+vw||setTop955<fBottom953-vh||setBottom955>fBottom953){vx=setLeft955;fBottom953=setBottom955;vw=Math.max(vw,setRight955-vx,(fBottom953-setTop955)/.625);vh=vw*.625;mx=vx+vw*.82;my=fBottom953-vh+vh*.2;mr=vw/24;}
     /* --- фон --- */
-    var BG = shpBg(o.bg, { u: u, W: W, Hh: Hh, wl: wl, vx: vx, vw: vw, vh: vh, mx: mx, my: my, mr: mr });
+    // v969: explicit scene preferences override only atmospheric layers, never saved background IDs.
+    var scene969=!!o.scn, bgId969=o.bg||'', time969=scene969&&Object.prototype.hasOwnProperty.call(SHP_STM,LY.tm)?LY.tm:'', weather969=scene969&&Object.prototype.hasOwnProperty.call(SHP_SWX,LY.wx)?LY.wx:'', season969=scene969&&Object.prototype.hasOwnProperty.call(SHP_SSN,LY.sj)?LY.sj:'';
+    var BG = shpBg(o.bg, { u: u, W: W, Hh: Hh, wl: wl, vx: vx, vw: vw, vh: vh, mx: mx, my: my, mr: mr, bottom969:fBottom953, time969:time969, weather969:weather969, season969:season969 });
+    if(weather969&&['storm','fog','snowfall','xmas'].indexOf(bgId969)>=0) BG.over='';
     var patDef = o.spat ? shpSailPat(o.spat, u + 'sp', P.sail, P.sail2) : '';
     var bg = '<defs>' + BG.defs + patDef +
       '<linearGradient id="' + u + 'sl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".16"/><stop offset=".5" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#000" stop-opacity=".2"/></linearGradient>' +
@@ -43452,7 +43455,7 @@ document.addEventListener('change',function(e) {
       (back.indexOf('<radialGradient') >= 0 ? '<defs>' + back.match(/<radialGradient[\s\S]*?<\/radialGradient>/g).join('') + '</defs>' : '') + wkO + zo + back.replace(/<radialGradient[\s\S]*?<\/radialGradient>/g, '') +
       '<g class="' + (BG.noBob ? 'wk-shp-fix' : 'wk-shp-bob') + '" style="transform-origin:' + cx + 'px ' + wl + 'px">' + (dl >= 3 ? '<g transform="rotate(' + (dl === 3 ? 1.6 : 3.4) + ' ' + cx + ' ' + wl + ') translate(0 ' + (dl === 3 ? 1 : 3) + ')">' + ship + '</g>' : ship) + '</g>' + zc + wkC +
       waterFront + wakeS + (BG.over || '') + wkO + zo + front + zc + wkC + '</svg>';
-    if (o.scn && (LY.tm || LY.wx || LY.sj)) { var scn = shpAtmos(LY, u, vx, Hh - vh, vw, vh, !!o.still); if (scn) s = s.replace(/<\/svg>$/, scn + '</svg>'); }
+    if (o.scn && (LY.tm || LY.wx || LY.sj)) { var scn = shpAtmos(LY, u, vx, fBottom953 - vh, vw, vh, !!o.still, bgId969); if (scn) s = s.replace(/<\/svg>$/, scn + '</svg>'); }
     if (SHP_LCOL[LY.gc]) { var lc = SHP_LCOL[LY.gc]; s = s.split('#ffd56b').join(lc[0]).split('#ffe7a3').join(lc[1]).split('#ffb84a').join(lc[2]); }
     return s;
   }
@@ -43802,7 +43805,9 @@ document.addEventListener('change',function(e) {
   var SHP_BGART863 = {'': {dir:'night',sea:'#12305a',hl:'#9dc8ff',so:.76},day:{dir:'day',sea:'#1d6b9e',hl:'#e8f9ff',so:.6},sunset:{dir:'sunset',sea:'#393652',hl:'#ffce97',so:.67},storm:{dir:'storm',sea:'#223746',hl:'#cbe5f4',so:.66},fog:{dir:'fog',sea:'#436775',hl:'#dbe8e9',so:.53},snowfall:{dir:'snowfall',sea:'#365a71',hl:'#deeffa',so:.58},aurora:{dir:'aurora',sea:'#134254',hl:'#a2eee1',so:.62},tropic:{dir:'tropic',sea:'#168caa',hl:'#d2fff4',so:.56},jungle:{dir:'jungle',sea:'#147c97',hl:'#d3fff2',so:.56},candy:{dir:'candy',sea:'#178ba9',hl:'#ffe5f6',so:.56},snowland:{dir:'snowland',sea:'#12648b',hl:'#e4faff',so:.56},saloon:{dir:'saloon',sea:'#14688e',hl:'#fce3b3',so:.56},smogjp:{dir:'smogjp',sea:'#145a79',hl:'#d8e7f3',so:.56},worldtree:{dir:'worldtree',sea:'#12658a',hl:'#d5f2df',so:.56},deepsea:{dir:'deepsea',sea:'#07577d',hl:'#c6f7ff',so:0},beach:{dir:'beach',sea:'#dba264',hl:'#fff0c1',so:0},clouds:{dir:'clouds',sea:'#b6c9ef',hl:'#fff6de',so:0},volcano:{dir:'volcano',sea:'#124c75',hl:'#ffd8a0',so:.56},sakura:{dir:'sakura',sea:'#147db0',hl:'#dff9ff',so:.56},harbor:{dir:'harbor',sea:'#147db0',hl:'#fff0c8',so:.56},haunted:{dir:'haunted',sea:'#123849',hl:'#b9ffcf',so:.64},xmas:{dir:'xmas',sea:'#163860',hl:'#d9f1ff',so:.68}};
   function shpBgArt863(id,B) {
     if(!Object.prototype.hasOwnProperty.call(SHP_BGART863,id))return null;
-    var a=SHP_BGART863[id],f=shpF,x=B.vx,y=B.Hh-B.vh,w=B.vw,top=B.wl-6,h=Math.max(1,top-y),d=Math.max(1,B.Hh-top),path='assets/webp/backgrounds/'+a.dir+'/';
+    var a=SHP_BGART863[id],f=shpF,x=B.vx,bottom969=B.bottom969==null?B.Hh:B.bottom969,y=bottom969-B.vh,w=B.vw,top=B.wl-6,h=Math.max(1,top-y),d=Math.max(1,bottom969-top),path='assets/webp/backgrounds/'+a.dir+'/';
+    // Generic open sea: reuse the matching painted sky and sea; themed scenery is kept intact.
+    if(['','day','sunset'].indexOf(id)>=0){var match969=({rain:'storm',storm:'storm',drizzle:'fog',fog:'fog',snow:'snowfall',blizzard:'snowfall'})[B.weather969];if(!match969&&B.time969)match969=B.time969==='night'||B.time969==='blue'?'':B.time969==='dawn'||B.time969==='dusk'||B.time969==='golden'?'sunset':'day';if(match969!=null){a=SHP_BGART863[match969];path='assets/webp/backgrounds/'+a.dir+'/';}}
     function img(file,xx,yy,ww,hh,fit){return '<image href="'+path+file+'.webp" x="'+f(xx)+'" y="'+f(yy)+'" width="'+f(ww)+'" height="'+f(hh)+'" preserveAspectRatio="'+fit+'"/>';}
     if(id==='deepsea')return {defs:'',body:'<rect x="'+f(x)+'" y="'+f(y)+'" width="'+f(w)+'" height="'+f(B.vh)+'" fill="'+a.sea+'"/>'+img('scene',x,y,w,B.vh,'xMidYMid slice'),sea:a.sea,hl:a.hl,so:0,art863:true,noWave:true};
     if(id==='beach'){var sandArt=img('sand',x,top,w,d,'none');return {defs:'',body:img('sky',x,y,w,h,'xMidYMid slice')+sandArt,over:sandArt,sea:a.sea,hl:a.hl,so:0,art863:true,noWave:true,noBob:true};}
@@ -43936,7 +43941,7 @@ document.addEventListener('change',function(e) {
       var clouds=cloudbank('stFar',55,36,1.05)+cloudbank('stFar',280,31,1.38,true)+cloudbank('stFar',455,50,1.02)+cloudbank('stNear',75,5,1.3,true)+cloudbank('stNear',350,2,1.5)+cloudbank('stNear',218,18,.94);
       var bolt='<g class="wk-shp-bolt"><path d="M354 38L340 62 352 66 327 90 339 91 319 130 349 96 343 85 367 62 354 58 368 38M344 85L317 81 304 100M348 96L365 113 369 129" fill="none" stroke="#a8ccff" stroke-opacity=".34" stroke-width="6" stroke-linejoin="round"/><path d="M354 38L340 62 352 66 327 90 339 91 319 130 349 96 343 85 367 62 354 58 368 38M344 85L317 81 304 100M348 96L365 113 369 129" fill="none" stroke="#f2f8ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>';
       return Object.assign(art863||{}, {defs:grad('sk',[[0,'#0a101d'],[.38,'#263347'],[.75,'#53687a'],[1,'#798b99']])+grad('se',[[0,'#455a69'],[.4,'#23394a'],[1,'#091926']])+grad('stFar',[[0,'#657489'],[.42,'#465669'],[1,'#283748']])+grad('stNear',[[0,'#38475c'],[.55,'#222f40'],[1,'#101b2a']])+weatherRad('stGlow',[[0,'#91b9e7',.35],[1,'#91b9e7',0]])+fade('rf',cy0,Y(.46)),
-        body:(art863?art863.body+scene(bolt):sky()+scene('<ellipse cx="347" cy="74" rx="145" ry="76" fill="'+wf('stGlow')+'"/>'+clouds+bolt)+weatherWater('#bed7e2','#071320',1.8))+'<path d="'+caps+'" fill="none" stroke="#e5f4ff" stroke-opacity=".45" stroke-width="1.1" stroke-linecap="round"/>',
+        body:(art863?art863.body+(B.weather969?'':scene(bolt)):sky()+scene('<ellipse cx="347" cy="74" rx="145" ry="76" fill="'+wf('stGlow')+'"/>'+clouds+bolt)+weatherWater('#bed7e2','#071320',1.8))+'<path d="'+caps+'" fill="none" stroke="#e5f4ff" stroke-opacity=".45" stroke-width="1.1" stroke-linecap="round"/>',
         over:'<g mask="url(#'+u+'rfm)"><g class="wk-shp-rainf" stroke="#d2e4f5" stroke-opacity=".49" stroke-width=".8" fill="none"><path d="'+wxBand('rain',30,65,3,-120,W+120,cy0-40,Hh,0)+'"/></g></g><rect class="wk-shp-flash" x="-120" width="'+(W+240)+'" height="'+Hh+'" fill="#e8f0ff"/>',sea:'#223746',so:.66,hl:'#cbe5f4'});
     }
     if (id === 'fog') {
@@ -45504,7 +45509,7 @@ document.addEventListener('change',function(e) {
   /* v773: сцена. lay.tm (время суток), lay.wx (погода), lay.sj (сезон). Слой поверх всего, не зависит от фона. */
   /* v834: atmosphere in normalized scene coordinates; lightweight vector layers. */
   var SHP_STM = { dawn:'Рассвет', noon:'Полдень', golden:'Золотой час', dusk:'Закат', blue:'Синий час', night:'Ночь' }, SHP_SWX = { rain:'Дождь', snow:'Снег', fog:'Туман', storm:'Гроза', drizzle:'Морось', blizzard:'Метель', wind:'Сильный ветер', haze:'Жаркая дымка' }, SHP_SSN = { spring:'Весна', summer:'Лето', autumn:'Осень', winter:'Зима' };
-  function shpAtmos(LY,u,X,Y,W,H,still) {
+  function shpAtmos(LY,u,X,Y,W,H,still,bgId969) {
     var own=function(m,k){return Object.prototype.hasOwnProperty.call(m,k);}, tm=own(SHP_STM,LY.tm)?LY.tm:'', wx=own(SHP_SWX,LY.wx)?LY.wx:'', sj=own(SHP_SSN,LY.sj)?LY.sj:'';
     if(!tm&&!wx&&!sj)return '';
     var strength=LY.atm834==null||LY.atm834===''||!isFinite(+LY.atm834)?1:Math.max(.15,Math.min(1,+LY.atm834/100)), f=shpF, uid=u+'atm834', defs='', out='';
@@ -45518,29 +45523,55 @@ document.addEventListener('change',function(e) {
     function layer(key,stops){return rect(grad(key,stops,false),1);}
     function anim(axis,delta,dur){return still?'':'<animateTransform attributeName="transform" type="translate" from="0 0" to="'+(axis==='x'?delta+' 0':'0 '+delta)+'" dur="'+dur+'s" repeatCount="indefinite"/>';}
     function tiles(axis,items,dur){if(still)return items;var d=axis==='x'?480:300;return '<g>'+anim(axis,d,dur)+items+'<g transform="translate('+(axis==='x'?-d+' 0':'0 '+(-d))+')">'+items+'</g></g>';}
-    function particles(n,seed,fn){var a='';for(var i=0;i<n;i++)a+=fn(rand(seed+i*3)*480,rand(seed+i*3+1)*300,rand(seed+i*3+2),i);return a;}
-    function rain(n,seed,len,col,op,dur){return tiles('y',particles(n,seed,function(x,y,r){var l=len*(.45+r*.85);return path('M'+f(x)+' '+f(y)+'l'+f(-l*.32)+' '+f(l),'none',col,f(.45+r*.5),f(op*(.4+r*.6)));}),dur);}
-    function snow(n,seed,big,dur){return tiles('y',particles(n,seed,function(x,y,r,i){var z=.5+r*big, a=circle(x,y,z,'#ecf8ff',.42+r*.48);if(i%8===0&&z>1.8){a+=path('M'+f(x-z*1.8)+' '+f(y)+'h'+f(z*3.6)+'M'+f(x)+' '+f(y-z*1.8)+'v'+f(z*3.6)+'M'+f(x-z)+' '+f(y-z)+'l'+f(z*2)+' '+f(z*2)+'M'+f(x-z)+' '+f(y+z)+'l'+f(z*2)+' '+f(-z*2),'none','#f7fcff',.42,.74);}return a;}),dur);}
-    function leaves(n,seed,cols,spring){return tiles('y',particles(n,seed,function(x,y,r,i){var k=.65+r*.8,c=cols[i%cols.length], d=spring?'M0 -3C-5 -6 -7 -1 -2 3Q2 6 5 0Q4 -5 0 -3Z':'M0 -6Q7 -5 5 2Q3 6 0 7Q-5 3 -5 -1Q-4 -4 0 -6Z';return '<g transform="translate('+f(x)+' '+f(y)+') rotate('+f(r*360)+') scale('+f(k)+')">'+path(d,c,'#fff1c8',.35,.82)+path('M0 -4Q-1 1 0 5','none',spring?'#ce819e':'#8a4d23',.55,.64)+'</g>';}),spring?19:15);}
-    function fogBands(key,col,op,dur){var g=grad(key,[[0,col,op],[.52,col,op*.52],[1,col,0]],true),a='';for(var i=0;i<5;i++){var y=166+i*22; a+=ellipse(70+i*87,y,128+i*8,18+i*3,g,.8); }return still?a:'<g>'+anim('x',28,dur)+a+'</g>';}
-    if(tm==='dawn')out+=layer('dawn',[[0,'#694e9b',.18],[.48,'#f9a174',.16],[.75,'#ffc993',.13],[1,'#173b56',.09]])+light('dawnL',52,135,200,118,'#ffc183',.43);
-    else if(tm==='noon')out+=layer('noon',[[0,'#6cc7ed',.13],[.55,'#fff1c5',.06],[1,'#1494b2',.08]])+light('noonL',395,18,210,150,'#fff3c6',.26);
-    else if(tm==='golden')out+=layer('gold',[[0,'#e89a4a',.12],[.45,'#ffbc66',.24],[1,'#9d4f34',.14]])+light('goldL',424,113,252,132,'#ffd289',.48);
-    else if(tm==='dusk')out+=layer('dusk',[[0,'#382b65',.42],[.43,'#a24867',.23],[.65,'#f79a65',.19],[1,'#2a2d53',.25]])+light('duskL',415,141,215,91,'#ff9a61',.4);
-    else if(tm==='blue')out+=layer('blue',[[0,'#172850',.48],[.55,'#5a78aa',.19],[1,'#1f3765',.28]])+light('blueL',52,112,170,120,'#8eb4ef',.17);
-    else if(tm==='night')out+=layer('night',[[0,'#080f30',.56],[.5,'#152b58',.42],[1,'#091b36',.39]])+light('moonL',416,34,168,125,'#c6d9ff',.18);
+    function particles(n,seed,fn){var a='';n=Math.max(1,Math.round(n*(.35+.65*strength)));for(var i=0;i<n;i++)a+=fn(rand(seed+i*3)*480,rand(seed+i*3+1)*300,rand(seed+i*3+2),i);return a;}
+    // v965: painted transparent weather particles. Reuse a periodic tile via local SVG references.
+    var weather965='assets/webp/ships/weather965/', weatherAspect965={rain:0.59375,drizzle:0.65104,snowflake:0.875,snowdust:1.2093};
+    function sprite965(k,x,y,h,op,angle){var w=h*weatherAspect965[k];return '<image data-weather965="'+k+'" href="'+weather965+k+'.webp" x="'+f(x-w/2)+'" y="'+f(y-h/2)+'" width="'+f(w)+'" height="'+f(h)+'" opacity="'+f(op)+'"'+(angle?' transform="rotate('+f(angle)+' '+f(x)+' '+f(y)+')"':'')+' preserveAspectRatio="xMidYMid meet"/>';}
+    // The y-period is 300; the next row is offset by dx so the loop is seamless.
+    function drift965(key,items,dx,dur){if(still)return '<g data-weather-layer965="'+key+'">'+items+'</g>';var id=uid+'weather965'+key, a='';defs+='<g id="'+id+'">'+items+'</g>';for(var row=-1;row<=1;row++)for(var col=-1;col<=1;col++)a+='<use href="#'+id+'" transform="translate('+f(col*480+row*dx)+' '+(row*300)+')"/>';return '<g data-weather-layer965="'+key+'">'+(still?'':'<animateTransform attributeName="transform" type="translate" from="0 0" to="'+dx+' 300" dur="'+dur+'s" repeatCount="indefinite"/>')+a+'</g>';}
+    function rain(n,seed,len,col,op,dur){var fine=len<=7,k=fine?'drizzle':'rain';return drift965(k+seed,particles(n,seed,function(x,y,r){var l=len*(.55+r*.85);return sprite965(k,x,y,l,Math.min(1,op*(.65+r*.65)),0);}),-174,dur);}
+    function snow(n,seed,big,dur){return drift965('snow'+seed,particles(n,seed,function(x,y,r,i){var crystal=i%5===0||r>.89,k=crystal?'snowflake':'snowdust',z=(1.05+r*big)*(crystal?2.65:1.7);return sprite965(k,x,y,z,.53+r*.44,crystal?r*360:0);}),seed===300?42:-24,dur);}
+    // v967: independently animated painted seasonal particles and transparent light layers.
+    var season967='assets/webp/ships/season967/', seasonAspect967={"petal":1.19048,"petal_curled":0.82,"maple":1.02564,"oak":1.10497,"sunbeams":1.13636,"frost":1.16707};
+    function seasonSprite967(k,x,y,w,op,angle){var h=w/seasonAspect967[k];return '<image data-season967="'+k+'" href="'+season967+k+'.webp" x="'+f(x-w/2)+'" y="'+f(y-h/2)+'" width="'+f(w)+'" height="'+f(h)+'" opacity="'+f(op)+'"'+(angle?' transform="rotate('+f(angle)+' '+f(x)+' '+f(y)+')"':'')+' preserveAspectRatio="xMidYMid meet"/>';}
+    function leaves967(n,seed,spring){return drift965('season967'+seed,particles(n,seed,function(x,y,r,i){var k=spring?(i%2?'petal_curled':'petal'):(i%2?'oak':'maple'), w=(spring?3.5:5.5)+r*(spring?4.6:6.2),angle=rand(seed+i*13)*360,dur=5+rand(seed+i*7)*8;return '<g transform="translate('+f(x)+' '+f(y)+')"><g>'+(still?'':'<animateTransform attributeName="transform" type="rotate" values="-28 0 0;28 0 0;-28 0 0" keyTimes="0;.5;1" dur="'+f(dur)+'s" begin="-'+f(r*dur)+'s" repeatCount="indefinite"/>')+seasonSprite967(k,0,0,w,.68+r*.29,angle)+'</g></g>';}),spring?64:-92,spring?19:15);}
+    function summer967(){return sway966(seasonSprite967('sunbeams',365,104,275,.29,0),9,-5,27);}
+    function winter967(){return sway966(seasonSprite967('frost',112,260,180,.25,0)+seasonSprite967('frost',390,278,220,.23,8),21,-5,28);}
+    // v966: transparent hand-painted atmospheric overlays. Keep scene dimensions and intensity unchanged.
+    var weather966='assets/webp/ships/weather966/', weatherAspect966={"fog":1.97183,"blizzard":1.68675,"wind":1.74455,"lightning":1.48588,"haze":2.35865};
+    function sprite966(k,x,y,w,op,flip){var h=w/weatherAspect966[k];return '<image data-weather966="'+k+'" href="'+weather966+k+'.webp" x="'+f(x-w/2)+'" y="'+f(y-h/2)+'" width="'+f(w)+'" height="'+f(h)+'" opacity="'+f(op)+'"'+(flip?' transform="translate('+f(2*x)+' 0) scale(-1 1)"':'')+' preserveAspectRatio="xMidYMid meet"/>';}
+    // A slow oscillation avoids a visible reset in localized fog and warm air.
+    function sway966(items,dx,dy,dur){return '<g>'+(still?'':'<animateTransform attributeName="transform" type="translate" values="0 0;'+dx+' '+dy+';0 0" keyTimes="0;.5;1" dur="'+dur+'s" repeatCount="indefinite"/>')+items+'</g>';}
+    function fog966(){return sway966(sprite966('fog',125,225,350,.62,false)+sprite966('fog',410,209,330,.57,true),38,-8,24)+sway966(sprite966('fog',264,286,540,.73,true),-44,5,32);}
+    function sweep966(k,key,items,dur){if(still)return '<g data-weather-layer966="'+key+'">'+items+'</g>';var id=uid+'weather966'+key;defs+='<g id="'+id+'">'+items+'</g>';var a='';for(var i=-1;i<=1;i++)a+='<use href="#'+id+'" transform="translate('+(i*480)+' 0)"/>';return '<g data-weather-layer966="'+key+'">'+anim('x',480,dur)+a+'</g>';}
+    function blizzard966(){return sway966(sprite966('fog',250,278,560,.46,false),-34,-9,14)+sweep966('blizzard','blizzard',sprite966('blizzard',110,105,265,.42,false)+sprite966('blizzard',355,224,320,.58,false),6.5);}
+    function wind966(){return sweep966('wind','wind',sprite966('wind',115,85,225,.32,false)+sprite966('wind',350,205,265,.38,false),6.5)+sweep966('wind','wind2',sprite966('wind',250,263,240,.23,false),9.2);}
+    function heat966(){return sway966(sprite966('haze',130,231,290,.44,false)+sprite966('haze',390,255,320,.40,true),24,-13,19)+sway966(sprite966('haze',275,181,345,.25,true),-18,11,23);}
+    // v968: painted lighting layers, isolated from the selected background and weather particles.
+    var light968='assets/webp/ships/light968/', lightAspect968={"dawn":1.31332,"noon":1.12077,"golden":1.29134,"dusk":1.3587,"blue":1.29211,"night":1.18905};
+    var effectiveWeather969=wx||({storm:'storm',fog:'fog',snowfall:'snow'}[bgId969]||''), darkTheme969=['aurora','haunted','xmas','deepsea'].indexOf(bgId969)>=0, genericSea969=['','day','sunset'].indexOf(bgId969)>=0;
+    var lightWeather968=effectiveWeather969==='storm'||effectiveWeather969==='blizzard'?.32:effectiveWeather969==='fog'||effectiveWeather969==='rain'||effectiveWeather969==='snow'?.55:effectiveWeather969==='drizzle'?.72:1;
+    var daylight969=['dawn','noon','golden','dusk'].indexOf(tm)>=0;
+    if(darkTheme969&&daylight969)lightWeather968*=.25;
+    function paintLight968(k,x,y,w,op,flip){if(genericSea969&&['dawn','dusk'].indexOf(k)>=0)op*=.12; if(bgId969==='deepsea')op*=.15;var h=w/lightAspect968[k];return '<image data-light968="'+k+'" href="'+light968+k+'.webp" x="'+f(x-w/2)+'" y="'+f(y-h/2)+'" width="'+f(w)+'" height="'+f(h)+'" opacity="'+f(op*lightWeather968)+'"'+(flip?' transform="translate('+f(2*x)+' 0) scale(-1 1)"':'')+' preserveAspectRatio="xMidYMid meet"/>';}
+    if(tm==='dawn')out+=layer('dawn',[[0,'#694e9b',.18],[.48,'#f9a174',.16],[.75,'#ffc993',.13],[1,'#173b56',.09]])+light('dawnL',52,135,200,118,'#ffc183',.43*lightWeather968)+paintLight968('dawn',78,138,280,.44,false);
+    else if(tm==='noon')out+=layer('noon',[[0,'#6cc7ed',.13],[.55,'#fff1c5',.06],[1,'#1494b2',.08]])+light('noonL',395,18,210,150,'#fff3c6',.26*lightWeather968)+paintLight968('noon',344,64,300,.44,false);
+    else if(tm==='golden')out+=layer('gold',[[0,'#e89a4a',.12],[.45,'#ffbc66',.24],[1,'#9d4f34',.14]])+light('goldL',424,113,252,132,'#ffd289',.48*lightWeather968)+paintLight968('golden',378,109,320,.45,false);
+    else if(tm==='dusk')out+=layer('dusk',[[0,'#382b65',.42],[.43,'#a24867',.23],[.65,'#f79a65',.19],[1,'#2a2d53',.25]])+light('duskL',415,141,215,91,'#ff9a61',.4*lightWeather968)+paintLight968('dusk',410,144,280,.48,false);
+    else if(tm==='blue')out+=layer('blue',[[0,'#172850',.48],[.55,'#5a78aa',.19],[1,'#1f3765',.28]])+light('blueL',52,112,170,120,'#8eb4ef',.17)+paintLight968('blue',66,102,176,.37,false);
+    else if(tm==='night')out+=layer('night',[[0,'#080f30',.65],[.5,'#101f42',.50],[1,'#091b36',.48]])+light('moonL',416,34,168,125,'#c6d9ff',.18*lightWeather968)+paintLight968('night',411,54,148,.46,false);
     // Only lateral sky: no star decals on the sails.
-    if(tm==='night'||tm==='blue'){for(var i=0;i<20;i++){var x=(i%2?390:0)+rand(i+404)*90,y=rand(i+804)*106,r=.4+rand(i+504)*.9;out+=circle(x,y,r,'#eff5ff',f(.35+rand(i+304)*.55));}}
-    if(sj==='spring')out+=light('spring',65,64,230,200,'#ffc3db',.13)+leaves(23,60,['#f3a8bf','#ffe0e8','#ffc6d6'],true);
-    else if(sj==='summer')out+=light('summer',385,38,280,230,'#ffdf9a',.22)+layer('summer2',[[0,'#f9e59d',.04],[1,'#efa452',.10]]);
-    else if(sj==='autumn')out+=layer('autumn',[[0,'#d29b56',.07],[1,'#96502d',.14]])+leaves(24,80,['#bf5128','#e5a138','#d17933','#9f4a2d'],false);
-    else if(sj==='winter')out+=layer('winter',[[0,'#b6d6f0',.14],[1,'#b4cfe3',.08]])+snow(29,100,1.4,22);
+    if((tm==='night'||tm==='blue')&&['storm','blizzard','fog','rain','snow','drizzle'].indexOf(effectiveWeather969)<0&&!darkTheme969&&!genericSea969){for(var i=0;i<20;i++){var x=(i%2?390:0)+rand(i+404)*90,y=rand(i+804)*106,r=.4+rand(i+504)*.9;out+=circle(x,y,r,'#eff5ff',f(.35+rand(i+304)*.55));}}
+    if(sj==='spring')out+=light('spring',65,64,230,200,'#ffc3db',.13)+leaves967(23,60,true);
+    else if(sj==='summer'){if(tm==='night'||tm==='blue'||(!tm&&['','aurora','haunted','xmas','deepsea'].indexOf(bgId969)>=0)||darkTheme969)out+=layer('summer2',[[0,'#c6b19a',.025],[1,'#a68b65',.04]]);else out+=light('summer',385,38,280,230,'#ffdf9a',.22*lightWeather968)+layer('summer2',[[0,'#f9e59d',.04],[1,'#efa452',.10]])+(lightWeather968>.6?summer967():'');}
+    else if(sj==='autumn')out+=layer('autumn',[[0,'#d29b56',.07],[1,'#96502d',.14]])+leaves967(24,80,false);
+    else if(sj==='winter')out+=layer('winter',[[0,'#b6d6f0',.14],[1,'#b4cfe3',.08]])+((wx==='snow'||wx==='blizzard')||(!wx&&['snowfall','xmas'].indexOf(bgId969)>=0)?'':snow(29,100,1.4,22))+winter967();
     if(wx==='drizzle')out+=layer('drizzle',[[0,'#6e8ba4',.12],[1,'#50758a',.08]])+rain(42,110,7,'#d6eafb',.38,3.6);
-    else if(wx==='rain'||wx==='storm'){out+=layer('rain',[[0,'#243d58',wx==='storm'?.42:.22],[.6,'#536d84',.12],[1,'#203953',.14]])+rain(wx==='storm'?82:58,11,wx==='storm'?20:13,'#cfe8fc',.55,wx==='storm'?1.15:1.9)+rain(29,211,7,'#edf8ff',.32,2.7);if(wx==='storm'){var bolt=path('M404 13l-16 27 12 -2 -22 37 11 -27 -12 2 17 -37Z','#e4edff',null,0,.85)+path('M391 39l-11 4 -8 14M391 48l7 9 -8 13','none','#d3e3ff',.9,.76);out+='<g opacity="'+(still?.6:.15)+'">'+(still?'':'<animate attributeName="opacity" values=".1;.1;.75;.1;.1" keyTimes="0;.75;.8;.87;1" dur="13s" repeatCount="indefinite"/>')+bolt+'</g>';}}
-    else if(wx==='snow'||wx==='blizzard'){out+=layer('snow',[[0,'#9bb7cf',wx==='blizzard'?.25:.1],[1,'#c4d8e8',wx==='blizzard'?.20:.06]])+snow(wx==='blizzard'?78:52,200,wx==='blizzard'?2.1:1.5,wx==='blizzard'?7:15)+snow(28,300,2.7,wx==='blizzard'?4.5:10);if(wx==='blizzard')out+=fogBands('bliz','#e9f2f8',.24,8);}
-    else if(wx==='fog')out+=layer('fog',[[0,'#c0d3df',.07],[.65,'#d2e2e8',.13],[1,'#d2e2e8',.18]])+fogBands('mist','#dce9ee',.43,18);
-    else if(wx==='wind'){out+=tiles('x',particles(33,490,function(x,y,r){var l=18+r*38;return path('M'+f(x)+' '+f(y)+'q'+f(l*.3)+' -2 '+f(l*.7)+' 0t'+f(l*.3)+' 0','none','#e8f2f4',f(.45+r*.4),f(.14+r*.32));}),4.8);}
-    else if(wx==='haze')out+=light('heat',420,100,330,210,'#ffd19a',.26)+fogBands('heatband','#ffdab0',.16,21);
+    else if(wx==='rain'||wx==='storm'){out+=layer('rain',[[0,'#243d58',wx==='storm'?.42:.22],[.6,'#536d84',.12],[1,'#203953',.14]])+rain(wx==='storm'?82:58,11,wx==='storm'?20:13,'#cfe8fc',.55,wx==='storm'?1.15:1.9)+rain(29,211,7,'#edf8ff',.32,2.7);if(wx==='storm'){var bolt=sprite966('lightning',394,54,190,.92,false);out+='<g opacity="'+(still?.72:0)+'">'+(still?'':'<animate attributeName="opacity" values="0;0;.86;.16;.58;0;0" keyTimes="0;.75;.77;.79;.81;.84;1" dur="13s" repeatCount="indefinite"/>')+bolt+'</g>';}}
+    else if(wx==='snow'||wx==='blizzard'){out+=layer('snow',[[0,'#9bb7cf',wx==='blizzard'?.25:.1],[1,'#c4d8e8',wx==='blizzard'?.20:.06]])+snow(wx==='blizzard'?78:52,200,wx==='blizzard'?2.1:1.5,wx==='blizzard'?7:15)+snow(28,300,2.7,wx==='blizzard'?4.5:10);if(wx==='blizzard')out+=blizzard966();}
+    else if(wx==='fog')out+=layer('fog',[[0,'#c0d3df',.07],[.65,'#d2e2e8',.13],[1,'#d2e2e8',.18]])+fog966();
+    else if(wx==='wind'){out+=wind966();}
+    else if(wx==='haze')out+=light('heat',420,100,330,210,'#ffd19a',.26)+heat966();
     return '<g class="wk-shp-atm" data-atmos834="1" pointer-events="none" opacity="'+strength+'" transform="translate('+f(X)+' '+f(Y)+') scale('+shpK(W/480)+' '+shpK(H/300)+')"><defs><clipPath id="'+uid+'clip"><rect width="480" height="300"/></clipPath>'+defs+'</defs><g clip-path="url(#'+uid+'clip)">'+out+'</g></g>';
   }
   /* v774: команда на палубе. lay.cm ('sil' силуэты, 'col' в цветах ролей), lay.cwz (размер, %). Берутся те, кто назначен в экипаж корабля. */
