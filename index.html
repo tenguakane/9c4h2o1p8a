@@ -1,6 +1,6 @@
-<!-- One Piece Wiki update v1019: renamed Ace artistic back set -->
+<!-- One Piece Wiki update v1020: corrected Ace epic, holographic and negative card backs -->
 <!doctype html>
-<!--wk-ver:27.11.2026 · 1019-->
+<!--wk-ver:27.11.2026 · 1020-->
 <script id="wk-v616-pre">try{var K='wkExtrasKeepV616',old={},ca=[],ma={},cc=null,cca=[],cma={};try{old=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}try{ca=JSON.parse(localStorage.getItem('onePieceWikiCustomAchievementsV1')||'[]')}catch(e){}try{ma=JSON.parse(localStorage.getItem('onePieceWikiMedalArtV1')||'{}')}catch(e){}try{cc=JSON.parse(localStorage.getItem('wkCloudContentV1')||'null');if(cc&&cc.data){cca=Array.isArray(cc.data.customAchievements)?cc.data.customAchievements:[];cma=cc.data.medalArt&&typeof cc.data.medalArt==='object'?cc.data.medalArt:{}}}catch(e){}cc=null;var oc=Array.isArray(old.ca)?old.ca:[],om=old.ma&&typeof old.ma==='object'?old.ma:{},ids={},cids={};oc.forEach(function(a){if(a&&a.id!=null)ids[a.id]=1});cca.forEach(function(a){if(a&&a.id!=null)cids[a.id]=1});(Array.isArray(ca)?ca:[]).forEach(function(a){if(a&&a.id!=null&&!ids[a.id]&&!cids[a.id]){oc.push(a);ids[a.id]=1}});if(ma&&typeof ma==='object')Object.keys(ma).forEach(function(k){if(!(k in om)&&!(k in cma)&&ma[k]!=null&&ma[k]!=='')om[k]=ma[k]});if(oc.length||Object.keys(om).length)localStorage.setItem(K,JSON.stringify({ca:oc,ma:om}));else localStorage.removeItem(K)}catch(e){}</script>
 <html data-wiki-portable-baked="true" data-wiki-portable-id="2026-11-11T03:23:00.970Z" lang="ru" style="--reward-rank-first: #ffda75; --reward-rank-second: #d9d9d9; --reward-rank-third: #ffd285; --reward-rank-other: #4f4860; --wiki-progress-manga: #efc66b; --wiki-progress-anime: #60d9ff; --wk-title-font: 'Days One'; --wk-title-fw: 400; --wk-wp-tpl: url(&quot;./assets/webp/ui/wanted_template.webp&quot;); --wk-fg-manga: #0b0f17; --wk-fg-anime: #0b0f17; --wk-accent: #a78bfa; --wk-accent-soft: #d3c5fd; --fruit-type-param-color: #bb9eff !important; --fruit-type-param-rgb: 187, 158, 255 !important; --fruit-type-logia-color: #f967ae !important; --fruit-type-logia-rgb: 249, 103, 174 !important; --fruit-type-zoan-color: #65f6b7 !important; --fruit-type-zoan-rgb: 101, 246, 183 !important; --wk-tz-card: 1.15;" class="wk-sc-off wk-hz-c wk-hz-f wk-hz-u wk-hz-v wk-hz-h wk-calm wk-tfx-off wk-tfx-still wk-gpu wk-hdr-min" data-wk-role="admin" data-wk-title-font="g:Days One|"><head>
 <script id="wk-v596-early">try{var q=new URLSearchParams(location.search);if(q.get("tab")==="favorites"&&/^[a-z]+$/.test(q.get("cab")||"")){var cb=q.get("cab");localStorage.setItem("onePieceWikiCabinSubtabV3",cb==="overview"?"favorites":cb);localStorage.setItem("onePieceWikiCabinExtraTabV1",/^(watchgrid|timeline|deck|tops|stats|edits|quiz|atlas|help)$/.test(cb)?cb:"");}}catch(e){}</script>
@@ -3661,7 +3661,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "27.11.2026 · 1019";
+const WIKI_VERSION = "27.11.2026 · 1020";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -39431,7 +39431,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var path = 'assets/webp/cardbacks/full/';
     if (!fullBackHasRarities(id)) return path + id.slice(4) + '.webp';
     var key = /^(gold|holo|neg)$/.test(v || '') ? v : /^(common|rare|epic|legendary)$/.test(r || '') ? r : 'common';
-    return path + id.slice(4) + '/' + key + '.webp' + (/^(fullzunesha|fulllogpose|fullace)$/.test(id) ? '?v=1018' : id === 'fullmerry' ? '?v=1017' : id === 'fulldenden' ? '?v=1016' : id === 'fulllogpose' ? '?v=1015' : id === 'fullbolt' ? '?v=1014' : id === 'fullfruit' ? '?v=1013' : id === 'fullskull' ? '?v=1012' : id === 'fullzunesha' ? '?v=1011' : '');
+    return path + id.slice(4) + '/' + key + '.webp' + (id === 'fullace' && /^(epic|holo|neg)$/.test(key) ? '?v=1020' : /^(fullzunesha|fulllogpose|fullace)$/.test(id) ? '?v=1018' : id === 'fullmerry' ? '?v=1017' : id === 'fulldenden' ? '?v=1016' : id === 'fulllogpose' ? '?v=1015' : id === 'fullbolt' ? '?v=1014' : id === 'fullfruit' ? '?v=1013' : id === 'fullskull' ? '?v=1012' : id === 'fullzunesha' ? '?v=1011' : '');
   }
   function backChoice(emb) { var id = emb; if (id == null) { try { id = (DK.inF && FX.st && FX.st.__friend) ? (FX.st.back || '') : (load().back || ''); } catch(e) { id = ''; } } return backAllowed(id) ? id : ''; }
   function emblem(v, emb) {
