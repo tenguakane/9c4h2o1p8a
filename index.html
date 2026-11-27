@@ -1,6 +1,6 @@
-<!-- One Piece Wiki update v1016: aligned Den Den Mushi artistic card backs; earlier updates retained -->
+<!-- One Piece Wiki update v1018: artistic back geometry, unlock thresholds and retired Blades -->
 <!doctype html>
-<!--wk-ver:27.11.2026 · 1016-->
+<!--wk-ver:27.11.2026 · 1018-->
 <script id="wk-v616-pre">try{var K='wkExtrasKeepV616',old={},ca=[],ma={},cc=null,cca=[],cma={};try{old=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}try{ca=JSON.parse(localStorage.getItem('onePieceWikiCustomAchievementsV1')||'[]')}catch(e){}try{ma=JSON.parse(localStorage.getItem('onePieceWikiMedalArtV1')||'{}')}catch(e){}try{cc=JSON.parse(localStorage.getItem('wkCloudContentV1')||'null');if(cc&&cc.data){cca=Array.isArray(cc.data.customAchievements)?cc.data.customAchievements:[];cma=cc.data.medalArt&&typeof cc.data.medalArt==='object'?cc.data.medalArt:{}}}catch(e){}cc=null;var oc=Array.isArray(old.ca)?old.ca:[],om=old.ma&&typeof old.ma==='object'?old.ma:{},ids={},cids={};oc.forEach(function(a){if(a&&a.id!=null)ids[a.id]=1});cca.forEach(function(a){if(a&&a.id!=null)cids[a.id]=1});(Array.isArray(ca)?ca:[]).forEach(function(a){if(a&&a.id!=null&&!ids[a.id]&&!cids[a.id]){oc.push(a);ids[a.id]=1}});if(ma&&typeof ma==='object')Object.keys(ma).forEach(function(k){if(!(k in om)&&!(k in cma)&&ma[k]!=null&&ma[k]!=='')om[k]=ma[k]});if(oc.length||Object.keys(om).length)localStorage.setItem(K,JSON.stringify({ca:oc,ma:om}));else localStorage.removeItem(K)}catch(e){}</script>
 <html data-wiki-portable-baked="true" data-wiki-portable-id="2026-11-11T03:23:00.970Z" lang="ru" style="--reward-rank-first: #ffda75; --reward-rank-second: #d9d9d9; --reward-rank-third: #ffd285; --reward-rank-other: #4f4860; --wiki-progress-manga: #efc66b; --wiki-progress-anime: #60d9ff; --wk-title-font: 'Days One'; --wk-title-fw: 400; --wk-wp-tpl: url(&quot;./assets/webp/ui/wanted_template.webp&quot;); --wk-fg-manga: #0b0f17; --wk-fg-anime: #0b0f17; --wk-accent: #a78bfa; --wk-accent-soft: #d3c5fd; --fruit-type-param-color: #bb9eff !important; --fruit-type-param-rgb: 187, 158, 255 !important; --fruit-type-logia-color: #f967ae !important; --fruit-type-logia-rgb: 249, 103, 174 !important; --fruit-type-zoan-color: #65f6b7 !important; --fruit-type-zoan-rgb: 101, 246, 183 !important; --wk-tz-card: 1.15;" class="wk-sc-off wk-hz-c wk-hz-f wk-hz-u wk-hz-v wk-hz-h wk-calm wk-tfx-off wk-tfx-still wk-gpu wk-hdr-min" data-wk-role="admin" data-wk-title-font="g:Days One|"><head>
 <script id="wk-v596-early">try{var q=new URLSearchParams(location.search);if(q.get("tab")==="favorites"&&/^[a-z]+$/.test(q.get("cab")||"")){var cb=q.get("cab");localStorage.setItem("onePieceWikiCabinSubtabV3",cb==="overview"?"favorites":cb);localStorage.setItem("onePieceWikiCabinExtraTabV1",/^(watchgrid|timeline|deck|tops|stats|edits|quiz|atlas|help)$/.test(cb)?cb:"");}}catch(e){}</script>
@@ -3661,7 +3661,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "27.11.2026 · 1016";
+const WIKI_VERSION = "27.11.2026 · 1018";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -21227,7 +21227,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
       var ref = fb.fs.doc(db, 'content', 'shop_prices');
       return fb.fs.onSnapshot(ref, function (snap) {
         var x = snap.exists() ? snap.data() || {} : {};
-        cb(x.prices && typeof x.prices === 'object' ? x.prices : {}, x.updatedAt || '', x.updatedBy || '', typeof x.defaultOrn === 'string' ? x.defaultOrn : '');
+        cb(x.prices && typeof x.prices === 'object' ? x.prices : {}, x.updatedAt || '', x.updatedBy || '', typeof x.defaultOrn === 'string' ? x.defaultOrn : '', x.fullBackUnlocks || {});
       }, function (e) { if (onErr) onErr(e); });
     },
     save: function (prices) {
@@ -21235,6 +21235,17 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
       return fb.fs.setDoc(fb.fs.doc(db, 'content', 'shop_prices'), {
         prices: prices, updatedBy: me.login, updatedAt: new Date().toISOString()
       }, { merge: true });
+    },
+    saveFullBackUnlocks: function (map) {
+      if (!me || !db || !fb || me.role !== 'admin') return Promise.reject(new Error('no-admin-rights'));
+      var clean = {};
+      Object.keys(map || {}).forEach(function(id) {
+        if (!/^full(compass|skull|fruit|bolt|denden|sunny|logpose|zunesha|ace|drumsnow|merry)$/.test(id)) return;
+        var v = map[id] || {}, ch = Number(v.ch), ep = Number(v.ep);
+        if (!Number.isSafeInteger(ch) || !Number.isSafeInteger(ep) || ch < 0 || ep < 0 || ch > 99999 || ep > 99999) throw new Error('invalid-threshold');
+        clean[id] = {ch:ch,ep:ep};
+      });
+      return fb.fs.setDoc(fb.fs.doc(db, 'content', 'shop_prices'), {fullBackUnlocks:clean, updatedBy:me.login, updatedAt:new Date().toISOString()}, {merge:true});
     },
     /* Орнамент рубашек по умолчанию для всех, кто не выбрал свой: '' (классика), 'none' или id орнамента. */
     saveDefaultOrn: function (id) {
@@ -39410,16 +39421,19 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   cbCss();
   var BKE = {"skull": "<svg viewBox=\"0 0 100 100\" class=\"wk-bkm\" aria-hidden=\"true\"><path d=\"M24 70 76 94M76 70 24 94\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"6\" stroke-linecap=\"round\"/><circle cx=\"21\" cy=\"68\" r=\"5\" fill=\"currentColor\"/><circle cx=\"79\" cy=\"68\" r=\"5\" fill=\"currentColor\"/><circle cx=\"21\" cy=\"96\" r=\"0.01\" fill=\"currentColor\"/><path d=\"M50 8c-19 0-31 11-31 28 0 10 5 17 11 20v14h40v-14c6-3 11-10 11-20 0-17-12-28-31-28z\" fill=\"currentColor\"/><path d=\"M19 27c12-9 50-9 62 0l-2 11c-11-7-47-7-58 0z\" fill=\"#0b1020\"/><path d=\"M26 30l3 5M38 28l3 5M50 27l3 5M62 28l3 5M74 30l3 5\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><path d=\"M81 30l14-4-4 9 7 6-14 1z\" fill=\"#0b1020\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linejoin=\"round\"/><path d=\"M28 43l16 4-1 9-14-3zM72 43l-16 4 1 9 14-3z\" fill=\"#0b1020\"/><path d=\"M50 52l-3 7h6z\" fill=\"#0b1020\"/><path d=\"M28 58q22 13 44 0\" fill=\"none\" stroke=\"#0b1020\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M37 62v6M44 64v6M50 65v6M56 64v6M63 62v6\" stroke=\"#0b1020\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><path d=\"M13 20l-4-8M88 16l5-7M8 40l-6-1\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\"/></svg>", "fruit": "<svg viewBox=\"0 0 100 100\" class=\"wk-bkm\" aria-hidden=\"true\"><path d=\"M50 25c-7-6-26-5-31 11-5 15 3 38 17 44 7 3 11 1 14 0 3 1 7 3 14 0 14-6 22-29 17-44-5-16-24-17-31-11z\" fill=\"currentColor\"/><path d=\"M50 26c0-9 4-15 11-18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"4.5\" stroke-linecap=\"round\"/><path d=\"M52 14c8-6 20-4 22 2-8 5-18 4-22-2z\" fill=\"currentColor\"/><path d=\"M34 60c-5-8 3-16 11-13 8 3 7 13-1 14-6 1-9-5-4-8\" fill=\"none\" stroke=\"#0b1020\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><path d=\"M66 60c5-8-3-16-11-13-8 3-7 13 1 14 6 1 9-5 4-8\" fill=\"none\" stroke=\"#0b1020\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><path d=\"M42 74c4 4 12 4 16 0\" fill=\"none\" stroke=\"#0b1020\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><path d=\"M22 14l3 6M10 30l6 2M86 38l7-2\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\"/></svg>", "bolt": "<svg viewBox=\"0 0 100 100\" class=\"wk-bkm\" aria-hidden=\"true\"><path d=\"M61 4 31 52h17l-9 44 33-55H54z\" fill=\"currentColor\"/><path d=\"M26 18 14 38h8l-4 20 14-22h-7z\" fill=\"currentColor\" opacity=\".8\"/><path d=\"M82 52 72 68h7l-3 16 12-18h-7z\" fill=\"currentColor\" opacity=\".8\"/><path d=\"M50 52 44 64\" stroke=\"#0b1020\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><path d=\"M12 12l5 5M90 20l-6 4M8 78l7-3M88 88l-5-5\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><ellipse cx=\"50\" cy=\"50\" rx=\"44\" ry=\"44\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-dasharray=\"3 5\" opacity=\".8\"/></svg>", "blades": "<svg viewBox=\"0 0 100 100\" class=\"wk-bkm\" aria-hidden=\"true\"><path d=\"M16 14 74 72M84 14 26 72\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"5\" stroke-linecap=\"round\"/><ellipse cx=\"77\" cy=\"75\" rx=\"9\" ry=\"3.6\" transform=\"rotate(45 77 75)\" fill=\"currentColor\" stroke=\"#0b1020\" stroke-width=\"1.6\"/><ellipse cx=\"23\" cy=\"75\" rx=\"9\" ry=\"3.6\" transform=\"rotate(-45 23 75)\" fill=\"currentColor\" stroke=\"#0b1020\" stroke-width=\"1.6\"/><path d=\"M81 79 92 90M19 79 8 90\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"7\" stroke-linecap=\"round\"/><path transform=\"translate(0 -16)\" d=\"M50 26l3.4 7.6 7.6 3.4-7.6 3.4L50 48l-3.4-7.6L39 37l7.6-3.4z\" fill=\"currentColor\"/><path d=\"M8 44l7 1M92 44l-7 1M50 4v9\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\"/></svg>"};
   var BK_HD = BK_H.slice(BK_H.indexOf('<defs>'), BK_H.indexOf('</defs>') + 7);
-  function fullBackId(id) { return /^full(compass|skull|fruit|bolt|blades|denden|sunny|logpose|zunesha|ace|drumsnow)$/.test(String(id || '')); }
+  var FULL_UNLOCKS = {};
+  function fullBackAvailable(id) { return !fullBackId(id) || bkOk(FULL_UNLOCKS[id] || {}); }
+  function backAllowed(id) { return id !== 'fulldrum' && id !== 'fullblades' && fullBackAvailable(id); }
+  function fullBackId(id) { return /^full(compass|skull|fruit|bolt|denden|sunny|logpose|zunesha|ace|drumsnow|merry)$/.test(String(id || '')); }
   /* v1012: purchased artistic themes with seven independent illustrated backs. */
-  function fullBackHasRarities(id) { return id === 'fullcompass' || id === 'fullskull' || id === 'fullfruit' || id === 'fullbolt' || id === 'fulldenden' || id === 'fullsunny' || id === 'fulllogpose' || id === 'fullzunesha' || id === 'fullace' || id === 'fulldrumsnow'; }
+  function fullBackHasRarities(id) { return id === 'fullcompass' || id === 'fullskull' || id === 'fullfruit' || id === 'fullbolt' || id === 'fulldenden' || id === 'fullsunny' || id === 'fulllogpose' || id === 'fullzunesha' || id === 'fullace' || id === 'fulldrumsnow' || id === 'fullmerry'; }
   function fullBackArt(id, r, v) {
     var path = 'assets/webp/cardbacks/full/';
     if (!fullBackHasRarities(id)) return path + id.slice(4) + '.webp';
     var key = /^(gold|holo|neg)$/.test(v || '') ? v : /^(common|rare|epic|legendary)$/.test(r || '') ? r : 'common';
-    return path + id.slice(4) + '/' + key + '.webp' + (id === 'fulldenden' ? '?v=1016' : id === 'fulllogpose' ? '?v=1015' : id === 'fullbolt' ? '?v=1014' : id === 'fullfruit' ? '?v=1013' : id === 'fullskull' ? '?v=1012' : id === 'fullzunesha' ? '?v=1011' : '');
+    return path + id.slice(4) + '/' + key + '.webp' + (/^(fullzunesha|fulllogpose|fullace)$/.test(id) ? '?v=1018' : id === 'fullmerry' ? '?v=1017' : id === 'fulldenden' ? '?v=1016' : id === 'fulllogpose' ? '?v=1015' : id === 'fullbolt' ? '?v=1014' : id === 'fullfruit' ? '?v=1013' : id === 'fullskull' ? '?v=1012' : id === 'fullzunesha' ? '?v=1011' : '');
   }
-  function backChoice(emb) { var id = emb; if (id == null) { try { id = (DK.inF && FX.st && FX.st.__friend) ? (FX.st.back || '') : (load().back || ''); } catch(e) { id = ''; } } return id === 'fulldrum' ? '' : id; }
+  function backChoice(emb) { var id = emb; if (id == null) { try { id = (DK.inF && FX.st && FX.st.__friend) ? (FX.st.back || '') : (load().back || ''); } catch(e) { id = ''; } } return backAllowed(id) ? id : ''; }
   function emblem(v, emb) {
     var id = backChoice(emb);
     if (fullBackId(id)) id = 'art' + id.slice(4);
@@ -40640,10 +40654,10 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   }
   var BKX_P = { back: 'k_', orn: 'o_', bgt: 't_' };
   function bkxOwn(st, kind, id) { return bkxFree(kind, id) || !!(st.cos || {})[BKX_P[kind] + id]; }
-  function bkxCur(st, kind) { if (kind === 'back') return st.back === 'fulldrum' ? '' : (st.back || ''); if (kind === 'orn') return ornKey(st); var id = st.bgt || 'clouds'; return BGT.some(function(q){return q.id === id;}) ? id : 'clouds'; }
+  function bkxCur(st, kind) { if (kind === 'back') return backAllowed(st.back) ? (st.back || '') : ''; if (kind === 'orn') return ornKey(st); var id = st.bgt || 'clouds'; return BGT.some(function(q){return q.id === id;}) ? id : 'clouds'; }
   function bkxSel(st) {
     var X = DK.bkx = DK.bkx || { r: 'legendary', tab: 'back' };
-    var o = {}; ['back', 'orn', 'bgt'].forEach(function (k) { o[k] = X[k] != null ? X[k] : bkxCur(st, k); if (k === 'back' && o[k] === 'fulldrum') o[k] = ''; }); return o;
+    var o = {}; ['back', 'orn', 'bgt'].forEach(function (k) { o[k] = X[k] != null ? X[k] : bkxCur(st, k); if (k === 'back' && !backAllowed(o[k])) o[k] = ''; }); return o;
   }
   function bkxOrnAttr(id) { return id === 'cl' || id === 'classic' ? 'classic' : id; }
   function bkxCard(r, sel, cls) {
@@ -40683,7 +40697,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     }).join('');
     var cnt = function (k) { var t = k === 'full' ? 'back' : k, list = L[t].filter(function(q){return k === 'full' ? fullBackId(q.id) : k === 'back' ? !fullBackId(q.id) : true;}); return list.filter(function(q){return bkxOwn(st,t,q.id);}).length + '/' + list.length; };
     var pick = '<div class="wk-bkx-pick"><div class="wk-bkx-tabs" role="tablist">' + ['back', 'orn', 'bgt', 'full'].map(function (k) { return '<button type="button" role="tab" data-bkx-tab="' + k + '" class="' + (tab === k ? 'on' : '') + '" aria-selected="' + (tab === k) + '">' + { back: 'Знаки', orn: 'Орнаменты', bgt: 'Фоны', full: 'Цельные' }[k] + ' <small>' + cnt(k) + '</small></button>'; }).join('') + '</div><div class="wk-bkx-grid">' + tiles + '</div></div>';
-    var adminForm = tab === 'full' ? '' : tab === 'back' ? bkAdminHTML() : tab === 'orn' ? ornAdminHTML() : bgtexAdminHTML();
+    var adminForm = tab === 'full' ? fullBackAdminHTML() : tab === 'back' ? bkAdminHTML() : tab === 'orn' ? ornAdminHTML() : bgtexAdminHTML();
     return '<h3 class="wk-dk-h">Примерочная рубашки</h3><p class="wk-sh-hint">Собери рубашку: выбери знак, орнамент и фон. Карточка слева сразу показывает результат. Покупаешь только то, чего у тебя ещё нет.</p><section class="wk-bkx">' + stage + pick + (adminForm ? '<div class="wk-bkx-admin">' + adminForm + '</div>' : '') + '</section>';
   }
   function bkxRepaint() {
@@ -40840,7 +40854,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     { id: 'bloodmoon', n: 'Алый гримуар', price: 45000, d: 'Винно-чёрная кожа, багровая луна и тонкие серебряные арабески.' },
     { id: 'abyssal', n: 'Бездонная библиотека', price: 46000, d: 'Темная бирюзовая глубина, патинированная бронза и светящиеся морские руны.' }
   ];
-  var BACKS = [{ id: 'skull', n: 'Весёлый Роджер', price: 30000 }, { id: 'fruit', n: 'Спиральный плод', price: 30000 }, { id: 'bolt', n: 'Молния воли', price: 30000 }, { id: 'blades', n: 'Скрещённые клинки', price: 30000 }, { id: 'artcompass', n: 'Резной компас', price: 0 }, { id: 'artskull', n: 'Рельефный Весёлый Роджер', price: 30000 }, { id: 'artfruit', n: 'Рельефный спиральный плод', price: 30000 }, { id: 'artbolt', n: 'Рельефная молния воли', price: 30000 }, { id: 'artblades', n: 'Рельефные скрещённые клинки', price: 30000 }, { id: 'fullcompass', n: 'Компас Гранд-Лайна', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullskull', n: 'Флаг Мугивар', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullfruit', n: 'Дьявольский плод', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullbolt', n: 'Королевская воля', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullblades', n: 'Клинки морей', price: 60000, d: 'Цельная художественная рубашка. Собственная рамка и цвета.' }, { id: 'fulldenden', n: 'Ден Дэн Муши', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullsunny', n: 'Таузенд Санни', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fulllogpose', n: 'Лог Пос', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullzunesha', n: 'Зунеша', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullace', n: 'Последнее обещание Эйса', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fulldrumsnow', n: 'Снега Драма', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }];
+  var BACKS = [{ id: 'skull', n: 'Весёлый Роджер', price: 30000 }, { id: 'fruit', n: 'Спиральный плод', price: 30000 }, { id: 'bolt', n: 'Молния воли', price: 30000 }, { id: 'blades', n: 'Скрещённые клинки', price: 30000 }, { id: 'artcompass', n: 'Резной компас', price: 0 }, { id: 'artskull', n: 'Рельефный Весёлый Роджер', price: 30000 }, { id: 'artfruit', n: 'Рельефный спиральный плод', price: 30000 }, { id: 'artbolt', n: 'Рельефная молния воли', price: 30000 }, { id: 'artblades', n: 'Рельефные скрещённые клинки', price: 30000 }, { id: 'fullcompass', n: 'Компас Гранд-Лайна', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullskull', n: 'Флаг Мугивар', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullfruit', n: 'Дьявольский плод', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullbolt', n: 'Королевская воля', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fulldenden', n: 'Ден Дэн Муши', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullsunny', n: 'Таузенд Санни', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullmerry', n: 'Гоинг Мерри', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fulllogpose', n: 'Лог Пос', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullzunesha', n: 'Зунеша', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullace', n: 'Последнее обещание Эйса', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fulldrumsnow', n: 'Снега Драма', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }];
 
   /* В магазине только авторские орнаменты администратора. Старые восемь не продаются;
      классическая рубашка остаётся стандартной, не товаром. */
@@ -40903,7 +40917,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     }).then(function () { ORS.loading = false; });
   }
   function ornReset() { ORP = { id: '', name: '', price: 15000, d: '', file: null, mode: 'corners', s: 100, sy: 100, sx: 100, busy: false }; }
-  function allBacks() { return BACKS.concat(CB.filter(cbOk).map(function (q) { return { id: q.id, n: q.n || 'Рубашка', price: FREE() ? 0 : (q.price || 30000), ch: q.ch, ep: q.ep, cu: 1 }; })); }
+  function allBacks() { return BACKS.filter(function(q){return backAllowed(q.id);}).concat(CB.filter(cbOk).map(function (q) { return { id: q.id, n: q.n || 'Рубашка', price: FREE() ? 0 : (q.price || 30000), ch: q.ch, ep: q.ep, cu: 1 }; })); }
   var BKP = { d: '', name: '', price: 30000, inv: false, file: null };
   var BKS = { at: 0, loading: false };
   var BGT = [
@@ -41067,8 +41081,9 @@ window.addEventListener('wiki:cloud-logout', function(){BGTL=[];BGT_LOAD.at=0;bg
     if (!api || !api.enabled() || !user) { if (PRICE_USER) { priceStop(); applyShopPriceMap({}); } return; }
     if (PRICE_WATCH && PRICE_USER === user) return;
     priceStop(); PRICE_USER = user; PRICE_ERROR = '';
-    try { PRICE_WATCH = api.watch(function (prices, ua, ub, defOrn) {
+    try { PRICE_WATCH = api.watch(function (prices, ua, ub, defOrn, fullUnlocks) {
       if (PRICE_USER !== user) return;
+      FULL_UNLOCKS = fullUnlocks && typeof fullUnlocks === 'object' ? fullUnlocks : {};
       var prevDef = ornDefId();
       DEF_ORN = /^(none|o[a-z0-9]{3,14})$/.test(String(defOrn || '')) ? String(defOrn) : '';
       if (DEF_ORN && DEF_ORN !== 'none' && !ornHas(DEF_ORN)) { ORS.at = 0; try { refreshOrnaments(null, false); } catch (e) {} }
@@ -41482,6 +41497,27 @@ document.addEventListener('change',function(e) {
     if (t.id === 'wkOrnFile') { ORP.url = ''; var u2 = document.getElementById('wkOrnUrl'); if (u2) u2.value = ''; }
   });
   window.addEventListener('wiki:cloud-ready', function () { setTimeout(function () { try { refreshWalls(null, false); } catch (e) {} }, 900); });
+  function fullBackAdminHTML() {
+    if (!canEditPrices()) return '';
+    var rows = BACKS.filter(function(q){return fullBackId(q.id);}).map(function(q){
+      var v = FULL_UNLOCKS[q.id] || {};
+      return '<div class="wk-full-unlock-row" data-full-unlock="'+esc(q.id)+'"><b>'+esc(q.n)+'</b><label>Глава манги <input type="number" min="0" max="99999" step="1" data-unlock-ch value="'+(Number(v.ch)||0)+'"></label><label>Серия аниме <input type="number" min="0" max="99999" step="1" data-unlock-ep value="'+(Number(v.ep)||0)+'"></label></div>';
+    }).join('');
+    return '<h3 class="wk-dk-h">Открытие художественных наборов</h3><p class="wk-sh-hint">0 в обоих полях — доступен сразу. Если задана глава и серия, достаточно достичь одной из них. До открытия набор скрыт; ранее сделанные покупки сохраняются.</p><div class="wk-full-unlock-form">'+rows+'<button type="button" class="wk-tx-btn pri" data-full-unlock-save>Сохранить условия открытия</button><span class="wk-full-unlock-status" role="status"></span></div>';
+  }
+  document.addEventListener('click', function(e){
+    var b=e.target.closest && e.target.closest('[data-full-unlock-save]'); if(!b || !canEditPrices()) return;
+    var api=window.__wkShopPrices, form=b.closest('.wk-full-unlock-form'), status=form.querySelector('.wk-full-unlock-status'), map={};
+    if(!api || !api.enabled() || !PRICE_READY){status.textContent='Облачные настройки ещё не загружены.';return;}
+    var valid=true; form.querySelectorAll('[data-full-unlock]').forEach(function(row){
+      var ch=Number(row.querySelector('[data-unlock-ch]').value), ep=Number(row.querySelector('[data-unlock-ep]').value);
+      if(!Number.isSafeInteger(ch)||!Number.isSafeInteger(ep)||ch<0||ep<0||ch>99999||ep>99999) valid=false;
+      map[row.dataset.fullUnlock]={ch:ch,ep:ep};
+    });
+    if(!valid){status.textContent='Укажи целые числа от 0 до 99999.';return;}
+    b.disabled=true;status.textContent='Сохранение…';
+    api.saveFullBackUnlocks(map).then(function(){FULL_UNLOCKS=map;try{txToast('Условия открытия сохранены');}catch(e){} priceRefreshShop();},function(err){b.disabled=false;status.textContent='Не удалось сохранить: '+String(err && (err.code||err.message)||'ошибка');});
+  });
   function bkAdminHTML() {
     if (!canEditBackGoods()) return '';
     var list = CB.filter(cbOk).map(function (q) { return '<li><span>' + esc(q.n || 'Рубашка') + ' · ' + fmtB(q.price) + (q.ch || q.ep ? ' · с ' + [q.ch ? 'гл. ' + q.ch : '', q.ep ? 'сер. ' + q.ep : ''].filter(Boolean).join(' или ') : '') + '</span><span class="wk-bk-lb"><button type="button" class="wk-tx-btn" data-tx="bkedit" data-id="' + esc(q.id) + '">Изменить</button>' + (isDima() ? '<button type="button" class="wk-tx-btn" data-tx="bkdel" data-id="' + esc(q.id) + '">Удалить</button>' : '') + '</span></li>'; }).join('');
@@ -51357,6 +51393,7 @@ if (a === 'bgtexdel') {
     }
     if (a === 'cossel') {
       var kd0 = b.getAttribute('data-kind'), kd = kd0 === 'bg' ? 'bg' : kd0 === 'bgt' ? 'bgt' : kd0 === 'alb' ? 'alb' : kd0 === 'back' ? 'back' : kd0 === 'orn' ? 'orn' : kd0 === 'avf' ? 'avf' : kd0 === 'nkc' ? 'nkc' : 'frame', cid = b.getAttribute('data-id');
+      if (kd === 'back' && !backAllowed(cid)) return;
       if (kd === 'orn' && (cid === 'classic' || (cid && cid === ornDefId()))) { st.orn = 'classic'; save(st); repaint(); try { if (window.__wkCosApply) window.__wkCosApply(); } catch (e) {} return; }
       if (kd === 'orn' && cid === 'cl') { st.orn = st.orn === 'cl' ? 'classic' : 'cl'; save(st); repaint(); try { if (window.__wkCosApply) window.__wkCosApply(); } catch (e) {} return; }
       if (kd === 'alb' && cid === 'captain') { st.alb = ''; save(st); repaint(); return; }
@@ -58353,6 +58390,8 @@ html body :is(.wk-bkx-big,.wk-bkx-mini):has(img.wk-fullback-art[src*="/full/skul
 html body :is(.wk-bkx-big,.wk-bkx-mini):has(img.wk-fullback-art[src*="/full/fruit/"]){aspect-ratio:2/3!important;}
 /* v1016: preserve Den Den Mushi art proportions in the fitting room. */
 html body :is(.wk-bkx-big,.wk-bkx-mini):has(img.wk-fullback-art[src*="/full/denden/"]){aspect-ratio:2/3!important;}
+/* v1017: preserve Going Merry art proportions in the fitting room. */
+html body :is(.wk-bkx-big,.wk-bkx-mini):has(img.wk-fullback-art[src*="/full/merry/"]){aspect-ratio:2/3!important;}
 /* v1015: preserve Log Pose art proportions in the fitting room. */
 html body :is(.wk-bkx-big,.wk-bkx-mini):has(img.wk-fullback-art[src*="/full/logpose/"]){aspect-ratio:2/3!important;}
 /* v1014: preserve Haki art proportions in the fitting room. */
@@ -58370,6 +58409,18 @@ html body :is(.wk-pk-bk,.wk-dk-back):has(>img.wk-fullback-rarity)::before,
 html body .wk-pk.wk-pk.wk-pk.v-gold .wk-pk-bk:has(>img.wk-fullback-rarity)::before{content:none!important;display:none!important}
 html body :is(.wk-pk-bk,.wk-dk-back):has(>img.wk-fullback-rarity){background:#101019!important}
 html body .wk-bkx-rar button{white-space:normal!important}
+</style>
+<style id="wk-fullbacks-v1018">
+html body :is(.wk-bkx-big,.wk-bkx-mini):has(img.wk-fullback-rarity){aspect-ratio:2/3!important;}
+html body :is(.wk-pk-bk,.wk-dk-back):has(>img.wk-fullback-rarity){border:0!important;box-shadow:none!important;background:#101019!important;background-image:none!important;overflow:hidden!important;isolation:isolate;}
+html body :is(.wk-pk-bk,.wk-dk-back):has(>img.wk-fullback-rarity)::before,html body :is(.wk-pk-bk,.wk-dk-back):has(>img.wk-fullback-rarity)::after{content:none!important;display:none!important;animation:none!important;}
+html body :is(.wk-pk-bk,.wk-dk-back):has(>img.wk-fullback-rarity)>:is(.wk-bkfl,.wk-bksp,.wk-bkst){display:none!important;}
+html body :is(.wk-pk-bk,.wk-dk-back)>img.wk-fullback-rarity{object-fit:contain!important;background:#101019!important;border:0!important;}
+html body .wk-full-unlock-row{display:grid;grid-template-columns:minmax(130px,1fr) repeat(2,minmax(105px,1fr));gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid #ffffff18;}
+html body .wk-full-unlock-row label{display:grid;gap:4px;font-size:12px;}
+html body .wk-full-unlock-row input{width:100%;min-width:0;box-sizing:border-box;padding:7px;background:#101725;color:inherit;border:1px solid #46516a;border-radius:6px;}
+html body .wk-full-unlock-form>button{margin-top:12px;}html body .wk-full-unlock-status{display:block;margin-top:6px;}
+@media(max-width:520px){html body .wk-full-unlock-row{grid-template-columns:1fr 1fr;}html body .wk-full-unlock-row>b{grid-column:1/-1;}}
 </style>
 </body></html>
 
