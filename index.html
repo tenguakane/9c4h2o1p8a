@@ -1,6 +1,6 @@
-<!-- One Piece Wiki update v1030: negative rarity emblem palette fix -->
+<!-- One Piece Wiki update v1032: stronger readable album full-art back text with soft blur panels -->
 <!doctype html>
-<!--wk-ver:27.11.2026 · 1030-->
+<!--wk-ver:27.11.2026 · 1032-->
 <script id="wk-v616-pre">try{var K='wkExtrasKeepV616',old={},ca=[],ma={},cc=null,cca=[],cma={};try{old=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}try{ca=JSON.parse(localStorage.getItem('onePieceWikiCustomAchievementsV1')||'[]')}catch(e){}try{ma=JSON.parse(localStorage.getItem('onePieceWikiMedalArtV1')||'{}')}catch(e){}try{cc=JSON.parse(localStorage.getItem('wkCloudContentV1')||'null');if(cc&&cc.data){cca=Array.isArray(cc.data.customAchievements)?cc.data.customAchievements:[];cma=cc.data.medalArt&&typeof cc.data.medalArt==='object'?cc.data.medalArt:{}}}catch(e){}cc=null;var oc=Array.isArray(old.ca)?old.ca:[],om=old.ma&&typeof old.ma==='object'?old.ma:{},ids={},cids={};oc.forEach(function(a){if(a&&a.id!=null)ids[a.id]=1});cca.forEach(function(a){if(a&&a.id!=null)cids[a.id]=1});(Array.isArray(ca)?ca:[]).forEach(function(a){if(a&&a.id!=null&&!ids[a.id]&&!cids[a.id]){oc.push(a);ids[a.id]=1}});if(ma&&typeof ma==='object')Object.keys(ma).forEach(function(k){if(!(k in om)&&!(k in cma)&&ma[k]!=null&&ma[k]!=='')om[k]=ma[k]});if(oc.length||Object.keys(om).length)localStorage.setItem(K,JSON.stringify({ca:oc,ma:om}));else localStorage.removeItem(K)}catch(e){}</script>
 <html data-wiki-portable-baked="true" data-wiki-portable-id="2026-11-11T03:23:00.970Z" lang="ru" style="--reward-rank-first: #ffda75; --reward-rank-second: #d9d9d9; --reward-rank-third: #ffd285; --reward-rank-other: #4f4860; --wiki-progress-manga: #efc66b; --wiki-progress-anime: #60d9ff; --wk-title-font: 'Days One'; --wk-title-fw: 400; --wk-wp-tpl: url(&quot;./assets/webp/ui/wanted_template.webp&quot;); --wk-fg-manga: #0b0f17; --wk-fg-anime: #0b0f17; --wk-accent: #a78bfa; --wk-accent-soft: #d3c5fd; --fruit-type-param-color: #bb9eff !important; --fruit-type-param-rgb: 187, 158, 255 !important; --fruit-type-logia-color: #f967ae !important; --fruit-type-logia-rgb: 249, 103, 174 !important; --fruit-type-zoan-color: #65f6b7 !important; --fruit-type-zoan-rgb: 101, 246, 183 !important; --wk-tz-card: 1.15;" class="wk-sc-off wk-hz-c wk-hz-f wk-hz-u wk-hz-v wk-hz-h wk-calm wk-tfx-off wk-tfx-still wk-gpu wk-hdr-min" data-wk-role="admin" data-wk-title-font="g:Days One|"><head>
 <script id="wk-v596-early">try{var q=new URLSearchParams(location.search);if(q.get("tab")==="favorites"&&/^[a-z]+$/.test(q.get("cab")||"")){var cb=q.get("cab");localStorage.setItem("onePieceWikiCabinSubtabV3",cb==="overview"?"favorites":cb);localStorage.setItem("onePieceWikiCabinExtraTabV1",/^(watchgrid|timeline|deck|tops|stats|edits|quiz|atlas|help)$/.test(cb)?cb:"");}}catch(e){}</script>
@@ -58400,7 +58400,7 @@ html body :is(.wk-bkx-big,.wk-bkx-mini):has(img.wk-fullback-art[src*="/full/bolt
 html body :is(.wk-pk-bk,.wk-dk-back):has(> .wk-fullback-art){background:#101019!important;border-color:var(--c,#d5b36b)!important;overflow:hidden!important;isolation:isolate;}
 html body :is(.wk-pk-bk,.wk-dk-back):has(> .wk-fullback-art)::before{content:none!important;display:none!important}
 html body :is(.wk-pk-bk,.wk-dk-back)>img.wk-fullback-art{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:contain!important;object-position:center!important;display:block!important;border:0!important;border-radius:inherit!important;margin:0!important;padding:0!important;filter:none!important;opacity:1!important;z-index:1!important;pointer-events:none!important}
-html body .wk-dk-back:has(> .wk-fullback-art) .wk-al-bi{z-index:6!important;background:linear-gradient(transparent,#080c16dc 26%,#080c16ef)!important;padding:6px 3px!important}
+html body .wk-dk-back:has(> .wk-fullback-art) .wk-al-bi{z-index:6!important;background:none!important;padding:6px 3px!important}
 html body .wk-bkx-tabs{flex-wrap:wrap!important}
 @media(max-width:760px){html body .wk-bkx{min-width:0!important;max-width:100%!important;width:100%!important;grid-template-columns:minmax(0,1fr)!important;box-sizing:border-box!important}html body .wk-bkx-stage,html body .wk-bkx-pick,html body .wk-bkx-grid{min-width:0!important;max-width:100%!important;box-sizing:border-box!important}html body .wk-bkx-tabs{width:100%!important;min-width:0!important}html body .wk-bkx-tabs button{max-width:100%!important;white-space:normal!important}}
 </style>
@@ -58439,6 +58439,73 @@ html body :is(.wk-pk.v-neg,.wk-al-fb.v-neg) :is(.wk-pk-bk,.wk-dk-back) > .wk-bkm
 /* Legacy SVG signs inherit currentColor; do not use the legendary gold. */
 html body :is(.wk-pk.v-neg,.wk-al-fb.v-neg) :is(.wk-pk-bk,.wk-dk-back) > svg.wk-bkm {
   color:#3a56a6!important;
+}
+</style>
+<style id="wk-album-fullback-text-v1031">
+/* Only album cards with painted full backs: no central rectangular overlay. */
+html body .wk-al-fb .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi {
+  background:none!important;box-shadow:none!important;isolation:isolate;
+}
+html body .wk-al-fb .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi::before {
+  content:"";position:absolute;inset:-9% -22% -6%;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse 49% 17% at 50% 12%,rgba(4,8,18,.84),rgba(4,8,18,.46) 50%,transparent 100%),radial-gradient(ellipse 49% 24% at 50% 83%,rgba(4,8,18,.87),rgba(4,8,18,.48) 52%,transparent 100%);
+}
+html body .wk-al-fb .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi > :is(b,span,em) {
+  text-shadow:0 1px 2px #050811,0 0 4px #050811,0 0 8px rgba(5,8,17,.95)!important;
+  overflow-wrap:anywhere;font-weight:600;
+  -webkit-text-stroke:.25px rgba(5,8,17,.85);paint-order:stroke fill;
+}
+html body .wk-al-fb .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi > b{color:#fff!important;font-weight:700;}
+html body .wk-al-fb .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi > span{color:#f0f3fa!important;}
+html body .wk-al-fb.r-common .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi > em{color:#e2e8f0!important;}
+html body .wk-al-fb.r-rare .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi > em{color:#9bd0ff!important;}
+html body .wk-al-fb.r-epic .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi > em{color:#deb7ff!important;}
+html body .wk-al-fb.v-neg .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi > em{color:#b4d5ff!important;}
+html body .wk-al-fb.v-holo .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi > em{-webkit-text-stroke:0;text-shadow:none!important;filter:drop-shadow(0 1px 2px #050811) drop-shadow(0 0 3px #050811);}
+html body .wk-al-fb .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi .wk-al-pp{color:inherit;text-shadow:0 1px 2px #050811,0 0 4px #050811;}
+html body .wk-al-fb.v-holo .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi .wk-al-pp{color:#e6dcff!important;-webkit-text-fill-color:#e6dcff!important;}
+</style>
+
+<style id="wk-album-fullback-text-v1032">
+/* Stronger readability for album full-art backs: soft blur panels behind text, no central black rectangle. */
+html body .wk-al-fb .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi{
+  isolation:isolate!important;
+}
+html body .wk-al-fb .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi::before,
+html body .wk-al-fb .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi::after{
+  content:"";position:absolute;left:-13%;right:-13%;pointer-events:none;z-index:-1;
+  border-radius:22px;border:1px solid rgba(255,255,255,.06);
+  box-shadow:0 10px 24px rgba(4,8,18,.22), inset 0 1px 0 rgba(255,255,255,.05);
+  -webkit-backdrop-filter:blur(7px) saturate(.92);
+  backdrop-filter:blur(7px) saturate(.92);
+}
+html body .wk-al-fb .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi::before{
+  top:-2%;height:28%;
+  background:linear-gradient(180deg,rgba(5,9,20,.72) 0%,rgba(5,9,20,.46) 60%,rgba(5,9,20,.12) 100%);
+}
+html body .wk-al-fb .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi::after{
+  bottom:-2%;height:34%;
+  background:linear-gradient(180deg,rgba(5,9,20,.12) 0%,rgba(5,9,20,.44) 34%,rgba(5,9,20,.78) 100%);
+}
+html body .wk-al-fb .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi > :is(b,span,em),
+html body .wk-al-fb .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi .wk-al-pp{
+  position:relative;z-index:1;
+  text-shadow:0 2px 3px rgba(3,6,14,.96),0 0 8px rgba(3,6,14,.98),0 0 16px rgba(3,6,14,.78)!important;
+  -webkit-text-stroke:.35px rgba(3,6,14,.92);paint-order:stroke fill;
+}
+html body .wk-al-fb .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi > b{
+  letter-spacing:.01em;
+}
+html body .wk-al-fb .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi > span{
+  color:#f6f8fd!important;
+}
+html body .wk-al-fb .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi > em,
+html body .wk-al-fb .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi .wk-al-pp{
+  font-weight:700!important;
+}
+html body .wk-al-fb.v-holo .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi > em,
+html body .wk-al-fb.v-holo .wk-dk-back:has(>img.wk-fullback-art) .wk-al-bi .wk-al-pp{
+  filter:drop-shadow(0 2px 3px rgba(3,6,14,.96)) drop-shadow(0 0 8px rgba(3,6,14,.98));
 }
 </style>
 </body></html>
