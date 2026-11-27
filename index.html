@@ -1,5 +1,6 @@
+<!-- One Piece Wiki update v1016: aligned Den Den Mushi artistic card backs; earlier updates retained -->
 <!doctype html>
-<!--wk-ver:27.11.2026 · 997-->
+<!--wk-ver:27.11.2026 · 1016-->
 <script id="wk-v616-pre">try{var K='wkExtrasKeepV616',old={},ca=[],ma={},cc=null,cca=[],cma={};try{old=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}try{ca=JSON.parse(localStorage.getItem('onePieceWikiCustomAchievementsV1')||'[]')}catch(e){}try{ma=JSON.parse(localStorage.getItem('onePieceWikiMedalArtV1')||'{}')}catch(e){}try{cc=JSON.parse(localStorage.getItem('wkCloudContentV1')||'null');if(cc&&cc.data){cca=Array.isArray(cc.data.customAchievements)?cc.data.customAchievements:[];cma=cc.data.medalArt&&typeof cc.data.medalArt==='object'?cc.data.medalArt:{}}}catch(e){}cc=null;var oc=Array.isArray(old.ca)?old.ca:[],om=old.ma&&typeof old.ma==='object'?old.ma:{},ids={},cids={};oc.forEach(function(a){if(a&&a.id!=null)ids[a.id]=1});cca.forEach(function(a){if(a&&a.id!=null)cids[a.id]=1});(Array.isArray(ca)?ca:[]).forEach(function(a){if(a&&a.id!=null&&!ids[a.id]&&!cids[a.id]){oc.push(a);ids[a.id]=1}});if(ma&&typeof ma==='object')Object.keys(ma).forEach(function(k){if(!(k in om)&&!(k in cma)&&ma[k]!=null&&ma[k]!=='')om[k]=ma[k]});if(oc.length||Object.keys(om).length)localStorage.setItem(K,JSON.stringify({ca:oc,ma:om}));else localStorage.removeItem(K)}catch(e){}</script>
 <html data-wiki-portable-baked="true" data-wiki-portable-id="2026-11-11T03:23:00.970Z" lang="ru" style="--reward-rank-first: #ffda75; --reward-rank-second: #d9d9d9; --reward-rank-third: #ffd285; --reward-rank-other: #4f4860; --wiki-progress-manga: #efc66b; --wiki-progress-anime: #60d9ff; --wk-title-font: 'Days One'; --wk-title-fw: 400; --wk-wp-tpl: url(&quot;./assets/webp/ui/wanted_template.webp&quot;); --wk-fg-manga: #0b0f17; --wk-fg-anime: #0b0f17; --wk-accent: #a78bfa; --wk-accent-soft: #d3c5fd; --fruit-type-param-color: #bb9eff !important; --fruit-type-param-rgb: 187, 158, 255 !important; --fruit-type-logia-color: #f967ae !important; --fruit-type-logia-rgb: 249, 103, 174 !important; --fruit-type-zoan-color: #65f6b7 !important; --fruit-type-zoan-rgb: 101, 246, 183 !important; --wk-tz-card: 1.15;" class="wk-sc-off wk-hz-c wk-hz-f wk-hz-u wk-hz-v wk-hz-h wk-calm wk-tfx-off wk-tfx-still wk-gpu wk-hdr-min" data-wk-role="admin" data-wk-title-font="g:Days One|"><head>
 <script id="wk-v596-early">try{var q=new URLSearchParams(location.search);if(q.get("tab")==="favorites"&&/^[a-z]+$/.test(q.get("cab")||"")){var cb=q.get("cab");localStorage.setItem("onePieceWikiCabinSubtabV3",cb==="overview"?"favorites":cb);localStorage.setItem("onePieceWikiCabinExtraTabV1",/^(watchgrid|timeline|deck|tops|stats|edits|quiz|atlas|help)$/.test(cb)?cb:"");}}catch(e){}</script>
@@ -3660,7 +3661,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "27.11.2026 · 997";
+const WIKI_VERSION = "27.11.2026 · 1016";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -38289,6 +38290,20 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     try { var body = document.getElementById('wkTxBody'); if (body && DK.tab === 'shop' && !DK.pack) body.innerHTML = shopHTML(allCards(), load()); } catch (e) {}
   }
   window.addEventListener('wiki:cloud-ready', function () { setTimeout(function () { try { refundGoneBgt(); } catch (e) {} }, 800); });
+  /* v1009: refund the retired Drum back through the normal versioned deck save. */
+  function refundGoneDrum() {
+    if (!CLOUD.ready || CLOUD.busy || CLOUD.lock || window.__wkStale || DK.fillAll) return;
+    var st = load(); if (!st || st.__fake) return;
+    var paid = !!(st.cos && st.cos.k_fulldrum), selected = st.back === 'fulldrum';
+    if (!paid && !selected) return;
+    if (paid) { delete st.cos.k_fulldrum; st.belli = (Number(st.belli) || 0) + 60000; try { income(st, 'refund', 60000); } catch (e) {} }
+    if (selected) st.back = '';
+    if (DK.bkx && DK.bkx.back === 'fulldrum') DK.bkx.back = null;
+    save(st);
+    if (paid) try { txToast('Рубашка «Память о Драме» снята с продажи. Возвращено ' + fmtB(60000)); } catch (e) {}
+  }
+  window.addEventListener('wk-deck-changed', function () { setTimeout(function () { try { refundGoneDrum(); } catch (e) {} }, 250); });
+
   /* Крупный просмотр фона рубашки: окно рубашки получает выбранный фон */
   (function () { function tag(e) { var w = e.target && e.target.closest && e.target.closest('.wk-sh-bgtpv[data-bgt]'); if (!w) return; if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return; setTimeout(function () { var z = document.getElementById('wkDkZoom'); if (z) { z.setAttribute('data-bgt', w.getAttribute('data-bgt')); var h = z.querySelector('.wk-dk-zoomhint'); var nm = (BGT.filter(function (q) { return q.id === w.getAttribute('data-bgt'); })[0] || {}).n; if (h && nm) h.textContent = 'Фон рубашки «' + nm + '». ' + h.textContent.replace(/^Рубашка: [^.]*\. /, ''); } }, 0); } document.addEventListener('click', tag); document.addEventListener('keydown', tag); })();
   function deckParse() { try { return JSON.parse(deckRaw()) || {}; } catch (e) { return {}; } }
@@ -38987,7 +39002,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       if (n) {
         var fl = !!DK.alBack[k.key], rn = k.v ? VAR[k.v].n : RN4[k.r], arcN = k.kind === 'wanted' ? k.sub : (k.arc && k.arc.name) || '';
         return '<div class="wk-al-s has' + (fl ? ' flipped' : '') + '">' + no + '<div class="wk-al-fi"><div class="wk-al-ff"><div class="wk-dk-slot has r-' + k.r + (k.v ? ' v-' + k.v : '') + '">' + cardHTML(k) + (n > 1 ? '<em class="wk-dk-x">×' + n + '</em>' : '') + '</div></div>' +
-          '<div class="wk-al-fb r-' + k.r + (k.v ? ' v-' + k.v : '') + '" data-bkr="' + k.r + '" data-bkv="' + (k.v || '') + '" data-bkc="' + esc(k.kind === 'char' ? k.c.id : k.kind + ':' + k.c.id) + '" title="Открыть рубашку крупно"><div class="wk-dk-back">' + backInner(k.r, '', true) + '<div class="wk-al-bi"><b>' + esc(cName(k)) + '</b><span>' + esc(srcOf(k)) + '</span>' + (arcN ? '<span>' + esc(arcN) + '</span>' : '') + '<em>' + esc(rn) + (n > 1 ? ' · ×' + n : '') + pipBlk(k.r) + '</em>' + alIcons(k) + '</div></div></div></div>' +
+          '<div class="wk-al-fb r-' + k.r + (k.v ? ' v-' + k.v : '') + '" data-bkr="' + k.r + '" data-bkv="' + (k.v || '') + '" data-bkc="' + esc(k.kind === 'char' ? k.c.id : k.kind + ':' + k.c.id) + '" title="Открыть рубашку крупно"><div class="wk-dk-back">' + backInner(k.r, fullBackHasRarities(backChoice()) ? (k.v || '') : '', true) + '<div class="wk-al-bi"><b>' + esc(cName(k)) + '</b><span>' + esc(srcOf(k)) + '</span>' + (arcN ? '<span>' + esc(arcN) + '</span>' : '') + '<em>' + esc(rn) + (n > 1 ? ' · ×' + n : '') + pipBlk(k.r) + '</em>' + alIcons(k) + '</div></div></div></div>' +
           '<button type="button" class="wk-al-flip" data-alflip="' + esc(k.key) + '" aria-pressed="' + fl + '" title="Перевернуть карточку" aria-label="Перевернуть карточку">⟲</button></div>';
       }
       var wOn = !isC && !k.v && !st.__fake ? alWantBtn(k, st) : '';
@@ -39395,8 +39410,19 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   cbCss();
   var BKE = {"skull": "<svg viewBox=\"0 0 100 100\" class=\"wk-bkm\" aria-hidden=\"true\"><path d=\"M24 70 76 94M76 70 24 94\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"6\" stroke-linecap=\"round\"/><circle cx=\"21\" cy=\"68\" r=\"5\" fill=\"currentColor\"/><circle cx=\"79\" cy=\"68\" r=\"5\" fill=\"currentColor\"/><circle cx=\"21\" cy=\"96\" r=\"0.01\" fill=\"currentColor\"/><path d=\"M50 8c-19 0-31 11-31 28 0 10 5 17 11 20v14h40v-14c6-3 11-10 11-20 0-17-12-28-31-28z\" fill=\"currentColor\"/><path d=\"M19 27c12-9 50-9 62 0l-2 11c-11-7-47-7-58 0z\" fill=\"#0b1020\"/><path d=\"M26 30l3 5M38 28l3 5M50 27l3 5M62 28l3 5M74 30l3 5\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><path d=\"M81 30l14-4-4 9 7 6-14 1z\" fill=\"#0b1020\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linejoin=\"round\"/><path d=\"M28 43l16 4-1 9-14-3zM72 43l-16 4 1 9 14-3z\" fill=\"#0b1020\"/><path d=\"M50 52l-3 7h6z\" fill=\"#0b1020\"/><path d=\"M28 58q22 13 44 0\" fill=\"none\" stroke=\"#0b1020\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M37 62v6M44 64v6M50 65v6M56 64v6M63 62v6\" stroke=\"#0b1020\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><path d=\"M13 20l-4-8M88 16l5-7M8 40l-6-1\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\"/></svg>", "fruit": "<svg viewBox=\"0 0 100 100\" class=\"wk-bkm\" aria-hidden=\"true\"><path d=\"M50 25c-7-6-26-5-31 11-5 15 3 38 17 44 7 3 11 1 14 0 3 1 7 3 14 0 14-6 22-29 17-44-5-16-24-17-31-11z\" fill=\"currentColor\"/><path d=\"M50 26c0-9 4-15 11-18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"4.5\" stroke-linecap=\"round\"/><path d=\"M52 14c8-6 20-4 22 2-8 5-18 4-22-2z\" fill=\"currentColor\"/><path d=\"M34 60c-5-8 3-16 11-13 8 3 7 13-1 14-6 1-9-5-4-8\" fill=\"none\" stroke=\"#0b1020\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><path d=\"M66 60c5-8-3-16-11-13-8 3-7 13 1 14 6 1 9-5 4-8\" fill=\"none\" stroke=\"#0b1020\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><path d=\"M42 74c4 4 12 4 16 0\" fill=\"none\" stroke=\"#0b1020\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><path d=\"M22 14l3 6M10 30l6 2M86 38l7-2\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\"/></svg>", "bolt": "<svg viewBox=\"0 0 100 100\" class=\"wk-bkm\" aria-hidden=\"true\"><path d=\"M61 4 31 52h17l-9 44 33-55H54z\" fill=\"currentColor\"/><path d=\"M26 18 14 38h8l-4 20 14-22h-7z\" fill=\"currentColor\" opacity=\".8\"/><path d=\"M82 52 72 68h7l-3 16 12-18h-7z\" fill=\"currentColor\" opacity=\".8\"/><path d=\"M50 52 44 64\" stroke=\"#0b1020\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><path d=\"M12 12l5 5M90 20l-6 4M8 78l7-3M88 88l-5-5\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><ellipse cx=\"50\" cy=\"50\" rx=\"44\" ry=\"44\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-dasharray=\"3 5\" opacity=\".8\"/></svg>", "blades": "<svg viewBox=\"0 0 100 100\" class=\"wk-bkm\" aria-hidden=\"true\"><path d=\"M16 14 74 72M84 14 26 72\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"5\" stroke-linecap=\"round\"/><ellipse cx=\"77\" cy=\"75\" rx=\"9\" ry=\"3.6\" transform=\"rotate(45 77 75)\" fill=\"currentColor\" stroke=\"#0b1020\" stroke-width=\"1.6\"/><ellipse cx=\"23\" cy=\"75\" rx=\"9\" ry=\"3.6\" transform=\"rotate(-45 23 75)\" fill=\"currentColor\" stroke=\"#0b1020\" stroke-width=\"1.6\"/><path d=\"M81 79 92 90M19 79 8 90\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"7\" stroke-linecap=\"round\"/><path transform=\"translate(0 -16)\" d=\"M50 26l3.4 7.6 7.6 3.4-7.6 3.4L50 48l-3.4-7.6L39 37l7.6-3.4z\" fill=\"currentColor\"/><path d=\"M8 44l7 1M92 44l-7 1M50 4v9\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\"/></svg>"};
   var BK_HD = BK_H.slice(BK_H.indexOf('<defs>'), BK_H.indexOf('</defs>') + 7);
+  function fullBackId(id) { return /^full(compass|skull|fruit|bolt|blades|denden|sunny|logpose|zunesha|ace|drumsnow)$/.test(String(id || '')); }
+  /* v1012: purchased artistic themes with seven independent illustrated backs. */
+  function fullBackHasRarities(id) { return id === 'fullcompass' || id === 'fullskull' || id === 'fullfruit' || id === 'fullbolt' || id === 'fulldenden' || id === 'fullsunny' || id === 'fulllogpose' || id === 'fullzunesha' || id === 'fullace' || id === 'fulldrumsnow'; }
+  function fullBackArt(id, r, v) {
+    var path = 'assets/webp/cardbacks/full/';
+    if (!fullBackHasRarities(id)) return path + id.slice(4) + '.webp';
+    var key = /^(gold|holo|neg)$/.test(v || '') ? v : /^(common|rare|epic|legendary)$/.test(r || '') ? r : 'common';
+    return path + id.slice(4) + '/' + key + '.webp' + (id === 'fulldenden' ? '?v=1016' : id === 'fulllogpose' ? '?v=1015' : id === 'fullbolt' ? '?v=1014' : id === 'fullfruit' ? '?v=1013' : id === 'fullskull' ? '?v=1012' : id === 'fullzunesha' ? '?v=1011' : '');
+  }
+  function backChoice(emb) { var id = emb; if (id == null) { try { id = (DK.inF && FX.st && FX.st.__friend) ? (FX.st.back || '') : (load().back || ''); } catch(e) { id = ''; } } return id === 'fulldrum' ? '' : id; }
   function emblem(v, emb) {
-    var id = emb != null ? emb : ''; if (emb == null) { try { id = (DK.inF && FX.st && FX.st.__friend) ? (FX.st.back || '') : (load().back || ''); } catch (e) { id = ''; } }
+    var id = backChoice(emb);
+    if (fullBackId(id)) id = 'art' + id.slice(4);
     if (id === 'none') return '';
     if (CB.some(function (q) { return q.id === id && bkOk(q); })) return '<div class="wk-bkm wk-bkimg" aria-hidden="true"><i class="wk-bki-' + id + '"></i></div>';
     if (/^art(compass|skull|fruit|bolt|blades)$/.test(id)) return '<div class="wk-bkm wk-bkc wk-bkwebp" aria-hidden="true" data-bk-art="' + id.slice(3) + '"></div>';
@@ -39415,6 +39441,8 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     for (i = 0; i < n; i++) { var px = 50 + (i - (n - 1) / 2) * 14; pp += '<path d="M' + px.toFixed(1) + ' 3 L' + (px + 5.6).toFixed(1) + ' 10 L' + px.toFixed(1) + ' 17 L' + (px - 5.6).toFixed(1) + ' 10Z" fill="' + pf + '" stroke="' + (neg ? '#12214a' : '#05070f') + '" stroke-width="1" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>'; }
     if (v === 'gold') { ex += '<div class="wk-bkfl"><i></i><i></i><i></i><i></i><i></i></div>'; [[22, 0], [40, .6], [58, 1.4], [78, 2]].forEach(function (x) { ex += '<i class="wk-bksp" style="left:' + x[0] + '%;bottom:8px;animation-delay:' + x[1] + 's"></i>'; }); }
     if (v === 'neg') BK_SP.forEach(function (x) { ex += '<i class="wk-bkst" style="left:' + x[0] + '%;top:' + x[1] + '%;animation-delay:' + x[2] + 's">✦</i>'; });
+    var full = backChoice(emb);
+    if (fullBackId(full)) return '<img class="wk-fullback-art' + (fullBackHasRarities(full) ? ' wk-fullback-rarity' : '') + '" src="' + fullBackArt(full, r, v) + '" alt="" draggable="false" decoding="async">' + (fullBackHasRarities(full) && noPips ? '' : ex);
     return '<div class="wk-bkt"></div><div class="wk-bkf' + (noPips ? ' nf' : '') + '"></div><i class="wk-bk-edge" aria-hidden="true"></i>' + ex + emblem(v, emb) + '';
   }
   function pct(x) { return Math.round(x * 100); }
@@ -40597,7 +40625,8 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   }
 
   /* ===== Примерочная рубашки: один предпросмотр, выбор знака, орнамента и фона, покупка выбранного ===== */
-  var BKX_R = { common: 'Обычная', rare: 'Редкая', epic: 'Эпик', legendary: 'Легенда' };
+  var BKX_R = { common: 'Обычная', rare: 'Редкая', epic: 'Эпическая', legendary: 'Легендарная', gold: 'Пламенная', holo: 'Голографическая', neg: 'Негативная' };
+  function bkxRarity(r) { return /^(gold|holo|neg)$/.test(r) ? {r:'legendary',v:r} : {r:r,v:''}; }
   function bkxLists(st) {
     var cos = st.cos || {};
     var backs = [{ id: '', n: 'Компас', price: 0, d: 'Стандартный знак' }, { id: 'none', n: 'Без знака', price: 0, d: 'Без значка в центре, только орнамент и фон' }].concat(allBacks().filter(function (q) { return (!/^(skull|fruit|bolt|blades)$/.test(q.id) || cos['k_' + q.id]) && (!q.cu || bkOk(q)); }).sort(function (x, y) { return (x.price || 0) - (y.price || 0); }));
@@ -40611,22 +40640,24 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   }
   var BKX_P = { back: 'k_', orn: 'o_', bgt: 't_' };
   function bkxOwn(st, kind, id) { return bkxFree(kind, id) || !!(st.cos || {})[BKX_P[kind] + id]; }
-  function bkxCur(st, kind) { if (kind === 'back') return st.back || ''; if (kind === 'orn') return ornKey(st); var id = st.bgt || 'clouds'; return BGT.some(function(q){return q.id === id;}) ? id : 'clouds'; }
+  function bkxCur(st, kind) { if (kind === 'back') return st.back === 'fulldrum' ? '' : (st.back || ''); if (kind === 'orn') return ornKey(st); var id = st.bgt || 'clouds'; return BGT.some(function(q){return q.id === id;}) ? id : 'clouds'; }
   function bkxSel(st) {
     var X = DK.bkx = DK.bkx || { r: 'legendary', tab: 'back' };
-    var o = {}; ['back', 'orn', 'bgt'].forEach(function (k) { o[k] = X[k] != null ? X[k] : bkxCur(st, k); }); return o;
+    var o = {}; ['back', 'orn', 'bgt'].forEach(function (k) { o[k] = X[k] != null ? X[k] : bkxCur(st, k); if (k === 'back' && o[k] === 'fulldrum') o[k] = ''; }); return o;
   }
   function bkxOrnAttr(id) { return id === 'cl' || id === 'classic' ? 'classic' : id; }
   function bkxCard(r, sel, cls) {
-    return '<div class="' + cls + '" data-wk-orn-preview="' + esc(bkxOrnAttr(sel.orn)) + '" data-bgt="' + esc(sel.bgt) + '"><div class="wk-pk r-' + r + ' wk-dk-sbin"><div class="wk-pk-bk">' + backInner(r, '', false, sel.back) + '</div></div></div>';
+    var rv = bkxRarity(r);
+    return '<div class="' + cls + '" data-wk-orn-preview="' + esc(bkxOrnAttr(sel.orn)) + '" data-bgt="' + esc(sel.bgt) + '"><div class="wk-pk r-' + rv.r + (rv.v ? ' is-var v-' + rv.v : '') + ' wk-dk-sbin"><div class="wk-pk-bk">' + backInner(rv.r, rv.v, false, sel.back) + '</div></div></div>';
   }
   function bkxItem(L, kind, id) { return L[kind].filter(function (q) { return q.id === id; })[0] || null; }
   function bkxHTML(st, bel) {
+    if (st && (st.back === 'fulldrum' || (st.cos && st.cos.k_fulldrum))) setTimeout(function () { try { refundGoneDrum(); } catch (e) {} }, 0);
     if (st && st.cos && Object.keys(BGT_GONE).some(function (id) { return st.cos['t_' + id]; })) setTimeout(function () { try { refundGoneBgt(); } catch (e) {} }, 0);
     var X = DK.bkx = DK.bkx || { r: 'legendary', tab: 'back' }, sel = bkxSel(st), L = bkxLists(st), cos = st.cos || {};
     ['back', 'orn', 'bgt'].forEach(function (k) { if (!bkxItem(L, k, sel[k])) { sel[k] = bkxCur(st, k); X[k] = null; } });
-    var NM = { back: 'Знак', orn: 'Орнамент', bgt: 'Фон' }, sum = 0, buy = [], change = false;
-    var rows = ['back', 'orn', 'bgt'].map(function (k) {
+    var isFull = fullBackId(sel.back), NM = { back: isFull ? 'Рубашка' : 'Знак', orn: 'Орнамент', bgt: 'Фон' }, sum = 0, buy = [], change = false;
+    var rows = (isFull ? ['back'] : ['back', 'orn', 'bgt']).map(function (k) {
       var it = bkxItem(L, k, sel[k]) || { n: '—', price: 0 }, own = bkxOwn(st, k, sel[k]), on = bkxCur(st, k) === sel[k];
       if (!own) { sum += it.price || 0; buy.push(k); } if (!on) change = true;
       var code = BKX_P[k] + sel[k];
@@ -40640,19 +40671,19 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     else main = '<button type="button" class="wk-tx-btn" disabled>Сейчас надето</button>';
     var dirty = X.back != null || X.orn != null || X.bgt != null;
     var stage = '<div class="wk-bkx-stage">' + bkxCard(X.r, sel, 'wk-bkx-big') +
-      '<div class="wk-bkx-rar" role="group" aria-label="Редкость в предпросмотре">' + ['common', 'rare', 'epic', 'legendary'].map(function (r) { return '<button type="button" data-bkx-r="' + r + '" class="' + (X.r === r ? 'on' : '') + '" aria-pressed="' + (X.r === r) + '">' + BKX_R[r] + '</button>'; }).join('') + '</div>' +
+      '<div class="wk-bkx-rar" role="group" aria-label="Редкость в предпросмотре">' + ['common', 'rare', 'epic', 'legendary', 'gold', 'holo', 'neg'].map(function (r) { return '<button type="button" data-bkx-r="' + r + '" class="' + (X.r === r ? 'on' : '') + '" aria-pressed="' + (X.r === r) + '">' + BKX_R[r] + '</button>'; }).join('') + '</div>' +
       '<ul class="wk-bkx-sum">' + rows + '</ul><div class="wk-bkx-act">' + main + (dirty ? '<button type="button" class="wk-tx-btn" data-bkx-reset="1">Вернуть надетое</button>' : '') + '</div>' +
-      '<p class="wk-sh-hint">Нажми на карточку, чтобы рассмотреть крупнее. Цвет и свечение зависят от редкости карты.</p></div>';
-    var tab = X.tab || 'back', list = L[tab];
+      '<p class="wk-sh-hint">Нажми на карточку, чтобы рассмотреть крупнее. ' + (fullBackHasRarities(sel.back) ? 'Семь самостоятельных артов. Рубашка автоматически меняется по редкости и особой версии карты; покупка открывает всю линейку.' : isFull ? 'Цельная рубашка сохраняет собственные цвета и рамку. Редкость отмечена внешним кантом.' : 'Цвет и свечение зависят от редкости карты.') + '</p></div>';
+    var tab = X.tab || 'back', kind = tab === 'full' ? 'back' : tab, list = L[kind].filter(function(q){ return tab === 'full' ? fullBackId(q.id) : tab === 'back' ? !fullBackId(q.id) : true; });
     var tiles = list.map(function (q) {
-      var s2 = { back: sel.back, orn: sel.orn, bgt: sel.bgt }; s2[tab] = q.id;
-      var own = bkxOwn(st, tab, q.id), on = bkxCur(st, tab) === q.id, pk = sel[tab] === q.id;
-      var lab = on ? '<em class="wk-bkx-st on">Надето</em>' : own ? '<em class="wk-bkx-st">' + (bkxFree(tab, q.id) ? 'Бесплатно' : 'Есть') + '</em>' : '<em class="wk-bkx-st buy">' + fmtB(q.price || 0) + '</em>';
+      var s2 = { back: sel.back, orn: sel.orn, bgt: sel.bgt }; if ((kind === 'orn' || kind === 'bgt') && fullBackId(s2.back)) s2.back = ''; s2[kind] = q.id;
+      var own = bkxOwn(st, kind, q.id), on = bkxCur(st, kind) === q.id, pk = sel[kind] === q.id;
+      var lab = on ? '<em class="wk-bkx-st on">Надето</em>' : own ? '<em class="wk-bkx-st">' + (bkxFree(kind, q.id) ? 'Бесплатно' : 'Есть') + '</em>' : '<em class="wk-bkx-st buy">' + fmtB(q.price || 0) + '</em>';
       return '<button type="button" class="wk-bkx-tile' + (pk ? ' pk' : '') + '" data-bkx-pick="' + esc(q.id) + '" aria-pressed="' + pk + '" title="' + esc(q.d || q.n) + '">' + bkxCard(X.r, s2, 'wk-bkx-mini') + '<span class="wk-bkx-tn">' + esc(q.n) + '</span>' + lab + '</button>';
     }).join('');
-    var cnt = function (k) { return L[k].filter(function (q) { return bkxOwn(st, k, q.id); }).length + '/' + L[k].length; };
-    var pick = '<div class="wk-bkx-pick"><div class="wk-bkx-tabs" role="tablist">' + ['back', 'orn', 'bgt'].map(function (k) { return '<button type="button" role="tab" data-bkx-tab="' + k + '" class="' + (tab === k ? 'on' : '') + '" aria-selected="' + (tab === k) + '">' + { back: 'Знаки', orn: 'Орнаменты', bgt: 'Фоны' }[k] + ' <small>' + cnt(k) + '</small></button>'; }).join('') + '</div><div class="wk-bkx-grid">' + tiles + '</div></div>';
-    var adminForm = tab === 'back' ? bkAdminHTML() : tab === 'orn' ? ornAdminHTML() : bgtexAdminHTML();
+    var cnt = function (k) { var t = k === 'full' ? 'back' : k, list = L[t].filter(function(q){return k === 'full' ? fullBackId(q.id) : k === 'back' ? !fullBackId(q.id) : true;}); return list.filter(function(q){return bkxOwn(st,t,q.id);}).length + '/' + list.length; };
+    var pick = '<div class="wk-bkx-pick"><div class="wk-bkx-tabs" role="tablist">' + ['back', 'orn', 'bgt', 'full'].map(function (k) { return '<button type="button" role="tab" data-bkx-tab="' + k + '" class="' + (tab === k ? 'on' : '') + '" aria-selected="' + (tab === k) + '">' + { back: 'Знаки', orn: 'Орнаменты', bgt: 'Фоны', full: 'Цельные' }[k] + ' <small>' + cnt(k) + '</small></button>'; }).join('') + '</div><div class="wk-bkx-grid">' + tiles + '</div></div>';
+    var adminForm = tab === 'full' ? '' : tab === 'back' ? bkAdminHTML() : tab === 'orn' ? ornAdminHTML() : bgtexAdminHTML();
     return '<h3 class="wk-dk-h">Примерочная рубашки</h3><p class="wk-sh-hint">Собери рубашку: выбери знак, орнамент и фон. Карточка слева сразу показывает результат. Покупаешь только то, чего у тебя ещё нет.</p><section class="wk-bkx">' + stage + pick + (adminForm ? '<div class="wk-bkx-admin">' + adminForm + '</div>' : '') + '</section>';
   }
   function bkxRepaint() {
@@ -40666,11 +40697,11 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var t = e.target && e.target.closest && e.target.closest('[data-bkx-pick],[data-bkx-tab],[data-bkx-r],[data-bkx-reset],.wk-bkx-big'); if (!t || !t.closest('.wk-bkx')) return;
     var X = DK.bkx = DK.bkx || { r: 'legendary', tab: 'back' };
     if (t.classList.contains('wk-bkx-big')) {
-      var st0 = load(), sel = bkxSel(st0); backZoom(X.r, '', '', 0, sel.back);
+      var st0 = load(), sel = bkxSel(st0); var rv = bkxRarity(X.r); backZoom(rv.r, rv.v, '', 0, sel.back);
       var z = document.getElementById('wkDkZoom'); if (z) { z.setAttribute('data-bgt', sel.bgt); z.setAttribute('data-wk-orn-preview', bkxOrnAttr(sel.orn)); var hh = z.querySelector('.wk-dk-zoomhint'); if (hh) hh.textContent = 'Примерка рубашки. Тяни, чтобы наклонять. Нажми рядом, чтобы закрыть'; }
       return;
     }
-    if (t.hasAttribute('data-bkx-pick')) { var st1 = load(); X[X.tab || 'back'] = t.getAttribute('data-bkx-pick'); var tb = X.tab || 'back'; if (X[tb] === bkxCur(st1, tb)) X[tb] = null; }
+    if (t.hasAttribute('data-bkx-pick')) { var st1 = load(), tb = X.tab === 'full' ? 'back' : (X.tab || 'back'), id = t.getAttribute('data-bkx-pick'); if (fullBackId(id)) { X.orn = X.bgt = null; } else if (tb !== 'back' && fullBackId(bkxSel(st1).back)) { X.back = ''; } X[tb] = id; if (X[tb] === bkxCur(st1, tb)) X[tb] = null; }
     else if (t.hasAttribute('data-bkx-tab')) X.tab = t.getAttribute('data-bkx-tab');
     else if (t.hasAttribute('data-bkx-r')) X.r = t.getAttribute('data-bkx-r');
     else if (t.hasAttribute('data-bkx-reset')) { X.back = X.orn = X.bgt = null; }
@@ -40809,7 +40840,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     { id: 'bloodmoon', n: 'Алый гримуар', price: 45000, d: 'Винно-чёрная кожа, багровая луна и тонкие серебряные арабески.' },
     { id: 'abyssal', n: 'Бездонная библиотека', price: 46000, d: 'Темная бирюзовая глубина, патинированная бронза и светящиеся морские руны.' }
   ];
-  var BACKS = [{ id: 'skull', n: 'Весёлый Роджер', price: 30000 }, { id: 'fruit', n: 'Спиральный плод', price: 30000 }, { id: 'bolt', n: 'Молния воли', price: 30000 }, { id: 'blades', n: 'Скрещённые клинки', price: 30000 }, { id: 'artcompass', n: 'Резной компас', price: 0 }, { id: 'artskull', n: 'Рельефный Весёлый Роджер', price: 30000 }, { id: 'artfruit', n: 'Рельефный спиральный плод', price: 30000 }, { id: 'artbolt', n: 'Рельефная молния воли', price: 30000 }, { id: 'artblades', n: 'Рельефные скрещённые клинки', price: 30000 }];
+  var BACKS = [{ id: 'skull', n: 'Весёлый Роджер', price: 30000 }, { id: 'fruit', n: 'Спиральный плод', price: 30000 }, { id: 'bolt', n: 'Молния воли', price: 30000 }, { id: 'blades', n: 'Скрещённые клинки', price: 30000 }, { id: 'artcompass', n: 'Резной компас', price: 0 }, { id: 'artskull', n: 'Рельефный Весёлый Роджер', price: 30000 }, { id: 'artfruit', n: 'Рельефный спиральный плод', price: 30000 }, { id: 'artbolt', n: 'Рельефная молния воли', price: 30000 }, { id: 'artblades', n: 'Рельефные скрещённые клинки', price: 30000 }, { id: 'fullcompass', n: 'Компас Гранд-Лайна', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullskull', n: 'Флаг Мугивар', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullfruit', n: 'Дьявольский плод', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullbolt', n: 'Королевская воля', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullblades', n: 'Клинки морей', price: 60000, d: 'Цельная художественная рубашка. Собственная рамка и цвета.' }, { id: 'fulldenden', n: 'Ден Дэн Муши', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullsunny', n: 'Таузенд Санни', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fulllogpose', n: 'Лог Пос', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullzunesha', n: 'Зунеша', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fullace', n: 'Последнее обещание Эйса', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }, { id: 'fulldrumsnow', n: 'Снега Драма', price: 60000, d: 'Семь самостоятельных художественных рубашек по редкости карты. Одна покупка открывает все семь.' }];
 
   /* В магазине только авторские орнаменты администратора. Старые восемь не продаются;
      классическая рубашка остаётся стандартной, не товаром. */
@@ -51304,7 +51335,7 @@ if (a === 'bgtexdel') {
       delete st.pick; save(st); repaint(); txToast('Получена карточка: ' + esc(cName(kk)) + (isN ? ' (новая)' : ' (повтор)')); return;
     }
     if (a === 'bkxbuy' || a === 'bkxwear') {
-      var xs = bkxSel(st), xl = bkxLists(st), xsum = 0, xneed = [];
+      var xs = bkxSel(st), xl = bkxLists(st), xsum = 0, xneed = []; if (fullBackId(xs.back) && DK.bkx) { DK.bkx.orn = DK.bkx.bgt = null; }
       ['back', 'orn', 'bgt'].forEach(function (k) { if (!DK.bkx || DK.bkx[k] == null) return; var it = bkxItem(xl, k, xs[k]); if (!it) return; if (!bkxOwn(st, k, xs[k])) { xneed.push([k, it]); xsum += it.price || 0; } });
       if (a === 'bkxwear' && xneed.length) return;
       if (xsum > (st.belli || 0)) return;
@@ -58314,6 +58345,31 @@ html body :is(.wk-pk-bk,.wk-dk-back) .wk-bkm.wk-bkc.wk-bkwebp{
  -webkit-mask:var(--wk-bk-art) center/contain no-repeat!important;mask:var(--wk-bk-art) center/contain no-repeat!important;
 }
 html body .wk-wrp .wk-wrp-bk.wk-bkwebp{position:relative!important;display:block;background:var(--wk-bk-art) center/contain no-repeat;aspect-ratio:1;}
+</style>
+<style id="wk-fullbacks-v998">
+/* v1012: preserve 2:3 art in the Flag of the Straw Hats fitting room only. */
+html body :is(.wk-bkx-big,.wk-bkx-mini):has(img.wk-fullback-art[src*="/full/skull/"]){aspect-ratio:2/3!important;}
+/* v1013: preserve Devil Fruit art proportions in the fitting room only. */
+html body :is(.wk-bkx-big,.wk-bkx-mini):has(img.wk-fullback-art[src*="/full/fruit/"]){aspect-ratio:2/3!important;}
+/* v1016: preserve Den Den Mushi art proportions in the fitting room. */
+html body :is(.wk-bkx-big,.wk-bkx-mini):has(img.wk-fullback-art[src*="/full/denden/"]){aspect-ratio:2/3!important;}
+/* v1015: preserve Log Pose art proportions in the fitting room. */
+html body :is(.wk-bkx-big,.wk-bkx-mini):has(img.wk-fullback-art[src*="/full/logpose/"]){aspect-ratio:2/3!important;}
+/* v1014: preserve Haki art proportions in the fitting room. */
+html body :is(.wk-bkx-big,.wk-bkx-mini):has(img.wk-fullback-art[src*="/full/bolt/"]){aspect-ratio:2/3!important;}
+
+html body :is(.wk-pk-bk,.wk-dk-back):has(> .wk-fullback-art){background:#101019!important;border-color:var(--c,#d5b36b)!important;overflow:hidden!important;isolation:isolate;}
+html body :is(.wk-pk-bk,.wk-dk-back):has(> .wk-fullback-art)::before{content:none!important;display:none!important}
+html body :is(.wk-pk-bk,.wk-dk-back)>img.wk-fullback-art{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:contain!important;object-position:center!important;display:block!important;border:0!important;border-radius:inherit!important;margin:0!important;padding:0!important;filter:none!important;opacity:1!important;z-index:1!important;pointer-events:none!important}
+html body .wk-dk-back:has(> .wk-fullback-art) .wk-al-bi{z-index:6!important;background:linear-gradient(transparent,#080c16dc 26%,#080c16ef)!important;padding:6px 3px!important}
+html body .wk-bkx-tabs{flex-wrap:wrap!important}
+@media(max-width:760px){html body .wk-bkx{min-width:0!important;max-width:100%!important;width:100%!important;grid-template-columns:minmax(0,1fr)!important;box-sizing:border-box!important}html body .wk-bkx-stage,html body .wk-bkx-pick,html body .wk-bkx-grid{min-width:0!important;max-width:100%!important;box-sizing:border-box!important}html body .wk-bkx-tabs{width:100%!important;min-width:0!important}html body .wk-bkx-tabs button{max-width:100%!important;white-space:normal!important}}
+</style>
+<style id="wk-compass-rarities-v999">
+html body :is(.wk-pk-bk,.wk-dk-back):has(>img.wk-fullback-rarity)::before,
+html body .wk-pk.wk-pk.wk-pk.v-gold .wk-pk-bk:has(>img.wk-fullback-rarity)::before{content:none!important;display:none!important}
+html body :is(.wk-pk-bk,.wk-dk-back):has(>img.wk-fullback-rarity){background:#101019!important}
+html body .wk-bkx-rar button{white-space:normal!important}
 </style>
 </body></html>
 
