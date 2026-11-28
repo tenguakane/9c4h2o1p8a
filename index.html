@@ -1,3 +1,8 @@
+<!-- One Piece v1084: continuous independent snow, underwater particles and atmospheric drift -->
+<!-- One Piece v1083: account-scoped pending saves, conflict-safe ship appearance recovery -->
+<!-- One Piece v1082: unified saved appearance across shipyard, profile, voyage, guest and fleet views -->
+<!-- One Piece v1081: shipyard catalog, material swatches and precise mobile decoration controls -->
+<!-- One Piece v1080: authoritative ship assembly, shared color filters and safe decor fallback -->
 <!-- One Piece v1079: independent rain trajectories, continuous offscreen recycling -->
 <!-- One Piece v1078: registered ornament footpoints and shared vertical movement limits -->
 <!-- One Piece v1077: independent material dyes, source-registered windows and figure mounting -->
@@ -10,12 +15,19 @@
 <!-- One Piece v1067: large ship source-registered alpha material masks -->
 <!-- One Piece Wiki update v1064: synchronized personal fleet map colors -->
 <!doctype html>
-<!--wk-ver:28.11.2026 · 1079-->
+<!--wk-ver:28.11.2026 · 1100-->
 <!-- v1065: boat paint rebuilt from source contours -->
 <script id="wk-v616-pre">try{var K='wkExtrasKeepV616',old={},ca=[],ma={},cc=null,cca=[],cma={};try{old=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}try{ca=JSON.parse(localStorage.getItem('onePieceWikiCustomAchievementsV1')||'[]')}catch(e){}try{ma=JSON.parse(localStorage.getItem('onePieceWikiMedalArtV1')||'{}')}catch(e){}try{cc=JSON.parse(localStorage.getItem('wkCloudContentV1')||'null');if(cc&&cc.data){cca=Array.isArray(cc.data.customAchievements)?cc.data.customAchievements:[];cma=cc.data.medalArt&&typeof cc.data.medalArt==='object'?cc.data.medalArt:{}}}catch(e){}cc=null;var oc=Array.isArray(old.ca)?old.ca:[],om=old.ma&&typeof old.ma==='object'?old.ma:{},ids={},cids={};oc.forEach(function(a){if(a&&a.id!=null)ids[a.id]=1});cca.forEach(function(a){if(a&&a.id!=null)cids[a.id]=1});(Array.isArray(ca)?ca:[]).forEach(function(a){if(a&&a.id!=null&&!ids[a.id]&&!cids[a.id]){oc.push(a);ids[a.id]=1}});if(ma&&typeof ma==='object')Object.keys(ma).forEach(function(k){if(!(k in om)&&!(k in cma)&&ma[k]!=null&&ma[k]!=='')om[k]=ma[k]});if(oc.length||Object.keys(om).length)localStorage.setItem(K,JSON.stringify({ca:oc,ma:om}));else localStorage.removeItem(K)}catch(e){}</script>
 <html data-wiki-portable-baked="true" data-wiki-portable-id="2026-11-11T03:23:00.970Z" lang="ru" style="--reward-rank-first: #ffda75; --reward-rank-second: #d9d9d9; --reward-rank-third: #ffd285; --reward-rank-other: #4f4860; --wiki-progress-manga: #efc66b; --wiki-progress-anime: #60d9ff; --wk-title-font: 'Days One'; --wk-title-fw: 400; --wk-wp-tpl: url(&quot;./assets/webp/ui/wanted_template.webp&quot;); --wk-fg-manga: #0b0f17; --wk-fg-anime: #0b0f17; --wk-accent: #a78bfa; --wk-accent-soft: #d3c5fd; --fruit-type-param-color: #bb9eff !important; --fruit-type-param-rgb: 187, 158, 255 !important; --fruit-type-logia-color: #f967ae !important; --fruit-type-logia-rgb: 249, 103, 174 !important; --fruit-type-zoan-color: #65f6b7 !important; --fruit-type-zoan-rgb: 101, 246, 183 !important; --wk-tz-card: 1.15;" class="wk-sc-off wk-hz-c wk-hz-f wk-hz-u wk-hz-v wk-hz-h wk-calm wk-tfx-off wk-tfx-still wk-gpu wk-hdr-min" data-wk-role="admin" data-wk-title-font="g:Days One|"><head>
+<!-- One Piece v1089: naval gun visual effects -->
 <script id="wk-v596-early">try{var q=new URLSearchParams(location.search);if(q.get("tab")==="favorites"&&/^[a-z]+$/.test(q.get("cab")||"")){var cb=q.get("cab");localStorage.setItem("onePieceWikiCabinSubtabV3",cb==="overview"?"favorites":cb);localStorage.setItem("onePieceWikiCabinExtraTabV1",/^(watchgrid|timeline|deck|tops|stats|edits|quiz|atlas|help)$/.test(cb)?cb:"");}}catch(e){}</script>
-<style id="wk-layer-order">@layer wk-redesign, ios-app;</style><link rel="preconnect" href="https://i.pinimg.com" crossorigin=""><script id="wk-storage-slim">
+<style id="wk-layer-order">@layer wk-redesign, ios-app;
+/* v1088: local critical-state embers */
+.wk-ember1088{animation:wkEmber1088 linear infinite;pointer-events:none}
+@keyframes wkEmber1088{0%{opacity:0;transform:translate(0,0)}15%{opacity:.85}65%{opacity:.55}100%{opacity:0;transform:translate(var(--ember-x),var(--ember-y))}}
+.wk-shp-still .wk-ember1088,[data-decor-edit1070] .wk-ember1088,html.wk-mobile-no-motion .wk-ember1088{animation:none!important;opacity:0}
+@media(prefers-reduced-motion:reduce){.wk-ember1088{animation:none!important;opacity:0}}
+</style><link rel="preconnect" href="https://i.pinimg.com" crossorigin=""><script id="wk-storage-slim">
 /* Общие мелкие функции: раньше каждая из них была скопирована в десятки модулей. */
 window.__wkU={esc:function(a){return String(a==null?'':a).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});},
 q:function(a,b){return(b||document).querySelector(a);},
@@ -970,6 +982,21 @@ html body #storyList.sg-on .story-saga-group.sg-sel>.story-saga-arcs{align-conte
 .wk-wakes937 .wk-shp-seg .wk-shp-mini{display:block;width:76px;height:38px;margin:0 auto 3px;max-width:100%}
 .wk-wakes937 .wk-shp-seg{min-width:90px;max-width:100%;white-space:normal}
 @keyframes wkShpWave{to{transform:translateX(-36px)}}
+
+/* v1087: waterline contact effects, independent of purchased wakes */
+.wk-ripple1087{animation:wkRipple1087 ease-out infinite}
+@keyframes wkRipple1087{0%{opacity:0;transform:translateX(0)}22%{opacity:1}100%{opacity:0;transform:translateX(var(--wk-ripple-dx))}}
+.wk-spray1087{animation:wkSpray1087 linear infinite}
+@keyframes wkSpray1087{0%{opacity:0;transform:translate(0,0)}18%{opacity:.95}48%{opacity:.8;transform:translate(calc(var(--wk-spray-x)*.48),var(--wk-spray-y))}100%{opacity:0;transform:translate(var(--wk-spray-x),2px)}}
+.wk-shp-still .wk-ripple1087,.wk-shp-still .wk-spray1087,[data-decor-edit1070] .wk-ripple1087,[data-decor-edit1070] .wk-spray1087,html.wk-mobile-no-motion .wk-ripple1087,html.wk-mobile-no-motion .wk-spray1087{animation:none!important}
+@media(prefers-reduced-motion:reduce){.wk-ripple1087,.wk-spray1087{animation:none!important}}
+.wk-wake-drift1086{animation:wkWakeDrift1086 linear infinite}
+@keyframes wkWakeDrift1086{to{transform:translateX(var(--wk-wake-step1086))}}
+.wk-wake-contact1086{animation:wkWakeContact1086 ease-in-out infinite}
+@keyframes wkWakeContact1086{0%,100%{transform:translateY(calc(-.5 * var(--wk-wake-rise1086)));opacity:.55}50%{transform:translateY(var(--wk-wake-rise1086));opacity:.95}}
+.wk-fls-d1 .wk-wake-contact1086{animation-delay:-1.6s}.wk-fls-d2 .wk-wake-contact1086{animation-delay:-3.1s}.wk-fls-d3 .wk-wake-contact1086{animation-delay:-4.5s}
+.wk-shp-still .wk-wake-drift1086,.wk-shp-still .wk-wake-contact1086,html.wk-mobile-no-motion .wk-wake-drift1086,html.wk-mobile-no-motion .wk-wake-contact1086{animation:none!important}
+@media(prefers-reduced-motion:reduce){.wk-wake-drift1086,.wk-wake-contact1086{animation:none!important}}
 /* v1072: animate the water surface, independently of the ship transform. */
 [data-water1072] [data-water-edge1072]{animation:wkWaterEdge1072 var(--wk1072-time,5.8s) ease-in-out infinite}
 @keyframes wkWaterEdge1072{0%,100%{d:var(--wk1072-edge-a)}50%{d:var(--wk1072-edge-b)}}
@@ -1475,6 +1502,15 @@ html.wk-mobile-no-motion .wk-g832-flash,html.wk-mobile-no-motion .wk-g832-smoke,
 @media(max-width:699px){.wk-rain1079-extra{display:none}}
 .wk-shp-still .wk-rain1079-drop,.wk-shp-still .wk-storm1079-bolt,html.wk-mobile-no-motion .wk-rain1079-drop,html.wk-mobile-no-motion .wk-storm1079-bolt{animation:none!important}
 @media(prefers-reduced-motion:reduce){.wk-rain1079-drop,.wk-storm1079-bolt{animation:none!important}}
+
+/* v1084: continuous atmospheric motion, independent phases, no synchronized resets. */
+.wk-env1084-particle{animation:wkEnv1084Travel var(--env-dur) linear var(--env-delay) infinite;transform-box:view-box;transform-origin:0 0;pointer-events:none}
+@keyframes wkEnv1084Travel{0%{transform:translate(0px,0px)}25%{transform:translate(var(--env-x1),var(--env-y1))}50%{transform:translate(var(--env-x2),var(--env-y2))}75%{transform:translate(var(--env-x3),var(--env-y3))}100%{transform:translate(var(--env-x4),var(--env-y4))}}
+.wk-env1084-drift{animation:wkEnv1084Drift var(--env-dur) ease-in-out var(--env-delay) infinite;transform-box:view-box;transform-origin:0 0;pointer-events:none}
+@keyframes wkEnv1084Drift{0%,100%{transform:translate(0px,0px);opacity:.83}50%{transform:translate(var(--env-x4),var(--env-y4));opacity:1}}
+@media(max-width:699px){.wk-env1084-extra{display:none}}
+.wk-shp-still .wk-env1084-particle,.wk-shp-still .wk-env1084-drift,html.wk-mobile-no-motion .wk-env1084-particle,html.wk-mobile-no-motion .wk-env1084-drift{animation:none!important}
+@media(prefers-reduced-motion:reduce){.wk-env1084-particle,.wk-env1084-drift{animation:none!important}}
 
 /* v1076: suspend offscreen ship scenes; mobile fleets retain the main motion. */
 svg.wk-shp-svg.wk-offscreen1076,svg.wk-shp-svg.wk-offscreen1076 *,html.wk-ship-hidden1076 svg.wk-shp-svg,html.wk-ship-hidden1076 svg.wk-shp-svg *{animation-play-state:paused!important}
@@ -2697,6 +2733,40 @@ License:   Apache-2.0
 .wk-tb-i.act{background:rgba(120,190,240,.08)}.wk-tb-i.out{background:rgba(255,255,255,.04)}
 </style>
 <script>(function(){var q=0;function f(){q=0;var h=document.querySelector('body > header');if(h)document.documentElement.style.setProperty('--wk-sticky-top',Math.round(h.getBoundingClientRect().height)+'px');}function g(){if(!q)q=requestAnimationFrame(f);}document.addEventListener('DOMContentLoaded',f);window.addEventListener('scroll',g,{passive:true});window.addEventListener('resize',g);})();</script>
+<style id="wk-gun1089">
+.wk-g1089-puff,.wk-g1089-ring{opacity:0;pointer-events:none;transform-box:fill-box;transform-origin:center;animation-fill-mode:both;animation-iteration-count:1}
+.wk-g1089-puff{animation-name:wkGunPuff1089;animation-timing-function:ease-out}
+.wk-g1089-ring{animation:wkGunRing1089 .34s ease-out both}
+@keyframes wkGunPuff1089{0%{opacity:0;transform:scale(.35)}18%{opacity:.72}100%{opacity:0;transform:translate(var(--gun-drift),var(--gun-rise)) scale(1.8)}}
+@keyframes wkGunRing1089{0%{opacity:0;transform:scale(.4)}18%{opacity:.7}100%{opacity:0;transform:translateX(9px) scale(2)}}
+[data-gun-effect1075] .wk-g832-flash{animation-duration:.24s}
+[data-gun-effect1075] .wk-g832-smoke{animation-duration:1.5s}
+.wk-shp-still .wk-g1089-puff,.wk-shp-still .wk-g1089-ring,html.wk-mobile-no-motion .wk-g1089-puff,html.wk-mobile-no-motion .wk-g1089-ring{animation:none!important;opacity:0}
+@media(prefers-reduced-motion:reduce){.wk-g1089-puff,.wk-g1089-ring{animation:none!important;opacity:0}}
+</style><style id="wk-battle1090">
+@keyframes wkGunRecoil1075{0%{transform:scale(1)}9%{transform:translateY(-4px) scale(.88)}24%{transform:translateY(-2px) scale(.94)}65%,100%{transform:scale(1)}}
+.wk-hit1090{opacity:0;transform-box:fill-box;transform-origin:center bottom;animation:wkHit1090 1.1s ease-out both}
+.wk-ring1090{opacity:0;transform-box:fill-box;transform-origin:center;animation:wkRing1090 1.35s ease-out both}
+@keyframes wkHit1090{0%{opacity:0;transform:scale(.35,.1)}18%{opacity:.95;transform:scale(.85,1)}55%{opacity:.65;transform:scale(1.1,.65)}100%{opacity:0;transform:scale(1.4,.15)}}
+@keyframes wkRing1090{0%{opacity:0;transform:scale(.25)}18%{opacity:.75}100%{opacity:0;transform:scale(2.3)}}
+@media(prefers-reduced-motion:reduce){.wk-hit1090,.wk-ring1090{display:none}}
+.wk-shp-still .wk-hit1090,.wk-shp-still .wk-ring1090,html.wk-mobile-no-motion .wk-hit1090,html.wk-mobile-no-motion .wk-ring1090{display:none}
+</style><style id="wk-surface1094">.wk-surface1094{animation:wkSurface1093 2.2s ease-out both}.wk-snow1094{animation:wkSnow1094 8s ease-out both}@keyframes wkSnow1094{from{fill-opacity:.08}to{fill-opacity:1}}@media(prefers-reduced-motion:reduce){.wk-surface1094,.wk-snow1094{animation:none}}html.wk-mobile-no-motion .wk-surface1094,html.wk-mobile-no-motion .wk-snow1094,.wk-shp-svg.wk-shp-still .wk-surface1094,.wk-shp-svg.wk-shp-still .wk-snow1094{animation:none}</style><style id="wk-surface1093">.wk-surface1093{animation:wkSurface1093 1.4s ease-out both}.wk-deckdrop1093{transform-box:fill-box;transform-origin:center;animation:wkDrop1093 1.7s var(--drop1093) infinite ease-out}@keyframes wkSurface1093{from{opacity:0}to{opacity:1}}@keyframes wkDrop1093{0%{opacity:0;transform:scale(.2)}20%{opacity:var(--wet1093)}75%,100%{opacity:0;transform:scale(1.8)}}@media(prefers-reduced-motion:reduce){.wk-surface1093{animation:none}.wk-deckdrop1093{display:none}}html.wk-mobile-no-motion .wk-surface1093,.wk-shp-svg.wk-shp-still .wk-surface1093{animation:none}html.wk-mobile-no-motion .wk-deckdrop1093,.wk-shp-svg.wk-shp-still .wk-deckdrop1093{display:none}</style><style id="wk-weather1092">
+.wk-shp-svg[data-decor-weather1070="fog"]{--wk1071-flag-angle:3deg;--wk1071-cloth-time:6.4s;--wk1071-rope-time:6.4s}
+.wk-shp-svg[data-decor-weather1070="blizzard"]{--wk1071-flag-angle:13deg;--wk1071-cloth-time:2.8s;--wk1071-rope-time:2.8s}
+</style><style id="wk-battle1091">
+.wk-impact1091{opacity:0;animation:wkImpact1091 .48s ease-out both;transform-box:fill-box;transform-origin:center}
+.wk-chip1091{opacity:0;animation:wkChip1091 var(--dur,.8s) ease-out both;transform-box:fill-box;transform-origin:center}
+@keyframes wkImpact1091{0%{opacity:0;transform:scale(.4)}15%{opacity:1;transform:scale(1.15)}100%{opacity:0;transform:scale(1.7)}}
+@keyframes wkChip1091{0%{opacity:0;transform:translate(0,0)}12%{opacity:1}65%{opacity:.8}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--rot))}}
+@media(prefers-reduced-motion:reduce){.wk-impact1091,.wk-chip1091{display:none}}
+.wk-shp-still .wk-impact1091,.wk-shp-still .wk-chip1091,html.wk-mobile-no-motion .wk-impact1091,html.wk-mobile-no-motion .wk-chip1091{display:none}
+</style><style id="wk-v1096-light">
+@keyframes wkLamp1096{0%,100%{filter:brightness(1)}29%{filter:brightness(.84)}61%{filter:brightness(1.12)}83%{filter:brightness(.94)}}
+@keyframes wkWaterlight1096{0%,100%{transform:translateX(0) scaleX(1)}37%{transform:translateX(2px) scaleX(.82)}71%{transform:translateX(-1.5px) scaleX(1.13)}}
+.wk-lamp1096{animation:wkLamp1096 var(--lamp-period,3s) ease-in-out infinite}.wk-waterlight1096{transform-box:fill-box;transform-origin:center;animation:wkWaterlight1096 var(--light-period,4s) ease-in-out infinite}
+.wk-shp-still .wk-lamp1096,.wk-shp-still .wk-waterlight1096{animation:none!important}@media(prefers-reduced-motion:reduce){.wk-lamp1096,.wk-waterlight1096{animation:none!important}}
+</style>
 </head>
 <body data-theme="mugiwara" data-active-tab="characters">
 <script id="wiki-cloud-config">
@@ -3812,7 +3882,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "28.11.2026 · 1079";
+const WIKI_VERSION = "28.11.2026 · 1093";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -38424,8 +38494,75 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   var COSM = ['back', 'orn', 'bgt', 'bg', 'frame', 'alb', 'avf', 'nkc', 'mapColor'], PEND_K = 'wkDeckPendV1';
   function cosmOf(o) { var r = {}; if (o && typeof o === 'object') COSM.forEach(function (k) { if (o[k] !== undefined) r[k] = o[k]; }); return r; }
   function cosmEq(a, b) { try { return JSON.stringify(a === undefined ? null : a) === JSON.stringify(b === undefined ? null : b); } catch (e) { return true; } }
-  function pendSave() { try { var ml = myLogin(); if (!ml || !CLOUD.json || CLOUD.json.length > 1500000) return; localStorage.setItem(PEND_K, JSON.stringify({ l: ml, b: CLOUD.rev, j: CLOUD.json, c: CLOUD.bc || {} })); } catch (e) {} }
-  function pendDrop() { try { localStorage.removeItem(PEND_K); } catch (e) {} }
+  /* v1083: ship appearance snapshots are local only; no new cloud schema and no replay of paid purchases. */
+  var SHP_AP_KEYS1083 = ['name','paint','orn','hpat','sorn','spat','fig','flag','flagUrl','ornUrl','sornUrl','figUrl','dec','bg','lay'];
+  var SHP_FREE_LAY1083 = ['nsz','nxo','nyo','nsl','nm','nf','nc','np836','ne836','nw836','nr836','nt836','no836','snx836','sny836'];
+  var SHP_REC_MEM1083 = Object.create(null);
+  function shpObj1083(o) { return o && typeof o === 'object' && !Array.isArray(o) ? o : {}; }
+  function shpCopy1083(o) { return o === undefined ? undefined : JSON.parse(JSON.stringify(o)); }
+  function shpEq1083(a,b) {
+    if (a === b) return true;
+    if (a == null || b == null || typeof a !== 'object' || typeof b !== 'object' || Array.isArray(a) !== Array.isArray(b)) return false;
+    if (Array.isArray(a)) return a.length === b.length && a.every(function(v,i){return shpEq1083(v,b[i]);});
+    var ak=Object.keys(a),bk=Object.keys(b);return ak.length===bk.length&&ak.every(function(k){return Object.prototype.hasOwnProperty.call(b,k)&&shpEq1083(a[k],b[k]);});
+  }
+  function shpAppearance1083(d) {
+    var sh=shpObj1083(d&&d.ship), cs=shpObj1083(sh.c), out={c:{}};
+    function pick(o){var v={};SHP_AP_KEYS1083.forEach(function(k){if(o[k]!==undefined)v[k]=shpCopy1083(o[k]);});return v;}
+    for(var t=0;t<7;t++)if(cs[t]&&typeof cs[t]==='object'&&!Array.isArray(cs[t]))out.c[t]=pick(cs[t]);
+    out.legacy=pick(sh);if(sh.flt!==undefined)out.flt=shpCopy1083(sh.flt);if(sh.show!==undefined)out.show=sh.show;return out;
+  }
+  function shpPut1083(o,k,v){if(v===undefined)delete o[k];else o[k]=shpCopy1083(v);}
+  function shpMerge1083(remote,local,base){
+    var l=shpAppearance1083(local),r=shpAppearance1083(remote),b=base,merged=0,blocked=0,changes=[];
+    function blockedField(path, v){blocked++;changes.push({path:path,value:shpCopy1083(v),removed:v===undefined});}
+    function field(path, bv,lv,rv,apply){
+      if(shpEq1083(lv,bv)||shpEq1083(lv,rv))return;
+      if(apply&&shpEq1083(rv,bv)){apply(lv);merged++;}else blockedField(path,lv);
+    }
+    if(!b){if(!shpEq1083(l,r)){blocked=1;changes.push({path:'legacy-pending',value:l});}return {merged:merged,blocked:blocked,changes:changes,appearance:l};}
+    var rc=shpObj1083(remote&&remote.ship&&remote.ship.c);
+    for(var t=0;t<7;t++)(function(t){
+      var bc=b.c&&b.c[t],lc=l.c[t],rr=r.c[t],target=rc[t], prefix='c.'+t+'.';
+      if(!bc||!lc||!rr||!target){field('c.'+t,bc,lc,rr,null);return;}
+      SHP_AP_KEYS1083.forEach(function(k){
+        if(k==='lay')return;
+        field(prefix+k,bc[k],lc[k],rr[k],k==='name'?function(v){shpPut1083(target,k,v);}:null);
+      });
+      var bl=shpObj1083(bc.lay),ll=shpObj1083(lc.lay),rl=shpObj1083(rr.lay),tl=shpCopy1083(shpObj1083(target.lay)),m0=merged;
+      var keys=Array.from(new Set(Object.keys(bl).concat(Object.keys(ll),Object.keys(rl))));
+      keys.forEach(function(k){
+        if(k==='ds'){
+          var bd=shpObj1083(bl.ds),ld=shpObj1083(ll.ds),rd=shpObj1083(rl.ds),td=shpObj1083(tl.ds);
+          Array.from(new Set(Object.keys(bd).concat(Object.keys(ld),Object.keys(rd)))).forEach(function(id){
+            if(!/^[a-zA-Z0-9_-]{1,100}$/.test(id)||['__proto__','constructor','prototype'].indexOf(id)>=0)return;
+            /* Do not move a different pet or a decoration replaced remotely. Merge one item's transform atomically. */
+            var compatible = id!=='petm'&&id!=='petd'&&shpEq1083(lc.dec,rr.dec)&&shpEq1083(bc.dec,rr.dec);
+            field(prefix+'lay.ds.'+id,bd[id],ld[id],rd[id],compatible?function(v){shpPut1083(td,id,v);}:null);
+          });
+          if(Object.keys(td).length)tl.ds=td;else delete tl.ds;
+        }else if(!['__proto__','constructor','prototype'].includes(k))field(prefix+'lay.'+k,bl[k],ll[k],rl[k],SHP_FREE_LAY1083.indexOf(k)>=0?function(v){shpPut1083(tl,k,v);}:null);
+      });
+      if(merged!==m0){if(Object.keys(tl).length)target.lay=tl;else delete target.lay;}
+    })(t);
+    field('legacy',b.legacy,l.legacy,r.legacy,null);field('flt',b.flt,l.flt,r.flt,null);field('show',b.show,l.show,r.show,null);
+    return {merged:merged,blocked:blocked,changes:changes,appearance:l};
+  }
+  function pendKey1083(ml){return PEND_K+':'+encodeURIComponent(ml);}
+  function pendRead1083(ml){var p=JSON.parse(localStorage.getItem(pendKey1083(ml))||'null');if(p&&p.l===ml)return p;p=JSON.parse(localStorage.getItem(PEND_K)||'null');return p&&p.l===ml?p:null;}
+  function pendSave() { try { var ml = myLogin(); if (!ml || !CLOUD.json || (CLOUD.login&&CLOUD.login!==ml)) return false; localStorage.setItem(pendKey1083(ml), JSON.stringify({ l: ml, b: CLOUD.rev, j: CLOUD.json, c: CLOUD.bc || {}, shipBase1083:CLOUD.sb1083||null }));return true; } catch (e) { return false; } }
+  function pendDrop() { try { var ml=myLogin();if(!ml)return;localStorage.removeItem(pendKey1083(ml));var p=JSON.parse(localStorage.getItem(PEND_K)||'null');if(p&&p.l===ml)localStorage.removeItem(PEND_K); } catch (e) {} }
+  function shpRecoveryRead1083(ml){if(!ml)return [];if(SHP_REC_MEM1083[ml])return SHP_REC_MEM1083[ml];try{var a=JSON.parse(localStorage.getItem('wkShipConflict1083:'+encodeURIComponent(ml))||'[]');return Array.isArray(a)?a:[];}catch(e){return [];}}
+  function shpRecovery1083(ml,res,rev){
+    if(!res.blocked||!ml)return true;
+    var a=shpRecoveryRead1083(ml).slice(), entry={at:new Date().toISOString(),rev:rev,changes:res.changes,appearance:res.appearance};
+    if(!a.some(function(q){return q.rev===rev&&shpEq1083(q.appearance,entry.appearance);}))a.unshift(entry);
+    a=a.slice(0,3);SHP_REC_MEM1083[ml]=a;
+    try{localStorage.setItem('wkShipConflict1083:'+encodeURIComponent(ml),JSON.stringify(a));return true;}catch(e){return false;}
+  }
+  function shpRecoveryHTML1083(ml){var a=shpRecoveryRead1083(ml);return a.length?'<p class="wk-cl-e">Локальные конфликтные настройки кораблей: '+a.length+' (до 3 последних). Покупки автоматически не повторяются.</p><button type="button" class="wk-dk-reset" data-act="cloud-ship-local1083">Скачать настройки JSON</button>':'';}
+  function shpRecoveryDownload1083(ml){var a=shpRecoveryRead1083(ml);if(!a.length)return;var url=URL.createObjectURL(new Blob([JSON.stringify({version:1083,records:a},null,2)],{type:'application/json'}));var el=document.createElement('a');el.href=url;el.download='one-piece-ship-conflicts.json';document.body.appendChild(el);el.click();el.remove();setTimeout(function(){URL.revokeObjectURL(url);},1000);}
+  function shpConflictNotice1083(res,durable){if(!res.blocked&&!res.merged)return '';return (res.merged?' Восстановлено свободных настроек корабля: '+res.merged+'.':'')+(res.blocked?' Другие изменения корабля '+(durable?'сохранены в локальной копии':'удерживаются только в этой вкладке (хранилище недоступно)')+' — скачай их в «Колода → Облако»; платные изменения примени повторно.':'');}
   function cloudSig(o) { try { return JSON.stringify(CLOUD_KEYS.map(function (k) { return o[k] === undefined ? null : o[k]; })); } catch (e) { return ''; } }
   function deckRaw() { return CLOUD.ready ? CLOUD.json : '{}'; }
   function setOrn(v) { var de = document.documentElement, x = String(v); if (de.getAttribute('data-wk-orn') !== x) de.setAttribute('data-wk-orn', x); }
@@ -38470,17 +38607,17 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   (function () { function tag(e) { var w = e.target && e.target.closest && e.target.closest('.wk-sh-bgtpv[data-bgt]'); if (!w) return; if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return; setTimeout(function () { var z = document.getElementById('wkDkZoom'); if (z) { z.setAttribute('data-bgt', w.getAttribute('data-bgt')); var h = z.querySelector('.wk-dk-zoomhint'); var nm = (BGT.filter(function (q) { return q.id === w.getAttribute('data-bgt'); })[0] || {}).n; if (h && nm) h.textContent = 'Фон рубашки «' + nm + '». ' + h.textContent.replace(/^Рубашка: [^.]*\. /, ''); } }, 0); } document.addEventListener('click', tag); document.addEventListener('keydown', tag); })();
   function deckParse() { try { return JSON.parse(deckRaw()) || {}; } catch (e) { return {}; } }
   function cloudAdopt(deck) {
-    CLOUD.json = JSON.stringify(deck || {}); CLOUD.rev = +(deck && deck.rev) || 0; CLOUD.bc = cosmOf(deck); pendDrop();
+    CLOUD.json = JSON.stringify(deck || {}); CLOUD.rev = +(deck && deck.rev) || 0; CLOUD.bc = cosmOf(deck); CLOUD.sb1083 = shpAppearance1083(deck); pendDrop();
     try { setOrn(deck && ornSelected(deck.orn || '')); } catch(e) {}
     try { window.dispatchEvent(new Event('wk-deck-changed')); } catch (e) {} try { nSched(); } catch (e) {}
   }
-  function cloudRepaint() { var p = document.querySelector('#wkDkCta, #wkDkPack, .wk-dk-gate'); p = p && p.closest('.wk-pane'); if (p && p.isConnected && !DK.pack) renderDeck(p); }
+  function cloudRepaint() { if(DK.ship&&document.querySelector('.wk-sht-p[data-shp="ship"]')&&!SHP_ADM){shpRepaint();return;} var p = document.querySelector('#wkDkCta, #wkDkPack, .wk-dk-gate'); p = p && p.closest('.wk-pane'); if (p && p.isConnected && !DK.pack) renderDeck(p); }
   function save(s) {
-    if (!s || s.__fake || !CLOUD.ready) return;
+    if (!s || s.__fake || !CLOUD.ready || (CLOUD.login&&CLOUD.login!==myLogin())) return;
     cleanSH(s);
     if (s.__keepRev) delete s.__keepRev;
     else if (!s.rev || cloudSig(s) !== cloudSig(deckParse())) s.rev = Math.max(Date.now(), (+s.rev || 0) + 1, CLOUD.rev + 1);
-    CLOUD.json = JSON.stringify(s); pendSave(); cloudPing();
+    CLOUD.json = JSON.stringify(s); var localOK1083=pendSave();if(!localOK1083&&!CLOUD.localWarn1083){CLOUD.localWarn1083=true;try{txToast('Локальная страховка недоступна. Не закрывай вкладку до подтверждения облачного сохранения.');}catch(e){}}else if(localOK1083)CLOUD.localWarn1083=false;cloudPing();
     try { setOrn(ornSelected(s.orn || '')); } catch(e) {}
     try { window.dispatchEvent(new Event('wk-deck-changed')); } catch (e) {} try { nSched(); } catch (e) {}
     cloudFlushSoon();
@@ -38500,14 +38637,15 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   function cloudFlushSoon() { clearTimeout(CLOUD.t); CLOUD.t = setTimeout(cloudFlush, 80); }
   function cloudPing() { setTimeout(function () { if (window.__wkCloudUpd) window.__wkCloudUpd(); }, 30); }
   function cloudFlush() {
-    var cl = window.__wkDeckCloud; if (!CLOUD.ready || !cl || !cl.enabled()) return;
+    var cl = window.__wkDeckCloud; if (!CLOUD.ready || !cl || !cl.enabled() || (CLOUD.login&&CLOUD.login!==myLogin())) return;
     if (CLOUD.busy) { CLOUD.dirty = true; return; }
     if (CLOUD.lock) return;
     if (window.__wkStale) return; /* открыта устаревшая версия: в облако не пишем */
     var d = deckParse(), rev = +d.rev || 0; if (rev === CLOUD.rev && !CLOUD.force) return;
     CLOUD.busy = true; CLOUD.dirty = false; cloudPing();
-    var frc = !!CLOUD.force;
+    var frc = !!CLOUD.force, login1083=myLogin(), epoch1083=CLOUD.epoch1083||0;
     cl.commit(d, CLOUD.rev, frc).then(function (r) {
+      if(myLogin()!==login1083||(CLOUD.epoch1083||0)!==epoch1083)return;
       CLOUD.busy = false; cloudPing();
       if (r && r.stale) {
         CLOUD.lock = true; CLOUD.fails = 0; window.__wkStale = true;
@@ -38525,18 +38663,18 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
         CLOUD.fails = 0;
         var loc = deckParse(), bc0 = CLOUD.bc || {}, kept = {}, nk = 0;
         COSM.forEach(function (k) { if (!cosmEq(loc[k], bc0[k])) { kept[k] = loc[k]; nk++; } });
-        cloudAdopt(r.deck); cloudRepaint();
-        if (nk) {
-          var s2 = deckParse(); Object.keys(kept).forEach(function (k) { if (kept[k] === undefined) delete s2[k]; else s2[k] = kept[k]; });
-          save(s2); try { if (window.__wkCosApply) window.__wkCosApply(); } catch (e) {}
-          try { txToast('Колода изменилась на другом устройстве. Оформление рубашки сохранил, остальное обновил.'); } catch (e) {}
-        } else { try { txToast('Колода изменилась на другом устройстве. Показана актуальная версия, последнее действие не сохранилось.'); } catch (e) {} }
+        var srv=shpCopy1083(r.deck||{}), rebased=shpCopy1083(srv), sr=shpMerge1083(rebased,loc,CLOUD.sb1083), durable=shpRecovery1083(login1083,sr,+loc.rev||0);
+        cloudAdopt(srv);
+        if(nk||sr.merged){Object.keys(kept).forEach(function(k){shpPut1083(rebased,k,kept[k]);});save(rebased);try{if(window.__wkCosApply)window.__wkCosApply();}catch(e){}}
+        cloudRepaint();
+        try{txToast('Данные изменились на другом устройстве. Облачная версия имеет приоритет; платные и игровые действия не повторяются автоматически.'+(nk?' Оформление карточек восстановлено.':'')+shpConflictNotice1083(sr,durable));}catch(e){}
         return;
       }
-      CLOUD.rev = rev; CLOUD.fails = 0; window.__wkDeckErr = ''; if (r && r.size) { window.__wkDocSize = r.size; try { cloudSizeWarn(); } catch (e3) {} } CLOUD.bc = cosmOf(d); if ((+deckParse().rev || 0) === rev) pendDrop();
+      CLOUD.rev = rev; CLOUD.fails = 0; window.__wkDeckErr = ''; if (r && r.size) { window.__wkDocSize = r.size; try { cloudSizeWarn(); } catch (e3) {} } CLOUD.bc = cosmOf(d); CLOUD.sb1083=shpAppearance1083(d); if ((+deckParse().rev || 0) === rev) pendDrop(); else pendSave();
       if (CLOUD.dropLegacy) { CLOUD.dropLegacy = false; try { localStorage.removeItem(KEY); } catch (e) {} }
       if (CLOUD.dirty || (+deckParse().rev || 0) !== rev) cloudFlush();
     }, function (e) {
+      if(myLogin()!==login1083||(CLOUD.epoch1083||0)!==epoch1083)return;
       CLOUD.busy = false; CLOUD.fails++; cloudPing(); window.__wkDeckErr = String(e && (e.code || e.message) || e);
       if (CLOUD.fails === 1) { try { var ec = String(e && (e.code || e.message) || e), net = /unavailable|offline|network|deadline|failed-precondition|no-cloud/i.test(ec); txToast(/doc-too-large/.test(ec) ? 'Данные не помещаются в облако (лимит 1 МБ). Новые изменения не сохраняются. Напиши разработчику, пока вкладка открыта.' : net ? 'Нет связи с облаком. Колода сохранится, когда связь появится. Не закрывай вкладку.' : 'Облако не приняло запись (' + ec.slice(0, 60) + '). Попробую ещё раз. Не закрывай вкладку.'); } catch (e2) {} }
       clearTimeout(CLOUD.t); CLOUD.t = setTimeout(cloudFlush, Math.min(30000, 2000 * CLOUD.fails));
@@ -38603,7 +38741,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     window.addEventListener('online', function () { try { if (CLOUD.fails > 0) { clearTimeout(CLOUD.t); cloudFlushSoon(); } } catch (e) {} setTimeout(upd, 300); });
     window.addEventListener('offline', function () { setTimeout(upd, 100); });
   })();
-  function cloudReset() { try { if (CLOUD.off) CLOUD.off(); } catch (e) {} CLOUD.off = null; CLOUD.ready = false; CLOUD.loading = false; CLOUD.state = 'wait'; CLOUD.json = '{}'; CLOUD.rev = 0; CLOUD.busy = false; CLOUD.dirty = false; CLOUD.legacy = null; CLOUD.login = ''; CLOUD.lock = false; CLOUD.force = false; CLOUD.bak = null; CLOUD.restore = null; try { window.dispatchEvent(new Event('wk-deck-changed')); } catch (e) {} cloudRepaint(); }
+  function cloudReset() { CLOUD.epoch1083=(CLOUD.epoch1083||0)+1;clearTimeout(CLOUD.t);CLOUD.sb1083=null;CLOUD.bc={};CLOUD.cbs=[];CLOUD.localWarn1083=false;CLOUD.pushNow=false;CLOUD.dropLegacy=false;CLOUD.fails=0;CLOUD.resumed=0;try{SHP_D={paint:{}};SHP_FD=null;SHP_SEL=null;}catch(e){} try { if (CLOUD.off) CLOUD.off(); } catch (e) {} CLOUD.off = null; CLOUD.ready = false; CLOUD.loading = false; CLOUD.state = 'wait'; CLOUD.json = '{}'; CLOUD.rev = 0; CLOUD.busy = false; CLOUD.dirty = false; CLOUD.legacy = null; CLOUD.login = ''; CLOUD.lock = false; CLOUD.force = false; CLOUD.bak = null; CLOUD.restore = null; try { window.dispatchEvent(new Event('wk-deck-changed')); } catch (e) {} cloudRepaint(); }
   function deckBoot(cb) {
     var cl = window.__wkDeckCloud, ml = myLogin();
     if (CLOUD.ready) { if (cb) cb(true); return; }
@@ -38611,11 +38749,12 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (CLOUD.loading) return;
     if (!ml) { CLOUD.state = 'guest'; cloudDone(false); return; }
     if (!cl || !cl.enabled()) { CLOUD.state = 'wait'; cloudDone(false); return; }
-    CLOUD.loading = true; CLOUD.state = 'load'; CLOUD.at = Date.now();
+    CLOUD.loading = true; CLOUD.state = 'load'; CLOUD.at = Date.now(); var bootEpoch1083=CLOUD.epoch1083||0;
     cl.own().then(function (deck) {
       if (deck || CLOUD.restore || !cl.bak) return [deck, null];
       return cl.bak().then(function (b) { return [deck, b]; }, function () { return [deck, null]; });
     }).then(function (res) {
+      if(myLogin()!==ml||(CLOUD.epoch1083||0)!==bootEpoch1083){if((CLOUD.epoch1083||0)===bootEpoch1083)cloudReset();return;}
       var deck = res[0], bak = res[1];
       var legacy = null; try { legacy = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
       if (legacy && (typeof legacy !== 'object' || !legacy.owned)) legacy = null;
@@ -38637,37 +38776,39 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
         CLOUD.json = JSON.stringify(deck); CLOUD.rev = +deck.rev || 0;
         if (legacy) { try { localStorage.removeItem(KEY); } catch (e) {} }
       }
-      try { CLOUD.bc = cosmOf(JSON.parse(CLOUD.json)); } catch (e) { CLOUD.bc = {}; }
-      CLOUD.resumed = 0;
+      try { CLOUD.bc = cosmOf(deck||{}); CLOUD.sb1083=shpAppearance1083(deck||{}); } catch (e) { CLOUD.bc = {}; CLOUD.sb1083=null; }
+      CLOUD.resumed = 0; var recoveryNote1083='';
       try {
-        var pp = JSON.parse(localStorage.getItem(PEND_K) || 'null');
-        if (pp && pp.l === ml && pp.j && deck) {
+        var pp = pendRead1083(ml);
+        if (pp && pp.j && deck) {
           var pj = JSON.parse(pp.j), cj = JSON.parse(CLOUD.json);
-          if ((+pj.rev || 0) > (+cj.rev || 0)) {
-            if ((+pp.b || 0) === (+cj.rev || 0)) { CLOUD.json = pp.j; CLOUD.resumed = 1; }
+          if ((+pj.rev||0) > (+pp.b||0) && !shpEq1083(pj,cj)) {
+            if ((+pp.b||0)===(+cj.rev||0)) {CLOUD.json=pp.j;CLOUD.resumed=1;}
             else {
-              var cc = pp.c || {}, chn = 0; COSM.forEach(function (k) { if (!cosmEq(pj[k], cc[k])) { if (pj[k] === undefined) delete cj[k]; else cj[k] = pj[k]; chn++; } });
-              if (chn) { cj.rev = Math.max(Date.now(), (+cj.rev || 0) + 1); CLOUD.json = JSON.stringify(cj); CLOUD.resumed = 2; }
+              var cc=pp.c||{},chn=0;COSM.forEach(function(k){if(!cosmEq(pj[k],cc[k])){shpPut1083(cj,k,pj[k]);chn++;}});
+              var sr=shpMerge1083(cj,pj,pp.shipBase1083||null),durable=shpRecovery1083(ml,sr,+pj.rev||0);
+              recoveryNote1083=shpConflictNotice1083(sr,durable);
+              if(chn||sr.merged){cj.rev=Math.max(Date.now(),(+cj.rev||0)+1);CLOUD.json=JSON.stringify(cj);CLOUD.resumed=2;}
             }
-            if (CLOUD.resumed) { CLOUD.pushNow = true; pendSave(); }
+            if(CLOUD.resumed){CLOUD.pushNow=true;pendSave();}
           }
         }
-        if (!CLOUD.resumed) pendDrop();
-      } catch (e) {}
+        if(!CLOUD.resumed&&deck)pendDrop();
+      } catch(e){}
       CLOUD.ready = true; CLOUD.loading = false; CLOUD.state = 'ok'; CLOUD.login = ml; CLOUD.fails = 0;
       try {
         CLOUD.off = cl.watchOwn(function (d, pending) {
-          if (!d || pending) return; var r = +d.rev || 0;
-          if (r <= CLOUD.rev || CLOUD.busy || (+deckParse().rev || 0) !== CLOUD.rev) return;
+          if (myLogin()!==ml||(CLOUD.epoch1083||0)!==bootEpoch1083||!d || pending) return; var r = +d.rev || 0;
+          if (r <= CLOUD.rev || CLOUD.busy || CLOUD.force || (+deckParse().rev || 0) !== CLOUD.rev) return;
           cloudAdopt(d); cloudRepaint();
         }, function () {});
       } catch (e) {}
       try { window.dispatchEvent(new Event('wk-deck-changed')); } catch (e) {} try { nSched(); } catch (e) {}
       if (CLOUD.dropLegacy || CLOUD.pushNow) { CLOUD.pushNow = false; cloudFlushSoon(); }
-      if (CLOUD.resumed) { try { txToast(CLOUD.resumed === 1 ? 'Вернул изменения, которые не успели сохраниться, и отправляю их в облако.' : 'Колода в облаке изменилась. Твоё оформление рубашки вернул и сохраняю.'); } catch (e) {} }
+      if (CLOUD.resumed || recoveryNote1083) { try { txToast((CLOUD.resumed===1?'Вернул неотправленные изменения и сохраняю.':'Колода в облаке изменилась. Безопасные настройки восстановлены без повторения покупок.')+recoveryNote1083); } catch(e){} }
       if (CLOUD.legacy) { try { txToast('На этом устройстве осталась колода новее облачной. Открой «Колода» → «Облако», чтобы выбрать.'); } catch (e) {} }
       cloudDone(true);
-    }, function (e) { CLOUD.loading = false; CLOUD.state = 'err'; CLOUD.err = String(e && (e.code || e.message) || e); cloudDone(false); });
+    }, function (e) { if(myLogin()!==ml||(CLOUD.epoch1083||0)!==bootEpoch1083){if((CLOUD.epoch1083||0)===bootEpoch1083)cloudReset();return;} CLOUD.loading = false; CLOUD.state = 'err'; CLOUD.err = String(e && (e.code || e.message) || e); cloudDone(false); });
   }
   setInterval(function () {
     var ml = myLogin(); if (CLOUD.login && CLOUD.login !== ml) { cloudReset(); return; }
@@ -39652,34 +39793,38 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
   function cloudAct(pane, a) {
     var cl = window.__wkDeckCloud, ml = myLogin(), box = pane.querySelector('#wkDkCloud');
     if (a === 'cloud-x') { if (box) box.remove(); return; }
+    if(a==='cloud-ship-local1083'){shpRecoveryDownload1083(ml);return;}
     var paint = function (inner) {
       var o = pane.querySelector('#wkDkCloud'); if (o) o.remove();
       pane.insertAdjacentHTML('beforeend', '<div class="wk-dk-modal" id="wkDkCloud" role="dialog" aria-modal="true" aria-label="Колода в облаке"><div class="wk-dk-mbox"><div class="wk-dk-mscroll"><h3>Колода в облаке</h3>' + inner + '</div><div class="wk-cl-b"><button type="button" class="wk-dk-reset" data-act="cloud-x">Закрыть</button></div></div></div>');
     };
     var report = function (extra) {
-      if (!cl || !ml || !cl.enabled() || !CLOUD.ready) { paint('<p>Колода хранится только в облаке. Войди в аккаунт и проверь подключение.</p>'); return; }
+      if (!cl || !ml || !cl.enabled() || !CLOUD.ready) { paint('<p>Колода хранится в облаке. Войди в аккаунт и проверь подключение.</p>'+shpRecoveryHTML1083(ml)); return; }
       paint('<p class="wk-cl-r">Проверяю облако…</p>');
       Promise.all([cl.own(), cl.bak ? cl.bak().catch(function () { return null; }) : Promise.resolve(null)]).then(function (rs) {
-        var deck = rs[0], bk = rs[1];
+        if(myLogin()!==ml)return;var deck = rs[0], bk = rs[1];
         CLOUD.baks = bk;
         var bkH = '';
         if (bk && (bk.best || bk.prev)) {
           bkH = (bk.best ? cloudSum(bk.best, 'Копия: лучшая') : '') + (bk.prev ? cloudSum(bk.prev, 'Копия: предыдущая') : '') + '<div class="wk-cl-b">' + (bk.best ? '<button type="button" class="wk-dk-reset" data-act="cloud-restore" data-k="best">Вернуть лучшую копию</button>' : '') + (bk.prev ? '<button type="button" class="wk-dk-reset" data-act="cloud-restore" data-k="prev">Вернуть предыдущую</button>' : '') + '</div>' + ((bk.best && bk.best.ship) || (bk.prev && bk.prev.ship) ? '<div class="wk-cl-b"><b>Только корабль (карточки и белли остаются как сейчас):</b> ' + (bk.best && bk.best.ship ? '<button type="button" class="wk-dk-open" data-act="cloud-ship" data-k="best">Корабль из лучшей копии</button> ' : '') + (bk.prev && bk.prev.ship ? '<button type="button" class="wk-dk-open" data-act="cloud-ship" data-k="prev">Корабль из предыдущей</button>' : '') + '</div>' : '');
         }
         var shipH = bk && bk.ship && typeof bk.ship === 'object' ? '<p class="wk-cl-r"><b>Страховая копия корабля:</b> уровень ' + (+bk.ship.lv || 0) + ', плаваний ' + ((bk.ship.cnt && +bk.ship.cnt.voy) || 0) + (bk.shipAt && !isNaN(new Date(bk.shipAt)) ? ' · от ' + new Date(bk.shipAt).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '') + '</p><div class="wk-cl-b"><button type="button" class="wk-dk-open" data-act="cloud-ship" data-k="ship">Вернуть корабль из страховой копии</button></div>' : '';
+        var recH1083=shpRecoveryHTML1083(ml);
         var lockH = CLOUD.lock ? '<p class="wk-cl-e">Запись заблокирована: колода в облаке пропала. Верни её из копии.</p>' : '';
         var pend = CLOUD.busy || (+deckParse().rev || 0) !== CLOUD.rev;
         var err = window.__wkDeckErr ? '<p class="wk-cl-e">Последняя запись не удалась: ' + esc(window.__wkDeckErr) + '</p>' : '';
         var lg = CLOUD.legacy ? '<p class="wk-cl-e">На этом устройстве осталась старая локальная колода, она новее облачной.</p>' + cloudSum(CLOUD.legacy, 'На устройстве') + '<div class="wk-cl-b"><button type="button" class="wk-dk-open" data-act="cloud-up">Заменить облако колодой с устройства</button><button type="button" class="wk-dk-reset" data-act="cloud-drop">Удалить локальную копию</button></div>' : '';
-        paint((extra || '') + lockH + cloudSum(deckParse(), 'Сейчас на экране') + cloudSum(deck, 'В облаке') + bkH + shipH + (window.__wkDocSizeHTML ? window.__wkDocSizeHTML() : '') + (pend ? '<p class="wk-cl-r">Есть изменения, которые ещё сохраняются…</p>' : '') + err + lg +
-          '<p class="wk-dk-mnote">Колода и белли хранятся только в облаке, на устройстве их копии нет. Изменения на другом устройстве подтягиваются сами.</p>' +
+        paint((extra || '') + lockH + cloudSum(deckParse(), 'Сейчас на экране') + cloudSum(deck, 'В облаке') + bkH + shipH + (window.__wkDocSizeHTML ? window.__wkDocSizeHTML() : '') + (pend ? '<p class="wk-cl-r">Есть изменения, которые ещё сохраняются…</p>' : '') + err + lg + recH1083 +
+          '<p class="wk-dk-mnote">Подтверждённые данные хранятся в облаке. Неотправленные изменения и конфликтные настройки могут временно сохраняться на устройстве.</p>' +
           '<div class="wk-cl-b"><button type="button" class="wk-dk-reset" data-act="cloud-pull">Обновить из облака</button></div>');
-      }, function (e) { paint('<p class="wk-cl-e">Облако не ответило: ' + esc(String(e && (e.code || e.message) || e)) + '</p>'); });
+      }, function (e) { if(myLogin()!==ml)return;paint('<p class="wk-cl-e">Облако не ответило: ' + esc(String(e && (e.code || e.message) || e)) + '</p>'+shpRecoveryHTML1083(ml)); });
     };
     if (a === 'cloud') { report(''); return; }
     if (!cl || !ml || !cl.enabled() || !CLOUD.ready) return;
     if (a === 'cloud-pull') {
-      cl.own().then(function (deck) { if (deck) { CLOUD.busy = false; cloudAdopt(deck); cloudRepaint(); } report('<p class="wk-cl-ok">✓ Обновлено из облака</p>'); }, function (e) { report('<p class="wk-cl-e">Облако не ответило: ' + esc(String(e && (e.code || e.message) || e)) + '</p>'); });
+      if(CLOUD.busy||CLOUD.force||(+deckParse().rev||0)!==CLOUD.rev){report('<p class="wk-cl-e">Сначала дождись сохранения текущих изменений.</p>');return;}
+      var pullRev1083=CLOUD.rev,pullEpoch1083=CLOUD.epoch1083||0;
+      cl.own().then(function (deck) { if(myLogin()!==ml||(CLOUD.epoch1083||0)!==pullEpoch1083)return; if(CLOUD.busy||CLOUD.rev!==pullRev1083||(+deckParse().rev||0)!==pullRev1083){report('<p class="wk-cl-e">Данные изменились во время загрузки. Повтори обновление после сохранения.</p>');return;} if (deck&&(+deck.rev||0)>=CLOUD.rev) { cloudAdopt(deck); cloudRepaint(); } report('<p class="wk-cl-ok">✓ Проверено облако</p>'); }, function (e) { report('<p class="wk-cl-e">Облако не ответило: ' + esc(String(e && (e.code || e.message) || e)) + '</p>'); });
       return;
     }
     if (a === 'cloud-up' && CLOUD.legacy) {
@@ -42390,13 +42535,15 @@ document.addEventListener('change',function(e) {
     var art=B.art863&&B.seaArt863,fill=B.sea||'#173e59';
     var out='<g data-water1072="1" data-water-force1072="'+force+'" pointer-events="none" style="--wk1072-time:'+f(5.8/Math.sqrt(force))+'s;--wk1072-rise:'+f(a*.75)+'px"><defs>'+defs+'</defs><g data-water-depth1072="1" mask="url(#'+mid+')"><rect x="'+f(left)+'" y="'+f(top)+'" width="'+f(w)+'" height="'+f(h)+'" fill="'+fill+'"/>'+(art?B.seaArt863:'')+'</g>';
     var light=B.hl||'#d9f3ff';
-    (contacts||[]).forEach(function(c,ci){var x=c.x,scale=c.scale||1,sz=(c.oar?7:13)*scale,yy=y+(c.oar?6:2),amount=c.oar?.52:.60;
-      // Individual uneven foam strokes, with soft taper and small droplets. No continuous white stripe.
-      var line=function(d,width,op){return '<path d="'+d+'" fill="none" stroke="'+light+'" stroke-width="'+f(width)+'" stroke-opacity="'+f(op)+'" stroke-linecap="round"/>';};
-      var foam='<g data-water-contact1072="'+(c.oar?'oar':'bow')+'" transform="translate('+f(x)+' '+f(yy)+')" style="--wk1072-phase:'+f(-ci*.63)+'s"><g data-water-ripple1072="1">';
-      for(var k=0;k<3;k++){var q=sz*(1+k*.36),z=(k-1)*2.5*scale;foam+=line('M'+f(-q*.86)+' '+f(z+1)+' Q'+f(-q*.24)+' '+f(z-2.2*scale)+' '+f(q*.35)+' '+f(z)+' T'+f(q*.82)+' '+f(z+.9),(.62-k*.12)*scale,amount/(1+k*.9));}
-      foam+='</g>';
-      if(!c.oar){foam+='<g data-water-spray1072="1">';for(var k=0;k<(force>1.5?7:4);k++){var px=(k*.29-.25)*sz,py=-(1.2+(k%3)*1.6)*scale*force;foam+='<ellipse cx="'+f(px)+'" cy="'+f(py)+'" rx="'+f((.37+k%2*.13)*scale)+'" ry="'+f((.64+k%3*.19)*scale)+'" fill="'+light+'" opacity="'+f(.36+(k%3)*.12)+'" transform="rotate(28 '+f(px)+' '+f(py)+')"/>';}foam+='</g>';}
+    (contacts||[]).forEach(function(c,ci){
+      var kind=c.kind||(c.oar?'oar':'bow'),scale=c.scale||1,power=Math.max(.5,Math.min(2.4,c.power||1)),sz=(kind==='oar'?7:kind==='side'?10:15)*scale,yy=y+(kind==='oar'?6:2),strength=Math.min(1, .48*power*Math.sqrt(force));
+      var foam='<g data-contact1087="'+kind+'" transform="translate('+f(c.x)+' '+f(yy)+')">';
+      function line(d,w,op){return '<path d="'+d+'" fill="none" stroke="'+light+'" stroke-width="'+f(w)+'" stroke-opacity="'+f(op)+'" stroke-linecap="round"/>';}
+      for(var k=0;k<3;k++){var q=sz*(1+k*.36),z=(k-1)*2.3*scale;foam+='<g class="wk-ripple1087" style="--wk-ripple-dx:'+f(-q*.36)+'px;animation-duration:'+f((2.7+k*.71)/Math.sqrt(force*power))+'s;animation-delay:'+f(-ci*.71-k*.83)+'s">'+line('M'+f(-q)+' '+f(z+1)+' Q'+f(-q*.38)+' '+f(z-2.2*scale)+' '+f(q*.18)+' '+f(z)+' T'+f(q*.65)+' '+f(z+.9),(.85-k*.19)*scale,strength/(1+k*.65))+'</g>';}
+      if(kind!=='side')for(var j=0;j<Math.min(12,Math.ceil((kind==='oar'?4:6)*Math.sqrt(force*power)));j++){
+        var px=sz*(.12-j*.09),py=-scale*(.6+j%3*.6),dx=-scale*(3+j%5*2)*power,dy=-scale*(3+j%4*2)*force;
+        foam+='<g class="wk-spray1087" style="--wk-spray-x:'+f(dx)+'px;--wk-spray-y:'+f(dy)+'px;animation-duration:'+f((.85+j%5*.19)/Math.sqrt(power))+'s;animation-delay:'+f(-j*.37-ci*.61)+'s"><ellipse cx="'+f(px)+'" cy="'+f(py)+'" rx="'+f((.35+j%3*.13)*scale)+'" ry="'+f((.55+j%3*.21)*scale)+'" fill="'+light+'" opacity="'+f(strength)+'"/></g>';
+      }
       out+=foam+'</g>';
     });
     return out+'</g>';
@@ -42404,15 +42551,16 @@ document.addEventListener('change',function(e) {
   /* v1073: material-preserving ambient light and alpha-bounded reflected light. */
   function shpLight1073(bg,tm,wx,sj,strength){
     var profiles={day:[1,1,1,0,0,0,.07],dawn:[1.02,.94,.87,.018,.012,.017,.31],noon:[1.025,1.01,.985,0,0,0,.05],golden:[1.07,.95,.80,.022,.013,.004,.26],dusk:[.96,.82,.78,.025,.015,.025,.48],blue:[.74,.82,.94,.013,.022,.038,.65],night:[.65,.73,.86,.009,.017,.032,.86],aurora:[.68,.86,.87,.012,.025,.023,.77],deepsea:[.58,.82,.94,.006,.029,.043,.55],haunted:[.72,.84,.76,.012,.025,.014,.76],volcano:[1.03,.88,.75,.019,.008,.004,.34]};
-    var fallback={'':'night',sunset:'golden',aurora:'aurora',haunted:'haunted',xmas:'night',deepsea:'deepsea',volcano:'volcano'};
+    var fallback={'':'night',day:'day',sunset:'golden',storm:'blue',fog:'day',snowfall:'blue',aurora:'aurora',tropic:'noon',jungle:'day',candy:'day',snowland:'day',saloon:'golden',smogjp:'day',worldtree:'day',deepsea:'deepsea',beach:'noon',clouds:'day',volcano:'volcano',sakura:'day',harbor:'golden',haunted:'haunted',xmas:'night'};
+    var accents1095={tropic:[1.01,1.025,1.02],jungle:[.96,1.025,.96],candy:[1.025,.99,1.02],snowland:[.96,1.01,1.045],smogjp:[.98,.98,.96],worldtree:[.97,1.025,.98],sakura:[1.025,.99,1.01],clouds:[1.01,1.01,1.025]};
     var weather=wx||({storm:'storm',fog:'fog',snowfall:'snow',snowland:'snow',xmas:'snow',smogjp:'fog'})[bg]||'';
     var mode=profiles[tm]?tm:(fallback[bg]||'day'),p=profiles[mode].slice(),w=({rain:[.91,.95,1.01],drizzle:[.95,.98,1.01],storm:[.81,.88,1.00],fog:[.95,.99,1.01],snow:[.91,.97,1.04],blizzard:[.85,.95,1.05],haze:[1.03,.99,.93],wind:[.98,.99,1]})[weather]||[1,1,1];
     var k=strength==null||strength===''||!isFinite(+strength)?1:Math.max(.15,Math.min(1,+strength/100));
     // Fixed scene lighting remains when the optional atmosphere intensity is reduced.
     if(!tm&&!wx&&!sj)k=1;
-    for(var i=0;i<3;i++){var mul=p[i]*w[i]*(sj==='winter'?[.96,.99,1.02][i]:1);p[i]=1+(mul-1)*k;p[i+3]*=k;}
+    for(var i=0;i<3;i++){var mul=p[i]*w[i]*(accents1095[bg]||[1,1,1])[i]*(sj==='winter'?[.96,.99,1.02][i]:1);p[i]=1+(mul-1)*k;p[i+3]*=k;}
     p[6]=Math.min(.9,(p[6]+(weather==='storm'?.12:weather==='rain'?.05:0))*k);
-    return {mode:mode,weather:weather,p:p};
+    return {mode:mode,weather:weather,p:p,strength:k};
   }
   function shpLightSources1073(ship,L,uid){
     // Read actual final SVG positions, including user translation, rotation and scale.
@@ -42429,12 +42577,13 @@ document.addEventListener('change',function(e) {
     doc.querySelectorAll('circle[data-glow1070]').forEach(function(el){var c=el.getAttribute('fill');if(/^#[0-9a-f]{6}$/i.test(c||''))add(el,+el.getAttribute('cx'),+el.getAttribute('cy'),Math.max(4,+el.getAttribute('r')*2.1),c,.35);});
     return out.slice(0,72);
   }
-  function shpShipLight1073(ship,u,L,profile,surface,lightsOn){
+  function shpShipLight1073(ship,u,L,profile,surface,lightsOn,still,sourceSink){
     var p=profile.p,f=shpF,id=u+'ambient1073',num=function(x){return (+x).toFixed(4);};
     var vals=[p[0],0,0,0,p[3],0,p[1],0,0,p[4],0,0,p[2],0,p[5],0,0,0,1,0].map(num).join(' ');
     var identity1076=p.slice(0,6).every(function(v,i){return num(v)===num(i<3?1:0);});
     var defs=identity1076?'':'<filter id="'+id+'" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="'+vals+'"/></filter>',out='<g data-light-ambient1073="'+profile.mode+'"'+(identity1076?'':' filter="url(#'+id+')"')+'>'+ship+'</g>';
     var sources=lightsOn&&surface&&p[6]>.13&&(/data-glow1070|\/lamps\.webp|\/sloop928\/hull\.webp|\/decor\/(?:v\d+\/)?(?:lanterns|pole|bowlamp)\.webp/.test(ship))?shpLightSources1073(ship,L,u):[];
+    if(sourceSink)sourceSink.push.apply(sourceSink,sources);
     if(sources.length){var mask=u+'spill1073m',grad={},ell='';
       // Only the union of the reflected light ellipses can contribute pixels. Extra two units for AA.
       var left1076=Infinity,top1076=Infinity,right1076=-Infinity,bottom1076=-Infinity;
@@ -42442,12 +42591,36 @@ document.addEventListener('change',function(e) {
       left1076=Math.floor(left1076)-2;top1076=Math.floor(top1076)-2;right1076=Math.ceil(right1076)+2;bottom1076=Math.ceil(bottom1076)+2;
       defs+='<mask id="'+mask+'" maskUnits="userSpaceOnUse" x="'+left1076+'" y="'+top1076+'" width="'+(right1076-left1076)+'" height="'+(bottom1076-top1076)+'" style="mask-type:alpha">'+surface+'</mask>';
       sources.forEach(function(q){var c=q[3],g=grad[c];if(!g){g=grad[c]=u+'spill1073g'+Object.keys(grad).length;defs+='<radialGradient id="'+g+'"><stop stop-color="'+c+'" stop-opacity=".64"/><stop offset=".42" stop-color="'+c+'" stop-opacity=".25"/><stop offset="1" stop-color="'+c+'" stop-opacity="0"/></radialGradient>';}
-        ell+='<ellipse cx="'+f(q[0])+'" cy="'+f(q[1]+q[2]*.16)+'" rx="'+f(q[2])+'" ry="'+f(q[2]*.75)+'" fill="url(#'+g+')" opacity="'+num(q[4]*p[6])+'"/>';});
+        ell+='<ellipse class="wk-lamp1096" style="--lamp-period:'+(2.7+(q[0]%7)*.31)+'s;animation-delay:-'+(Math.abs(q[1])%5)+'s'+(still?';animation:none':'')+'" cx="'+f(q[0])+'" cy="'+f(q[1]+q[2]*.16)+'" rx="'+f(q[2])+'" ry="'+f(q[2]*.75)+'" fill="url(#'+g+')" opacity="'+num(q[4]*p[6])+'"/>';});
       out+='<g data-light-spill1073="'+sources.length+'" mask="url(#'+mask+')" pointer-events="none">'+ell+'</g>';
+    }
+    if(surface&&profile.mode!=='deepsea'){
+      var rim=u+'rim1095',rm=rim+'m',rg=rim+'g',warm=['golden','dawn','dusk','volcano'].indexOf(profile.mode)>=0,night=['night','blue','aurora','haunted'].indexOf(profile.mode)>=0;
+      var a=(warm?.15:night?.12:.075)*profile.strength*(/storm|fog|blizzard/.test(profile.weather)?.45:1);
+      defs+='<mask id="'+rm+'" maskUnits="objectBoundingBox" x="0" y="0" width="1" height="1" style="mask-type:alpha">'+surface+'</mask><linearGradient id="'+rg+'" x1="0%" y1="0%" x2="75%" y2="100%"><stop stop-color="'+(warm?'#ffe1ac':night?'#b6d8ff':'#fff5dd')+'" stop-opacity="'+num(a)+'"/><stop offset=".55" stop-color="#ffffff" stop-opacity="0"/></linearGradient>';
+      // Use the original surface images as the geometry for the gradient overlay.
+      var rects=''; surface.replace(/<image\b[^>]*>/g,function(tag){var x=/\bx="([\d.-]+)"/.exec(tag),y=/\by="([\d.-]+)"/.exec(tag),w=/\bwidth="([\d.-]+)"/.exec(tag),h=/\bheight="([\d.-]+)"/.exec(tag);if(x&&y&&w&&h&&!rects)rects='<rect x="'+x[1]+'" y="'+y[1]+'" width="'+w[1]+'" height="'+h[1]+'" fill="url(#'+rg+')"/>';return tag;});
+      if(rects)out+='<g pointer-events="none" mask="url(#'+rm+')">'+rects+'</g>';
     }
     return '<defs>'+defs+'</defs>'+out;
   }
   /* v1074: deterministic damage registered to the original painted hull canvases. */
+  // Transient visual events only; never persisted or used in combat calculations.
+  var shpBattleHits1091 = new WeakMap();
+  function shpBattleMark1091(sh,t,loss){
+    var actual=Math.min(shpHp(sh,t),Math.max(0,loss)); if(!actual)return;
+    var hits=shpBattleHits1091.get(sh); if(!hits){hits={};shpBattleHits1091.set(sh,hits);}
+    hits[t]={at:Date.now(),loss:actual};
+  }
+  function shpBattleImpact1091(t,x,y,L,H,event,paint){
+    if(!event||Date.now()-event.at>1800)return '';
+    var spots=[[.46,.69],[.49,.81],[.49,.80],[.44,.70],[.52,.74],[.47,.91],[.46,.72]],p=spots[t]||spots[0],f=shpF,k=Math.max(.65,Math.min(1.4,L/305)),n=Math.min(12,4+Math.ceil(event.loss/3));
+    var a='<g pointer-events="none" data-battle-impact1091="1" transform="translate('+f(x+p[0]*L)+' '+f(y+p[1]*H)+') scale('+f(k)+')"><g class="wk-impact1091"><ellipse rx="9" ry="5" fill="#ffb65c" opacity=".55"/><path d="M-9 0L-3 -2 -1 -8 2 -3 9 -1 3 2 1 6 -2 2Z" fill="#fff0c4"/></g>';
+    var color=/^#[0-9a-f]{6}$/i.test(paint||'')?paint:'#9b7651';
+    for(var j=0;j<n;j++){var dx=Math.cos(j*2.4)*(9+j*1.5),dy=-5-(j%5)*4;
+      a+='<g class="wk-chip1091" style="--dx:'+f(dx)+'px;--dy:'+f(dy)+'px;--rot:'+(j%2?110:-130)+'deg;--dur:'+f(.65+j%4*.12)+'s;animation-delay:'+f(j*.018)+'s"><path d="M-2 -.5L2 -1 1 1.3 -1 .8Z" fill="'+color+'" stroke="#30251d" stroke-width=".3"/></g>';}
+    return a+'</g>';
+  }
   function shpHullDamage1074(u,t,x,y,L,H,hp,raw){
     if(hp>=90||!raw)return '';
     var f=shpF, v=1-hp/100, id=u+'damage1074', k=Math.max(.64,Math.min(1.35,L/305));
@@ -42468,7 +42641,7 @@ document.addEventListener('change',function(e) {
       var inner='', sc=f(.45+.55*a), ang=(i*17%25)-12;
       if(kind==='scratch'){
         var d='M'+f(-rx*1.2)+' 0L'+f(-rx*.47)+' '+f(-ry*.36)+'L'+f(-rx*.11)+' '+f(ry*.14)+'L'+f(rx*.49)+' '+f(-ry*.35)+'L'+f(rx*1.15)+' '+f(ry*.1);
-        inner='<path d="'+d+'" fill="none" stroke="#1e100c" stroke-width="'+f(.46+k*.39)+'" stroke-linecap="round" stroke-linejoin="round"/><path d="'+d+'" transform="translate(0 .65)" fill="none" stroke="#d7a873" stroke-opacity=".67" stroke-width=".42" stroke-linecap="round"/><path d="M0 0l'+f(rx*.22)+' '+f(ry*.85)+'" fill="none" stroke="#342016" stroke-width=".48"/>';
+        inner='<path d="'+d+'" fill="none" stroke="#1e100c" stroke-width="'+f(.46+k*.39)+'" stroke-linecap="round" stroke-linejoin="round"/><path d="'+d+'" transform="translate(0 .65)" fill="none" stroke="#ffffff" stroke-opacity=".24" stroke-width=".42" stroke-linecap="round"/><path d="M0 0l'+f(rx*.22)+' '+f(ry*.85)+'" fill="none" stroke="#342016" stroke-width=".48"/>';
       }else{
         var pts=[], shape='';for(var j=0;j<15;j++){var th=j*Math.PI*2/15,rr=(j%3===0?.55:j%3===1?1:.79)*(1+.12*Math.sin(j*7+i));pts.push([Math.cos(th)*rx*rr,Math.sin(th)*ry*rr]);}
         shape='M'+pts.map(function(q){return f(q[0])+' '+f(q[1]);}).join('L')+'Z';
@@ -42476,9 +42649,28 @@ document.addEventListener('change',function(e) {
         if(kind==='breach')pts.forEach(function(q,j){if(j%2)return;var tx=q[0]*1.48,ty=q[1]*1.45;inner+='<path d="M'+f(tx)+' '+f(ty)+'L'+f(q[0])+' '+f(q[1])+'L'+f(q[0]*.57)+' '+f(q[1]*.48)+'" fill="none" stroke="'+(j%4?'#42261b':'#ddb080')+'" stroke-width=".56" stroke-linecap="round"/>';});
         else inner+='<path d="M'+f(-rx*1.2)+' 0L'+f(-rx*.6)+' '+f(-ry*.23)+'M'+f(rx*.65)+' '+f(ry*.27)+'L'+f(rx*1.28)+' '+f(ry*.5)+'" stroke="#291a13" stroke-width=".62" fill="none"/>';
       }
+      if(hp<70){inner+='<path d="M'+f(-rx*1.7)+' '+f(ry*.8)+'l'+f(rx*.6)+' -.5 '+f(rx*.45)+' .7 '+f(rx*.8)+' -.6" fill="none" stroke="#211913" stroke-opacity="'+f(.25+v*.4)+'" stroke-width=".65"/><path d="M'+f(-rx*1.7)+' '+f(ry*.8+.8)+'l'+f(rx*.6)+' -.5 '+f(rx*.45)+' .7 '+f(rx*.8)+' -.6" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width=".45"/>'; }
       out+='<g data-damage-site1074="'+i+'" data-damage-kind1074="'+kind+'" transform="translate('+f(x+p[0]*L)+' '+f(y+p[1]*H)+') rotate('+ang+') scale('+sc+')" opacity="'+f(.28+.72*a)+'">'+inner+'</g>';
     });
     return defs+'<g data-dmg="hull" data-hull-damage1074="'+t+'" mask="url(#'+id+'m)" pointer-events="none">'+out+'</g>';
+  }
+  function shpHullWeather1094(u,x,y,L,H,raw,weather,hp){
+    var wet=({drizzle:.35,rain:.65,storm:.9})[weather]||0, snow=({snow:.55,blizzard:.9,xmas:.45,winter:.25})[weather]||0;
+    if(!raw||(!wet&&!snow))return ''; var f=shpF,id=u+'hullWeather1094',rect=' x="'+f(x)+'" y="'+f(y)+'" width="'+f(L)+'" height="'+f(H)+'"';
+    var a='<defs><mask id="'+id+'m" maskUnits="userSpaceOnUse"'+rect+' style="mask-type:alpha">'+raw+'</mask><linearGradient id="'+id+'g" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#dceeff" stop-opacity=".25"/><stop offset=".3" stop-color="#dceeff" stop-opacity=".03"/><stop offset=".65" stop-color="#102633" stop-opacity=".22"/><stop offset="1" stop-color="#102633" stop-opacity=".08"/></linearGradient></defs><g pointer-events="none" mask="url(#'+id+'m)" class="wk-surface1094">';
+    if(wet)a+='<rect'+rect+' fill="url(#'+id+'g)" opacity="'+f(wet)+'"/>';
+    if(snow)a+='<rect'+rect+' fill="#dcebf5" opacity="'+f(snow*.065)+'"/>';
+    return a+'</g>';
+  }
+  function shpSurface1093(u,t,x,y,L,H,raw,weather){
+    if(!raw)return ''; var wet=({drizzle:.35,rain:.65,storm:.9})[weather]||0, snow=({snow:.55,blizzard:.9,xmas:.45,winter:.25})[weather]||0;
+    if(!wet&&!snow)return ''; var f=shpF,id=u+'surface1093',spots=[[[.32,.44],[.67,.43]],[[.35,.52],[.72,.49]],[[.39,.47],[.75,.43]],[[.44,.43],[.74,.41]],[[.40,.46],[.58,.48]],[[.34,.49],[.60,.49]],[[.36,.43],[.68,.46]]][t];
+    var a='<defs><mask id="'+id+'" maskUnits="userSpaceOnUse" x="'+f(x)+'" y="'+f(y)+'" width="'+f(L)+'" height="'+f(H)+'" style="mask-type:alpha">'+raw+'</mask></defs><g pointer-events="none" mask="url(#'+id+')" class="wk-surface1093">';
+    if(wet)a+='<rect x="'+f(x)+'" y="'+f(y)+'" width="'+f(L)+'" height="'+f(H)+'" fill="#172c39" opacity="'+f(wet*.13)+'"/>';
+    spots.forEach(function(p,i){var px=x+L*p[0],py=y+H*p[1];for(var j=0;j<5;j++){var xx=px+(j-2)*L*.025, yy=py+Math.sin(j*2.4+i)*H*.009;
+      if(snow)a+='<ellipse class="wk-snow1094" cx="'+f(xx)+'" cy="'+f(yy)+'" rx="'+f(L*.019)+'" ry="'+f(H*.009)+'" fill="#e0edf4" opacity="'+f(snow*(.38+j*.07))+'"/>';
+      if(wet)a+='<g transform="translate('+f(xx)+' '+f(yy)+')"><ellipse class="wk-deckdrop1093" rx="3" ry=".8" fill="none" stroke="#d5f1ff" stroke-width=".45" style="--drop1093:'+f(-j*.31-i*.47)+'s;--wet1093:'+f(wet)+'"/></g>';
+    }});return a+'</g>';
   }
   function shpDeckDamage1074(u,t,x,y,L,H,hp,raw,weather,underwater){
     if(hp>=70||!raw)return {wear:'',air:''};
@@ -42486,16 +42678,29 @@ document.addEventListener('change',function(e) {
     // Deck-floor positions, away from the central mast sockets and stairs.
     var spots=[[[.32,.44],[.67,.43]],[[.35,.52],[.72,.49]],[[.39,.47],[.75,.43]],[[.44,.43],[.74,.41]],[[.40,.46],[.58,.48]],[[.34,.49],[.60,.49]],[[.36,.43],[.68,.46]]][t];
     var defs='<defs><mask id="'+id+'m" maskUnits="userSpaceOnUse" x="'+f(x)+'" y="'+f(y)+'" width="'+f(L)+'" height="'+f(H)+'" style="mask-type:alpha">'+raw+'</mask><radialGradient id="'+id+'ash"><stop stop-color="#231915" stop-opacity=".72"/><stop offset=".56" stop-color="#30241f" stop-opacity=".32"/><stop offset="1" stop-color="#30241f" stop-opacity="0"/></radialGradient><radialGradient id="'+id+'smoke"><stop stop-color="#888c90" stop-opacity=".8"/><stop offset=".45" stop-color="#686b70" stop-opacity=".47"/><stop offset="1" stop-color="#474950" stop-opacity="0"/></radialGradient><linearGradient id="'+id+'flame" x1="0" y1="1" x2="0" y2="0"><stop stop-color="#fff2bc"/><stop offset=".28" stop-color="#ffc24d"/><stop offset=".67" stop-color="#e36b22"/><stop offset="1" stop-color="#a43f1a" stop-opacity=".12"/></linearGradient></defs>';
-    var wear='',smoke='',fire='',wind=/storm|wind|blizzard/.test(weather),wet=/rain|drizzle|storm|snow|blizzard/.test(weather),intensity=Math.max(.1,Math.min(1,(50-hp)/20));
+    var wear='',smoke='',fire='',wind=/storm|wind|blizzard/.test(weather),wet=/rain|drizzle|storm|snow|blizzard/.test(weather),intensity=Math.max(0,Math.min(1,(50-hp)/30));
     spots.forEach(function(p,i){var px=x+L*p[0],py=y+H*p[1];if(i&&hp>=45)return;
       wear+='<g transform="translate('+f(px)+' '+f(py)+') scale('+f(k)+')"><ellipse rx="11" ry="3.8" fill="url(#'+id+'ash)" opacity="'+f(v)+'"/><path d="M-7 0l4 -1 2 1.1 5 -.6 3 1M-2 0l1 2" fill="none" stroke="#281b14" stroke-width=".62" stroke-linecap="round"/><path d="M-7 .7l4 -1 2 1.1 5 -.6" fill="none" stroke="#cba477" stroke-width=".4" opacity=".55"/></g>';
       if(hp>=50||underwater)return;
-      smoke+='<g transform="translate('+f(px)+' '+f(py-2*k)+') scale('+f(k)+')" style="--wk1074-drift:'+(wind?17:7)+'px;--wk1074-period:'+(wind?'3.1s':'4.8s')+'">';
-      for(var j=0;j<4;j++){smoke+='<g data-smoke1074="1" style="--wk1074-delay:'+f(-j*(wind?.78:1.2)-i*.4)+'s" opacity="'+f(intensity*(.42-j*.06))+'"><ellipse cx="'+f(j*1.4)+'" cy="'+f(-2-j*3)+'" rx="'+f(3+j*1.3)+'" ry="'+f(3.3+j*1.4)+'" fill="url(#'+id+'smoke)"/></g>';}
+      smoke+='<g transform="translate('+f(px)+' '+f(py-2*k)+') scale('+f(k)+')" style="--wk1074-drift:'+(shpWind1092(weather)*28)+'px;--wk1074-period:'+(wind?'3.1s':'4.8s')+'">';
+      for(var j=0;j<6;j++){smoke+='<g data-smoke1074="1" style="--wk1074-delay:'+f(-j*(wind?.52:.8)-i*.4)+'s" opacity="'+f((.52-j*.055)*(wet?.72:1))+'"><ellipse cx="'+f(j*1.4)+'" cy="'+f(-2-j*3)+'" rx="'+f(3+j*1.3)+'" ry="'+f(3.3+j*1.4)+'" fill="url(#'+id+'smoke)"/></g>';}
       smoke+='</g>';
+      if(hp<20&&!wet){fire+='<g transform="translate('+f(px)+' '+f(py-3*k)+') scale('+f(k)+')" pointer-events="none">';for(var e=0;e<4;e++){fire+='<g class="wk-ember1088" style="--ember-x:'+f((wind?12:5)+e*2)+'px;--ember-y:'+f(-9-e*3)+'px;animation-duration:'+f(1.3+e*.37)+'s;animation-delay:'+f(-e*.53-i*.3)+'s"><circle r="'+f(.48+e*.09)+'" cx="'+f(e-2)+'" fill="#ffd18a"/></g>';}fire+='</g>';}
       if(hp<30){var a=Math.min(1,(30-hp)/18),size=k*(.58+a*.42)*(wet?.72:1);fire+='<g transform="translate('+f(px)+' '+f(py)+') scale('+f(size)+')" opacity="'+f(.35+a*.65)+'"><g data-fire1074="1" style="--wk1074-delay:'+f(-i*.61)+'s"><path d="M-5 0C-8 -6 -2 -9 -3 -14C1 -11 0 -8 2 -7C5 -11 4 -13 6 -17C6 -10 11 -6 6 0Z" fill="url(#'+id+'flame)"/><path d="M-2 0C-4 -4 1 -7 0 -10C4 -6 5 -3 2 0Z" fill="#fff0ad" opacity=".84"/></g></g>';}
     });
     return {wear:defs+'<g data-dmg="deckwear" mask="url(#'+id+'m)" pointer-events="none">'+wear+'</g>',air:(smoke?'<g data-dmg="smoke" opacity="'+f(intensity)+'" pointer-events="none">'+smoke+'</g>':'')+(fire?'<g data-dmg="fire" pointer-events="none">'+fire+'</g>':'')};
+  }
+  function shpFinalize1080(svg) {
+    var definitions=Object.create(null),aliases=Object.create(null),ordered=[];
+    var source=svg.replace(/<defs><filter id="(shp\d+(?:b857t|s975t|warm1077)\d+)"([^>]*>[\s\S]*?<\/filter>)<\/defs>/g,function(all,id,body){
+      if(!definitions[body]){definitions[body]=id;ordered.push([id,body]);}
+      aliases[id]=definitions[body];return '';
+    });
+    if(!ordered.length)return svg;
+    var used=Object.create(null);
+    source=source.replace(/url\(#(shp\d+(?:b857t|s975t|warm1077)\d+)\)/g,function(all,id){var canonical=aliases[id]||id;used[canonical]=true;return 'url(#'+canonical+')';});
+    var defs=ordered.filter(function(q){return used[q[0]];}).map(function(q){return '<filter id="'+q[0]+'"'+q[1];}).join('');
+    return defs?source.replace(/^(<svg\b[^>]*>)/,'$1<defs>'+defs+'</defs>'):source;
   }
   function shpSVG(o) {
     o = o || {};
@@ -42593,7 +42798,7 @@ document.addEventListener('change',function(e) {
       if (fS > 1.6) figK = Math.min(figK * fS / 1.6, (vw - (bx + 8 - fLeft)) / 29);
       vx = fLeft - Math.max(0, (vw - (bx + figK * 29 + 8 - fLeft)) / 2); mx = vx + vw * .82;
     }
-    if (LY.wk && SHP_WAKES[LY.wk]) { wkE = Math.round(vw * .22); vw += wkE; vh = vw * .625; my = Hh - vh + vh * .2; mr = vw / 24; mx = vx + vw * .82; }
+    if (!o.layer && LY.wk && SHP_WAKES[LY.wk]) { wkE = Math.round(vw * .22); vw += wkE; vh = vw * .625; my = Hh - vh + vh * .2; mr = vw / 24; mx = vx + vw * .82; }
     if(fArt938 && has('hull')){
       // x/y: mounting point on the painted stem; w: default width relative to hull length.
       var tier938=T===shpTShape(6)?6:T===shpTShape(5)?5:Math.max(0,SHP_T.indexOf(T));
@@ -42837,8 +43042,8 @@ document.addEventListener('change',function(e) {
     /* --- фон --- */
     // v969: explicit scene preferences override only atmospheric layers, never saved background IDs.
     var scene969=!!o.scn, bgId969=o.bg||'', time969=scene969&&Object.prototype.hasOwnProperty.call(SHP_STM,LY.tm)?LY.tm:'', weather969=scene969&&Object.prototype.hasOwnProperty.call(SHP_SWX,LY.wx)?LY.wx:'', season969=scene969&&Object.prototype.hasOwnProperty.call(SHP_SSN,LY.sj)?LY.sj:'';
-    var BG = shpBg(o.bg, { u: u, W: W, Hh: Hh, wl: wl, vx: vx, vw: vw, vh: vh, mx: mx, my: my, mr: mr, bottom969:fBottom953, time969:time969, weather969:weather969, season969:season969 });
-    if (o.layer) BG = { defs: '', body: '', over: '', hl: BG.hl, sea: BG.sea, so: BG.so, art863: true, noWave: true, noBob: BG.noBob }; /* v1030: фон и воду рисует сцена флота */
+    var BG = shpBg(o.bg, { u: u, W: W, Hh: Hh, wl: wl, vx: vx, vw: vw, vh: vh, mx: mx, my: my, mr: mr, bottom969:fBottom953, time969:time969, weather969:weather969, season969:season969, still1084:!!o.still });
+    if (o.layer) BG = { defs: '', body: '', over: '', hl: BG.hl, sea: BG.sea, so: BG.so, art863: true, noWave: true, wakeAllowed1085: !BG.noWave, noBob: BG.noBob }; /* v1030: фон и воду рисует сцена флота */
     if(weather969&&['storm','fog','snowfall','xmas'].indexOf(bgId969)>=0) BG.over='';
     var patDef = o.spat ? shpSailPat(o.spat, u + 'sp', P.sail, P.sail2) : '';
     var bg = '<defs>' + BG.defs + patDef +
@@ -43951,6 +44156,7 @@ document.addEventListener('change',function(e) {
         ah1074=[boat927h,sloop928H,brig929H,frigate930H,galleon931H,galleon932H,galleon933H][tier1053],
         readyDeck1074=B790?has('hull')&&on('hull'):has('deck')&&on('deck'),
         dd1074=readyDeck1074?shpDeckDamage1074(u,tier1053,sx,ay1074,L,ah1074,hpv,art1074(B790?'deck_base':'deck'),(o.fltLight1073||{}).wx||weather969||bgId969,bgId969==='underwater'):{wear:'',air:''};
+    if(readyDeck1074&&bgId969!=='underwater')ship+=shpSurface1093(u,tier1053,sx,ay1074,L,ah1074,art1074(B790?'deck_base':'deck'),(o.fltLight1073||{}).wx||weather969||bgId969);
     ship+=dd1074.wear;
     var ropePhase1071=0;
     if(has('mast'))rig=rig.replace(/<path\b[^>]*stroke="#f3d8a5"[^>]*stroke-dasharray="\.65 1\.25"[^>]*\/>/g,function(tag){return tag.replace('<path ','<path data-rope-light1071="1" style="--wk1071-phase:'+(-((ropePhase1071++)%9)*.17).toFixed(2)+'s" ');});
@@ -43963,7 +44169,9 @@ document.addEventListener('change',function(e) {
       var phase=(c.match(/--wk1071-phase:([^;"]+)/)||[])[1]||'0s';
       return '<g data-rope-flex1071="1" style="--wk1071-phase:'+phase+';--wk1071-rope-taut:path(\''+taut+'\');--wk1071-rope-slack:path(\''+slack+'\')">'+a+b+c+'</g>';
     });
-    ship += grp('mast', on('mast') ? rigRope1077(rig) + masts : '');
+    var frost1094=bgId969==='underwater'?0:(({snow:.55,blizzard:.9,xmas:.45,winter:.25})[(o.fltLight1073||{}).wx||weather969||bgId969]||0);
+    function frostRig1094(markup){if(!frost1094)return markup;return markup.replace(/<path\b[^>]*data-rope-light1071="1"[^>]*\/>/g,function(tag){return tag+tag.replace(/stroke="[^"]*"/,'stroke="#e0edf5"').replace(/\sstyle="[^"]*"/,'').replace('data-rope-light1071="1"','pointer-events="none" opacity="'+shpF(frost1094*.48)+'"');});}
+    ship += grp('mast', on('mast') ? frostRig1094(rigRope1077(rig)) + masts : '');
     ship += on('bowsprit') ? grp('bowsprit', bows) : '';
     var dec = o.dec || [], decV = {};
     dec = dec.map(function (id) { var v = SHP_DECVAR[id]; if (!v) return id; decV[v.b] = id; return v.b; });
@@ -43973,6 +44181,7 @@ document.addEventListener('change',function(e) {
         var bw=b[3],bh=Math.max(6,b[2]-b[1]);
         for(var q=0;q<n1074;q++){
           var key=bi*100+q*11+1700,hx=b[0]+bw*(-.24+.48*dr(key)),hy=b[1]+bh*(.24+.52*dr(key+1)),rx=Math.max(1.2,bw*(.075+.035*dr(key+2))*(.8+dmgEase*.4)),ry=Math.max(.8,bh*.065);
+          swr+='<path d="M'+shpF(hx-rx)+' '+shpF(hy)+'l'+shpF(rx*.7)+' '+shpF(-ry*.4)+' '+shpF(rx*.9)+' '+shpF(ry*.65)+'" fill="none" stroke="#201b18" stroke-opacity="'+shpF(.15+dmgEase*.25)+'" stroke-width=".45"/>';
           swr+='<ellipse data-sail-wear1074="'+q+'" cx="'+shpF(hx)+'" cy="'+shpF(hy)+'" rx="'+shpF(rx*1.8)+'" ry="'+shpF(ry*1.4)+'" fill="url(#'+sid1074+'g)" opacity="'+(.26+dmgEase*.35).toFixed(2)+'" transform="rotate('+shpF(-17+dr(key+3)*34)+' '+shpF(hx)+' '+shpF(hy)+')"/>';
           if(dl>=2&&q<dl-1&&dec.indexOf('torn')<0){
             var rr=Math.max(1.1,Math.min(bw,bh)*(.055+dmgEase*.045)), pts=[];
@@ -43980,7 +44189,7 @@ document.addEventListener('change',function(e) {
             var path='M'+pts.map(function(p){return shpF(p[0])+' '+shpF(p[1]);}).join('L')+'Z';
             dh+='<path data-sail-hole1074="'+q+'" d="'+path+'" fill="#000"/>';
             swr+='<path d="'+path+'" fill="none" stroke="#241a15" stroke-opacity=".42" stroke-width=".82" stroke-linejoin="round"/>';
-            pts.forEach(function(p,j){if(j%3===0)swr+='<path d="M'+shpF(p[0]+(p[0]-hx)*.19)+' '+shpF(p[1]+(p[1]-hy)*.19)+'L'+shpF(p[0]+(hx-p[0])*.08)+' '+shpF(p[1]+(hy-p[1])*.08)+'" stroke="#e3d3b7" stroke-opacity=".65" stroke-width=".25" fill="none"/>';});
+            pts.forEach(function(p,j){if(j%3===0)swr+='<path d="M'+shpF(p[0]+(p[0]-hx)*.19)+' '+shpF(p[1]+(p[1]-hy)*.19)+'L'+shpF(p[0]+(hx-p[0])*.08)+' '+shpF(p[1]+(hy-p[1])*.08)+'" stroke="#ffffff" stroke-opacity=".32" stroke-width=".25" fill="none"/>';});
           }
         }
       });
@@ -44012,14 +44221,20 @@ document.addEventListener('change',function(e) {
     ship += on('fore') ? grp('fore', fore) : '';
     if (showFrame) ship += '<g class="wk-shp-' + (has('keel') ? 'ok' : 'bld') + '">' + frame + '</g>';
     if((B790||S791||brig858||frigate859||galleon860||galleon861||galleon862)&&on('rudder'))ship+=grp('rudder',rudder);
-    ship += grp('hull', hull);
+    ship += '<!--depth1098-->'+grp('hull', hull);
+    if(has('hull')&&on('hull')&&bgId969!=='underwater')ship+=shpHullWeather1094(u,sx,ay1074,L,ah1074,art1074(B790?'hull_base':'hull'),(o.fltLight1073||{}).wx||weather969||bgId969,hpv);
     if(has('hull')&&on('hull'))ship+=shpHullDamage1074(u,tier1053,sx,ay1074,L,ah1074,hpv,art1074(B790?'hull_base':'hull'));
+    if(has('hull')&&on('hull')&&!o.still)ship+=shpBattleImpact1091(tier1053,sx,ay1074,L,ah1074,o.battleHit1091,P.hull);
     ship += !B790 && on('deck') && !((S791||brig858||frigate859||galleon860||galleon861||galleon862)&&has('deck')) ? grp('deck', deck) : '';
     ship += on('guns') ? grp('guns', guns) : '';
     ship += on('rudder') && !B790 && !S791 && !brig858 && !frigate859 && !galleon860 && !galleon861 && !galleon862 ? grp('rudder', rudder) : '';
     ship += on('oars') ? grp('oars', oars) : '';
     ship += on('lamps') ? grp('lamps', lamps) : '';
     ship+=dd1074.air;
+    ship += '<!--sailshadow1098--><!--contact1099-->';
+    var depthQueue1099=[];
+    function depthAdd1099(markup,y){depthQueue1099.push({html:markup,y:y,i:depthQueue1099.length});}
+    function depthManual1099(id){var q=(LY.ds||{})[id]||{};return !!((+q.x||0)||(+q.y||0)||(+q.r||0)||((+q.s||100)!==100));}
     var ok = function (p) { return o.all || has(p) || (o.parts && o.parts.indexOf(p) < 0 && has('hull')); };
     if(galleon862&&dec.indexOf('gilt')>=0&&ok('hull'))ship+='<g data-dec="gilt">'+boatTint857(galleon933Himg('mask_wale'),'#f1cb67',.62)+['deck','cabin','fore'].map(function(k){return ok(k)?boatTint857(galleon933Himg(k+'_wale'),'#f1cb67',.62):'';}).join('')+'</g>';
     else if(galleon861&&dec.indexOf('gilt')>=0&&ok('hull'))ship+='<g data-dec="gilt">'+boatTint857(galleon932Himg('mask_wale'),'#f1cb67',.62)+['deck','cabin','fore'].map(function(k){return ok(k)?boatTint857(galleon932Himg(k+'_wale'),'#f1cb67',.62):'';}).join('')+'</g>';
@@ -44189,13 +44404,20 @@ document.addEventListener('change',function(e) {
       ship += lr.s; back += lr.b; front += lr.f;
     });
     var pet0 = o.pet ? shpPetGet(o.pet) : null;
-    if (pet0 && ok(pet0.sp === 'parrot' ? 'mast' : 'deck')) ship += shpPetDraw(pet0, lctx, LY, o.drag);
+    if (pet0 && ok(pet0.sp === 'parrot' ? 'mast' : 'deck')) {
+      var petDraw1098=shpPetDraw(pet0,lctx,LY,o.drag),petQ1098=(LY.ds||{})[shpPetDsId(pet0)]||{};
+      var petManual1098=(+petQ1098.x||0)||(+petQ1098.y||0)||(+petQ1098.r||0)||((+petQ1098.s||100)!==100);
+      if(!o.drag&&!petManual1098&&pet0.sp!=='parrot'&&petPlan1069&&has('hull')&&on('hull')&&petPlan1069[1]<deckAt(petPlan1069[0])-L*.008&&ship.indexOf('<!--depth1098-->')>=0){
+        ship=ship.replace('<!--depth1098-->',function(){return petDraw1098+'<!--depth1098-->';});
+      }else if(!o.drag&&!petManual1098&&pet0.sp!=='parrot'&&petPlan1069)depthAdd1099(petDraw1098,petPlan1069[1]);
+      else ship+=petDraw1098;
+    }
     if (fArt938 && fBox938 && ok('hull') && !fAlt953) {
       // Contact shadow is bounded by native hull alpha, and omitted when manually detached.
       var mountShadow1055='', mx1055=fPivot953[0],my1055=fPivot953[1];
       if(Math.abs(mx1055-ax938)<L*.035&&Math.abs(my1055-ay938)<h938*.09){
         var hm1055=u+'figContactHull1055',hg1055=u+'figContactGrad1055',hp1055=['boat927/hull_base','sloop928/hull','brig929/hull','frigate930/hull','galleon931/hull','galleon932/hull','galleon933/hull'][tier938];
-        mountShadow1055='<defs><mask id="'+hm1055+'" maskUnits="userSpaceOnUse" x="'+shpF(sx)+'" y="'+shpF(y938)+'" width="'+shpF(L)+'" height="'+shpF(h938)+'" style="mask-type:alpha"><image href="assets/webp/ships/'+hp1055+'.webp" x="'+shpF(sx)+'" y="'+shpF(y938)+'" width="'+shpF(L)+'" height="'+shpF(h938)+'" preserveAspectRatio="none"/></mask><radialGradient id="'+hg1055+'"><stop stop-color="#180e08" stop-opacity=".36"/><stop offset="1" stop-color="#180e08" stop-opacity="0"/></radialGradient></defs><g data-fig-contact1055="1" mask="url(#'+hm1055+')"><ellipse cx="'+shpF(mx1055-1)+'" cy="'+shpF(my1055+1)+'" rx="'+shpF(Math.min(fw938*.22,L*.04))+'" ry="'+shpF(Math.min(fh938*.15,h938*.075))+'" fill="url(#'+hg1055+')" transform="rotate(-40 '+shpF(mx1055-1)+' '+shpF(my1055+1)+')"/></g>';
+        mountShadow1055='<defs><mask id="'+hm1055+'" maskUnits="userSpaceOnUse" x="'+shpF(sx)+'" y="'+shpF(y938)+'" width="'+shpF(L)+'" height="'+shpF(h938)+'" style="mask-type:alpha"><image href="assets/webp/ships/'+hp1055+'.webp" x="'+shpF(sx)+'" y="'+shpF(y938)+'" width="'+shpF(L)+'" height="'+shpF(h938)+'" preserveAspectRatio="none"/></mask><radialGradient id="'+hg1055+'"><stop stop-color="#180e08" stop-opacity=".36"/><stop offset="1" stop-color="#180e08" stop-opacity="0"/></radialGradient></defs><g data-fig-contact1055="1" mask="url(#'+hm1055+')"><ellipse cx="'+shpF(mx1055-1)+'" cy="'+shpF(my1055+1)+'" rx="'+shpF(Math.min(fw938*.26,L*.045))+'" ry="'+shpF(Math.min(fh938*.15,h938*.075))+'" fill="url(#'+hg1055+')" transform="rotate(-40 '+shpF(mx1055-1)+' '+shpF(my1055+1)+')"/></g>';
       }
       var rawFig1077='<image data-fig938="'+o.fig+'" href="'+shpFigArtPath938(fArt938)+'" x="'+shpF(fBox938[0])+'" y="'+shpF(fBox938[1])+'" width="'+shpF(fBox938[2])+'" height="'+shpF(fBox938[3])+'" preserveAspectRatio="xMidYMid meet"/>';
       ship += mountShadow1055+'<g data-fig="'+o.fig+'" data-fig-fit1055="1"'+(fSkin954?' data-fig-alternate="1"':'')+' transform="rotate('+fAngle953+' '+shpF(fPivot953[0])+' '+shpF(fPivot953[1])+')">'+figureMount1077(rawFig1077,fBox938,o.fig,fSkin954)+'</g>';
@@ -44246,14 +44468,17 @@ document.addEventListener('change',function(e) {
         var art972=(a.slot==='mast'||a.slot==='pendant')?'<g data-dec="'+id+'" data-ax="'+shpF(pivot1078[0])+'" data-ay="'+shpF(pivot1078[1])+'">'+shpSetArt847(id,fit[0],fit[1],fit[2],fit[3])+'</g>':shpBoatSetArt972(id,fit);
         // Feet of the small rail are occluded by the near gunwale, not pasted on its face.
         if(a.slot==='rail'&&/<g class="wk-shp-(?:ok|bld|bp)" data-part="hull">/.test(ship))ship=ship.replace(/<g class="wk-shp-(?:ok|bld|bp)" data-part="hull">/,function(tag){return art972+tag;});
+        else if(!o.drag&&!depthManual1099(id)&&a.slot==='deck')depthAdd1099(art972,pivot1078[1]);
         else ship+=art972;
         return;
       }
       var x=fit[0],y=fit[1],w=fit[2],h=fit[3];
       var tie1053=''; // v1078: pendants attach directly to the registered rail instead of a diagonal rope from mast top.
       var stern1055=a.slot==='stern';
-      ship+='<g data-dec="'+id+'" data-ax="'+shpF(pivot1078[0])+'" data-ay="'+shpF(pivot1078[1])+'"'+(stern1055?' data-stern-fit1055="1"':'')+'>'+tie1053+(stern1055?'<g style="filter:drop-shadow(0 .65px .55px rgba(28,14,7,.42))">':'')+shpSetArt847(id,x,y,w,h)+(stern1055?'</g>':'')+'</g>';
+      var item1099='<g data-dec="'+id+'" data-ax="'+shpF(pivot1078[0])+'" data-ay="'+shpF(pivot1078[1])+'"'+(stern1055?' data-stern-fit1055="1"':'')+'>'+tie1053+(stern1055?'<g style="filter:drop-shadow(0 .65px .55px rgba(28,14,7,.42))">':'')+shpSetArt847(id,x,y,w,h)+(stern1055?'</g>':'')+'</g>';
+      if(!o.drag&&!depthManual1099(id)&&a.slot==='deck')depthAdd1099(item1099,pivot1078[1]);else ship+=item1099;
     });
+    depthQueue1099.sort(function(a,b){return a.y-b.y||a.i-b.i;}).forEach(function(q){ship+=q.html;});
     var DSL = LY.ds && typeof LY.ds === 'object' ? LY.ds : null;
     var dsIds = Object.keys(DSL || {});
     if (o.drag) (o.dec || []).forEach(function (id) { if (SHP_MOVE.indexOf(id) >= 0 && dsIds.indexOf(id) < 0) dsIds.push(id); });
@@ -44272,7 +44497,9 @@ document.addEventListener('change',function(e) {
     var still = o.still ? ' wk-shp-still' : '';
     var wkO = wkE ? '<g transform="translate(' + wkE + ' 0)">' : '', wkC = wkE ? '</g>' : '';
     var zk = lyn('zs', 100, 40, 120) / 100;
-    var wakeS = LY.wk && SHP_WAKES[LY.wk] && !BG.noWave && has('hull') ? shpWake(LY.wk, cx + (sx + L * .025 - cx) * zk + wkE, wl, L * zk, vx, u, lyn('wkl', 100, 40, 160) / 100) : '';
+    var wt1085=Math.max(0,Math.min(6,+o.t||0)), ww1085=(o.fltLight1073||{}).wx||weather969||({storm:'storm',snowfall:'snow'})[bgId969]||'calm', wp1085=shpWakeProfile1085(wt1085,ww1085);
+    wp1085[2]*=o.wakeRate1086||1;
+    var wakeS = LY.wk && SHP_WAKES[LY.wk] && (!BG.noWave || (o.layer && BG.wakeAllowed1085)) && has('hull') ? shpWake(LY.wk, cx + (sx + L * wp1085[0] - cx) * zk + wkE, wl, L * zk, o.layer?sx-65:vx, u, lyn('wkl', 100, 40, 160) / 100, wp1085, !!(o.still||o.drag), {tier:wt1085,weather:ww1085,noBob:BG.noBob,rate:o.wakeRate1086||1}) : '';
     // Lighting is deliberately after paint/decor assembly, before bobbing and foreground water.
     if(o.scn&&!o.drag){
       var lighting1073=o.fltLight1073||{},prof1073=shpLight1073(bgId969,lighting1073.tm||time969,lighting1073.wx||weather969,lighting1073.sj||season969,lighting1073.atm==null?LY.atm834:lighting1073.atm);
@@ -44282,15 +44509,74 @@ document.addEventListener('change',function(e) {
       if(!B790&&has('deck')&&on('deck'))surface1073+=art1073('deck');
       if(setTier955>=2&&has('cabin')&&on('cabin'))surface1073+=art1073('cabin');
       if(setTier955>=4&&has('fore')&&on('fore'))surface1073+=art1073('fore');
-      ship=shpShipLight1073(ship,u,L,prof1073,surface1073,LY.gc!=='off');
+      var sharedShadow1100=u+'shadowSurface1100', shadowMaskUsed1100=false;
+      // v1098: soft sail projections on the registered hull/deck, below decorations.
+      if(surface1073&&has('sail')&&on('sail')&&sails&&sbox.length&&prof1073.mode!=='deepsea'){
+        var sid1098=u+'sailshadow1098',shadow1098='',dir1098=/dusk|night|blue/.test(prof1073.mode)?-1:1;
+        var low1098=/golden|dawn|dusk|night|blue/.test(prof1073.mode),soft1098=/storm|fog|blizzard|snow/.test(prof1073.weather);
+        sbox.slice(0,o.layer?5:10).forEach(function(b){
+          var x=b[0]+dir1098*L*(low1098?.065:.018),y=deckAt(x)+L*.018,w=Math.min(L*.16,b[3]*.48),h=L*(low1098?.035:.022);
+          if(!isFinite(x+y+w+h)||w<=0||h<=0)return;
+          shadow1098+='<ellipse cx="'+shpF(x)+'" cy="'+shpF(y)+'" rx="'+shpF(w)+'" ry="'+shpF(h)+'" transform="rotate('+(-dir1098*12)+' '+shpF(x)+' '+shpF(y)+')" fill="url(#'+sid1098+'g)"/>';
+        });
+        if(shadow1098)shadowMaskUsed1100=true;
+        if(shadow1098)ship=ship.replace('<!--sailshadow1098-->',function(){return '<defs><radialGradient id="'+sid1098+'g"><stop stop-color="#24212b" stop-opacity="'+(soft1098?.08:.19)+'"/><stop offset="1" stop-color="#24212b" stop-opacity="0"/></radialGradient></defs><g pointer-events="none" mask="url(#'+sharedShadow1100+')">'+shadow1098+'</g>';});
+      }
+      // v1097: contact shadows on the native alpha surface, not floating in the air.
+      if(surface1073&&prof1073.mode!=='deepsea'){
+        var shid1097=u+'contact1097',shapes1097='',f1097=shpF;
+        var low1097=/golden|dawn|dusk|night|blue/.test(prof1073.mode),soft1097=/storm|fog|blizzard|snow/.test(prof1073.weather);
+        var dir1097=/dusk|night|blue/.test(prof1073.mode)?-1:1;
+        function contact1097(x,y,rx,ry,a){
+          if(!isFinite(x+y+rx+ry+a)||rx<=0||ry<=0)return;
+          shapes1097+='<ellipse cx="'+f1097(x)+'" cy="'+f1097(y)+'" rx="'+f1097(rx)+'" ry="'+f1097(ry)+'" fill="url(#'+shid1097+'g)" opacity="'+f1097(a)+'"/>';
+        }
+        if(has('deck')&&on('deck')){
+          Object.keys(deckPlan1069).slice(0,o.layer?16:40).forEach(function(id){
+            var p=deckPlan1069[id],actual=(o.dec||[]).find(function(k){return decorBase1068(k)===id;}),q=(LY.ds||{})[actual]||(LY.ds||{})[id]||{};
+            if(!actual||ship.indexOf('data-dec="'+actual+'"')<0&&ship.indexOf('data-dec="'+id+'"')<0)return;
+            var k=Math.max(.5,Math.min(2.2,(+q.s||100)/100)),dx=Math.max(-40,Math.min(40,+q.x||0))/100*L,lim=shpDsLim(actual)[1],dy=Math.max(-lim,Math.min(lim,+q.y||0)),r=Math.max(-90,Math.min(90,+q.r||0))*Math.PI/180;
+            var x=p[0]+dx,y=p[1]+dy,foot=y+Math.abs(Math.cos(r))*p[3]*k/2+Math.abs(Math.sin(r))*p[2]*k/2;
+            var floor=deckAt(x),gap=floor-foot;if(gap>L*.045||gap<-L*.045)return;
+            contact1097(x+dir1097*p[2]*k*.08,foot+1,Math.max(1,p[2]*k*.46),Math.max(.8,p[2]*k*.12),soft1097?.34:.57);
+          });
+        }
+        if(has('mast')&&on('mast'))mastX.forEach(function(x,i){var y=mastBase[i];contact1097(x+dir1097*L*.012,y,L*.027,L*.008,soft1097?.27:.48);if(low1097)contact1097(x+dir1097*L*.035,y+L*.008,L*.055,L*.009,.23);});
+        if(shapes1097)shadowMaskUsed1100=true;
+        if(shapes1097)ship=ship.replace('<!--contact1099-->',function(){return '<defs><radialGradient id="'+shid1097+'g"><stop stop-color="#211b22" stop-opacity=".72"/><stop offset=".48" stop-color="#211b22" stop-opacity=".34"/><stop offset="1" stop-color="#211b22" stop-opacity="0"/></radialGradient></defs><g data-contact1097="1" pointer-events="none" mask="url(#'+sharedShadow1100+')">'+shapes1097+'</g>';});
+      }
+      if(shadowMaskUsed1100)ship='<defs><mask id="'+sharedShadow1100+'" maskUnits="userSpaceOnUse" x="'+shpF(sx-L*.1)+'" y="'+shpF(wl-L)+'" width="'+shpF(L*1.2)+'" height="'+shpF(L*1.2)+'" style="mask-type:alpha">'+surface1073+'</mask></defs>'+ship;
+      ship=ship.replace('<!--sailshadow1098-->','').replace('<!--contact1099-->','').replace('<!--depth1098-->','');
+      var lamps1096=[];
+      ship=shpShipLight1073(ship,u,L,prof1073,surface1073,LY.gc!=='off',!!o.still,lamps1096);
     }
-    var dw1070=weather969||({storm:'storm',snowfall:'snow',fog:'fog',xmas:'snow'})[bgId969]||'calm';
-    var waterFront = '';
+    var dw1070=(o.fltLight1073||{}).wx||weather969||({storm:'storm',snowfall:'snow',fog:'fog',xmas:'snow'})[bgId969]||'calm';
+    var waterFront = '', reflection1095='';
+    if(o.scn&&!o.drag&&!BG.noWave&&has('hull')&&on('hull')&&prof1073){
+      var warm1095=['golden','dawn','dusk','volcano'].indexOf(prof1073.mode)>=0, dark1095=['night','blue','aurora','haunted'].indexOf(prof1073.mode)>=0;
+      var col1095=warm1095?'#ffd39a':dark1095?'#a5ceff':'#e5f5ff', alpha1095=(warm1095?.16:dark1095?.11:.07)*prof1073.strength*(/storm|fog|blizzard/.test(prof1073.weather)?.4:1);
+      for(var j1095=0;j1095<8;j1095++){var yy1095=wl+3+j1095*2.4;if(yy1095>=fBottom953)break;reflection1095+='<ellipse class="wk-waterlight1096" style="--light-period:'+(4.1+j1095*.37)+'s;animation-delay:-'+(j1095*.73)+'s'+(o.still?';animation:none':'')+'" pointer-events="none" cx="'+shpF(cx+wkE+Math.sin(j1095*2.4)*L*zk*.035)+'" cy="'+shpF(yy1095)+'" rx="'+shpF(L*zk*(.12+j1095*.012))+'" ry=".65" fill="'+col1095+'" opacity="'+shpF(alpha1095*(1-j1095/9))+'"/>';}
+    }
+    // v1096: project actual transformed lamp positions onto the water plane.
+    if(o.scn&&!o.drag&&!BG.noWave&&has('hull')&&on('hull')&&prof1073&&lamps1096){
+      lamps1096.slice(0,o.layer?6:12).forEach(function(q,i){
+        var xx=cx+(q[0]-cx)*zk+wkE, a=q[4]*prof1073.p[6]*.28*(/storm|fog|blizzard/.test(prof1073.weather)?.45:1);
+        for(var j=0;j<(o.layer?3:5);j++){
+          var yy=wl+2+j*2.8;if(yy>=fBottom953)break;
+          reflection1095+='<ellipse class="wk-waterlight1096" pointer-events="none" style="--light-period:'+(3.2+j*.47+i*.13)+'s;animation-delay:-'+(i*.61+j*.39)+'s'+(o.still?';animation:none':'')+'" cx="'+shpF(xx+Math.sin(i+j*2.1)*2)+'" cy="'+shpF(yy)+'" rx="'+shpF(Math.max(1,q[2]*zk*(.15+j*.045)))+'" ry=".7" fill="'+q[3]+'" opacity="'+shpF(a*(1-j/6))+'"/>';
+        }
+      });
+    }
     if (!BG.noWave) {
       var waterContacts1072=[], tierWater1072=Math.max(0,Math.min(6,Math.floor(+o.t||0)));
       var worldX1072=function(x){return cx+(x-cx)*zk+wkE;};
-      if(has('hull'))waterContacts1072.push({x:worldX1072(sx+L*[.88,.86,.83,.82,.81,.79,.83][tierWater1072]),scale:Math.min(1.4,Math.max(.65,L/310))*zk});
-      if(T.id==='boat'&&has('oars'))[-.2,.14].forEach(function(k){var ox=cx+k*L,ax=ox+16,ay=deckAt(ox)-9,ex=ox-36,ey=wl+13,at=Math.max(0,Math.min(1,(wl+3-ay)/(ey-ay)));waterContacts1072.push({x:worldX1072(ax+(ex-ax)*at),scale:zk,oar:true});});
+      var waterProfile1087=[[.88,.30,.65],[.86,.36,.80],[.83,.43,.94],[.82,.48,1.04],[.81,.52,1.16],[.79,.55,1.25],[.83,.49,1.12]][tierWater1072];
+      var waterRate1087=Math.max(.65,Math.min(1.8,o.wakeRate1086||1)), waterScale1087=Math.min(1.4,Math.max(.65,L/310))*zk;
+      if(has('hull')){
+        waterContacts1072.push({x:worldX1072(sx+L*waterProfile1087[0]),scale:waterScale1087,kind:'bow',power:waterProfile1087[2]*waterRate1087});
+        [waterProfile1087[0]-.13,waterProfile1087[0]-.27,waterProfile1087[0]-waterProfile1087[1]].forEach(function(k,i){waterContacts1072.push({x:worldX1072(sx+L*k),scale:waterScale1087*(1-i*.13),kind:'side',power:waterProfile1087[2]*waterRate1087});});
+      }
+      if(T.id==='boat'&&has('oars'))[-.2,.14].forEach(function(k){var ox=cx+k*L,ax=ox+16,ay=deckAt(ox)-9,ex=ox-36,ey=wl+13,at=Math.max(0,Math.min(1,(wl+3-ay)/(ey-ay)));waterContacts1072.push({x:worldX1072(ax+(ex-ax)*at),scale:zk,oar:true,kind:'oar',power:waterRate1087});});
       waterFront=shpSeaFront1072(BG,u,wl,vx,vx+vw,fBottom953,dw1070,waterContacts1072)+(BG.front||'');
     }
     var zo = zk !== 1 ? '<g transform="translate(' + shpF(cx) + ' ' + shpF(wl) + ') scale(' + shpF(zk) + ') translate(' + shpF(-cx) + ' ' + shpF(-wl) + ')">' : '', zc = zk !== 1 ? '</g>' : '';
@@ -44300,10 +44586,10 @@ document.addEventListener('change',function(e) {
     s = '<svg class="wk-shp-svg' + still + '"'+motion1071+' data-decor-weather1070="'+dw1070+'"' +(o.drag?' data-decor-edit1070="1"':'') + (o.drag ? ' data-len="' + L + '"' : '') + ' viewBox="' + shpF(vx) + ' ' + shpF(fBottom953 - vh) + ' ' + vw + ' ' + shpF(vh) + '" role="img" aria-label="' + (o.label || T.n) + '" xmlns="http://www.w3.org/2000/svg">' + bg +
       (back.indexOf('<radialGradient') >= 0 ? '<defs>' + back.match(/<radialGradient[\s\S]*?<\/radialGradient>/g).join('') + '</defs>' : '') + wkO + zo + back.replace(/<radialGradient[\s\S]*?<\/radialGradient>/g, '') +
       '<g class="' + (BG.noBob ? 'wk-shp-fix' : 'wk-shp-bob') + '" style="transform-origin:' + cx + 'px ' + wl + 'px">' + (dl >= 3 ? '<g transform="rotate(' + (dl === 3 ? 1.6 : 3.4) + ' ' + cx + ' ' + wl + ') translate(0 ' + (dl === 3 ? 1 : 3) + ')">' + ship + '</g>' : ship) + '</g>' + zc + wkC +
-      waterFront + wakeS + (BG.over || '') + wkO + zo + front + zc + wkC + '</svg>';
+      waterFront + reflection1095 + wakeS + (BG.over || '') + wkO + zo + front + zc + wkC + '</svg>';
     if (o.scn && (LY.tm || LY.wx || LY.sj)) { var scn = shpAtmos(LY, u, vx, fBottom953 - vh, vw, vh, !!o.still, bgId969); if (scn) s = s.replace(/<\/svg>$/, scn + '</svg>'); }
     if (SHP_LCOL[LY.gc]) { var lc = SHP_LCOL[LY.gc]; s = s.split('#ffd56b').join(lc[0]).split('#ffe7a3').join(lc[1]).split('#ffb84a').join(lc[2]); }
-    return s;
+    return shpFinalize1080(s);
   }
 
   /* Эмблемы на парус: SVG Repo; утёнок, пришелец, кальмар, череп, шляпа ведьмы, лиса — коллекция Flat Icon Design Dark Vectors (flat-icon-design, общественное достояние); клоун — коллекция Circus 18 (CC0). Рисунки цветные, в координатах 512×512. */
@@ -45093,6 +45379,8 @@ document.addEventListener('change',function(e) {
     return {defs:'',body:'<rect x="'+f(x)+'" y="'+f(y)+'" width="'+f(w)+'" height="'+f(B.vh)+'" fill="'+a.sea+'"/>'+img('sky',x,y,w,h,'xMidYMid slice')+seaArt,sea:a.sea,hl:a.hl,so:a.so,art863:true,seaArt863:seaArt};
   }
   // v1079: bounded, independent painted rain sprites. No shared moving tile.
+  // v1092: common visual wind profile; negative X is downwind in the scene.
+  function shpWind1092(mode){return ({calm:-.12,fog:-.16,haze:-.12,drizzle:-.27,rain:-.40,snow:-.18,xmas:-.18,winter:-.12,wind:-.72,storm:-.59,blizzard:-.85})[mode]||-.12;}
   function shpRain1079(X,Y,W,H,mode,strength,still,seed,aspect) {
     var f=shpF, sw=Math.max(240,Math.min(2400,300*(aspect||W/H||1.6))), sh=300;
     var cfg=mode==='storm'?[126,11,26,150,265,.59,.42]:mode==='rain'?[90,7,19,98,190,.40,.33]:[55,4,9,65,125,.27,.24];
@@ -45100,7 +45388,7 @@ document.addEventListener('change',function(e) {
     var n=Math.min(250,Math.max(25,Math.round(cfg[0]*(sw/480)*(.4+.6*strength)))), out='', epoch=Date.now()/1000;
     function rand(i){var a=Math.sin(i*127.1+seed*13.17+311.7)*43758.5453;return a-Math.floor(a);}
     for(var i=0;i<n;i++){
-      var k=i*11, depth=rand(k+1), len=cfg[1]+(cfg[2]-cfg[1])*depth, velocity=cfg[3]+(cfg[4]-cfg[3])*depth, slope=cfg[5]*(.90+.20*rand(k+2)),
+      var k=i*11, depth=rand(k+1), len=cfg[1]+(cfg[2]-cfg[1])*depth, velocity=cfg[3]+(cfg[4]-cfg[3])*depth, slope=-shpWind1092(mode)*(.90+.20*rand(k+2)),
           margin=len+5, travel=sh+2*margin, dx=-slope*travel, duration=travel/velocity, phase=rand(k+3),
           x=rand(k+4)*(sw-dx+2*margin)-margin, y=-margin,
           // Match the painted streak angle to the direction of travel.
@@ -45111,8 +45399,31 @@ document.addEventListener('change',function(e) {
     }
     return '<svg data-rain1079="'+mode+'" x="'+f(X)+'" y="'+f(Y)+'" width="'+f(W)+'" height="'+f(H)+'" viewBox="0 0 '+f(sw)+' 300" preserveAspectRatio="none" overflow="hidden" pointer-events="none" aria-hidden="true">'+out+'</svg>';
   }
+  // v1084: use a normalized viewport so fleet and individual scenes share particle scale.
+  function shpEnv1084(X,Y,W,H,mode,strength,still,seed,aspect){
+    var f=shpF, sw=Math.max(240,Math.min(2400,300*(aspect||W/H||1.6))), up=mode==='deepsea', snow=mode==='snow'||mode==='blizzard'||mode==='xmas'||mode==='winter', cfg=mode==='blizzard'?[118,33,70,56]:mode==='snow'?[82,14,31,24]:mode==='xmas'?[56,12,26,18]:mode==='winter'?[29,10,22,12]:[44,8,20,11];
+    strength=Math.max(.15,Math.min(1,+strength||1));var n=Math.min(250,Math.max(12,Math.round(cfg[0]*sw/480*(.35+.65*strength)))),out='',epoch=Date.now()/1000;
+    function rand(i){var a=Math.sin(i*127.1+seed*13.17+311.7)*43758.5453;return a-Math.floor(a);}
+    for(var i=0;i<n;i++){
+      var k=i*13,r=rand(k+1),h=snow?(1.5+r*4.6)*(i%5===0?1.35:1):1.2+r*3.8, margin=h+8, travel=300+2*margin,dy=up?-travel:travel,dx=(rand(k+2)-.5)*cfg[3]*2+(snow?shpWind1092(mode)*112:0),dur=travel/(cfg[1]+r*(cfg[2]-cfg[1])),phase=rand(k+3),sway=3+rand(k+4)*8,x=rand(k+5)*(sw+Math.abs(dx)+2*margin)-margin-Math.max(0,dx),y=up?300+margin:-margin,opacity=snow?(.35+r*.52):(.18+r*.34),a=rand(k+6)*360;
+      function px(t){return dx*t+Math.sin(t*2*Math.PI)*sway;}function py(t){return dy*t;}
+      var style='--env-dur:'+dur.toFixed(5)+'s;--env-delay:'+(-((epoch+phase*dur)%dur)).toFixed(5)+'s;';[.25,.5,.75,1].forEach(function(t,j){style+='--env-x'+(j+1)+':'+px(t).toFixed(4)+'px;--env-y'+(j+1)+':'+py(t).toFixed(4)+'px;';});
+      var art;if(snow){var crystal=i%5===0||r>.89,file=crystal?'snowflake':'snowdust',w=h*(crystal?.875:1.2093);art='<image data-env1084-sprite="'+file+'" href="assets/webp/ships/weather965/'+file+'.webp" x="'+f(x-w/2)+'" y="'+f(y-h/2)+'" width="'+f(w)+'" height="'+f(h)+'" transform="rotate('+f(a)+' '+f(x)+' '+f(y)+')" preserveAspectRatio="xMidYMid meet"/>';}
+      else if(i%4===0)art='<circle cx="'+f(x)+'" cy="'+f(y)+'" r="'+f(h*.46)+'" fill="#9bdeed" fill-opacity=".10" stroke="#c5f2fb" stroke-width=".48"/><circle cx="'+f(x-h*.13)+'" cy="'+f(y-h*.15)+'" r="'+f(h*.10)+'" fill="#e3faff"/>';
+      else art='<circle cx="'+f(x)+'" cy="'+f(y)+'" r="'+f(h*.22)+'" fill="#d1f1f7"/>';
+      out+='<g class="wk-env1084-particle'+(i%3===0?' wk-env1084-extra':'')+'" data-env1084-particle="'+i+'" opacity="'+opacity.toFixed(3)+'" transform="translate('+f(px(phase))+' '+f(py(phase))+')" style="'+style+(still?'animation:none!important;':'')+'">'+art+'</g>';
+    }
+    return '<svg data-env1084="'+mode+'" x="'+f(X)+'" y="'+f(Y)+'" width="'+f(W)+'" height="'+f(H)+'" viewBox="0 0 '+f(sw)+' 300" preserveAspectRatio="none" overflow="hidden" pointer-events="none" aria-hidden="true">'+out+'</svg>';
+  }
+  function shpDrift1084(art,dx,dy,dur,phase,still){return '<g class="wk-env1084-drift" style="--env-x4:'+dx+'px;--env-y4:'+dy+'px;--env-dur:'+dur+'s;--env-delay:'+(-phase*dur)+'s;'+(still?'animation:none!important;':'')+'">'+art+'</g>';}
+  // Soft local lighting/condensation over existing painted backgrounds, not a replacement for the art.
+  function shpSkyEnv1084(B,mode){var f=shpF,x=B.vx,y=(B.bottom969==null?B.Hh:B.bottom969)-B.vh,w=B.vw,h=B.vh,uid=B.u+'env1084'+mode,cloud=mode==='clouds',out='',defs='';
+    var zones=cloud?[[.23,.18,.35,.10,'#ffffff',.14],[.75,.31,.33,.075,'#edf6ff',.12]]:[[.22,.24,.29,.18,'#64efc2',.12],[.70,.15,.34,.17,'#8d9bff',.10],[.54,.35,.27,.10,'#9bffe1',.085]];
+    zones.forEach(function(q,i){var id=uid+'g'+i;defs+='<radialGradient id="'+id+'"><stop stop-color="'+q[4]+'" stop-opacity="'+q[5]+'"/><stop offset=".6" stop-color="'+q[4]+'" stop-opacity="'+q[5]*.45+'"/><stop offset="1" stop-color="'+q[4]+'" stop-opacity="0"/></radialGradient>';out+=shpDrift1084('<ellipse cx="'+f(x+w*q[0])+'" cy="'+f(y+h*q[1])+'" rx="'+f(w*q[2])+'" ry="'+f(h*q[3])+'" fill="url(#'+id+')"/>',f(w*(i%2?-.035:.045)),f(h*(i%2?.018:-.018)),[37,49,61][i],.17+i*.24,B.still1084);});
+    return {defs:defs,body:'<g data-sky1084="'+mode+'" pointer-events="none">'+out+'</g>'};
+  }
   function shpBg(id, B) {
-    var art863=shpBgArt863(id||'',B); if(art863 && id!=='storm' && id!=='fog' && id!=='snowfall' && id!=='aurora' && id!=='deepsea' && id!=='haunted' && id!=='xmas')return art863;
+    var art863=shpBgArt863(id||'',B); if(art863&&(id==='clouds'||id==='aurora')){var env=shpSkyEnv1084(B,id);art863.defs+=env.defs;art863.body+=env.body;} if(art863 && id!=='storm' && id!=='fog' && id!=='snowfall' && id!=='aurora' && id!=='deepsea' && id!=='haunted' && id!=='xmas')return art863;
     var f = shpF, u = B.u, W = B.W, Hh = B.Hh, wl = B.wl, mx = B.mx, my = B.my, mr = B.mr;
     var grad = function (gid, stops, x2, y2) { return '<linearGradient id="' + u + gid + '" x1="0" y1="0" x2="' + (x2 || 0) + '" y2="' + (y2 == null ? 1 : y2) + '">' + stops.map(function (s) { return '<stop offset="' + s[0] + '" stop-color="' + s[1] + '"' + (s[2] != null ? ' stop-opacity="' + s[2] + '"' : '') + '/>'; }).join('') + '</linearGradient>'; };
     var X = function (k) { return B.vx + B.vw * k; }, Y = function (k) { return Hh - B.vh + B.vh * k; };
@@ -45237,21 +45548,21 @@ document.addEventListener('change',function(e) {
         over:B.weather969?'':shpRain1079(B.vx,(B.bottom969==null?Hh:B.bottom969)-B.vh,B.vw,B.vh,'storm',1,false,1079)+'<rect class="wk-shp-flash" x="'+f(B.vx)+'" y="'+f((B.bottom969==null?Hh:B.bottom969)-B.vh)+'" width="'+f(B.vw)+'" height="'+f(B.vh)+'" fill="#e8f0ff" pointer-events="none"/>',sea:'#223746',so:.66,hl:'#cbe5f4'});
     }
     if (id === 'fog') {
-      var fogL=function(y,h,op,cls){return '<g class="'+cls+'">'+mistPuff(B.vx+B.vw*.22,y,B.vw*.75,h,op,'fgMist')+mistPuff(B.vx+B.vw*.85,y+h*.25,B.vw*.65,h*1.2,op,'fgMist')+mistPuff(B.vx+B.vw*.47,y-h*.45,B.vw*.44,h*.65,op*.6,'fgMist')+'</g>';};
+      var fogL=function(y,h,op,cls){var q=cls==='wk-shp-fgd2'?1:-1;return shpDrift1084(mistPuff(B.vx+B.vw*.22,y,B.vw*.75,h,op,'fgMist'),q*B.vw*.045,-h*.13,31,.13,B.still1084)+shpDrift1084(mistPuff(B.vx+B.vw*.85,y+h*.25,B.vw*.65,h*1.2,op,'fgMist'),-q*B.vw*.06,h*.18,43,.57,B.still1084)+shpDrift1084(mistPuff(B.vx+B.vw*.47,y-h*.45,B.vw*.44,h*.65,op*.6,'fgMist'),q*B.vw*.03,h*.09,53,.81,B.still1084);};
       return Object.assign(art863||{}, {defs:grad('sk',[[0,'#647787'],[.5,'#9baeb8'],[.85,'#c9d7d8'],[1,'#e4e8e3']])+grad('se',[[0,'#9bafb3'],[.5,'#607e87'],[1,'#334c5a']])+weatherRad('fgMist',[[0,'#e4eded',.95],[.48,'#dce7e7',.64],[1,'#dce7e7',0]])+weatherRad('fgSun',[[0,'#fffcef',.94],[.22,'#fffcef',.75],[.45,'#f9f8e9',.23],[1,'#f9f8e9',0]]),
         body:art863?art863.body+fogL(wl-14,20,.42,'wk-shp-fgd'):(sky()+mistPuff(mx,my,mr*4,mr*3,1,'fgSun')+scene('<path d="M-50 200V183Q-8 152 19 169T74 164L93 153 128 185Q160 171 185 191L211 200Z" fill="#6a818a" opacity=".42"/><path d="M275 200L308 180 338 181 368 151 387 170 405 163 438 184 483 165 530 183V200Z" fill="#58747f" opacity=".34"/>')+fogL(wl-23,25,.75,'wk-shp-fgd')+weatherWater('#d3e1e4','#203e4b',.65)+fogL(wl-6,20,.78,'wk-shp-fgd2')),
-        over:fogL(wl+10,22,.46,'wk-shp-fgd')+fogL(wl+32,28,.3,'wk-shp-fgd2')+fogL(Y(.48),Math.max(10,B.vh*.1),.17,'wk-shp-fgd'),sea:art863?art863.sea:'#6c8790',so:.53,hl:'#dbe8e9'});
+        over:B.weather969==='fog'?'':fogL(wl+10,22,.46,'wk-shp-fgd')+fogL(wl+32,28,.3,'wk-shp-fgd2')+fogL(Y(.48),Math.max(10,B.vh*.1),.17,'wk-shp-fgd'),sea:art863?art863.sea:'#6c8790',so:.53,hl:'#dbe8e9'});
     }
     if (id === 'snowfall') {
       var floes='';for(var j=0;j<13;j++){var xx=B.vx+B.vw*(randW(j+211)%1), yy=wl+4+(Hh-wl-5)*(randW(j+81)%1), sz=3+(randW(j+71)%1)*9;floes+='<path d="M'+f(xx-sz)+' '+f(yy)+'l'+f(sz*.65)+' -2 '+f(sz*1.1)+' .5 '+f(sz*.4)+' 2 -'+f(sz*.6)+' 1.5Z" fill="#c4dbe4" opacity=".38"/>';}
       return Object.assign(art863||{}, {defs:grad('sk',[[0,'#3e536c'],[.45,'#8096ab'],[.8,'#c1d4e1'],[1,'#e5edf1']])+grad('se',[[0,'#6b91a6'],[.5,'#36596f'],[1,'#142d43']])+grad('snFar',[[0,'#c9d7e2'],[.6,'#a0b1c4'],[1,'#8296ac']])+grad('snNear',[[0,'#a6b9cd'],[1,'#677c94']])+weatherRad('snHaze',[[0,'#e6f4fc',.56],[1,'#e6f4fc',0]])+fade('sf',Y(.08),Y(.3)),
         body:art863?art863.body+mistPuff(X(.5),wl-11,B.vw*.8,23,.36,'snHaze')+floes:(sky()+scene(cloudbank('snFar',70,46,1.1)+cloudbank('snFar',360,50,1.25,true)+cloudbank('snNear',160,8,1.35)+cloudbank('snNear',440,7,1.1,true)+'<path d="M-20 200L-20 188 25 165 44 177 78 144 101 164 129 175 157 200Z" fill="#a1bdcf" opacity=".7"/><path d="M25 165l19 12 34-33 23 20-15-7-8 7-10-6-24 25z" fill="#edf7fc" opacity=".82"/><path d="M345 200L376 176 403 184 441 151 466 169 500 181V200Z" fill="#9ab6c8" opacity=".63"/><path d="M403 184l38-33 25 18-19-7-8 9-12-3z" fill="#edf7fc" opacity=".8"/>')+mistPuff(X(.5),wl-11,B.vw*.8,23,.66,'snHaze')+weatherWater('#c6e0ec','#102a40',.85)+floes),
-        over:'<g mask="url(#'+u+'sfm)"><g class="wk-shp-snf3" fill="#dceefa" opacity=".62"><path d="'+wxBand('snow',120,65,11,-120,W+120,-120,Hh,.85)+'"/></g><g class="wk-shp-snf2" fill="#fff" opacity=".8"><path d="'+wxBand('snow',160,40,5,-120,W+120,-160,Hh,1.4)+'"/></g><g class="wk-shp-snf1" fill="#fff" opacity=".94"><path d="'+wxBand('snow',200,20,23,-120,W+120,-200,Hh,2.0)+'"/></g></g>',sea:'#365a71',so:.58,hl:'#deeffa'});
+        over:B.weather969?'':shpEnv1084(B.vx,(B.bottom969==null?Hh:B.bottom969)-B.vh,B.vw,B.vh,'snow',1,B.still1084,1084),sea:'#365a71',so:.58,hl:'#deeffa'});
     }
     if (id === 'aurora') {
       var ribbon=function(gid,dy){return '<path d="M-28 '+(75+dy)+'C62 '+(132+dy)+' 130 '+(26+dy)+' 217 '+(55+dy)+'S348 '+(112+dy)+' 508 '+(20+dy)+'L508 '+(65+dy)+'C362 '+(157+dy)+' 284 '+(100+dy)+' 217 '+(101+dy)+'S65 '+(176+dy)+' -28 '+(120+dy)+'Z" fill="'+wf(gid)+'"/>';};
       var strands='';for(var j=0;j<52;j++){var t=j/51,x=-20+520*t,y=75+25*Math.sin(t*8.5)-42*t, h=19+25*(randW(j+403)%1);strands+='M'+f(x)+' '+f(y)+'q-3 '+f(h*.5)+' 2 '+f(h);}
-      return Object.assign(art863||{}, {defs:grad('sk',[[0,'#03091e'],[.5,'#112c49'],[.85,'#245965'],[1,'#366e78']])+grad('se',[[0,'#275e69'],[.48,'#133c51'],[1,'#071c32']])+grad('au1',[[0,'#7a72e8',0],[.25,'#50bbeb',.12],[.65,'#58f9bf',.72],[.87,'#b1ffe5',.5],[1,'#58f9bf',0]])+grad('au2',[[0,'#a17bff',0],[.43,'#9169ed',.22],[.72,'#7ad4ff',.41],[1,'#7ad4ff',0]])+weatherRad('auGlow',[[0,'#63efc1',.23],[1,'#63efc1',0]])+grad('ic',[[0,'#d8f5fa'],[.35,'#8abdcf'],[1,'#396d85']]),
+      return Object.assign(art863||{}, {defs:grad('sk',[[0,'#03091e'],[.5,'#112c49'],[.85,'#245965'],[1,'#366e78']])+grad('se',[[0,'#275e69'],[.48,'#133c51'],[1,'#071c32']])+grad('au1',[[0,'#7a72e8',0],[.25,'#50bbeb',.12],[.65,'#58f9bf',.72],[.87,'#b1ffe5',.5],[1,'#58f9bf',0]])+grad('au2',[[0,'#a17bff',0],[.43,'#9169ed',.22],[.72,'#7ad4ff',.41],[1,'#7ad4ff',0]])+weatherRad('auGlow',[[0,'#63efc1',.23],[1,'#63efc1',0]])+grad('ic',[[0,'#d8f5fa'],[.35,'#8abdcf'],[1,'#396d85']])+(art863?art863.defs:''),
         body:art863?art863.body+mistPuff(X(.54),wl+15,B.vw*.48,13,.28,'auGlow')+glint('#bfffe4',.19):(sky()+stars(.92)+scene('<ellipse cx="255" cy="92" rx="245" ry="90" fill="'+wf('auGlow')+'"/>'+ribbon('au2',-29)+ribbon('au1',0)+'<path d="'+strands+'" stroke="#b3ffec" stroke-opacity=".12" stroke-width=".8" fill="none"/><path d="M-28 119C65 174 145 75 217 101S350 155 508 65" fill="none" stroke="#a2ffdf" stroke-opacity=".37" stroke-width="1.4"/>')+weatherWater('#7ce6d9','#041b32',.8)+scene('<path d="M-5 202L12 179 27 188 46 160 59 182 75 191 100 202Z" fill="'+wf('ic')+'"/><path d="M12 179L27 188 46 160 37 188 53 199 20 199Z" fill="#c9f2f7" opacity=".54"/><path d="M391 202L409 180 422 185 443 166 458 192 477 181 494 202Z" fill="'+wf('ic')+'"/><path d="M422 185L443 166 437 190 451 202 408 202Z" fill="#bfe8f3" opacity=".48"/>')+mistPuff(X(.54),wl+15,B.vw*.48,13,.65,'auGlow')+glint('#bfffe4',.36)),sea:'#134254',so:.62,hl:'#a2eee1'});
     }
     /* v800: landscape backgrounds, layered vector art. */
@@ -45330,7 +45641,7 @@ document.addEventListener('change',function(e) {
     }
     if (id === 'xmas') { var fw = function (x,y,r,c) { var p='',q='',dots=''; for(var i=0;i<28;i++){var a=i*Math.PI/14, rr=r*(.67+.33*Math.sin(i*9.7)**2), co=Math.cos(a),si=Math.sin(a);p+='M'+f(x+co*rr*.18)+' '+f(y+si*rr*.18)+'Q'+f(x+co*rr*.62)+' '+f(y+si*rr*.62)+' '+f(x+co*rr)+' '+f(y+si*rr+1.5); if(i%2===0)q+='M'+f(x+co*r*.36)+' '+f(y+si*r*.36)+'L'+f(x+co*r*.58)+' '+f(y+si*r*.58); dots+='<circle cx="'+f(x+co*rr)+'" cy="'+f(y+si*rr+1.5)+'" r=".8" fill="'+c+'"/>'; } return '<circle cx="'+f(x)+'" cy="'+f(y)+'" r="'+f(r*1.5)+'" fill="'+wf('xmGlow')+'" opacity=".65"/><path d="'+p+'" fill="none" stroke="'+c+'" stroke-width="1" stroke-linecap="round"/><path d="'+q+'" stroke="#fff8df" stroke-width=".65" opacity=".8"/>'+dots+'<circle cx="'+f(x)+'" cy="'+f(y)+'" r="1.5" fill="#fff9de"/>'; };
       var town = scene('<path d="M-15 200L-15 183 24 165 52 177 81 154 118 179 151 170 192 200ZM300 200L329 180 363 157 386 177 426 151 460 177 500 165 500 200Z" fill="#849cb5" opacity=".7"/><path d="M-10 200Q50 180 98 193T186 200ZM315 200Q371 176 411 188T500 183V200Z" fill="#d2e4ee"/>'+[16,49,77,363,399,440,470].map(function(x,i){var y=190-i%3*4,h=23+i%3*6;return '<g transform="translate('+x+' '+y+')"><path d="M-8 0V-'+h+'H8V0Z" fill="#35455d"/><path d="M-12 -'+h+'L0 -'+(h+12)+' 12 -'+h+'Z" fill="#e3eff7"/><path d="M-4 -'+(h-5)+'h3v5h-3zM3 -'+(h-5)+'h3v5h-3z" fill="#ffd78a"/><path d="M-11 1h22" stroke="#e8f5ff" stroke-width="3"/></g>';}).join('')+[4,100,133,342,420,486].map(function(x,i){return '<g transform="translate('+x+' 198)"><path d="M0 -32L-9 -18H-5L-13 -5H13L5 -18H9Z" fill="#173d4a"/><path d="M0 -32l-9 14h6l-7 12 6-2 5 1 5-2 7 4-8-13h4z" fill="#d5e8ee" opacity=".75"/></g>';}).join(''));
-      if(art863){art863.defs=fade('sf',Y(.08),Y(.28));art863.over='<g mask="url(#'+u+'sfm)"><g class="wk-shp-snf3" fill="#fff" opacity=".5"><path d="'+wxBand('snow',120,70,11,-120,W+120,-120,Hh,1.1)+'"/></g><g class="wk-shp-snf2" fill="#fff" opacity=".7"><path d="'+wxBand('snow',160,44,5,-120,W+120,-160,Hh,1.6)+'"/></g></g>';return art863;}
+      if(art863){art863.over=B.weather969?'':shpEnv1084(B.vx,(B.bottom969==null?Hh:B.bottom969)-B.vh,B.vw,B.vh,'xmas',1,B.still1084,1085);return art863;}
       return { defs: weatherRad('xmGlow',[[0,'#fff3bd',.45],[1,'#ffe2a0',0]])+weatherRad('xmMoon',[[0,'#fffdf2',1],[1,'#b8d4e9',1]],.3,.3,.8)+grad('sk', [[0,'#060e2a'],[.42,'#193961'],[.76,'#425b88'],[1,'#9ab4cb']]) + grad('se', [[0, '#173a63'], [1, '#050d1c']]) + fade('sf', Y(.08), Y(.28)),
         over: '<g mask="url(#' + u + 'sfm)"><g class="wk-shp-snf3" fill="#fff" opacity=".5"><path d="' + wxBand('snow', 120, 70, 11, -120, W + 120, -120, Hh, 1.1) + '"/></g><g class="wk-shp-snf2" fill="#fff" opacity=".7"><path d="' + wxBand('snow', 160, 44, 5, -120, W + 120, -160, Hh, 1.6) + '"/></g></g>',
         body: sky() + stars(.8) + fw(X(.18), Y(.18), 16, '#ff6b6b') + fw(X(.42), Y(.1), 12, '#ffd84d') + fw(X(.74), Y(.2), 18, '#6bdcff') + fw(X(.58), Y(.32), 10, '#a3ff7a') + '<circle cx="' + f(mx) + '" cy="' + f(my) + '" r="' + f(mr * .8) + '" fill="' + wf('xmMoon') + '"/>' + town + weatherWater('#c3e8ff','#081b37',.55) + '<path d="M' + f(X(.02)) + ' ' + (wl - 4) + 'q12 -14 24 0z" fill="#e8f2fa"/><path d="M' + f(X(.86)) + ' ' + (wl - 4) + 'q16 -18 34 0z" fill="#e8f2fa"/>' + glint('#ffffff', .5) + '<path d="M'+f(X(.18))+' '+f(wl+8)+'h18M'+f(X(.74))+' '+f(wl+12)+'h24M'+f(X(.42))+' '+f(wl+20)+'h14" stroke="#f5c6a1" stroke-opacity=".45" stroke-width="1.5" stroke-linecap="round"/>',
@@ -45565,7 +45876,7 @@ document.addEventListener('change',function(e) {
       var coral = function (x, k, c) { return '<path d="M' + f(x) + ' ' + Hh + 'V' + f(Hh - 20 * k) + 'M' + f(x) + ' ' + f(Hh - 10 * k) + 'q' + f(-8 * k) + ' ' + f(-2 * k) + ' ' + f(-9 * k) + ' ' + f(-12 * k) + 'M' + f(x) + ' ' + f(Hh - 14 * k) + 'q' + f(7 * k) + ' ' + f(-2 * k) + ' ' + f(8 * k) + ' ' + f(-14 * k) + 'M' + f(x) + ' ' + f(Hh - 20 * k) + 'l' + f(-3 * k) + ' ' + f(-6 * k) + 'M' + f(x) + ' ' + f(Hh - 20 * k) + 'l' + f(3 * k) + ' ' + f(-7 * k) + '" fill="none" stroke="' + c + '" stroke-width="' + f(2.6 * k) + '" stroke-linecap="round"/>'; };
       var snowM = ''; for (var ms = 0; ms < 36; ms++) snowM += '<circle cx="' + f(X(rn(ms * 2.2))) + '" cy="' + f(Y(rn(ms * 3.7))) + '" r="' + f(.5 + rn(ms) * .8) + '"/>';
       var bubs = ''; [[.06, .55, 3], [.08, .4, 2], [.94, .6, 2.6], [.92, .45, 1.6], [.9, .3, 2.2], [.1, .25, 1.4], [.5, -.02, 2]].forEach(function (q) { bubs += '<circle cx="' + f(X(q[0])) + '" cy="' + f(Y(q[1])) + '" r="' + f(q[2] * S + .8) + '" fill="none" stroke="#e6fbff" stroke-opacity=".7" stroke-width=".7"/>'; });
-      if(art863){art863.over='<g class="wk-shp-wisp">'+bubs+'</g>'+anim('wk-shp-snow','<g fill="#dff6ff" opacity=".35">'+snowM+'</g>');return art863;}
+      if(art863){art863.over=shpEnv1084(B.vx,(B.bottom969==null?Hh:B.bottom969)-B.vh,B.vw,B.vh,'deepsea',1,B.still1084,1086);return art863;}
       var hlA = function (a0, a1, rk) { var p = ''; for (var a = a0; a <= a1 + .001; a += (a1 - a0) / 16) p += (p ? 'L' : 'M') + f(bcx + Math.cos(a) * brx * rk) + ' ' + f(bcy + Math.sin(a) * bry * rk); return p; };
       var pool = 'M' + f(bcx - brx) + ' ' + f(wl); for (var pw = 0; pw < 16; pw++) pool += 'q' + f(brx / 16) + ' -3 ' + f(brx / 8) + ' 0';
       return { defs: grad('dsRay',[[0,'#c3f7ff',.5],[1,'#4c9cc2',0]])+grad('dsWhale',[[0,'#659db0'],[.45,'#27566e'],[1,'#0a2a44']])+grad('dsOcto',[[0,'#b36c9a'],[.48,'#713e71'],[1,'#2d173e']])+grad('dsKelp',[[0,'#569c87'],[1,'#0b343c']])+grad('dsKelp2',[[0,'#7a8cbd'],[1,'#20324f']])+weatherRad('dsLight',[[0,'#9ff3ff',.58],[.42,'#38badd',.24],[1,'#11618c',0]])+grad('sk', [[0,'#267da0'],[.28,'#145977'],[.65,'#0b3554'],[1,'#031322']]) + grad('se', [[0, '#2d3c44'], [1, '#0b1216']]) +
@@ -45784,10 +46095,10 @@ document.addEventListener('change',function(e) {
   function shpCSet(sh, t, patch) {
     sh.c = sh.c && typeof sh.c === 'object' ? sh.c : {};
     var c = JSON.parse(JSON.stringify(shpC(sh, t)));
-    Object.keys(patch).forEach(function (k) { c[k] = patch[k]; });
+    Object.keys(patch).forEach(function (k) { if(patch[k]===undefined)delete c[k];else c[k] = shpCopy1083(patch[k]); });
     sh.c[t] = c;
   }
-  function shpShowT(sh, v) { var s = +sh.show; return sh.show != null && sh.show !== '' && s >= 0 && s < v.lv ? s : v.lv - 1; }
+  function shpShowT(sh, v) { var s = +sh.show, n = shpFleetN(sh, v); return sh.show != null && sh.show !== '' && Number.isInteger(s) && s >= 0 && s < n ? s : v.lv - 1; }
   function shpSel(sh, v) {
     var building = v.lv < 5 && (Object.keys(v.done).length > 0 || !!v.job), opts = [];
     for (var i = 0; i < shpFleetN(sh, v); i++) opts.push(i);
@@ -45822,14 +46133,25 @@ document.addEventListener('change',function(e) {
     return '<h3 class="wk-dk-h">Дополнительные галеоны <small class="wk-shp-achc">' + gx + ' из 2</small></h3><p class="wk-sh-hint">Каждый галеон ходит в плавания сам и приносит свою добычу.</p><div class="wk-gx-g">' + gxc + '</div>';
   }
   function shpPartIds(t) { return (SHP_PARTS[Math.min(4, t)] || []).map(function (p) { return p.id; }); }
+  /* v1082: saved appearance is shared by every public/own view. Only scene-specific overrides are applied. */
+  function shpWakeRate1086(sh,t){
+    var v=sh.voy&&sh.voy[t], now=Date.now();
+    if(!v||!(v.t1>now)||!(v.t1>v.t0))return 1;
+    var r=typeof SHP_ROUTES!=='undefined'&&SHP_ROUTES.find(function(q){return q.id===v.r;});
+    var hours=+(v.h||(r&&r.h));
+    return hours>0?Math.max(.65,Math.min(1.8,hours*3600000/(v.t1-v.t0))):1;
+  }
+  function shpSavedScene1082(sh, t, opt) {
+    var c = shpC(sh, t), o = { scn: 1, cr: shpCrewIds(sh,t), pn: shpPatchN(sh), pet: shpPetOf(sh,t), hp: shpHp(sh,t), wakeRate1086:shpWakeRate1086(sh,t), battleHit1091:(shpBattleHits1091.get(sh)||{})[t], t:t, built:{}, all:true, parts:shpPartIds(t), name:c.name || '', label:(c.name ? '«'+c.name+'» — ' : '')+shpTT(t).n };
+    ['paint','hpat','orn','sorn','spat','fig','flag','flagUrl','ornUrl','sornUrl','figUrl','dec','lay','bg'].forEach(function(k){o[k]=c[k];});
+    Object.keys(opt||{}).forEach(function(k){o[k]=opt[k];});
+    return shpSVG(o);
+  }
   function shpShipSVG(sh, opt) {
-    var v = shpView(sh), sc = shpSel(sh, v), c = shpC(sh, sc.t); opt = opt || {};
-    return shpSVG({ scn: 1, cr: shpCrewIds(sh, sc.t), pn: shpPatchN(sh), pet: shpPetOf(sh, sc.t), hp: shpHp(sh, sc.t), t: sc.t, built: sc.built, bld: sc.bld, all: sc.all, parts: shpPartIds(sc.t), name: c.name || '', paint: c.paint, hpat: c.hpat, orn: c.orn, sorn: c.sorn, spat: c.spat, fig: c.fig, flag: c.flag, flagUrl: c.flagUrl, ornUrl: c.ornUrl, sornUrl: c.sornUrl, figUrl: c.figUrl, dec: c.dec, lay: c.lay, bg: c.bg, still: opt.still, label: (c.name ? '«' + c.name + '» — ' : '') + shpTT(sc.t).n });
+    var v = shpView(sh), sc = shpSel(sh, v); opt = opt || {};
+    return shpSavedScene1082(sh,sc.t,{built:sc.built,bld:sc.bld,all:sc.all,still:opt.still});
   }
-  function shpShipSVGT(sh, t) {
-    var c = shpC(sh, t);
-    return shpSVG({ scn: 1, cr: shpCrewIds(sh, t), pn: shpPatchN(sh), pet: shpPetOf(sh, t), hp: shpHp(sh, t), t: t, built: {}, all: true, parts: shpPartIds(t), name: c.name || '', paint: c.paint, hpat: c.hpat, orn: c.orn, sorn: c.sorn, spat: c.spat, fig: c.fig, flag: c.flag, flagUrl: c.flagUrl, ornUrl: c.ornUrl, sornUrl: c.sornUrl, figUrl: c.figUrl, dec: c.dec, lay: c.lay, bg: c.bg, still: true, label: (c.name ? '«' + c.name + '» — ' : '') + shpTT(t).n });
-  }
+  function shpShipSVGT(sh, t) { return shpSavedScene1082(sh,t,{still:true}); }
   /* v1030: «Флот рядом» — все корабли в одной сцене под общим фоном.
      Настройки сцены лежат в sh.flt, купленные фоны флота — в sh.own['fbg:id'] (отдельно от фонов кораблей). */
   var SHP_FSET = false, SHP_FD = null, SHP_FLT_SCENE = 3000, SHP_FLT_L = [190, 260, 310, 370, 402, 458, 474];
@@ -45852,15 +46174,15 @@ document.addEventListener('change',function(e) {
   /* один корабль без фона и воды, в своих координатах (центр 232, ватерлиния 246) */
   function shpFltShip(sh, t, bg, env1073) {
     var c = shpC(sh, t), lay = JSON.parse(JSON.stringify(c.lay || {}));
-    ['zs', 'wk', 'wkl', 'tm', 'wx', 'sj', 'atm834'].forEach(function (k) { delete lay[k]; });
-    var s = shpSVG({ scn: 1, layer: 1, fltLight1073: env1073, cr: shpCrewIds(sh, t), pn: shpPatchN(sh), pet: shpPetOf(sh, t), hp: shpHp(sh, t), t: t, built: {}, all: true, parts: shpPartIds(t), name: c.name || '', paint: c.paint, hpat: c.hpat, orn: c.orn, sorn: c.sorn, spat: c.spat, fig: c.fig, flag: c.flag, flagUrl: c.flagUrl, ornUrl: c.ornUrl, sornUrl: c.sornUrl, figUrl: c.figUrl, dec: c.dec, lay: lay, bg: bg, label: shpTT(t).n });
+    ['zs', 'tm', 'wx', 'sj', 'atm834'].forEach(function (k) { delete lay[k]; });
+    var s = shpSavedScene1082(sh,t,{layer:1,fltLight1073:env1073,lay:lay,bg:bg,label:shpTT(t).n});
     var m = s.match(/^<svg[^>]*?viewBox="([^"]*)"[^>]*>/);
     if (!m) return { body: '', head: 220 };
     return { body: s.slice(m[0].length, s.lastIndexOf('</svg>')), head: Math.max(150, 246 - Number(m[1].split(/\s+/)[1])) };
   }
   /* расстановка: «в линию» по возрастанию или «эскадрой» в несколько рядов, крупные позади */
   function shpFltPlan(heads, form, target) {
-    var PL = 28, PR = 52, line = form === 'line', n = heads.length, ids = heads.map(function (h, i) { return i; });
+    var PL = 72, PR = 52, line = form === 'line', n = heads.length, ids = heads.map(function (h, i) { return i; });
     var slot = function (t) { return SHP_FLT_L[Math.min(6, t)] + PL + PR; };
     var sum = function (a) { return a.reduce(function (s, t) { return s + slot(t); }, 0); };
     var geom = function (rows) {
@@ -45924,9 +46246,10 @@ document.addEventListener('change',function(e) {
     if (!perRow && (BG.over || BG.front)) { var F = mkB('f', wl[wl.length - 1]); over = dead(F.defs, (F.front || '') + (F.over || '')); }
     var atm = '';
     if (e.tm) atm += shpAtmos({ tm: e.tm, atm834: e.atm }, u + 'a', 0, 0, W, H, false, e.bg);
-    var wet1079=['rain','storm','drizzle'].indexOf(e.wx)>=0;
+    var wet1079=['rain','storm','drizzle','snow','blizzard','fog'].indexOf(e.wx)>=0;var winter1084=e.sj==='winter';
     if (wet1079) atm += shpAtmos({wx:e.wx,atm834:e.atm},u+'wet1079',0,0,W,H,false,e.bg);
-    if ((!wet1079&&e.wx) || e.sj) { var nt = Math.max(1, Math.round(W / H / 1.7)), tw = W / nt; for (i = 0; i < nt; i++) atm += shpAtmos({ wx: wet1079?'':e.wx, sj: e.sj, atm834: e.atm }, u + 'w' + i, i * tw, 0, tw, H, false, e.bg); }
+    if(winter1084)atm+=shpAtmos({sj:e.sj,wx:'',atm834:e.atm},u+'winter1084',0,0,W,H,false,['snow','blizzard'].indexOf(e.wx)>=0?'snowfall':e.wx&&['snowfall','xmas'].indexOf(e.bg)>=0?'day':e.bg);
+    if ((!wet1079&&e.wx) || (e.sj&&!winter1084)) { var nt = Math.max(1, Math.round(W / H / 1.7)), tw = W / nt; for (i = 0; i < nt; i++) atm += shpAtmos({ wx: wet1079?'':e.wx, sj: winter1084?'':e.sj, atm834: e.atm }, u + 'w' + i, i * tw, 0, tw, H, false, e.bg); }
     var labels = D && e.lbl ? D.labels(W, H, wl[0]) : '';
     if (!D && e.lbl) {
       /* размер букв считаем от того, какой ширины сцена на экране */
@@ -46271,7 +46594,7 @@ document.addEventListener('change',function(e) {
     if (!DK.frData) return note('Загружаю корабли участников…');
     var foes = shpDuoFoes(); if (!foes.length) return note('Пока ни у кого из участников нет спущенного на воду корабля.');
     var lg = foes.indexOf(SHP_DUO.l) >= 0 ? SHP_DUO.l : foes[0], fs = shpFriendShip(lg), fv = shpView(fs), fn = shpFleetN(fs, fv);
-    var ft = SHP_DUO.t != null && SHP_DUO.t >= 0 && SHP_DUO.t < fn ? SHP_DUO.t : shpShowT(fs, fv);
+    var ft = Number.isInteger(SHP_DUO.t) && SHP_DUO.t >= 0 && SHP_DUO.t < fn ? SHP_DUO.t : shpShowT(fs, fv);
     SHP_DUO.l = lg; SHP_DUO.t = ft;
     var pick = '<div class="wk-flt-sel wk-duo-pick"><label><span>Чей корабль напротив</span><select data-duo="l" aria-label="Чей корабль напротив">' + foes.map(function (q) { return '<option value="' + esc(q) + '"' + (q === lg ? ' selected' : '') + '>' + esc(accName(q)) + '</option>'; }).join('') + '</select></label></div>';
     var chips = fn > 1 ? '<div class="wk-shp-fleet" role="group" aria-label="Корабль соперника"><span class="wk-shp-fl-t">Его корабль:</span>' + Array.apply(null, Array(fn)).map(function (x, i) { var q = shpC(fs, i); return '<button type="button" class="wk-shp-fl' + (i === ft ? ' on' : '') + '" data-tx="shipduot" data-t="' + i + '" aria-pressed="' + (i === ft) + '" title="' + esc(q.name ? '«' + q.name + '»' : 'Без имени') + '">' + shpTT(i).n + '</button>'; }).join('') + '</div>' : '';
@@ -46650,7 +46973,7 @@ document.addEventListener('change',function(e) {
     if (a.indexOf('shipflt') === 0) { shpFltClick(a, b, st, sh, sv, ba, pane, repaint); return; }
     if (a === 'shipfleet') { SHP_FLV = !SHP_FLV; SHP_DUO = null; SHP_FSET = false; SHP_FD = null; SHP_VB = ''; if (SHP_ST !== 'build' && SHP_ST !== 'port') SHP_ST = 'build'; repaint(); return; }
     if (a === 'shipsel') { if (SHP_VB && SHP_ST !== 'port') SHP_ST = 'build'; SHP_FLV = false; SHP_FSET = false; SHP_FD = null; SHP_VB = ''; SHP_SEL = +b.getAttribute('data-t'); SHP_EDIT = false; SHP_D = { paint: {} }; repaint(); return; }
-    if (a === 'shipshow') { var t1 = shpSel(sh, v).t; if (t1 >= v.lv) return; sh.show = t1; sv(st); repaint(); txToast('На витрине профиля: ' + shpTT(t1).n.toLowerCase()); return; }
+    if (a === 'shipshow') { var t1 = shpSel(sh, v).t; if (t1 < 0 || t1 >= shpFleetN(sh,v)) return; sh.show = t1; sv(st); repaint(); txToast('На витрине профиля: ' + shpTT(t1).n.toLowerCase()); return; }
     if (a === 'shipbuy' || a === 'shipbuyset') {
       /* кнопка из постройки помнит поставку: если купцы успели смениться, ничего не покупаем */
       var mkk = b.getAttribute('data-k'), mk0 = shpMarket(sh);
@@ -47149,7 +47472,7 @@ document.addEventListener('change',function(e) {
       while((m=re.exec(str))){if(m[0]==='<g')depth++;else if(--depth===0){end=m.index+4;break;}}
       if(end<0)continue;
       var p=t===0&&SHP_BOATSEASON973_SIZE[id]?shpBoatSeasonFit973(id,selected):fit[t];if(fit1048)p=fit1048(id,p);var rope=id==='dinghy'?'<path d="M'+shpF(p[0]+p[2]*.42)+' '+shpF(p[1]-p[3]*.12)+' Q'+shpF(p[0]+p[2]*.65)+' '+shpF(p[1]+p[3]*.15)+' '+shpF(fit1048&&fit1048.tow1068?fit1048.tow1068[0]:112)+' '+shpF(fit1048&&fit1048.tow1068?fit1048.tow1068[1]:232)+'" stroke="#c2a071" stroke-width="1.25" fill="none"/>':'';
-      var art1070=(t===0&&SHP_BOATSEASON973_SIZE[id]?shpBoatSeasonArt973(id,p):t===0&&SHP_BOATART971[id]?shpBoatImg971(id,p[0]-p[2]/2,p[1]-p[3]/2,p[2],p[3]):shpDecArt853(id,p[0],p[1],p[2],p[3]));if((t===0&&id==='lanterns')||id==='sloop_bell')art1070='<g data-sway1070="pendant">'+art1070+'</g>';var replacement=seen[id]?'':'<g data-dec="'+id+'" data-art853="1" data-ax="'+shpF(p[0])+'" data-ay="'+shpF(p[1])+'">'+rope+art1070+'</g>';seen[id]=true;
+      var art1070=(t===0&&SHP_BOATSEASON973_SIZE[id]?shpBoatSeasonArt973(id,p):t===0&&SHP_BOATART971[id]?shpBoatImg971(id,p[0]-p[2]/2,p[1]-p[3]/2,p[2],p[3]):shpDecArt853(id,p[0],p[1],p[2],p[3]));if(!art1070){seek.lastIndex=end;continue;}if((t===0&&id==='lanterns')||id==='sloop_bell')art1070='<g data-sway1070="pendant">'+art1070+'</g>';var replacement=seen[id]?'':'<g data-dec="'+id+'" data-art853="1" data-ax="'+shpF(p[0])+'" data-ay="'+shpF(p[1])+'">'+rope+art1070+'</g>';seen[id]=true;
       str=str.slice(0,match.index)+replacement+str.slice(end);seek.lastIndex=match.index+replacement.length;
     }return str;
   }
@@ -47157,48 +47480,8 @@ document.addEventListener('change',function(e) {
     var src = SHP_DECART853[id]; if(!src) return '';
     return '<image href="'+src+'" x="'+shpF(x-w/2)+'" y="'+shpF(y-h/2)+'" width="'+shpF(w)+'" height="'+shpF(h)+'" preserveAspectRatio="xMidYMid meet"/>';
   }
-  function shpApplyDecorWebp853(root) {
-    function applySvg(svg) {
-      if(!svg || !svg.querySelectorAll) return;
-      Array.prototype.forEach.call(svg.querySelectorAll('g[data-dec]'), function(g){
-        var id = g.getAttribute('data-dec'), base = SHP_DECVAR[id] ? SHP_DECVAR[id].b : id, src = SHP_DECART853[base];
-        if (['fog','snow','torn','bats','wisps','xlights','lights','bunting','snowfall'].indexOf(base)>=0) return;
-        if(!src || g.getAttribute('data-art853')==='1') return;
-        try {
-          var bb = g.getBBox();
-          if(!bb || !(bb.width>0) || !(bb.height>0)) return;
-          var pad = Math.max(1, Math.min(bb.width, bb.height) * 0.05);
-          var img = document.createElementNS('http://www.w3.org/2000/svg','image');
-          img.setAttribute('href', src);
-          img.setAttributeNS('http://www.w3.org/1999/xlink','href', src);
-          img.setAttribute('x', shpF(bb.x - pad));
-          img.setAttribute('y', shpF(bb.y - pad));
-          img.setAttribute('width', shpF(bb.width + pad*2));
-          img.setAttribute('height', shpF(bb.height + pad*2));
-          img.setAttribute('preserveAspectRatio','xMidYMid meet');
-          while(g.firstChild) g.removeChild(g.firstChild);
-          g.appendChild(img);
-          g.setAttribute('data-art853','1');
-        } catch(e) {}
-      });
-    }
-    if(root && root.tagName && String(root.tagName).toLowerCase()==='svg') applySvg(root);
-    else if(root && root.querySelectorAll) {
-      if(root.matches && root.matches('svg')) applySvg(root);
-      Array.prototype.forEach.call(root.querySelectorAll('svg'), applySvg);
-    } else Array.prototype.forEach.call(document.querySelectorAll('svg'), applySvg);
-  }
-  (function(){
-    var queued=new Set(), frame=0;
-    function run(n){
-      if(!n||!n.querySelectorAll)return;
-      if(n.nodeType===1){var svg=n.closest&&n.closest('svg');if(svg&&svg.querySelector('g[data-dec]'))queued.add(svg);}
-      n.querySelectorAll('svg').forEach(function(svg){if(svg.querySelector('g[data-dec]'))queued.add(svg);});
-      if(!frame&&queued.size)frame=requestAnimationFrame(function(){frame=0;var batch=Array.from(queued);queued.clear();batch.forEach(function(svg){if(svg.isConnected)shpApplyDecorWebp853(svg);});});
-    }
-    if(document.readyState!=='loading')run(document);else document.addEventListener('DOMContentLoaded',function(){run(document);});
-    try{new MutationObserver(function(ms){ms.forEach(function(m){Array.prototype.forEach.call(m.addedNodes||[],function(n){if(n&&n.nodeType===1&&n.getAttribute('data-art853')!=='1')run(n);});});}).observe(document.documentElement,{childList:true,subtree:true});}catch(e){}
-  })();
+  // v1080: shpSVG is the sole owner of assembled decor. The old document-wide
+  // getBBox/replace observer is retired; it must not mutate finished ship layers.
   /* v938: painted figureheads with integral mount, independently fitted to all seven hulls. */
   var SHP_FIG938 = {"fh938_dragon":["dragon",472,354],"fh938_kraken":["kraken",471,345],"fh938_kitsune":["kitsune",463,352],"fh938_lion":["lion",467,362],"fh938_phoenix":["phoenix",479,373],"fh938_shark":["shark",477,348],"fh938_oni":["oni",469,360],"fh938_angel":["angel",483,376],"fh938_serpent":["serpent",474,366]};
   Object.keys(SHP_FIG938).forEach(function(id){var a=SHP_FIG938[id];SHP_FIGC[id]=["#ad8150","#523419"];SHP_FIGA[id]='<image href="assets/webp/figureheads/v938/'+a[0]+'.webp" x="0" y="0" width="98" height="97" preserveAspectRatio="xMidYMid meet"/>';});
@@ -47326,9 +47609,16 @@ document.addEventListener('change',function(e) {
   var SHP_WAKES = { foam: { n: 'Пена', c: '#e8f6ff' }, gold: { n: 'Золото', c: '#f1d27c' }, fire: { n: 'Огонь', c: '#ff8a1f' }, rain: { n: 'Радуга', c: '#c77dff' }, petal: { n: 'Лепестки', c: '#ffb3c7' }, bub: { n: 'Пузыри', c: '#9fd4ff' }, bio: { n: 'Биолюминесценция', c: '#40f4da' }, frost: { n: 'Ледяной след', c: '#b7ebff' }, bolt: { n: 'Молнии', c: '#a99aff' }, stars: { n: 'Звёздная пыль', c: '#eccaff' }, ink: { n: 'Чернильный след', c: '#60568e' }, vortex: { n: 'Водовороты', c: '#56c6ed' } };
   function shpWakeCol(q) { return q && q.wk && SHP_WAKES[q.wk] ? SHP_WAKES[q.wk].c : shpMapColorClean1064(q && q.mapColor) || (q && q.mine ? '#ffd56b' : '#7fb2ff'); }
   /* v830: individual layered wake, fading into water; one moving group, no new filters. */
-  function shpWake(id, sx, wl, L, vx, u, mul) {
+  function shpWakeProfile1085(t,w){
+    var p=[[.07,.085,.82],[.08,.075,1.12],[.13,.067,1.04],[.14,.064,1.18],[.16,.062,.88],[.13,.071,.79],[.15,.065,1.0]][t].slice();
+    var rough=({storm:1.55,wind:1.3,rain:1.18,drizzle:1.08,blizzard:1.35,snow:1.08})[w]||1;
+    p[1]*=rough;p[2]*=Math.sqrt(rough);return p;
+  }
+  function shpWake(id, sx, wl, L, vx, u, mul, prof, still, motion) {
+    motion=motion||{};
+    prof=prof||shpWakeProfile1085(2,'calm');
     if (!Object.prototype.hasOwnProperty.call(SHP_WAKES,id)) return '';
-    var f=shpF, x0=sx, D=Math.max(12,Math.min(Math.max(12,x0-vx-3),Math.max(12,(x0-vx-3)*.72*mul))), x1=x0-D, y=wl+3, g=u+'wk830', c=SHP_WAKES[id].c, h=Math.max(9,Math.min(20,L*.052)), defs='', st='', mv='';
+    var f=shpF, x0=sx, D=Math.max(12,Math.min(Math.max(12,x0-vx-3),Math.max(12,(x0-vx-3)*.72*mul))), x1=x0-D, y=wl+3, g=u+'wk830', c=SHP_WAKES[id].c, h=Math.max(7,Math.min(32,L*prof[1])), defs='', st='', mv='';
     function grad(key,col,op){defs+='<linearGradient id="'+g+key+'" gradientUnits="userSpaceOnUse" x1="'+f(x0)+'" y1="0" x2="'+f(x1)+'" y2="0"><stop stop-color="'+col+'" stop-opacity="'+op+'"/><stop offset=".45" stop-color="'+col+'" stop-opacity="'+(op*.65)+'"/><stop offset="1" stop-color="'+col+'" stop-opacity="0"/></linearGradient>';return 'url(#'+g+key+')';}
     function path(d,fill,stroke,w,op){return '<path d="'+d+'" fill="'+fill+'"'+(stroke?' stroke="'+stroke+'" stroke-width="'+w+'" stroke-linecap="round" stroke-linejoin="round"':'')+(op!=null?' opacity="'+op+'"':'')+'/>';}
     function p(t,z){return f(x0-D*t)+' '+f(y+h*z);}
@@ -47338,8 +47628,8 @@ document.addEventListener('change',function(e) {
     function oval(x,z,rx,ry,fill,op,stroke,w){return '<ellipse cx="'+f(x)+'" cy="'+f(z)+'" rx="'+f(rx)+'" ry="'+f(ry)+'" fill="'+fill+'" fill-opacity="'+op+'"'+(stroke?' stroke="'+stroke+'" stroke-width="'+w+'"':'')+'/>';}
     function star(r,col){return path('M0 '+f(-r)+'Q'+f(r*.19)+' '+f(-r*.19)+' '+f(r)+' 0Q'+f(r*.19)+' '+f(r*.19)+' 0 '+f(r)+'Q'+f(-r*.19)+' '+f(r*.19)+' '+f(-r)+' 0Q'+f(-r*.19)+' '+f(-r*.19)+' 0 '+f(-r)+'Z',col);}
     function group(x,z,scale,rot,art){return '<g transform="translate('+f(x)+' '+f(z)+') rotate('+rot+') scale('+f(scale)+')">'+art+'</g>';}
-    // The 36-unit repeat matches the existing CSS wave animation exactly.
-    function particles(count,draw){var out='';for(var k=0;k<=Math.ceil(D/36)+1;k++)for(var j=0;j<count;j++){var x=x0+36-k*36-(j+.5)*36/count, z=y+h*(.15+((j*7+3)%9)/12);out+=draw(x,z,j,.72+(j%3)*.2);}return out;}
+    // Two seamless, independently drifting particle bands with irregular spacing.
+    function particles(count,draw){var out='';[47,71].forEach(function(period,band){var bits='';for(var k=-1;k<=Math.ceil(D/period)+1;k++)for(var j=0;j<count;j++){var q=(j+.5)/count, jitter=Math.sin((j+1)*13.7+band*8.1)*.22/count;var x=x0+period-k*period-(q+jitter)*period,z=y+h*(.08+((j*7+3+band*4)%11)/13);bits+=draw(x,z,j,.65+((j+band)%3)*.19);}out+='<g class="wk-wake-drift1086" style="--wk-wake-step1086:-'+period+'px;animation-duration:'+(period/(7.2*prof[2]*(band? .83:1))).toFixed(3)+'s;'+(still?'animation:none;':'')+'" opacity="'+(band?.42:.76)+'">'+bits+'</g>';});return out;}
     var base= id==='ink'?'#242238':id==='fire'?'#842e28':id==='frost'?'#6fb8e8':id==='bio'?'#0b8f93':'#318db2';
     st+=ribbon(.52,.62,base,.68,'base')+ribbon(.35,.28,c,.47,'body');
     if(id==='foam'){
@@ -47379,12 +47669,16 @@ document.addEventListener('change',function(e) {
       st+=current(.25,'#b9f4ff',1.2,.85,'a')+current(.92,'#5fd3ff',1.4,.75,'b');
       mv=particles(2,function(x,z,j,k){var d='M-10 0C-8 -5 7 -6 9 -1S-4 5 -5 0Q-5 -3 2 -2Q6 0 0 1';return group(x,z,k,0,oval(0,0,10,4,'#2381a9',.28)+path(d,'none','#95e5fa',1.1,.9)+path('M-9 -1Q-6 -5 2 -4','none','#fff',.8,.85));});
     }
+    // Fade both ends of the particle field; the painted wake remains anchored.
     var fade=grad('mask','#ffffff',1); // override near-origin opacity ramp for particles and hide all overflow
     defs+='<mask id="'+g+'m" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="'+f(x1)+'" y="'+f(y-15)+'" width="'+f(D+1)+'" height="'+f(h+32)+'"><rect x="'+f(x1)+'" y="'+f(y-15)+'" width="'+f(D)+'" height="'+f(h+32)+'" fill="'+fade+'"/></mask>';
     /* v937: painted wake on water, anchored at stern; original moving particles and fade retained. */
-    var artH=Math.min(h*2.15,Math.max(5,D*.29)), artY=y-artH*.57;
+    var artH=Math.min(h*2.15,Math.max(5,D*.42)), artY=y-artH*.57;
     var art='<image data-wake-art="'+id+'" href="assets/webp/ships/wakes937/'+id+'.webp" x="'+f(x1)+'" y="'+f(artY)+'" width="'+f(D)+'" height="'+f(artH)+'" preserveAspectRatio="none"/>';
-    return '<g class="wk-shp-wk" data-wake="'+id+'" pointer-events="none"><defs>'+defs+'</defs><g mask="url(#'+g+'m)">'+art+'<g class="wk-shp-wave" opacity=".48">'+mv+'</g></g></g>';
+    var force=({rain:1.28,drizzle:1.13,snow:1.12,wind:1.75,storm:2.15,blizzard:1.75})[motion.weather]||1;
+    var bp=[[.95,1.55,4.8],[.78,1.35,5.3],[.62,1.14,5.8],[.51,.99,6.3],[.43,.86,6.8],[.34,.76,7.3],[.46,.91,6.7]][motion.tier||0];
+    var foam=path('M'+p(0,0)+'Q'+p(.045,-.20)+' '+p(.15,.10)+'Q'+p(.09,.32)+' '+p(0,.15)+'Z','#e5faff',null,0,.65);
+    return '<g class="wk-shp-wk" data-wake="'+id+'" pointer-events="none"><defs>'+defs+'</defs><g mask="url(#'+g+'m)">'+st+'<g opacity=".82">'+art+'</g><g opacity=".65">'+mv+'</g><g class="wk-wake-contact1086" style="--wk-wake-rise1086:'+Math.min(3,bp[1]*force).toFixed(2)+'px;animation-duration:'+(bp[2]/Math.sqrt(force)).toFixed(3)+'s;'+(still||motion.noBob?'animation:none;':'')+'">'+foam+'</g></g></g>';
 
   }
   /* v770: паруса. lay.sf (ткань), lay.sw (ветер: l, s), lay.pa ('0' выключает заплаты). Заплаты растут с победами в боях. */
@@ -47407,6 +47701,13 @@ document.addEventListener('change',function(e) {
     var star=function(x,y,r){return '<path d="M'+f(x-r)+' '+f(y)+'L'+f(x-r*.18)+' '+f(y-r*.2)+' '+f(x)+' '+f(y-r)+' '+f(x+r*.18)+' '+f(y-r*.2)+' '+f(x+r)+' '+f(y)+' '+f(x+r*.18)+' '+f(y+r*.2)+' '+f(x)+' '+f(y+r)+' '+f(x-r*.18)+' '+f(y+r*.2)+'Z" fill="'+h+'"/>';};
     a+='<defs><radialGradient id="'+uid+'gl"><stop stop-color="'+h+'" stop-opacity=".96"/><stop offset=".28" stop-color="'+c+'" stop-opacity=".68"/><stop offset="1" stop-color="'+c+'" stop-opacity="0"/></radialGradient><radialGradient id="'+uid+'sm" cx=".35" cy=".3"><stop stop-color="'+h+'" stop-opacity=".72"/><stop offset=".6" stop-color="'+sm+'" stop-opacity=".55"/><stop offset="1" stop-color="'+sm+'" stop-opacity="0"/></radialGradient></defs>';
     a+='<g'+css('smoke')+' opacity=".78"><ellipse cx="12" cy="1" rx="10" ry="6" fill="url(#'+uid+'sm)"/><ellipse cx="21" cy="-4" rx="10" ry="7" fill="url(#'+uid+'sm)"/><ellipse cx="25" cy="5" rx="8" ry="6" fill="url(#'+uid+'sm)"/></g>';
+    if(!still){
+      for(var p=0;p<5;p++){
+        var px=5+p*4,py=Math.sin(p*2.1)*4;
+        a+='<g class="wk-g1089-puff" style="animation-delay:'+f(delay+p*.065)+'s;animation-duration:'+f(1.05+p*.16)+'s;--gun-drift:'+f(8+p*2)+'px;--gun-rise:'+f(-7-p*3)+'px"><ellipse cx="'+f(px)+'" cy="'+f(py)+'" rx="'+f(4+p*.7)+'" ry="'+f(3+p*.5)+'" fill="url(#'+uid+'sm)"/></g>';
+      }
+      a+='<g class="wk-g1089-ring" style="animation-delay:'+delay+'s"><ellipse cx="5" rx="3" ry="8" fill="none" stroke="'+h+'" stroke-width=".65"/></g>';
+    }
     a+='<g'+css('flash')+'><ellipse cx="5" rx="18" ry="12" fill="url(#'+uid+'gl)"/><path d="M-1 -2L6 -4 12 -10 13 -3 27 -1 16 2 19 7 8 4 1 2Z" fill="'+c+'"/><path d="M0 -1L8 -2 15 -5 13 0 20 1 8 2 0 1Z" fill="'+h+'"/>';
     if(id==='fire') a+='<path d="M0 0Q10 -9 17 -7Q14 -3 24 -5Q20 0 30 2Q21 8 14 4Q8 7 0 0Z" fill="'+c+'" opacity=".9"/><path d="M2 0Q12 -6 20 0Q12 4 2 0Z" fill="'+h+'"/>';
     if(id==='storm') a+='<path d="M0 0L8 -7 12 -2 19 -9 21 -4 29 -8M2 1L10 6 16 1 21 8 30 4" stroke="'+h+'" stroke-width="1.2" fill="none" stroke-linejoin="round"/>';
@@ -47441,8 +47742,24 @@ document.addEventListener('change',function(e) {
     [].forEach.call(svg.querySelectorAll('.wk-gun-firing1075'),function(el){el.classList.remove('wk-gun-firing1075');});
     var guns=svg.querySelectorAll('[data-part="guns"].wk-shp-ok [data-gun832]'),count=Math.min(guns.length,5),ns='http://www.w3.org/2000/svg',made=[],recoils=[],token=++shpGunFxUid832;
     function add(parent,x,y,idx,scale,angle,recoil){
-      var g=document.createElementNS(ns,'g'),delay=idx*.14;
+      var g=document.createElementNS(ns,'g'),delay=idx*.12+(idx%2)*.035;
+      var water=svg.querySelector('[data-water-force1072]'),force=Math.max(.5,Math.min(3,Number(water&&water.getAttribute('data-water-force1072'))||1));
       g.setAttribute('transform','translate('+x+' '+y+') rotate('+angle+') scale('+scale+')');g.innerHTML=shpGunFx832(id,'gunfx832_'+(++shpGunFxUid832)+'_',delay,false);g.setAttribute('data-gun-effect832','wrapper');g.setAttribute('data-gun-effect1075','1');g.setAttribute('pointer-events','none');parent.appendChild(g);made.push(g);
+      // Local muzzle smoke follows the ship; water preview is anchored to the sea instead.
+      g.querySelectorAll('.wk-g1089-puff').forEach(function(p,j){p.style.setProperty('--gun-drift',(Math.cos(angle*Math.PI/180)*shpWind1092(svg.getAttribute('data-decor-weather1070'))*(18+j*4)-Math.sin(angle*Math.PI/180)*(7+j*3)/Math.sqrt(force))+'px');p.style.setProperty('--gun-rise',(-Math.sin(angle*Math.PI/180)*shpWind1092(svg.getAttribute('data-decor-weather1070'))*(18+j*4)-Math.cos(angle*Math.PI/180)*(7+j*3)/Math.sqrt(force))+'px');});
+      if(!allowFestive&&recoil&&water){
+        var sea=water.querySelector('[data-water-depth1072] rect');
+        if(sea){
+          var sx=+sea.getAttribute('x'),sy=+sea.getAttribute('y'),sw=+sea.getAttribute('width'),sh=+sea.getAttribute('height');
+          if(sw>0&&sh>0){
+            var hit=document.createElementNS(ns,'g'),hx=sx+sw*(.65+idx*.055),hy=sy+sh*(.35+(idx%3)*.14),d=delay+.32;
+            hit.setAttribute('transform','translate('+hx+' '+hy+')');hit.setAttribute('data-gun-effect832','water-preview');hit.setAttribute('pointer-events','none');
+            hit.innerHTML='<g class="wk-ring1090" style="animation-delay:'+d+'s"><ellipse rx="9" ry="2.5" fill="none" stroke="#d8f6ff" stroke-width=".8"/><ellipse rx="5" ry="1.4" fill="none" stroke="#fff" stroke-width=".5"/></g><g class="wk-hit1090" style="animation-delay:'+d+'s"><path d="M-8 0Q-5 -4 -3 -12Q-1 -6 0 -19Q2 -8 4 -13Q4 -5 8 0Q0 3 -8 0Z" fill="#d9f5ff" opacity=".8"/><path d="M-2 0Q0 -8 0 -15Q3 -5 3 0Z" fill="#fff"/><circle cx="-6" cy="-10" r="1" fill="#eafaff"/><circle cx="6" cy="-8" r=".8" fill="#eafaff"/></g>';
+            water.appendChild(hit);made.push(hit);
+          }
+        }
+      }
+
       if(recoil&&parent.querySelector('[data-gun-recoil1075]')){parent.setAttribute('data-gun-shot1075',token);parent.style.setProperty('--wk-gun-delay1075',delay+'s');parent.getBoundingClientRect();parent.classList.add('wk-gun-firing1075');recoils.push(parent);}
     }
     for(var i=0;i<count;i++){var g=guns[Math.floor(i*guns.length/count)];add(g,+(g.getAttribute('data-gun-mx1054')||0),g.hasAttribute('data-gun-my1054')?+g.getAttribute('data-gun-my1054'):1.45,i,+(g.getAttribute('data-gun-scale1075')||.65),+(g.getAttribute('data-gun-angle1075')||38),true);}
@@ -47512,9 +47829,9 @@ document.addEventListener('change',function(e) {
     function sprite966(k,x,y,w,op,flip){var h=w/weatherAspect966[k];return '<image data-weather966="'+k+'" href="'+weather966+k+'.webp" x="'+f(x-w/2)+'" y="'+f(y-h/2)+'" width="'+f(w)+'" height="'+f(h)+'" opacity="'+f(op)+'"'+(flip?' transform="translate('+f(2*x)+' 0) scale(-1 1)"':'')+' preserveAspectRatio="xMidYMid meet"/>';}
     // A slow oscillation avoids a visible reset in localized fog and warm air.
     function sway966(items,dx,dy,dur){return '<g>'+(still?'':'<animateTransform attributeName="transform" type="translate" values="0 0;'+dx+' '+dy+';0 0" keyTimes="0;.5;1" dur="'+dur+'s" repeatCount="indefinite"/>')+items+'</g>';}
-    function fog966(){return sway966(sprite966('fog',125,225,350,.62,false)+sprite966('fog',410,209,330,.57,true),38,-8,24)+sway966(sprite966('fog',264,286,540,.73,true),-44,5,32);}
+    function fog966(){return shpDrift1084(sprite966('fog',125,225,350,.42,false),-22,-4,43,.17,still)+shpDrift1084(sprite966('fog',410,209,330,.48,true),-33,4,53,.61,still)+shpDrift1084(sprite966('fog',264,286,540,.65,true),-49,5,67,.83,still);}
     function sweep966(k,key,items,dur){if(still)return '<g data-weather-layer966="'+key+'">'+items+'</g>';var id=uid+'weather966'+key;defs+='<g id="'+id+'">'+items+'</g>';var a='';for(var i=-1;i<=1;i++)a+='<use href="#'+id+'" transform="translate('+(i*480)+' 0)"/>';return '<g data-weather-layer966="'+key+'">'+anim('x',480,dur)+a+'</g>';}
-    function blizzard966(){return sway966(sprite966('fog',250,278,560,.46,false),-34,-9,14)+sweep966('blizzard','blizzard',sprite966('blizzard',110,105,265,.42,false)+sprite966('blizzard',355,224,320,.58,false),6.5);}
+    function blizzard966(){return shpDrift1084(sprite966('fog',250,278,560,.46,false),-34,-9,27,.2,still)+shpDrift1084(sprite966('blizzard',110,105,265,.30,false),-42,8,19,.31,still)+shpDrift1084(sprite966('blizzard',355,224,320,.42,false),-59,11,23,.73,still);}
     function wind966(){return sweep966('wind','wind',sprite966('wind',115,85,225,.32,false)+sprite966('wind',350,205,265,.38,false),6.5)+sweep966('wind','wind2',sprite966('wind',250,263,240,.23,false),9.2);}
     function heat966(){return sway966(sprite966('haze',130,231,290,.44,false)+sprite966('haze',390,255,320,.40,true),24,-13,19)+sway966(sprite966('haze',275,181,345,.25,true),-18,11,23);}
     // v968: painted lighting layers, isolated from the selected background and weather particles.
@@ -47537,10 +47854,10 @@ document.addEventListener('change',function(e) {
     if(sj==='spring')out+=light('spring',65,64,230,200,'#ffc3db',.13)+leaves967(23,60,true);
     else if(sj==='summer'){if(tm==='night'||tm==='blue'||(!tm&&['','aurora','haunted','xmas','deepsea'].indexOf(bgId969)>=0)||darkTheme969)out+=layer('summer2',[[0,'#c6b19a',.025],[1,'#a68b65',.04]]);else out+=light('summer',385,38,280,230,'#ffdf9a',.22*lightWeather968)+layer('summer2',[[0,'#f9e59d',.04],[1,'#efa452',.10]])+(lightWeather968>.6?summer967():'');}
     else if(sj==='autumn')out+=layer('autumn',[[0,'#d29b56',.07],[1,'#96502d',.14]])+leaves967(24,80,false);
-    else if(sj==='winter')out+=layer('winter',[[0,'#b6d6f0',.14],[1,'#b4cfe3',.08]])+((wx==='snow'||wx==='blizzard')||(!wx&&['snowfall','xmas'].indexOf(bgId969)>=0)?'':snow(29,100,1.4,22))+winter967();
+    else if(sj==='winter')out+=layer('winter',[[0,'#b6d6f0',.14],[1,'#b4cfe3',.08]])+((wx==='snow'||wx==='blizzard')||(!wx&&['snowfall','xmas'].indexOf(bgId969)>=0)?'':shpEnv1084(0,0,480,300,'winter',strength,still,100,W/H))+winter967();
     if(wx==='drizzle')out+=layer('drizzle',[[0,'#6e8ba4',.12],[1,'#50758a',.08]])+shpRain1079(0,0,480,300,'drizzle',strength,still,110,W/H);
     else if(wx==='rain'||wx==='storm'){out+=layer('rain',[[0,'#243d58',wx==='storm'?.42:.22],[.6,'#536d84',.12],[1,'#203953',.14]])+shpRain1079(0,0,480,300,wx,strength,still,11,W/H);if(wx==='storm'){var bolt=sprite966('lightning',394,54,190,.92,false);out+='<g class="wk-storm1079-bolt"'+(still?' style="animation:none!important"':'')+'>'+bolt+'</g>';}}
-    else if(wx==='snow'||wx==='blizzard'){out+=layer('snow',[[0,'#9bb7cf',wx==='blizzard'?.25:.1],[1,'#c4d8e8',wx==='blizzard'?.20:.06]])+snow(wx==='blizzard'?78:52,200,wx==='blizzard'?2.1:1.5,wx==='blizzard'?7:15)+snow(28,300,2.7,wx==='blizzard'?4.5:10);if(wx==='blizzard')out+=blizzard966();}
+    else if(wx==='snow'||wx==='blizzard'){out+=layer('snow',[[0,'#9bb7cf',wx==='blizzard'?.25:.1],[1,'#c4d8e8',wx==='blizzard'?.20:.06]])+shpEnv1084(0,0,480,300,wx,strength,still,200,W/H);if(wx==='blizzard')out+=blizzard966();}
     else if(wx==='fog')out+=layer('fog',[[0,'#c0d3df',.07],[.65,'#d2e2e8',.13],[1,'#d2e2e8',.18]])+fog966();
     else if(wx==='wind'){out+=wind966();}
     else if(wx==='haze')out+=light('heat',420,100,330,210,'#ffd19a',.26)+heat966();
@@ -47561,7 +47878,7 @@ document.addEventListener('change',function(e) {
     });
   }
   function shpCrewSil(ids,mode,hs,sx,L,deckAt,T,LY,u,plan1069) {
-    var order=['cap','carp','cook','nav','gun','bos'], active=order.filter(function(id){return ids.indexOf(id)>=0;}), a='', defs='', sil=mode==='sil', uniform=mode==='uni';
+    var order=['cap','carp','cook','nav','gun','bos'], active=order.filter(function(id){return ids.indexOf(id)>=0;}), a='', defs='', depth1099=[], sil=mode==='sil', uniform=mode==='uni';
     if(!active.length)return '';
     var lo=sx+L*(T.cab?T.cab.w+.035:.14), hi=sx+L*(T.fore?1-T.fore.w-.035:.86), mid=(lo+hi)/2, span=hi-lo;
     var spread=Math.max(65,Math.min(120,LY.cws835==null?100:+LY.cws835||100))/100, shift=Math.max(-25,Math.min(25,+LY.cwx835||0))/100;
@@ -47582,7 +47899,7 @@ document.addEventListener('change',function(e) {
         var src892='assets/webp/crew/'+id+(uniform?'_uni':'')+'.webp', filter892='';
         if(sil){var fid892=u+'crewSil892'+id;defs+='<filter id="'+fid892+'" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 .13 0 0 0 0 .17 0 0 0 0 .21 0 0 0 1 0"/></filter>';filter892=' filter="url(#'+fid892+')"';}
         g+='<image data-crew-art892="'+id+'" href="'+src892+'" x="'+art892[0]+'" y="'+art892[1]+'" width="'+art892[2]+'" height="'+art892[3]+'" preserveAspectRatio="xMidYMid meet"'+filter892+'/>';
-        a+=g+'</g>';return;
+        depth1099.push({y:y,i:i,html:g+'</g>'});return;
       }
       // staggered legs, cuffs, boots and waist
       g+=path('M-5 -13L-.5 -13 -1.2 -4 -2.5 -1 -6 -1 -6 -5Z',pants,edge)+path('M.5 -13H5L6 -5 5.5 -1 1.8 -1 .6 -5Z',shpShade(pants,.12),edge)+path('M-6 -4h4.4l.1 2 1.5 1.2V0h-7v-1.5Z',boots,edge)+path('M1.6 -4h4.2l.5 2 2 1v1H1.2Z',boots,edge)+path('M-4.8 -10l.4 5M3 -10l.8 5','none',shpShade(pants,.35),.55);
@@ -47604,8 +47921,9 @@ document.addEventListener('change',function(e) {
       } else {
         g+=path('M-4 -22L0 -19 4 -22','none',shirt,1.25)+path('M-3.6 -21h7.2M-4.3 -18h8.6','none',sil?'#4a525a':'#d6c8aa',.65)+path('M-5.5 -31.8H5.5L3.6 -33.6Q0 -36.6 -3.7 -33.6Z',dark,edge)+path('M-5.5 -31.8h11','none',gold,.7)+path('M7 -15q5 -2 5 2.7t-4 2q-3 -1 -1 -4.4t4 3q-1 3 -4 1.2','none',sil?'#4a525a':'#d0a36d',1.05);
       }
-      a+=g+'</g>';
+      depth1099.push({y:y,i:i,html:g+'</g>'});
     });
+    a=depth1099.sort(function(a,b){return a.y-b.y||a.i-b.i;}).map(function(q){return q.html;}).join('');
     return '<g data-crew="1"><defs>'+defs+'</defs>'+a+'</g>';
   }
   var SHP_SFAB = { silk: 'Шёлк', burl: 'Холстина', skin: 'Кожа', fade: 'Выцветшая', damask: 'Дамаст', wax: 'Вощёная парусина', web: 'Паутина 🎃' };
@@ -47655,7 +47973,7 @@ document.addEventListener('change',function(e) {
   Array.prototype.push.apply(SHP_MOVE,Object.keys(SHP_SETART847));
   function shpLayClean(l) {
     var o = {}; l = l && typeof l === 'object' ? l : {};
-    Object.keys(SHP_LAYD).forEach(function (k) { var n = Math.round(+l[k]); if (isFinite(n) && l[k] !== '' && l[k] != null && n !== SHP_LAYD[k]) o[k] = Math.max(SHP_LAYR[k][0], Math.min(SHP_LAYR[k][1], n)); });
+    Object.keys(SHP_LAYD).forEach(function (k) { var n = Math.round(+l[k]); if (isFinite(n) && l[k] !== '' && l[k] != null) {n=Math.max(SHP_LAYR[k][0],Math.min(SHP_LAYR[k][1],n));if(n!==SHP_LAYD[k])o[k]=n;} });
     if (l.flm !== '' && l.flm != null && isFinite(+l.flm) && +l.flm >= 0 && +l.flm < 4) o.flm = Math.floor(+l.flm);
     if (l.sm === 'big' || l.sm === 'first' || l.sm === 'last') o.sm = l.sm;
     if (shpMaskOk(l.sp)) o.sp = l.sp;
@@ -47716,7 +48034,23 @@ document.addEventListener('change',function(e) {
     var uid='mi845_'+(++shpUid)+'_';
     return '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini wk-shp-still"><rect width="60" height="36" fill="#13213b"/><svg x="2" y="2" width="56" height="32" viewBox="'+a[0]+'" preserveAspectRatio="xMidYMid meet">'+a[1].split('__M845__').join(uid)+'</svg></svg>';
   }
+  function shpLineMini1081(id) {
+    var variant=SHP_DECVAR[id], base=variant?variant.b:id;
+    if(['lights','bunting','xlights'].indexOf(base)<0)return '';
+    var flags=base==='bunting', fest=base==='xlights', out='<path d="M4 8Q30 25 56 8" stroke="#483423" stroke-width="1.1" fill="none"/><path d="M4 8Q30 25 56 8" stroke="#d1b084" stroke-width=".35" fill="none"/>';
+    for(var i=0;i<6;i++){var t=(i+.5)/6,x=4+52*t,y=8+34*t*(1-t),h=flags?10:9,w=h*(flags?SHP_BOATART971.pennant:SHP_BOATART971.bulb),k=flags?['pennant','pennant_gold','pennant_blue','pennant_ivory','pennant_green'][i%5]:fest?['red','green','blue','pink','gold'][i%5]:'gold';
+      out+=flags?shpBoatImg971(k,x-w/2,y,w,h):k==='gold'?shpBoatImg971('bulb',x-w/2,y,w,h):shpBoatSeasonArt973('bulb_'+k,[x,y+h/2,w,h]);}
+    return '<svg viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini" data-line-mini1081="'+base+'"><rect width="60" height="36" fill="#13213b"/>'+(variant?'<g style="filter:hue-rotate('+variant.h+'deg) saturate('+variant.s+')">'+out+'</g>':out)+'</svg>';
+  }
   function shpMini(kind, id, tier) {
+    if(kind==='dec'){
+      var line1081=shpLineMini1081(id);if(line1081)return line1081;
+      var va1081=SHP_DECVAR[id], b1081=va1081?va1081.b:id;
+      if(tier!=null&&tier!==''&&+tier===0&&(SHP_BOATSEASON973_SIZE[b1081]||SHP_BOATART971[b1081])){
+        var a1081=SHP_BOATSEASON973_SIZE[b1081]?shpBoatSeasonArt973(b1081,[30,18,54,32]):shpBoatImg971(b1081,3,2,54,32);
+        return '<svg viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini"><rect width="60" height="36" fill="#13213b"/>'+(va1081?'<g style="filter:hue-rotate('+va1081.h+'deg) saturate('+va1081.s+')">'+a1081+'</g>':a1081)+'</svg>';
+      }
+    }
     // v987: collection views without a selected ship still show the current artwork.
     if (kind==='hpat' && (tier==null || tier==='') && Object.prototype.hasOwnProperty.call(SHP_HPAT936,id)) return '<svg viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini"><rect width="60" height="36" fill="#13213b"/><image href="assets/webp/ships/boat979/skins/'+id+'.webp" x="3" y="2" width="54" height="32" preserveAspectRatio="xMidYMid slice"/></svg>';
     if (kind==='orn' && (tier==null || tier==='') && Object.prototype.hasOwnProperty.call(SHP_ORART934,id)) return '<svg viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini"><rect width="60" height="36" fill="#13213b"/><image href="'+(SHP_BOAT978_NEW[id]?'assets/webp/ships/boat978/ornaments/':SHP_ORART935[id]?SHP_ART935+'ornaments/':SHP_ART934+'ornaments/')+id+'.webp" x="3" y="2" width="54" height="32" preserveAspectRatio="xMidYMid meet"/></svg>';
@@ -47822,9 +48156,18 @@ document.addEventListener('change',function(e) {
       (n ? '<button type="button" class="wk-tx-btn' + (can ? ' pri' : '') + '" data-tx="shipdzok"' + (can ? '' : ' disabled') + '>' + (df.sum ? 'Купить и применить' : 'Применить') + '</button><button type="button" class="wk-tx-btn" data-tx="shipdzx">Сбросить</button>' : '') + '<button type="button" class="wk-tx-btn" data-tx="shipdzplay">▶ Проиграть анимацию</button></div>';
     return bar;
   }
+  function shpPaintInfo1081(k,e,c) {
+    var cur=/^#[\da-f]{6}$/i.test(e.paint[k])?e.paint[k]:SHP_PAINT[k],wale=/^#[\da-f]{6}$/i.test(e.paint.wale)?e.paint.wale:SHP_PAINT.wale;
+    var inherit=['windowframe','rigmetal','figmount'].indexOf(k)>=0&&cur.toLowerCase()===SHP_PAINT[k].toLowerCase(),auto=inherit&&wale.toLowerCase()!==SHP_PAINT.wale.toLowerCase(),color=auto?wale:cur;
+    var changed=cur.toLowerCase()!==String(c.paint[k]||SHP_PAINT[k]).toLowerCase();
+    return {cur:cur,inherit:inherit,color:color,text:(auto?'От канта · ':inherit?'Исходный / от канта · ':'')+color.toUpperCase()+(changed?' · в примерке':'')};
+  }
   function shpDzHTML(st, sh, v) {
     var sc = shpSel(sh, v); if (sc.none || !(sc.all || sc.built.hull)) return '';
     var c = shpCos(sh), e = shpEffCos(sh), df = shpDiff(sh), bel = st.belli || 0;
+    function mini1081(kind,id){if(kind==='fig'&&id===e.fig&&shpFigIsAlt(id,e.lay)&&SHP_FIGALT954[id])return '<svg viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini"><rect width="60" height="36" fill="#13213b"/><image href="'+shpFigArtPath938(SHP_FIGALT954[id])+'" x="2" y="1" width="56" height="34" preserveAspectRatio="xMidYMid meet"/></svg>';return shpMini(kind,id,sc.t);}
+    function state1081(kind,it,sel){var applied=kind==='dec'?c.dec.indexOf(it.id)>=0:c[kind]===it.id;return sel&&!applied?'<span class="wk-shp-status1081 draft">В примерке</span>':!sel&&applied?'<span class="wk-shp-status1081 draft">Будет снято</span>':sel&&applied?'<span class="wk-shp-status1081">Применено</span>':'';}
+
     var lockNote = function (req) { return shpReqOk(sc, req) ? '' : '<small class="wk-shp-lk">Сначала построй ' + (SHP_REQN[req] || req) + '</small>'; };
     var pv = shpDzScene1076(sh,sc,e);
     var tabs = '<div class="wk-shp-dtabs" role="tablist">' + SHP_DTABS.map(function (t) { var on = t[0] === SHP_DT; return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? 'on' : '') + '" data-tx="shipdzt" data-t="' + t[0] + '">' + t[1] + '</button>'; }).join('') + '</div>';
@@ -47838,26 +48181,26 @@ document.addEventListener('change',function(e) {
     var cardBtn = function (kind, it, sel, req) {
       var own = shpOwn(sh, kind, it.id), bpl = it.bp && !own, ltl = it.lt && !own, bsl = it.bs && !own, lock = bpl || ltl || bsl || !shpReqOk(sc, req || it.req), p = FREE() ? 0 : it.p;
       var price = own ? (it.id ? 'есть' : 'бесплатно') : fmtB(p);
-      if (ltl) return '<button type="button" class="wk-shp-it lock lt" disabled aria-disabled="true">' + shpMini(kind, it.id, sc.t).replace('class="wk-shp-mini"', 'class="wk-shp-mini wk-shp-bpm"') + '<b>' + it.n + '</b><small>трофей из плаваний</small><em class="wk-shp-set lt-' + it.lt + '">' + SHP_LOOTR[it.lt].n + '</em></button>';
-      if (bsl) return '<button type="button" class="wk-shp-it lock lt" disabled aria-disabled="true">' + shpMini(kind, it.id, sc.t).replace('class="wk-shp-mini"', 'class="wk-shp-mini wk-shp-bpm"') + '<b>' + it.n + '</b><small>награда за босса «' + SHP_BOSS[it.bs].n + '»</small><em class="wk-shp-set lt-' + it.r + '">' + SHP_LOOTR[it.r].n + '</em></button>';
-      if (bpl) return '<button type="button" class="wk-shp-it lock bp"" disabled aria-disabled="true">' + shpMini(kind, it.id, sc.t).replace('class="wk-shp-mini"', 'class="wk-shp-mini wk-shp-bpm"') + '<b>' + it.n + '</b><small>чертёж ищут в плаваниях</small><em class="wk-shp-set ' + (it.lg ? 'lg' : 'bp') + '">' + (it.lg ? 'Легендарный чертёж' : 'Редкий чертёж') + '</em></button>';
-      return '<button type="button" class="wk-shp-it' + (sel ? ' on' : '') + (lock ? ' lock' : '') + (it.lg ? ' lg' : '') + '" data-tx="shipdz" data-k="' + kind + '" data-v="' + it.id + '"' + (lock ? ' disabled' : '') + ' aria-pressed="' + sel + '">' + shpMini(kind, it.id, sc.t) + '<b>' + it.n + '</b><small>' + ((it.tiers && it.tiers.length) ? ('для ' + (SHP_TIERN[it.tiers[0]] || it.tiers[0]) + ' · ') : '') + (lock ? 'нужн' + ({ sail: 'ы паруса' }[req || it.req] ? 'ы паруса' : 'а ' + ({ hull: 'обшивка', mast: 'мачта', deck: 'палуба', cabin: 'каюта', bowsprit: 'бушприт' }[req || it.req] || '')) : price) + '</small>' + (it.set ? '<em class="wk-shp-set ' + it.set + '">' + (it.set === 'hw' ? 'Хэллоуин' : 'Новый год') + '</em>' : it.lg ? '<em class="wk-shp-set lg">Легендарная</em>' : it.bp ? '<em class="wk-shp-set bp">Чертёж</em>' : it.lt ? '<em class="wk-shp-set lt-' + it.lt + '">' + SHP_LOOTR[it.lt].n + (shpDup(sh, it.id) ? ' ×' + (shpDup(sh, it.id) + 1) : '') + '</em>' : (it.r ? '<em class="wk-shp-set lt-' + it.r + '">' + SHP_LOOTR[it.r].n + '</em>' : ((it.tiers && it.tiers.length) ? '<em class="wk-shp-set bp">Уникальное</em>' : ''))) + '</button>';
+      if (ltl) return '<button type="button" class="wk-shp-it lock lt" disabled aria-disabled="true">' + mini1081(kind,it.id).replace('class="wk-shp-mini"', 'class="wk-shp-mini wk-shp-bpm"') + '<b>' + it.n + '</b><small>трофей из плаваний</small><em class="wk-shp-set lt-' + it.lt + '">' + SHP_LOOTR[it.lt].n + '</em></button>';
+      if (bsl) return '<button type="button" class="wk-shp-it lock lt" disabled aria-disabled="true">' + mini1081(kind,it.id).replace('class="wk-shp-mini"', 'class="wk-shp-mini wk-shp-bpm"') + '<b>' + it.n + '</b><small>награда за босса «' + SHP_BOSS[it.bs].n + '»</small><em class="wk-shp-set lt-' + it.r + '">' + SHP_LOOTR[it.r].n + '</em></button>';
+      if (bpl) return '<button type="button" class="wk-shp-it lock bp" disabled aria-disabled="true">' + mini1081(kind,it.id).replace('class="wk-shp-mini"', 'class="wk-shp-mini wk-shp-bpm"') + '<b>' + it.n + '</b><small>чертёж ищут в плаваниях</small><em class="wk-shp-set ' + (it.lg ? 'lg' : 'bp') + '">' + (it.lg ? 'Легендарный чертёж' : 'Редкий чертёж') + '</em></button>';
+      return '<button type="button" class="wk-shp-it' + (sel ? ' on' : '') + (lock ? ' lock' : '') + (it.lg ? ' lg' : '') + '" data-tx="shipdz" data-k="' + kind + '" data-v="' + it.id + '"' + (lock ? ' disabled' : '') + ' aria-pressed="' + sel + '">' + mini1081(kind,it.id) + '<b>' + it.n + '</b>' + state1081(kind,it,sel) + '<small>' + ((it.tiers && it.tiers.length) ? ('для ' + (SHP_TIERN[it.tiers[0]] || it.tiers[0]) + ' · ') : '') + (lock ? 'нужн' + ({ sail: 'ы паруса' }[req || it.req] ? 'ы паруса' : 'а ' + ({ hull: 'обшивка', mast: 'мачта', deck: 'палуба', cabin: 'каюта', bowsprit: 'бушприт' }[req || it.req] || '')) : price) + '</small>' + (it.set ? '<em class="wk-shp-set ' + it.set + '">' + (it.set === 'hw' ? 'Хэллоуин' : 'Новый год') + '</em>' : it.lg ? '<em class="wk-shp-set lg">Легендарная</em>' : it.bp ? '<em class="wk-shp-set bp">Чертёж</em>' : it.lt ? '<em class="wk-shp-set lt-' + it.lt + '">' + SHP_LOOTR[it.lt].n + (shpDup(sh, it.id) ? ' ×' + (shpDup(sh, it.id) + 1) : '') + '</em>' : (it.r ? '<em class="wk-shp-set lt-' + it.r + '">' + SHP_LOOTR[it.r].n + '</em>' : ((it.tiers && it.tiers.length) ? '<em class="wk-shp-set bp">Уникальное</em>' : ''))) + '</button>';
     };
     var urlBox = function (k, lbl, tip) { return '<div class="wk-shp-url"><label for="wkShipUrl-' + k + '">' + lbl + '</label><span><input id="wkShipUrl-' + k + '" type="url" inputmode="url" maxlength="500" placeholder="https://…/picture.png" value="' + esc(e[k + 'Url'] || '') + '" autocomplete="off"><button type="button" class="wk-tx-btn" data-tx="shipurl" data-k="' + k + '">Примерить</button></span><small>Подойдёт прямая ссылка на картинку (PNG, JPG, WEBP, GIF), ' + tip + '. Картинку увидят все, кто откроет твой профиль, так что без оскорбительных изображений.</small></div>'; };
-    var sl = function (key, lbl, lo, hi, val, unit, step) { return '<label class="wk-shp-sl"><span>' + lbl + '</span><input type="range" min="' + lo + '" max="' + hi + '" step="' + (step || 5) + '" value="' + val + '" data-shl="' + key + '" aria-label="' + lbl + '"><output>' + val + (unit || '%') + '</output></label>'; };
+    var sl = function (key, lbl, lo, hi, val, unit, step) {
+      var precise=key.indexOf('ds.')===0, u=unit||'%', stp=precise?1:(step||5);
+      return '<'+(precise?'div':'label')+' class="wk-shp-sl'+(precise?' wk-shp-prec1081':'')+'"><span>'+lbl+'</span><input type="range" min="'+lo+'" max="'+hi+'" step="'+stp+'" value="'+val+'" data-shl="'+key+'" aria-label="'+lbl+'"><output>'+val+u+'</output>'+(precise?'<span class="wk-shp-num1081"><input type="number" inputmode="numeric" min="'+lo+'" max="'+hi+'" step="1" value="'+val+'" data-shnum1081="'+key+'" aria-label="'+lbl+' ('+u.trim()+')"><span>'+u+'</span></span>':'')+'</'+(precise?'div':'label')+'>';
+    };
     var lyv = function (k) { return e.lay[k] != null ? e.lay[k] : SHP_LAYD[k]; };
     var lbtn = function (key, val, lbl, on) { return '<button type="button" class="wk-shp-seg' + (on ? ' on' : '') + '" data-tx="shipdzlay" data-s="' + key + '" data-v="' + val + '" aria-pressed="' + on + '">' + lbl + '</button>'; };
     var layBox = function (title, inner, grp) { return '<div class="wk-shp-lay"><div class="wk-shp-lay-h"><b>' + title + '</b><button type="button" class="wk-tx-btn" data-tx="shipdzlayx" data-g="' + grp + '">Сбросить</button></div><details class="wk-shp-fine"' + (SHP_FINE ? ' open' : '') + '><summary data-tx="shipfine">Тонкая настройка</summary>' + inner + '</details></div>'; };
     var prRow = function (s) {
-      var cur = e.paint[s.k] || SHP_PAINT[s.k], lock = !shpReqOk(sc, s.req);
-      return '<div class="wk-shp-pr' + (lock ? ' lock' : '') + '"><span class="wk-shp-prn">' + s.n + lockNote(s.req) + '</span><span class="wk-shp-sw">' + s.c.map(function (col) { var on = col.toLowerCase() === cur.toLowerCase(); return '<button type="button" style="--c:' + col + '" class="' + (on ? 'on' : '') + '" data-tx="shipdz" data-k="paint" data-s="' + s.k + '" data-v="' + col + '"' + (lock ? ' disabled' : '') + ' aria-pressed="' + on + '" aria-label="' + s.n + ': ' + col + '"></button>'; }).join('') + (function () { var cu = s.c.some(function (col) { return col.toLowerCase() === cur.toLowerCase(); }); return '<label class="wk-shp-cc' + (cu ? '' : ' on') + '" style="--c:' + (/^#[\da-f]{6}$/i.test(cur) ? cur : '#888') + '" title="Свой цвет"><input type="color" data-shpc="' + s.k + '" value="' + (/^#[\da-f]{6}$/i.test(cur) ? cur : '#888888') + '"' + (lock ? ' disabled' : '') + ' aria-label="' + s.n + ': свой цвет"></label>'; })() + '</span></div>';
+      var info=shpPaintInfo1081(s.k,e,c),cur=info.cur,inherit=info.inherit,lock=!shpReqOk(sc,s.req);
+      return '<div class="wk-shp-pr'+(lock?' lock':'')+'"><span class="wk-shp-prn">'+s.n+lockNote(s.req)+'</span><div class="wk-shp-paintinfo1081" data-paintinfo1081="'+s.k+'"><i style="background:'+info.color+'"></i><span>'+info.text+'</span></div><span class="wk-shp-sw">'+s.c.map(function(col){var on=col.toLowerCase()===cur.toLowerCase();return '<button type="button" style="--c:'+col+'" class="'+(on?'on':'')+'" data-tx="shipdz" data-k="paint" data-s="'+s.k+'" data-v="'+col+'"'+(lock?' disabled':'')+' aria-pressed="'+on+'" aria-label="'+s.n+': '+col+'" title="'+(inherit&&on?'Исходный / от канта':col)+'"></button>';}).join('')+(function(){var cu=s.c.some(function(col){return col.toLowerCase()===cur.toLowerCase();});return '<label class="wk-shp-cc'+(cu?'':' on')+'" style="--c:'+cur+'" title="Свой цвет"><input type="color" data-shpc="'+s.k+'" value="'+cur+'"'+(lock?' disabled':'')+' aria-label="'+s.n+': свой цвет"></label>';})()+'</span></div>';
     };
     var nM = shpTT(sc.t).masts.length;
     var body = '';
-    if (SHP_DT === 'paint') body = '<p class="wk-sh-hint">Оформление у каждого корабля флота своё. Рамы, металл и крепления фигур наследуют изменённый кант, если не выбран отдельный цвет. Канаты сохраняют исходный цвет до ручной перекраски. Один перекрашенный слой — ' + fmtB(FREE() ? 0 : SHP_PAINT_PRICE) + '</p>' + SHP_PSLOTS.filter(function (s) { return s.k !== 'sail2' && (s.k !== 'windowframe' || sc.t > 0); }).map(function (s) {
-      var cur = e.paint[s.k] || SHP_PAINT[s.k], lock = !shpReqOk(sc, s.req);
-      return '<div class="wk-shp-pr' + (lock ? ' lock' : '') + '"><span class="wk-shp-prn">' + s.n + lockNote(s.req) + '</span><span class="wk-shp-sw">' + s.c.map(function (col) { var on = col.toLowerCase() === cur.toLowerCase(); return '<button type="button" style="--c:' + col + '" class="' + (on ? 'on' : '') + '" data-tx="shipdz" data-k="paint" data-s="' + s.k + '" data-v="' + col + '"' + (lock ? ' disabled' : '') + ' aria-pressed="' + on + '" aria-label="' + s.n + ': ' + col + '"></button>'; }).join('') + (function () { var cu = s.c.some(function (col) { return col.toLowerCase() === cur.toLowerCase(); }); return '<label class="wk-shp-cc' + (cu ? '' : ' on') + '" style="--c:' + (/^#[\da-f]{6}$/i.test(cur) ? cur : '#888') + '" title="Свой цвет"><input type="color" data-shpc="' + s.k + '" value="' + (/^#[\da-f]{6}$/i.test(cur) ? cur : '#888888') + '"' + (lock ? ' disabled' : '') + ' aria-label="' + s.n + ': свой цвет"></label>'; })() + '</span></div>';
-    }).join('');
+    if (SHP_DT === 'paint') body = '<p class="wk-sh-hint">Оформление у каждого корабля флота своё. Рамы, металл и крепления фигур наследуют изменённый кант, если не выбран отдельный цвет. Канаты сохраняют исходный цвет до ручной перекраски. Один перекрашенный слой — ' + fmtB(FREE() ? 0 : SHP_PAINT_PRICE) + '</p>' + SHP_PSLOTS.filter(function (s) { return s.k !== 'sail2' && (s.k !== 'windowframe' || sc.t > 0); }).map(prRow).join('');
     else if (SHP_DT === 'orn') body = (e.orn ? tuneBox('orn', layBox('Борт: размер и положение узора', sl('os', 'Размер узора', 50, 220, lyv('os')) + sl('oy', 'Выше или ниже', -10, 16, lyv('oy'), ' px', 1), 'orn')) : '') + (e.sorn ? (function () {
       var Tt = shpTT(sc.t), nS = shpSailN(Tt), mk = shpSailMask(e.lay, Tt), bt = '', zs = '', i;
       for (i = 0; i < nS; i++) { bt += lbtn('sp', i, nS > 1 ? 'Парус ' + (i + 1) + (i === 0 ? ' (передний)' : i === nS - 1 ? ' (задний)' : '') : 'Парус', mk[i]); if (mk[i]) zs += sl('sz' + i, nS > 1 ? 'Размер: парус ' + (i + 1) : 'Размер на парусе', 50, 220, lyv('sz' + i)); }
@@ -47933,13 +48276,14 @@ document.addEventListener('change',function(e) {
         if (!on || SHP_MOVE.indexOf(it.id) < 0) return h;
         var open = SHP_TUNE === it.id, d = (e.lay.ds && e.lay.ds[it.id]) || {};
         return '<div class="wk-shp-cell">' + h + '<button type="button" class="wk-shp-gear' + (open ? ' on' : '') + '" data-tx="shipdztune" data-v="' + it.id + '" aria-expanded="' + open + '" aria-label="Настройка: ' + esc(it.n) + '">⚙ Настройка</button></div>' +
-          (open ? '<div class="wk-shp-tune"><div class="wk-shp-lay"><div class="wk-shp-lay-h"><b>' + it.n + ': размер и место</b><button type="button" class="wk-tx-btn" data-tx="shipdztunex" data-v="' + it.id + '">Сбросить</button></div><div class="wk-shp-dmv">' + sl('ds.' + it.id + '.s', 'Размер', 50, 220, d.s != null ? d.s : 100) + sl('ds.' + it.id + '.x', 'Левее / правее', -40, 40, d.x || 0, '%', 1) + sl('ds.' + it.id + '.y', 'Выше / ниже', -shpDsLim(it.id)[1], shpDsLim(it.id)[1], d.y || 0, ' px', 1) + sl('ds.' + it.id + '.r', 'Поворот (влево / вправо)', -90, 90, d.r || 0, '°', 1) + '</div></div></div>' : '');
+          (open ? '<div class="wk-shp-tune"><div class="wk-shp-lay"><div class="wk-shp-lay-h"><b>' + it.n + ': размер и место</b><button type="button" class="wk-tx-btn" data-tx="shipdztunex" data-v="' + it.id + '">Сбросить</button></div><div class="wk-shp-dmv">' + sl('ds.' + it.id + '.s', 'Размер', 50, 220, d.s != null ? d.s : 100) + sl('ds.' + it.id + '.x', 'Левее / правее', -40, 40, d.x || 0, '%', 1) + sl('ds.' + it.id + '.y', 'Вверх (−) / вниз (+)', -shpDsLim(it.id)[1], shpDsLim(it.id)[1], d.y || 0, ' px', 1) + sl('ds.' + it.id + '.r', 'Поворот (влево / вправо)', -90, 90, d.r || 0, '°', 1) + '</div></div></div>' : '');
       };
       var grpH = function (g, title, note) { var its = inGrp(g).filter(function (it) { return want('dec', it); }); return its.length ? '<h4 class="wk-shp-h4' + (g === 'hw' || g === 'ny' || g === 'loot' ? ' wk-shp-h4-' + g : '') + '">' + title + '</h4>' + (note && !mine ? '<p class="wk-sh-hint wk-shp-gn">' + note + '</p>' : '') + '<div class="wk-shp-its">' + its.map(function (it) { return dcard(it, it.req); }).join('') + '</div>' : ''; };
       var setsH = SHP_SET847.map(function (g) {
         var fg = shpItem('fig', g.fig), owned = (shpOwn(sh, 'fig', g.fig) ? 1 : 0) + g.ids.filter(function (id) { return shpOwn(sh, 'dec', id); }).length, active = (e.fig === g.fig ? 1 : 0) + g.ids.filter(function (id) { return e.dec.indexOf(id) >= 0; }).length;
+        var applied=(c.fig===g.fig?1:0)+g.ids.filter(function(id){return c.dec.indexOf(id)>=0;}).length;
         var cells = (want('fig', fg) ? card('fig', fg, e.fig === g.fig, 'hull') : '') + g.ids.map(function (id) { return shpItem('dec', id); }).filter(function (it) { return want('dec', it); }).map(function (it) { return dcard(it); }).join('');
-        return cells ? '<h4 class="wk-shp-h4">Комплект «' + g.n + '» <small class="wk-shp-achc">' + owned + '/6 собрано · ' + active + '/6 надето</small></h4>' + (mine ? '' : '<p class="wk-sh-hint">Носовая фигура и пять отдельных украшений. Можно смешивать комплекты.</p>') + '<div class="wk-shp-its">' + cells + '</div>' : '';
+        return cells ? '<h4 class="wk-shp-h4">Комплект «' + g.n + '» <small class="wk-shp-achc">' + owned + '/6 собрано · ' + applied + '/6 надето' + (active!==applied ? ' · в примерке '+active+'/6' : '') + '</small></h4>' + (mine ? '' : '<p class="wk-sh-hint">Носовая фигура и пять отдельных украшений. Можно смешивать комплекты.</p>') + '<div class="wk-shp-its">' + cells + '</div>' : '';
       }).join('');
       /* сколько вещей на каждой вкладке (без повторов) */
       var all = {}, other = 0;
@@ -47952,7 +48296,7 @@ document.addEventListener('change',function(e) {
         var pk = shpPetOf(sh, sc.t), pp = pk && shpPetGet(pk); if (!pp) return '';
         var id = shpPetDsId(pp), lm = shpDsLim(id), open = SHP_TUNE === id, d = (e.lay.ds && e.lay.ds[id]) || {}, nm = esc(shpPetNm(sh, pk) || pp.n);
         return '<h4 class="wk-shp-h4">Питомец на борту</h4><div class="wk-shp-its wk-shp-petmv"><div class="wk-shp-cell"><button type="button" class="wk-shp-it on" data-tx="shipdztune" data-v="' + id + '">' + shpPetMini(pp) + '<b>' + nm + '</b><small>перетащи его на корабле</small></button><button type="button" class="wk-shp-gear' + (open ? ' on' : '') + '" data-tx="shipdztune" data-v="' + id + '" aria-expanded="' + open + '" aria-label="Настройка: ' + nm + '">⚙ Настройка</button></div>' +
-          (open ? '<div class="wk-shp-tune"><div class="wk-shp-lay"><div class="wk-shp-lay-h"><b>' + nm + ': размер и место</b><button type="button" class="wk-tx-btn" data-tx="shipdztunex" data-v="' + id + '">Сбросить</button></div><div class="wk-shp-dmv">' + sl('ds.' + id + '.s', 'Размер', 50, 220, d.s != null ? d.s : 100) + sl('ds.' + id + '.x', 'Левее / правее', -lm[0], lm[0], d.x || 0, '%', 1) + sl('ds.' + id + '.y', 'Выше / ниже', -lm[1], lm[1], d.y || 0, ' px', 1) + sl('ds.' + id + '.r', 'Поворот (влево / вправо)', -90, 90, d.r || 0, '°', 1) + '</div></div></div>' : '') + '</div>';
+          (open ? '<div class="wk-shp-tune"><div class="wk-shp-lay"><div class="wk-shp-lay-h"><b>' + nm + ': размер и место</b><button type="button" class="wk-tx-btn" data-tx="shipdztunex" data-v="' + id + '">Сбросить</button></div><div class="wk-shp-dmv">' + sl('ds.' + id + '.s', 'Размер', 50, 220, d.s != null ? d.s : 100) + sl('ds.' + id + '.x', 'Левее / правее', -lm[0], lm[0], d.x || 0, '%', 1) + sl('ds.' + id + '.y', 'Вверх (−) / вниз (+)', -lm[1], lm[1], d.y || 0, ' px', 1) + sl('ds.' + id + '.r', 'Поворот (влево / вправо)', -90, 90, d.r || 0, '°', 1) + '</div></div></div>' : '') + '</div>';
       })();
       var list = grpH('base', 'Общий декор') + grpH('tier', 'Только для ' + (SHP_TIERN[tid] || ''), 'У каждого типа судна свои уникальные вещи. Выбери другой корабль флота, чтобы увидеть его набор.') + setsH + grpH('hw', 'Хэллоуин', 'Корабль-призрак: рваные паруса, туман и нечисть. К набору есть флаг, носовая фигура и фон.') + grpH('ny', 'Новый год', 'Праздничный корабль. Флаг, носовая фигура и фон к набору — на своих вкладках.') + grpH('loot', 'Находки из плаваний', mine ? '' : 'Эти украшения нельзя купить: их привозят из плаваний. Чем дальше и опаснее маршрут, тем ценнее находки. Пока не найденные показаны тёмными.');
       var dupN = shpLootSum(sh).n, dupH = dupN ? shpShopLink('dup', 'Продать повторки (' + dupN + ')') : '';
@@ -47980,7 +48324,7 @@ document.addEventListener('change',function(e) {
       var r = p.getBoundingClientRect(), low = window.innerHeight - (window.innerWidth <= 760 ? 92 : 16);
       if (r.bottom <= low) return;
       var pv = document.querySelector('.wk-shp-dpv'), top = pv && window.innerWidth <= 900 ? pv.getBoundingClientRect().bottom + 8 : 90;
-      var up = Math.min(r.bottom - low, r.top - top - 120); if (up > 0) window.scrollBy({ top: up, behavior: 'smooth' });
+      var available=Math.max(80,low-top),delta=r.height>available?r.top-top:Math.max(r.bottom-low,0); if(delta>0)window.scrollBy({top:delta,behavior:'smooth'});
     }, 60);
   }
   function shpDzClick(a, b, st, sh, v, pane, repaint, sv, ba) {
@@ -48083,7 +48427,7 @@ document.addEventListener('change',function(e) {
     var t = shpShowT(sh, v), c = shpC(sh, t), building = v.lv < 5 && (Object.keys(v.done).length || v.job);
     var vy0 = shpVoys(sh)[t], rt0 = vy0 && +vy0.t1 > Date.now() ? (SHP_ROUTES.filter(function (q) { return q.id === vy0.r; })[0] || {}).n : '';
     return { t: t, n: shpTT(t).n, sea: rt0 || '', name: c.name || '', next: building ? SHP_T[v.lv].n : '', max: v.lv >= 5,
-      fleet: v.lv, svg: shpSVG({ pn: shpPatchN(sh), pet: shpPetOf(sh, t), t: t, all: true, parts: shpPartIds(t), name: c.name || '', paint: c.paint, hpat: c.hpat, orn: c.orn, sorn: c.sorn, spat: c.spat, fig: c.fig, flag: c.flag, flagUrl: c.flagUrl, ornUrl: c.ornUrl, sornUrl: c.sornUrl, figUrl: c.figUrl, dec: c.dec, lay: c.lay, bg: c.bg, label: (c.name ? '«' + c.name + '» — ' : '') + shpTT(t).n }) };
+      fleet: shpFleetN(sh,v), svg: shpSavedScene1082(sh,t) };
   }
   function shpBaseShow(sh, id) {
     sh = sh && typeof sh === 'object' ? sh : {};
@@ -48121,7 +48465,7 @@ document.addEventListener('change',function(e) {
     function draw(id, q) {
       var g = gNow(id); if (!g) return; var len = +g.ownerSVGElement.getAttribute('data-len');
       g.setAttribute('transform', shpDsTf(q.x / 100 * len, q.y, +g.getAttribute('data-ax'), +g.getAttribute('data-ay'), q.r, q.s / 100)); g.classList.add('wk-ds-on');
-      ['s', 'x', 'y'].forEach(function (p) { var i = document.querySelector('.wk-shp-tune [data-shl="ds.' + id + '.' + p + '"]'); if (!i) return; i.value = q[p]; if (i.nextElementSibling) i.nextElementSibling.textContent = q[p] + (p === 'y' ? ' px' : '%'); });
+      ['s', 'x', 'y'].forEach(function (p) { var i = document.querySelector('.wk-shp-tune [data-shl="ds.' + id + '.' + p + '"]'); if (!i) return; i.value = q[p]; if (i.nextElementSibling) i.nextElementSibling.textContent = q[p] + (p === 'y' ? ' px' : '%'); var num=i.parentNode.querySelector('[data-shnum1081]');if(num)num.value=q[p]; });
     }
     function keep(id, q) { var L = layNow(); L.ds = L.ds || {}; L.ds[id] = { s: q.s, x: q.x, y: q.y, r: q.r }; SHP_D.lay = L; }
     function open(id) { sel = id; if (SHP_DT === 'dec' && !SHP_DMENU) SHP_TUNE = id; shpRepaint(); }
@@ -48174,7 +48518,8 @@ document.addEventListener('change',function(e) {
       if(!scene||!bar)return;
       var st=SHP_ADM?SHP_ADM.st:load(),sh=shpGet(st),v=shpView(sh),sc=shpSel(sh,v);
       if(sc.none||!(sc.all||sc.built.hull))return;
-      scene.innerHTML=shpDzScene1076(sh,sc,shpEffCos(sh));
+      var eff1081=shpEffCos(sh);scene.innerHTML=shpDzScene1076(sh,sc,eff1081);
+      var colors1081=host.parentNode.querySelectorAll('[data-paintinfo1081]');if(colors1081.length){var committed1081=shpCos(sh);[].forEach.call(colors1081,function(el){var info=shpPaintInfo1081(el.getAttribute('data-paintinfo1081'),eff1081,committed1081);el.querySelector('i').style.background=info.color;el.querySelector('span').textContent=info.text;});}
       var next=shpDzBar1076(shpDiff(sh),st.belli||0);
       if(bar.outerHTML!==next)bar.outerHTML=next;
     });
@@ -48188,9 +48533,11 @@ document.addEventListener('change',function(e) {
     var t = e.target, key = t && t.getAttribute && t.getAttribute('data-shl'); if (!key) return;
     var st = SHP_ADM ? SHP_ADM.st : load(), sh = shpGet(st), L = JSON.parse(JSON.stringify(shpEffCos(sh).lay)), val = +t.value, p = key.split('.');
     if (p[0] === 'ds') { L.ds = L.ds || {}; L.ds[p[1]] = L.ds[p[1]] || {}; L.ds[p[1]][p[2]] = val; } else L[key] = val;
-    SHP_D.lay = L; var o = t.nextElementSibling; if (o) o.textContent = val + (/\.r$/.test(key) || key==='nr836' ? '°' : key==='snx836'||key==='sny836'||key === 'oy' || key === 'fx' || key === 'nxo' || key === 'nyo' || /\.y$/.test(key) ? ' px' : '%');
+    SHP_D.lay = L; var num1081=t.parentNode.querySelector('[data-shnum1081]');if(num1081)num1081.value=val; var o = t.nextElementSibling; if (o) o.textContent = val + (/\.r$/.test(key) || key==='nr836' ? '°' : key==='snx836'||key==='sny836'||key === 'oy' || key === 'fx' || key === 'nxo' || key === 'nyo' || /\.y$/.test(key) ? ' px' : '%');
     shpDpvRefresh();
   });
+  document.addEventListener('change',function(e){var n=e.target,key=n&&n.getAttribute&&n.getAttribute('data-shnum1081');if(!key)return;var r=n.closest('.wk-shp-sl').querySelector('[data-shl]');if(!r)return;var v=n.value.trim()===''?+r.value:Number(n.value);if(!Number.isFinite(v))v=+r.value;v=Math.round(Math.max(+r.min,Math.min(+r.max,v)));n.value=r.value=v;r.dispatchEvent(new Event('input',{bubbles:true}));});
+  document.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target&&e.target.hasAttribute('data-shnum1081')){e.preventDefault();e.target.blur();}});
   /* ======== Верфь: экипаж из колоды и плавания ======== */
   try { INC_SRC.laugh = 'Лафтель'; INC_SRC.island = 'Острова Нового Света'; INC_SRC.voyage = 'Плавания'; INC_SRC.base = 'Базы на островах'; INC_SRC.boss = 'Награды за боссов'; INC_SRC.duel = 'Дуэли'; INC_SRC.exam = 'Экзамены'; } catch (e) {}
   var SHP_CT = {
@@ -48655,7 +49002,7 @@ document.addEventListener('change',function(e) {
       var team = shpNwTeam(st, sh, v), cs = shpNxCost(ap, I), inv = sh.inv = shpInv(sh), lack = shpNxLack(st, inv, cs); if (lack) { txToast(lack); return true; }
       Object.keys(cs.m).forEach(function (m) { inv[m] -= cs.m[m]; }); if (cs.b) { st.belli = b0 - cs.b; st.spent = (st.spent || 0) + cs.b; track(st, 'spend', cs.b); }
       var emp = SHP_NXE[id], D = Math.round(I.def * SHP_NXSF[bt.s]), S = shpNxStr(st, sh, team, ap, emp.s, bt.la), pr = shpNwWin(S, D).r, rnd = shpRng('nxb|' + id + '|' + bt.sd + '|' + bt.s), ok = rnd() < pr;
-      var dm = (ok ? 2 : 6 + I.t) + (ap.id === 'land' ? 3 + I.t : 0); sh.hp = sh.hp || {}; team.ships.forEach(function (q) { sh.hp[q.t] = Math.max(0, shpHp(sh, q.t) - dm); });
+      var dm = (ok ? 2 : 6 + I.t) + (ap.id === 'land' ? 3 + I.t : 0); sh.hp = sh.hp || {}; team.ships.forEach(function (q) { shpBattleMark1091(sh,q.t,dm); sh.hp[q.t] = Math.max(0, shpHp(sh, q.t) - dm); });
       bt.h.push({ a: ap.id, ok: ok ? 1 : 0, p: Math.round(pr * 100), s: bt.s }); if (ok) bt.w++; else bt.l++; bt.s++; bt.la = ap.id;
       if (bt.w >= 2 || bt.l >= 2 || bt.s >= 3) {
         var win = bt.w >= 2, rounds = bt.h.map(function (h) { var q = SHP_NXA.filter(function (z) { return z.id === h.a; })[0]; return { g: !!h.ok, t: SHP_NXST[h.s] + ' (' + q.n.toLowerCase() + '): ' + (h.ok ? 'успех' : 'неудача') }; });
@@ -48860,7 +49207,7 @@ document.addEventListener('change',function(e) {
     }
     Object.keys(mats).forEach(function (m) { inv[m] = (inv[m] || 0) + mats[m]; });
     if (belli) { st.belli = b0 + belli; income(st, 'boss', belli); } if (pack) st.packs = (st.packs || 0) + pack;
-    sh.hp = sh.hp || {}; sh.hp[t] = Math.max(0, shpHp(sh, t) - dmg);
+    sh.hp = sh.hp || {}; shpBattleMark1091(sh,t,dmg); sh.hp[t] = Math.max(0, shpHp(sh, t) - dmg);
     var c = shpC(sh, t); sh.vlog = (sh.vlog || []).concat([{ at: Date.now(), s: c.name ? '«' + c.name + '»' : shpTT(t).n, r: 'Охота вдвоём на «' + nm + '»', b: belli, m: mats, p: pack, ev: ev, d: dmg }]).slice(-12);
     delete vs[t]; shpBtyCheck(sh); sv(st); repaint(); ba(pane, b0);
     txToast(win ? 'Победа вдвоём над «' + esc(nm) + '»: +' + fmtB(belli) + ', материалы и +3 очка розыска' + (pack ? ', набор карточек' : '') + '. Корпус потерял ' + dmg + '.' : 'Поражение: «' + esc(nm) + '» оказался сильнее. Корпус потерял ' + dmg + ', добычи нет');
@@ -48940,7 +49287,7 @@ document.addEventListener('change',function(e) {
       var w = shpNwWin(team.p, I.def), rnd = shpRng('nwb|' + id + '|' + now), won = 0, lostR = 0, rounds = [], R = ['Первый залп', 'Абордаж', 'Штурм крепости'];
       for (var i = 0; i < 3; i++) { var ok = rnd() < w.r; if (ok) won++; else lostR++; rounds.push({ g: ok, t: R[i] + ': ' + (ok ? 'успех' : 'гарнизон выстоял') }); if (won === 2 || lostR === 2) break; }
       var win = won >= 2;
-      team.ships.forEach(function (q) { var dm = 4 + lostR * 8 + (win ? 0 : 6) + I.t; sh.hp = sh.hp || {}; sh.hp[q.t] = Math.max(0, shpHp(sh, q.t) - dm); });
+      team.ships.forEach(function (q) { var dm = 4 + lostR * 8 + (win ? 0 : 6) + I.t; sh.hp = sh.hp || {}; shpBattleMark1091(sh,q.t,dm); sh.hp[q.t] = Math.max(0, shpHp(sh, q.t) - dm); });
       shpCnt(sh, 'nwb', 1);
       if (win) {
         var prev = shpNwS(sh)[id] || {}; sh.nw = shpNwS(sh); sh.nw[id] = { own: 1, at: now, ck: shpNwDayN(), f: shpNwF(prev) };
@@ -49104,7 +49451,7 @@ document.addEventListener('change',function(e) {
         if (b0 < fee) { txToast('Не хватает белли на взнос'); return true; }
         if (fee) { st.belli = b0 - fee; st.spent = (st.spent || 0) + fee; track(st, 'spend', fee); }
         var mine = team.p * (1 + .6 * (shpCrewB(st, 'gun') + shpCrewB(st, 'nav') + shpCrewB(st, 'bos'))), sh2 = team.p * .95 + 10, pr = shpNwWin(mine, sh2).r, rnd = shpRng('ltxs|' + shpLtSeed() + '|' + now), ok = rnd() < pr;
-        sh.hp = sh.hp || {}; team.ships.forEach(function (q) { sh.hp[q.t] = Math.max(0, shpHp(sh, q.t) - (ok ? 4 : 10)); });
+        sh.hp = sh.hp || {}; team.ships.forEach(function (q) { shpBattleMark1091(sh,q.t,(ok ? 4 : 10)); sh.hp[q.t] = Math.max(0, shpHp(sh, q.t) - (ok ? 4 : 10)); });
         if (!ok) { sv(st); repaint(); ba(pane, b0); txToast('Тень оказалась сильнее (шанс был ' + Math.round(pr * 100) + '%). Попробуй ещё раз'); return true; }
       }
       shpLtPay(st, sh, now); x.h[hid] = now; st.belli = (st.belli || 0) + h.r; income(st, 'laugh', h.r); shpCnt(sh, 'lth', 1);
@@ -49126,7 +49473,7 @@ document.addEventListener('change',function(e) {
       var tn = shpNwTeam(st, sh, v), cs = shpNxCost(ap, SHP_LTXB), inv = sh.inv = shpInv(sh), lack = shpNxLack(st, inv, cs); if (lack) { txToast(lack); return true; }
       Object.keys(cs.m).forEach(function (m) { inv[m] -= cs.m[m]; }); if (cs.b) { st.belli = b0 - cs.b; st.spent = (st.spent || 0) + cs.b; track(st, 'spend', cs.b); }
       var ph = SHP_LTXP[bb.s], seals = shpLtxN(sh), D = Math.round(SHP_LTXB.def * ph.f * (1 - .05 * seals)), Sv = shpNxStr(st, sh, tn, ap, ph.s, bb.la), p2 = shpNwWin(Sv, D).r, r2 = shpRng('ltxb|' + bb.sd + '|' + bb.s), ok2 = r2() < p2;
-      var dm = (ok2 ? 2 : 6 + SHP_LTXB.t) + (ap.id === 'land' ? 3 + SHP_LTXB.t : 0); sh.hp = sh.hp || {}; tn.ships.forEach(function (q) { sh.hp[q.t] = Math.max(0, shpHp(sh, q.t) - dm); });
+      var dm = (ok2 ? 2 : 6 + SHP_LTXB.t) + (ap.id === 'land' ? 3 + SHP_LTXB.t : 0); sh.hp = sh.hp || {}; tn.ships.forEach(function (q) { shpBattleMark1091(sh,q.t,dm); sh.hp[q.t] = Math.max(0, shpHp(sh, q.t) - dm); });
       bb.h.push({ a: ap.id, ok: ok2 ? 1 : 0, p: Math.round(p2 * 100), s: bb.s }); if (ok2) bb.w++; else bb.l++; bb.s++; bb.la = ap.id;
       if (bb.w >= 3 || bb.l >= 2) {
         var win = bb.w >= 3, rounds = bb.h.map(function (h) { var q = SHP_NXA.filter(function (z) { return z.id === h.a; })[0]; return { g: !!h.ok, t: SHP_LTXP[h.s].n + ' (' + q.n.toLowerCase() + '): ' + (h.ok ? 'успех' : 'неудача') }; });
@@ -50688,7 +51035,7 @@ document.addEventListener('change',function(e) {
       } else if (!vy.dz && bq.dz) { delete bq.dz; shpCnt(sh, 'boss', 1); first = ' Босс острова побеждён по-настоящему: засчитано достижение.'; ev.push({ g: true, t: 'Босс острова побеждён: засчитано достижение.' }); }
     }
     if (belli) { st.belli = b0 + belli; income(st, 'boss', belli); } if (pack) st.packs = (st.packs || 0) + pack;
-    sh.hp = sh.hp || {}; sh.hp[t] = Math.max(0, shpHp(sh, t) - dmg);
+    sh.hp = sh.hp || {}; shpBattleMark1091(sh,t,dmg); sh.hp[t] = Math.max(0, shpHp(sh, t) - dmg);
     var c = shpC(sh, t); sh.vlog = (sh.vlog || []).concat([{ at: Date.now(), s: c.name ? '«' + c.name + '»' : shpTT(t).n, r: 'Охота на «' + nm + '»', b: belli, m: mats, p: pack, ev: ev, d: dmg }]).slice(-12);
     sh.bhs = sh.bhs && typeof sh.bhs === 'object' ? sh.bhs : {}; var q = sh.bhs[b.id] = sh.bhs[b.id] || { w: 0, l: 0 }; if (win) q.w++; else q.l++;
     shpCnt(sh, win ? 'bhw' : 'bhl', 1); delete vs[t];
@@ -50752,7 +51099,7 @@ document.addEventListener('change',function(e) {
     var cards = '', cardA = {}, vtabs = []; for (var t = gl ? 4 : 0; t < shpFleetN(sh, v); t++) (function (t) {
       var c = shpC(sh, t), vy = vs[t], nm = c.name ? '«' + esc(c.name) + '»' : 'Без имени', status, hp = shpHp(sh, t), repBtn = '';
       if (hp < 100 && !vy && !(sh.rep && sh.rep[t] && +sh.rep[t].t1 > now)) { var rc = shpRepCost(sh, t, shpCrewB(st, 'carp', t)), inv0 = shpInv(sh), canR = inv0.wood >= rc.wood && inv0.tar >= rc.tar && (st.belli || 0) >= rc.belli; repBtn = '<button type="button" class="wk-tx-btn' + (canR && hp < SHP_HPMIN ? ' pri' : '') + '" data-tx="shiprepair" data-t="' + t + '"' + (canR ? '' : ' disabled') + '>Починить · ' + fmtB(rc.belli) + ', доски ×' + rc.wood + ', смола ×' + rc.tar + ', ' + shpDur(rc.ms) + '</button>'; }
-      var mini = '<div class="wk-shp-vy-sc">' + shpSVG({ pet: shpPetOf(sh, t), hp: shpHp(sh, t), t: t, all: true, parts: shpPartIds(t), name: '', paint: c.paint, hpat: c.hpat, orn: c.orn === 'url' ? '' : c.orn, sorn: c.sorn === 'url' ? '' : c.sorn, spat: c.spat, fig: c.fig, figUrl: c.figUrl, flag: c.flag === 'url' ? '' : c.flag, bg: c.bg, lay: c.lay, still: true, label: shpTT(t).n }) + '</div>';
+      var mini = '<div class="wk-shp-vy-sc">' + shpSavedScene1082(sh,t,{still:true,name:'',label:shpTT(t).n}) + '</div>';
       if (shpPqS(sh)[t]) { var pq0 = shpPqS(sh)[t]; status = '<div class="wk-shp-vy-s"><b>' + (pq0.op ? 'Плывёт к Лафтелю' : 'Ищет Рио-понеглиф') + '</b><small>' + (+pq0.t1 > now ? 'Вернётся через <span data-shp-end="' + pq0.t1 + '">' + shpDur(pq0.t1 - now) + '</span>' : 'Вернулся: осмотри находки во вкладке «Новый Свет»') + '</small></div>'; }
       else if (vy && +vy.t1 > now) {
         var r = SHP_ROUTES.filter(function (q) { return q.id === vy.r; })[0] || shpBhRoute(vy) || SHP_ROUTES[0], pc = Math.max(0, Math.min(100, (now - vy.t0) / Math.max(1, vy.t1 - vy.t0) * 100));
@@ -51104,8 +51451,7 @@ document.addEventListener('change',function(e) {
   }
   /* ----- вкладка «Гавань» ----- */
   function shpScene(sh, t, label) {
-    var c = shpC(sh, t);
-    return shpSVG({ pn: shpPatchN(sh), pet: shpPetOf(sh, t), hp: shpHp(sh, t), t: t, all: true, parts: shpPartIds(t), name: c.name || '', paint: c.paint, hpat: c.hpat, orn: c.orn, sorn: c.sorn, spat: c.spat, fig: c.fig, flag: c.flag, flagUrl: c.flagUrl, ornUrl: c.ornUrl, sornUrl: c.sornUrl, figUrl: c.figUrl, dec: c.dec, lay: c.lay, bg: c.bg, label: label || ((c.name ? '«' + c.name + '» — ' : '') + shpTT(t).n) });
+    return shpSavedScene1082(sh,t,label ? {label:label} : {});
   }
   /* ======== Верфь: карта плаваний — где сейчас корабли твои и других участников ======== */
   var SHP_DIST = { coast: 120, isles: 260, trade: 450, grand: 780, gl_drum: 950, newworld: 1200, gl_alab: 1450, gl_sky: 1700 };
@@ -52745,7 +53091,7 @@ document.addEventListener('change',function(e) {
   function shpGBar(t0, t1, now) { var p = Math.max(0, Math.min(100, (now - t0) / Math.max(1, t1 - t0) * 100)); return '<div class="wk-shp-bar"><i data-gv-pb="' + (+t0) + ':' + (+t1) + '" style="width:' + p.toFixed(1) + '%"></i></div><small>Осталось: <b data-gv-end="' + (+t1) + '">' + (t1 > now ? shpDur(t1 - now) : 'уже готово') + '</b></small>'; }
   function shpGScene(fs, fv, t) {
     if (t < shpFleetN(fs, fv)) return shpScene(fs, t);
-    var keep = SHP_SEL, h = ''; SHP_SEL = t; try { h = shpShipSVG(fs); } catch (e) { h = ''; } SHP_SEL = keep; return h;
+    return shpSavedScene1082(fs,t,{built:fv.done,bld:fv.job&&fv.job.p,all:false});
   }
   /* Чем занят корабль: плавание, ремонт или стоит в порту. */
   function shpGAct(fs, t, now) {
@@ -52905,8 +53251,8 @@ document.addEventListener('change',function(e) {
     var ov = document.getElementById('wkShpVisit'); if (!ov) return;
     if (!SHP_VIS) { ov.remove(); return; }
     var lg = SHP_VIS.l, fs = shpFriendShip(lg); if (!fs) { ov.remove(); SHP_VIS = null; return; }
-    var fv = shpView(fs), t = Math.min(SHP_VIS.t, fv.lv - 1), c = shpC(fs, t), rc = shpSalRecv(lg), me = myLogin(), st = load(), mine = shpSalOf(shpGet(st), lg), done = mine && mine.d === shpDay(), self = lg === me;
-    var chips = fv.lv > 1 ? '<div class="wk-shp-fleet" role="group" aria-label="Флот"><span class="wk-shp-fl-t">Флот:</span>' + SHP_T.slice(0, fv.lv).map(function (T, i) { var c2 = shpC(fs, i); return '<button type="button" class="wk-shp-fl' + (i === t ? ' on' : '') + '" data-shv="t" data-t="' + i + '" aria-pressed="' + (i === t) + '" title="' + esc(c2.name ? '«' + c2.name + '»' : 'Без имени') + '">' + T.n + '</button>'; }).join('') + '</div>' : '';
+    var fv = shpView(fs), n1082 = shpFleetN(fs,fv), t = Number.isInteger(SHP_VIS.t) && SHP_VIS.t >= 0 && SHP_VIS.t < n1082 ? SHP_VIS.t : shpShowT(fs,fv), c = shpC(fs, t), rc = shpSalRecv(lg), me = myLogin(), st = load(), mine = shpSalOf(shpGet(st), lg), done = mine && mine.d === shpDay(), self = lg === me;
+    var chips = n1082 > 1 ? '<div class="wk-shp-fleet" role="group" aria-label="Флот"><span class="wk-shp-fl-t">Флот:</span>' + Array.from({length:n1082},function(_,i){return shpTT(i);}).map(function (T, i) { var c2 = shpC(fs, i); return '<button type="button" class="wk-shp-fl' + (i === t ? ' on' : '') + '" data-shv="t" data-t="' + i + '" aria-pressed="' + (i === t) + '" title="' + esc(c2.name ? '«' + c2.name + '»' : 'Без имени') + '">' + T.n + '</button>'; }).join('') + '</div>' : '';
     var vs = fs.voy && fs.voy[t] && +fs.voy[t].t1 > Date.now() ? (SHP_ROUTES.filter(function (q) { return q.id === fs.voy[t].r; })[0] || {}).n : '';
     var sec = shpHp(fs, t);
     var crewH = '', cr = shpCrewOf(fs, t), CC = allCards(), fo = (DK.frData && DK.frData[lg] && DK.frData[lg].deck && DK.frData[lg].deck.owned) || {};
@@ -53798,7 +54144,7 @@ if (a === 'bgtexdel') {
         else if (a === 'tear') { tearPack(pane); }
         else if (a === 'fr-more') { DK.frLim += 60; var ff = pane.querySelector('#wkDkFriend'); if (ff) ff.innerHTML = friendBody(); }
         else if (a === 'rules') { showRules(pane); }
-        else if (a === 'cloud' || a === 'cloud-up' || a === 'cloud-drop' || a === 'cloud-pull' || a === 'cloud-x' || a === 'cloud-restore' || a === 'cloud-ship') { cloudAct.k = t.getAttribute('data-k') || ''; cloudAct(pane, a); }
+        else if (a === 'cloud' || a === 'cloud-up' || a === 'cloud-drop' || a === 'cloud-pull' || a === 'cloud-x' || a === 'cloud-restore' || a === 'cloud-ship' || a === 'cloud-ship-local1083') { cloudAct.k = t.getAttribute('data-k') || ''; cloudAct(pane, a); }
         else if (a === 'notify') { notifyToggle(pane); }
         else if (a === 'daily') { dailyClaim(pane); }
         else if (a === 'daily-more') { DK.dlyAll = !DK.dlyAll; var dh = pane.querySelector('#wkDkDay'); if (dh) dh.innerHTML = dailyHTML(load()); }
@@ -60622,5 +60968,9 @@ details.wk-nt>.wk-fx-slot>.wk-fx-add{margin:0 14px 10px}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
 </script>
+<style id="wk-ship-ui1081">
+.wk-shp-dop,.wk-shp-dpv{min-width:0}.wk-shp-dop .wk-shp-it{min-width:0;overflow-wrap:anywhere}.wk-shp-dop .wk-shp-it .wk-shp-mini{aspect-ratio:5/3;object-fit:contain}.wk-shp-dop .wk-shp-status1081{font-size:10px;color:#9cb6a4;line-height:1.2}.wk-shp-dop .wk-shp-status1081.draft{color:#f1d27c}.wk-shp-paintinfo1081{display:flex;align-items:center;gap:7px;color:inherit;font-size:12px}.wk-shp-paintinfo1081 i{width:18px;height:18px;border:1px solid rgba(148,163,184,.65);border-radius:5px;flex:none}.wk-shp-paintinfo1081 span{font-variant-numeric:tabular-nums}.wk-shp-dop .wk-shp-prec1081{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr) 84px;gap:6px;align-items:center}.wk-shp-prec1081>output{position:absolute;clip-path:inset(50%);width:1px;height:1px;overflow:hidden}.wk-shp-num1081{display:flex;align-items:center;gap:4px;min-width:0;font-size:11px}.wk-shp-num1081 input{box-sizing:border-box;width:58px;min-width:0;height:34px;padding:3px 4px;border:1px solid #63738b;border-radius:6px;background:#111b2b;color:#e2e8f0;font:inherit;font-size:14px;text-align:right}.wk-shp-num1081>span{white-space:nowrap}.wk-shp-dop .wk-shp-its{grid-auto-flow:row}.wk-shp-dop .wk-shp-gear{white-space:normal;min-height:36px}.wk-shp-dop .wk-shp-sw button:focus-visible,.wk-shp-dop .wk-shp-cc:focus-within{outline:2px solid #f1d27c;outline-offset:3px}
+@media(max-width:640px){.wk-shp-dop .wk-shp-its{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.wk-shp-dop .wk-shp-tune .wk-shp-dmv{display:block}.wk-shp-dop .wk-shp-prec1081{grid-template-columns:minmax(0,1fr) 84px;gap:4px 8px;margin:8px 0}.wk-shp-dop .wk-shp-prec1081>span:first-child{grid-column:1/-1;grid-row:1}.wk-shp-dop .wk-shp-prec1081>input{grid-column:1;grid-row:2;min-height:32px}.wk-shp-dop .wk-shp-prec1081>.wk-shp-num1081{grid-column:2;grid-row:2}.wk-shp-dop .wk-shp-sw button,.wk-shp-dop .wk-shp-cc{width:36px;height:36px}.wk-shp-dpv .wk-shp-dbar{gap:5px;padding:6px 8px}.wk-shp-dpv .wk-shp-dbar .wk-tx-btn{min-height:36px;flex:1 1 auto}.wk-shp-dpv .wk-shp-dbar span{flex-basis:100%}.wk-shp-dpv .wk-shp-scene:not(.mini){max-height:22vh}.wk-shp-dpv .wk-shp-scene:not(.mini) svg{max-height:22vh}.wk-shp-dop .wk-shp-tune{scroll-margin-top:calc(22vh + 160px)}}
+</style>
 </body></html>
 
