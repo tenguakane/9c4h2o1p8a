@@ -1,6 +1,6 @@
 <!-- One Piece Wiki update v1034: align album labels with feathered blur zones -->
 <!doctype html>
-<!--wk-ver:27.11.2026 · 1034-->
+<!--wk-ver:28.11.2026 · 1044-->
 <script id="wk-v616-pre">try{var K='wkExtrasKeepV616',old={},ca=[],ma={},cc=null,cca=[],cma={};try{old=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}try{ca=JSON.parse(localStorage.getItem('onePieceWikiCustomAchievementsV1')||'[]')}catch(e){}try{ma=JSON.parse(localStorage.getItem('onePieceWikiMedalArtV1')||'{}')}catch(e){}try{cc=JSON.parse(localStorage.getItem('wkCloudContentV1')||'null');if(cc&&cc.data){cca=Array.isArray(cc.data.customAchievements)?cc.data.customAchievements:[];cma=cc.data.medalArt&&typeof cc.data.medalArt==='object'?cc.data.medalArt:{}}}catch(e){}cc=null;var oc=Array.isArray(old.ca)?old.ca:[],om=old.ma&&typeof old.ma==='object'?old.ma:{},ids={},cids={};oc.forEach(function(a){if(a&&a.id!=null)ids[a.id]=1});cca.forEach(function(a){if(a&&a.id!=null)cids[a.id]=1});(Array.isArray(ca)?ca:[]).forEach(function(a){if(a&&a.id!=null&&!ids[a.id]&&!cids[a.id]){oc.push(a);ids[a.id]=1}});if(ma&&typeof ma==='object')Object.keys(ma).forEach(function(k){if(!(k in om)&&!(k in cma)&&ma[k]!=null&&ma[k]!=='')om[k]=ma[k]});if(oc.length||Object.keys(om).length)localStorage.setItem(K,JSON.stringify({ca:oc,ma:om}));else localStorage.removeItem(K)}catch(e){}</script>
 <html data-wiki-portable-baked="true" data-wiki-portable-id="2026-11-11T03:23:00.970Z" lang="ru" style="--reward-rank-first: #ffda75; --reward-rank-second: #d9d9d9; --reward-rank-third: #ffd285; --reward-rank-other: #4f4860; --wiki-progress-manga: #efc66b; --wiki-progress-anime: #60d9ff; --wk-title-font: 'Days One'; --wk-title-fw: 400; --wk-wp-tpl: url(&quot;./assets/webp/ui/wanted_template.webp&quot;); --wk-fg-manga: #0b0f17; --wk-fg-anime: #0b0f17; --wk-accent: #a78bfa; --wk-accent-soft: #d3c5fd; --fruit-type-param-color: #bb9eff !important; --fruit-type-param-rgb: 187, 158, 255 !important; --fruit-type-logia-color: #f967ae !important; --fruit-type-logia-rgb: 249, 103, 174 !important; --fruit-type-zoan-color: #65f6b7 !important; --fruit-type-zoan-rgb: 101, 246, 183 !important; --wk-tz-card: 1.15;" class="wk-sc-off wk-hz-c wk-hz-f wk-hz-u wk-hz-v wk-hz-h wk-calm wk-tfx-off wk-tfx-still wk-gpu wk-hdr-min" data-wk-role="admin" data-wk-title-font="g:Days One|"><head>
 <script id="wk-v596-early">try{var q=new URLSearchParams(location.search);if(q.get("tab")==="favorites"&&/^[a-z]+$/.test(q.get("cab")||"")){var cb=q.get("cab");localStorage.setItem("onePieceWikiCabinSubtabV3",cb==="overview"?"favorites":cb);localStorage.setItem("onePieceWikiCabinExtraTabV1",/^(watchgrid|timeline|deck|tops|stats|edits|quiz|atlas|help)$/.test(cb)?cb:"");}}catch(e){}</script>
@@ -3720,7 +3720,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "28.11.2026 · 1039";
+const WIKI_VERSION = "28.11.2026 · 1044";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -42183,14 +42183,22 @@ document.addEventListener('change',function(e) {
     }
     return '';
   }
-  function shpPetDraw(p, c) {
+  /* v1044: свой сдвиг, размер и поворот питомца: petm — попугай (по умолчанию на мачте), petd — остальные (на палубе) */
+  function shpPetDsId(p) { return p.sp === 'parrot' ? 'petm' : 'petd'; }
+  function shpDsLim(id) { return id === 'petm' || id === 'petd' ? [75, 220] : [40, 30]; }
+  function shpPetDraw(p, c, LY, drag) {
     var T = c.T, f = shpF, S = Math.max(.8, T.H / 34), k, x, y;
     if (p.sp === 'parrot') { var pi = c.tallest; x = c.mastX[pi]; y = c.mastTop[pi] + (T.rig === 'square' ? 25 : 12); k = Math.max(1.3, S * 1.05); }
     else { x = c.sx + c.L * (T.cab ? T.cab.w + .07 : .3); y = c.dTop(x); k = S * 1.4; }
-    return '<g data-pet="' + p.k + '" transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + f(k) + ')">' + shpPetBody(p) + '</g>';
+    var g = '<g data-pet="' + p.k + '" transform="translate(' + f(x) + ' ' + f(y) + ') scale(' + f(k) + ')">' + shpPetBody(p) + '</g>';
+    var id = shpPetDsId(p), q = LY && LY.ds && LY.ds[id];
+    if (!drag && !q) return g;
+    q = q || {}; var lm = shpDsLim(id), cl = function (n, m) { return Math.max(-m, Math.min(m, +n || 0)); };
+    return '<g' + (drag ? ' data-dsw="' + id + '" data-ax="' + f(x) + '" data-ay="' + f(y) + '"' : '') + ' transform="' + shpDsTf(cl(q.x, lm[0]) / 100 * c.L, cl(q.y, lm[1]), x, y, cl(q.r, 90), Math.max(.5, Math.min(2.2, (+q.s || 100) / 100))) + '">' + g + '</g>';
   }
   function shpPetMini(p, locked) {
-    return '<svg viewBox="0 0 60 36" aria-hidden="true" class="wk-shp-mini' + (locked ? ' wk-shp-bpm' : '') + '"><rect width="60" height="36" fill="#13213b"/><path d="M6 32h48" stroke="#8a5a35" stroke-width="3" stroke-linecap="round"/><g transform="translate(' + (p.sp === 'fox' ? 34 : 30) + ' ' + (p.sp === 'parrot' ? 26 : 31) + ') scale(1.65)">' + shpPetBody(p) + '</g></svg>';
+    var px = p.sp === 'fox' ? 34 : 30; /* v1044: кадр вплотную к питомцу, чтобы он был крупнее */
+    return '<svg viewBox="' + (px - 18) + ' 0 36 35" aria-hidden="true" class="wk-shp-mini wk-shp-petpic' + (locked ? ' wk-shp-bpm' : '') + '"><rect x="-60" width="180" height="36" fill="#13213b"/><path d="M' + (px - 15) + ' 32h30" stroke="#8a5a35" stroke-width="2.4" stroke-linecap="round"/><g transform="translate(' + px + ' ' + (p.sp === 'parrot' ? 26 : 31) + ') scale(1.65)">' + shpPetBody(p) + '</g></svg>';
   }
   var shpUid = 0;
   function shpF(n) { return (Math.round(n * 10) / 10).toString(); }
@@ -42242,6 +42250,7 @@ document.addEventListener('change',function(e) {
     var ratio=[0.4653, 0.57865, 0.47097, 0.45324, 0.4403, 0.47692],j=i%ratio.length,h=w*ratio[j];
     return '<g transform="translate('+shpF(x)+' '+shpF(y)+')"><g'+(animated?' class="wk-shp-flt" style="animation-delay:'+(-i*.83)+'s"':'')+'><g transform="rotate('+angle+')"><image data-bat976="'+(j+1)+'" href="assets/webp/decor/v976/bat_'+(j+1)+'.webp" x="'+shpF(-w/2)+'" y="'+shpF(-h/2)+'" width="'+shpF(w)+'" height="'+shpF(h)+'" preserveAspectRatio="xMidYMid meet"/></g></g></g>';
   }
+  function shpDsTf(dx, dy, ax, ay, r, k) { return 'translate(' + shpF(dx) + ' ' + shpF(dy) + ') translate(' + shpF(ax) + ' ' + shpF(ay) + ') rotate(' + shpF(r) + ') scale(' + shpF(k) + ') translate(' + shpF(-ax) + ' ' + shpF(-ay) + ')'; }
   function shpSVG(o) {
     o = o || {};
     if (o.fig && !shpIsFigU(o.fig) && !SHP_FIGC[o.fig]) { var o0 = o; o = {}; Object.keys(o0).forEach(function (k) { o[k] = o0[k]; }); o.fig = ''; }
@@ -43368,7 +43377,7 @@ document.addEventListener('change',function(e) {
       ship += lr.s; back += lr.b; front += lr.f;
     });
     var pet0 = o.pet ? shpPetGet(o.pet) : null;
-    if (pet0 && ok(pet0.sp === 'parrot' ? 'mast' : 'deck')) ship += shpPetDraw(pet0, lctx);
+    if (pet0 && ok(pet0.sp === 'parrot' ? 'mast' : 'deck')) ship += shpPetDraw(pet0, lctx, LY, o.drag);
     if (fArt938 && fBox938 && ok('hull') && !fAlt953) {
       ship += '<g data-fig="'+o.fig+'"'+(fSkin954?' data-fig-alternate="1"':'')+' transform="rotate('+fAngle953+' '+shpF(fPivot953[0])+' '+shpF(fPivot953[1])+')"><image data-fig938="'+o.fig+'" href="'+shpFigArtPath938(fArt938)+'" x="'+shpF(fBox938[0])+'" y="'+shpF(fBox938[1])+'" width="'+shpF(fBox938[2])+'" height="'+shpF(fBox938[3])+'" preserveAspectRatio="xMidYMid meet"/></g>';
     } else if(fAlt953 && fAltBox953 && ok('hull')) {
@@ -43423,9 +43432,11 @@ document.addEventListener('change',function(e) {
       ship+='<g data-dec="'+id+'" data-ax="'+shpF(x)+'" data-ay="'+shpF(y)+'">'+shpSetArt847(id,x,y,w,h)+'</g>';
     });
     var DSL = LY.ds && typeof LY.ds === 'object' ? LY.ds : null;
-    if (DSL) Object.keys(DSL).forEach(function (id) {
-      var q = DSL[id] || {}, dk = Math.max(.5, Math.min(2.2, (+q.s || 100) / 100)), dxp = Math.max(-40, Math.min(40, +q.x || 0)) / 100 * L, dyp = Math.max(-30, Math.min(30, +q.y || 0)), rot = Math.max(-90, Math.min(90, +q.r || 0));
-      if (dk === 1 && !dxp && !dyp && !rot) return;
+    var dsIds = Object.keys(DSL || {});
+    if (o.drag) (o.dec || []).forEach(function (id) { if (SHP_MOVE.indexOf(id) >= 0 && dsIds.indexOf(id) < 0) dsIds.push(id); });
+    dsIds.forEach(function (id) {
+      var q = (DSL && DSL[id]) || {}, dk = Math.max(.5, Math.min(2.2, (+q.s || 100) / 100)), dxp = Math.max(-40, Math.min(40, +q.x || 0)) / 100 * L, dyp = Math.max(-30, Math.min(30, +q.y || 0)), rot = Math.max(-90, Math.min(90, +q.r || 0));
+      if (!o.drag && dk === 1 && !dxp && !dyp && !rot) return;
       var tag = '<g data-dec="' + id + '"', i0 = ship.indexOf(tag); if (i0 < 0) return;
       var re = /<g\b|<\/g>/g, depth = 0, m, end = -1; re.lastIndex = i0;
       while ((m = re.exec(ship))) { if (m[0] === '<g') depth++; else { depth--; if (!depth) { end = m.index + 4; break; } } }
@@ -43433,7 +43444,7 @@ document.addEventListener('change',function(e) {
       var seg = ship.slice(i0, end), xs = [], mm, rx = /\b(?:cx|x)="(-?[\d.]+)"/g; while ((mm = rx.exec(seg))) xs.push(+mm[1]);
       var xt = [], rt = /translate\((-?[\d.]+) -?[\d.]+\) scale\(/g; while ((mm = rt.exec(seg))) xt.push(+mm[1]); if (xt.length) xs = xt;
       var am = /data-ax="(-?[\d.]+)"/.exec(seg), ax = am ? +am[1] : (xs.length ? xs.reduce(function (a, b2) { return a + b2; }, 0) / xs.length : cx), ay = /data-ay="(-?[\d.]+)"/.test(seg) ? +/data-ay="(-?[\d.]+)"/.exec(seg)[1] : deckAt(ax);
-      ship = ship.slice(0, i0) + '<g transform="translate(' + shpF(dxp) + ' ' + shpF(dyp) + ') translate(' + shpF(ax) + ' ' + shpF(ay) + ') rotate(' + shpF(rot) + ') scale(' + shpF(dk) + ') translate(' + shpF(-ax) + ' ' + shpF(-ay) + ')">' + seg + '</g>' + ship.slice(end);
+      ship = ship.slice(0, i0) + '<g' + (o.drag ? ' data-dsw="' + id + '" data-ax="' + shpF(ax) + '" data-ay="' + shpF(ay) + '"' : '') + ' transform="' + shpDsTf(dxp, dyp, ax, ay, rot, dk) + '">' + seg + '</g>' + ship.slice(end);
     });
     var dkk = 0;
     if (dl >= 1 && ok('hull')) {
@@ -43508,7 +43519,7 @@ document.addEventListener('change',function(e) {
         '<path d="' + wf3 + '" fill="none" stroke="' + BG.hl + '" stroke-opacity=".09" stroke-width=".92"/>' + foam + foam2 + (BG.front || '') + '</g>';
     }
     var zo = zk !== 1 ? '<g transform="translate(' + shpF(cx) + ' ' + shpF(wl) + ') scale(' + shpF(zk) + ') translate(' + shpF(-cx) + ' ' + shpF(-wl) + ')">' : '', zc = zk !== 1 ? '</g>' : '';
-    s = '<svg class="wk-shp-svg' + still + '" viewBox="' + shpF(vx) + ' ' + shpF(fBottom953 - vh) + ' ' + vw + ' ' + shpF(vh) + '" role="img" aria-label="' + (o.label || T.n) + '" xmlns="http://www.w3.org/2000/svg">' + bg +
+    s = '<svg class="wk-shp-svg' + still + '"' + (o.drag ? ' data-len="' + L + '"' : '') + ' viewBox="' + shpF(vx) + ' ' + shpF(fBottom953 - vh) + ' ' + vw + ' ' + shpF(vh) + '" role="img" aria-label="' + (o.label || T.n) + '" xmlns="http://www.w3.org/2000/svg">' + bg +
       (back.indexOf('<radialGradient') >= 0 ? '<defs>' + back.match(/<radialGradient[\s\S]*?<\/radialGradient>/g).join('') + '</defs>' : '') + wkO + zo + back.replace(/<radialGradient[\s\S]*?<\/radialGradient>/g, '') +
       '<g class="' + (BG.noBob ? 'wk-shp-fix' : 'wk-shp-bob') + '" style="transform-origin:' + cx + 'px ' + wl + 'px">' + (dl >= 3 ? '<g transform="rotate(' + (dl === 3 ? 1.6 : 3.4) + ' ' + cx + ' ' + wl + ') translate(0 ' + (dl === 3 ? 1 : 3) + ')">' + ship + '</g>' : ship) + '</g>' + zc + wkC +
       waterFront + wakeS + (BG.over || '') + wkO + zo + front + zc + wkC + '</svg>';
@@ -45008,7 +45019,7 @@ document.addEventListener('change',function(e) {
       var open = gx === i && bl >= need[i], c = shpGxCost(i);
       if (!open) return '';
       var can = (st.belli || 0) >= c.b && Object.keys(c.m).every(function (m) { return inv[m] >= c.m[m]; });
-      return '<article class="wk-gx"><b>' + name + '</b><small>Можно построить. Нужно: ' + [c.b ? fmtB(c.b) : ''].concat(Object.keys(c.m).map(function (m) { return (inv[m] >= c.m[m] ? '' : '!') + SHP_MAT[m].n.toLowerCase() + ' ×' + c.m[m]; })).filter(Boolean).join(', ').replace(/!([^,]+)/g, '<u>$1</u>') + '</small><button type="button" class="wk-tx-btn pri" data-tx="shipgxbuy"' + (can ? '' : ' disabled') + '>Построить ' + name + '</button></article>';
+      return '<article class="wk-gx"><b>' + name + '</b><small>Можно построить. Нужно: ' + [c.b ? fmtB(c.b) : ''].concat(Object.keys(c.m).map(function (m) { return (inv[m] >= c.m[m] ? '' : '!') + SHP_MAT[m].n.toLowerCase() + ' ×' + c.m[m]; })).filter(Boolean).join(', ').replace(/!([^,]+)/g, '<u>$1</u>') + '</small>' + (function () { var q = shpQuickBuy(sh, inv, c.m, st.belli || 0); if (!q.lack) return ''; var sl9 = shpSlot(), no = {}; q.no.forEach(function (m) { no[m] = 1; }); return q.h + '<small class="wk-shp-qbn">' + shpQbNo(no) + 'Новая поставка через <span data-shp-end="' + (Date.now() + sl9.left) + '" data-shp-mk="1">' + shpDur(sl9.left) + '</span></small>'; })() + '<button type="button" class="wk-tx-btn pri" data-tx="shipgxbuy"' + (can ? '' : ' disabled') + '>Построить ' + name + '</button></article>';
     }).join('');
     if (!gxc) return '';
     return '<h3 class="wk-dk-h">Дополнительные галеоны <small class="wk-shp-achc">' + gx + ' из 2</small></h3><p class="wk-sh-hint">Каждый галеон ходит в плавания сам и приносит свою добычу.</p><div class="wk-gx-g">' + gxc + '</div>';
@@ -45499,6 +45510,38 @@ document.addEventListener('change',function(e) {
     var ok = have >= need;
     return '<span class="wk-shp-m' + (ok ? ' ok' : ' no') + '" title="' + SHP_MAT[m].n + ': есть ' + have + ', нужно ' + need + '">' + shpIco(m, 30) + '<b>' + Math.min(have, need) + '/' + need + '</b></span>';
   }
+  /* v1041: быстрая покупка прямо в постройке — те же лоты, что сейчас лежат у купцов в «Магазине» */
+  /* чего нет в поставке: обычные материалы и отдельно те, что добывают только в плаваниях */
+  function shpQbNo(no) {
+    var nm = function (m) { return SHP_MAT[m].n.toLowerCase(); }, base = SHP_MAT_ORDER.filter(function (m) { return no[m] && SHP_MAT_BASE.indexOf(m) >= 0; }).map(nm), rare = SHP_MAT_ORDER.filter(function (m) { return no[m] && SHP_MAT_BASE.indexOf(m) < 0; }).map(nm);
+    return (base.length ? 'Сейчас у купцов нет: ' + base.join(', ') + '. ' : '') + (rare.length ? 'Только из плаваний: ' + rare.join(', ') + '. ' : '');
+  }
+  function shpQuickBuy(sh, inv, req, bel) {
+    var mk = shpMarket(sh), key = mk.k + '/' + (mk.r || 0), got = mk.b || [], btns = '', no = [], set = [], full = true, lack = false;
+    Object.keys(req).forEach(function (m) {
+      var d = req[m] - (inv[m] || 0); if (d <= 0) return; lack = true;
+      var ids = []; mk.l.forEach(function (l, i) { if (l.m === m && got.indexOf(i) < 0) ids.push(i); });
+      if (!ids.length) { full = false; no.push(m); return; }
+      ids.sort(function (a, b) { return shpPrice(mk.l[a]) / mk.l[a].q - shpPrice(mk.l[b]) / mk.l[b].q; });
+      /* самый дешёвый набор лотов, который закрывает нехватку */
+      var best = null;
+      for (var mask = 1; mask < (1 << Math.min(ids.length, 8)); mask++) {
+        var q = 0, p = 0, pick = [];
+        ids.forEach(function (i, k) { if (mask & (1 << k)) { q += mk.l[i].q; p += shpPrice(mk.l[i]); pick.push(i); } });
+        if (q >= d && (!best || p < best.p || (p === best.p && q > best.q))) best = { p: p, q: q, ids: pick };
+      }
+      if (!best) full = false;
+      set = set.concat(best ? best.ids : ids);
+      ids.forEach(function (i) {
+        var l = mk.l[i], pr = shpPrice(l), can = bel >= pr, tip = 'Купить: ' + SHP_MAT[m].n.toLowerCase() + ' ×' + l.q;
+        btns += '<button type="button" class="wk-shp-qbi" data-tx="shipbuy" data-i="' + i + '" data-k="' + key + '" title="' + tip + (can ? '' : ' — не хватает белли') + '" aria-label="' + tip + ' за ' + pr + ' белли"' + (can ? '' : ' disabled') + '>' + shpIco(m, 24) + '<span>×' + l.q + '</span><span class="p">' + fmtB(pr) + '</span>' + (l.f < 1 ? '<em>−' + Math.round((1 - l.f) * 100) + '%</em>' : '') + '</button>';
+      });
+    });
+    if (!lack) return { h: '', lack: false, no: [] };
+    var sum = set.reduce(function (a, i) { return a + shpPrice(mk.l[i]); }, 0);
+    var all = set.length > 1 ? '<button type="button" class="wk-shp-qbi all" data-tx="shipbuyset" data-i="' + set.join(',') + '" data-k="' + key + '"' + (bel >= sum ? '' : ' disabled title="Не хватает белли"') + '><span>' + (full ? 'Купить всё недостающее' : 'Купить всё, что есть') + '</span><span class="p">' + fmtB(sum) + '</span></button>' : '';
+    return { lack: true, no: no, h: btns ? '<div class="wk-shp-qb"><small>Есть у купцов:</small>' + btns + all + '</div>' : '' };
+  }
   function shipBadge(st) {
     var sh = shpGet(st), v = shpView(sh), back = shpVoyBack(sh); if (back) return '<i>' + back + '</i>';
     if (v.job || v.lv >= 5) return '';
@@ -45549,7 +45592,7 @@ document.addEventListener('change',function(e) {
         '<div class="wk-shp-bar"><i data-shp-pb="' + v.job.t0 + ':' + v.job.t1 + '" style="width:' + pc.toFixed(1) + '%"></i></div>' +
         '<div class="wk-shp-job-a"><button type="button" class="wk-tx-btn' + (bel >= fp ? ' pri' : '') + '" data-tx="shipfast"' + (bel >= fp ? '' : ' disabled') + '>Ускорить · <span data-shp-fp="' + v.job.t1 + '">' + fmtB(fp) + '</span>' + '</button><button type="button" class="wk-tx-btn" data-tx="shipcancel">Остановить и вернуть материалы</button></div></div>';
     }
-    var parts = '';
+    var parts = '', qbLack = false, qbNo = {};
     if (!maxed) {
       var nextT = SHP_T[v.lv], started = Object.keys(v.done).length || v.job;
       parts = '<h3 class="wk-dk-h">' + (started ? 'Этапы: ' + nextT.n.toLowerCase() : v.lv ? 'Следующий уровень: ' + nextT.n.toLowerCase() : 'Этапы: ' + nextT.n.toLowerCase()) + '</h3>' +
@@ -45562,17 +45605,19 @@ document.addEventListener('change',function(e) {
           else if (v.job) { cls = 'wait'; act = '<button type="button" class="wk-tx-btn" disabled>Стапель занят</button>'; }
           else { cls = c.ok ? 'can' : 'wait'; act = '<button type="button" class="wk-tx-btn' + (c.ok ? ' pri' : '') + '" data-tx="shipbuild" data-p="' + p.id + '"' + (c.ok ? '' : ' disabled') + '>' + (c.ok ? 'Строить' : 'Не хватает материалов') + '</button>'; }
           var mats = done ? '' : '<span class="wk-shp-ms">' + Object.keys(p.m).map(function (m) { return shpMatChip(m, inv[m], p.m[m]); }).join('') + '</span>';
+          if (!done && !bld) { var qb = shpQuickBuy(sh, inv, p.m, bel); mats += qb.h; qbLack = qbLack || qb.lack; qb.no.forEach(function (m) { qbNo[m] = 1; }); }
           return '<div class="wk-shp-pt ' + cls + '"><div class="wk-shp-pt-b"><b>' + esc(p.n) + '</b><small>' + (done ? 'построено' : 'время работы: ' + (carpB ? shpDur(p.h * 3600000 * (1 - carpB)) + ' (плотник −' + Math.round(carpB * 100) + '%)' : shpHours(p.h))) + '</small>' + mats + '</div><div class="wk-shp-pt-a">' + act + '</div></div>';
         }).join('') + '</div>';
+      if (qbLack) { var qsl = shpSlot(); parts += '<p class="wk-sh-hint wk-shp-qbn">' + shpQbNo(qbNo) + 'Новая поставка через <span data-shp-end="' + (now + qsl.left) + '" data-shp-mk="1">' + shpDur(qsl.left) + '</span></p>'; }
     } else parts = '<p class="wk-sh-hint wk-shp-max">Самый большой корабль на Гранд Лайн готов. Теперь можно украшать его сколько душе угодно.</p>';
-    var store = '<h3 class="wk-dk-h">Склад</h3><p class="wk-sh-hint">Адамово дерево, морской камень, шёлк и диалы добывают только в плаваниях по Гранд Лайн: Литл Гарден, Остров Драм, Рейнбейс, Алабаста и Скайпия. Их нельзя продать или подарить. Они идут на Галеон II и III, базы 4 и 5 уровня, Обсерваторию, башню и эпические украшения.</p><div class="wk-shp-inv">' + SHP_MAT_ORDER.map(function (m) { return '<span class="wk-shp-iv' + (inv[m] ? '' : ' zero') + '">' + shpIco(m, 36) + '<span><b>' + inv[m] + '</b><small>' + SHP_MAT[m].n + '</small></span></span>'; }).join('') + '</div>';
+    var store = '<h3 class="wk-dk-h">Склад</h3><p class="wk-sh-hint">Адамово дерево, морской камень, шёлк и диалы добывают только в плаваниях по Гранд Лайн: Литл Гарден, Остров Драм, Рейнбейс, Алабаста и Скайпия. Их нельзя продать или подарить. Они идут на Галеон II и III, базы 4 и 5 уровня, Обсерваторию, башню и эпические украшения.</p><div class="wk-shp-inv">' + SHP_MAT_ORDER.map(function (m) { return '<span class="wk-shp-iv' + (inv[m] ? '' : ' zero') + '">' + shpIco(m, 56) + '<span><b>' + inv[m] + '</b><small>' + SHP_MAT[m].n + '</small></span></span>'; }).join('') + '</div>';
     var mk = shpMarket(sh), sl = shpSlot(), bought = mk.b || [], rp = FREE() ? 0 : SHP_ROLL * ((mk.r || 0) + 1), rl = SHP_ROLL_MAX - (mk.r || 0);
     var need = shpNeed(v, inv);
     var market = '<h3 class="wk-dk-h">Поставки материалов</h3><p class="wk-sh-hint">Купцы привозят случайный товар. Новая поставка через <span data-shp-end="' + (now + sl.left) + '" data-shp-mk="1">' + shpDur(sl.left) + '</span>. Нужное для текущих этапов попадается чаще.</p>' +
       '<div class="wk-shp-lots">' + mk.l.map(function (l, i) {
         var got = bought.indexOf(i) >= 0, pr = shpPrice(l), can = !got && bel >= pr;
         var tag = l.f < 1 ? '<em class="wk-shp-tag sale">−' + Math.round((1 - l.f) * 100) + '%</em>' : l.f > 1 ? '<em class="wk-shp-tag hi">+' + Math.round((l.f - 1) * 100) + '%</em>' : '';
-        return '<article class="wk-shp-lot' + (got ? ' got' : '') + (need[l.m] ? ' need' : '') + '">' + tag + shpIco(l.m, 48) + '<b>' + SHP_MAT[l.m].n + '</b><span class="wk-shp-q">×' + l.q + '</span>' + (need[l.m] && !got ? '<small class="wk-shp-nd">нужно ещё ' + need[l.m] + '</small>' : '<small class="wk-shp-nd">&nbsp;</small>') +
+        return '<article class="wk-shp-lot' + (got ? ' got' : '') + (need[l.m] ? ' need' : '') + '">' + tag + shpIco(l.m, 80) + '<b>' + SHP_MAT[l.m].n + '</b><span class="wk-shp-q">×' + l.q + '</span>' + (need[l.m] && !got ? '<small class="wk-shp-nd">нужно ещё ' + need[l.m] + '</small>' : '<small class="wk-shp-nd">&nbsp;</small>') +
           '<button type="button" class="wk-tx-btn' + (can ? ' pri' : '') + '" data-tx="shipbuy" data-i="' + i + '"' + (can ? '' : ' disabled') + '>' + (got ? 'Куплено' : fmtB(pr)) + '</button></article>';
       }).join('') + '</div>' +
       '<div class="wk-shp-roll"><button type="button" class="wk-tx-btn" data-tx="shiproll"' + (rl > 0 && bel >= rp ? '' : ' disabled') + '>' + (rl > 0 ? 'Позвать других купцов · ' + fmtB(rp) : 'Купцы на сегодня закончились') + '</button><small>' + (rl > 0 ? 'Осталось ' + rl + ' из ' + SHP_ROLL_MAX + ' до следующей поставки' : 'Новые придут с поставкой') + '</small></div>';
@@ -45749,6 +45794,11 @@ document.addEventListener('change',function(e) {
     if (a.indexOf('shipduo') === 0) { shpDuoClick(a, b, repaint); return; }
     if (a === 'shipsize') { var szm = b.getAttribute('data-v') === 'mini'; if (b.getAttribute('data-k') === 'base') SHP_BMINI = szm; else SHP_ZMINI = szm; repaint(); return; }
     if (a === 'shipfs') { shpFsOpen(b); return; }
+    if (a === 'shippetmove') {
+      var shM = shpGet(SHP_ADM ? SHP_ADM.st : load()), pkM = shpPetOf(shM, shpSel(shM, shpView(shM)).t), ppM = pkM && shpPetGet(pkM); if (!ppM) return;
+      SHP_ST = 'dz'; SHP_SECL.ship = 'dz'; SHP_VB = ''; SHP_DT = 'dec'; SHP_DMENU = false; SHP_DECT = 'my'; SHP_TUNE = shpPetDsId(ppM); SHP_ZMINI = false; repaint();
+      setTimeout(function () { var el = document.getElementById('wkShipDz'); if (el) el.scrollIntoView({ block: 'start' }); }, 0); return;
+    }
     if (a === 'shipshop') {
       var jump = SHP_ST !== 'shop'; SHP_SHOPT = b.getAttribute('data-v') || 'buy'; SHP_ST = 'shop'; SHP_SECL.ship = 'shop'; SHP_VB = ''; repaint();
       if (jump) setTimeout(function () { var el = document.querySelector('.wk-shp-shop'); if (el) el.scrollIntoView({ block: 'start' }); }, 0); return;
@@ -45800,6 +45850,21 @@ document.addEventListener('change',function(e) {
     if (a === 'shipfleet') { SHP_FLV = !SHP_FLV; SHP_DUO = null; SHP_FSET = false; SHP_FD = null; SHP_VB = ''; if (SHP_ST !== 'build' && SHP_ST !== 'port') SHP_ST = 'build'; repaint(); return; }
     if (a === 'shipsel') { if (SHP_VB && SHP_ST !== 'port') SHP_ST = 'build'; SHP_FLV = false; SHP_FSET = false; SHP_FD = null; SHP_VB = ''; SHP_SEL = +b.getAttribute('data-t'); SHP_EDIT = false; SHP_D = { paint: {} }; repaint(); return; }
     if (a === 'shipshow') { var t1 = shpSel(sh, v).t; if (t1 >= v.lv) return; sh.show = t1; sv(st); repaint(); txToast('На витрине профиля: ' + shpTT(t1).n.toLowerCase()); return; }
+    if (a === 'shipbuy' || a === 'shipbuyset') {
+      /* кнопка из постройки помнит поставку: если купцы успели смениться, ничего не покупаем */
+      var mkk = b.getAttribute('data-k'), mk0 = shpMarket(sh);
+      if (mkk && mkk !== mk0.k + '/' + (mk0.r || 0)) { if (ev) sv(st); repaint(); txToast('Купцы уже сменились — посмотри новый товар'); return; }
+    }
+    if (a === 'shipbuyset') {
+      var ms = shpMarket(sh); ms = sh.mk = JSON.parse(JSON.stringify(ms)); ms.b = ms.b || [];
+      var ids = String(b.getAttribute('data-i') || '').split(',').map(Number).filter(function (i, k, arr) { return ms.l[i] && ms.b.indexOf(i) < 0 && arr.indexOf(i) === k; });
+      if (!ids.length) { if (ev) { sv(st); repaint(); } return; }
+      var tot = ids.reduce(function (q, i) { return q + shpPrice(ms.l[i]); }, 0); if (b0 < tot) { txToast('Не хватает белли'); return; }
+      st.belli = b0 - tot; st.spent = (st.spent || 0) + tot; if (tot) track(st, 'spend', tot);
+      var gotM = {}; ids.forEach(function (i) { var l = ms.l[i]; inv[l.m] = (inv[l.m] || 0) + l.q; gotM[l.m] = (gotM[l.m] || 0) + l.q; ms.b.push(i); });
+      sv(st); repaint(); ba(pane, b0);
+      txToast('На склад: ' + Object.keys(gotM).map(function (m) { return SHP_MAT[m].n.toLowerCase() + ' ×' + gotM[m]; }).join(', ')); return;
+    }
     if (a === 'shipbuy') {
       var mk = shpMarket(sh), i = Number(b.getAttribute('data-i')), lot = mk.l[i]; if (!lot) return;
       mk = sh.mk = JSON.parse(JSON.stringify(mk)); mk.b = mk.b || [];
@@ -46773,7 +46838,7 @@ document.addEventListener('change',function(e) {
       var k = q[0] + i; if (l[k] === '' || l[k] == null) return; var n = Math.round(+l[k]); if (!isFinite(n)) return;
       n = Math.max(q[1], Math.min(q[2], n)); if (n !== (o[q[0]] != null ? o[q[0]] : q[3])) o[k] = n;
     }); });
-    if (l.ds && typeof l.ds === 'object') { var d = {}; Object.keys(l.ds).forEach(function (id) { var q = l.ds[id] || {}, r = {}, sv = Math.round(+q.s), xv = Math.round(+q.x), yv = Math.round(+q.y), rv = Math.round(+q.r); if (isFinite(rv) && rv) r.r = Math.max(-90, Math.min(90, rv)); if (isFinite(sv) && sv !== 100) r.s = Math.max(50, Math.min(220, sv)); if (isFinite(xv) && xv) r.x = Math.max(-40, Math.min(40, xv)); if (isFinite(yv) && yv) r.y = Math.max(-30, Math.min(30, yv)); if (Object.keys(r).length && SHP_MOVE.indexOf(id) >= 0) d[id] = r; }); if (Object.keys(d).length) o.ds = d; }
+    if (l.ds && typeof l.ds === 'object') { var d = {}; Object.keys(l.ds).forEach(function (id) { var q = l.ds[id] || {}, r = {}, sv = Math.round(+q.s), xv = Math.round(+q.x), yv = Math.round(+q.y), rv = Math.round(+q.r), lm = shpDsLim(id); if (isFinite(rv) && rv) r.r = Math.max(-90, Math.min(90, rv)); if (isFinite(sv) && sv !== 100) r.s = Math.max(50, Math.min(220, sv)); if (isFinite(xv) && xv) r.x = Math.max(-lm[0], Math.min(lm[0], xv)); if (isFinite(yv) && yv) r.y = Math.max(-lm[1], Math.min(lm[1], yv)); if (Object.keys(r).length && (SHP_MOVE.indexOf(id) >= 0 || id === 'petm' || id === 'petd')) d[id] = r; }); if (Object.keys(d).length) o.ds = d; }
     return o;
   }
   function shpItem(kind, id) { return (SHP_DZ[kind].l.filter(function (q) { return q.id === id; })[0]) || null; }
@@ -46907,7 +46972,7 @@ document.addEventListener('change',function(e) {
     var sc = shpSel(sh, v); if (sc.none || !(sc.all || sc.built.hull)) return '';
     var c = shpCos(sh), e = shpEffCos(sh), df = shpDiff(sh), bel = st.belli || 0;
     var lockNote = function (req) { return shpReqOk(sc, req) ? '' : '<small class="wk-shp-lk">Сначала построй ' + (SHP_REQN[req] || req) + '</small>'; };
-    var pv = shpSVG({ scn: 1, cr: shpCrewIds(sh, sc.t), pn: shpPatchN(sh), pet: shpPetOf(sh, sc.t), t: sc.t, built: sc.built, bld: sc.bld, all: sc.all, parts: shpPartIds(sc.t), name: shpC(sh, sc.t).name || '', paint: e.paint, hpat: e.hpat, orn: e.orn, sorn: e.sorn, spat: e.spat, fig: e.fig, flag: e.flag, flagUrl: e.flagUrl, ornUrl: e.ornUrl, sornUrl: e.sornUrl, figUrl: e.figUrl, dec: e.dec, lay: e.lay, bg: e.bg, still: !(SHP_PLAYU > Date.now()), label: 'Примерка оформления' });
+    var pv = shpSVG({ drag: 1, scn: 1, cr: shpCrewIds(sh, sc.t), pn: shpPatchN(sh), pet: shpPetOf(sh, sc.t), t: sc.t, built: sc.built, bld: sc.bld, all: sc.all, parts: shpPartIds(sc.t), name: shpC(sh, sc.t).name || '', paint: e.paint, hpat: e.hpat, orn: e.orn, sorn: e.sorn, spat: e.spat, fig: e.fig, flag: e.flag, flagUrl: e.flagUrl, ornUrl: e.ornUrl, sornUrl: e.sornUrl, figUrl: e.figUrl, dec: e.dec, lay: e.lay, bg: e.bg, still: !(SHP_PLAYU > Date.now()), label: 'Примерка оформления' });
     var tabs = '<div class="wk-shp-dtabs" role="tablist">' + SHP_DTABS.map(function (t) { var on = t[0] === SHP_DT; return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? 'on' : '') + '" data-tx="shipdzt" data-t="' + t[0] + '">' + t[1] + '</button>'; }).join('') + '</div>';
     /* v1039: настройки выбранной вещи показываются прямо под её карточкой */
     var TUNE = {}, tuneBox = function (kind, html) { TUNE[kind] = html; return ''; };
@@ -47029,10 +47094,16 @@ document.addEventListener('change',function(e) {
       var nAll = Object.keys(all).length, nMine = Object.keys(all).filter(function (k) { return all[k]; }).length;
       SHP_DZ.dec.l.forEach(function (it) { if (!fits(it) && shpOwn(sh, 'dec', it.id)) other++; });
       var dtab = function (id, nm, n) { var on = (id === 'my') === mine; return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? 'on' : '') + '" data-tx="shipdzdect" data-v="' + id + '">' + nm + ' <small>' + n + '</small></button>'; };
+      var petSec = (function () {
+        var pk = shpPetOf(sh, sc.t), pp = pk && shpPetGet(pk); if (!pp) return '';
+        var id = shpPetDsId(pp), lm = shpDsLim(id), open = SHP_TUNE === id, d = (e.lay.ds && e.lay.ds[id]) || {}, nm = esc(shpPetNm(sh, pk) || pp.n);
+        return '<h4 class="wk-shp-h4">Питомец на борту</h4><div class="wk-shp-its wk-shp-petmv"><div class="wk-shp-cell"><button type="button" class="wk-shp-it on" data-tx="shipdztune" data-v="' + id + '">' + shpPetMini(pp) + '<b>' + nm + '</b><small>перетащи его на корабле</small></button><button type="button" class="wk-shp-gear' + (open ? ' on' : '') + '" data-tx="shipdztune" data-v="' + id + '" aria-expanded="' + open + '" aria-label="Настройка: ' + nm + '">⚙ Настройка</button></div>' +
+          (open ? '<div class="wk-shp-tune"><div class="wk-shp-lay"><div class="wk-shp-lay-h"><b>' + nm + ': размер и место</b><button type="button" class="wk-tx-btn" data-tx="shipdztunex" data-v="' + id + '">Сбросить</button></div><div class="wk-shp-dmv">' + sl('ds.' + id + '.s', 'Размер', 50, 220, d.s != null ? d.s : 100) + sl('ds.' + id + '.x', 'Левее / правее', -lm[0], lm[0], d.x || 0, '%', 1) + sl('ds.' + id + '.y', 'Выше / ниже', -lm[1], lm[1], d.y || 0, ' px', 1) + sl('ds.' + id + '.r', 'Поворот (влево / вправо)', -90, 90, d.r || 0, '°', 1) + '</div></div></div>' : '') + '</div>';
+      })();
       var list = grpH('base', 'Общий декор') + grpH('tier', 'Только для ' + (SHP_TIERN[tid] || ''), 'У каждого типа судна свои уникальные вещи. Выбери другой корабль флота, чтобы увидеть его набор.') + setsH + grpH('hw', 'Хэллоуин', 'Корабль-призрак: рваные паруса, туман и нечисть. К набору есть флаг, носовая фигура и фон.') + grpH('ny', 'Новый год', 'Праздничный корабль. Флаг, носовая фигура и фон к набору — на своих вкладках.') + grpH('loot', 'Находки из плаваний', mine ? '' : 'Эти украшения нельзя купить: их привозят из плаваний. Чем дальше и опаснее маршрут, тем ценнее находки. Пока не найденные показаны тёмными.');
       var dupN = shpLootSum(sh).n, dupH = dupN ? shpShopLink('dup', 'Продать повторки (' + dupN + ')') : '';
       body = '<div class="wk-shp-dect" role="tablist" aria-label="Декор">' + dtab('my', 'Мои', nMine) + dtab('shop', 'Магазин', nAll - nMine) + '</div>' +
-        (mine ? dupH + (list ? '<p class="wk-sh-hint">Нажми на вещь, чтобы надеть или снять. Украшения можно сочетать.</p>' + list : '<div class="wk-shp-dempty"><p class="wk-sh-hint">Здесь пока пусто: сюда попадают купленные и найденные в плаваниях украшения.</p><button type="button" class="wk-tx-btn pri" data-tx="shipdzdect" data-v="shop">Открыть магазин</button></div>') + (other ? '<p class="wk-sh-hint">Ещё у тебя есть вещи для других кораблей флота: ' + other + '.</p>' : '')
+        (mine ? petSec + dupH + (list ? '<p class="wk-sh-hint">Нажми на вещь, чтобы надеть или снять. Надетое и питомца можно перетаскивать прямо на корабле — мышью или пальцем; размер меняют колесо мыши или щипок.</p>' + list : '<div class="wk-shp-dempty"><p class="wk-sh-hint">Здесь пока пусто: сюда попадают купленные и найденные в плаваниях украшения.</p><button type="button" class="wk-tx-btn pri" data-tx="shipdzdect" data-v="shop">Открыть магазин</button></div>') + (other ? '<p class="wk-sh-hint">Ещё у тебя есть вещи для других кораблей флота: ' + other + '.</p>' : '')
           : '<p class="wk-sh-hint">Украшения можно сочетать: выбирай сколько угодно, купить можно всё сразу кнопкой под кораблём.</p>' + shpDecHow() + (list || '<p class="wk-sh-hint">Всё, что подходит этому кораблю, уже у тебя.</p>')) +
         '<p class="wk-sh-hint wk-shp-pcr">Бонсай — maxicons, Japan Flat Vectors; первоначальные версии подарков и снеговика — Monkik, Santa Christmas Vectors (SVG Repo, CC BY), ёлки — Twemoji, Twitter (MIT); с v808 — новые самостоятельные рисунки; тыквы-коты — Justas Galaburda, Pumpkin Cat Halloween Vectors (CC BY); сундук, мандариновое дерево и глобус — SVG Repo (CC0).</p>';
     }
@@ -47048,7 +47119,7 @@ document.addEventListener('change',function(e) {
     var n = df.list.length, can = n && bel >= df.sum;
     var bar = '<div class="wk-shp-dbar' + (n ? ' on' : '') + '"><span>' + (n ? 'Изменений в примерке: ' + n + (df.sum ? ' · итого <b>' + fmtB(df.sum) + '</b>' : ' · <b>бесплатно</b>') : 'Выбери цвет или украшение — корабль в примерке сразу покажет, как это будет выглядеть') + '</span>' +
       (n ? '<button type="button" class="wk-tx-btn' + (can ? ' pri' : '') + '" data-tx="shipdzok"' + (can ? '' : ' disabled') + '>' + (df.sum ? 'Купить и применить' : 'Применить') + '</button><button type="button" class="wk-tx-btn" data-tx="shipdzx">Сбросить</button>' : '') + '<button type="button" class="wk-tx-btn" data-tx="shipdzplay">▶ Проиграть анимацию</button></div>';
-    return '<h3 class="wk-dk-h" id="wkShipDz">Оформление корабля</h3><div class="wk-shp-dz"><div class="wk-shp-dpv">' + shpSizeBar('ship', SHP_ZMINI) + '<div class="wk-shp-scene wk-shp-zoom' + (SHP_ZMINI ? ' mini' : '') + '" data-tx="shipzoom" role="button" tabindex="0" title="' + (SHP_ZMINI ? 'Нажми, чтобы увеличить' : 'Нажми, чтобы уменьшить') + '">' + pv + '</div>' + bar + '</div><div class="wk-shp-dop">' + (!SHP_DMENU ? shpBackHTML('shipdzt', (SHP_DTABS.filter(function (t) { return t[0] === SHP_DT; })[0] || ['', ''])[1], 'К разделам оформления') + body : shpMenuHTML(SHP_DTABS.map(function (t) { return { at: 'data-tx="shipdzt" data-t="' + t[0] + '"', ic: SHP_DTI[t[0]], n: t[1], sub: SHP_DTH[t[0]] }; }))) + '</div></div>';
+    return '<h3 class="wk-dk-h" id="wkShipDz">Оформление корабля</h3><div class="wk-shp-dz"><div class="wk-shp-dpv">' + shpSizeBar('ship', SHP_ZMINI) + '<div class="wk-shp-scene wk-shp-zoom wk-shp-dnd' + (SHP_ZMINI ? ' mini' : '') + '">' + pv + '</div>' + bar + '</div><div class="wk-shp-dop">' + (!SHP_DMENU ? shpBackHTML('shipdzt', (SHP_DTABS.filter(function (t) { return t[0] === SHP_DT; })[0] || ['', ''])[1], 'К разделам оформления') + body : shpMenuHTML(SHP_DTABS.map(function (t) { return { at: 'data-tx="shipdzt" data-t="' + t[0] + '"', ic: SHP_DTI[t[0]], n: t[1], sub: SHP_DTH[t[0]] }; }))) + '</div></div>';
   }
   /* если настройка открылась за краем экрана, подвигаем страницу ровно настолько, чтобы её было видно */
   function shpTuneShow() {
@@ -47177,6 +47248,69 @@ document.addEventListener('change',function(e) {
     if (typeof window.wkOpenShipTab === 'function') window.wkOpenShipTab();
   }
 
+  /* v1040: надетые украшения двигаются мышью или пальцем прямо на примерке; колесо и щипок меняют размер выбранного */
+  (function () {
+    var dr = null, pts = {}, sel = '', wt = 0;
+    function cl(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
+    function svgAt(t) { var sc = t && t.closest && t.closest('.wk-shp-dpv .wk-shp-dnd'); return sc ? sc.querySelector('svg[data-len]') : null; }
+    function area(g) { var r = g.getBoundingClientRect(); return r.width * r.height; }
+    /* что под пальцем: сначала нарисованное, затем мелкие вещи с запасом вокруг */
+    function hit(sv, x, y, pad) {
+      var c = [];
+      (document.elementsFromPoint ? document.elementsFromPoint(x, y) : []).forEach(function (n) { var g = n.closest && n.closest('[data-dsw]'); if (g && sv.contains(g) && c.indexOf(g) < 0) c.push(g); });
+      if (!c.length) [].forEach.call(sv.querySelectorAll('[data-dsw]'), function (g) { var r = g.getBoundingClientRect(); if (r.width && Math.min(r.width, r.height) < 60 && x >= r.left - pad && x <= r.right + pad && y >= r.top - pad && y <= r.bottom + pad) c.push(g); });
+      if (!c.length) return null;
+      var mine = c.filter(function (g) { return g.getAttribute('data-dsw') === (SHP_TUNE || sel); })[0];
+      return mine || c.sort(function (a, b) { return area(a) - area(b); })[0];
+    }
+    function layNow() { var st = SHP_ADM ? SHP_ADM.st : load(); return JSON.parse(JSON.stringify(shpEffCos(shpGet(st)).lay || {})); }
+    function qOf(id) { var q = (layNow().ds || {})[id] || {}; return { s: +q.s || 100, x: +q.x || 0, y: +q.y || 0, r: +q.r || 0 }; }
+    function gNow(id) { return document.querySelector('.wk-shp-dpv .wk-shp-dnd [data-dsw="' + id + '"]'); }
+    function draw(id, q) {
+      var g = gNow(id); if (!g) return; var len = +g.ownerSVGElement.getAttribute('data-len');
+      g.setAttribute('transform', shpDsTf(q.x / 100 * len, q.y, +g.getAttribute('data-ax'), +g.getAttribute('data-ay'), q.r, q.s / 100)); g.classList.add('wk-ds-on');
+      ['s', 'x', 'y'].forEach(function (p) { var i = document.querySelector('.wk-shp-tune [data-shl="ds.' + id + '.' + p + '"]'); if (!i) return; i.value = q[p]; if (i.nextElementSibling) i.nextElementSibling.textContent = q[p] + (p === 'y' ? ' px' : '%'); });
+    }
+    function keep(id, q) { var L = layNow(); L.ds = L.ds || {}; L.ds[id] = { s: q.s, x: q.x, y: q.y, r: q.r }; SHP_D.lay = L; }
+    function open(id) { sel = id; if (SHP_DT === 'dec' && !SHP_DMENU) SHP_TUNE = id; shpRepaint(); }
+    document.addEventListener('pointerdown', function (e) {
+      var sv = svgAt(e.target); if (!sv || (e.pointerType === 'mouse' && e.button !== 0)) return;
+      if (dr) { if (e.pointerType !== 'mouse') { pts[e.pointerId] = { x: e.clientX, y: e.clientY }; var k = Object.keys(pts); if (k.length === 2) dr.pinch = { d0: Math.hypot(pts[k[0]].x - pts[k[1]].x, pts[k[0]].y - pts[k[1]].y) || 1, s0: dr.q.s }; e.preventDefault(); return; } dr = null; pts = {}; }
+      var g = hit(sv, e.clientX, e.clientY, e.pointerType === 'mouse' ? 4 : 12); if (!g) return;
+      var m = g.parentNode.getScreenCTM && g.parentNode.getScreenCTM(); if (!m) return;
+      var id = g.getAttribute('data-dsw'), q = qOf(id);
+      pts = {}; pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+      dr = { id: id, q: q, bx: q.x, by: q.y, x0: e.clientX, y0: e.clientY, inv: m.inverse(), len: +sv.getAttribute('data-len'), pid: e.pointerId, moved: false };
+      g.classList.add('wk-ds-on'); document.documentElement.classList.add('wk-ds-drag'); e.preventDefault();
+    });
+    document.addEventListener('pointermove', function (e) {
+      if (!dr || !pts[e.pointerId]) return; pts[e.pointerId] = { x: e.clientX, y: e.clientY }; var k = Object.keys(pts);
+      if (k.length >= 2 && dr.pinch) { dr.q.s = Math.round(cl(dr.pinch.s0 * (Math.hypot(pts[k[0]].x - pts[k[1]].x, pts[k[0]].y - pts[k[1]].y) || 1) / dr.pinch.d0, 50, 220)); dr.moved = true; draw(dr.id, dr.q); e.preventDefault(); return; }
+      if (e.pointerId !== dr.pid) return;
+      var px = e.clientX - dr.x0, py = e.clientY - dr.y0;
+      if (!dr.moved && Math.abs(px) + Math.abs(py) < 4) return;
+      dr.moved = true; var lm = shpDsLim(dr.id); dr.q.x = Math.round(cl(dr.bx + (dr.inv.a * px + dr.inv.c * py) / dr.len * 100, -lm[0], lm[0])); dr.q.y = Math.round(cl(dr.by + dr.inv.b * px + dr.inv.d * py, -lm[1], lm[1]));
+      draw(dr.id, dr.q); e.preventDefault();
+    });
+    function up(e) {
+      if (!dr || !pts[e.pointerId]) return; delete pts[e.pointerId];
+      var left = Object.keys(pts);
+      if (left.length) { dr.pinch = null; dr.pid = +left[0]; dr.x0 = pts[left[0]].x; dr.y0 = pts[left[0]].y; dr.bx = dr.q.x; dr.by = dr.q.y; return; }
+      var d = dr; dr = null; document.documentElement.classList.remove('wk-ds-drag');
+      if (d.moved) keep(d.id, d.q);
+      if (e.type === 'pointerup' || d.moved) open(d.id); else shpDpvRefresh();
+    }
+    document.addEventListener('pointerup', up); document.addEventListener('pointercancel', up);
+    /* палец на украшении двигает его, а не листает страницу */
+    document.addEventListener('touchstart', function (e) { var sv = svgAt(e.target), t = e.changedTouches && e.changedTouches[0]; if (!sv || !t) return; if (dr || hit(sv, t.clientX, t.clientY, 12)) { e.preventDefault(); e.stopPropagation(); } }, { capture: true, passive: false });
+    document.addEventListener('touchmove', function (e) { if (dr) { e.preventDefault(); e.stopPropagation(); } }, { capture: true, passive: false });
+    document.addEventListener('wheel', function (e) {
+      var sv = svgAt(e.target); if (!sv || dr) return; var g = hit(sv, e.clientX, e.clientY, 4), id = g && g.getAttribute('data-dsw');
+      if (!id || id !== (SHP_TUNE || sel)) return; e.preventDefault();
+      var q = qOf(id); q.s = cl(q.s + (e.deltaY < 0 ? 5 : -5), 50, 220); keep(id, q); draw(id, q);
+      clearTimeout(wt); wt = setTimeout(function () { if (gNow(id)) shpRepaint(); }, 450);
+    }, { passive: false });
+  })();
   function shpDpvRefresh() {
     var host = document.querySelector('.wk-shp-dpv'); if (!host) return; var st = SHP_ADM ? SHP_ADM.st : load(), sh = shpGet(st), v = shpView(sh), html = shpDzHTML(st, sh, v), m = html.match(/<div class="wk-shp-dpv">([\s\S]*?)<\/div><div class="wk-shp-dop">/);
     if (m) host.innerHTML = m[1];
@@ -47417,7 +47551,7 @@ document.addEventListener('change',function(e) {
     var v0 = shpView(sh), t0 = shpSel(sh, v0).t, pm = shpPetMap(sh), cur = shpPetOf(sh, t0), cp = cur && shpPetGet(cur), have = shpPetHave(sh).length;
     function shN(t) { return '«' + esc(shpC(sh, t).name || shpTT(t).n) + '»'; }
     var head = '<h3 class="wk-dk-h">Питомец <small class="wk-shp-achc">' + have + ' из ' + SHP_PETS.length + '</small></h3><p class="wk-sh-hint">Питомцев находят в плаваниях: ' + SHP_ROUTES.filter(function (r) { return !r.dr; }).map(function (r) { return r.n.toLowerCase() + ' — ' + Math.round(SHP_PETCH[r.id] * 100) + '%'; }).join(', ') + '. У каждого вида свой бонус, а у редких расцветок он сильнее. Повторов не бывает: каждая расцветка находится один раз. У каждого корабля флота свой питомец, а один питомец живёт на одном корабле. Выбери корабль в строке «Флот» сверху, затем питомца: бонус берётся при отплытии именно этого корабля. Питомцу можно дать имя.</p>';
-    var now = t0 == null ? '<p class="wk-sh-hint">Питомцы поселятся на корабле, когда он будет построен.</p>' : (cp ? '<div class="wk-shp-petnow">' + shpPetMini(cp) + '<div><b>' + esc(shpPetNm(sh, cur) || cp.n) + '</b><small>' + (shpPetNm(sh, cur) ? cp.n + ' · ' : '') + 'корабль ' + shN(t0) + ' · ' + SHP_PETSP[cp.sp].t(shpPetV(cp)) + '</small></div><button type="button" class="wk-tx-btn" data-tx="shipcrewpet" data-k="' + cp.k + '">Отпустить</button></div><p class="wk-shp-nmf"><input id="wkPetNameIn" type="text" maxlength="16" value="' + esc(shpPetNm(sh, cur)) + '" placeholder="Имя питомца" aria-label="Имя питомца" autocomplete="off"><button type="button" class="wk-tx-btn pri" data-tx="shipcrewpname" data-k="' + cur + '">Назвать</button></p>' : '<p class="wk-sh-hint">На корабле ' + shN(t0) + ' пока нет питомца: выбери из найденных ниже.</p>');
+    var now = t0 == null ? '<p class="wk-sh-hint">Питомцы поселятся на корабле, когда он будет построен.</p>' : (cp ? '<div class="wk-shp-petnow">' + shpPetMini(cp) + '<div><b>' + esc(shpPetNm(sh, cur) || cp.n) + '</b><small>' + (shpPetNm(sh, cur) ? cp.n + ' · ' : '') + 'корабль ' + shN(t0) + ' · ' + SHP_PETSP[cp.sp].t(shpPetV(cp)) + '</small></div><button type="button" class="wk-tx-btn pri" data-tx="shippetmove">Переставить на корабле</button><button type="button" class="wk-tx-btn" data-tx="shipcrewpet" data-k="' + cp.k + '">Отпустить</button></div><p class="wk-shp-nmf"><input id="wkPetNameIn" type="text" maxlength="16" value="' + esc(shpPetNm(sh, cur)) + '" placeholder="Имя питомца" aria-label="Имя питомца" autocomplete="off"><button type="button" class="wk-tx-btn pri" data-tx="shipcrewpname" data-k="' + cur + '">Назвать</button></p>' : '<p class="wk-sh-hint">На корабле ' + shN(t0) + ' пока нет питомца: выбери из найденных ниже.</p>');
     var fl = '', nf = shpFleetN(sh, v0);
     if (nf > 0) { for (var ft = 0; ft < nf; ft++) { var fk = shpPetOf(sh, ft), fp = fk && shpPetGet(fk); fl += '<tr' + (ft === t0 ? ' class="on"' : '') + '><td>' + shN(ft) + '</td><td>' + (fp ? esc(shpPetNm(sh, fk) || fp.n) + (shpPetNm(sh, fk) ? ' <small>(' + fp.n + ')</small>' : '') : '—') + '</td><td>' + (fp ? SHP_PETSP[fp.sp].t(shpPetV(fp)) : '') + '</td></tr>'; } now += '<table class="wk-shp-petfl"><thead><tr><th>Корабль</th><th>Питомец</th><th>Бонус</th></tr></thead><tbody>' + fl + '</tbody></table>'; }
     var rows = Object.keys(SHP_PETSP).map(function (sp) {
@@ -48340,21 +48474,137 @@ document.addEventListener('change',function(e) {
   function shpFactLinks(sec) {
     var x = shpFxIdx; if (!x || !x.n) { x = shpFxIdx = shpFxBuild(); }
     if (shpFxLk[sec]) return shpFxLk[sec];
-    var out = [], used = {};
-    String(sec).split(/[,:;]|\s+и\s+|\s+против\s+/i).forEach(function (tk) {
+    var out = [], used = {}, add = function (r) { if (!used[r.id]) { used[r.id] = 1; out.push(r); } };
+    /* v1042: статья, привязанная вручную, важнее угаданной по имени */
+    var whole = shpFlRecs(sec); if (whole.length) { whole.forEach(add); return out.slice(0, 4); }
+    shpFlTokens(sec).forEach(function (tk) {
       var k = shpFxNorm(tk); if (!k) return;
+      var man = shpFlRecs(tk); if (man.length) { man.forEach(add); return; }
       var c = x.full[k];
       if (!c) { var ws = k.split(' ').filter(function (w) { return w.length >= 4; }); if (ws.length === 1) c = x.word[ws[0]]; else if (ws.length > 1) c = (x.word[ws[0]] || []).filter(function (r) { return ws.every(function (w) { return (x.word[w] || []).indexOf(r) >= 0; }); }); }
       if (!c) return;
       var u = c.filter(function (r, i) { return c.indexOf(r) === i; }); if (u.length !== 1) return;
-      if (!used[u[0].id]) { used[u[0].id] = 1; out.push(u[0]); }
+      add(u[0]);
     });
     return out.slice(0, 4);
   }
-  function shpFactLinkHTML(sec) {
-    var l = shpFactLinks(sec).filter(shpFxOpen); if (!l.length) return '';
-    return '<p class="wk-sh-hint wk-fx-lk">Статья: ' + l.map(function (r) { return '<a href="#" class="wk-art-link" data-wk-open="character" data-wk-id="' + esc(r.id) + '">' + esc(r.name) + '</a>'; }).join(', ') + '</p>';
+  function shpFlCan() { try { return !!(window.__wikiCanEdit && window.__wikiCanEdit()); } catch (e) { return false; } }
+  function shpFactLinkIn(sec) {
+    var all = shpFactLinks(sec), l = all.filter(shpFxOpen), ed = shpFlCan(), man = !!shpFlGet(sec);
+    var btn = function (cls, label, tip) { return '<button type="button" class="' + cls + '" data-factlink="' + esc(sec) + '" title="' + tip + '" aria-label="' + tip + ': ' + esc(sec) + '">' + label + '</button>'; };
+    if (l.length) return '<p class="wk-sh-hint wk-fx-lk">Статья: ' + l.map(function (r) { return '<a href="#" class="wk-art-link" data-wk-open="character" data-wk-id="' + esc(r.id) + '">' + esc(r.name) + '</a>'; }).join(', ') + (ed ? ' ' + btn('wk-fx-ed', '✎', man ? 'Изменить привязанную статью' : 'Выбрать другую статью') : '') + '</p>';
+    if (!ed) return '';
+    return all.length ? '<p class="wk-sh-hint wk-fx-lk">Статья скрыта спойлером ' + btn('wk-fx-ed', '✎', 'Выбрать другую статью') + '</p>' : btn('wk-fx-add', '+ Привязать статью', 'Привязать статью');
   }
+  function shpFactLinkHTML(sec) { return '<div class="wk-fx-slot" data-fxs="' + esc(sec) + '">' + shpFactLinkIn(sec) + '</div>'; }
+  /* ----- привязка статей вручную: общая для всех игроков, лежит в облаке (content/factlinks), меняют админ и редактор ----- */
+  var SHP_FLK = 'wkFactLinksV1', SHP_FLD = (function () { var d = null; try { d = JSON.parse(localStorage.getItem('wkFactLinksV1') || 'null'); } catch (e) {} d = d && typeof d === 'object' ? d : {}; return { m: d.m && typeof d.m === 'object' ? d.m : {}, p: d.p && typeof d.p === 'object' ? d.p : {} }; })();
+  var SHP_FLAT = 0, SHP_FLONLY = false;
+  function shpFlStore() { try { localStorage.setItem(SHP_FLK, JSON.stringify(SHP_FLD)); } catch (e) {} }
+  function shpFlTokens(sec) { return String(sec).split(/[,:;]|\s+и\s+|\s+против\s+/i).filter(function (t) { return shpFxNorm(t); }); }
+  function shpFlGet(sec) { var a = SHP_FLD.m[shpFxNorm(sec)]; return Array.isArray(a) && a.length ? a : null; }
+  function shpFlChars() { try { return typeof characters !== 'undefined' && Array.isArray(characters) ? characters.filter(function (r) { return r && r.id && r.name; }) : []; } catch (e) { return []; } }
+  function shpFlRecs(sec) { var a = shpFlGet(sec); if (!a) return []; var l = shpFlChars(); return a.map(function (id) { return l.filter(function (r) { return String(r.id) === String(id); })[0]; }).filter(Boolean); }
+  function shpFlRefresh() {
+    [].forEach.call(document.querySelectorAll('.wk-fx-slot[data-fxs]'), function (el) { el.innerHTML = shpFactLinkIn(el.getAttribute('data-fxs')); });
+    shpFlFilter();
+  }
+  /* у редактора: сколько персонажей осталось без статьи и показ только их */
+  function shpFlFilter() {
+    var b = document.querySelector('[data-factnolink]'); if (!b) return;
+    var box = b.closest('.wk-ft-box') || b.parentNode.parentNode, n = 0, inp = box.querySelector('[data-factq]'), q = String(inp && inp.value || '').trim().toLowerCase();
+    [].forEach.call(box.querySelectorAll('details[data-fq]'), function (d) {
+      var sl = d.querySelector('.wk-fx-slot'), no = !!(sl && !shpFactLinks(sl.getAttribute('data-fxs')).length); if (no) n++;
+      d.style.display = (!q || d.getAttribute('data-fq').indexOf(q) >= 0) && (!SHP_FLONLY || no) ? '' : 'none';
+    });
+    b.innerHTML = 'Без статьи · ' + n; b.setAttribute('aria-pressed', String(SHP_FLONLY)); b.classList.toggle('on', SHP_FLONLY); b.hidden = !n && !SHP_FLONLY;
+  }
+  function shpFlCloud() { try { var f = typeof window.__wkFirebase === 'function' ? window.__wkFirebase() : null; return f && f.fb && f.fb.fs && f.db ? f : null; } catch (e) { return null; } }
+  function shpFlPush(cb) {
+    var f = shpFlCloud(), keys = Object.keys(SHP_FLD.p); if (!keys.length) { if (cb) cb(true); return; }
+    if (!f || !f.me || !shpFlCan()) { if (cb) cb(false, 'нет связи с облаком'); return; }
+    var send = {}; keys.forEach(function (k) { send[k] = SHP_FLD.p[k]; });
+    var fail = function (e) { if (cb) cb(false, 'облако не приняло (' + ((e && e.code) || 'ошибка') + ')'); };
+    try {
+      f.fb.fs.setDoc(f.fb.fs.doc(f.db, 'content', 'factlinks'), { m: send, at: new Date().toISOString(), by: f.me.login }, { merge: true }).then(function () {
+        keys.forEach(function (k) { if (SHP_FLD.p[k] === send[k]) delete SHP_FLD.p[k]; }); shpFlStore(); if (cb) cb(true);
+      }, fail);
+    } catch (e) { fail(e); }
+  }
+  function shpFlPull() {
+    if (Date.now() - SHP_FLAT < 120000) return; var f = shpFlCloud(); if (!f) return; SHP_FLAT = Date.now();
+    try {
+      f.fb.fs.getDoc(f.fb.fs.doc(f.db, 'content', 'factlinks')).then(function (snap) {
+        var d = snap && snap.exists() ? snap.data() : null, m = {}, src = d && d.m && typeof d.m === 'object' ? d.m : {};
+        Object.keys(src).forEach(function (k) { if (Array.isArray(src[k])) m[k] = src[k].map(String); });
+        Object.keys(SHP_FLD.p).forEach(function (k) { m[k] = SHP_FLD.p[k]; });
+        var ch = JSON.stringify(m) !== JSON.stringify(SHP_FLD.m); SHP_FLD.m = m; shpFlStore(); if (ch) shpFlRefresh(); shpFlPush();
+      }, function () { SHP_FLAT = Date.now() - 100000; });
+    } catch (e) {}
+  }
+  function shpFlSet(sec, ids) {
+    var k = shpFxNorm(sec); if (!k || !shpFlCan()) return;
+    SHP_FLD.m[k] = ids.slice(); SHP_FLD.p[k] = SHP_FLD.m[k]; shpFlStore(); shpFlRefresh();
+    shpFlPush(function (ok, why) { try { txToast(ok ? (ids.length ? 'Статья привязана к «' + esc(sec) + '» для всех записок' : 'Привязка убрана') : 'Сохранено только на этом устройстве: ' + why + '. Отправлю позже'); } catch (e) {} });
+  }
+  /* похожие имена: «Тасиги» и «Ташиги» считаются одним звучанием */
+  function shpFlSound(s) { return shpFxNorm(s).replace(/[шщ]/g, 'с').replace(/дж/g, 'ж').replace(/й/g, 'и').replace(/э/g, 'е').replace(/(.)\1/g, '$1'); }
+  function shpFlSim(a, b) {
+    if (a === b) return 1; if (a.length < 2 || b.length < 2) return 0;
+    var g = {}, hit = 0, i; for (i = 0; i < a.length - 1; i++) { var p = a.substr(i, 2); g[p] = (g[p] || 0) + 1; }
+    for (i = 0; i < b.length - 1; i++) { var q = b.substr(i, 2); if (g[q] > 0) { g[q]--; hit++; } }
+    return 2 * hit / (a.length + b.length - 2);
+  }
+  function shpFlLike(sec) {
+    var toks = shpFlTokens(sec).map(shpFlSound);
+    return shpFlChars().map(function (r) {
+      var best = 0; [r.name, r.nickname].filter(Boolean).forEach(function (n) {
+        var full = shpFlSound(n), parts = [full].concat(full.split(' ').filter(function (w) { return w.length >= 3; }));
+        toks.forEach(function (t) { [t].concat(t.split(' ').filter(function (w) { return w.length >= 3; })).forEach(function (tw) { parts.forEach(function (w) { var v = shpFlSim(tw, w); if (v > best) best = v; }); }); });
+      });
+      return { r: r, v: best };
+    }).filter(function (o) { return o.v >= .45; }).sort(function (a, b) { return b.v - a.v; }).slice(0, 6).map(function (o) { return o.r; });
+  }
+  function shpFlOpen(sec) {
+    if (!shpFlCan()) return;
+    var old = document.getElementById('wkFxPick'); if (old) old.__close();
+    var multi = shpFlTokens(sec).length > 1, back = document.activeElement;
+    var ov = document.createElement('div'); ov.id = 'wkFxPick'; ov.className = 'wk-fxp'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', 'Статья для записок');
+    ov.innerHTML = '<div class="wk-fxp-box"><div class="wk-fxp-h"><b>Статья для «' + esc(sec) + '»</b><button type="button" data-fxp="x" aria-label="Закрыть">×</button></div><div class="wk-fxp-cur"></div><input type="search" class="wk-fxp-q" placeholder="Имя или прозвище персонажа" aria-label="Поиск статьи"><div class="wk-fxp-l"></div><p class="wk-fxp-n">Ссылка появится у всех записок этого персонажа, в том числе будущих, и у всех игроков. Закрытые спойлерами статьи игроки не увидят.</p></div>';
+    var q = ov.querySelector('.wk-fxp-q'), list = ov.querySelector('.wk-fxp-l'), cur = ov.querySelector('.wk-fxp-cur');
+    function ids() { return (shpFlGet(sec) || shpFactLinks(sec).map(function (r) { return String(r.id); })).slice(); }
+    function row(r) {
+      var on = ids().indexOf(String(r.id)) >= 0, pic = /^https?:\/\//i.test(String(r.person_link || '')) ? '<img src="' + esc(r.person_link) + '" alt="" loading="lazy">' : '<i></i>';
+      return '<button type="button" class="wk-fxp-r' + (on ? ' on' : '') + '" data-fxp="pick" data-id="' + esc(r.id) + '">' + pic + '<span><b>' + esc(r.name) + '</b>' + (r.nickname ? '<small>' + esc(r.nickname) + '</small>' : '') + '</span>' + (on ? '<em>✓</em>' : '') + '</button>';
+    }
+    function draw() {
+      var have = shpFlRecs(sec);
+      cur.innerHTML = have.length ? have.map(function (r) { return '<button type="button" data-fxp="rm" data-id="' + esc(r.id) + '" title="Убрать">' + esc(shpFxOpen(r) ? r.name : 'Скрытая статья') + ' ×</button>'; }).join('') : '';
+      var s = shpFxNorm(q.value), l;
+      if (s) { l = shpFlChars().filter(shpFxOpen).filter(function (r) { return (shpFxNorm(r.name) + ' | ' + shpFxNorm(r.nickname)).indexOf(s) >= 0; }); if (!l.length) l = shpFlLike(q.value).filter(shpFxOpen); l = l.slice(0, 40); list.innerHTML = l.length ? l.map(row).join('') : '<p>Такой статьи нет среди открытых по твоему прогрессу.</p>'; }
+      else { l = shpFlLike(sec).filter(shpFxOpen); list.innerHTML = l.length ? '<p>Похожие по имени:</p>' + l.map(row).join('') : '<p>Начни вводить имя персонажа.</p>'; }
+    }
+    function key(e) { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); } else if (e.key === 'Enter' && e.target === q) { var f = list.querySelector('.wk-fxp-r'); if (f) { e.preventDefault(); f.click(); } } }
+    function close() { ov.remove(); window.removeEventListener('keydown', key, true); window.removeEventListener('hashchange', close); window.removeEventListener('popstate', close); try { if (back && back.isConnected) back.focus({ preventScroll: true }); } catch (e) {} }
+    ov.__close = close;
+    ov.addEventListener('click', function (e) {
+      e.stopPropagation(); if (e.target === ov) { close(); return; }
+      var b = e.target.closest('[data-fxp]'); if (!b) return; var a = b.getAttribute('data-fxp'), id = b.getAttribute('data-id'), l = ids();
+      if (a === 'x') { close(); return; }
+      if (a === 'rm') { shpFlSet(sec, l.filter(function (v) { return v !== id; })); draw(); return; }
+      if (multi) l = l.indexOf(id) >= 0 ? l.filter(function (v) { return v !== id; }) : l.concat([id]).slice(-4); else l = (shpFlGet(sec) || []).indexOf(id) >= 0 ? [] : [id];
+      shpFlSet(sec, l); if (multi) draw(); else close();
+    });
+    q.addEventListener('input', draw);
+    window.addEventListener('keydown', key, true); window.addEventListener('hashchange', close); window.addEventListener('popstate', close);
+    document.body.appendChild(ov); draw();
+    try { if (!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches)) q.focus({ preventScroll: true }); } catch (e) {}
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-factlink],[data-factnolink]'); if (!b) return; e.preventDefault();
+    if (b.hasAttribute('data-factnolink')) { SHP_FLONLY = !SHP_FLONLY; shpFlFilter(); return; }
+    shpFlOpen(b.getAttribute('data-factlink'));
+  });
   var SHP_FACTS = (function () {
     var out = [], seen = {};
     try {
@@ -48420,20 +48670,22 @@ document.addEventListener('change',function(e) {
     h += '<h4 class="wk-shp-h4">Последние находки</h4><div class="wk-nt-g">' + last.map(function (f) { return '<article class="wk-nt-n"><b>' + esc(f.c) + '</b><p>' + esc(f.t) + '</p>' + shpFactLinkHTML(f.c0 || f.c) + '</article>'; }).join('') + '</div>';
     var by = {}; vis.forEach(function (f) { (by[f.c] = by[f.c] || []).push(f); });
     var names = Object.keys(by).sort(function (a, b) { return a.localeCompare(b, 'ru'); });
-    h += '<h4 class="wk-shp-h4">По персонажам <small class="wk-shp-achc">' + names.length + '</small></h4><input type="search" class="wk-sh-sel" data-factq="1" placeholder="Найти персонажа или слово" aria-label="Поиск по запискам"><div class="wk-ft-l">' + names.map(function (nm) {
+    var ed = shpFlCan(), nNo = ed ? names.filter(function (nm) { return !shpFactLinks(nm).length; }).length : 0; if (!nNo) SHP_FLONLY = false;
+    h += '<div class="wk-ft-box"><h4 class="wk-shp-h4">По персонажам <small class="wk-shp-achc">' + names.length + '</small></h4><div class="wk-ft-bar"><input type="search" class="wk-sh-sel" data-factq="1" placeholder="Найти персонажа или слово" aria-label="Поиск по запискам">' + (ed && nNo ? '<button type="button" class="wk-fx-add' + (SHP_FLONLY ? ' on' : '') + '" data-factnolink="1" aria-pressed="' + SHP_FLONLY + '">Без статьи · ' + nNo + '</button>' : '') + '</div><div class="wk-ft-l">' + names.map(function (nm) {
       var l = by[nm].slice().sort(function (a, b) { return (a.ch || 1e9) - (b.ch || 1e9); });
-      return '<details class="wk-nt" data-fq="' + esc((nm + ' ' + l.map(function (f) { return f.t; }).join(' ')).toLowerCase()) + '"><summary><b>' + esc(nm) + '</b><span>' + l.length + '</span></summary>' + shpFactLinkHTML(nm) + l.map(function (f) { return '<article class="wk-nt-n"><p>' + esc(f.t) + '</p></article>'; }).join('') + '</details>';
-    }).join('') + '</div>';
+      return '<details class="wk-nt"' + (SHP_FLONLY && shpFactLinks(nm).length ? ' style="display:none"' : '') + ' data-fq="' + esc((nm + ' ' + l.map(function (f) { return f.t; }).join(' ')).toLowerCase()) + '"><summary><b>' + esc(nm) + '</b><span>' + l.length + '</span></summary>' + shpFactLinkHTML(nm) + l.map(function (f) { return '<article class="wk-nt-n"><p>' + esc(f.t) + '</p></article>'; }).join('') + '</details>';
+    }).join('') + '</div></div>';
     return h;
   }
   document.addEventListener('input', function (e) {
     var t = e.target; if (!t || !t.getAttribute || !t.getAttribute('data-factq')) return;
-    var q = String(t.value || '').trim().toLowerCase(), box = t.parentNode;
-    [].forEach.call(box.querySelectorAll('details[data-fq]'), function (d) { d.style.display = !q || d.getAttribute('data-fq').indexOf(q) >= 0 ? '' : 'none'; if (q && d.style.display === '') d.open = true; else if (!q) d.open = false; });
+    var q = String(t.value || '').trim().toLowerCase(), box = t.closest('.wk-ft-box') || t.parentNode;
+    [].forEach.call(box.querySelectorAll('details[data-fq]'), function (d) { var sl = d.querySelector('.wk-fx-slot'), only = SHP_FLONLY && sl && shpFactLinks(sl.getAttribute('data-fxs')).length; d.style.display = (!q || d.getAttribute('data-fq').indexOf(q) >= 0) && !only ? '' : 'none'; if (q && d.style.display === '') d.open = true; else if (!q) d.open = false; });
   });
   /* непрочитанные записки: красная точка на вкладке «Записки», её разделе и на «Верфи», пока вкладку не откроют */
   function shpNtUnread(sh) { return Math.max(0, +sh.nnew || 0); }
   function shpNtHTML(st, sh, v) {
+    setTimeout(shpFlPull, 0);
     if (!SHP_ADM && shpNtUnread(sh) > 0) { sh.nnew = 0; setTimeout(function () { try { save(st); shpRepaint(); } catch (e) {} }, 0); }
     var m = shpNotes(sh), all = shpNoteAll(), n = shpNoteCount(sh), chd = SHP_NCH.filter(function (c) { return c.p.every(function (p, i) { return m[c.id + (i + 1)]; }); }).length;
     var head = '<p class="wk-sh-hint wk-shp-intro">Записки находят в плаваниях, бутылках и экспедициях. Истории из нескольких частей открываются по порядку, а когда соберёшь последнюю часть, придёт награда. Часть записок попадается только в определённых водах.</p>' +
@@ -50044,7 +50296,8 @@ document.addEventListener('change',function(e) {
     var mineN = vs.filter(function (q) { return q.mine; }).length, otherN = vs.length - mineN;
     var stats = '<div class="wk-mp-stats"><div class="wk-mp-st"><small>Твоих кораблей в море</small><b>' + mineN + '</b></div><div class="wk-mp-st"><small>Кораблей других участников</small><b>' + (me ? otherN : '—') + '</b></div><div class="wk-mp-st"><small>Твои рейсы</small><b>' + shpCntV(sh, 'voy') + '</b></div><div class="wk-mp-st"><small>Пройдено миль за всё время</small><b>' + shpCntV(sh, 'miles') + '</b></div></div>';
     var svg = '<svg class="wk-mp-svg" viewBox="' + (SHP_MAPSC === 'gl' ? '0 0 900 520' : '0 190 588 330') + '" role="img" aria-label="Карта плаваний" xmlns="http://www.w3.org/2000/svg">' + shpMapBase() + trails + trailsM + marks + marksM + '</svg>';
-    var legend = '<p class="wk-sh-hint">Золотые корабли — твои, синие — других участников. Первую половину рейса корабль плывёт к цели, вторую возвращается домой по тому же маршруту. Расстояния (в одну сторону) в морских милях: ' + Object.keys(SHP_MAPR).map(function (k) { return SHP_MAPR[k].n.toLowerCase() + ' — ' + SHP_DIST[k]; }).join(', ') + '. Положение считается по времени рейса, карта обновляется каждую секунду' + (me ? '. Данные других участников подгружаются из облака (раз в пару минут).' : '. Войди под своим именем, чтобы видеть корабли других участников.') + ' <button type="button" class="wk-tx-btn" data-tx="shipmapref">Обновить</button></p>';
+    var legend = '<p class="wk-sh-hint">Золотые корабли — твои, синие — других участников. Первую половину рейса корабль плывёт к цели, вторую возвращается домой по тому же маршруту. Расстояния (в одну сторону) в морских милях: ' + Object.keys(SHP_MAPR).map(function (k) { return SHP_MAPR[k].n.toLowerCase() + ' — ' + SHP_DIST[k]; }).join(', ') + '. Положение считается по времени рейса, карта обновляется каждую секунду' + (me ? '. Данные других участников подгружаются из облака (раз в пару минут).' : '. Войди под своим именем, чтобы видеть корабли других участников.') + '</p>';
+    var refBtn = '<div class="wk-mp-ref"><button type="button" class="wk-tx-btn" data-tx="shipmapref">Обновить карту</button></div>';
     /* таблица мореходов */
     var tb = '';
     if (me && DK.frData) {
@@ -50054,7 +50307,7 @@ document.addEventListener('change',function(e) {
       tb = '<h3 class="wk-dk-h">Мореходы по пройденным милям</h3><p class="wk-sh-hint">Мили считаются с обновления карты: каждый завершённый рейс добавляет длину маршрута. Рейсы считаются за всё время.</p><table class="wk-mp-tb"><thead><tr><th>#</th><th>Участник</th><th>Рейсов</th><th>Миль</th></tr></thead><tbody>' + pl.slice(0, 15).map(function (x, i) { return '<tr' + (x.mine ? ' class="me"' : '') + '><td>' + (i + 1) + '</td><td>' + (x.mine ? 'ты' : esc(accName(x.lg))) + '</td><td>' + shpCntV(x.s, 'voy') + '</td><td>' + shpCntV(x.s, 'miles') + '</td></tr>'; }).join('') + '</tbody></table>';
     }
     setTimeout(shpMapTick, 0);
-    return '<div class="wk-shp-map">' + stats + svg + legend + (vs.length ? '<h3 class="wk-dk-h">Кто сейчас в плавании</h3><div class="wk-mp-rows">' + rows + '</div>' : '<p class="wk-sh-hint wk-shp-intro">Сейчас никто не в плавании. Отправь корабль во вкладке «Плавания», и он появится на карте.</p>') + tb + '</div>';
+    return '<div class="wk-shp-map">' + stats + svg + refBtn + legend + (vs.length ? '<h3 class="wk-dk-h">Кто сейчас в плавании</h3><div class="wk-mp-rows">' + rows + '</div>' : '<p class="wk-sh-hint wk-shp-intro">Сейчас никто не в плавании. Отправь корабль во вкладке «Плавания», и он появится на карте.</p>') + tb + '</div>';
   }
   /* подписи кораблей: сверху, а если мешают другим подписям или кораблям, то снизу; если места нет нигде, подпись скрыта (имя остаётся во всплывающей подсказке) */
   function shpMapLabels(root, pos) {
@@ -51544,7 +51797,7 @@ document.addEventListener('change',function(e) {
         '<button type="button" class="wk-tx-btn pri" data-tx="shipmklist">Выставить на 3 дня</button></div><p class="wk-shp-mkh" id="wkShpMkHint">' + shpMkHint(m0, +q0 || 0, +p0 || 0) + '</p>' +
         (lots.length ? '<div class="wk-shp-mkl">' + lots.map(function (l) {
           var k = shpMkKey(l.key), mine = l.seller === me, can = (st.belli || 0) >= l.price;
-          return '<article class="wk-shp-mkr' + (mine ? ' mine' : '') + '">' + shpIco(k.m, 40) + '<div class="wk-shp-mkr-b"><b>' + SHP_MAT[k.m].n + ' ×' + k.q + '</b><small>продавец: ' + esc(mine ? 'ты' : (l.sellerName || accName(l.seller))) + ' · осталось ' + leftTxt(l.expiresMs - Date.now()) + ' · ' + fmtB(Math.round(l.price / k.q)) + ' за штуку</small></div><span class="wk-shp-mkr-p">' + fmtB(l.price) + '</span>' +
+          return '<article class="wk-shp-mkr' + (mine ? ' mine' : '') + '">' + shpIco(k.m, 56) + '<div class="wk-shp-mkr-b"><b>' + SHP_MAT[k.m].n + ' ×' + k.q + '</b><small>продавец: ' + esc(mine ? 'ты' : (l.sellerName || accName(l.seller))) + ' · осталось ' + leftTxt(l.expiresMs - Date.now()) + ' · ' + fmtB(Math.round(l.price / k.q)) + ' за штуку</small></div><span class="wk-shp-mkr-p">' + fmtB(l.price) + '</span>' +
             (mine ? '<button type="button" class="wk-tx-btn" data-tx="shipmkcancel" data-id="' + esc(l.id) + '">Снять</button>' : '<button type="button" class="wk-tx-btn' + (can ? ' pri' : '') + '" data-tx="shipmkbuy" data-id="' + esc(l.id) + '"' + (can ? '' : ' disabled') + '>' + (can ? 'Купить' : 'Не хватает белли') + '</button>') + '</article>';
         }).join('') + '</div>' : '<p class="wk-dk-fnote">' + (MK.at ? 'Лотов с материалами пока нет.' : 'Загружаю лоты…') + '</p>');
     }
@@ -59352,6 +59605,65 @@ body:has(#wkShpVisit .wk-shp-ov-w) .wk-tx-toast{z-index:100001!important}
 .wk-shp-dect>button.on{background:color-mix(in srgb,var(--accent,var(--c-accent,#e3b341)) 22%,transparent);color:var(--accent,var(--c-accent,#e3b341))}
 .wk-shp-dempty{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:12px 0}
 @media (max-width:640px){.wk-shp-tune .wk-shp-dmv{display:grid;grid-template-columns:1fr 1fr;column-gap:12px}.wk-shp-tune .wk-shp-dmv>b,.wk-shp-tune .wk-shp-dmv>:not(.wk-shp-sl){grid-column:1/-1}.wk-shp-tune .wk-shp-sl{margin:2px 0;gap:2px 6px;grid-template-columns:1fr auto}.wk-shp-tune .wk-shp-sl>span{grid-column:1;grid-row:1;font-size:12px;line-height:1.25}.wk-shp-tune .wk-shp-sl>output{grid-column:2;grid-row:1}.wk-shp-tune .wk-shp-sl>input{grid-column:1/-1;grid-row:2}.wk-shp-tune .wk-shp-lay-h .wk-tx-btn{min-height:32px}.wk-shp-tune .wk-shp-fine>.wk-shp-sl{display:inline-grid;vertical-align:top;width:calc(50% - 8px);margin:2px 4px}.wk-shp-tune .wk-shp-fine>.wk-shp-sl:only-of-type{width:calc(100% - 8px)}}
+</style>
+<style id="wk-v1040-dnd">
+.wk-shp .wk-shp-zoom.wk-shp-dnd,.wk-shp-zoom.wk-shp-dnd{cursor:default}
+.wk-shp-zoom.wk-shp-dnd::after{content:none}
+.wk-shp-dnd [data-dsw]{cursor:grab}
+.wk-shp-dnd [data-dsw].wk-ds-on{filter:drop-shadow(0 0 3px var(--accent,var(--c-accent,#e3b341)))}
+@media (hover:hover){.wk-shp-dnd [data-dsw]:hover{filter:drop-shadow(0 0 3px var(--accent,var(--c-accent,#e3b341)))}}
+html.wk-ds-drag,html.wk-ds-drag .wk-shp-dnd *{cursor:grabbing!important;-webkit-user-select:none;user-select:none}
+.wk-shp-dnd{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+</style>
+<style id="wk-v1041-qbuy">
+.wk-shp-qb{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px}
+.wk-shp-qb>small{flex:1 0 100%}
+.wk-shp-qb button.wk-shp-qbi{position:relative;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:3px 12px 3px 8px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent,var(--c-accent,#e3b341)) 55%,transparent);background:color-mix(in srgb,var(--accent,var(--c-accent,#e3b341)) 12%,transparent);color:#f1f5f9;font:700 13px/1.2 inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
+.wk-shp-qb .wk-shp-qbi .p{color:var(--accent,var(--c-accent,#e3b341));display:inline-flex;align-items:center;gap:2px}
+.wk-shp-qb .wk-shp-qbi em{font-style:normal;font-size:11px;color:#4ade80}
+.wk-shp-qb button.wk-shp-qbi.all{background:var(--accent,var(--c-accent,#e3b341));border-color:transparent;color:#14100a;padding-left:14px}
+.wk-shp-qb .wk-shp-qbi.all .p{color:#14100a}
+.wk-shp-qb button.wk-shp-qbi:disabled{opacity:.45;cursor:default}
+.wk-shp-qbn{margin-top:8px}
+@media (max-width:640px){.wk-shp-qb button.wk-shp-qbi{min-height:40px}.wk-shp-qb button.wk-shp-qbi.all{flex:1 0 100%;justify-content:center}}
+</style>
+<style id="wk-v1042-factlinks">
+.wk-fx-slot:empty{display:none}
+.wk-fx-add{display:inline-flex;align-items:center;min-height:30px;margin-top:4px;padding:3px 12px;border-radius:999px;border:1px dashed color-mix(in srgb,var(--accent,var(--c-accent,#e3b341)) 60%,transparent);background:transparent;color:var(--accent,var(--c-accent,#e3b341));font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+.wk-fx-add.on{border-style:solid;background:var(--accent,var(--c-accent,#e3b341));color:#14100a}
+.wk-fx-ed{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;margin-left:2px;padding:0;border-radius:999px;border:1px solid rgba(148,163,184,.3);background:transparent;color:inherit;font-size:13px;font-style:normal;cursor:pointer;vertical-align:middle}
+.wk-fx-ed:hover,.wk-fx-add:hover{border-color:var(--accent,var(--c-accent,#e3b341))}
+details.wk-nt>.wk-fx-slot>.wk-fx-add{margin:0 14px 10px}
+.wk-ft-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.wk-ft-bar>input{flex:1 1 220px;min-width:0;margin:0}
+.wk-ft-bar>.wk-fx-add{margin:0;min-height:36px}
+.wk-fxp{position:fixed;inset:0;z-index:2147481000;display:flex;align-items:flex-start;justify-content:center;padding:max(8vh,calc(env(safe-area-inset-top,0px) + 16px)) 12px 12px;background:rgba(2,6,14,.7)}
+.wk-fxp-box{width:min(440px,100%);max-height:min(600px,80vh);display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;border:1px solid rgba(148,163,184,.3);background:#0d1424;color:#e2e8f0;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.wk-fxp-h{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.wk-fxp-h button{width:34px;height:34px;flex:none;border-radius:999px;border:1px solid rgba(148,163,184,.3);background:transparent;color:inherit;font-size:20px;line-height:1;cursor:pointer}
+.wk-fxp-cur{display:flex;gap:6px;flex-wrap:wrap}.wk-fxp-cur:empty{display:none}
+.wk-fxp-cur button{min-height:30px;padding:3px 12px;border-radius:999px;border:0;background:var(--accent,var(--c-accent,#e3b341));color:#14100a;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.wk-fxp-q{width:100%;box-sizing:border-box;min-height:40px;padding:8px 12px;border-radius:10px;border:1px solid rgba(148,163,184,.35);background:#070c17;color:inherit;font:inherit;font-size:16px}
+.wk-fxp-l{flex:1 1 auto;min-height:80px;overflow:auto;display:flex;flex-direction:column;gap:4px;overscroll-behavior:contain}
+.wk-fxp-l p,.wk-fxp-n{margin:0;font-size:12.5px;color:#8b97ab}
+.wk-fxp-l button.wk-fxp-r{flex:none;display:flex;align-items:center;gap:10px;width:100%;padding:5px 8px;border-radius:10px;border:1px solid transparent;background:rgba(148,163,184,.08);color:inherit;font:inherit;text-align:left;cursor:pointer}
+.wk-fxp-r:hover,.wk-fxp-r.on{border-color:var(--accent,var(--c-accent,#e3b341))!important}
+.wk-fxp-r img,.wk-fxp-r i{width:34px;height:34px;flex:none;border-radius:8px;object-fit:cover;object-position:50% 20%;background:rgba(148,163,184,.15)}
+.wk-fxp-r span{flex:1;min-width:0;display:flex;flex-direction:column}.wk-fxp-r small{color:#8b97ab;font-size:12px}
+.wk-fxp-r em{font-style:normal;color:var(--accent,var(--c-accent,#e3b341));font-weight:800}
+</style>
+<style id="wk-v1043-mapref">.wk-mp-ref{display:flex;justify-content:flex-end;margin:8px 0}.wk-mp-ref>button{margin:0}</style>
+<style id="wk-v1044-pets">
+.wk-shp-pgrid{grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr))!important}
+.wk-shp-psp .wk-shp-its{gap:8px!important}
+.wk-shp-psp .wk-shp-it{padding:6px 6px 8px!important}
+.wk-shp-psp .wk-shp-it .wk-shp-petpic{max-height:170px}
+.wk-shp-psp .wk-shp-it b{font-size:13px!important}.wk-shp-psp .wk-shp-it small{font-size:11px!important;line-height:1.25!important}.wk-shp-psp .wk-shp-it em{font-size:9.5px!important}
+.wk-shp .wk-shp-petnow .wk-shp-mini{width:104px;flex:0 0 104px}
+.wk-shp .wk-shp-dup .wk-shp-mini{width:96px;flex:0 0 96px}
+.wk-shp-petmv .wk-shp-it .wk-shp-petpic{max-height:96px}
+@media (min-width:761px){.wk-shp-psp .wk-shp-its:has(>:nth-child(5)){grid-template-columns:repeat(5,minmax(0,1fr))!important}}
+@media (max-width:760px){.wk-shp-psp .wk-shp-its{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 </style>
 </body></html>
 
