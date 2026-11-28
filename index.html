@@ -1,6 +1,6 @@
-<!-- One Piece Wiki update v1060: triple shipyard merchant refresh price -->
+<!-- One Piece Wiki update v1064: synchronized personal fleet map colors -->
 <!doctype html>
-<!--wk-ver:28.11.2026 · 1061-->
+<!--wk-ver:28.11.2026 · 1064-->
 <script id="wk-v616-pre">try{var K='wkExtrasKeepV616',old={},ca=[],ma={},cc=null,cca=[],cma={};try{old=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}try{ca=JSON.parse(localStorage.getItem('onePieceWikiCustomAchievementsV1')||'[]')}catch(e){}try{ma=JSON.parse(localStorage.getItem('onePieceWikiMedalArtV1')||'{}')}catch(e){}try{cc=JSON.parse(localStorage.getItem('wkCloudContentV1')||'null');if(cc&&cc.data){cca=Array.isArray(cc.data.customAchievements)?cc.data.customAchievements:[];cma=cc.data.medalArt&&typeof cc.data.medalArt==='object'?cc.data.medalArt:{}}}catch(e){}cc=null;var oc=Array.isArray(old.ca)?old.ca:[],om=old.ma&&typeof old.ma==='object'?old.ma:{},ids={},cids={};oc.forEach(function(a){if(a&&a.id!=null)ids[a.id]=1});cca.forEach(function(a){if(a&&a.id!=null)cids[a.id]=1});(Array.isArray(ca)?ca:[]).forEach(function(a){if(a&&a.id!=null&&!ids[a.id]&&!cids[a.id]){oc.push(a);ids[a.id]=1}});if(ma&&typeof ma==='object')Object.keys(ma).forEach(function(k){if(!(k in om)&&!(k in cma)&&ma[k]!=null&&ma[k]!=='')om[k]=ma[k]});if(oc.length||Object.keys(om).length)localStorage.setItem(K,JSON.stringify({ca:oc,ma:om}));else localStorage.removeItem(K)}catch(e){}</script>
 <html data-wiki-portable-baked="true" data-wiki-portable-id="2026-11-11T03:23:00.970Z" lang="ru" style="--reward-rank-first: #ffda75; --reward-rank-second: #d9d9d9; --reward-rank-third: #ffd285; --reward-rank-other: #4f4860; --wiki-progress-manga: #efc66b; --wiki-progress-anime: #60d9ff; --wk-title-font: 'Days One'; --wk-title-fw: 400; --wk-wp-tpl: url(&quot;./assets/webp/ui/wanted_template.webp&quot;); --wk-fg-manga: #0b0f17; --wk-fg-anime: #0b0f17; --wk-accent: #a78bfa; --wk-accent-soft: #d3c5fd; --fruit-type-param-color: #bb9eff !important; --fruit-type-param-rgb: 187, 158, 255 !important; --fruit-type-logia-color: #f967ae !important; --fruit-type-logia-rgb: 249, 103, 174 !important; --fruit-type-zoan-color: #65f6b7 !important; --fruit-type-zoan-rgb: 101, 246, 183 !important; --wk-tz-card: 1.15;" class="wk-sc-off wk-hz-c wk-hz-f wk-hz-u wk-hz-v wk-hz-h wk-calm wk-tfx-off wk-tfx-still wk-gpu wk-hdr-min" data-wk-role="admin" data-wk-title-font="g:Days One|"><head>
 <script id="wk-v596-early">try{var q=new URLSearchParams(location.search);if(q.get("tab")==="favorites"&&/^[a-z]+$/.test(q.get("cab")||"")){var cb=q.get("cab");localStorage.setItem("onePieceWikiCabinSubtabV3",cb==="overview"?"favorites":cb);localStorage.setItem("onePieceWikiCabinExtraTabV1",/^(watchgrid|timeline|deck|tops|stats|edits|quiz|atlas|help)$/.test(cb)?cb:"");}}catch(e){}</script>
@@ -3720,7 +3720,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "28.11.2026 · 1061";
+const WIKI_VERSION = "28.11.2026 · 1064";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -21170,7 +21170,7 @@ img.wk-fade{opacity:0;transition:opacity .45s ease}img.wk-fade.wk-loaded{opacity
   /* Что хранится в tops/{uid}.deck. Это же видят другие участники в «Колоде друга». */
   function slimDeck(d) {
   var slim = { packs: d.packs || 0, pity: d.pity || 0, last: d.last || 0, open: d.open || null, owned: d.owned, tr: d.tr || {}, got: d.got || {}, show: d.show || [], showCap: d.showCap || 3, cos: d.cos || {}, frame: d.frame || '', bg: d.bg || '', alb: d.alb || '', back: d.back || '', hold: d.hold || {}, ev: d.ev || [], belli: d.belli || 0, ach: d.ach || {}, achB: d.achB || {}, daily: d.daily || null, shield: d.shield || 0, bless: d.bless || 0, pig: d.pig || null, ttl: d.ttl || null, inc: d.inc || {}, incD: d.incD || {}, incLog: d.incLog || [], spent: d.spent || 0, bought: d.bought || 0, crafted: d.crafted || 0, sold: d.sold || 0, qpay: d.qpay || 0, want: d.want || [], pages: d.pages || [], rev: d.rev || 0 };
-    ['pick', 'achOpen', 'feedSeen', 'maxBuy', 'mk', 'sld', 'spd', 'vBoost', 'vpity', 'lk', 'dl', 'pigX', 'pigE', 'auto', 'autoN', 'autoOff', 'autoLog','autoSeen', 'orn', 'bgt', 'avf', 'nkc', 'qsw', 'prof', 'ship', 'exam', 'crf'].forEach(function (k) { if (d[k] !== undefined && d[k] !== null) slim[k] = d[k]; });
+    ['pick', 'achOpen', 'feedSeen', 'maxBuy', 'mk', 'sld', 'spd', 'vBoost', 'vpity', 'lk', 'dl', 'pigX', 'pigE', 'auto', 'autoN', 'autoOff', 'autoLog','autoSeen', 'orn', 'bgt', 'avf', 'nkc', 'qsw', 'prof', 'ship', 'exam', 'crf', 'mapColor'].forEach(function (k) { if (d[k] !== undefined && d[k] !== null) slim[k] = d[k]; });
     return slim;
   }
   /* Размер документа tops/{uid}: лимит Firestore 1 МиБ. В нём лежат текущая колода, две её копии (deckBest, deckPrev) и копия корабля. Кириллица в UTF-8 занимает 2 байта. */
@@ -38327,9 +38327,9 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     return cleanSH(v);
   }
   /* ===== Колода в облаке: tops/{uid}.deck. Правило одно: пишем только поверх той версии, которую видели; иначе действие отклоняется. ===== */
-  var CLOUD_KEYS = ['packs', 'pity', 'vpity', 'last', 'open', 'owned', 'tr', 'got', 'show', 'showCap', 'cos', 'frame', 'bg', 'alb', 'back', 'orn', 'hold', 'ev', 'belli', 'ach', 'achB', 'daily', 'shield', 'bless', 'pig', 'ttl', 'inc', 'incD', 'incLog', 'spent', 'bought', 'crafted', 'sold', 'qpay', 'want', 'pages', 'pick', 'achOpen', 'feedSeen', 'maxBuy', 'mk', 'sld', 'spd', 'vBoost', 'lk', 'dl', 'pigX', 'pigE', 'avf', 'nkc', 'qsw', 'prof', 'auto', 'autoN', 'autoOff', 'autoLog','autoSeen','bgt','ship','exam','crf'];
+  var CLOUD_KEYS = ['packs', 'pity', 'vpity', 'last', 'open', 'owned', 'tr', 'got', 'show', 'showCap', 'cos', 'frame', 'bg', 'alb', 'back', 'orn', 'hold', 'ev', 'belli', 'ach', 'achB', 'daily', 'shield', 'bless', 'pig', 'ttl', 'inc', 'incD', 'incLog', 'spent', 'bought', 'crafted', 'sold', 'qpay', 'want', 'pages', 'pick', 'achOpen', 'feedSeen', 'maxBuy', 'mk', 'sld', 'spd', 'vBoost', 'lk', 'dl', 'pigX', 'pigE', 'avf', 'nkc', 'qsw', 'prof', 'auto', 'autoN', 'autoOff', 'autoLog','autoSeen','bgt','ship','exam','crf','mapColor'];
   /* v671: оформление (рубашка, орнамент, фон...) и любые неотправленные изменения не должны пропадать при перезагрузке или конфликте */
-  var COSM = ['back', 'orn', 'bgt', 'bg', 'frame', 'alb', 'avf', 'nkc'], PEND_K = 'wkDeckPendV1';
+  var COSM = ['back', 'orn', 'bgt', 'bg', 'frame', 'alb', 'avf', 'nkc', 'mapColor'], PEND_K = 'wkDeckPendV1';
   function cosmOf(o) { var r = {}; if (o && typeof o === 'object') COSM.forEach(function (k) { if (o[k] !== undefined) r[k] = o[k]; }); return r; }
   function cosmEq(a, b) { try { return JSON.stringify(a === undefined ? null : a) === JSON.stringify(b === undefined ? null : b); } catch (e) { return true; } }
   function pendSave() { try { var ml = myLogin(); if (!ml || !CLOUD.json || CLOUD.json.length > 1500000) return; localStorage.setItem(PEND_K, JSON.stringify({ l: ml, b: CLOUD.rev, j: CLOUD.json, c: CLOUD.bc || {} })); } catch (e) {} }
@@ -40450,7 +40450,9 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     var cl = window.__wkDeckCloud; if (!cl || !cl.watch || DK.frUnsub || DK.frWatchFail || !cl.enabled() || !myLogin()) return;
     try {
       DK.frUnsub = cl.watch(function (by) {
+        var mapChange1064=shpMapColorSig1064(DK.frData)!==shpMapColorSig1064(by);
         DK.frData = by; DK.frAt = Date.now(); var p = txPane(); try { shpFrHook(by); } catch (e) {}
+        if(mapChange1064 && document.querySelector('.wk-shp-map, .wk-bhm') && !SHP_ADM) try { shpRepaint(); } catch(e) {}
         if (p) {
           if (DK.tab === 'feed') { markFeed(); var b = p.querySelector('#wkTxBody'); if (b) b.innerHTML = feedHTML(); }
           var tb = p.querySelector('.wk-tx-tabs'); if (tb) swapEl(tb, tabsHTML()); repaintMeBar(p);
@@ -46228,6 +46230,14 @@ document.addEventListener('change',function(e) {
       var jump = SHP_ST !== 'shop'; SHP_SHOPT = b.getAttribute('data-v') || 'buy'; SHP_ST = 'shop'; SHP_SECL.ship = 'shop'; SHP_VB = ''; repaint();
       if (jump) setTimeout(function () { var el = document.querySelector('.wk-shp-shop'); if (el) el.scrollIntoView({ block: 'start' }); }, 0); return;
     }
+    if (a === 'shipmapcolor') {
+      var d1064=load(); if (!myLogin() || SHP_ADM || d1064.__fake || !CLOUD.ready || CLOUD.lock || window.__wkStale) return;
+      var auto1064=b.getAttribute('data-auto')==='1', box1064=b.closest('.wk-mapcol1064'), input1064=box1064 && box1064.querySelector('[data-mapcolor1064]');
+      var color1064=shpMapColorClean1064(b.getAttribute('data-c') || (input1064 && input1064.value));
+      if(!auto1064 && !color1064)return;
+      d1064.mapColor=auto1064?'':color1064;
+      save(d1064); repaint(); txToast('Цвет флота изменён. Синхронизация через облако.'); return;
+    }
     var ADM = SHP_ADM, st = ADM ? ADM.st : load(); if (!ADM && st.__fake) return;
     var sh0 = st.ship; if (sh0 && typeof sh0 === 'object' && sh0.name && (sh0.nt == null || sh0.nt === '')) sh0.nt = shpLegT(sh0);
     var sv = function (x) { if (!ADM) save(x); }, ba = function (pn, n) { if (!ADM) belliAnim(pn, n); };
@@ -46937,7 +46947,7 @@ document.addEventListener('change',function(e) {
   function shpNameSample836(id){return '<svg class="wk-shp-nsample836" viewBox="0 0 156 30" aria-hidden="true">'+shpName836('Морской волк',id,78,15,18,'#e3c781',{},'sample',146)+'</svg>';}
   /* v769: след за кормой. Хранится в раскладке: lay.wk (стиль) и lay.wkl (длина, %). */
   var SHP_WAKES = { foam: { n: 'Пена', c: '#e8f6ff' }, gold: { n: 'Золото', c: '#f1d27c' }, fire: { n: 'Огонь', c: '#ff8a1f' }, rain: { n: 'Радуга', c: '#c77dff' }, petal: { n: 'Лепестки', c: '#ffb3c7' }, bub: { n: 'Пузыри', c: '#9fd4ff' }, bio: { n: 'Биолюминесценция', c: '#40f4da' }, frost: { n: 'Ледяной след', c: '#b7ebff' }, bolt: { n: 'Молнии', c: '#a99aff' }, stars: { n: 'Звёздная пыль', c: '#eccaff' }, ink: { n: 'Чернильный след', c: '#60568e' }, vortex: { n: 'Водовороты', c: '#56c6ed' } };
-  function shpWakeCol(q) { return q && q.wk && SHP_WAKES[q.wk] ? SHP_WAKES[q.wk].c : q && q.mine ? '#ffd56b' : '#7fb2ff'; }
+  function shpWakeCol(q) { return q && q.wk && SHP_WAKES[q.wk] ? SHP_WAKES[q.wk].c : shpMapColorClean1064(q && q.mapColor) || (q && q.mine ? '#ffd56b' : '#7fb2ff'); }
   /* v830: individual layered wake, fading into water; one moving group, no new filters. */
   function shpWake(id, sx, wl, L, vx, u, mul) {
     if (!Object.prototype.hasOwnProperty.call(SHP_WAKES,id)) return '';
@@ -49754,7 +49764,7 @@ document.addEventListener('change',function(e) {
     if(x>640)return start+'C'+X(405)+' 266 '+X(470)+' 478 '+X(584)+' 478L'+X(640)+' 478Q'+X(Math.round((640+x)/2))+' '+Math.round((478+y)/2)+' '+X(x)+' '+y;
     return start+'Q'+X(Math.round((332+x)/2))+' '+Math.round((266+y)/2-15*sg)+' '+X(x)+' '+y;
   }
-  function shpBhMapVoys(sh) {
+  function shpBhMapVoys(sh, st) {
     var out = [], hid = 0, now = Date.now(), me = myLogin() || '';
     var add = function (s, owner, mine) {
       var vs = shpVoys(s);
@@ -49762,7 +49772,7 @@ document.addEventListener('change',function(e) {
         var vy = vs[t]; if (!vy || !vy.bh || !(+vy.t1 > now) || !(+vy.t1 > +vy.t0)) return;
         var b = shpBhById(String(vy.r).slice(3)); if (!b) return;
         if (!(shpBhOpen(b) || b.base) || !shpBhZv(sh, b)) { hid++; return; }
-        var c = shpC(s, +t); out.push({ wk: shpLayClean(c.lay).wk || '', owner: owner, mine: mine, name: c.name || shpTT(+t).n, tier: shpTT(+t).n, b: b, dz: !shpBhOpen(b), t0: +vy.t0, t1: +vy.t1, ins: !!vy.ins, p: +vy.bp || .5 });
+        var c = shpC(s, +t); out.push({ wk: shpLayClean(c.lay).wk || '', owner: owner, mine: mine, mapColor: shpMapColorFor1064(owner,mine,st), name: c.name || shpTT(+t).n, tier: shpTT(+t).n, shipTier: +t, b: b, dz: !shpBhOpen(b), t0: +vy.t0, t1: +vy.t1, ins: !!vy.ins, p: +vy.bp || .5 });
       });
     };
     add(sh, me, true);
@@ -49776,7 +49786,7 @@ document.addEventListener('change',function(e) {
   }
   /* v811 — original illustrated nautical charts. Geometry and game state remain unchanged. */
   function shpChartSea(p, boss) {
-    var f=shpF, c=boss?612:619, out='<defs><linearGradient id="'+p+'sea" x1="0" y1="0" x2=".85" y2="1"><stop stop-color="#225c72"/><stop offset=".48" stop-color="#17445a"/><stop offset="1" stop-color="#092b43"/></linearGradient><radialGradient id="'+p+'light"><stop stop-color="#6ab8b1" stop-opacity=".22"/><stop offset="1" stop-color="#6ab8b1" stop-opacity="0"/></radialGradient><linearGradient id="'+p+'ridge" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#653a37"/><stop offset=".27" stop-color="#b97153"/><stop offset=".5" stop-color="#d49b6b"/><stop offset=".75" stop-color="#98553e"/><stop offset="1" stop-color="#512c32"/></linearGradient><pattern id="'+p+'grid" width="60" height="52" patternUnits="userSpaceOnUse"><path d="M60 0H0V52" fill="none" stroke="#b9ded6" stroke-opacity=".065" stroke-width=".7"/><circle r="1" fill="#bed7d5" opacity=".22"/></pattern></defs><rect width="900" height="520" fill="url(#'+p+'sea)"/><ellipse cx="245" cy="220" rx="390" ry="290" fill="url(#'+p+'light)"/><ellipse cx="800" cy="100" rx="190" ry="250" fill="url(#'+p+'light)"/>';
+    var f=shpF, c=boss?612:619, out='<defs><linearGradient id="'+p+'sea" x1="0" y1="0" x2=".85" y2="1"><stop stop-color="#225c72"/><stop offset=".48" stop-color="#17445a"/><stop offset="1" stop-color="#092b43"/></linearGradient><radialGradient id="'+p+'light"><stop stop-color="#6ab8b1" stop-opacity=".22"/><stop offset="1" stop-color="#6ab8b1" stop-opacity="0"/></radialGradient><linearGradient id="'+p+'ridge" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#653a37"/><stop offset=".27" stop-color="#b97153"/><stop offset=".5" stop-color="#d49b6b"/><stop offset=".75" stop-color="#98553e"/><stop offset="1" stop-color="#512c32"/></linearGradient><linearGradient id="'+p+'shoreL" x1="1" y1="0" x2="0" y2="0"><stop stop-color="#d3f0ec" stop-opacity=".72"/><stop offset=".45" stop-color="#6ca8a8" stop-opacity=".28"/><stop offset="1" stop-color="#0c2738" stop-opacity="0"/></linearGradient><linearGradient id="'+p+'shoreR" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#d3f0ec" stop-opacity=".72"/><stop offset=".45" stop-color="#6ca8a8" stop-opacity=".28"/><stop offset="1" stop-color="#0c2738" stop-opacity="0"/></linearGradient><linearGradient id="'+p+'shadeL" x1="1" y1="0" x2="0" y2="0"><stop stop-color="#082233" stop-opacity=".42"/><stop offset="1" stop-color="#082233" stop-opacity="0"/></linearGradient><linearGradient id="'+p+'shadeR" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#082233" stop-opacity=".42"/><stop offset="1" stop-color="#082233" stop-opacity="0"/></linearGradient><pattern id="'+p+'grid" width="60" height="52" patternUnits="userSpaceOnUse"><path d="M60 0H0V52" fill="none" stroke="#b9ded6" stroke-opacity=".065" stroke-width=".7"/><circle r="1" fill="#bed7d5" opacity=".22"/></pattern></defs><rect width="900" height="520" fill="url(#'+p+'sea)"/><ellipse cx="245" cy="220" rx="390" ry="290" fill="url(#'+p+'light)"/><ellipse cx="800" cy="100" rx="190" ry="250" fill="url(#'+p+'light)"/>';
     var gl924=!boss&&SHP_MAPSC==='gl', painted921=boss||SHP_MAPSC==='near'||gl924;
     var painted961=boss||SHP_MAPSC==='near';
     if(painted961){
@@ -49804,8 +49814,9 @@ document.addEventListener('change',function(e) {
       }
       if(painted961){
         // v963: continuous painted continental strips, not stacked individual rocks.
-        var rw=under?98:94, land=under?'red_line.webp':'reverse_mountain.webp';
-        r+='<image data-map-ridge963="1" href="assets/webp/maps/v963/'+land+'" x="'+(cx-rw/2)+'" y="-10" width="'+rw+'" height="540" preserveAspectRatio="none" pointer-events="none"/>';
+        var rw=under?98:94, land=under?'red_line.webp':'reverse_mountain.webp', sx=(cx-rw/2), ex=(cx+rw/2), blend=20;
+        r+='<image data-map-ridge963="1" href="assets/webp/maps/v963/'+land+'" x="'+sx+'" y="-10" width="'+rw+'" height="540" preserveAspectRatio="none" pointer-events="none" style="filter:drop-shadow(0 0 8px rgba(4,16,28,.40))"/>';
+        r+='<g pointer-events="none" opacity=".95"><rect x="'+(sx-blend)+'" y="-10" width="'+blend+'" height="540" fill="url(#'+p+'shoreL)"/><rect x="'+ex+'" y="-10" width="'+blend+'" height="540" fill="url(#'+p+'shoreR)"/><rect x="'+(sx-blend-18)+'" y="-10" width="18" height="540" fill="url(#'+p+'shadeL)" opacity=".65"/><rect x="'+(ex+blend)+'" y="-10" width="18" height="540" fill="url(#'+p+'shadeR)" opacity=".65"/></g>';
         if(under){r+='<g transform="translate('+cx+' '+pass+')" pointer-events="none"><ellipse rx="22" ry="15" fill="#153f59" fill-opacity=".84" stroke="#93d6d2" stroke-dasharray="2 3" stroke-width="1"/><path d="M-23 0Q0 12 23 0" fill="none" stroke="#a6d8dd" stroke-opacity=".85" stroke-width="1.5" stroke-dasharray="3 3"/></g>';}
 
       }else if(under){r+=segment(-10,530);r+='<g transform="translate('+cx+' '+pass+')"><ellipse rx="25" ry="22" fill="#153f59" stroke="#93d6d2" stroke-dasharray="2 3" stroke-width="1.2"/><path d="M-23 0Q0 15 23 0" fill="none" stroke="#a6d8dd" stroke-opacity=".85" stroke-width="2" stroke-dasharray="3 3"/></g>';}
@@ -49829,8 +49840,13 @@ document.addEventListener('change',function(e) {
   var SHP_MAP921_SIZE = {"port":[374,315],"coast":[372,311],"isles":[368,299],"trade":[386,307],"orange":[372,314],"syrup":[377,318],"baratie":[363,315],"koko":[389,305],"jungle":[372,322],"drum":[378,322],"alab":[376,313],"sky":[385,317],"enies":[341,358],"marine":[380,326],"fish":[327,309],"punk":[354,341],"dress":[358,302],"zou":[374,355],"wci":[345,375],"wano":[362,367],"egg":[362,362],"elbaf":[377,383],"grand":[856,761]};
   function shpMapArt921(kind,x,y,k){
     var a=SHP_MAP921_SIZE[kind];if(!a)return '';
-    var sc=Math.min(84/a[0],68/a[1]),w=a[0]*sc,h=a[1]*sc;
-    return '<g transform="translate('+x+' '+y+') scale('+k+')" pointer-events="none"><image data-map-art921="'+kind+'" href="assets/webp/maps/'+kind+'.webp" x="'+(-w/2)+'" y="'+(17-h)+'" width="'+w+'" height="'+h+'" preserveAspectRatio="xMidYMid meet"/></g>';
+    var sc=Math.min(84/a[0],68/a[1]),w=a[0]*sc,h=a[1]*sc, rx=Math.max(16,w*.32), ry=Math.max(4,h*.07), rx2=Math.max(22,w*.4), ry2=Math.max(6,h*.11);
+    return '<g transform="translate('+x+' '+y+') scale('+k+')" pointer-events="none">'+
+      '<ellipse cy="14" rx="'+rx2+'" ry="'+ry2+'" fill="#0a2334" fill-opacity=".38"/>'+
+      '<ellipse cy="13" rx="'+(rx2-2)+'" ry="'+Math.max(3,ry2-2)+'" fill="#2b6f82" fill-opacity=".16"/>'+
+      '<ellipse cy="12" rx="'+rx+'" ry="'+ry+'" fill="none" stroke="#c9e7df" stroke-opacity=".34" stroke-width="1.2"/>'+
+      '<image data-map-art921="'+kind+'" href="assets/webp/maps/'+kind+'.webp" x="'+(-w/2)+'" y="'+(17-h)+'" width="'+w+'" height="'+h+'" preserveAspectRatio="xMidYMid meet" style="filter:drop-shadow(0 4px 6px rgba(4,18,28,.34))"/>'+
+      '</g>';
   }
   function shpChartIsland(kind, x,y,k,col,painted) {
     if(painted&&SHP_MAP921_SIZE[kind])return shpMapArt921(kind,x,y,k);
@@ -49992,7 +50008,7 @@ document.addEventListener('change',function(e) {
 
   function shpBhMapHTML(st, sh, v) {
     var me = myLogin(); if (me) shpFrEnsure();
-    var nw = shpNwOpen(sh), md = shpBhMapVoys(sh), vs = md.list, now = Date.now(), isl = {}, cnt = {};
+    var nw = shpNwOpen(sh), md = shpBhMapVoys(sh, st), vs = md.list, now = Date.now(), isl = {}, cnt = {};
     SHP_BH.filter(function (b) { return (shpBhOpen(b) || b.base) && shpBhZv(sh, b); }).forEach(function (b) { var k = SHP_BHON[b.id]; if (k && SHP_BHIS[k]) (isl[k] = isl[k] || []).push(b); });
     vs.sort(function (a, b) { return (b.mine ? 1 : 0) - (a.mine ? 1 : 0) || a.t1 - b.t1; });
     SHP_BHMV = {};
@@ -50003,14 +50019,14 @@ document.addEventListener('change',function(e) {
       SHP_BHMV[id] = { is: k, t0: q.t0, t1: q.t1, i: n };
       if (!used[k]) { used[k] = 1; if (shpBhInMode(k)) routes += '<path data-route="' + k + '" d="' + shpBhPath(k) + '" fill="none" stroke="#d6e8f7" stroke-opacity=".3" stroke-width="2" stroke-dasharray="3 7"/>'; }
       if (shpBhInMode(k)) trails += '<path data-tr="' + id + '" d="' + shpBhPath(k) + '" pathLength="1" fill="none" stroke="' + shpWakeCol(q) + '" stroke-width="' + (q.mine ? 3.4 : 2.4) + '" stroke-linecap="round" stroke-dasharray="0 2"/>';
-      if (shpBhInMode(k)) marks += '<g data-mk="' + id + '" class="wk-mp-mk"><title>' + esc(q.name + ' · ' + who + ' → ' + bn) + '</title><g transform="scale(1.5)">' + shpMapShip(q.mine) + '</g><text data-fx="' + id + '" x="16" y="-6" font-size="20" style="display:none">⚔</text><text class="wk-mp-lb" data-lb="' + (q.mine ? 1 : 0) + '" y="-24" text-anchor="middle" font-size="14" font-weight="700" fill="' + (q.mine ? '#ffe9a0' : '#c4dcff') + '" stroke="#0b2545" stroke-width="3" paint-order="stroke">' + esc(q.mine ? 'ты' : String(who).slice(0, 9)) + '</text></g>';
+      if (shpBhInMode(k)) marks += '<g data-mk="' + id + '" class="wk-mp-mk"><title>' + esc(q.name + ' · ' + who + ' → ' + bn) + '</title><g transform="scale(1.5)">' + shpMapShip(q.shipTier, q.mine, q.mapColor) + '</g><text data-fx="' + id + '" x="16" y="-6" font-size="20" style="display:none">⚔</text><text class="wk-mp-lb" data-lb="' + (q.mine ? 1 : 0) + '" y="-24" text-anchor="middle" font-size="14" font-weight="700" fill="' + (q.mapColor || (q.mine ? '#ffe9a0' : '#c4dcff')) + '" stroke="' + shpMapColorInk1064(q.mapColor) + '" stroke-width="3" paint-order="stroke">' + esc(q.mine ? 'ты' : String(who).slice(0, 9)) + '</text></g>';
       rows += '<article class="wk-mp-row' + (q.mine ? ' mine' : '') + '"><div class="wk-mp-h"><b>' + esc(q.name) + '</b><small>' + (q.mine ? 'твой' : esc(who)) + ' · ' + esc(q.tier.toLowerCase()) + ' → «' + esc(bn) + '»' + (q.ins ? ' 🛡' : '') + ' · шанс ' + Math.round(q.p * 100) + '%</small></div><div class="wk-shp-bar"><i data-bf="' + id + '" data-k="bar" style="width:0%"></i></div><div class="wk-mp-t"><span data-bf="' + id + '" data-k="ph"></span> · осталось <span data-bf="' + id + '" data-k="eta"></span></div></article>';
     });
     var isls = Object.keys(isl).filter(shpBhInMode).map(function (k) { return shpBhIslSVG(k, isl[k], nw, sh); }).join('');
     var svg = '<svg class="wk-mp-svg" viewBox="0 0 900 520" role="img" aria-label="Карта охоты на боссов" xmlns="http://www.w3.org/2000/svg">' + shpBhMapBase() + routes + isls + trails + marks + '</svg>';
     var pl = shpBhPlayers(sh), mineN = vs.filter(function (q) { return q.mine; }).length, otherN = vs.length - mineN;
     var stats = '<div class="wk-mp-stats"><div class="wk-mp-st"><small>Твоих кораблей на охоте</small><b>' + mineN + '</b></div><div class="wk-mp-st"><small>Кораблей других участников</small><b>' + (me ? otherN : '—') + '</b></div><div class="wk-mp-st"><small>Твои победы / поражения</small><b>' + shpCntV(sh, 'bhw') + ' / ' + shpCntV(sh, 'bhl') + '</b></div></div>';
-    var hint = '<p class="wk-sh-hint">Золотые корабли твои, синие других участников. Корабль плывёт к острову босса, сражается там и возвращается домой. Острова боссов, до которых ты ещё не добрался, на карте скрыты.' + (md.hid ? ' Ещё ' + md.hid + ' ' + (md.hid === 1 ? 'корабль идёт' : 'кораблей идут') + ' к боссам, которых ты пока не знаешь.' : '') + '</p>';
+    var hint = '<p class="wk-sh-hint">Цвет корабля соответствует владельцу; цвета указаны рядом с картой. Корабль плывёт к острову босса, сражается там и возвращается домой. Острова боссов, до которых ты ещё не добрался, на карте скрыты.' + (md.hid ? ' Ещё ' + md.hid + ' ' + (md.hid === 1 ? 'корабль идёт' : 'кораблей идут') + ' к боссам, которых ты пока не знаешь.' : '') + '</p>';
     /* таблица охотников */
     var hn = pl.filter(function (p) { return shpCntV(p.s, 'bhw') + shpCntV(p.s, 'bhl') > 0; }).sort(function (a, b) { return shpCntV(b.s, 'bhw') - shpCntV(a.s, 'bhw') || shpCntV(a.s, 'bhl') - shpCntV(b.s, 'bhl'); });
     var tb = hn.length ? '<h3 class="wk-dk-h">Охотники на боссов</h3><table class="wk-mp-tb"><thead><tr><th>Охотник</th><th>Побед</th><th>Поражений</th><th>Побед, %</th></tr></thead><tbody>' + hn.map(function (p) {
@@ -50028,7 +50044,7 @@ document.addEventListener('change',function(e) {
       return '<div class="wk-bhm-r"><span>' + esc(shpBhName(q.b)) + '</span><div class="wk-bhm-b" style="width:' + (tot / mx * 100).toFixed(1) + '%"><i class="w" style="flex:' + q.w + '"></i><i class="l" style="flex:' + q.l + '"></i></div><small>' + q.w + ' из ' + tot + ' · ' + Math.round(q.w / tot * 100) + '%</small></div>';
     }).join('') + '<p class="wk-sh-hint">Зелёное: победы всех участников, красное: поражения.</p></div>' : '';
     setTimeout(shpBhMapTick, 0);
-    return '<h3 class="wk-dk-h">Карта охоты</h3><div class="wk-bhm">' + stats + '<div class="wk-mpz-bar" role="group" aria-label="Режим карты">' + SHP_BHMODES.map(function (q) { var on = (SHP_BHZM.m || 'all') === q[0]; return '<button type="button" class="wk-mpz-c' + (on ? ' on' : '') + '" data-tx="shipbhmode" data-m="' + q[0] + '" aria-pressed="' + on + '">' + q[1] + '</button>'; }).join('') + '</div><div class="wk-mpz">' + svg + '</div>' + hint + (shown ? '<h3 class="wk-dk-h">Кто куда плывёт</h3><div class="wk-mp-rows">' + rows + '</div>' : '<p class="wk-sh-hint">Сейчас никто не идёт на босса. Отправь корабль на охоту ниже, и он появится на карте.</p>') + tb + ch + '</div>';
+    return '<h3 class="wk-dk-h">Карта охоты</h3><div class="wk-bhm">' + stats + '<div class="wk-mpz-bar" role="group" aria-label="Режим карты">' + SHP_BHMODES.map(function (q) { var on = (SHP_BHZM.m || 'all') === q[0]; return '<button type="button" class="wk-mpz-c' + (on ? ' on' : '') + '" data-tx="shipbhmode" data-m="' + q[0] + '" aria-pressed="' + on + '">' + q[1] + '</button>'; }).join('') + '</div><div class="wk-mpz">' + svg + '</div>' + shpMapColorPanel1064(st) + hint + (shown ? '<h3 class="wk-dk-h">Кто куда плывёт</h3><div class="wk-mp-rows">' + rows + '</div>' : '<p class="wk-sh-hint">Сейчас никто не идёт на босса. Отправь корабль на охоту ниже, и он появится на карте.</p>') + tb + ch + '</div>';
   }
   var SHP_BHZM = { z: 1, cx: 450, cy: 260, m: 'all' };
   /* v822: отрезок мира [a,b] растягивается на экран [sa,sb]; Рэд Лайн (мир 300 и 612) ставится на край или между регионами */
@@ -50676,13 +50692,13 @@ document.addEventListener('change',function(e) {
   };
   var SHP_MAPV = {}, SHP_MAPL = {}, SHP_MAPSC = 'near', SHP_MAPGL = { grand: 1, gl_drum: 1, newworld: 1, gl_alab: 1, gl_sky: 1 };
   function shpMapIn(r) { return SHP_MAPR[r] && (SHP_MAPSC === 'gl' ? !!SHP_MAPGL[r] : !SHP_MAPGL[r]); }
-  function shpMapVoys(sh) {
+  function shpMapVoys(sh, st) {
     var out = [], now = Date.now(), me = myLogin() || '';
     var add = function (s, owner, mine) {
       var vs = shpVoys(s);
       Object.keys(vs).forEach(function (t) {
         var vy = vs[t]; if (!vy || !shpMapIn(vy.r) || +vy.t1 < now - 86400000 || !(+vy.t1 > +vy.t0)) return;
-        var c = shpC(s, +t), tt = shpTT(+t); out.push({ wk: shpLayClean(c.lay).wk || '', owner: owner, mine: mine, name: c.name || tt.n, tier: tt.n, type: tt.id || '', shipTier: +t, r: vy.r, t0: +vy.t0, t1: +vy.t1 });
+        var c = shpC(s, +t), tt = shpTT(+t); out.push({ wk: shpLayClean(c.lay).wk || '', owner: owner, mine: mine, mapColor: shpMapColorFor1064(owner,mine,st), name: c.name || tt.n, tier: tt.n, type: tt.id || '', shipTier: +t, r: vy.r, t0: +vy.t0, t1: +vy.t1 });
       });
     };
     add(sh, me, true);
@@ -50697,51 +50713,65 @@ document.addEventListener('change',function(e) {
     var drm = gl ? '' : SHP_ROUTES.filter(function (q) { return q.dr && shpDrOk(q); }).map(function (q) { var m = SHP_MAPR[q.id], k = (m && m.k) || q.k || 'isles', tint = (m && m.tint) || q.tint || '#c9a34a'; return shpChartDailySpot(k, m.x, m.y, .42, tint) + shpChartLabel(m.x, m.y + 30, q.n, 11); }).join('');
     return shpChartSea('wk812v',false)+(gl ? shpChartRegion(760,497,'ГРАНД ЛАЙН · РАЙ') : shpChartRegion(300,222,'ИСТ-БЛЮ'))+rt+locations.map(function(q){return shpChartIsland(q[0],q[1],q[2],q[3],q[4],true)+shpChartLabel(q[1],q[6],q[5],13);}).join('')+drm+(gl ? '' : shpChartIsland('isles',334,240,.30,'#779b67',true)+shpChartIsland('isles',272,236,.25,'#779b67',true));
   }
-  function shpMapShip(type, mine, tierName) {
-    var c = mine ? '#edc575' : '#75b6e7', d = mine ? '#a36c32' : '#365e91', line = '#172a33', cloth = mine ? '#efe1c1' : '#d9e6ea';
-    var halo = '<circle r="12.5" fill="'+c+'" fill-opacity=".18" stroke="'+c+'" stroke-opacity=".52" stroke-width=".8"/><ellipse cy="9" rx="10.8" ry="2.8" fill="#061b2c" opacity=".5"/>';
-    var badgeMap = { boat: 'Л', sloop: 'Ш', brig: 'Б', frigate: 'Ф', galleon: 'Г' };
-    var badge = badgeMap[type] || 'К';
-    var detail = '';
-    if (type === 'boat') {
-      detail = '<path d="M-10 4Q-3 8 10 4L7 9Q0 12 -7 8Z" fill="'+d+'" stroke="'+line+'" stroke-width=".75"/>' +
-               '<path d="M-6 4L-1 -7L0 -7L-2 4Z" fill="'+cloth+'" stroke="#82735b" stroke-width=".45"/>' +
-               '<path d="M-1 3V-8" stroke="#785c3f" stroke-width="1.05"/>' +
-               '<path d="M-5 6L-9 8M3 7L7 9" stroke="'+c+'" stroke-width=".7" stroke-linecap="round" opacity=".95"/>';
-    } else if (type === 'sloop') {
-      detail = '<path d="M-10 3Q-3 6 10 2L7 8Q0 11 -7 7Z" fill="'+d+'" stroke="'+line+'" stroke-width=".75"/>' +
-               '<path d="M-1 3V-11" stroke="#785c3f" stroke-width="1.2"/>' +
-               '<path d="M-1 -10Q7 -9 8 1H-1Z" fill="'+cloth+'" stroke="#82735b" stroke-width=".5"/>' +
-               '<path d="M-2 -6L-7 1H-2Z" fill="#adc8ca" stroke="#607c82" stroke-width=".4"/>';
-    } else if (type === 'brig') {
-      detail = '<path d="M-10 3Q-1 6 10 2L7 8Q0 11 -7 7Z" fill="'+d+'" stroke="'+line+'" stroke-width=".75"/>' +
-               '<path d="M-4 2V-10M3 2V-8" stroke="#785c3f" stroke-width="1.05"/>' +
-               '<path d="M-7 -6H-1M0 -4H6" stroke="#60482f" stroke-width=".8" stroke-linecap="round"/>' +
-               '<path d="M-7 -6H-1V0H-7Z" fill="'+cloth+'" stroke="#82735b" stroke-width=".42"/>' +
-               '<path d="M0 -4H6V1H0Z" fill="#d8e2e4" stroke="#7a8a8f" stroke-width=".4"/>';
-    } else if (type === 'frigate') {
-      detail = '<path d="M-11 3Q-2 6 10 1L7 8Q0 12 -8 8Z" fill="'+d+'" stroke="'+line+'" stroke-width=".78"/>' +
-               '<path d="M-6 2V-8M-1 2V-11M5 2V-7" stroke="#785c3f" stroke-width="1"/>' +
-               '<path d="M-8 -4H-4M-3 -7H1M3 -3H7" stroke="#60482f" stroke-width=".72" stroke-linecap="round"/>' +
-               '<path d="M-8 -4H-4V1H-8Z" fill="#cfd9db" stroke="#7a8a8f" stroke-width=".38"/>' +
-               '<path d="M-3 -7H1V0H-3Z" fill="'+cloth+'" stroke="#82735b" stroke-width=".4"/>' +
-               '<path d="M3 -3H7V1H3Z" fill="#cfd9db" stroke="#7a8a8f" stroke-width=".38"/>';
-    } else {
-      detail = '<path d="M-11 4Q-3 7 11 1L8 9Q1 12 -8 9Z" fill="'+d+'" stroke="'+line+'" stroke-width=".8"/>' +
-               '<path d="M-7 3V-8M-1 3V-12M6 3V-9" stroke="#785c3f" stroke-width="1.03"/>' +
-               '<path d="M-9 -3H-5M-3 -7H2M4 -4H8" stroke="#60482f" stroke-width=".74" stroke-linecap="round"/>' +
-               '<path d="M-9 -3H-5V2H-9Z" fill="#d6e0e2" stroke="#7a8a8f" stroke-width=".38"/>' +
-               '<path d="M-3 -7H2V1H-3Z" fill="'+cloth+'" stroke="#82735b" stroke-width=".42"/>' +
-               '<path d="M4 -4H8V2H4Z" fill="#d6e0e2" stroke="#7a8a8f" stroke-width=".38"/>' +
-               '<path d="M8 2Q9 0 10 -1" fill="none" stroke="'+c+'" stroke-width=".6" opacity=".9"/>';
-    }
-    return halo + detail + '<circle cx="8.6" cy="-8.6" r="4.45" fill="#0e2030" fill-opacity=".84" stroke="'+c+'" stroke-width=".7"/><text x="8.6" y="-7.2" text-anchor="middle" font-size="4.6" font-weight="800" fill="'+c+'">'+badge+'</text>';
+  /* v1064: account-wide map colors, saved by the versioned deck cloud. */
+  var SHP_MAPCOL1064 = ['#ffda82','#9bd1ff','#ff8a80','#7de2a5','#c5a3ff','#ffac69','#f49acf','#76e0e5','#f2ee85','#d0e0ef','#b3ed7e','#a9b5ff'];
+  function shpMapColorClean1064(v) { return typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v) ? v.toLowerCase() : ''; }
+  function shpMapColor1064(owner, deck) {
+    var c = shpMapColorClean1064(deck && deck.mapColor); if (c) return c;
+    var k = String(owner || ''), h = 0; for(var i=0;i<k.length;i++) h = ((h*31)+k.charCodeAt(i))>>>0;
+    return SHP_MAPCOL1064[h % SHP_MAPCOL1064.length].toLowerCase();
   }
-
+  function shpMapColorFor1064(owner,mine,st) {
+    return shpMapColor1064(owner,mine ? st : (DK.frData && DK.frData[owner] && DK.frData[owner].deck));
+  }
+  function shpMapColorInk1064(c) {
+    c=shpMapColorClean1064(c)||'#ffda82'; var r=parseInt(c.slice(1,3),16),g=parseInt(c.slice(3,5),16),b=parseInt(c.slice(5,7),16);
+    return .2126*r+.7152*g+.0722*b < 120 ? '#e6f2ff' : '#102c45';
+  }
+  function shpMapColorPanel1064(st) {
+    var me=myLogin()||'', by=DK.frData||{}, c=shpMapColor1064(me,st), can=!!(me && !SHP_ADM && !st.__fake && CLOUD.ready && !CLOUD.lock && !window.__wkStale);
+    var players=[{name:me?accName(me)+' (ты)':'Ты',color:c}];
+    Object.keys(by).filter(function(lg){return lg!==me && !!shpFriendShip(lg);}).sort().forEach(function(lg){players.push({name:accName(lg),color:shpMapColor1064(lg,by[lg].deck)});});
+    var disabled=can?'':' disabled';
+    return '<section class="wk-mapcol1064" style="display:grid;gap:8px;margin:8px 0 12px;padding:10px 12px;border:1px solid rgba(140,170,200,.25);border-radius:12px">'+
+      '<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between"><b>Цвет твоего флота на карте</b><small>Общий для всех участников · бесплатно</small></div>'+
+      '<div role="group" aria-label="Палитра цветов флота" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">'+SHP_MAPCOL1064.map(function(p){var selected=p.toLowerCase()===c;return '<button type="button" class="wk-tx-btn" data-tx="shipmapcolor" data-c="'+p+'" title="'+p+'" aria-label="Выбрать цвет '+p+'" aria-pressed="'+selected+'"'+disabled+' style="width:30px;height:30px;min-width:30px;padding:0;border-radius:8px;background:'+p+';border:2px solid '+(selected?'#fff':'#526278')+';color:'+shpMapColorInk1064(p)+';font-weight:800">'+(selected?'✓':'')+'</button>';}).join('')+
+      '<label style="display:inline-flex;gap:5px;align-items:center;font-size:12px">Свой цвет <input type="color" aria-label="Свой цвет флота" data-mapcolor1064 value="'+c+'"'+disabled+' style="width:36px;height:30px;padding:2px;border:1px solid #64748b;border-radius:7px;background:transparent"></label><button type="button" class="wk-tx-btn" data-tx="shipmapcolor"'+disabled+'>Сохранить</button><button type="button" class="wk-tx-btn" data-tx="shipmapcolor" data-auto="1"'+disabled+'>Авто</button></div>'+
+      (!can?'<small>Выбор доступен после входа и загрузки облачной колоды.</small>':'')+
+      '<div aria-label="Цвета участников" style="display:flex;flex-wrap:wrap;gap:5px 14px;align-items:center">'+players.map(function(p){return '<span style="display:inline-flex;align-items:center;gap:5px;font-size:12px"><i aria-hidden="true" style="width:11px;height:11px;border:1px solid #a3b2c4;border-radius:50%;background:'+p.color+'"></i>'+esc(p.name)+'</span>';}).join('')+'</div><small>Цвет кораблей и обычных маршрутов одинаков для всех игроков. Особые следы сохраняют свой цвет.</small></section>';
+  }
+  function shpMapColorSig1064(by) { return JSON.stringify(Object.keys(by||{}).sort().map(function(k){return [k,shpMapColorClean1064(by[k] && by[k].deck && by[k].deck.mapColor)];})); }
+  /* v1063: compact seven-class navigation glyphs, independent of ship artwork. */
+  function shpMapShip(t, mine, mapColor) {
+    t = Number(t); if (!Number.isInteger(t) || t < 0 || t > 6) t = 0;
+    var c = shpMapColorClean1064(mapColor) || (mine ? '#ffda82' : '#9bd1ff');
+    var shapes = [
+      // Boat: shallow open hull, one slanted lug sail.
+      ['M-9 4Q0 6 9 3L6 8Q0 11 -6 8Z','M-5 -7L5 -5L7 1Q0 0 -6 2Z','M0 -8V5'],
+      // Sloop: triangular mainsail and jib.
+      ['M-11 3Q1 5 11 2L8 8Q0 11 -8 8Z','M-2 -11L-2 1H-10Z M0 -10L9 1H0Z','M-1 -12V5'],
+      // Brig: two square-rigged masts.
+      ['M-11 3Q0 5 11 2L8 8Q0 11 -8 8Z','M-10 -7H-3L-4 -2H-9Z M-10 -1H-3L-4 2H-9Z M0 -9H8L7 -4H1Z M0 -3H8L7 1H1Z','M-6 -9V5M4 -11V5'],
+      // Frigate: three masts, narrow low hull.
+      ['M-12 3L12 2L8 7Q0 9 -9 7Z','M-11 -6H-5L-6 1H-10Z M-4 -11H3L2 -5H-3Z M-4 -4H3L2 1H-3Z M5 -8H11L10 1H6Z','M-8 -8V4M0 -12V4M8 -10V4'],
+      // Galleon I: high stern castle and deep broad hull.
+      ['M-12 -1H-7V3H6V1H11L9 7L5 10H-6L-10 7Z','M-10 -8H-5L-6 -2H-9Z M-3 -11H4L3 -6H-2Z M-4 -5H5L4 1H-3Z M6 -8H11L10 0H7Z','M-8 -10V4M0 -12V4M8 -10V4'],
+      // Galleon II: four masts and stepped stern.
+      ['M-12 -3H-8V0H-5V3H7L12 0L10 7L6 10H-7L-11 6Z','M-11 -9H-7L-8 -4H-10Z M-6 -11H-2L-2 1H-6Z M0 -11H5L4 1H0Z M7 -7H11L10 0H7Z','M-9 -11V2M-4 -12V5M2 -12V5M9 -9V4'],
+      // Galleon III: long streamlined hull, tall sails and long bowsprit.
+      ['M-12 1H-8V3H7L12 0L9 7L5 9H-8Z','M-11 -9H-6L-7 0H-10Z M-4 -12H4L3 -6H-3Z M-4 -5H4L3 1H-3Z M6 -10H11L10 -4H7Z M6 -3H11L10 0H7Z','M-8 -11V4M0 -13V4M8 -12V4M8 3L13 -3']
+    ];
+    var q=shapes[t], outline=shpMapColorInk1064(c);
+    return '<g data-map-ship1063="'+t+'" aria-hidden="true" stroke-linejoin="round" stroke-linecap="round">'+
+      '<path d="'+q[2]+'" fill="none" stroke="'+outline+'" stroke-width="2.2"/><path d="'+q[2]+'" fill="none" stroke="'+c+'" stroke-width=".95"/>'+
+      '<path d="'+q[1]+'" fill="'+c+'" stroke="'+outline+'" stroke-width=".65"/>'+
+      '<path d="'+q[0]+'" fill="'+c+'" stroke="'+outline+'" stroke-width="1.1"/>'+
+      '</g>';
+  }
 
   function shpMapHTML(st, sh, v) {
     var me = myLogin(); if (me) shpFrEnsure();
-    var vs = shpMapVoys(sh), now = Date.now(), cnt = {};
+    var vs = shpMapVoys(sh, st), now = Date.now(), cnt = {};
     vs.sort(function (a, b) { return (b.mine ? 1 : 0) - (a.mine ? 1 : 0) || (b.t1 - a.t1); });
     SHP_MAPV = {};
     var trails = '', trailsM = '', marks = '', marksM = '', rows = '';
@@ -50749,16 +50779,17 @@ document.addEventListener('change',function(e) {
       var id = 'v' + i, dist = SHP_DIST[q.r] || 1, p = Math.max(0, Math.min(1, (now - q.t0) / (q.t1 - q.t0))), done = Math.round(dist * p), n = cnt[q.r] = (cnt[q.r] == null ? 0 : cnt[q.r] + 1), who = q.mine ? 'ты' : accName(q.owner);
       SHP_MAPV[id] = { r: q.r, t0: q.t0, t1: q.t1, i: n, dist: dist };
       var tpath = '<path data-tr="' + id + '" d="' + SHP_MAPR[q.r].d + '" pathLength="1" fill="none" stroke="' + shpWakeCol(q) + '" stroke-width="' + (q.mine ? 3.4 : 2.4) + '" stroke-linecap="round" stroke-dasharray="' + p.toFixed(4) + ' 2"/>';
-      var tback = '<path data-tb="' + id + '" d="' + SHP_MAPR[q.r].d + '" pathLength="1" fill="none" stroke="' + (q.mine ? '#fff4cf' : '#cfe3ff') + '" stroke-opacity=".85" stroke-width="' + (q.mine ? 2 : 1.6) + '" stroke-linecap="round" stroke-dasharray="0 1 0 2"/>';
+      var tback = '<path data-tb="' + id + '" d="' + SHP_MAPR[q.r].d + '" pathLength="1" fill="none" stroke="' + (q.mapColor || (q.mine ? '#fff4cf' : '#cfe3ff')) + '" stroke-opacity=".85" stroke-width="' + (q.mine ? 2 : 1.6) + '" stroke-linecap="round" stroke-dasharray="0 1 0 2"/>';
       if (q.mine) trailsM += tpath + tback; else trails += tpath + tback;
-      var mg = '<g data-mk="' + id + '" class="wk-mp-mk"><title>' + esc(q.name) + ' · ' + esc(who) + ' · ' + esc(q.tier) + '</title>' + shpMapShip(q.type, q.mine, q.tier) + '<text class="wk-mp-lb" data-lb="' + (q.mine ? 1 : 0) + '" y="-17" text-anchor="middle" font-size="10" font-weight="700" fill="' + (q.mine ? '#ffe9a0' : '#c4dcff') + '" stroke="#0b2545" stroke-width="2.6" paint-order="stroke">' + esc(q.name) + '</text>' + '</g>';
+      var mg = '<g data-mk="' + id + '" class="wk-mp-mk"><title>' + esc(q.name) + ' · ' + esc(who) + ' · ' + esc(q.tier) + '</title>' + shpMapShip(q.shipTier, q.mine, q.mapColor) + '<text class="wk-mp-lb" data-lb="' + (q.mine ? 1 : 0) + '" y="-17" text-anchor="middle" font-size="10" font-weight="700" fill="' + (q.mapColor || (q.mine ? '#ffe9a0' : '#c4dcff')) + '" stroke="' + shpMapColorInk1064(q.mapColor) + '" stroke-width="2.6" paint-order="stroke">' + esc(q.name) + '</text>' + '</g>';
       if (q.mine) marksM += mg; else marks += mg;
       rows += '<article class="wk-mp-row' + (q.mine ? ' mine' : '') + '"><div class="wk-mp-h"><b>' + esc(q.name) + '</b><small>' + (q.mine ? 'твой' : esc(accName(q.owner))) + ' · ' + q.tier.toLowerCase() + ' · ' + SHP_MAPR[q.r].n + '</small></div><div class="wk-shp-bar"><i data-vf="' + id + '" data-k="bar" style="width:' + (p * 100).toFixed(1) + '%"></i></div><small class="wk-mp-t">Проплыто <b data-vf="' + id + '" data-k="done">' + done + '</b> из ' + dist + ' миль · осталось <b data-vf="' + id + '" data-k="left">' + (dist - done) + '</b> · <span data-vf="' + id + '" data-k="eta">' + (p >= 1 ? 'уже в порту' : '≈ ' + shpDur(q.t1 - now)) + '</span></small></article>';
     });
     var mineN = vs.filter(function (q) { return q.mine; }).length, otherN = vs.length - mineN;
     var stats = '<div class="wk-mp-stats"><div class="wk-mp-st"><small>Твоих кораблей в море</small><b>' + mineN + '</b></div><div class="wk-mp-st"><small>Кораблей других участников</small><b>' + (me ? otherN : '—') + '</b></div><div class="wk-mp-st"><small>Твои рейсы</small><b>' + shpCntV(sh, 'voy') + '</b></div><div class="wk-mp-st"><small>Пройдено миль за всё время</small><b>' + shpCntV(sh, 'miles') + '</b></div></div>';
     var svg = '<svg class="wk-mp-svg" viewBox="' + (SHP_MAPSC === 'gl' ? '0 0 900 520' : '0 190 588 330') + '" role="img" aria-label="Карта плаваний" xmlns="http://www.w3.org/2000/svg">' + shpMapBase() + trails + trailsM + marks + marksM + '</svg>';
-    var legend = '<p class="wk-sh-hint">Золотые корабли — твои, синие — других участников. Силуэт и буква на маркере показывают тип судна: Л — лодка, Ш — шлюп, Б — бриг, Ф — фрегат, Г — галеон. Первую половину рейса корабль плывёт к цели, вторую возвращается домой по тому же маршруту. Расстояния (в одну сторону) в морских милях: ' + Object.keys(SHP_MAPR).map(function (k) { return SHP_MAPR[k].n.toLowerCase() + ' — ' + SHP_DIST[k]; }).join(', ') + '. Положение считается по времени рейса, карта обновляется каждую секунду' + (me ? '. Данные других участников подгружаются из облака (раз в пару минут).' : '. Войди под своим именем, чтобы видеть корабли других участников.') + '</p>';
+    var legend = '<p class="wk-sh-hint">Цвет корабля обозначает его владельца; цвета указаны над легендой. Силуэт показывает класс судна: лодка, шлюп, бриг, фрегат и три модели галеона. Первую половину рейса корабль плывёт к цели, вторую возвращается домой по тому же маршруту. Расстояния (в одну сторону) в морских милях: ' + Object.keys(SHP_MAPR).map(function (k) { return SHP_MAPR[k].n.toLowerCase() + ' — ' + SHP_DIST[k]; }).join(', ') + '. Положение считается по времени рейса, карта обновляется каждую секунду' + (me ? '. Данные других участников подгружаются из облака (раз в пару минут).' : '. Войди под своим именем, чтобы видеть корабли других участников.') + '</p>';
+    var key1063 = '<div aria-label="Типы кораблей" style="display:flex;flex-wrap:wrap;gap:5px 13px;margin:5px 0 8px;align-items:center">'+[0,1,2,3,4,5,6].map(function(t){return '<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;white-space:nowrap"><svg width="30" height="30" viewBox="-15 -15 30 30" aria-hidden="true">'+shpMapShip(t,true,shpMapColor1064(me,st))+'</svg>'+esc(shpTT(t).n)+'</span>';}).join('')+'</div>';
     var refBtn = '<div class="wk-mp-ref"><button type="button" class="wk-tx-btn" data-tx="shipmapref">Обновить карту</button></div>';
     /* таблица мореходов */
     var tb = '';
@@ -50769,7 +50800,7 @@ document.addEventListener('change',function(e) {
       tb = '<h3 class="wk-dk-h">Мореходы по пройденным милям</h3><p class="wk-sh-hint">Мили считаются с обновления карты: каждый завершённый рейс добавляет длину маршрута. Рейсы считаются за всё время.</p><table class="wk-mp-tb"><thead><tr><th>#</th><th>Участник</th><th>Рейсов</th><th>Миль</th></tr></thead><tbody>' + pl.slice(0, 15).map(function (x, i) { return '<tr' + (x.mine ? ' class="me"' : '') + '><td>' + (i + 1) + '</td><td>' + (x.mine ? 'ты' : esc(accName(x.lg))) + '</td><td>' + shpCntV(x.s, 'voy') + '</td><td>' + shpCntV(x.s, 'miles') + '</td></tr>'; }).join('') + '</tbody></table>';
     }
     setTimeout(shpMapTick, 0);
-    return '<div class="wk-shp-map">' + stats + svg + refBtn + legend + (vs.length ? '<h3 class="wk-dk-h">Кто сейчас в плавании</h3><div class="wk-mp-rows">' + rows + '</div>' : '<p class="wk-sh-hint wk-shp-intro">Сейчас никто не в плавании. Отправь корабль во вкладке «Плавания», и он появится на карте.</p>') + tb + '</div>';
+    return '<div class="wk-shp-map">' + stats + svg + refBtn + shpMapColorPanel1064(st) + key1063 + legend + (vs.length ? '<h3 class="wk-dk-h">Кто сейчас в плавании</h3><div class="wk-mp-rows">' + rows + '</div>' : '<p class="wk-sh-hint wk-shp-intro">Сейчас никто не в плавании. Отправь корабль во вкладке «Плавания», и он появится на карте.</p>') + tb + '</div>';
   }
   /* подписи кораблей: сверху, а если мешают другим подписям или кораблям, то снизу; если места нет нигде, подпись скрыта (имя остаётся во всплывающей подсказке) */
   function shpMapLabels(root, pos) {
