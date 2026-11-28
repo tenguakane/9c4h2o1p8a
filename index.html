@@ -1,6 +1,6 @@
-<!-- One Piece Wiki update v1056: boat wood dye registration and continuous stem paint -->
+<!-- One Piece Wiki update v1059: corrected boat stern deck paint zone -->
 <!doctype html>
-<!--wk-ver:28.11.2026 · 1056-->
+<!--wk-ver:28.11.2026 · 1059-->
 <script id="wk-v616-pre">try{var K='wkExtrasKeepV616',old={},ca=[],ma={},cc=null,cca=[],cma={};try{old=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}try{ca=JSON.parse(localStorage.getItem('onePieceWikiCustomAchievementsV1')||'[]')}catch(e){}try{ma=JSON.parse(localStorage.getItem('onePieceWikiMedalArtV1')||'{}')}catch(e){}try{cc=JSON.parse(localStorage.getItem('wkCloudContentV1')||'null');if(cc&&cc.data){cca=Array.isArray(cc.data.customAchievements)?cc.data.customAchievements:[];cma=cc.data.medalArt&&typeof cc.data.medalArt==='object'?cc.data.medalArt:{}}}catch(e){}cc=null;var oc=Array.isArray(old.ca)?old.ca:[],om=old.ma&&typeof old.ma==='object'?old.ma:{},ids={},cids={};oc.forEach(function(a){if(a&&a.id!=null)ids[a.id]=1});cca.forEach(function(a){if(a&&a.id!=null)cids[a.id]=1});(Array.isArray(ca)?ca:[]).forEach(function(a){if(a&&a.id!=null&&!ids[a.id]&&!cids[a.id]){oc.push(a);ids[a.id]=1}});if(ma&&typeof ma==='object')Object.keys(ma).forEach(function(k){if(!(k in om)&&!(k in cma)&&ma[k]!=null&&ma[k]!=='')om[k]=ma[k]});if(oc.length||Object.keys(om).length)localStorage.setItem(K,JSON.stringify({ca:oc,ma:om}));else localStorage.removeItem(K)}catch(e){}</script>
 <html data-wiki-portable-baked="true" data-wiki-portable-id="2026-11-11T03:23:00.970Z" lang="ru" style="--reward-rank-first: #ffda75; --reward-rank-second: #d9d9d9; --reward-rank-third: #ffd285; --reward-rank-other: #4f4860; --wiki-progress-manga: #efc66b; --wiki-progress-anime: #60d9ff; --wk-title-font: 'Days One'; --wk-title-fw: 400; --wk-wp-tpl: url(&quot;./assets/webp/ui/wanted_template.webp&quot;); --wk-fg-manga: #0b0f17; --wk-fg-anime: #0b0f17; --wk-accent: #a78bfa; --wk-accent-soft: #d3c5fd; --fruit-type-param-color: #bb9eff !important; --fruit-type-param-rgb: 187, 158, 255 !important; --fruit-type-logia-color: #f967ae !important; --fruit-type-logia-rgb: 249, 103, 174 !important; --fruit-type-zoan-color: #65f6b7 !important; --fruit-type-zoan-rgb: 101, 246, 183 !important; --wk-tz-card: 1.15;" class="wk-sc-off wk-hz-c wk-hz-f wk-hz-u wk-hz-v wk-hz-h wk-calm wk-tfx-off wk-tfx-still wk-gpu wk-hdr-min" data-wk-role="admin" data-wk-title-font="g:Days One|"><head>
 <script id="wk-v596-early">try{var q=new URLSearchParams(location.search);if(q.get("tab")==="favorites"&&/^[a-z]+$/.test(q.get("cab")||"")){var cb=q.get("cab");localStorage.setItem("onePieceWikiCabinSubtabV3",cb==="overview"?"favorites":cb);localStorage.setItem("onePieceWikiCabinExtraTabV1",/^(watchgrid|timeline|deck|tops|stats|edits|quiz|atlas|help)$/.test(cb)?cb:"");}}catch(e){}</script>
@@ -3720,7 +3720,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "28.11.2026 · 1056";
+const WIKI_VERSION = "28.11.2026 · 1059";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -42537,6 +42537,10 @@ document.addEventListener('change',function(e) {
         var posts=['M55 15L142 15L144 60L139 104L89 121L84 74L55 57Z','M944 82L986 78L985 99L976 170L945 173Z'];
         var painted=P.wale.toLowerCase()===SHP_PAINT.wale.toLowerCase()?raw:boatTint857(raw,P.wale,.58);
         a+='<g data-boat-deck-posts1056="1">'+boatZone1056(painted,posts)+'</g>';
+        /* v1059: restore the stern board/after bulwark to the wale material.
+           The old deck_hull region still left a dark hull-colored chunk on the boat stern. */
+        var stern=['M0 17L55 16L56 57L84 74L89 121L47 118L0 101Z'];
+        a+='<g data-boat-stern1059="1">'+boatZone1056(painted,stern)+'</g>';
       }
       return a;
     }
@@ -42545,15 +42549,66 @@ document.addEventListener('change',function(e) {
     /* v928: full painted sloop components, real aspect ratios and registered color masks. */
     function sloopImg856(file,x,y,w,h){return '<image href="assets/webp/ships/sloop928/'+file+'.webp" x="'+shpF(x)+'" y="'+shpF(y)+'" width="'+shpF(w)+'" height="'+shpF(h)+'" preserveAspectRatio="xMidYMid meet"/>';}
     function sloop928Himg(file){return '<image href="assets/webp/ships/sloop928/'+file+'.webp'+(/^(?:mask_|deck_)/.test(file)&&!/base$/.test(file)?'?v=1048':'')+'" x="'+shpK(sx)+'" y="'+shpK(sloop928Y)+'" width="'+shpK(L)+'" height="'+shpK(sloop928H)+'" preserveAspectRatio="xMidYMid meet"/>';}
-    function sloopHull856(){var a=sloop928Himg('hull');[['hull',.35],['trim',.27],['wale',.62],['bottom',.18]].forEach(function(q){if(P[q[0]].toLowerCase()!==SHP_PAINT[q[0]].toLowerCase())a+=boatTint857(sloop928Himg('mask_'+q[0]),P[q[0]],q[1]);});return a;}
-    function sloop928Deck(){var a=sloop928Himg('deck');[['hull',.35],['wale',.62]].forEach(function(q){if(P[q[0]].toLowerCase()!==SHP_PAINT[q[0]].toLowerCase())a+=boatTint857(sloop928Himg('deck_'+q[0]),P[q[0]],q[1]);});return a;}
-    
+    // v1057: source-alpha material zones. All paint samples the original art; no color threshold masks.
+    function sloopZone1057(raw,paths){return clip1049(raw,sx,sloop928Y,L,sloop928H,1438,406,paths,false);}
+    function sloopColor1057(raw,key,ref){return P[key].toLowerCase()===SHP_PAINT[key].toLowerCase()?raw:boatTint857(raw,P[key],ref);}
+    function sloopHull856(){
+      var raw=sloop928Himg('hull');
+      if(['hull','trim','wale','bottom'].every(function(k){return P[k].toLowerCase()===SHP_PAINT[k].toLowerCase();}))return raw;
+      var a=sloopColor1057(raw,'hull',.35);
+      var bottom='M0 310L115 310Q240 359 530 374Q850 388 1100 356Q1220 320 1310 210L1438 210V406H0Z';
+      var trim='M70 221Q162 235 279 248Q352 282 419 292Q820 326 1050 278Q1178 244 1280 172L1291 211Q1185 294 1040 320Q760 353 501 330Q225 308 100 263Z';
+      var stem='M1314 55Q1291 107 1254 174Q1215 255 1160 317Q1104 377 1038 406H1438V0H1304Z';
+      var upper='M45 78L48 100Q165 140 320 136Q340 138 350 166Q370 218 419 231Q750 247 1055 203Q1200 170 1316 63L1320 88Q1205 199 1058 222Q755 263 415 246Q362 232 336 177Q328 158 311 157Q152 153 48 122Z';
+      var rail='M56 198Q186 229 318 226Q348 229 385 260Q425 276 525 278Q806 294 1055 248Q1205 210 1282 149L1293 168Q1199 231 1060 266Q820 310 526 298Q422 297 377 277Q346 250 318 247Q182 247 56 217Z';
+      var frames=['M150 203V175Q150 147 179 147Q206 147 206 176V216H148Z','M222 210V181Q222 153 249 153Q276 153 276 182V221H220Z'];
+      a+=sloopZone1057(sloopColor1057(raw,'bottom',.18),[bottom])+sloopZone1057(sloopColor1057(raw,'trim',.27),[trim])+sloopZone1057(sloopColor1057(raw,'wale',.50),[stem,upper,rail].concat(frames));
+      // Preserve glass, lantern and metal fasteners independently of the paint palette.
+      var fixed=['M0 66H48V154H0Z','M159 200V176Q159 158 179 158Q197 158 197 176V204Z','M231 207V182Q231 164 249 164Q267 164 267 182V211Z'];
+      [[250,279],[251,313],[254,347],[600,299],[600,327],[599,354],[1035,301],[1034,324],[1033,348],[1169,240],[1168,264]].forEach(function(q){var x=q[0],y=q[1];fixed.push('M'+(x-8)+' '+y+'a8 9 0 1 0 16 0a8 9 0 1 0 -16 0Z');});
+      return '<g data-sloop-material1057="hull">'+a+sloopZone1057(raw,fixed)+'</g>';
+    }
+    function sloop928Deck(){
+      var raw=sloop928Himg('deck');if(P.hull.toLowerCase()===SHP_PAINT.hull.toLowerCase()&&P.wale.toLowerCase()===SHP_PAINT.wale.toLowerCase())return raw;
+      var rail=['M0 0H275V20Q155 19 75 41L52 57L39 70L16 65Z','M48 48Q170 86 330 77L341 91Q175 105 48 65Z','M268 39Q351 40 426 49L433 66Q350 56 268 55Z','M423 76Q469 78 482 111Q491 136 527 140Q840 153 1176 98L1305 65V82L1180 116Q845 173 527 155Q485 154 468 120Q453 95 423 93Z','M257 0H280V68H255Z','M315 78H344V151H316Z','M411 40H437V112H411Z','M838 117H865V148H838Z','M842 147Q872 136 904 149V173Q873 180 842 170Z','M950 185H988V208H950Z','M520 213H565V233H520Z','M780 213H821V235H780Z'];
+      var fixed=['M840 199Q870 192 907 201V218H840Z','M11 38H43V76H11Z'];
+      return '<g data-sloop-material1057="deck">'+sloopColor1057(raw,'hull',.35)+sloopZone1057(sloopColor1057(raw,'wale',.50),rail)+sloopZone1057(raw,fixed)+'</g>';
+    }
+
     /* v858: brig art, independent material zones, original geometry and all overlays. */
     var brig858 = T.id === 'brig';
     /* v929: native painted brig parts, registered material masks. */
     function brigImg858(file,x,y,w,h){return '<image href="assets/webp/ships/brig929/'+file+'.webp" x="'+shpF(x)+'" y="'+shpF(y)+'" width="'+shpF(w)+'" height="'+shpF(h)+'" preserveAspectRatio="xMidYMid meet"/>';}
     function brig929Himg(k){return '<image href="assets/webp/ships/brig929/'+k+'.webp'+(/^(?:mask_|(?:deck|cabin|fore|bowsprit)_)/.test(k)?'?v=1048':'')+'" x="'+shpK(sx)+'" y="'+shpK(brig929Y)+'" width="'+shpK(L)+'" height="'+shpK(brig929H)+'" preserveAspectRatio="xMidYMid meet"/>';}
-    function brig929Paint(k,keys){var a=brig929Himg(k);keys.forEach(function(q){if(P[q[0]].toLowerCase()!==SHP_PAINT[q[0]].toLowerCase())a+=boatTint857(brig929Himg((k==='hull'?'mask':k)+'_'+q[0]),P[q[0]],q[1]);});return a;}
+    // v1058: paint complete source-alpha material regions, not hue-selected fragments.
+    function brigZone1058(raw,paths){return clip1049(raw,sx,brig929Y,L,brig929H,1486,500,paths,false);}
+    function brigColor1058(raw,k,ref){return P[k].toLowerCase()===SHP_PAINT[k].toLowerCase()?raw:boatTint857(raw,P[k],ref);}
+    function brig929Paint(k,keys){
+      var raw=brig929Himg(k);if(keys.every(function(q){return P[q[0]].toLowerCase()===SHP_PAINT[q[0]].toLowerCase();}))return raw;
+      var a=brigColor1058(raw,'hull',.35), gold=[],fixed=[];
+      function oval(x,y,rx,ry){return 'M'+(x-rx)+' '+y+'a'+rx+' '+ry+' 0 1 0 '+(rx*2)+' 0a'+rx+' '+ry+' 0 1 0 '+(-rx*2)+' 0Z';}
+      if(k==='hull'){
+        var bottom='M0 407L160 410Q260 460 500 466Q850 487 1100 464Q1190 429 1270 342L1486 342V500H0Z';
+        var trim='M62 259Q280 299 550 309Q865 329 1115 290Q1220 272 1305 211L1330 255Q1230 338 1138 354Q915 403 552 382Q250 371 100 315Z';
+        a+=brigZone1058(brigColor1058(raw,'bottom',.18),[bottom])+brigZone1058(brigColor1058(raw,'trim',.27),[trim]);
+        // Continuous prow and upper/lower rails, with source texture retained.
+        gold=['M1354 0H1486V500H1108Q1212 413 1266 321Q1327 218 1379 125L1350 111Z',
+        'M61 247Q333 294 562 298Q872 317 1115 279Q1235 256 1340 153L1355 170Q1243 280 1118 296Q875 331 562 314Q330 309 61 263Z',
+        'M93 311Q295 356 551 369Q846 391 1121 347Q1250 323 1300 275L1310 289Q1244 342 1124 363Q852 405 551 387Q294 373 93 328Z',
+        'M166 274L181 278L197 340L178 337Z','M470 290H503L502 397L475 397Z','M728 305H757V405H729Z','M1148 282L1175 276L1170 373L1148 381Z'];
+        // Native gun port frames; restore unpainted apertures after the colored frames.
+        [[301,309,349,357],[403,315,450,363],[528,325,576,371],[641,328,688,375],[779,330,825,375],[872,327,920,373],[970,320,1017,366],[1060,309,1108,357]].forEach(function(q){gold.push(rect1049(q));fixed.push(rect1049([q[0]+10,q[1]+10,q[2]-10,q[3]-10]));});
+        [[269,302],[269,318],[269,336],[486,303],[486,328],[486,358],[486,397],[492,420],[500,442],[514,467],[742,316],[742,338],[742,365],[741,406],[741,431],[738,452],[735,473],[1163,302],[1163,322],[1159,345],[1153,372],[1140,398],[1123,423],[1107,448],[977,397],[975,421],[967,444],[954,470],[275,372],[279,395],[286,416],[296,438],[309,460],[1388,85]].forEach(function(q){fixed.push(oval(q[0],q[1],8,9));});
+      }else if(k==='deck'){
+        gold=['M500 118Q530 120 545 146Q560 172 608 173Q893 182 1220 136L1337 110V125L1225 150Q893 198 608 187Q556 186 532 157L500 134Z','M345 249Q570 258 740 250Q990 267 1208 201Q1280 172 1337 137V154Q1280 191 1208 216Q990 283 740 266Q570 273 345 265Z','M620 160H651V179H620Z','M847 138H879V156H847Z','M1028 132H1060V150H1028Z','M864 165Q893 158 925 169V192Q893 200 864 190Z','M727 239H759V257H727Z','M979 224H1019V248H979Z'];
+        fixed=['M857 208Q892 199 929 209V244H857Z','M616 195H651V215H616Z','M1026 188H1062V207H1026Z'];
+      }else if(k==='cabin'){
+        gold=['M8 24Q32 12 63 27L93 52Q185 84 291 65L304 84Q190 101 72 66L51 49L24 77L8 64Z','M56 54Q175 74 293 51L308 64Q175 90 56 68Z','M303 53Q392 64 484 76V91Q393 81 303 67Z','M55 110Q171 136 300 127Q329 147 348 201Q357 224 385 243L375 260Q338 239 327 208Q309 154 294 146Q174 156 55 129Z','M60 224Q170 259 319 248L333 265Q168 279 60 242Z','M280 7H303V67H280Z','M281 65H310V144H281Z','M456 56H484V118H456Z','M319 101L479 116L491 133L334 153Z'];
+        [[111,145,169,221],[177,151,235,226],[244,157,300,232],[354,167,397,239]].forEach(function(q){gold.push('M'+q[0]+' '+q[3]+'V'+(q[1]+23)+'Q'+((q[0]+q[2])/2)+' '+(q[1]-15)+' '+q[2]+' '+(q[1]+23)+'V'+q[3]+'Z');});
+        [[120,155,160,214],[186,161,226,219],[253,167,291,225]].forEach(function(q){fixed.push('M'+q[0]+' '+q[3]+'V'+(q[1]+18)+'Q'+((q[0]+q[2])/2)+' '+(q[1]-8)+' '+q[2]+' '+(q[1]+18)+'V'+q[3]+'Z');});
+      }
+      return '<g data-brig-material1058="'+k+'">'+a+(gold.length?brigZone1058(brigColor1058(raw,'wale',.50),gold):'')+(fixed.length?brigZone1058(raw,fixed):'')+'</g>';
+    }
     function brigHull858(){return brig929Paint('hull',[['hull',.35],['trim',.27],['wale',.62],['bottom',.18]]);}
     function brigPaint858(file,x,y,w,h,key,ref){var art=brigImg858(file,x,y,w,h);return P[key].toLowerCase()===SHP_PAINT[key].toLowerCase()?art:(key==='sail'?sailTint975(art,P[key],.84):boatTint857(art,P[key],ref));}
     /* v859: frigate painted assets, physical color zones, existing rig and construction preserved. */
@@ -42595,8 +42650,24 @@ document.addEventListener('change',function(e) {
         'M0 378L12 373 24 367 38 362 52 359 64 357 76 353V528L64 525 51 524 37 526 23 527 12 524 0 519Z',
         'M0 558L16 559 29 561 43 559 56 557 76 552V568L60 565 45 566 27 567 0 571Z'
       ]],
-      sloop928:[138,589,[[51,22,82,70],[50,195,86,248],[44,278,89,356],[42,401,92,472],[40,517,95,545]],['M15 92L24 91L37 116L29 116Z','M40 87L49 87L55 116L47 116Z','M64 86L73 86L74 116L64 116Z','M89 87L98 89L92 116L83 116Z','M115 92L123 95L111 116L103 116Z','M32 139L47 139L62 162L53 166Z','M85 139L102 139L86 165L79 164Z','M62 140L74 140L73 161L62 161Z']],
-      brig929:[165,590,[[68,29,96,79],[66,221,102,255],[66,280,105,321],[64,364,107,442],[61,490,109,534]],['M16 104L25 102L40 132L31 134Z','M45 99L54 97L61 130L52 130Z','M77 98L88 98L88 130L77 130Z','M108 99L117 101L111 131L102 130Z','M136 104L146 106L134 133L125 132Z','M40 156L52 156L72 190L63 191Z','M108 155L122 154L99 190L92 190Z','M77 155L88 155L87 190L76 190Z']],
+      sloop928:[138,589,[],[
+        'M40 0H98V69H40Z',
+        'M8 85L29 85L45 112H29Z','M35 85L48 85L58 111H46Z','M59 84H79V111H59Z','M90 85L103 87L93 112H81Z','M114 87L133 92L109 113H99Z',
+        'M26 133L43 132L64 161L55 165Z','M58 132H80L79 165H61Z','M98 133L113 131L85 164L76 164Z',
+        'M30 196Q68 191 103 196V251Q69 246 30 254Z',
+        'M30 275Q68 278 103 269V358Q70 352 30 367Z',
+        'M27 399Q68 391 106 394V476Q68 469 27 485Z',
+        'M25 516Q68 510 108 512V548Q69 543 25 552Z'
+      ]],
+      brig929:[165,590,[],[
+        'M0 0H165V78H0Z',
+        'M0 100Q82 79 165 100V135Q82 124 0 140Z',
+        'M0 158Q82 150 165 158V190Q82 188 0 196Z',
+        'M0 221Q83 214 165 221V257Q83 252 0 259Z',
+        'M0 281Q82 276 165 281V327Q82 316 0 329Z',
+        'M0 363Q82 358 165 362V449Q82 438 0 449Z',
+        'M0 487Q82 479 165 487V537Q82 531 0 539Z'
+      ]],
       frigate930:[174,593,[[69,28,103,70],[68,212,108,252],[69,282,109,313],[66,365,109,440],[64,486,111,531]],['M17 97L27 94L41 123L31 125Z','M46 91L56 90L62 121L53 121Z','M81 89L91 89L91 122L80 122Z','M113 90L122 92L115 122L106 122Z','M143 96L153 99L140 125L132 123Z','M42 154L55 154L75 184L66 184Z','M112 154L125 153L103 184L95 184Z','M80 155L91 155L90 183L80 183Z']],
       galleon931:[176,570,[[72,20,103,50],[68,198,110,219],[67,252,111,275],[65,319,113,383],[63,430,114,482],[61,515,116,530]],['M18 76L29 73L41 100L32 102Z','M48 72L58 70L64 99L54 99Z','M82 70L93 70L93 99L82 99Z','M115 71L125 72L118 99L109 99Z','M145 76L155 80L141 102L133 101Z','M40 128L56 128L75 161L65 161Z','M113 128L129 126L105 161L96 161Z','M81 128L94 128L93 160L80 160Z']],
       galleon932:[161,541,[[68,24,94,32],[55,155,105,173],[54,201,106,221],[54,248,108,265],[54,333,110,357],[51,396,110,411],[51,486,112,505]],['M14 54L24 52L37 73L28 76Z','M43 49L52 49L57 72L49 72Z','M75 50L85 50L85 72L75 72Z','M105 50L115 51L109 72L101 72Z','M135 54L145 56L134 76L126 74Z','M55 300L65 300L65 355L55 355Z','M96 299L106 299L108 355L96 355Z','M53 435L65 435L65 466L53 466Z','M97 435L110 435L110 466L97 466Z']],
@@ -42621,7 +42692,7 @@ document.addEventListener('change',function(e) {
       var center=mastX[ix], foot=mastBase[ix], slot=floorReady1052?feet1052.p[ix]:null, visibleDeck=!o.parts||o.parts.indexOf(B790?'hull':'deck')>=0;
       var seat=slot&&slot.length>2&&visibleDeck, cut=cfg[0], sw=z[0], sh=z[1], srcCenter=cfg[1], shaft=cfg[2];
       var fullH=Math.max(1,foot-y), width=fullH*sw/sh*.92, artX, artH, result='', targetY;
-      function layer(ax,ay,aw,ah){var raw=img('mast',ax,ay,aw,ah).replace('preserveAspectRatio="xMidYMid meet"','preserveAspectRatio="none"');return wood1049(raw,ax,ay,aw,ah,sw,sh,paths);}
+      function layer(ax,ay,aw,ah){var raw=img('mast',ax,ay,aw,ah).replace('preserveAspectRatio="xMidYMid meet"','preserveAspectRatio="none"');var painted=wood1049(raw,ax,ay,aw,ah,sw,sh,paths);if(key==='brig929'&&P.wale.toLowerCase()!==SHP_PAINT.wale.toLowerCase()){painted+=clip1049(boatTint857(raw,P.wale,.50),ax,ay,aw,ah,sw,sh,['M0 78Q82 63 165 78V103Q82 82 0 105Z','M0 134Q82 121 165 134V158Q82 148 0 160Z'],false);}return painted;}
       function replaceHead1053(art){
         if(!replaceNest1053||ix!==tallest)return art;
         var clip=u+'lookout1053'+(++boatArtN855),cy=heads1053[ix].clearY-.8;
@@ -42651,7 +42722,19 @@ document.addEventListener('change',function(e) {
       path.push('M60 123L81 118L88 146L61 154L56 139Z','M632 5L657 0V39L635 43Z');
       return '<g data-boat-yard1056="1">'+wood1049(raw,x,y,w,h,657,553,path)+'</g>';
     }
-    function sloopRig1049(k,x,y,w,h){var raw=sloopImg856(k+'_rig',x,y,w,h);return k==='main'?wood1049(raw,x,y,w,h,664,580,[rect1049([169,175,607,191])]):raw;}
+    function sloopRig1049(k,x,y,w,h){return sloopImg856(k+'_rig',x,y,w,h);}
+    function sloopSail1057(k,x,y,w,h){
+      var raw=sloopImg856(k,x,y,w,h),sw=k==='main'?664:317,sh=k==='main'?580:429;
+      var keep=k==='main'?['M155 188L648 15L660 26L155 206Z','M155 187L192 176L156 239Z','M619 31L641 26L637 73Z','M17 560L60 518L65 546Z','M541 541L576 503L578 570Z']:['M16 409L36 376L59 406Z','M257 396L278 371L296 410Z'];
+      var dyed=P.sail.toLowerCase()===SHP_PAINT.sail.toLowerCase()?raw:sailTint975(raw,P.sail,.84);
+      var base=clip1049(dyed,x,y,w,h,sw,sh,keep,true),hardware=clip1049(raw,x,y,w,h,sw,sh,keep,false);
+      if(k==='main'){
+        // Actual sloped wooden gaff; keep lashing and metal corners in the original colors.
+        var strips=[[191,222],[240,294],[313,368],[386,430],[449,496],[516,569],[589,615]].map(function(q){var t=function(v){return 242-v*.347;};return 'M'+q[0]+' '+t(q[0])+'L'+q[1]+' '+t(q[1])+'L'+q[1]+' '+(t(q[1])+10)+'L'+q[0]+' '+(t(q[0])+10)+'Z';});
+        if(P.hull.toLowerCase()!==SHP_PAINT.hull.toLowerCase())hardware+=clip1049(boatTint857(raw,P.hull,.43),x,y,w,h,sw,sh,strips,false);
+      }
+      return {cloth:base,hardware:hardware};
+    }
     // Painted square yards are part of the source sail image; keep them outside the damage and cloth-dye layers.
     var yardMaterial1049={
       'frigate930/main':[653,470,37,12,31,[[83,138],[157,229],[249,323],[351,423],[442,516],[538,592]]],
@@ -42715,7 +42798,7 @@ document.addEventListener('change',function(e) {
     }
     /* --- такелаж и мачты --- */
     /* v1047: normalized coordinates on the actual registered deck/cabin artwork. */
-    var rig1047 = has('deck') && (frigate859 ? {y:frigate930Y,h:frigate930H,feet:[[.70,.435],[.55,.458],[.24,.195]],rail:[[.08,.18],[.24,.20],[.34,.39],[.50,.45],[.70,.44],[.83,.36],[.94,.22]]} : galleon860 ? {y:galleon931Y,h:galleon931H,feet:[[.65,.48],[.45,.48],[.26,.32]],rail:[[.08,.12],[.22,.26],[.32,.32],[.42,.46],[.65,.48],[.76,.35],[.93,.23]]} : galleon861 ? {y:galleon932Y,h:galleon932H,feet:[[.69,.46],[.55,.46],[.36,.46],[.16,.19]],rail:[[.08,.12],[.16,.19],[.25,.28],[.34,.45],[.65,.46],[.72,.39],[.84,.23]]} : galleon862 ? {y:galleon933Y,h:galleon933H,feet:[[.70,.415],[.53,.447],[.25,.255]],rail:[[.08,.15],[.20,.22],[.29,.28],[.38,.43],[.57,.44],[.73,.40],[.92,.20]]} : null);
+    var rig1047 = has('deck') && (brig858 ? {y:brig929Y,h:brig929H,rail:[[.08,.14],[.23,.22],[.34,.39],[.43,.34],[.58,.31],[.70,.30],[.82,.28],[.90,.24],[.94,.22]]} : frigate859 ? {y:frigate930Y,h:frigate930H,feet:[[.70,.435],[.55,.458],[.24,.195]],rail:[[.08,.18],[.24,.20],[.34,.39],[.50,.45],[.70,.44],[.83,.36],[.94,.22]]} : galleon860 ? {y:galleon931Y,h:galleon931H,feet:[[.65,.48],[.45,.48],[.26,.32]],rail:[[.08,.12],[.22,.26],[.32,.32],[.42,.46],[.65,.48],[.76,.35],[.93,.23]]} : galleon861 ? {y:galleon932Y,h:galleon932H,feet:[[.69,.46],[.55,.46],[.36,.46],[.16,.19]],rail:[[.08,.12],[.16,.19],[.25,.28],[.34,.45],[.65,.46],[.72,.39],[.84,.23]]} : galleon862 ? {y:galleon933Y,h:galleon933H,feet:[[.70,.415],[.53,.447],[.25,.255]],rail:[[.08,.15],[.20,.22],[.29,.28],[.38,.43],[.57,.44],[.73,.40],[.92,.20]]} : null);
     function rigDeck1047(x){if(!rig1047)return deckAt(x);var a=rig1047.rail,t=Math.max(a[0][0],Math.min(a[a.length-1][0],(x-sx)/L)),i=1;while(i<a.length-1&&t>a[i][0])i++;return rig1047.y+rig1047.h*(a[i-1][1]+(a[i][1]-a[i-1][1])*(t-a[i-1][0])/(a[i][0]-a[i-1][0]));}
     var rig = '', masts = '', sails = '', flag = '', jib = '', yards = [], sbox = [];
     var FUR = LY.sa === 'f' ? .14 : LY.sa === 'h' ? .55 : 1;
@@ -42755,9 +42838,17 @@ document.addEventListener('change',function(e) {
       return out+bpath(d,'none',sailLine,2.2,'opacity=".34"')+bpath(d,'none','#fff',.65,'opacity=".29"')+'</g>';
     }
     var brig929Meta={"main":[617,437,[[0.99352,0.00915],[0.97731,0.00229],[0.88493,0.02059],[0.81361,0.01602],[0.74554,0.02975],[0.71313,0.02975],[0.69044,0.02059],[0.65316,0.03204],[0.58833,0.03204],[0.56564,0.02517],[0.52188,0.03432],[0.45867,0.02975],[0.45057,0.02288],[0.42301,0.02975],[0.3517,0.02746],[0.31767,0.01602],[0.24473,0.02288],[0.18152,0.01144],[0.10049,0.01602],[0.05511,0.00686],[0.04376,0.01373],[0.04052,0.0389],[0.05997,0.08696],[0.06807,0.1373],[0.06969,0.1762],[0.06159,0.21053],[0.06807,0.29977],[0.05835,0.39588],[0.02917,0.47597],[0.02917,0.5103],[0.01783,0.57437],[0.02431,0.75973],[0.00972,0.83066],[0.00648,0.89474],[0.01297,0.9405],[0.02917,0.98627],[0.03404,0.97025],[0.06807,0.93135],[0.141,0.90618],[0.18476,0.90389],[0.2269,0.91762],[0.26094,0.89703],[0.30308,0.88558],[0.35818,0.8833],[0.40032,0.89703],[0.45057,0.87643],[0.5235,0.87185],[0.57374,0.89245],[0.65802,0.88101],[0.71799,0.89474],[0.74716,0.91533],[0.80227,0.90847],[0.83468,0.9222],[0.86062,0.91991],[0.88655,0.93135],[0.91734,0.95652],[0.92869,0.95423],[0.95138,0.98856],[0.9611,0.96339],[0.97245,0.9016],[0.96921,0.83982],[0.94814,0.73684],[0.95462,0.60412],[0.96759,0.52403],[0.96596,0.45767],[0.953,0.37071],[0.95462,0.21281],[0.96759,0.09153],[0.98055,0.04805],[0.99352,0.02746]]],"top":[338,267,[[0.04142,0.02247],[0.04142,0.04494],[0.05917,0.06742],[0.07988,0.12734],[0.08876,0.25468],[0.05917,0.33708],[0.06509,0.50562],[0.02663,0.65918],[0.03254,0.85393],[0.00296,0.94007],[0.00592,0.98876],[0.08284,0.93633],[0.14201,0.92509],[0.17751,0.93258],[0.25444,0.88764],[0.31953,0.88015],[0.36686,0.89139],[0.42604,0.86891],[0.50888,0.85768],[0.57692,0.86142],[0.64201,0.88764],[0.69231,0.8764],[0.75444,0.8839],[0.81657,0.92135],[0.85503,0.91386],[0.91124,0.92884],[0.98521,0.98502],[0.99112,0.90637],[0.95562,0.73783],[0.96746,0.59551],[0.93195,0.44944],[0.93787,0.3221],[0.92012,0.27715],[0.92308,0.17228],[0.94379,0.09738],[0.97633,0.04494],[0.96746,0.01498],[0.8432,0.03745],[0.7574,0.02996],[0.68047,0.04494],[0.60059,0.03371],[0.56509,0.04494],[0.48225,0.04494],[0.42012,0.02996],[0.31657,0.03745],[0.2574,0.02247],[0.15385,0.02622],[0.06213,0.00749]]],"jib":[355,354,[[0.03099,0.0113],[0.02535,0.04237],[0.06761,0.08475],[0.12113,0.27401],[0.14366,0.45198],[0.14366,0.5904],[0.12676,0.72599],[0.09859,0.83051],[0.05634,0.91808],[0.03944,0.93503],[0.00845,0.94633],[0.01127,0.98305],[0.04507,0.9887],[0.08169,0.94915],[0.22254,0.90395],[0.48169,0.86723],[0.77746,0.87288],[0.91831,0.89548],[0.95775,0.9322],[0.97465,0.9322],[0.98873,0.91808],[0.99155,0.89548],[0.9831,0.88136],[0.93521,0.85593],[0.51831,0.4322],[0.1493,0.0904],[0.10141,0.0565],[0.06761,0.00565],[0.04507,0.00282]]],"mast":[165,590,[[0.47879,0.00508],[0.4,0.01186],[0.37576,0.02034],[0.41818,0.06441],[0.41212,0.13051],[0.21818,0.14068],[0.10909,0.15254],[0.0303,0.1678],[0.01818,0.18475],[0.03636,0.19831],[0.07273,0.20678],[0.10909,0.23559],[0.10909,0.26441],[0.24848,0.27797],[0.34545,0.30678],[0.38182,0.32542],[0.36364,0.3678],[0.4,0.37966],[0.4,0.40847],[0.3697,0.47119],[0.39394,0.47797],[0.38788,0.54915],[0.35758,0.55932],[0.35152,0.60847],[0.38788,0.62373],[0.37576,0.75932],[0.33939,0.76949],[0.33333,0.82034],[0.3697,0.83051],[0.35758,0.90847],[0.33333,0.91356],[0.32727,0.94746],[0.29697,0.95254],[0.29091,0.98983],[0.38788,0.99492],[0.65455,0.99492],[0.73939,0.99153],[0.75152,0.97627],[0.74545,0.95254],[0.71515,0.93898],[0.71515,0.91525],[0.67879,0.90508],[0.67273,0.82881],[0.70303,0.81864],[0.69697,0.76949],[0.66061,0.75593],[0.64242,0.62542],[0.67879,0.61186],[0.67273,0.55932],[0.63636,0.54576],[0.6303,0.47797],[0.65455,0.47119],[0.65455,0.44576],[0.62424,0.43729],[0.61818,0.37627],[0.65455,0.3661],[0.65455,0.34068],[0.6303,0.32542],[0.75758,0.27797],[0.84242,0.27288],[0.89697,0.26271],[0.89697,0.2339],[0.93333,0.20508],[0.9697,0.19661],[0.98182,0.17458],[0.93333,0.15763],[0.86061,0.14746],[0.57576,0.13051],[0.5697,0.05932],[0.60606,0.02034],[0.56364,0.00847]]]};
-    function brig929Canvas(k,x,y,w,h,i){var d=brig929Meta[k][2].map(function(q,j){return (j?'L':'M')+bF(x+w*q[0])+' '+bF(y+h*q[1]);}).join('')+'Z', mid=u+'b929s'+(++brigClothN),fill=i==null?sailFill:sfi(i);
+    function brig929Canvas(k,x,y,w,h,i){
+      var z=brig929Meta[k],d=z[2].map(function(q,j){return (j?'L':'M')+bF(x+w*q[0])+' '+bF(y+h*q[1]);}).join('')+'Z',fill=i==null?sailFill:sfi(i);
       if(!has('sail'))return bpath(d,P.sail,sailLine,.8)+clothPaint829(d,fill,i);
-      return paintedCanvas1049('brig929',k,brigImg858,x,y,w,h,i,d);
+      if(k!=='jib')rigFront1049+=brigYard1051(x+w/2,y,w,h,k);
+      if(FUR<1)return k==='jib'?foldCanvas964(k,x,y,w,h,i):fold964(x,y+h*.025,w,h,0,i);
+      var raw=brigImg858(k,x,y,w,h),keep=k==='jib'?['M0 0H32L49 49L33 42Z','M0 307L45 318L29 354H0Z','M310 300L355 306V342L332 341Z']:k==='main'?['M0 0H617V16H0Z']:['M0 0H338V15H0Z'];
+      var cloth=clip1049(raw,x,y,w,h,z[0],z[1],keep,true),end=cloth.indexOf('</defs>')+7,defs=cloth.slice(0,end);cloth=cloth.slice(end);
+      var mid=u+'brigcloth1058'+(++brigClothN),art=web964?'':(P.sail.toLowerCase()===SHP_PAINT.sail.toLowerCase()?cloth:sailTint975(cloth,P.sail,.84));
+      // hardware outside cloth damage/paint and pattern layers
+      rigFront1049+='<g data-brig-sail-hardware1058="'+k+'">'+clip1049(raw,x,y,w,h,z[0],z[1],keep,false)+'</g>';
+      return defs+'<defs><mask id="'+mid+'" maskUnits="userSpaceOnUse" x="'+bF(x)+'" y="'+bF(y)+'" width="'+bF(w)+'" height="'+bF(h)+'" style="mask-type:alpha">'+cloth+'</mask></defs>'+art+'<g mask="url(#'+mid+')">'+clothPaint829(d,fill,i)+(canPattern964&&fill===sailPt?'<g style="mix-blend-mode:multiply" opacity=".23">'+cloth+'</g>':'')+'</g>';
     }
     var frigate930Meta={"main":[653,470,[[0.99541,0.02766],[0.98775,0.01915],[0.97243,0.02128],[0.96478,0.01277],[0.94946,0.01489],[0.94334,0.00851],[0.93415,0.01277],[0.92802,0.02553],[0.90965,0.01489],[0.8974,0.02553],[0.81776,0.02553],[0.81011,0.01489],[0.79786,0.01489],[0.79173,0.02553],[0.67534,0.02766],[0.66922,0.01702],[0.65391,0.01702],[0.64778,0.02766],[0.54058,0.02766],[0.53292,0.01489],[0.51761,0.00638],[0.49617,0.01702],[0.49158,0.02766],[0.37979,0.02979],[0.3706,0.01702],[0.35988,0.01702],[0.35069,0.02979],[0.2389,0.02979],[0.23277,0.01915],[0.21746,0.01915],[0.21133,0.02979],[0.13017,0.03191],[0.12557,0.02128],[0.11639,0.01915],[0.09954,0.03191],[0.0827,0.01064],[0.05819,0.01277],[0.04135,0.02553],[0.02144,0.02766],[0.01531,0.04043],[0.02144,0.06596],[0.03982,0.06809],[0.06279,0.08085],[0.07198,0.11702],[0.07351,0.21064],[0.049,0.29787],[0.0536,0.41915],[0.03369,0.48085],[0.01531,0.57447],[0.01378,0.63404],[0.0245,0.75745],[0.00613,0.86809],[0.01531,0.94894],[0.00919,0.96809],[0.01072,0.98511],[0.02144,0.98298],[0.03063,0.96383],[0.06432,0.94043],[0.10107,0.92553],[0.1317,0.92766],[0.13936,0.91489],[0.1853,0.9],[0.22665,0.89787],[0.26034,0.90851],[0.27718,0.89574],[0.32159,0.89149],[0.37825,0.89787],[0.40429,0.90851],[0.40888,0.9],[0.42573,0.89362],[0.48392,0.88723],[0.51608,0.89787],[0.5268,0.90851],[0.54977,0.89362],[0.60337,0.88298],[0.65391,0.89149],[0.66769,0.89787],[0.67381,0.90851],[0.69525,0.9],[0.75191,0.9],[0.81164,0.91702],[0.81776,0.92553],[0.83767,0.92128],[0.86524,0.92766],[0.91271,0.95106],[0.92802,0.96383],[0.93874,0.98511],[0.9464,0.98511],[0.94946,0.96596],[0.94334,0.95106],[0.951,0.87447],[0.94793,0.82128],[0.95559,0.73191],[0.9464,0.6],[0.96018,0.51064],[0.96018,0.48298],[0.95253,0.41915],[0.93415,0.34681],[0.93415,0.28298],[0.94181,0.22553],[0.93568,0.13617],[0.94181,0.09362],[0.951,0.07021],[0.97397,0.05745],[0.99081,0.05745],[0.99694,0.04468]]],"top":[365,269,[[0.0137,0.05204],[0.01096,0.08922],[0.02192,0.10409],[0.06575,0.11152],[0.08219,0.14498],[0.09041,0.2342],[0.07397,0.43494],[0.07397,0.55019],[0.05753,0.63941],[0.06575,0.79182],[0.04658,0.9145],[0.03014,0.94796],[0.03836,0.98141],[0.06849,0.94052],[0.11233,0.91822],[0.16164,0.90706],[0.20548,0.91822],[0.21644,0.89963],[0.27397,0.88104],[0.35342,0.88476],[0.39726,0.89963],[0.40822,0.9145],[0.46849,0.88848],[0.52603,0.88848],[0.58356,0.9145],[0.59452,0.89963],[0.6274,0.88848],[0.71507,0.88104],[0.76712,0.89591],[0.79452,0.92193],[0.8411,0.91078],[0.89315,0.92565],[0.94521,0.95539],[0.96164,0.98513],[0.97808,0.9777],[0.95342,0.88104],[0.9589,0.71375],[0.93151,0.5948],[0.90411,0.20074],[0.91233,0.13383],[0.92329,0.11152],[0.98904,0.0855],[0.99178,0.05204],[0.98082,0.03717],[0.90959,0.0223],[0.89863,0.03717],[0.86849,0.02974],[0.84932,0.04461],[0.73699,0.04461],[0.72329,0.02974],[0.68493,0.04461],[0.55342,0.04461],[0.52877,0.01115],[0.49589,0.00743],[0.46301,0.04461],[0.29589,0.04461],[0.29041,0.03346],[0.26301,0.03346],[0.25753,0.04461],[0.14247,0.04833],[0.13151,0.03346],[0.10959,0.04089],[0.09041,0.02602]]],"jib":[356,367,[[0.06461,0.01635],[0.05337,0.0327],[0.05337,0.0545],[0.07022,0.07357],[0.09831,0.08447],[0.1236,0.19891],[0.14326,0.3733],[0.14888,0.56131],[0.13483,0.6921],[0.10393,0.82834],[0.06742,0.91008],[0.01404,0.93733],[0.01404,0.9782],[0.03652,0.99183],[0.05618,0.9891],[0.09551,0.9455],[0.26404,0.89646],[0.28652,0.89918],[0.38483,0.87466],[0.47191,0.87466],[0.55899,0.86104],[0.77809,0.87193],[0.90169,0.89646],[0.94382,0.94005],[0.97472,0.93188],[0.98596,0.91281],[0.98034,0.88556],[0.96067,0.87193],[0.94382,0.87193],[0.90449,0.84196],[0.62921,0.57766],[0.33708,0.25886],[0.19101,0.11444],[0.19101,0.10354],[0.12921,0.05722],[0.10674,0.01362],[0.08708,0.00817]]],"mast":[174,593,[[0.44253,0.00506],[0.39655,0.01012],[0.36207,0.02192],[0.40805,0.05902],[0.40805,0.11636],[0.13793,0.13153],[0.05172,0.14503],[0.01724,0.15514],[0.02874,0.17707],[0.08046,0.18718],[0.12069,0.22428],[0.12069,0.25295],[0.17241,0.26307],[0.24138,0.26644],[0.3908,0.31366],[0.36207,0.32884],[0.36782,0.3575],[0.4023,0.36594],[0.39655,0.43002],[0.37356,0.43676],[0.37356,0.46712],[0.39655,0.47218],[0.3908,0.53457],[0.35057,0.54806],[0.35057,0.60877],[0.3908,0.61889],[0.37931,0.74874],[0.33908,0.76223],[0.33908,0.80776],[0.37931,0.81788],[0.37356,0.90051],[0.34483,0.90725],[0.32184,0.98482],[0.40805,0.99157],[0.61494,0.99157],[0.7069,0.98314],[0.7069,0.95953],[0.67816,0.94098],[0.67816,0.90725],[0.64943,0.90051],[0.64368,0.81788],[0.67816,0.80776],[0.67816,0.76054],[0.63793,0.74705],[0.62644,0.6172],[0.66092,0.60708],[0.65517,0.54469],[0.61494,0.53288],[0.6092,0.47218],[0.63218,0.46543],[0.63218,0.43845],[0.60345,0.43002],[0.5977,0.36594],[0.63218,0.35582],[0.63218,0.32546],[0.6092,0.31872],[0.6092,0.31029],[0.74138,0.26644],[0.86207,0.25295],[0.87931,0.23777],[0.86207,0.22934],[0.90805,0.1855],[0.96552,0.17369],[0.97126,0.15514],[0.92529,0.14165],[0.82184,0.12816],[0.58621,0.11804],[0.57471,0.05734],[0.61494,0.02024],[0.54023,0.00506]]]};
     function frigate930Canvas(k,x,y,w,h,i){var d=frigate930Meta[k][2].map(function(q,j){return (j?'L':'M')+bF(x+w*q[0])+' '+bF(y+h*q[1]);}).join('')+'Z', mid=u+'f930s'+(++brigClothN),fill=i==null?sailFill:sfi(i);
@@ -42788,17 +42879,15 @@ document.addEventListener('change',function(e) {
       galleon932:{main:[.012,.997,.947,.993],top:[.052,.996,.956,.981]},
       galleon933:{main:[.011,.996,.973,.991],top:[.051,.981,.941,.994]}
     };
-    function brigYard1051(x,yt,w){
-      // Reuse the painted yard in the Galleon I topsail, not the former flat stroke.
-      var sw=354,sh=270,ww=w*1.035,hh=ww*sh/sw,band=hh*24/sh,xx=x-ww/2,yy=yt-band*.68;
-      var raw=galleonImg860('top',xx,yy,ww,hh), z=yardMaterial1049['galleon931/top'];
-      return '<g data-brig-yard1051="1">'+clip1049(wood1049(raw,xx,yy,ww,hh,sw,sh,z[5].map(function(q){return rect1049([q[0],z[3],q[1],z[4]]);})),xx,yy,ww,hh,sw,sh,[rect1049([0,0,sw,24])],false)+'</g>';
+    function brigYard1051(x,yt,w,h,k){
+      var sw=354,sh=270,ww=w*1.035,hh=ww*sh/sw,band=hh*27/sh,xx=x-ww/2,yy=yt+h*.025-band*.78;
+      var raw=galleonImg860('top',xx,yy,ww,hh), wood=[[0,16],[28,38],[53,112],[129,164],[190,227],[243,300],[318,354]].map(function(q){return rect1049([q[0],0,q[1],27]);});
+      return '<g data-brig-yard1051="1">'+clip1049(wood1049(raw,xx,yy,ww,hh,sw,sh,wood),xx,yy,ww,hh,sw,sh,[rect1049([0,0,sw,27])],false)+'</g>';
     }
     function squareFinish1051(key,k,x,yt,yb,w,idx,level){
       if(!has('sail'))return '';
-      var h=yb-yt, z=yardMaterial1049[key+'/'+k], yardY=key==='brig929'?yt-h*.028:yt+h*(z?(z[3]+z[4])/2/z[1]:.03), yardW=w*(key==='brig929'?1.035:1), lower=squareYards1051[idx];
+      var h=yb-yt, z=yardMaterial1049[key+'/'+k], yardY=key==='brig929'?yt+h*.025-w*1.035*27/354*.28:yt+h*(z?(z[3]+z[4])/2/z[1]:.03), yardW=w*(key==='brig929'?1.035:1), lower=squareYards1051[idx];
       if(level===0)squareYards1051[idx]={x:x,y:yardY,w:yardW};
-      if(key==='brig929')rigFront1049+=brigYard1051(x,yt,w);
       // No duplicated painted bindings or false hem line. Clews follow the real art silhouette.
       if(FUR<1||dl>=3||(o.dec||[]).indexOf('torn')>=0)return '';
       var c=clew1051[key][k], out='', left=x-w/2;
@@ -42908,20 +42997,38 @@ document.addEventListener('change',function(e) {
       var x1 = mastX[0], y1 = mastBase[0], tp = mastTop[0];
       /* v928: hand-painted gaff mainsail and jib, separate cloth and hardware. */
       var f=bF, mainY=has('mast')?Math.max(tp+13,heads1053[0].clearY+2):tp+13, mainW=Math.min(L*.48,Math.max(30,(y1-mainY-8)*664/580)),mainH=mainW*580/664,mainX=x1-mainW*.94,
-          jibY=mainY+7,jibH=mainH*.93,jibW=jibH*317/429,jibX=x1+3;
+          jibY=mainY+7,jibH=mainH*.93,jibW=jibH*317/429,jibX=x1-jibW*18/317;
+      mainX=x1-mainW*648/664;
       var sp928={"main":[664,580,[[0.95633,0.04483],[0.9247,0.04828],[0.7741,0.12586],[0.75602,0.12759],[0.73946,0.14138],[0.67169,0.16897],[0.66114,0.16724],[0.6506,0.17759],[0.59488,0.2],[0.56928,0.20345],[0.5497,0.21724],[0.5,0.23621],[0.30572,0.29655],[0.23645,0.32586],[0.23494,0.33276],[0.24096,0.3431],[0.23946,0.39828],[0.20482,0.53966],[0.09337,0.83793],[0.03012,0.96552],[0.14307,0.92931],[0.19428,0.92241],[0.25,0.90517],[0.29066,0.90172],[0.29367,0.9069],[0.41416,0.89483],[0.50452,0.89483],[0.7741,0.92759],[0.86898,0.9569],[0.86596,0.78621],[0.92018,0.47069],[0.93373,0.31897],[0.95633,0.14483]]],"jib":[317,429,[[0.07886,0.06527],[0.11987,0.3986],[0.12303,0.65967],[0.1041,0.84382],[0.05678,0.94639],[0.28076,0.90443],[0.47634,0.89277],[0.72555,0.90909],[0.92429,0.94172],[0.87066,0.85548],[0.4858,0.49417],[0.16088,0.16084]]]};
       function sc928(k,x,y,w,h,i){var d=sp928[k][2].map(function(q,j){return (j?'L':'M')+f(x+w*q[0])+' '+f(y+h*q[1]);}).join('')+'Z',mid=u+'s928'+i;
         if(!has('sail'))return bpath(d,P.sail,sailLine,.8)+clothPaint829(d,sfi(i),i);
-        rigFront1049+=sloopRig1049(k,x,y,w,h);
-        if(FUR<1)return (k==='main'?fold964(x+w*.23,y+h*.32,w*.75,h,-20,i):foldCanvas964(k,x,y,w,h,i));
-        var a=sloopImg856(k,x,y,w,h);if(P.sail.toLowerCase()!==SHP_PAINT.sail.toLowerCase())a=sailTint975(a,P.sail,.84);
+        if(FUR<1){
+          // The full-size rig would leave loose eyelets below the folded canvas.
+          return (k==='main'?fold964(x+w*.23,y+h*.32,w*.75,h,-20,i):foldCanvas964(k,x,y,w,h,i));
+        }
+        var layers=sloopSail1057(k,x,y,w,h),a=layers.cloth;
+        rigFront1049+=layers.hardware+sloopRig1049(k,x,y,w,h);
         return '<defs><mask id="'+mid+'" maskUnits="userSpaceOnUse" x="'+f(x)+'" y="'+f(y)+'" width="'+f(w)+'" height="'+f(h)+'" style="mask-type:alpha">'+sloopImg856(k,x,y,w,h)+'</mask></defs>'+a+'<g mask="url(#'+mid+')">'+clothPaint829(d,sfi(i),i)+(patDef&&sfi(i)===sailPt?'<g style="mix-blend-mode:multiply" opacity=".23">'+sloopImg856(k,x,y,w,h)+'</g>':'')+(FUR===1&&(!LY.sf||LY.sf==='plain')?'':clothFinish831(d))+'</g>';
       }
       sails+=sc928('main',mainX,mainY,mainW,mainH,0)+sc928('jib',jibX,jibY,jibW,jibH,1);
       var mh=y1+4-tp,mw=mh*138/589;
       masts=has('mast')?mast1049('sloop928',sloopImg856,x1-mw/2,tp,mw,mh):bspar(bline(x1,y1+4,x1,tp),4.5);
       sbox.push([mainX+mainW/2,mainY,mainY+mainH,mainW],[jibX+jibW/2,jibY,jibY+jibH,jibW]);yards.push([mainX,mainX+mainW,mainY+mainH]);
-      rig=brope(bline(x1,tp+5,bx-8,deckAt(bx-8)-1),.82)+brope(bline(x1,tp+5,sx+18,deckAt(sx+18)-1),.9);
+      // v1057: eyelet coordinates are measured in the original 664×580 / 317×429 rasters.
+      function eye1057(k,px,py){return k==='main'?[mainX+mainW*px/664,mainY+mainH*py/580]:[jibX+jibW*px/317,jibY+jibH*py/429];}
+      function tie1057(p,q,kind){return '<g data-sloop-tie1057="'+kind+'">'+brope(bline(p[0],p[1],q[0],q[1]),.58)+'</g>';}
+      var aft=[sx+L*330/1438,sloop928Y+sloop928H*88/406],fore=[sx+L*1190/1438,sloop928Y+sloop928H*104/406],heel=[x1,sloop928Y+sloop928H*156/406],head=[x1,tp+5];
+      if(!floorReady1052){aft=[sx+18,deckAt(sx+18)-1];fore=[bx-8,deckAt(bx-8)-1];heel=[x1,y1-2];}
+      rig=has('mast')?tie1057(head,aft,'backstay')+tie1057(head,fore,'forestay'):'';
+      if(has('mast')&&has('sail')){
+        if(FUR>=1){
+          rigFront1049+=tie1057(eye1057('main',648,12),[x1,mainY+2],'main-head')+tie1057(eye1057('main',156,181),[x1,heads1053[0].clearY-1],'gaff-halyard')+tie1057(eye1057('main',11,565),aft,'main-sheet')+tie1057(eye1057('main',577,568),[x1,mainY+mainH*.98],'main-tack')+tie1057(eye1057('jib',18,11),[x1,jibY+2],'jib-head')+tie1057(eye1057('jib',11,418),heel,'jib-tack')+tie1057(eye1057('jib',307,416),fore,'jib-sheet');
+        }else{
+          var a1057=[mainX+mainW*.23,mainY+mainH*.32],b1057=[jibX+jibW*.09,jibY+jibH*.06];
+          var gaffEnd=[a1057[0]+mainW*.75*Math.cos(Math.PI/9),a1057[1]-mainW*.75*Math.sin(Math.PI/9)],jibEnd=[b1057[0]+jibW*.83,b1057[1]+jibH*.70];
+          rigFront1049+=tie1057(a1057,[x1,heads1053[0].clearY-1],'folded-gaff')+tie1057(gaffEnd,[x1,gaffEnd[1]],'folded-gaff-end')+tie1057(b1057,[x1,jibY+1],'folded-jib-head')+tie1057(jibEnd,fore,'folded-jib-sheet');
+        }
+      }
     } else {
       var bsx = galleon862?bx+T.bs*.55:galleon861?bx-L*.012:bx + (T.bs || 0) * .92, bsy = galleon862?galleon933Y+galleon933H*.025:galleon861?galleon932Y+galleon932H*.045:yb - (T.bs || 0) * .36;
       if (T.bs) {
@@ -42948,7 +43055,22 @@ document.addEventListener('change',function(e) {
       } else if(B792){
         var jD='M'+bF(fx+2)+' '+bF(ftop+30)+'L'+bF(bx+2)+' '+bF(yb-2)+'Q'+bF(fx+(bx-fx)*.5)+' '+bF(yb-6)+' '+bF(fx+8)+' '+bF(deckAt(fx)-30)+'Z', js=[];
         for(var j=1;j<5;j++){var t=j/5, y=ftop+30+(deckAt(fx)-30-ftop-30)*t;js.push('M'+bF(fx+3)+' '+bF(y)+'Q'+bF(fx+(bx-fx)*t*.6)+' '+bF(y+8)+' '+bF(fx+2+(bx-fx)*t)+' '+bF(ftop+30+(yb-2-ftop-30)*t));}
-        if(brig858){var jt=ftop+T.masts[0].h*.34,jh=Math.min(brig929Y+brig929H*.22-jt,(bx-fx-7)*354/355),jw=jh*355/354;jib=brig929Canvas('jib',fx+3,jt,jw,jh,null);}else jib=brigCloth(jD,sailFill,js);rig+=brope(bline(fx,ftop+3,bx+2,yb-2),.95)+brope(bline(mastX[1],mastTop[1]+4,sx+6,ys-1),1.05)+brope(bline(mastX[1],mastTop[1]+5,fx,ftop+30),.85);
+        if(brig858){
+          var jt=Math.max(ftop+T.masts[0].h*.34,heads1053[0].clearY+2),jh=Math.max(8,Math.min(brig929Y+brig929H*.27-jt,(bx-fx-7)*354/355)),jw=jh*355/354,jx=fx-jw*19/355+2;
+          jib=brig929Canvas('jib',jx,jt,jw,jh,null);
+          function eye1058(px,py){return [jx+jw*px/355,jt+jh*py/354];}
+          function tie1058(p,q,k){return '<g data-brig-jib-tie1058="'+k+'">'+brope(bline(p[0],p[1],q[0],q[1]),.50)+'</g>';}
+          var bow=[sx+L*1330/1486,brig929Y+brig929H*120/500],heel=[sx+L*1044/1486,brig929Y+brig929H*140/500],aft=[sx+L*480/1486,brig929Y+brig929H*82/500];
+          if(!has('deck')){bow=[bx-8,deckAt(bx-8)];heel=[fx+6,mastBase[0]-2];aft=[sx+10,ys];}
+          if(!has('cabin'))aft=[sx+L*.34,rigDeck1047(sx+L*.34)];
+          if(has('mast')){
+            rig+=tie1058([fx,ftop+3],bow,'forestay')+tie1058([mastX[1],mastTop[1]+4],aft,'backstay')+tie1058([mastX[1],mastTop[1]+5],[fx,heads1053[0].clearY],'intermast');
+            if(has('sail')){
+              if(FUR>=1){rigFront1049+=tie1058(eye1058(19,12),[fx,jt],'head')+tie1058(eye1058(12,341),heel,'tack')+tie1058(eye1058(342,319),bow,'clew');}
+              else {var px=jx+jw*.09,py=jt+jh*.06,dx=jw*.83,dy=jh*.70;rigFront1049+=tie1058([px,py],[fx,jt],'folded-head')+tie1058([px+dx,py+dy],bow,'folded-clew');}
+            }
+          }
+        }else {jib=brigCloth(jD,sailFill,js);rig+=brope(bline(fx,ftop+3,bx+2,yb-2),.95)+brope(bline(mastX[1],mastTop[1]+4,sx+6,ys-1),1.05)+brope(bline(mastX[1],mastTop[1]+5,fx,ftop+30),.85);}
       }
       if (T.masts.length > 2) {
         var ax = mastX[T.masts.length - 1], ay = mastBase[T.masts.length - 1], at = mastTop[T.masts.length - 1];
