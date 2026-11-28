@@ -1,6 +1,6 @@
-<!-- One Piece Wiki update v1055: registered figurehead seating and stern ornament fitting -->
+<!-- One Piece Wiki update v1056: boat wood dye registration and continuous stem paint -->
 <!doctype html>
-<!--wk-ver:28.11.2026 · 1055-->
+<!--wk-ver:28.11.2026 · 1056-->
 <script id="wk-v616-pre">try{var K='wkExtrasKeepV616',old={},ca=[],ma={},cc=null,cca=[],cma={};try{old=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}try{ca=JSON.parse(localStorage.getItem('onePieceWikiCustomAchievementsV1')||'[]')}catch(e){}try{ma=JSON.parse(localStorage.getItem('onePieceWikiMedalArtV1')||'{}')}catch(e){}try{cc=JSON.parse(localStorage.getItem('wkCloudContentV1')||'null');if(cc&&cc.data){cca=Array.isArray(cc.data.customAchievements)?cc.data.customAchievements:[];cma=cc.data.medalArt&&typeof cc.data.medalArt==='object'?cc.data.medalArt:{}}}catch(e){}cc=null;var oc=Array.isArray(old.ca)?old.ca:[],om=old.ma&&typeof old.ma==='object'?old.ma:{},ids={},cids={};oc.forEach(function(a){if(a&&a.id!=null)ids[a.id]=1});cca.forEach(function(a){if(a&&a.id!=null)cids[a.id]=1});(Array.isArray(ca)?ca:[]).forEach(function(a){if(a&&a.id!=null&&!ids[a.id]&&!cids[a.id]){oc.push(a);ids[a.id]=1}});if(ma&&typeof ma==='object')Object.keys(ma).forEach(function(k){if(!(k in om)&&!(k in cma)&&ma[k]!=null&&ma[k]!=='')om[k]=ma[k]});if(oc.length||Object.keys(om).length)localStorage.setItem(K,JSON.stringify({ca:oc,ma:om}));else localStorage.removeItem(K)}catch(e){}</script>
 <html data-wiki-portable-baked="true" data-wiki-portable-id="2026-11-11T03:23:00.970Z" lang="ru" style="--reward-rank-first: #ffda75; --reward-rank-second: #d9d9d9; --reward-rank-third: #ffd285; --reward-rank-other: #4f4860; --wiki-progress-manga: #efc66b; --wiki-progress-anime: #60d9ff; --wk-title-font: 'Days One'; --wk-title-fw: 400; --wk-wp-tpl: url(&quot;./assets/webp/ui/wanted_template.webp&quot;); --wk-fg-manga: #0b0f17; --wk-fg-anime: #0b0f17; --wk-accent: #a78bfa; --wk-accent-soft: #d3c5fd; --fruit-type-param-color: #bb9eff !important; --fruit-type-param-rgb: 187, 158, 255 !important; --fruit-type-logia-color: #f967ae !important; --fruit-type-logia-rgb: 249, 103, 174 !important; --fruit-type-zoan-color: #65f6b7 !important; --fruit-type-zoan-rgb: 101, 246, 183 !important; --wk-tz-card: 1.15;" class="wk-sc-off wk-hz-c wk-hz-f wk-hz-u wk-hz-v wk-hz-h wk-calm wk-tfx-off wk-tfx-still wk-gpu wk-hdr-min" data-wk-role="admin" data-wk-title-font="g:Days One|"><head>
 <script id="wk-v596-early">try{var q=new URLSearchParams(location.search);if(q.get("tab")==="favorites"&&/^[a-z]+$/.test(q.get("cab")||"")){var cb=q.get("cab");localStorage.setItem("onePieceWikiCabinSubtabV3",cb==="overview"?"favorites":cb);localStorage.setItem("onePieceWikiCabinExtraTabV1",/^(watchgrid|timeline|deck|tops|stats|edits|quiz|atlas|help)$/.test(cb)?cb:"");}}catch(e){}</script>
@@ -3720,7 +3720,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "28.11.2026 · 1055";
+const WIKI_VERSION = "28.11.2026 · 1056";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -42515,9 +42515,31 @@ document.addEventListener('change',function(e) {
     /* v927: original-resolution painted boat, shared pixel-aligned layers, no stretching. */
     function boat927img(k,x,y,w,h){return '<image href="assets/webp/ships/boat927/'+k+'.webp" x="'+shpF(x)+'" y="'+shpF(y)+'" width="'+shpF(w)+'" height="'+shpF(h)+'" preserveAspectRatio="xMidYMid meet"/>';}
     function boat927himg(k){return '<image href="assets/webp/ships/boat927/'+k+'.webp'+(/^(?:mask_|deck_)/.test(k)&&!/base$/.test(k)?'?v=1048':'')+'" x="'+shpK(sx)+'" y="'+shpK(boat927y)+'" width="'+shpK(L)+'" height="'+shpK(boat927h)+'" preserveAspectRatio="xMidYMid meet"/>'; }
-    function boatHull855(){var b=boat927himg('hull_base'),refs={hull:.36,trim:.29,wale:.62,bottom:.18};Object.keys(refs).forEach(function(k){if(P[k].toLowerCase()!==SHP_PAINT[k].toLowerCase())b+=boatTint857(boat927himg('mask_'+k),P[k],refs[k]);});return b;}
-    function boat927deck(){var a=boat927himg('deck_base');[['hull',.34],['wale',.58]].forEach(function(q){if(P[q[0]].toLowerCase()!==SHP_PAINT[q[0]].toLowerCase())a+=boatTint857(boat927himg('mask_deck_'+q[0]),P[q[0]],q[1]);});return a;}
-
+    /* v1056: the carved bow is a single wale material; restore its entire source silhouette above old overlapping masks. */
+    function boatZone1056(raw,paths){return clip1049(raw,sx,boat927y,L,boat927h,1264,403,paths,false);}
+    function boatHull855(){
+      var raw=boat927himg('hull_base'),b=raw,refs={hull:.36,trim:.29,wale:.62,bottom:.18};
+      Object.keys(refs).forEach(function(k){if(P[k].toLowerCase()!==SHP_PAINT[k].toLowerCase())b+=boatTint857(boat927himg('mask_'+k),P[k],refs[k]);});
+      if(Object.keys(refs).some(function(k){return P[k].toLowerCase()!==SHP_PAINT[k].toLowerCase();})){
+        var stem='M1139 76 Q1130 139 1104 189 Q1075 254 1035 306 Q990 365 933 389 L900 403H1264V0H1139Z';
+        var stemArt=P.wale.toLowerCase()===SHP_PAINT.wale.toLowerCase()?raw:boatTint857(raw,P.wale,.62);
+        b+='<g data-boat-stem1056="1">'+boatZone1056(stemArt,[stem])+'</g>';
+        var pins=[[159,215,6,8],[164,255,6,8],[170,294,6,8],[359,251,8,8],[359,293,8,8],[364,332,8,8],[798,251,8,8],[795,294,8,8],[792,335,8,8],[1092,235,9,10],[1135,150,8,10],[1022,165,6,7]];
+        var holes=pins.map(function(q){return 'M'+(q[0]-q[2])+' '+q[1]+'a'+q[2]+' '+q[3]+' 0 1 0 '+(q[2]*2)+' 0a'+q[2]+' '+q[3]+' 0 1 0 '+(-q[2]*2)+' 0Z';});
+        b+='<g data-boat-rivets1056="1">'+boatZone1056(raw,holes)+'</g>';
+      }
+      return b;
+    }
+    function boat927deck(){
+      var raw=boat927himg('deck_base'),a=raw;
+      [['hull',.34],['wale',.58]].forEach(function(q){if(P[q[0]].toLowerCase()!==SHP_PAINT[q[0]].toLowerCase())a+=boatTint857(boat927himg('mask_deck_'+q[0]),P[q[0]],q[1]);});
+      if(P.hull.toLowerCase()!==SHP_PAINT.hull.toLowerCase()||P.wale.toLowerCase()!==SHP_PAINT.wale.toLowerCase()){
+        var posts=['M55 15L142 15L144 60L139 104L89 121L84 74L55 57Z','M944 82L986 78L985 99L976 170L945 173Z'];
+        var painted=P.wale.toLowerCase()===SHP_PAINT.wale.toLowerCase()?raw:boatTint857(raw,P.wale,.58);
+        a+='<g data-boat-deck-posts1056="1">'+boatZone1056(painted,posts)+'</g>';
+      }
+      return a;
+    }
 
     /* v856: modular painted sloop. Geometry, paint slots, construction and decorations remain independent. */
     /* v928: full painted sloop components, real aspect ratios and registered color masks. */
@@ -42566,7 +42588,13 @@ document.addEventListener('change',function(e) {
     /* v1049: registered material regions on the original painted WebP. Only wood is dyed.
        Keep the existing hull paint key, default source artwork, alpha, and all saved customization. */
     var rigMaterial1049={
-      boat927:[76,596,[[12,8,60,35],[14,82,59,193],[14,234,58,313],[13,365,60,518]]],
+      boat927:[76,596,[],[
+        'M0 0H76V39L64 38 55 35 40 35 23 39 0 46Z',
+        'M0 82L13 79 23 72 37 68 52 67 63 70 76 67V201L62 198 52 195 37 194 21 197 9 201 0 207Z',
+        'M0 231L12 227 22 224 38 224 53 221 64 218 76 216V316L65 314 56 315 43 320 29 326 15 334 0 346Z',
+        'M0 378L12 373 24 367 38 362 52 359 64 357 76 353V528L64 525 51 524 37 526 23 527 12 524 0 519Z',
+        'M0 558L16 559 29 561 43 559 56 557 76 552V568L60 565 45 566 27 567 0 571Z'
+      ]],
       sloop928:[138,589,[[51,22,82,70],[50,195,86,248],[44,278,89,356],[42,401,92,472],[40,517,95,545]],['M15 92L24 91L37 116L29 116Z','M40 87L49 87L55 116L47 116Z','M64 86L73 86L74 116L64 116Z','M89 87L98 89L92 116L83 116Z','M115 92L123 95L111 116L103 116Z','M32 139L47 139L62 162L53 166Z','M85 139L102 139L86 165L79 164Z','M62 140L74 140L73 161L62 161Z']],
       brig929:[165,590,[[68,29,96,79],[66,221,102,255],[66,280,105,321],[64,364,107,442],[61,490,109,534]],['M16 104L25 102L40 132L31 134Z','M45 99L54 97L61 130L52 130Z','M77 98L88 98L88 130L77 130Z','M108 99L117 101L111 131L102 130Z','M136 104L146 106L134 133L125 132Z','M40 156L52 156L72 190L63 191Z','M108 155L122 154L99 190L92 190Z','M77 155L88 155L87 190L76 190Z']],
       frigate930:[174,593,[[69,28,103,70],[68,212,108,252],[69,282,109,313],[66,365,109,440],[64,486,111,531]],['M17 97L27 94L41 123L31 125Z','M46 91L56 90L62 121L53 121Z','M81 89L91 89L91 122L80 122Z','M113 90L122 92L115 122L106 122Z','M143 96L153 99L140 125L132 123Z','M42 154L55 154L75 184L66 184Z','M112 154L125 153L103 184L95 184Z','M80 155L91 155L90 183L80 183Z']],
@@ -42616,8 +42644,12 @@ document.addEventListener('change',function(e) {
     }
     function boatYard1049(x,y,w,h){
       var raw=boat927img('yard',x,y,w,h),path=[];
-      [[67,110],[138,201],[228,300],[329,410],[435,515],[539,595],[624,647]].forEach(function(a){var l=a[0],r=a[1],t=function(v){return 130-(v-65)*.208;};path.push('M'+l+' '+t(l)+'L'+r+' '+t(r)+'L'+r+' '+(t(r)+17)+'L'+l+' '+(t(l)+17)+'Z');});
-      return wood1049(raw,x,y,w,h,657,553,path);
+      // The original yard is diagonal. Bound the wood by the actual lashings, not an inset horizontal rectangle.
+      var segments=[[55,109,113,55],[137,199,204,138],[225,302,309,225],[329,409,414,329],[435,515,519,435],[539,598,603,539],[625,657,657,625]];
+      segments.forEach(function(q){var t=function(v){return 142.5-v*.209;},b=function(v){return 166-v*.209;};path.push('M'+q[0]+' '+t(q[0])+'L'+q[1]+' '+t(q[1])+'L'+q[2]+' '+b(q[2])+'L'+q[3]+' '+b(q[3])+'Z');});
+      // End grain extends beyond the linear spar band at both tips.
+      path.push('M60 123L81 118L88 146L61 154L56 139Z','M632 5L657 0V39L635 43Z');
+      return '<g data-boat-yard1056="1">'+wood1049(raw,x,y,w,h,657,553,path)+'</g>';
     }
     function sloopRig1049(k,x,y,w,h){var raw=sloopImg856(k+'_rig',x,y,w,h);return k==='main'?wood1049(raw,x,y,w,h,664,580,[rect1049([169,175,607,191])]):raw;}
     // Painted square yards are part of the source sail image; keep them outside the damage and cloth-dye layers.
