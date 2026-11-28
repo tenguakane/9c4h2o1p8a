@@ -3720,7 +3720,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "28.11.2026 · 1035";
+const WIKI_VERSION = "28.11.2026 · 1039";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -38388,7 +38388,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     cleanSH(s);
     if (s.__keepRev) delete s.__keepRev;
     else if (!s.rev || cloudSig(s) !== cloudSig(deckParse())) s.rev = Math.max(Date.now(), (+s.rev || 0) + 1, CLOUD.rev + 1);
-    CLOUD.json = JSON.stringify(s); pendSave();
+    CLOUD.json = JSON.stringify(s); pendSave(); cloudPing();
     try { setOrn(ornSelected(s.orn || '')); } catch(e) {}
     try { window.dispatchEvent(new Event('wk-deck-changed')); } catch (e) {} try { nSched(); } catch (e) {}
     cloudFlushSoon();
@@ -38406,16 +38406,17 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     return '<p class="' + (bad ? 'wk-cl-e' : 'wk-cl-r') + '"><b>Размер данных в облаке:</b> ' + kb(o.n) + ' из ' + kb(o.lim) + ' КБ (' + pc + '%). Колода ' + kb(o.p.deck) + ', копии колоды ' + kb(o.p.best + o.p.prev) + ', копия корабля ' + kb(o.p.ship) + ' КБ.' + (bad ? ' Место заканчивается: новые копии колоды могут перестать создаваться.' : '') + '</p><div class="wk-cl-sz"><i style="width:' + Math.min(100, pc) + '%;background:' + (bad ? '#ef4444' : o.pc >= .7 ? '#f1c40f' : '#4ade80') + '"></i></div>';
   };
   function cloudFlushSoon() { clearTimeout(CLOUD.t); CLOUD.t = setTimeout(cloudFlush, 80); }
+  function cloudPing() { setTimeout(function () { if (window.__wkCloudUpd) window.__wkCloudUpd(); }, 30); }
   function cloudFlush() {
     var cl = window.__wkDeckCloud; if (!CLOUD.ready || !cl || !cl.enabled()) return;
     if (CLOUD.busy) { CLOUD.dirty = true; return; }
     if (CLOUD.lock) return;
     if (window.__wkStale) return; /* открыта устаревшая версия: в облако не пишем */
     var d = deckParse(), rev = +d.rev || 0; if (rev === CLOUD.rev && !CLOUD.force) return;
-    CLOUD.busy = true; CLOUD.dirty = false;
+    CLOUD.busy = true; CLOUD.dirty = false; cloudPing();
     var frc = !!CLOUD.force;
     cl.commit(d, CLOUD.rev, frc).then(function (r) {
-      CLOUD.busy = false;
+      CLOUD.busy = false; cloudPing();
       if (r && r.stale) {
         CLOUD.lock = true; CLOUD.fails = 0; window.__wkStale = true;
         try { txToast('В облаке данные от более новой версии сайта. Эта версия устарела и ничего не записывает. Обновляю страницу…'); } catch (e) {}
@@ -38444,7 +38445,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       if (CLOUD.dropLegacy) { CLOUD.dropLegacy = false; try { localStorage.removeItem(KEY); } catch (e) {} }
       if (CLOUD.dirty || (+deckParse().rev || 0) !== rev) cloudFlush();
     }, function (e) {
-      CLOUD.busy = false; CLOUD.fails++; window.__wkDeckErr = String(e && (e.code || e.message) || e);
+      CLOUD.busy = false; CLOUD.fails++; cloudPing(); window.__wkDeckErr = String(e && (e.code || e.message) || e);
       if (CLOUD.fails === 1) { try { var ec = String(e && (e.code || e.message) || e), net = /unavailable|offline|network|deadline|failed-precondition|no-cloud/i.test(ec); txToast(/doc-too-large/.test(ec) ? 'Данные не помещаются в облако (лимит 1 МБ). Новые изменения не сохраняются. Напиши разработчику, пока вкладка открыта.' : net ? 'Нет связи с облаком. Колода сохранится, когда связь появится. Не закрывай вкладку.' : 'Облако не приняло запись (' + ec.slice(0, 60) + '). Попробую ещё раз. Не закрывай вкладку.'); } catch (e2) {} }
       clearTimeout(CLOUD.t); CLOUD.t = setTimeout(cloudFlush, Math.min(30000, 2000 * CLOUD.fails));
     });
@@ -38468,14 +38469,20 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     if (off) return ['bad', 'Нет интернета'];
     return ['ok', 'Сохранено'];
   }
-  window.__wkCloudStat = cloudStat;
+  window.__wkCloudStat = cloudStat; window.__wkCloudUpd = null;
   (function cloudInd() {
-    var el = null, prev = '', txt = '';
+    var el = null, prev = '', txt = '', okRev = null, okT = 0;
+    /* v1039: удачное сохранение показывается 5 секунд, потом пометка уходит */
+    function fade(r) {
+      var fresh = r[0] === 'ok' && (prev !== 'ok' || okRev !== CLOUD.rev);
+      if (r[0] !== 'ok' || fresh) { clearTimeout(okT); okT = 0; el.classList.remove('wk-ci-gone'); }
+      if (fresh) { okRev = CLOUD.rev; okT = setTimeout(function () { var q = cloudStat(); if (q && q[0] === 'ok' && okRev === CLOUD.rev) el.classList.add('wk-ci-gone'); else upd(); }, 5000); }
+    }
     function mk() {
       if (el || !document.body) return;
       if (!document.getElementById('wkCloudIndCss')) {
         var st = document.createElement('style'); st.id = 'wkCloudIndCss';
-        st.textContent = '#wkCloudInd{position:fixed;top:calc(env(safe-area-inset-top,0px) + 3px);left:50%;transform:translateX(-50%);z-index:2147482000;display:inline-flex;align-items:center;gap:6px;height:20px;padding:0 10px;border-radius:999px;border:1px solid rgba(148,163,184,.3);background:rgba(15,23,42,.9);color:#cbd5e1;font:600 11px/1 system-ui,-apple-system,sans-serif;white-space:nowrap;cursor:pointer;opacity:.6;transition:opacity .25s}#wkCloudInd::before{content:"";width:8px;height:8px;border-radius:50%;background:#4ade80}#wkCloudInd[data-s=wait]{opacity:.95}#wkCloudInd[data-s=wait]::before{background:#fbbf24;animation:wkCiP 1s ease-in-out infinite}#wkCloudInd[data-s=bad]{opacity:1;border-color:#f87171;color:#fecaca}#wkCloudInd[data-s=bad]::before{background:#f87171;animation:wkCiP .8s ease-in-out infinite}@keyframes wkCiP{50%{opacity:.3}}';
+        st.textContent = '#wkCloudInd{position:fixed;top:calc(env(safe-area-inset-top,0px) + 3px);left:50%;transform:translateX(-50%);z-index:2147482000;display:inline-flex;align-items:center;gap:6px;height:20px;padding:0 10px;border-radius:999px;border:1px solid rgba(148,163,184,.3);background:rgba(15,23,42,.9);color:#cbd5e1;font:600 11px/1 system-ui,-apple-system,sans-serif;white-space:nowrap;cursor:pointer;opacity:.6;transition:opacity .25s}#wkCloudInd::before{content:"";width:8px;height:8px;border-radius:50%;background:#4ade80}#wkCloudInd.wk-ci-gone{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .5s,visibility 0s .5s}#wkCloudInd[data-s=wait]{opacity:.95}#wkCloudInd[data-s=wait]::before{background:#fbbf24;animation:wkCiP 1s ease-in-out infinite}#wkCloudInd[data-s=bad]{opacity:1;border-color:#f87171;color:#fecaca}#wkCloudInd[data-s=bad]::before{background:#f87171;animation:wkCiP .8s ease-in-out infinite}@keyframes wkCiP{50%{opacity:.3}}';
         document.head.appendChild(st);
       }
       el = document.createElement('button'); el.type = 'button'; el.id = 'wkCloudInd'; el.hidden = true;
@@ -38495,9 +38502,11 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
         if (el.getAttribute('data-s') !== r[0]) el.setAttribute('data-s', r[0]);
         if (txt !== r[1]) { txt = r[1]; el.textContent = r[1]; }
         if (prev === 'bad' && r[0] === 'ok') { try { txToast('Связь восстановлена, всё сохранено ✓'); } catch (e) {} }
+        fade(r);
         prev = r[0];
       } catch (e) {}
     }
+    window.__wkCloudUpd = upd;
     setInterval(function () { if (!document.hidden) upd(); }, 900);
     window.addEventListener('online', function () { try { if (CLOUD.fails > 0) { clearTimeout(CLOUD.t); cloudFlushSoon(); } } catch (e) {} setTimeout(upd, 300); });
     window.addEventListener('offline', function () { setTimeout(upd, 100); });
@@ -39686,7 +39695,7 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     }
     setInterval(upd, 1200); window.addEventListener('wk-deck-changed', function () { setTimeout(upd, 50); }); window.addEventListener('resize', function () { var b = document.getElementById(ID); if (b) place(b); });
   })();
-  /* v1029: на компьютере кошелёк живёт в шапке, справа от «Верфи»; на телефоне плашка в Верфи остаётся */
+  /* v1029: на компьютере кошелёк живёт в шапке, справа от «Верфи». v1038: на телефоне — в шапке сверху слева, старые кошельки в «Верфи» и «Колоде» убраны */
   function hbalFmt(n, short) {
     n = Math.round(n); var cut = function (x, u) { return String(Math.floor(x * 10) / 10).replace('.', ',') + u; };
     if (short && Math.abs(n) >= 1e6) return cut(n / 1e6, 'М');
@@ -39699,7 +39708,13 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
     st.textContent = '.wk-hbal{position:relative;display:inline-flex;align-items:center;gap:6px;align-self:flex-start;flex:0 0 auto;margin-left:10px;margin-bottom:0;padding:4px 13px;border-radius:999px;border:1px solid color-mix(in srgb,' + A + ' 45%,transparent);background:color-mix(in srgb,' + A + ' 12%,transparent);color:var(--c-text,#f2f0f8);font-size:14px;font-weight:700;line-height:1.2;white-space:nowrap;font-variant-numeric:tabular-nums}' +
       '.wk-hbal .wk-sh-chip{position:absolute;right:4px;top:calc(100% + 2px);font-size:13px;animation:wkHbalChip 1.5s ease-out forwards;z-index:3}.wk-hbal.gain{animation:wkHbalPop .6s ease-out}' +
       '@keyframes wkHbalChip{0%{opacity:0;transform:translateY(-6px)}15%,70%{opacity:1}100%{opacity:0;transform:translateY(10px)}}@keyframes wkHbalPop{35%{transform:scale(1.08)}}' +
-      '@media (prefers-reduced-motion:reduce){.wk-hbal.gain{animation:none}}@media (max-width:700px){.wk-hbal{display:none!important}}' +
+      '@media (prefers-reduced-motion:reduce){.wk-hbal.gain{animation:none}}' +
+      'html.ios-app body > header > .wk-hbal.wk-hbal{display:inline-flex!important;position:absolute;left:12px;top:calc(var(--ios-sat,0px) + 17px);height:30px;box-sizing:border-box;margin:0;padding:0 11px;gap:5px;z-index:30}' +
+      'html.ios-app body > header > .wk-hbal.wk-hbal.wk-sub{left:56px}html.ios-app body > header > .wk-hbal.wk-hbal.wk-off{visibility:hidden;pointer-events:none}' +
+      /* положение заголовка задано в слое wk-redesign, поэтому и перекрываем его там же */
+      '@layer wk-redesign{html.ios-app.wk-hbal-tl.wk-hbal-tl body > header.ios-show-title .ios-nav-title{left:var(--wk-bel-l)!important}}' +
+      'html.ios-app.wk-hbal-nt.wk-hbal-nt body > header.ios-show-title .ios-nav-title{visibility:hidden}' +
+      'html.ios-app.wk-hbal-on body #wkCabinPaneDeck .wk-db-main.wk-db-main > .wk-db-wal.wk-db-wal{display:none!important}' +
       'html.wk-hbal-t body header .main-tabs .main-tabs-center .wk-hbal{margin-left:5px;padding-left:9px;padding-right:9px;gap:4px}' +
       'html.wk-hbal-on.wk-shipmain #wkCabinPaneDeck .wk-sh-bal.wk-sh-bal{display:none!important}';
     document.head.appendChild(st);
@@ -39715,17 +39730,50 @@ function cleanSH(v) { if (!v || v.__fake || !v.owned) return v; if (v.show) { va
       [].forEach.call(document.querySelectorAll('.main-tabs-center > .main-tab'), function (t) { ['padding-left', 'padding-right'].forEach(function (k) { if (on) t.style.setProperty(k, '7px', 'important'); else if (t.style.getPropertyValue(k) === '7px') t.style.removeProperty(k); }); });
     }
     function put(el, v, short) { el.querySelector('.wk-sh-num').textContent = hbalFmt(v, short); if (short) el.setAttribute('data-short', '1'); else el.removeAttribute('data-short'); }
+    /* телефон: слева в шапке; внутри подраздела при прокрутке место отдаём его названию */
+    var seen = null, SEEN = '';
+    function headSig(hd) { var b = hd.querySelector('.ios-nav-back'), t = hd.querySelector('.ios-nav-title'); return [hd.classList.contains('ios-show-title'), !!(b && !b.hidden), t ? t.textContent : ''].join('|'); }
+    function watch(hd) {
+      if (seen === hd || !window.MutationObserver) return; seen = hd;
+      new MutationObserver(function () { var k = headSig(hd); if (k !== SEEN) { SEEN = k; upd(); } }).observe(hd, { attributes: true, attributeFilter: ['class', 'hidden'], childList: true, characterData: true, subtree: true });
+    }
+    function phonePut(el, hd, v) {
+      var h = document.documentElement, back = hd.querySelector('.ios-nav-back'), title = hd.querySelector('.ios-nav-title');
+      var sub = !!(back && !back.hidden && back.getClientRects().length && getComputedStyle(back).visibility !== 'hidden'), small = hd.classList.contains('ios-show-title'), off = sub && small, left = 0, none = false;
+      /* пока цифры «докручиваются» после покупки или дохода, текст не трогаем */
+      var say = function (short) { if (!(el._wkBusy > Date.now())) put(el, v, short); };
+      el.classList.toggle('wk-sub', sub); el.classList.toggle('wk-off', off);
+      say(false);
+      if (!off) {
+        /* правый край пилюли не должен доходить до кнопок и до пометки о сохранении посередине */
+        var lim = window.innerWidth / 2 - 50;
+        [].forEach.call(hd.querySelectorAll('#wkMe, .global-search-mobile-trigger, .ios-nav-fav, .wk-acc-btn, #wkAddArticle'), function (c) { var r = c.getBoundingClientRect(); if (r.width > 0) lim = Math.min(lim, r.left - 6); });
+        if (el.getBoundingClientRect().right > lim) say(true);
+        if (small && title && title.firstElementChild) {
+          var rg = parseFloat(getComputedStyle(title).right) || 150, need = title.firstElementChild.scrollWidth;
+          var room = function () { left = Math.ceil(el.getBoundingClientRect().right - hd.getBoundingClientRect().left) + 10; return window.innerWidth - rg - left; };
+          var got = room(); if (got < need) { say(true); got = room(); }
+          none = got < need; /* обрезанное слово хуже, чем его отсутствие: раздел виден и в нижнем меню */
+        }
+      }
+      h.classList.toggle('wk-hbal-tl', left > 0); h.classList.toggle('wk-hbal-nt', none);
+      if (left > 0) h.style.setProperty('--wk-bel-l', left + 'px');
+    }
     function upd() {
       var el = document.getElementById(ID), tab = document.getElementById('tabShip'), q = null, h = document.documentElement;
+      var hd = h.classList.contains('ios-app') ? document.querySelector('body > header') : null;
       try { if (CLOUD.ready && myLogin()) { q = load(); if (q && q.__fake) q = null; } } catch (e) { q = null; }
-      if (!q || !tab || !tab.parentNode) { if (el) { el.remove(); tabsPad(false); } h.classList.remove('wk-hbal-on', 'wk-hbal-t'); KEYW = ''; return; }
+      if (!q || (!hd && (!tab || !tab.parentNode))) { if (el) { el.remove(); tabsPad(false); } h.classList.remove('wk-hbal-on', 'wk-hbal-t', 'wk-hbal-tl', 'wk-hbal-nt'); KEYW = ''; return; }
       if (!el) {
         el = document.createElement('span'); el.id = ID; el.className = 'wk-hbal';
         el.innerHTML = '<span class="berry-symbol" aria-hidden="true" title="Белли"></span><span class="wk-sh-num"></span>'; KEYW = '';
       }
-      if (el.previousElementSibling !== tab) { tab.parentNode.insertBefore(el, tab.nextSibling); KEYW = ''; }
+      if (hd) {
+        if (el.parentNode !== hd) { hd.appendChild(el); el.style.marginTop = ''; el.style.display = ''; tabsPad(false); h.classList.remove('wk-hbal-t'); KEYW = ''; }
+      } else if (el.previousElementSibling !== tab) { tab.parentNode.insertBefore(el, tab.nextSibling); el.classList.remove('wk-sub', 'wk-off'); h.classList.remove('wk-hbal-tl', 'wk-hbal-nt'); KEYW = ''; }
       var v = Math.round(q.belli || 0), full = hbalFmt(v);
       if (el.getAttribute('data-v') !== String(v)) { el.setAttribute('data-v', v); el.title = 'Твой кошелёк: ' + full; el.setAttribute('aria-label', 'Твой кошелёк: ' + v + ' белли'); put(el, v, el.hasAttribute('data-short')); }
+      if (hd) { watch(hd); SEEN = headSig(hd); h.classList.add('wk-hbal-on'); phonePut(el, hd, v); return; }
       if (full.length + '|' + sig(tab) !== KEYW) {
         el.style.marginTop = ''; el.style.display = 'none'; tabsPad(false); h.classList.remove('wk-hbal-t');
         var s0 = searchTop();
@@ -45532,15 +45580,19 @@ document.addEventListener('change',function(e) {
       ? '<p class="wk-sh-hint wk-shp-intro">Собери свой корабль: покупай материалы в «Магазине», закладывай этапы на стапеле и жди, пока мастера закончат. Начни с лодки и дорасти до галеона.</p>' : '';
     if (bview) return '<div class="wk-shp">' + intro + shpAdmStrip() + shpRestoreBanner(st, sh) + fleet + bases + shpSubTabs(st, sh, v) + '<div class="wk-shp-sp">' + shpBaseHTML(st, sh, v) + '</div></div>';
     /* v1025: вкладки считаются первыми (они же поправляют SHP_ST), предпросмотр нужен только в «Постройке» и «Гавани» */
-    var goalH = shpGoalStrip(st, sh, v), tabsH = shpSubTabs(st, sh, v), pvOn = SHP_ST === 'build' || SHP_ST === 'port', pvH = '';
+    var tabsH = shpSubTabs(st, sh, v), pvOn = SHP_ST === 'build' || SHP_ST === 'port', pvH = '';
     if (pvOn) {
       var fleetOn = SHP_FLV && shpFleetN(sh, v) > 1;
       pvH = '<div class="wk-shp-top">' + nameBox + '<span class="wk-shp-lv">' + stage + '</span></div>' +
         (SHP_DUO && v.lv > 0 ? shpDuoViewHTML(st, sh, v) : fleetOn ? shpFleetViewHTML(sh, v, bel) + (showBtn ? '<div class="wk-shp-showr">' + showBtn + '</div>' : '')
           : '<div class="wk-shp-pvbox">' + shpSizeBar('ship', SHP_ZMINI, showBtn) + '<div class="wk-shp-scene wk-shp-zoom' + (SHP_ZMINI ? ' mini' : '') + '" data-tx="shipzoom" role="button" tabindex="0" title="' + (SHP_ZMINI ? 'Нажми, чтобы увеличить' : 'Нажми, чтобы уменьшить') + '">' + shpShipSVG(sh) + '</div></div>');
-    } else fleet = fleet.replace(/<button type="button" class="wk-shp-fl wk-shp-fl-all[\s\S]*?<\/button>/, '').replace(/<button type="button" class="wk-shp-fl wk-shp-fl-duo[\s\S]*?<\/button>/, '');
+    } else {
+      /* v1036: ряды «Флот» и «Базы» — только там, где выбор что-то меняет: у «Экипажа» и «Оформления» свой корабль, на остальных вкладках переключать нечего */
+      fleet = SHP_ST === 'crew' || SHP_ST === 'dz' ? fleet.replace(/<button type="button" class="wk-shp-fl wk-shp-fl-all[\s\S]*?<\/button>/, '').replace(/<button type="button" class="wk-shp-fl wk-shp-fl-duo[\s\S]*?<\/button>/, '') : '';
+      bases = '';
+    }
     return '<div class="wk-shp">' + intro +
-      shpAdmStrip() + shpRestoreBanner(st, sh) + fleet + bases + pvH + goalH + tabsH +
+      shpAdmStrip() + shpRestoreBanner(st, sh) + fleet + bases + pvH + tabsH +
       '<div class="wk-shp-sp">' + (SHP_ST === 'quest' ? shpQuestHTML(st, sh, v) : SHP_ST === 'gaz' ? shpGazHTML(st, sh, v) : SHP_ST === 'bty' ? shpBtyHTML(st, sh, v) : SHP_ST === 'nt' ? shpNtHTML(st, sh, v) : SHP_ST === 'nw' ? shpNwHTML(st, sh, v) : SHP_ST === 'duel' ? shpDuelHTML(st, sh, v) : SHP_ST === 'bh' ? shpBhHTML(st, sh, v) : SHP_ST === 'gl' ? shpGlHTML(st, sh, v) : SHP_ST === 'map' ? shpMapHTML(st, sh, v) : SHP_ST === 'port' ? shpPortHTML(st, sh, v) : SHP_ST === 'shop' ? shpShopHTML(st, sh, v, store, market) : SHP_ST === 'adm' ? shpAdmHTML(st) : SHP_ST === 'aw' ? shpAwHTML(st, sh) : SHP_ST === 'voy' ? shpVoyHTML(st, sh, v) : SHP_ST === 'crew' ? shpCrewHTML(st, sh, v) : SHP_ST === 'dz' ? (shpDzHTML(st, sh, v) || '<p class="wk-sh-hint wk-shp-intro">Оформлять можно готовые детали. Выбери в строке флота корабль, у которого уже есть обшивка, или дострой её во вкладке «Постройка».</p>') : ladder + shpGxHTML(st, sh, v) + job + parts + shpShopLink('buy', 'Купить материалы в Магазине') + store) + '</div></div>';
   }
   var SHP_SECS = [['ship', 'Корабль', ['quest', 'build', 'shop', 'port'], '⚓'], ['sea', 'Плавания', ['voy', 'gl', 'nw', 'duel', 'bh'], '🧭'], ['crew', 'Команда', ['crew', 'bty', 'aw', 'gaz', 'nt'], '🏆'], ['look', 'Оформление', ['dz'], '🎨'], ['adm', 'Инструменты Димы', ['adm'], '🛠', 'Админ']], SHP_SECL = {};
@@ -46342,7 +46394,7 @@ document.addEventListener('change',function(e) {
   }
   (function () { var c = document.createElement('style'); c.textContent = '.wk-fgp{display:flex;flex-direction:column;gap:8px}.wk-fgp input{width:100%;box-sizing:border-box}.wk-fgp-pv{width:84px;height:84px;object-fit:contain;background:rgba(255,255,255,.06);border-radius:10px}.wk-fgp-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}.wk-fgp-l li{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.wk-fgp-th{width:34px;height:34px;object-fit:contain}.wk-fgp-l .wk-bk-lb{display:flex;gap:6px;margin-left:auto}'; document.head.appendChild(c); })();
   var SHP_DTABS = [['paint', 'Покраска'], ['orn', 'Узоры'], ['fig', 'Носовая фигура'], ['flag', 'Флаг'], ['dec', 'Декор'], ['wake', 'След'], ['sails', 'Паруса'], ['guns', 'Орудия'], ['crest', 'Герб'], ['scene', 'Сцена'], ['crewv', 'Экипаж'], ['name', 'Название'], ['bg', 'Фон']];
-  var SHP_D = { paint: {} }, SHP_DT = 'paint', SHP_DMENU = true;
+  var SHP_D = { paint: {} }, SHP_DT = 'paint', SHP_DMENU = true, SHP_DECT = 'my', SHP_TUNE = ''; /* v1039: «Декор»: свои вещи / магазин; предмет с открытой настройкой */
   function shpCos(sh) { var c = shpC(sh, shpSel(sh, shpView(sh)).t); return { paint: c.paint && typeof c.paint === 'object' ? c.paint : {}, orn: c.orn || '', hpat: Object.prototype.hasOwnProperty.call(SHP_HPAT936,c.hpat) ? c.hpat : '', sorn: c.sorn || '', spat: c.spat || '', fig: c.fig || '', flag: c.flag || '', flagUrl: c.flagUrl || '', ornUrl: c.ornUrl || '', sornUrl: c.sornUrl, figUrl: c.figUrl || '', figUrl: c.figUrl || '', bg: c.bg || '', dec: Array.isArray(c.dec) ? c.dec : [], lay: shpLayClean(c.lay) }; }
   function shpEffCos(sh) {
     var c = shpCos(sh), e = { paint: {}, hpat: c.hpat, orn: c.orn, sorn: c.sorn, spat: c.spat, fig: c.fig, flag: c.flag, flagUrl: c.flagUrl, ornUrl: c.ornUrl, sornUrl: c.sornUrl, figUrl: c.figUrl, bg: c.bg, dec: c.dec.slice() };
@@ -46857,7 +46909,14 @@ document.addEventListener('change',function(e) {
     var lockNote = function (req) { return shpReqOk(sc, req) ? '' : '<small class="wk-shp-lk">Сначала построй ' + (SHP_REQN[req] || req) + '</small>'; };
     var pv = shpSVG({ scn: 1, cr: shpCrewIds(sh, sc.t), pn: shpPatchN(sh), pet: shpPetOf(sh, sc.t), t: sc.t, built: sc.built, bld: sc.bld, all: sc.all, parts: shpPartIds(sc.t), name: shpC(sh, sc.t).name || '', paint: e.paint, hpat: e.hpat, orn: e.orn, sorn: e.sorn, spat: e.spat, fig: e.fig, flag: e.flag, flagUrl: e.flagUrl, ornUrl: e.ornUrl, sornUrl: e.sornUrl, figUrl: e.figUrl, dec: e.dec, lay: e.lay, bg: e.bg, still: !(SHP_PLAYU > Date.now()), label: 'Примерка оформления' });
     var tabs = '<div class="wk-shp-dtabs" role="tablist">' + SHP_DTABS.map(function (t) { var on = t[0] === SHP_DT; return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? 'on' : '') + '" data-tx="shipdzt" data-t="' + t[0] + '">' + t[1] + '</button>'; }).join('') + '</div>';
+    /* v1039: настройки выбранной вещи показываются прямо под её карточкой */
+    var TUNE = {}, tuneBox = function (kind, html) { TUNE[kind] = html; return ''; };
     var card = function (kind, it, sel, req) {
+      var h = cardBtn(kind, it, sel, req), q = sel && TUNE[kind];
+      if (q) delete TUNE[kind];
+      return q ? h + '<div class="wk-shp-tune">' + q + '</div>' : h;
+    };
+    var cardBtn = function (kind, it, sel, req) {
       var own = shpOwn(sh, kind, it.id), bpl = it.bp && !own, ltl = it.lt && !own, bsl = it.bs && !own, lock = bpl || ltl || bsl || !shpReqOk(sc, req || it.req), p = FREE() ? 0 : it.p;
       var price = own ? (it.id ? 'есть' : 'бесплатно') : fmtB(p);
       if (ltl) return '<button type="button" class="wk-shp-it lock lt" disabled aria-disabled="true">' + shpMini(kind, it.id, sc.t).replace('class="wk-shp-mini"', 'class="wk-shp-mini wk-shp-bpm"') + '<b>' + it.n + '</b><small>трофей из плаваний</small><em class="wk-shp-set lt-' + it.lt + '">' + SHP_LOOTR[it.lt].n + '</em></button>';
@@ -46880,15 +46939,15 @@ document.addEventListener('change',function(e) {
       var cur = e.paint[s.k] || SHP_PAINT[s.k], lock = !shpReqOk(sc, s.req);
       return '<div class="wk-shp-pr' + (lock ? ' lock' : '') + '"><span class="wk-shp-prn">' + s.n + lockNote(s.req) + '</span><span class="wk-shp-sw">' + s.c.map(function (col) { var on = col.toLowerCase() === cur.toLowerCase(); return '<button type="button" style="--c:' + col + '" class="' + (on ? 'on' : '') + '" data-tx="shipdz" data-k="paint" data-s="' + s.k + '" data-v="' + col + '"' + (lock ? ' disabled' : '') + ' aria-pressed="' + on + '" aria-label="' + s.n + ': ' + col + '"></button>'; }).join('') + (function () { var cu = s.c.some(function (col) { return col.toLowerCase() === cur.toLowerCase(); }); return '<label class="wk-shp-cc' + (cu ? '' : ' on') + '" style="--c:' + (/^#[\da-f]{6}$/i.test(cur) ? cur : '#888') + '" title="Свой цвет"><input type="color" data-shpc="' + s.k + '" value="' + (/^#[\da-f]{6}$/i.test(cur) ? cur : '#888888') + '"' + (lock ? ' disabled' : '') + ' aria-label="' + s.n + ': свой цвет"></label>'; })() + '</span></div>';
     }).join('');
-    else if (SHP_DT === 'orn') body = (e.orn ? layBox('Борт: размер и положение узора', sl('os', 'Размер узора', 50, 220, lyv('os')) + sl('oy', 'Выше или ниже', -10, 16, lyv('oy'), ' px', 1), 'orn') : '') + (e.sorn ? (function () {
+    else if (SHP_DT === 'orn') body = (e.orn ? tuneBox('orn', layBox('Борт: размер и положение узора', sl('os', 'Размер узора', 50, 220, lyv('os')) + sl('oy', 'Выше или ниже', -10, 16, lyv('oy'), ' px', 1), 'orn')) : '') + (e.sorn ? (function () {
       var Tt = shpTT(sc.t), nS = shpSailN(Tt), mk = shpSailMask(e.lay, Tt), bt = '', zs = '', i;
       for (i = 0; i < nS; i++) { bt += lbtn('sp', i, nS > 1 ? 'Парус ' + (i + 1) + (i === 0 ? ' (передний)' : i === nS - 1 ? ' (задний)' : '') : 'Парус', mk[i]); if (mk[i]) zs += sl('sz' + i, nS > 1 ? 'Размер: парус ' + (i + 1) : 'Размер на парусе', 50, 220, lyv('sz' + i)); }
-      return layBox('Паруса: эмблема', '<div class="wk-shp-segs"><span>На каких парусах (можно несколько):</span>' + bt + (nS > 1 ? lbtn('sp', 'all', 'На всех', mk.every(Boolean)) : '') + '</div>' + sl('ss', 'Размер эмблемы (для всех)', 50, 220, lyv('ss')) + sl('sy', 'Выше или ниже', -60, 60, lyv('sy')) + (zs ? '<div class="wk-shp-dmv"><b>Размер на каждом парусе</b>' + zs + '</div>' : ''), 'sorn');
-    })() : '') + (e.hpat ? layBox('Обшивка: насыщенность и масштаб рисунка', sl('hop936','Насыщенность',15,95,lyv('hop936')) + sl('hscale936','Масштаб рисунка',50,200,lyv('hscale936')),'hpat') : '') + ['hpat', 'orn', 'spat', 'sorn'].map(function (k) { return '<h4 class="wk-shp-h4">' + SHP_DZ[k].n + '</h4><div class="wk-shp-its">' + SHP_DZ[k].l.filter(function (it) { return !it.tiers || it.tiers.indexOf(shpTT(sc.t).id) >= 0; }).map(function (it) { return card(k, it, e[k] === it.id, SHP_DZ[k].req); }).join('') + '</div>' + (k === 'spat' && e.spat ? (function () {
+      return tuneBox('sorn', layBox('Паруса: эмблема', '<div class="wk-shp-segs"><span>На каких парусах (можно несколько):</span>' + bt + (nS > 1 ? lbtn('sp', 'all', 'На всех', mk.every(Boolean)) : '') + '</div>' + sl('ss', 'Размер эмблемы (для всех)', 50, 220, lyv('ss')) + sl('sy', 'Выше или ниже', -60, 60, lyv('sy')) + (zs ? '<div class="wk-shp-dmv"><b>Размер на каждом парусе</b>' + zs + '</div>' : ''), 'sorn'));
+    })() : '') + (e.hpat ? tuneBox('hpat', layBox('Обшивка: насыщенность и масштаб рисунка', sl('hop936','Насыщенность',15,95,lyv('hop936')) + sl('hscale936','Масштаб рисунка',50,200,lyv('hscale936')),'hpat')) : '') + ['hpat', 'orn', 'spat', 'sorn'].map(function (k) { if (k === 'spat' && e.spat) tuneBox('spat', (function () {
       var Tt = shpTT(sc.t), nS = shpSailN(Tt), mk = shpPatMask(e.lay, Tt), bt = '', i;
       for (i = 0; i < nS; i++) bt += lbtn('pm', i, nS > 1 ? 'Парус ' + (i + 1) + (i === 0 ? ' (передний)' : i === nS - 1 ? ' (задний)' : '') : 'Парус', mk[i]);
       return '<div class="wk-shp-lay"><div class="wk-shp-segs"><span>На каких парусах узор (можно несколько):</span>' + bt + (nS > 1 ? lbtn('pm', 'all', 'На всех', mk.every(Boolean)) : '') + '</div></div>' + prRow(SHP_PSLOTS.filter(function (q) { return q.k === 'sail2'; })[0]);
-    })() : '') + (k === 'sorn' ? '<p class="wk-sh-hint wk-shp-pcr">Эмблемы: утёнок, пришелец, кальмар, череп, шляпа ведьмы и лиса — flat-icon-design, Flat Icon Design Dark Vectors (общественное достояние); клоун — Circus 18 (CC0); дьявол, метла, зелье и луна — Halloween Vectors, Satawat Anukul (CC BY); вампир, кости и рука — Halloween Scary Vectors, Josy Dom Alexis (CC BY); игральный кубик — Emojione, JoyPixels (MIT); череп с костями — Noto Emoji, Google (Apache 2.0); авокадо — Sensa Emoji Vectors (общественное достояние). Всё на SVG Repo.</p>' : '') + (k === 'orn' && e.orn === 'url' ? urlBox('orn', 'Ссылка на картинку для борта', 'лучше широкую: она растянется по борту от кормы почти до носа') : k === 'sorn' && e.sorn === 'url' ? urlBox('sorn', 'Ссылка на картинку для парусов', 'лучше квадратную или с прозрачным фоном: она встанет на каждый главный парус') : ''); }).join('');
+    })()); return '<h4 class="wk-shp-h4">' + SHP_DZ[k].n + '</h4><div class="wk-shp-its">' + SHP_DZ[k].l.filter(function (it) { return !it.tiers || it.tiers.indexOf(shpTT(sc.t).id) >= 0; }).map(function (it) { return card(k, it, e[k] === it.id, SHP_DZ[k].req); }).join('') + '</div>' + (k === 'sorn' ? '<p class="wk-sh-hint wk-shp-pcr">Эмблемы: утёнок, пришелец, кальмар, череп, шляпа ведьмы и лиса — flat-icon-design, Flat Icon Design Dark Vectors (общественное достояние); клоун — Circus 18 (CC0); дьявол, метла, зелье и луна — Halloween Vectors, Satawat Anukul (CC BY); вампир, кости и рука — Halloween Scary Vectors, Josy Dom Alexis (CC BY); игральный кубик — Emojione, JoyPixels (MIT); череп с костями — Noto Emoji, Google (Apache 2.0); авокадо — Sensa Emoji Vectors (общественное достояние). Всё на SVG Repo.</p>' : '') + (k === 'orn' && e.orn === 'url' ? urlBox('orn', 'Ссылка на картинку для борта', 'лучше широкую: она растянется по борту от кормы почти до носа') : k === 'sorn' && e.sorn === 'url' ? urlBox('sorn', 'Ссылка на картинку для парусов', 'лучше квадратную или с прозрачным фоном: она встанет на каждый главный парус') : ''); }).join('');
     else if (SHP_DT === 'crewv') body = (function () {
       var cmv = ['sil','col','uni'].indexOf(e.lay.cm)>=0 ? e.lay.cm : '', ids = shpCrewIds(sh, sc.t);
       var inner = '<div class="wk-shp-segs"><span>Команда на палубе:</span>' + lbtn('cm', '', 'Скрыть', !cmv) + lbtn('cm', 'sil', 'Силуэты', cmv === 'sil') + lbtn('cm', 'col', 'В цветах ролей', cmv === 'col') + lbtn('cm', 'uni', 'Морская униформа', cmv === 'uni') + '</div>' + (cmv ? sl('cwz', 'Размер фигур', 50, 170, lyv('cwz'), '%', 1) + sl('cws835', 'Расстояние между фигурами', 65, 120, lyv('cws835'), '%', 1) + sl('cwx835', 'Смещение экипажа вдоль палубы', -25, 25, lyv('cwx835'), '%', 1) : '');
@@ -46943,25 +47002,63 @@ document.addEventListener('change',function(e) {
       }
       return hint+'<div class="wk-shp-lay"><div class="wk-shp-lay-h"><b>Название на корабле</b><button type="button" class="wk-tx-btn" data-tx="shipdzlayx" data-g="name">Сбросить</button></div>'+inner+'</div><p class="wk-sh-hint">Новые кириллические стили рисуются векторными контурами, одинаковыми на телефоне и ПК. Прежние системные шрифты могут отличаться. Название на парусе остаётся под фактурой ткани; надписи ограничены контуром поверхности. При показе на обеих поверхностях положение регулируется отдельно. Латиница и основная кириллица поддерживаются; другие символы отображаются системным шрифтом.</p><p class="wk-sh-hint wk-shp-pcr">Контуры букв: Noto (Google, OFL), EB Garamond (Georg Duffner, OFL), Roboto Slab (Google, Christian Robertson, Apache 2.0), Comfortaa (Johan Aakerlund, OFL).</p>';
     })();
-    else if (SHP_DT === 'bg') body = layBox('Размер корабля на фоне', sl('zs', 'Размер корабля', 40, 120, lyv('zs')), 'zs') + '<p class="wk-sh-hint">Фон виден на верфи и в витрине корабля в Профиле. Купленный фон можно поставить любому кораблю флота. У панорамы «Флот рядом» фон свой и покупается отдельно.</p><p class="wk-sh-hint wk-shp-pcr">Динозавры на фоне «Доисторические джунгли»: Twemoji, Twitter (лицензия MIT, SVG Repo). Кактусы на фоне «Салун среди кактусов»: коллекция Mexican Elements 2 (CC0, SVG Repo). Вулкан на фоне «Вулканический остров»: Noto Emoji, Google (Apache 2.0, SVG Repo). Вишни на фоне «Весна в горах»: SVG Repo, Types Of Trees (CC0).</p><div class="wk-shp-its">' + SHP_DZ.bg.l.map(function (it) { return card('bg', it, e.bg === it.id, null); }).join('') + '</div>';
+    else if (SHP_DT === 'bg') body = tuneBox('bg', layBox('Размер корабля на фоне', sl('zs', 'Размер корабля', 40, 120, lyv('zs')), 'zs')) + '<p class="wk-sh-hint">Фон виден на верфи и в витрине корабля в Профиле. Купленный фон можно поставить любому кораблю флота. У панорамы «Флот рядом» фон свой и покупается отдельно.</p><p class="wk-sh-hint wk-shp-pcr">Динозавры на фоне «Доисторические джунгли»: Twemoji, Twitter (лицензия MIT, SVG Repo). Кактусы на фоне «Салун среди кактусов»: коллекция Mexican Elements 2 (CC0, SVG Repo). Вулкан на фоне «Вулканический остров»: Noto Emoji, Google (Apache 2.0, SVG Repo). Вишни на фоне «Весна в горах»: SVG Repo, Types Of Trees (CC0).</p><div class="wk-shp-its">' + SHP_DZ.bg.l.map(function (it) { return card('bg', it, e.bg === it.id, null); }).join('') + '</div>';
     else if (SHP_DT === 'dec') {
-      var tid = shpTT(sc.t).id, grpH = function (g, title, note) { var its = SHP_DZ.dec.l.filter(function (it) { return (it.g || 'base') === g && (!it.tiers || it.tiers.indexOf(tid) >= 0); }); return its.length ? '<h4 class="wk-shp-h4' + (g === 'hw' || g === 'ny' || g === 'loot' ? ' wk-shp-h4-' + g : '') + '">' + title + '</h4>' + (note ? '<p class="wk-sh-hint wk-shp-gn">' + note + '</p>' : '') + '<div class="wk-shp-its">' + its.map(function (it) { return card('dec', it, e.dec.indexOf(it.id) >= 0, it.req); }).join('') + '</div>' : ''; };
-      var mv = e.dec.filter(function (id) { var it = shpItem('dec', id); return SHP_MOVE.indexOf(id) >= 0 && it && (!it.tiers || it.tiers.indexOf(tid) >= 0); }).map(function (id) { var it = shpItem('dec', id), d = (e.lay.ds && e.lay.ds[id]) || {}; return '<div class="wk-shp-dmv"><b>' + it.n + '</b>' + sl('ds.' + id + '.s', 'Размер', 50, 220, d.s != null ? d.s : 100) + sl('ds.' + id + '.x', 'Левее / правее', -40, 40, d.x || 0, '%', 1) + sl('ds.' + id + '.y', 'Выше / ниже', -30, 30, d.y || 0, ' px', 1) + sl('ds.' + id + '.r', 'Поворот (влево / вправо)', -90, 90, d.r || 0, '°', 1) + '</div>'; }).join('');
+      var tid = shpTT(sc.t).id, mine = SHP_DECT !== 'shop';
+      var fits = function (it) { return !!it && (!it.tiers || it.tiers.indexOf(tid) >= 0); };
+      var want = function (kind, it) { return fits(it) && shpOwn(sh, kind, it.id) === mine; };
+      var inGrp = function (g) { return SHP_DZ.dec.l.filter(function (it) { return (it.g || 'base') === g && fits(it); }); };
+      /* у надетой вещи, которую можно двигать, под карточкой кнопка настройки */
+      var dcard = function (it, req) {
+        var on = e.dec.indexOf(it.id) >= 0, h = card('dec', it, on, req);
+        if (!on || SHP_MOVE.indexOf(it.id) < 0) return h;
+        var open = SHP_TUNE === it.id, d = (e.lay.ds && e.lay.ds[it.id]) || {};
+        return '<div class="wk-shp-cell">' + h + '<button type="button" class="wk-shp-gear' + (open ? ' on' : '') + '" data-tx="shipdztune" data-v="' + it.id + '" aria-expanded="' + open + '" aria-label="Настройка: ' + esc(it.n) + '">⚙ Настройка</button></div>' +
+          (open ? '<div class="wk-shp-tune"><div class="wk-shp-lay"><div class="wk-shp-lay-h"><b>' + it.n + ': размер и место</b><button type="button" class="wk-tx-btn" data-tx="shipdztunex" data-v="' + it.id + '">Сбросить</button></div><div class="wk-shp-dmv">' + sl('ds.' + it.id + '.s', 'Размер', 50, 220, d.s != null ? d.s : 100) + sl('ds.' + it.id + '.x', 'Левее / правее', -40, 40, d.x || 0, '%', 1) + sl('ds.' + it.id + '.y', 'Выше / ниже', -30, 30, d.y || 0, ' px', 1) + sl('ds.' + it.id + '.r', 'Поворот (влево / вправо)', -90, 90, d.r || 0, '°', 1) + '</div></div></div>' : '');
+      };
+      var grpH = function (g, title, note) { var its = inGrp(g).filter(function (it) { return want('dec', it); }); return its.length ? '<h4 class="wk-shp-h4' + (g === 'hw' || g === 'ny' || g === 'loot' ? ' wk-shp-h4-' + g : '') + '">' + title + '</h4>' + (note && !mine ? '<p class="wk-sh-hint wk-shp-gn">' + note + '</p>' : '') + '<div class="wk-shp-its">' + its.map(function (it) { return dcard(it, it.req); }).join('') + '</div>' : ''; };
+      var setsH = SHP_SET847.map(function (g) {
+        var fg = shpItem('fig', g.fig), owned = (shpOwn(sh, 'fig', g.fig) ? 1 : 0) + g.ids.filter(function (id) { return shpOwn(sh, 'dec', id); }).length, active = (e.fig === g.fig ? 1 : 0) + g.ids.filter(function (id) { return e.dec.indexOf(id) >= 0; }).length;
+        var cells = (want('fig', fg) ? card('fig', fg, e.fig === g.fig, 'hull') : '') + g.ids.map(function (id) { return shpItem('dec', id); }).filter(function (it) { return want('dec', it); }).map(function (it) { return dcard(it); }).join('');
+        return cells ? '<h4 class="wk-shp-h4">Комплект «' + g.n + '» <small class="wk-shp-achc">' + owned + '/6 собрано · ' + active + '/6 надето</small></h4>' + (mine ? '' : '<p class="wk-sh-hint">Носовая фигура и пять отдельных украшений. Можно смешивать комплекты.</p>') + '<div class="wk-shp-its">' + cells + '</div>' : '';
+      }).join('');
+      /* сколько вещей на каждой вкладке (без повторов) */
+      var all = {}, other = 0;
+      ['base', 'tier', 'hw', 'ny', 'loot'].forEach(function (g) { inGrp(g).forEach(function (it) { all['dec:' + it.id] = shpOwn(sh, 'dec', it.id); }); });
+      SHP_SET847.forEach(function (g) { if (fits(shpItem('fig', g.fig))) all['fig:' + g.fig] = shpOwn(sh, 'fig', g.fig); g.ids.forEach(function (id) { if (fits(shpItem('dec', id))) all['dec:' + id] = shpOwn(sh, 'dec', id); }); });
+      var nAll = Object.keys(all).length, nMine = Object.keys(all).filter(function (k) { return all[k]; }).length;
+      SHP_DZ.dec.l.forEach(function (it) { if (!fits(it) && shpOwn(sh, 'dec', it.id)) other++; });
+      var dtab = function (id, nm, n) { var on = (id === 'my') === mine; return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? 'on' : '') + '" data-tx="shipdzdect" data-v="' + id + '">' + nm + ' <small>' + n + '</small></button>'; };
+      var list = grpH('base', 'Общий декор') + grpH('tier', 'Только для ' + (SHP_TIERN[tid] || ''), 'У каждого типа судна свои уникальные вещи. Выбери другой корабль флота, чтобы увидеть его набор.') + setsH + grpH('hw', 'Хэллоуин', 'Корабль-призрак: рваные паруса, туман и нечисть. К набору есть флаг, носовая фигура и фон.') + grpH('ny', 'Новый год', 'Праздничный корабль. Флаг, носовая фигура и фон к набору — на своих вкладках.') + grpH('loot', 'Находки из плаваний', mine ? '' : 'Эти украшения нельзя купить: их привозят из плаваний. Чем дальше и опаснее маршрут, тем ценнее находки. Пока не найденные показаны тёмными.');
       var dupN = shpLootSum(sh).n, dupH = dupN ? shpShopLink('dup', 'Продать повторки (' + dupN + ')') : '';
-      body = dupH + (mv ? layBox('Расстановка: размер и место украшений', mv, 'dec') : '') + '<p class="wk-sh-hint">Украшения можно сочетать: выбирай сколько угодно.</p><p class="wk-sh-hint wk-shp-pcr">Бонсай — maxicons, Japan Flat Vectors; первоначальные версии подарков и снеговика — Monkik, Santa Christmas Vectors (SVG Repo, CC BY), ёлки — Twemoji, Twitter (MIT); с v808 — новые самостоятельные рисунки; тыквы-коты — Justas Galaburda, Pumpkin Cat Halloween Vectors (CC BY); сундук, мандариновое дерево и глобус — SVG Repo (CC0).</p>' + shpDecHow() + grpH('base', 'Общий декор') + grpH('tier', 'Только для ' + (SHP_TIERN[tid] || ''), 'У каждого типа судна свои уникальные вещи. Выбери другой корабль флота, чтобы увидеть его набор.') + SHP_SET847.map(function(g){var it=shpItem('fig',g.fig), owned=(shpOwn(sh,'fig',g.fig)?1:0)+g.ids.filter(function(id){return shpOwn(sh,'dec',id);}).length, active=(e.fig===g.fig?1:0)+g.ids.filter(function(id){return e.dec.indexOf(id)>=0;}).length;return '<h4 class="wk-shp-h4">Комплект «'+g.n+'» <small class="wk-shp-achc">'+owned+'/6 собрано · '+active+'/6 надето</small></h4><p class="wk-sh-hint">Носовая фигура и пять отдельных украшений. Можно смешивать комплекты.</p><div class="wk-shp-its">'+card('fig',it,e.fig===g.fig,'hull')+g.ids.map(function(id){return card('dec',shpItem('dec',id),e.dec.indexOf(id)>=0);}).join('')+'</div>';}).join('') + grpH('hw', 'Хэллоуин' , 'Корабль-призрак: рваные паруса, туман и нечисть. К набору есть флаг, носовая фигура и фон.') + grpH('ny', 'Новый год', 'Праздничный корабль. Флаг, носовая фигура и фон к набору — на своих вкладках.') + grpH('loot', 'Находки из плаваний', 'Эти украшения нельзя купить: их привозят из плаваний. Чем дальше и опаснее маршрут, тем ценнее находки. Пока не найденные показаны тёмными.');
+      body = '<div class="wk-shp-dect" role="tablist" aria-label="Декор">' + dtab('my', 'Мои', nMine) + dtab('shop', 'Магазин', nAll - nMine) + '</div>' +
+        (mine ? dupH + (list ? '<p class="wk-sh-hint">Нажми на вещь, чтобы надеть или снять. Украшения можно сочетать.</p>' + list : '<div class="wk-shp-dempty"><p class="wk-sh-hint">Здесь пока пусто: сюда попадают купленные и найденные в плаваниях украшения.</p><button type="button" class="wk-tx-btn pri" data-tx="shipdzdect" data-v="shop">Открыть магазин</button></div>') + (other ? '<p class="wk-sh-hint">Ещё у тебя есть вещи для других кораблей флота: ' + other + '.</p>' : '')
+          : '<p class="wk-sh-hint">Украшения можно сочетать: выбирай сколько угодно, купить можно всё сразу кнопкой под кораблём.</p>' + shpDecHow() + (list || '<p class="wk-sh-hint">Всё, что подходит этому кораблю, уже у тебя.</p>')) +
+        '<p class="wk-sh-hint wk-shp-pcr">Бонсай — maxicons, Japan Flat Vectors; первоначальные версии подарков и снеговика — Monkik, Santa Christmas Vectors (SVG Repo, CC BY), ёлки — Twemoji, Twitter (MIT); с v808 — новые самостоятельные рисунки; тыквы-коты — Justas Galaburda, Pumpkin Cat Halloween Vectors (CC BY); сундук, мандариновое дерево и глобус — SVG Repo (CC0).</p>';
     }
-    else body = (SHP_DT === 'fig' && e.fig ? layBox('Носовая фигура: размер и положение', (shpFigHasAlt(e.fig) ? '<div class="wk-shp-segs"><span>Альтернативный облик:</span>' + lbtn('fa', '', 'Выкл.', !shpFigIsAlt(e.fig, e.lay)) + lbtn('fa', 'old', 'Вкл.', shpFigIsAlt(e.fig, e.lay)) + '</div>' + (SHP_FIGALT954[e.fig] ? '<div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap"><span style="text-align:center"><img alt="Основной облик" src="'+shpFigArtPath938(SHP_FIG938[e.fig])+'" style="width:104px;height:76px;object-fit:contain;display:block">Основной</span><span style="text-align:center"><img alt="Альтернативный облик" src="'+shpFigArtPath938(SHP_FIGALT954[e.fig])+'" style="width:104px;height:76px;object-fit:contain;display:block">Альтернативный</span></div>' : '') : '') + sl('fs', 'Размер фигуры', 50, 220, lyv('fs')) + sl('fb', SHP_FIG938[e.fig]?'Глубина крепления':'Размер подставки', 50, 200, lyv('fb')) + sl('fq', SHP_FIG938[e.fig]?'Крепление выше или ниже':'Подставка выше или ниже', -40, 80, lyv('fq')) + sl('fy', 'Фигура выше или ниже', -40, 80, lyv('fy')) + sl('fx', 'Левее / правее', -50, 50, lyv('fx'), ' px', 1), 'fig') : '') + (SHP_DT === 'flag' && e.flag ? (function () {
+    else body = (SHP_DT === 'fig' && e.fig ? tuneBox('fig', layBox('Носовая фигура: размер и положение', (shpFigHasAlt(e.fig) ? '<div class="wk-shp-segs"><span>Альтернативный облик:</span>' + lbtn('fa', '', 'Выкл.', !shpFigIsAlt(e.fig, e.lay)) + lbtn('fa', 'old', 'Вкл.', shpFigIsAlt(e.fig, e.lay)) + '</div>' + (SHP_FIGALT954[e.fig] ? '<div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap"><span style="text-align:center"><img alt="Основной облик" src="'+shpFigArtPath938(SHP_FIG938[e.fig])+'" style="width:104px;height:76px;object-fit:contain;display:block">Основной</span><span style="text-align:center"><img alt="Альтернативный облик" src="'+shpFigArtPath938(SHP_FIGALT954[e.fig])+'" style="width:104px;height:76px;object-fit:contain;display:block">Альтернативный</span></div>' : '') : '') + sl('fs', 'Размер фигуры', 50, 220, lyv('fs')) + sl('fb', SHP_FIG938[e.fig]?'Глубина крепления':'Размер подставки', 50, 200, lyv('fb')) + sl('fq', SHP_FIG938[e.fig]?'Крепление выше или ниже':'Подставка выше или ниже', -40, 80, lyv('fq')) + sl('fy', 'Фигура выше или ниже', -40, 80, lyv('fy')) + sl('fx', 'Левее / правее', -50, 50, lyv('fx'), ' px', 1), 'fig')) : '') + (SHP_DT === 'flag' && e.flag ? (function () {
       var Tt = shpTT(sc.t), fm = shpFlagMask(e.lay, Tt), bt = '', fb = '', i, lv2 = function (k, i2, d) { var v = e.lay[k + i2] != null ? e.lay[k + i2] : e.lay[k] != null ? e.lay[k] : d; return v; };
       for (i = 0; i < nM; i++) {
         bt += lbtn('fm', i, nM > 1 ? 'Мачта ' + (i + 1) + (i === 0 ? ' (передняя)' : i === nM - 1 ? ' (задняя)' : '') : 'Флаг на мачте', fm[i]);
         if (fm[i]) fb += '<div class="wk-shp-dmv"><b>' + (nM > 1 ? 'Флаг: мачта ' + (i + 1) : 'Флаг') + '</b>' + sl('fls' + i, 'Размер', 50, 260, lv2('fls', i, 100)) + (e.flag !== 'url' ? sl('fex' + i, 'Эмблема: влево / вправо', -100, 100, lv2('fex', i, 0)) + sl('fey' + i, 'Эмблема: выше / ниже', -100, 100, lv2('fey', i, 0)) : '') + '</div>';
       }
-      return layBox('Флаги: мачты, размер и положение', '<div class="wk-shp-segs"><span>На каких мачтах (можно несколько):</span>' + bt + '</div>' + (fb || '<p class="wk-sh-hint">Флаг не поднят ни на одной мачте.</p>'), 'flag');
+      return tuneBox('flag', layBox('Флаги: мачты, размер и положение', '<div class="wk-shp-segs"><span>На каких мачтах (можно несколько):</span>' + bt + '</div>' + (fb || '<p class="wk-sh-hint">Флаг не поднят ни на одной мачте.</p>'), 'flag'));
     })() : '') + (SHP_DT === 'fig' ? '<p class="wk-sh-hint wk-shp-pcr">Носовые фигуры — авторские арты проекта в прозрачном WebP: резные корабельные скульптуры.</p><p class="wk-sh-hint wk-shp-pcr">Альтернативные облики: обезьяна, «вах», кулак и единорог — Twemoji, Twitter (MIT); носорог и орёл — Emojione, JoyPixels (MIT); фламинго — Nature Flat Color (CC0); гоблин, дракон и курица — Noto Emoji, Google (Apache 2.0); авокадо — Sensa Emoji Vectors (общественное достояние); оборотень, Медуза Горгона и жнец — Chanut is Industries, Role Playing Game (CC BY); попугай — SVG Repo, Animals 26 (CC0). Всё на SVG Repo.</p>' : '') + ((SHP_DT === 'dec') ? '<p class="wk-sh-hint">Для текущего корабля показаны только доступные общие украшения и его собственные уникальные варианты.</p>' : '') + '<div class="wk-shp-its">' + SHP_DZ[SHP_DT].l.filter(function (it) { return !it.tiers || it.tiers.indexOf(shpTT(sc.t).id) >= 0; }).map(function (it) { return card(SHP_DT, it, e[SHP_DT] === it.id, SHP_DZ[SHP_DT].req); }).join('') + '</div>' + (SHP_DT === 'flag' && e.flag === 'url' ? urlBox('flag', 'Ссылка на картинку флага', 'лучше горизонтальную') : '') + (SHP_DT === 'fig' && e.fig === 'url' ? urlBox('fig', 'Ссылка на картинку носовой фигуры', 'лучше PNG с прозрачным фоном, примерно квадратный: он встанет на нос корабля') : '') + (SHP_DT === 'fig' ? (shpFigRefresh(false), shpFigAdmHTML()) : '') + (SHP_DT === 'flag' ? '<p class="wk-sh-hint wk-shp-pcr">Флаг: объёмная ткань, печать по изгибу, швы и крепления. Эмблемы флага — Icojam, Scary Halloween Flat Icons (CC BY); вампир, кости и рука — Josy Dom Alexis, Halloween Scary Vectors (CC BY); игральный кубик — Emojione, JoyPixels (MIT); череп с костями — Noto Emoji, Google (Apache 2.0); авокадо — Sensa Emoji Vectors (общественное достояние). Всё на SVG Repo.</p>' : '');
+    Object.keys(TUNE).forEach(function (k) { body = TUNE[k] + body; });
     var n = df.list.length, can = n && bel >= df.sum;
     var bar = '<div class="wk-shp-dbar' + (n ? ' on' : '') + '"><span>' + (n ? 'Изменений в примерке: ' + n + (df.sum ? ' · итого <b>' + fmtB(df.sum) + '</b>' : ' · <b>бесплатно</b>') : 'Выбери цвет или украшение — корабль в примерке сразу покажет, как это будет выглядеть') + '</span>' +
       (n ? '<button type="button" class="wk-tx-btn' + (can ? ' pri' : '') + '" data-tx="shipdzok"' + (can ? '' : ' disabled') + '>' + (df.sum ? 'Купить и применить' : 'Применить') + '</button><button type="button" class="wk-tx-btn" data-tx="shipdzx">Сбросить</button>' : '') + '<button type="button" class="wk-tx-btn" data-tx="shipdzplay">▶ Проиграть анимацию</button></div>';
     return '<h3 class="wk-dk-h" id="wkShipDz">Оформление корабля</h3><div class="wk-shp-dz"><div class="wk-shp-dpv">' + shpSizeBar('ship', SHP_ZMINI) + '<div class="wk-shp-scene wk-shp-zoom' + (SHP_ZMINI ? ' mini' : '') + '" data-tx="shipzoom" role="button" tabindex="0" title="' + (SHP_ZMINI ? 'Нажми, чтобы увеличить' : 'Нажми, чтобы уменьшить') + '">' + pv + '</div>' + bar + '</div><div class="wk-shp-dop">' + (!SHP_DMENU ? shpBackHTML('shipdzt', (SHP_DTABS.filter(function (t) { return t[0] === SHP_DT; })[0] || ['', ''])[1], 'К разделам оформления') + body : shpMenuHTML(SHP_DTABS.map(function (t) { return { at: 'data-tx="shipdzt" data-t="' + t[0] + '"', ic: SHP_DTI[t[0]], n: t[1], sub: SHP_DTH[t[0]] }; }))) + '</div></div>';
+  }
+  /* если настройка открылась за краем экрана, подвигаем страницу ровно настолько, чтобы её было видно */
+  function shpTuneShow() {
+    setTimeout(function () {
+      var p = document.querySelector('.wk-shp-dop .wk-shp-tune'); if (!p) return;
+      var r = p.getBoundingClientRect(), low = window.innerHeight - (window.innerWidth <= 760 ? 92 : 16);
+      if (r.bottom <= low) return;
+      var pv = document.querySelector('.wk-shp-dpv'), top = pv && window.innerWidth <= 900 ? pv.getBoundingClientRect().bottom + 8 : 90;
+      var up = Math.min(r.bottom - low, r.top - top - 120); if (up > 0) window.scrollBy({ top: up, behavior: 'smooth' });
+    }, 60);
   }
   function shpDzClick(a, b, st, sh, v, pane, repaint, sv, ba) {
     if (a === 'shipdzgunplay') { var svg832=document.querySelector('.wk-shp-dpv .wk-shp-svg'); if(!shpPlayGun832(svg832,shpEffCos(sh).lay.gf||'classic',false))txToast('Сначала построй пушки'); return true; }
@@ -46991,7 +47088,10 @@ document.addEventListener('change',function(e) {
       b.disabled = true; fapi2.remove(b.getAttribute('data-id')).then(function () { SHP_FIGP = { id: '', name: '', price: 25000, url: '' }; SHP_FGST.at = 0; shpFigRefresh(true); shpRepaint(); }, function () { b.disabled = false; txToast('Не удалось удалить фигуру'); });
       return true;
     }
-    if (a === 'shipdzt') { var dtv = b.getAttribute('data-t'); if (dtv) { SHP_DT = dtv; SHP_DMENU = false; } else SHP_DMENU = true; shpRepaint(); return true; }
+    if (a === 'shipdzt') { var dtv = b.getAttribute('data-t'); if (dtv) { SHP_DT = dtv; SHP_DMENU = false; } else SHP_DMENU = true; SHP_DECT = 'my'; SHP_TUNE = ''; shpRepaint(); return true; }
+    if (a === 'shipdzdect') { SHP_DECT = b.getAttribute('data-v') === 'shop' ? 'shop' : 'my'; shpRepaint(); return true; }
+    if (a === 'shipdztune') { var tv = b.getAttribute('data-v') || ''; SHP_TUNE = SHP_TUNE === tv ? '' : tv; shpRepaint(); shpTuneShow(); return true; }
+    if (a === 'shipdztunex') { var Lt = JSON.parse(JSON.stringify(shpEffCos(sh).lay)); if (Lt.ds) { delete Lt.ds[b.getAttribute('data-v')]; if (!Object.keys(Lt.ds).length) delete Lt.ds; } SHP_D.lay = Lt; shpRepaint(); return true; }
     if (a === 'shipdzdup') {
       var dm = b.getAttribute('data-m'), did = b.getAttribute('data-id') || '', db0 = st.belli || 0, dc = 0, dsum = 0, dmat = {};
       sh.dup = sh.dup && typeof sh.dup === 'object' ? sh.dup : {};
@@ -47009,9 +47109,9 @@ document.addEventListener('change',function(e) {
     if (a === 'shipdz') {
       var k = b.getAttribute('data-k'), val = b.getAttribute('data-v') || '';
       if (k === 'paint') { var s = b.getAttribute('data-s'); SHP_D.paint = SHP_D.paint || {}; SHP_D.paint[s] = val; }
-      else if (k === 'dec') { var cur = shpEffCos(sh).dec, sa847=SHP_SETART847[val]; SHP_D.dec = cur.indexOf(val) >= 0 ? cur.filter(function (x) { return x !== val; }) : cur.filter(function(x){return !sa847 || !SHP_SETART847[x] || SHP_SETART847[x].slot!==sa847.slot;}).concat([val]); }
+      else if (k === 'dec') { var cur = shpEffCos(sh).dec, sa847=SHP_SETART847[val]; SHP_D.dec = cur.indexOf(val) >= 0 ? cur.filter(function (x) { return x !== val; }) : cur.filter(function(x){return !sa847 || !SHP_SETART847[x] || SHP_SETART847[x].slot!==sa847.slot;}).concat([val]); if (cur.indexOf(val) < 0) SHP_TUNE = SHP_MOVE.indexOf(val) >= 0 ? val : ''; else if (SHP_TUNE === val) SHP_TUNE = ''; }
       else if (SHP_DZ[k]) { var bi = shpItem(k, val); if(k==='hpat'&&!bi)return true; if (bi && bi.bp && !shpOwn(sh, k, val)) { txToast('Этот чертёж ещё не найден'); return true; } SHP_D[k] = val; if (k === 'fig' && bi && bi.cu) SHP_D.figUrl = bi.url; }
-      shpRepaint(); return true;
+      shpRepaint(); shpTuneShow(); return true;
     }
     if (a === 'shipurl') {
       var uk = b.getAttribute('data-k'); if (['flag', 'orn', 'sorn', 'fig'].indexOf(uk) < 0) return true;
@@ -48638,7 +48738,7 @@ document.addEventListener('change',function(e) {
   }
   /* ======== Доска заданий ======== */
   try { INC_SRC.quest = 'Задания Верфи'; } catch (e) {}
-  var SHP_TABNM = { shop: 'Магазин', build: 'Постройка', voy: 'Ближние рейсы', gl: 'Гранд Лайн', nw: 'Новый Свет', duel: 'Дуэли', crew: 'Экипаж', quest: 'Задания', aw: 'Награды' };
+  var SHP_TABNM = { shop: 'Магазин', build: 'Постройка', voy: 'Ближние рейсы', gl: 'Гранд Лайн', nw: 'Новый Свет', duel: 'Дуэли', crew: 'Экипаж', quest: 'Задания', aw: 'Награды', bh: 'Боссы' };
   function shpTabVis(sh, v, st) {
     if (SHP_ADM) return null;
     var l1 = v.lv >= 1, l5 = v.lv >= 5, bt = shpBty(sh).pts > 0;
@@ -48664,12 +48764,6 @@ document.addEventListener('change',function(e) {
     return { all: all, cur: cur, next: i >= 0 && all[i + 1] ? all[i + 1] : null, n: all.filter(function (x) { return x.done; }).length };
   }
   function shpBar(c, m) { var pc = m ? Math.max(0, Math.min(100, Math.round(c / m * 100))) : 0; return '<div class="wk-qb"><i style="width:' + pc + '%"></i></div>'; }
-  function shpGoalStrip(st, sh, v) {
-    if (SHP_ADM) return '';
-    var S = shpQState(sh, v);
-    if (!S.cur) return '<button type="button" class="wk-goal done" data-tx="shipst" data-t="quest"><b>Путь пройден</b><span>Ван Пис найден</span></button>';
-    return '<button type="button" class="wk-goal" data-tx="shipst" data-t="quest"><b>Цель</b><span>' + esc(S.cur.q.t) + '</span><em>' + S.cur.cur + ' из ' + S.cur.max + '</em>' + shpBar(S.cur.cur, S.cur.max) + '<small>Награда: ' + esc(S.cur.q.rw) + '</small></button>';
-  }
   /* ----- ежедневные и еженедельные ----- */
   var SHP_QRT = { coast: 'Прибрежные воды', isles: 'Рыбацкие острова', trade: 'Торговый путь' };
   function shpWeekKey() { var p = shpDay().split('-'), d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])); d.setUTCDate(d.getUTCDate() - (d.getUTCDay() + 6) % 7); return d.toISOString().slice(0, 10); }
@@ -51829,6 +51923,7 @@ document.addEventListener('change',function(e) {
     var still = false; try { still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
     if (still) return;
     var t0 = performance.now(), dur = Math.min(1400, 600 + Math.log10(Math.abs(d) + 1) * 140);
+    if (bal === hb) hb._wkBusy = Date.now() + dur + 120;
     el.textContent = f(from);
     (function st(t) { var p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3); el.textContent = f(from + d * e); if (p < 1 && el.isConnected) requestAnimationFrame(st); })(t0);
   }
@@ -53143,7 +53238,7 @@ html body .wk-sc .wk-sc-row[data-n="5"]{grid-template-columns:repeat(5,minmax(0,
 
   // Встроенные объявления (всегда видны, даже без облака)
   var BUILTIN = [
-    { t: 'Верфь: доска заданий', b: 'Первая вкладка Верфи «Задания»: всегда одна текущая цель и награда за неё (то, что откроется дальше). Над вкладками короткая строка с целью. Разделы, которые ещё недоступны, скрыты и появляются по мере продвижения. Ниже ежедневные и еженедельные задания (например, сплавать несколько раз в Прибрежные воды): за каждое белли, а за все три сразу бонус. Награду нужно забрать кнопкой.' },
+    { t: 'Верфь: доска заданий', b: 'Первая вкладка Верфи «Задания»: всегда одна текущая цель и награда за неё (то, что откроется дальше). Разделы, которые ещё недоступны, скрыты и появляются по мере продвижения. Ниже ежедневные и еженедельные задания (например, сплавать несколько раз в Прибрежные воды): за каждое белли, а за все три сразу бонус. Награду нужно забрать кнопкой.' },
     { t: 'Верфь: охотники, подкуп и газета', b: 'При награде от 2 уровня Дозора в плаваниях по Гранд Лайну и дальше тебя могут найти охотники за головами: у каждого своё имя. Можно принять бой (победа приносит добычу, но награда растёт), откупиться или попробовать договориться. Во вкладке «Награда» можно подкупить Дозор (−3 очка, раз в 6 часов) или залечь на дно на 12 часов: охоты нет, а потом награда падает на 4 очка. Новая вкладка «Газета»: рейтинг розыска и новости мира. Заметки о других участниках появляются, когда у них что-то меняется между твоими заходами. Есть достижения.' },
     { t: 'Верфь: награда за голову', b: 'Новая вкладка «Награда». За базы на Гранд Лайне, побеждённых боссов, захваты островов Нового Света и Лафтель растут очки розыска, а вместе с ними награда за твою голову. На постере WANTED твоя аватарка и сумма. Чем выше награда, тем чаще в плаваниях по Гранд Лайну и дальше тебя ищет Дозор (всего пять уровней): бои с ним могут стоить прочности и части груза. Внизу видны награды других участников. Есть достижения.' },
     { t: 'Верфь: записки картографа и хроники арок', b: 'В «Записках» появилась история картографа Роуэна: за каждую найденную часть шанс найти Рио-понеглиф в экспедиции растёт на 0,5% (до 2% сверху к базовым 4%). Также появились хроники арок: когда ты проходишь арку в вики, о ней могут попасться записки в плаваниях.' },
@@ -59241,6 +59336,22 @@ body:has(#wkShpFs) .wk-tx-toast{z-index:2147483400!important}
 body:has(#wkShpVisit .wk-shp-ov-w) .wk-tx-toast{z-index:100001!important}
 .wk-duo .wk-duo-pick,.wk-duo .wk-shp-fleet{margin:0 2px 8px}
 @media (max-width:700px){.wk-flt.wk-duo .wk-flt-tools>.wk-tx-btn{flex:1 1 40%}}
+</style>
+<style id="wk-v1039-decor">
+.wk-shp-its>.wk-shp-tune{grid-column:1/-1;min-width:0}
+.wk-shp-its:has(>.wk-shp-tune){grid-auto-flow:row dense}
+.wk-shp-tune>.wk-shp-lay,.wk-shp-its>.wk-shp-tune>.wk-shp-lay{margin:0;border-color:var(--accent,var(--c-accent,#e3b341))}
+.wk-shp-its>.wk-shp-tune>.wk-shp-pr{margin-top:6px}
+.wk-shp-cell{display:flex;flex-direction:column;gap:4px;min-width:0}
+.wk-shp-cell>.wk-shp-it{flex:1 1 auto;width:100%}
+.wk-shp-gear{min-height:30px;padding:2px 6px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent,var(--c-accent,#e3b341)) 45%,transparent);background:transparent;color:inherit;font:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wk-shp-gear.on{background:var(--accent,var(--c-accent,#e3b341));border-color:transparent;color:#14100a}
+.wk-shp-dect{display:flex;gap:4px;margin:0 0 10px;padding:4px;border-radius:999px;border:1px solid rgba(148,163,184,.25)}
+.wk-shp-dect>button{flex:1 1 0;min-height:36px;border:0;border-radius:999px;background:transparent;color:inherit;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.wk-shp-dect>button small{opacity:.7;font-weight:600;margin-left:4px}
+.wk-shp-dect>button.on{background:color-mix(in srgb,var(--accent,var(--c-accent,#e3b341)) 22%,transparent);color:var(--accent,var(--c-accent,#e3b341))}
+.wk-shp-dempty{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:12px 0}
+@media (max-width:640px){.wk-shp-tune .wk-shp-dmv{display:grid;grid-template-columns:1fr 1fr;column-gap:12px}.wk-shp-tune .wk-shp-dmv>b,.wk-shp-tune .wk-shp-dmv>:not(.wk-shp-sl){grid-column:1/-1}.wk-shp-tune .wk-shp-sl{margin:2px 0;gap:2px 6px;grid-template-columns:1fr auto}.wk-shp-tune .wk-shp-sl>span{grid-column:1;grid-row:1;font-size:12px;line-height:1.25}.wk-shp-tune .wk-shp-sl>output{grid-column:2;grid-row:1}.wk-shp-tune .wk-shp-sl>input{grid-column:1/-1;grid-row:2}.wk-shp-tune .wk-shp-lay-h .wk-tx-btn{min-height:32px}.wk-shp-tune .wk-shp-fine>.wk-shp-sl{display:inline-grid;vertical-align:top;width:calc(50% - 8px);margin:2px 4px}.wk-shp-tune .wk-shp-fine>.wk-shp-sl:only-of-type{width:calc(100% - 8px)}}
 </style>
 </body></html>
 
