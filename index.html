@@ -1,6 +1,6 @@
 <!-- One Piece Wiki update v1060: triple shipyard merchant refresh price -->
 <!doctype html>
-<!--wk-ver:28.11.2026 · 1060-->
+<!--wk-ver:28.11.2026 · 1061-->
 <script id="wk-v616-pre">try{var K='wkExtrasKeepV616',old={},ca=[],ma={},cc=null,cca=[],cma={};try{old=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}try{ca=JSON.parse(localStorage.getItem('onePieceWikiCustomAchievementsV1')||'[]')}catch(e){}try{ma=JSON.parse(localStorage.getItem('onePieceWikiMedalArtV1')||'{}')}catch(e){}try{cc=JSON.parse(localStorage.getItem('wkCloudContentV1')||'null');if(cc&&cc.data){cca=Array.isArray(cc.data.customAchievements)?cc.data.customAchievements:[];cma=cc.data.medalArt&&typeof cc.data.medalArt==='object'?cc.data.medalArt:{}}}catch(e){}cc=null;var oc=Array.isArray(old.ca)?old.ca:[],om=old.ma&&typeof old.ma==='object'?old.ma:{},ids={},cids={};oc.forEach(function(a){if(a&&a.id!=null)ids[a.id]=1});cca.forEach(function(a){if(a&&a.id!=null)cids[a.id]=1});(Array.isArray(ca)?ca:[]).forEach(function(a){if(a&&a.id!=null&&!ids[a.id]&&!cids[a.id]){oc.push(a);ids[a.id]=1}});if(ma&&typeof ma==='object')Object.keys(ma).forEach(function(k){if(!(k in om)&&!(k in cma)&&ma[k]!=null&&ma[k]!=='')om[k]=ma[k]});if(oc.length||Object.keys(om).length)localStorage.setItem(K,JSON.stringify({ca:oc,ma:om}));else localStorage.removeItem(K)}catch(e){}</script>
 <html data-wiki-portable-baked="true" data-wiki-portable-id="2026-11-11T03:23:00.970Z" lang="ru" style="--reward-rank-first: #ffda75; --reward-rank-second: #d9d9d9; --reward-rank-third: #ffd285; --reward-rank-other: #4f4860; --wiki-progress-manga: #efc66b; --wiki-progress-anime: #60d9ff; --wk-title-font: 'Days One'; --wk-title-fw: 400; --wk-wp-tpl: url(&quot;./assets/webp/ui/wanted_template.webp&quot;); --wk-fg-manga: #0b0f17; --wk-fg-anime: #0b0f17; --wk-accent: #a78bfa; --wk-accent-soft: #d3c5fd; --fruit-type-param-color: #bb9eff !important; --fruit-type-param-rgb: 187, 158, 255 !important; --fruit-type-logia-color: #f967ae !important; --fruit-type-logia-rgb: 249, 103, 174 !important; --fruit-type-zoan-color: #65f6b7 !important; --fruit-type-zoan-rgb: 101, 246, 183 !important; --wk-tz-card: 1.15;" class="wk-sc-off wk-hz-c wk-hz-f wk-hz-u wk-hz-v wk-hz-h wk-calm wk-tfx-off wk-tfx-still wk-gpu wk-hdr-min" data-wk-role="admin" data-wk-title-font="g:Days One|"><head>
 <script id="wk-v596-early">try{var q=new URLSearchParams(location.search);if(q.get("tab")==="favorites"&&/^[a-z]+$/.test(q.get("cab")||"")){var cb=q.get("cab");localStorage.setItem("onePieceWikiCabinSubtabV3",cb==="overview"?"favorites":cb);localStorage.setItem("onePieceWikiCabinExtraTabV1",/^(watchgrid|timeline|deck|tops|stats|edits|quiz|atlas|help)$/.test(cb)?cb:"");}}catch(e){}</script>
@@ -3720,7 +3720,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "28.11.2026 · 1060";
+const WIKI_VERSION = "28.11.2026 · 1061";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -50682,7 +50682,7 @@ document.addEventListener('change',function(e) {
       var vs = shpVoys(s);
       Object.keys(vs).forEach(function (t) {
         var vy = vs[t]; if (!vy || !shpMapIn(vy.r) || +vy.t1 < now - 86400000 || !(+vy.t1 > +vy.t0)) return;
-        var c = shpC(s, +t); out.push({ wk: shpLayClean(c.lay).wk || '', owner: owner, mine: mine, name: c.name || shpTT(+t).n, tier: shpTT(+t).n, r: vy.r, t0: +vy.t0, t1: +vy.t1 });
+        var c = shpC(s, +t), tt = shpTT(+t); out.push({ wk: shpLayClean(c.lay).wk || '', owner: owner, mine: mine, name: c.name || tt.n, tier: tt.n, type: tt.id || '', shipTier: +t, r: vy.r, t0: +vy.t0, t1: +vy.t1 });
       });
     };
     add(sh, me, true);
@@ -50697,10 +50697,47 @@ document.addEventListener('change',function(e) {
     var drm = gl ? '' : SHP_ROUTES.filter(function (q) { return q.dr && shpDrOk(q); }).map(function (q) { var m = SHP_MAPR[q.id], k = (m && m.k) || q.k || 'isles', tint = (m && m.tint) || q.tint || '#c9a34a'; return shpChartDailySpot(k, m.x, m.y, .42, tint) + shpChartLabel(m.x, m.y + 30, q.n, 11); }).join('');
     return shpChartSea('wk812v',false)+(gl ? shpChartRegion(760,497,'ГРАНД ЛАЙН · РАЙ') : shpChartRegion(300,222,'ИСТ-БЛЮ'))+rt+locations.map(function(q){return shpChartIsland(q[0],q[1],q[2],q[3],q[4],true)+shpChartLabel(q[1],q[6],q[5],13);}).join('')+drm+(gl ? '' : shpChartIsland('isles',334,240,.30,'#779b67',true)+shpChartIsland('isles',272,236,.25,'#779b67',true));
   }
-  function shpMapShip(mine) {
-    var c=mine?'#edc575':'#75b6e7', d=mine?'#a36c32':'#365e91';
-    return '<circle r="12" fill="'+c+'" fill-opacity=".18" stroke="'+c+'" stroke-opacity=".5" stroke-width=".8"/><ellipse cy="8" rx="10" ry="2.6" fill="#061b2c" opacity=".5"/><path d="M-10 3Q-3 5 10 2L7 8Q0 11 -7 7Z" fill="'+d+'" stroke="#172a33" stroke-width=".75"/><path d="M-8 4Q0 6 8 4" fill="none" stroke="'+c+'" stroke-width="1.2"/><path d="M-1 3V-11" stroke="#785c3f" stroke-width="1.2"/><path d="M-1 -10Q5 -9 8 1H-1Z" fill="#e9dcc2" stroke="#82735b" stroke-width=".5"/><path d="M-2 -7L-8 1H-2Z" fill="#a9c3c5" stroke="#607c82" stroke-width=".4"/><path d="M-1 -11L6 -10 -1 -7Z" fill="'+c+'"/><circle cx="-5" cy="6" r=".65" fill="#f5deae"/><circle cx="0" cy="7" r=".65" fill="#f5deae"/>';
+  function shpMapShip(type, mine, tierName) {
+    var c = mine ? '#edc575' : '#75b6e7', d = mine ? '#a36c32' : '#365e91', line = '#172a33', cloth = mine ? '#efe1c1' : '#d9e6ea';
+    var halo = '<circle r="12.5" fill="'+c+'" fill-opacity=".18" stroke="'+c+'" stroke-opacity=".52" stroke-width=".8"/><ellipse cy="9" rx="10.8" ry="2.8" fill="#061b2c" opacity=".5"/>';
+    var badgeMap = { boat: 'Л', sloop: 'Ш', brig: 'Б', frigate: 'Ф', galleon: 'Г' };
+    var badge = badgeMap[type] || 'К';
+    var detail = '';
+    if (type === 'boat') {
+      detail = '<path d="M-10 4Q-3 8 10 4L7 9Q0 12 -7 8Z" fill="'+d+'" stroke="'+line+'" stroke-width=".75"/>' +
+               '<path d="M-6 4L-1 -7L0 -7L-2 4Z" fill="'+cloth+'" stroke="#82735b" stroke-width=".45"/>' +
+               '<path d="M-1 3V-8" stroke="#785c3f" stroke-width="1.05"/>' +
+               '<path d="M-5 6L-9 8M3 7L7 9" stroke="'+c+'" stroke-width=".7" stroke-linecap="round" opacity=".95"/>';
+    } else if (type === 'sloop') {
+      detail = '<path d="M-10 3Q-3 6 10 2L7 8Q0 11 -7 7Z" fill="'+d+'" stroke="'+line+'" stroke-width=".75"/>' +
+               '<path d="M-1 3V-11" stroke="#785c3f" stroke-width="1.2"/>' +
+               '<path d="M-1 -10Q7 -9 8 1H-1Z" fill="'+cloth+'" stroke="#82735b" stroke-width=".5"/>' +
+               '<path d="M-2 -6L-7 1H-2Z" fill="#adc8ca" stroke="#607c82" stroke-width=".4"/>';
+    } else if (type === 'brig') {
+      detail = '<path d="M-10 3Q-1 6 10 2L7 8Q0 11 -7 7Z" fill="'+d+'" stroke="'+line+'" stroke-width=".75"/>' +
+               '<path d="M-4 2V-10M3 2V-8" stroke="#785c3f" stroke-width="1.05"/>' +
+               '<path d="M-7 -6H-1M0 -4H6" stroke="#60482f" stroke-width=".8" stroke-linecap="round"/>' +
+               '<path d="M-7 -6H-1V0H-7Z" fill="'+cloth+'" stroke="#82735b" stroke-width=".42"/>' +
+               '<path d="M0 -4H6V1H0Z" fill="#d8e2e4" stroke="#7a8a8f" stroke-width=".4"/>';
+    } else if (type === 'frigate') {
+      detail = '<path d="M-11 3Q-2 6 10 1L7 8Q0 12 -8 8Z" fill="'+d+'" stroke="'+line+'" stroke-width=".78"/>' +
+               '<path d="M-6 2V-8M-1 2V-11M5 2V-7" stroke="#785c3f" stroke-width="1"/>' +
+               '<path d="M-8 -4H-4M-3 -7H1M3 -3H7" stroke="#60482f" stroke-width=".72" stroke-linecap="round"/>' +
+               '<path d="M-8 -4H-4V1H-8Z" fill="#cfd9db" stroke="#7a8a8f" stroke-width=".38"/>' +
+               '<path d="M-3 -7H1V0H-3Z" fill="'+cloth+'" stroke="#82735b" stroke-width=".4"/>' +
+               '<path d="M3 -3H7V1H3Z" fill="#cfd9db" stroke="#7a8a8f" stroke-width=".38"/>';
+    } else {
+      detail = '<path d="M-11 4Q-3 7 11 1L8 9Q1 12 -8 9Z" fill="'+d+'" stroke="'+line+'" stroke-width=".8"/>' +
+               '<path d="M-7 3V-8M-1 3V-12M6 3V-9" stroke="#785c3f" stroke-width="1.03"/>' +
+               '<path d="M-9 -3H-5M-3 -7H2M4 -4H8" stroke="#60482f" stroke-width=".74" stroke-linecap="round"/>' +
+               '<path d="M-9 -3H-5V2H-9Z" fill="#d6e0e2" stroke="#7a8a8f" stroke-width=".38"/>' +
+               '<path d="M-3 -7H2V1H-3Z" fill="'+cloth+'" stroke="#82735b" stroke-width=".42"/>' +
+               '<path d="M4 -4H8V2H4Z" fill="#d6e0e2" stroke="#7a8a8f" stroke-width=".38"/>' +
+               '<path d="M8 2Q9 0 10 -1" fill="none" stroke="'+c+'" stroke-width=".6" opacity=".9"/>';
+    }
+    return halo + detail + '<circle cx="8.6" cy="-8.6" r="4.45" fill="#0e2030" fill-opacity=".84" stroke="'+c+'" stroke-width=".7"/><text x="8.6" y="-7.2" text-anchor="middle" font-size="4.6" font-weight="800" fill="'+c+'">'+badge+'</text>';
   }
+
 
   function shpMapHTML(st, sh, v) {
     var me = myLogin(); if (me) shpFrEnsure();
@@ -50714,14 +50751,14 @@ document.addEventListener('change',function(e) {
       var tpath = '<path data-tr="' + id + '" d="' + SHP_MAPR[q.r].d + '" pathLength="1" fill="none" stroke="' + shpWakeCol(q) + '" stroke-width="' + (q.mine ? 3.4 : 2.4) + '" stroke-linecap="round" stroke-dasharray="' + p.toFixed(4) + ' 2"/>';
       var tback = '<path data-tb="' + id + '" d="' + SHP_MAPR[q.r].d + '" pathLength="1" fill="none" stroke="' + (q.mine ? '#fff4cf' : '#cfe3ff') + '" stroke-opacity=".85" stroke-width="' + (q.mine ? 2 : 1.6) + '" stroke-linecap="round" stroke-dasharray="0 1 0 2"/>';
       if (q.mine) trailsM += tpath + tback; else trails += tpath + tback;
-      var mg = '<g data-mk="' + id + '" class="wk-mp-mk"><title>' + esc(q.name) + ' · ' + esc(who) + '</title>' + shpMapShip(q.mine) + '<text class="wk-mp-lb" data-lb="' + (q.mine ? 1 : 0) + '" y="-17" text-anchor="middle" font-size="10" font-weight="700" fill="' + (q.mine ? '#ffe9a0' : '#c4dcff') + '" stroke="#0b2545" stroke-width="2.6" paint-order="stroke">' + esc(q.name) + '</text>' + '</g>';
+      var mg = '<g data-mk="' + id + '" class="wk-mp-mk"><title>' + esc(q.name) + ' · ' + esc(who) + ' · ' + esc(q.tier) + '</title>' + shpMapShip(q.type, q.mine, q.tier) + '<text class="wk-mp-lb" data-lb="' + (q.mine ? 1 : 0) + '" y="-17" text-anchor="middle" font-size="10" font-weight="700" fill="' + (q.mine ? '#ffe9a0' : '#c4dcff') + '" stroke="#0b2545" stroke-width="2.6" paint-order="stroke">' + esc(q.name) + '</text>' + '</g>';
       if (q.mine) marksM += mg; else marks += mg;
       rows += '<article class="wk-mp-row' + (q.mine ? ' mine' : '') + '"><div class="wk-mp-h"><b>' + esc(q.name) + '</b><small>' + (q.mine ? 'твой' : esc(accName(q.owner))) + ' · ' + q.tier.toLowerCase() + ' · ' + SHP_MAPR[q.r].n + '</small></div><div class="wk-shp-bar"><i data-vf="' + id + '" data-k="bar" style="width:' + (p * 100).toFixed(1) + '%"></i></div><small class="wk-mp-t">Проплыто <b data-vf="' + id + '" data-k="done">' + done + '</b> из ' + dist + ' миль · осталось <b data-vf="' + id + '" data-k="left">' + (dist - done) + '</b> · <span data-vf="' + id + '" data-k="eta">' + (p >= 1 ? 'уже в порту' : '≈ ' + shpDur(q.t1 - now)) + '</span></small></article>';
     });
     var mineN = vs.filter(function (q) { return q.mine; }).length, otherN = vs.length - mineN;
     var stats = '<div class="wk-mp-stats"><div class="wk-mp-st"><small>Твоих кораблей в море</small><b>' + mineN + '</b></div><div class="wk-mp-st"><small>Кораблей других участников</small><b>' + (me ? otherN : '—') + '</b></div><div class="wk-mp-st"><small>Твои рейсы</small><b>' + shpCntV(sh, 'voy') + '</b></div><div class="wk-mp-st"><small>Пройдено миль за всё время</small><b>' + shpCntV(sh, 'miles') + '</b></div></div>';
     var svg = '<svg class="wk-mp-svg" viewBox="' + (SHP_MAPSC === 'gl' ? '0 0 900 520' : '0 190 588 330') + '" role="img" aria-label="Карта плаваний" xmlns="http://www.w3.org/2000/svg">' + shpMapBase() + trails + trailsM + marks + marksM + '</svg>';
-    var legend = '<p class="wk-sh-hint">Золотые корабли — твои, синие — других участников. Первую половину рейса корабль плывёт к цели, вторую возвращается домой по тому же маршруту. Расстояния (в одну сторону) в морских милях: ' + Object.keys(SHP_MAPR).map(function (k) { return SHP_MAPR[k].n.toLowerCase() + ' — ' + SHP_DIST[k]; }).join(', ') + '. Положение считается по времени рейса, карта обновляется каждую секунду' + (me ? '. Данные других участников подгружаются из облака (раз в пару минут).' : '. Войди под своим именем, чтобы видеть корабли других участников.') + '</p>';
+    var legend = '<p class="wk-sh-hint">Золотые корабли — твои, синие — других участников. Силуэт и буква на маркере показывают тип судна: Л — лодка, Ш — шлюп, Б — бриг, Ф — фрегат, Г — галеон. Первую половину рейса корабль плывёт к цели, вторую возвращается домой по тому же маршруту. Расстояния (в одну сторону) в морских милях: ' + Object.keys(SHP_MAPR).map(function (k) { return SHP_MAPR[k].n.toLowerCase() + ' — ' + SHP_DIST[k]; }).join(', ') + '. Положение считается по времени рейса, карта обновляется каждую секунду' + (me ? '. Данные других участников подгружаются из облака (раз в пару минут).' : '. Войди под своим именем, чтобы видеть корабли других участников.') + '</p>';
     var refBtn = '<div class="wk-mp-ref"><button type="button" class="wk-tx-btn" data-tx="shipmapref">Обновить карту</button></div>';
     /* таблица мореходов */
     var tb = '';
