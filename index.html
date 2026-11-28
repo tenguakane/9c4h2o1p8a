@@ -1,3 +1,4 @@
+<!-- One Piece v1103: voyage loot chest, presentation after settlement -->
 <!-- One Piece v1084: continuous independent snow, underwater particles and atmospheric drift -->
 <!-- One Piece v1083: account-scoped pending saves, conflict-safe ship appearance recovery -->
 <!-- One Piece v1082: unified saved appearance across shipyard, profile, voyage, guest and fleet views -->
@@ -15,7 +16,7 @@
 <!-- One Piece v1067: large ship source-registered alpha material masks -->
 <!-- One Piece Wiki update v1064: synchronized personal fleet map colors -->
 <!doctype html>
-<!--wk-ver:28.11.2026 · 1100-->
+<!--wk-ver:28.11.2026 · 1103-->
 <!-- v1065: boat paint rebuilt from source contours -->
 <script id="wk-v616-pre">try{var K='wkExtrasKeepV616',old={},ca=[],ma={},cc=null,cca=[],cma={};try{old=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}try{ca=JSON.parse(localStorage.getItem('onePieceWikiCustomAchievementsV1')||'[]')}catch(e){}try{ma=JSON.parse(localStorage.getItem('onePieceWikiMedalArtV1')||'{}')}catch(e){}try{cc=JSON.parse(localStorage.getItem('wkCloudContentV1')||'null');if(cc&&cc.data){cca=Array.isArray(cc.data.customAchievements)?cc.data.customAchievements:[];cma=cc.data.medalArt&&typeof cc.data.medalArt==='object'?cc.data.medalArt:{}}}catch(e){}cc=null;var oc=Array.isArray(old.ca)?old.ca:[],om=old.ma&&typeof old.ma==='object'?old.ma:{},ids={},cids={};oc.forEach(function(a){if(a&&a.id!=null)ids[a.id]=1});cca.forEach(function(a){if(a&&a.id!=null)cids[a.id]=1});(Array.isArray(ca)?ca:[]).forEach(function(a){if(a&&a.id!=null&&!ids[a.id]&&!cids[a.id]){oc.push(a);ids[a.id]=1}});if(ma&&typeof ma==='object')Object.keys(ma).forEach(function(k){if(!(k in om)&&!(k in cma)&&ma[k]!=null&&ma[k]!=='')om[k]=ma[k]});if(oc.length||Object.keys(om).length)localStorage.setItem(K,JSON.stringify({ca:oc,ma:om}));else localStorage.removeItem(K)}catch(e){}</script>
 <html data-wiki-portable-baked="true" data-wiki-portable-id="2026-11-11T03:23:00.970Z" lang="ru" style="--reward-rank-first: #ffda75; --reward-rank-second: #d9d9d9; --reward-rank-third: #ffd285; --reward-rank-other: #4f4860; --wiki-progress-manga: #efc66b; --wiki-progress-anime: #60d9ff; --wk-title-font: 'Days One'; --wk-title-fw: 400; --wk-wp-tpl: url(&quot;./assets/webp/ui/wanted_template.webp&quot;); --wk-fg-manga: #0b0f17; --wk-fg-anime: #0b0f17; --wk-accent: #a78bfa; --wk-accent-soft: #d3c5fd; --fruit-type-param-color: #bb9eff !important; --fruit-type-param-rgb: 187, 158, 255 !important; --fruit-type-logia-color: #f967ae !important; --fruit-type-logia-rgb: 249, 103, 174 !important; --fruit-type-zoan-color: #65f6b7 !important; --fruit-type-zoan-rgb: 101, 246, 183 !important; --wk-tz-card: 1.15;" class="wk-sc-off wk-hz-c wk-hz-f wk-hz-u wk-hz-v wk-hz-h wk-calm wk-tfx-off wk-tfx-still wk-gpu wk-hdr-min" data-wk-role="admin" data-wk-title-font="g:Days One|"><head>
@@ -2767,6 +2768,47 @@ License:   Apache-2.0
 .wk-lamp1096{animation:wkLamp1096 var(--lamp-period,3s) ease-in-out infinite}.wk-waterlight1096{transform-box:fill-box;transform-origin:center;animation:wkWaterlight1096 var(--light-period,4s) ease-in-out infinite}
 .wk-shp-still .wk-lamp1096,.wk-shp-still .wk-waterlight1096{animation:none!important}@media(prefers-reduced-motion:reduce){.wk-lamp1096,.wk-waterlight1096{animation:none!important}}
 </style>
+<style id="wk-v1103-chest-css">
+#wkVoyChest1103{box-sizing:border-box;width:min(820px,calc(100% - 24px));max-width:none;max-height:calc(100% - 24px);max-height:calc(100dvh - 24px);margin:auto;padding:0;border:2px solid #b18444;border-radius:20px;background:radial-gradient(ellipse at 50% 34%,#553417 0%,#251b20 46%,#141521 88%);color:#fff1d6;box-shadow:0 0 0 3px #39271c,0 24px 90px #000b;overflow:auto;overscroll-behavior:contain;color-scheme:dark;z-index:2147483000;font:15px system-ui,sans-serif}
+#wkVoyChest1103::backdrop{background:rgba(5,8,15,.84);backdrop-filter:blur(4px)}
+#wkVoyChest1103 *{box-sizing:border-box}
+#wkVoyChest1103 .vc-inner{padding:18px 22px 20px;text-align:center}
+#wkVoyChest1103 .vc-head{display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left}
+#wkVoyChest1103 h2{font-size:clamp(19px,3.2vw,27px);line-height:1.2;margin:0;color:#ffe5a5!important;letter-spacing:.01em}
+#wkVoyChest1103 button{font:inherit;cursor:pointer;min-height:44px;border-radius:10px;border:1px solid #bb934f;color:#fff0d1!important;background:#39271d;padding:8px 13px;white-space:nowrap}
+#wkVoyChest1103 button:focus-visible{outline:2px solid #fff0aa;outline-offset:3px}
+#wkVoyChest1103 .vc-route{color:#dfc6a6;font-size:13px;margin:7px 0 0;text-align:left;overflow-wrap:anywhere}
+#wkVoyChest1103 .vc-stage{height:clamp(180px,35vh,300px);position:relative;isolation:isolate;display:grid;place-items:center;overflow:hidden;margin:0 auto;width:100%;max-width:520px}
+#wkVoyChest1103 .vc-chest{position:relative;width:min(100%,315px,38vh);aspect-ratio:1;transform-origin:50% 90%;z-index:2;animation:vc-arrive1103 .48s ease-out both,vc-rock1103 .7s .48s ease-in-out infinite}
+#wkVoyChest1103 .vc-chest img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 12px 13px #0008);transition:opacity .16s ease;pointer-events:none}
+#wkVoyChest1103 .vc-open{opacity:0}#wkVoyChest1103.is-open .vc-open{opacity:1}#wkVoyChest1103.is-open .vc-closed{opacity:0}
+#wkVoyChest1103 .vc-seam{position:absolute;left:22%;right:12%;top:46%;height:7%;background:radial-gradient(ellipse,#fff4a9 0%,#ffbb46 36%,transparent 75%);filter:blur(6px);z-index:3;opacity:0;animation:vc-seam1103 .75s .45s ease-in-out infinite alternate;pointer-events:none}
+#wkVoyChest1103.is-open .vc-seam{display:none}#wkVoyChest1103.is-open .vc-chest{animation:vc-pop1103 .42s ease-out both}
+#wkVoyChest1103 .vc-halo{position:absolute;inset:3% 7%;background:radial-gradient(ellipse,#ffc34877,transparent 68%);opacity:.16;transition:opacity .3s;z-index:0}
+#wkVoyChest1103.is-open .vc-halo{opacity:1}
+#wkVoyChest1103 .vc-particle{position:absolute;left:50%;top:52%;width:var(--s);height:var(--s);background:#fff4b8;border-radius:50%;box-shadow:0 0 8px 2px #ffb637;opacity:0;pointer-events:none;z-index:3}
+#wkVoyChest1103.is-open:not(.is-done) .vc-particle{animation:vc-particle1103 1.1s var(--d) ease-out both}
+#wkVoyChest1103 .vc-status{color:#f4d59c;min-height:20px;font-size:13px;margin:0 0 12px}
+#wkVoyChest1103 .vc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:9px;align-items:stretch}
+#wkVoyChest1103 .vc-card{min-width:0;position:relative;padding:10px 7px;border:1px solid var(--rc,#bfa77b);border-radius:12px;background:radial-gradient(ellipse at 50% 15%,color-mix(in srgb,var(--rc,#bfa77b) 24%,#241b1d),#241b1d 80%);display:flex;flex-direction:column;align-items:center;gap:5px;overflow-wrap:anywhere;animation:vc-reward1103 .28s ease-out both}
+#wkVoyChest1103 .vc-card[hidden]{display:none!important}#wkVoyChest1103 .vc-kind{font-size:11px;color:#e1c7a9}#wkVoyChest1103 .vc-name{color:#fff1d6!important;font-size:13px;line-height:1.25}#wkVoyChest1103 .vc-qty{font-size:16px;color:#ffe4a0!important;font-variant-numeric:tabular-nums}#wkVoyChest1103 .vc-rarity{font-size:11px;color:var(--rc,#bfa77b)}
+#wkVoyChest1103 .vc-icon{height:65px;width:100%;max-width:110px;display:grid;place-items:center;color:#f1c879;font-size:35px;overflow:hidden;border-radius:6px}
+#wkVoyChest1103 .vc-icon svg,#wkVoyChest1103 .vc-icon img{display:block;width:100%!important;height:100%!important;max-height:65px!important;object-fit:contain;border:0!important;box-shadow:none!important}
+#wkVoyChest1103 .vc-icon .wk-ei{width:44px;height:44px}#wkVoyChest1103 .vc-icon .wk-shp-ic{max-width:100%;max-height:65px}
+#wkVoyChest1103 .vc-foot{position:sticky;bottom:0;background:linear-gradient(transparent,#1c171b 20%);padding:12px 0 0;margin-top:7px}
+#wkVoyChest1103 .vc-close{width:min(320px,100%);background:linear-gradient(#f9d88b,#c78835)!important;color:#211309!important;border-color:#ffe1a1!important;font-size:16px;font-weight:700!important}
+#wkVoyChest1103 .vc-close[disabled]{opacity:.55;cursor:default}#wkVoyChest1103 .vc-info{font-size:12px;color:#d9c4ac;margin:10px 0 0;line-height:1.4}
+@keyframes vc-arrive1103{from{opacity:0;transform:translateY(22px) scale(.85)}to{opacity:1;transform:none}}
+@keyframes vc-rock1103{0%,100%{transform:rotate(-1.8deg)}50%{transform:rotate(1.8deg)}}
+@keyframes vc-seam1103{to{opacity:.95}}@keyframes vc-pop1103{0%{transform:scale(.98)}45%{transform:scale(1.045)}100%{transform:scale(1)}}
+@keyframes vc-particle1103{0%{opacity:0;transform:translate(0,0) scale(.4)}15%{opacity:1}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(.15)}}
+@keyframes vc-reward1103{from{opacity:0;transform:translateY(10px) scale(.94)}to{opacity:1;transform:none}}
+@media(max-width:600px){#wkVoyChest1103{width:calc(100% - 16px);max-height:calc(100dvh - 16px);border-radius:14px}#wkVoyChest1103 .vc-inner{padding:12px 10px max(10px,env(safe-area-inset-bottom))}#wkVoyChest1103 .vc-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}#wkVoyChest1103 .vc-stage{height:clamp(150px,30vh,245px)}#wkVoyChest1103 .vc-chest{width:min(100%,250px,31vh)}#wkVoyChest1103 .vc-icon{height:53px}#wkVoyChest1103 .vc-card{padding:8px 5px}#wkVoyChest1103 .vc-foot{padding-top:8px}}
+@media(prefers-reduced-motion:reduce){#wkVoyChest1103 *,#wkVoyChest1103 *::before,#wkVoyChest1103 *::after{animation:none!important;transition:none!important}}
+#wkVoyChest1103.is-skipped *{animation:none!important;transition:none!important}
+
+#wkVoyChest1103 .vc-detail{width:100%;font-size:12px;text-align:left;color:#e4d1b4;line-height:1.4}#wkVoyChest1103 .vc-detail summary{cursor:pointer;text-align:center;color:#ffd68a}#wkVoyChest1103 .vc-detail p{margin:6px 0 0;overflow-wrap:anywhere}
+</style>
 </head>
 <body data-theme="mugiwara" data-active-tab="characters">
 <script id="wiki-cloud-config">
@@ -3882,7 +3924,7 @@ const rewardArcOrder = ["На заре приключений", "Орандж-т
 
 const rewardSagaOrder = ["Ист-Блю", "Алабаста", "Небесный Остров", "Water 7", "Триллер Барк", "Великая Война", "Остров Рыболюдей", "Дресс Роза", "Пирожный Остров", "Страна Вано", "Финальная"];
 
-const WIKI_VERSION = "28.11.2026 · 1093";
+const WIKI_VERSION = "28.11.2026 · 1103";
 
 /* ============================================================
    HTML-БЕЗОПАСНОСТЬ
@@ -9847,7 +9889,7 @@ function urlParams(){
     const p=new URLSearchParams();
     const s=document.querySelector('.section.active');
     p.set('tab',s?s.id.replace(/Section$/,''):'favorites');
-    try{if(s&&s.id==='favoritesSection'){const ab=document.querySelector('#favoritesSection .cabin-subnav .active[data-cabin-tab],#favoritesSection .cabin-subnav .active[data-wk-cabin-tab]');const ck=ab&&(ab.dataset.cabinTab||ab.dataset.wkCabinTab);p.set('cab',ck||(document.querySelector('#favoritesSection .cabin-subnav .wk-ov-tab')?'overview':'favorites'));}}catch(e){}
+    try{if(s&&s.id==='favoritesSection'){const ab=document.querySelector('#favoritesSection .cabin-subnav .active[data-cabin-tab],#favoritesSection .cabin-subnav .active[data-wk-cabin-tab]');const ck=ab&&(ab.dataset.cabinTab||ab.dataset.wkCabinTab);p.set('cab',window.__wkCabRoute1101 || (ck==='deck'&&window.__wkShipOn&&window.__wkShipOn()?'shipyard':ck)||(document.querySelector('#favoritesSection .cabin-subnav .wk-ov-tab')?'overview':'favorites'));}}catch(e){}
     if(themeName!=='default')p.set('theme',themeName);
     if(appArticleState){p.set('article',appArticleState.type);p.set('id',appArticleState.id);} return p;
 }
@@ -10374,7 +10416,7 @@ const __openImageW2=openImageViewer;openImageViewer=function(url){imageZoomReset
 function setupImageGestures(){const i=document.getElementById('imageViewerImage');if(!i||i.dataset.wikiGestures)return;i.dataset.wikiGestures='1';i.addEventListener('wheel',e=>{e.preventDefault();e.deltaY<0?imageZoomIn():imageZoomOut()},{passive:false});i.addEventListener('dblclick',e=>{e.preventDefault();imageZoom=imageZoom===1?2:1;imagePanX=0;imagePanY=0;updateImageTransform()});i.addEventListener('pointerdown',e=>{if(imageZoom<=1)return;i.setPointerCapture(e.pointerId);i.classList.add('dragging');imageDragStart={x:e.clientX,y:e.clientY,px:imagePanX,py:imagePanY}});i.addEventListener('pointermove',e=>{if(!imageDragStart)return;imagePanX=imageDragStart.px+e.clientX-imageDragStart.x;imagePanY=imageDragStart.py+e.clientY-imageDragStart.y;updateImageTransform()});const end=()=>{imageDragStart=null;i.classList.remove('dragging')};i.addEventListener('pointerup',end);i.addEventListener('pointercancel',end);}
 
 /* Browser state restoration */
-function restoreWikiState(){restoringFromHistory=true;const p=new URLSearchParams(location.search);applyTheme(p.get('theme')||themeName);const m=[['search','q'],['storySearch','storyq'],['rewardSearch','rewardq'],['fruitSearch','fruitq'],['usefulSearch','usefulq']];m.forEach(([id,k])=>{const e=document.getElementById(id);if(e&&p.has(k))e.value=p.get(k)||''});if(p.has('status'))characterStatusFilter=p.get('status')||'';if(p.has('chararc'))characterArcFilter=p.get('chararc')||'__all__';if(p.has('charsaga'))characterSagaFilter=p.get('charsaga')||'__all__';renderCharacterArcSagaFilters();const caf=document.getElementById('characterArcFilter');if(caf)caf.value=characterArcFilter;const csf=document.getElementById('characterSagaFilter');if(csf)csf.value=characterSagaFilter;if(p.has('page'))characterCurrentPage=Math.max(1,parseInt(p.get('page')||'1',10));const cs=document.getElementById('sort');if(cs&&p.get('charsort'))cs.value=p.get('charsort');storyDisplayMode='sagas';storySelectedSaga='';storyExpandedSagas=new Set();storySelectedSaga=p.get('storysaga')||'';if(storySelectedSaga)storyExpandedSagas.add(storySelectedSaga);const pairs=[['rewardSort','rewardsort'],['rewardArcFilter','rewardarc'],['rewardSagaFilter','rewardsaga'],['rewardMinFilter','rewardmin'],['rewardMaxFilter','rewardmax']];pairs.forEach(([id,k])=>{const e=document.getElementById(id);if(e&&p.has(k))e.value=p.get(k)});const ka=document.getElementById('kaToggle');if(ka&&p.has('ka'))ka.checked=p.get('ka')==='1';if(p.has('rewardpage'))rewardCurrentPage=Math.max(1,parseInt(p.get('rewardpage')||'1',10));const ft=document.getElementById('fruitTypeFilter');if(ft&&p.has('fruittype'))ft.value=p.get('fruittype')||'__all__';if(p.has('fruitpage'))fruitCurrentPage=Math.max(1,parseInt(p.get('fruitpage')||'1',10));if(p.has('usefultype'))usefulTypeFilter=p.get('usefultype')||'';if(p.has('usefulpage'))usefulCurrentPage=Math.max(1,parseInt(p.get('usefulpage')||'1',10));renderFruitStats();applyCharacterSearch(false);applyStorySearch();applyRewardFilters();applyFruitFilter();renderUsefulList();renderFavoritesList();renderRecentVisits();const initialTab=document.body.dataset.activeTab;const tab=WIKI_TABS.includes(p.get('tab'))?p.get('tab'):(WIKI_TABS.includes(initialTab)?initialTab:'characters');window.__wikiInternalNavigation=true;__switchTabW2(tab);updateMobileBottomNav(tab);window.__wikiInternalNavigation=false;scheduleVisibleCatalogPaginationRefresh(tab);const at=p.get('article'),ai=p.get('id');if(at&&ai){const f={character:()=>openCharacterArticle(ai,'history'),story:()=>openStoryArticle(ai,'history'),fruit:()=>openFruitArticle(ai,'history'),useful:()=>openUsefulArticle(ai,'history')}[at];if(f)f();}else{appArticleState=null;writeUrl('replace');}updatePageTitle();restoringFromHistory=false;}
+function restoreWikiState(){restoringFromHistory=true;const p=new URLSearchParams(location.search);window.__wkCabRoute1101=p.get('tab')==='favorites'&&['deck','shipyard'].includes(p.get('cab'))?p.get('cab'):null;applyTheme(p.get('theme')||themeName);const m=[['search','q'],['storySearch','storyq'],['rewardSearch','rewardq'],['fruitSearch','fruitq'],['usefulSearch','usefulq']];m.forEach(([id,k])=>{const e=document.getElementById(id);if(e&&p.has(k))e.value=p.get(k)||''});if(p.has('status'))characterStatusFilter=p.get('status')||'';if(p.has('chararc'))characterArcFilter=p.get('chararc')||'__all__';if(p.has('charsaga'))characterSagaFilter=p.get('charsaga')||'__all__';renderCharacterArcSagaFilters();const caf=document.getElementById('characterArcFilter');if(caf)caf.value=characterArcFilter;const csf=document.getElementById('characterSagaFilter');if(csf)csf.value=characterSagaFilter;if(p.has('page'))characterCurrentPage=Math.max(1,parseInt(p.get('page')||'1',10));const cs=document.getElementById('sort');if(cs&&p.get('charsort'))cs.value=p.get('charsort');storyDisplayMode='sagas';storySelectedSaga='';storyExpandedSagas=new Set();storySelectedSaga=p.get('storysaga')||'';if(storySelectedSaga)storyExpandedSagas.add(storySelectedSaga);const pairs=[['rewardSort','rewardsort'],['rewardArcFilter','rewardarc'],['rewardSagaFilter','rewardsaga'],['rewardMinFilter','rewardmin'],['rewardMaxFilter','rewardmax']];pairs.forEach(([id,k])=>{const e=document.getElementById(id);if(e&&p.has(k))e.value=p.get(k)});const ka=document.getElementById('kaToggle');if(ka&&p.has('ka'))ka.checked=p.get('ka')==='1';if(p.has('rewardpage'))rewardCurrentPage=Math.max(1,parseInt(p.get('rewardpage')||'1',10));const ft=document.getElementById('fruitTypeFilter');if(ft&&p.has('fruittype'))ft.value=p.get('fruittype')||'__all__';if(p.has('fruitpage'))fruitCurrentPage=Math.max(1,parseInt(p.get('fruitpage')||'1',10));if(p.has('usefultype'))usefulTypeFilter=p.get('usefultype')||'';if(p.has('usefulpage'))usefulCurrentPage=Math.max(1,parseInt(p.get('usefulpage')||'1',10));renderFruitStats();applyCharacterSearch(false);applyStorySearch();applyRewardFilters();applyFruitFilter();renderUsefulList();renderFavoritesList();renderRecentVisits();const initialTab=document.body.dataset.activeTab;const tab=WIKI_TABS.includes(p.get('tab'))?p.get('tab'):(WIKI_TABS.includes(initialTab)?initialTab:'characters');window.__wikiInternalNavigation=true;__switchTabW2(tab);updateMobileBottomNav(tab);window.__wikiInternalNavigation=false;scheduleVisibleCatalogPaginationRefresh(tab);const at=p.get('article'),ai=p.get('id');if(at&&ai){const f={character:()=>openCharacterArticle(ai,'history'),story:()=>openStoryArticle(ai,'history'),fruit:()=>openFruitArticle(ai,'history'),useful:()=>openUsefulArticle(ai,'history')}[at];if(f)f();}else{appArticleState=null;writeUrl('replace');}updatePageTitle();restoringFromHistory=false;}
 window.addEventListener('popstate',(event)=>{if(event.state?.__wikiBaseEntry){history.back();return;}wikiTransition(restoreWikiState,'history')});
 
 /* URL-aware filter wrappers */
@@ -42432,7 +42474,7 @@ document.addEventListener('change',function(e) {
   }
   function shpPetAuto(sh, k) {
     var v = shpView(sh), n = shpFleetN(sh, v), m = shpPetMap(sh), used = {}; Object.keys(m).forEach(function (q) { used[m[q]] = 1; });
-    for (var t = 0; t < n; t++) if (!used[t]) { shpCSet(sh, t, { pet: k }); return t; }
+    for (var t = 0; t < n; t++) if (!used[t] && !shpCrewBusy1102(sh,t)) { shpCSet(sh, t, { pet: k }); return t; }
     return -1;
   }
   /* действующий бонус питомца: { fx, v } где v — доля (0.15 = 15%) */
@@ -48607,6 +48649,9 @@ document.addEventListener('change',function(e) {
     return r;
   }
   /* Снять персонажа со всех мест (перевод между кораблями и базами бесплатный). */
+  var SHP_CREW_LOCK1102 = 'Смена экипажа доступна только в гавани';
+  function shpCrewBusy1102(sh,t) { return t != null && !!(shpVoys(sh)[t] || shpPqS(sh)[t]); }
+  function shpCrewSourceBusy1102(sh,C,cid) { var w=shpCrewWhere(sh,C,cid); return !!(w && shpCrewBusy1102(sh,w.ship)); }
   function shpCrewUnassign(sh, C, cid) {
     shpCrewMig(sh);
     Object.keys(sh.cw || {}).forEach(function (t) { var cr = sh.cw[t]; if (!cr || typeof cr !== 'object') return; Object.keys(cr).forEach(function (rid) { var m = cr[rid], k = m && m.k && cardByKey(C, m.k); if (k && k.c.id === cid) delete cr[rid]; }); });
@@ -48788,7 +48833,7 @@ document.addEventListener('change',function(e) {
         '<div class="wk-shp-cr-a"><button type="button" class="wk-tx-btn" data-tx="shipcrewpick" data-r="' + r.id + '">Сменить</button><button type="button" class="wk-tx-btn" data-tx="shipcrewfire" data-r="' + r.id + '">Уволить</button></div>';
       else body = '<div class="wk-shp-cr-who empty"><span class="wk-shp-pt-ph" style="width:48px;height:48px">?</span><div><b>Место свободно</b><small>' + r.d + '</small></div></div><div class="wk-shp-cr-a"><button type="button" class="wk-tx-btn pri" data-tx="shipcrewpick" data-r="' + r.id + '">Нанять</button></div>';
       var pick = '';
-      if (open && SHP_PICK === r.id) {
+      if (open && !shpCrewBusy1102(sh,ct) && SHP_PICK === r.id) {
         var cand = []; Object.keys(st.owned || {}).forEach(function (key) {
           if (!(st.owned[key] > 0)) return; var c = cardByKey(C, key); if (!c || (c.kind || 'character') !== 'character') return;
           if (used[c.c.id] && used[c.c.id] !== ct + ':' + r.id && usedK[c.c.id] !== c.key) return; cand.push(c);
@@ -48797,12 +48842,14 @@ document.addEventListener('change',function(e) {
         cand.sort(function (a, b2) { return ord[shpCrewT(a)] - ord[shpCrewT(b2)] || cName(a).localeCompare(cName(b2), 'ru'); });
         cand = cand.filter(function (c) { var id = c.c.id + '|' + shpCrewT(c); if (seen[id]) return false; seen[id] = 1; return true; });
         pick = '<div class="wk-shp-pick"><div class="wk-shp-pick-h"><input type="search" class="wk-shp-pick-q" placeholder="Найти в колоде…" aria-label="Поиск по колоде" autocomplete="off"><button type="button" class="wk-tx-btn" data-tx="shipcrewpick" data-r="">Закрыть</button></div>' +
-          (cand.length ? '<div class="wk-shp-pick-l">' + cand.map(function (c) { var t = shpCrewT(c), mv = !!used[c.c.id] && used[c.c.id] !== ct + ':' + r.id, fee = mv ? 0 : shpCrewFee(t), can = bel >= fee;
+          (cand.length ? '<div class="wk-shp-pick-l">' + cand.map(function (c) { var t = shpCrewT(c), mv = !!used[c.c.id] && used[c.c.id] !== ct + ':' + r.id, fee = mv ? 0 : shpCrewFee(t), can = bel >= fee && !shpCrewSourceBusy1102(sh,C,c.c.id);
             return '<div class="wk-shp-pick-i" data-q="' + esc(cName(c).toLowerCase()) + '">' + shpPortrait(c, 40) + '<span class="wk-shp-pick-n"><b>' + esc(cName(c)) + '</b><small><i style="background:' + SHP_CTC[t] + '"></i>' + SHP_CT[t].n + ' · ' + r.fx(SHP_CT[t].b) + (mv ? ' · сейчас: ' + esc(shpCrewPlace(sh, shpCrewWhere(sh, C, c.c.id))) : '') + '</small></span><button type="button" class="wk-tx-btn' + (can ? ' pri' : '') + '" data-tx="shipcrewhire" data-r="' + r.id + '" data-k="' + esc(c.key) + '"' + (can ? '' : ' disabled') + '>' + (mv ? 'Перевести сюда' : fee ? 'Нанять · ' + fmtB(fee) : 'Нанять') + '</button></div>'; }).join('') + '</div>' : '<p class="wk-sh-hint">В колоде пока нет подходящих персонажей. Открывай наборы во вкладке «Коллекция».</p>') + '</div>';
       }
       return '<article class="wk-shp-cr' + (open ? '' : ' lock') + (open && SHP_PICK === r.id ? ' picking' : '') + '"><div class="wk-shp-cr-h"><b>' + r.n + '</b><small>' + r.fx(b) + '</small></div><div class="wk-shp-cr-b">' + body + '</div>' + pick + '</article>';
     }).join('');
-    return '<p class="wk-sh-hint">Экипаж корабля <b>' + esc(shpGShipN(sh, ct)) + '</b>. У каждого корабля свой экипаж: выбери корабль в «Флоте» сверху. Бонусы действуют в рейсах, ремонте и охоте именно этого корабля. Один персонаж работает только на одном месте, но переводить его между кораблями и базами можно бесплатно: у занятых в списке кнопка «Перевести сюда».</p><p class="wk-sh-hint">Нанимай персонажей из своей колоды. Чем выше редкость карточки, тем дороже найм и сильнее бонус: обычная +6%, редкая +12%, эпик +20%, легенда +30%, особая версия +40%. Плата берётся один раз при найме. Если продать или обменять карточку, работник уйдёт.</p><div class="wk-shp-crew">' + rows + '</div>' + shpPetHTML(sh);
+    var locked1102=shpCrewBusy1102(sh,ct);
+    if(locked1102) rows=rows.replace(/<button(?=[^>]*data-tx="shipcrew(?:pick|fire|hire)")/g,'<button disabled title="'+SHP_CREW_LOCK1102+'"');
+    return (locked1102?'<p class="wk-sh-hint" role="status">'+SHP_CREW_LOCK1102+'</p>':'') + '<p class="wk-sh-hint">Экипаж корабля <b>'  + esc(shpGShipN(sh, ct)) + '</b>. У каждого корабля свой экипаж: выбери корабль в «Флоте» сверху. Бонусы действуют в рейсах, ремонте и охоте именно этого корабля. Один персонаж работает только на одном месте, но переводить его между кораблями и базами можно бесплатно: у занятых в списке кнопка «Перевести сюда».</p><p class="wk-sh-hint">Нанимай персонажей из своей колоды. Чем выше редкость карточки, тем дороже найм и сильнее бонус: обычная +6%, редкая +12%, эпик +20%, легенда +30%, особая версия +40%. Плата берётся один раз при найме. Если продать или обменять карточку, работник уйдёт.</p><div class="wk-shp-crew">' + rows + '</div>' + shpPetHTML(sh);
   }
   /* ======== Новый Свет: захват островов ======== */
   var SHP_NW = [
@@ -51129,6 +51176,44 @@ document.addEventListener('change',function(e) {
     var glHint = gl ? '' : '<p class="wk-sh-hint">' + (v.lv >= 5 ? 'Галеон умеет больше: на Гранд Лайн его ждут острова с богатой добычей, а там можно построить базу. Всё это — во вкладке «Гранд Лайн».' : 'Это ближние рейсы. Когда построишь галеон, откроется вкладка «Гранд Лайн» с дальними островами.') + '</p>';
     return (gl ? shpFruitHTML(st, sh) : '') + shpEncHTML(st, sh) + glHint + (gl || !shpAuOn(sh) ? '' : shpAutoPanel(st, sh, v)) + crewNote + shpVoySw(vtabs, shpVoySel(vtabs, gl), gl) + '<div class="wk-shp-vys">' + (cardA[shpVoySel(vtabs, gl)] || '') + '</div>' + shpVoyMapW(st, sh, v, gl) + logH;
   }
+  /* v1103: receipt only; no reward rolls, storage writes or currency operations in the presentation. */
+  function shpChestRewards1103(res, bp, pt, lt, fru, nt, fcl, total) {
+    var rows = [], colors = {c:'#bdc5d3',r:'#73b8ff',e:'#c29aff',l:'#ffc76b'};
+    function ico(name, fallback) { return (window.__wkEdIcon && window.__wkEdIcon(name)) || fallback; }
+    function art(fn, fallback) { try { return fn() || fallback; } catch(e) { return fallback; } }
+    function add(kind, name, qty, icon, rarity, color, detail) { rows.push({kind:kind,name:name,qty:qty,icon:icon,rarity:rarity||'',color:color||'#c6a66c',detail:detail||''}); }
+    if(total>0) add('Валюта','Белли',fmtB(total),ico('coins','฿'),'','#ffc76b');
+    Object.keys(res.mats||{}).forEach(function(m){if(res.mats[m]>0&&SHP_MAT[m])add('Материалы',SHP_MAT[m].n,'×'+res.mats[m],shpIco(m,65),SHP_MAT_BASE.indexOf(m)<0?'Редкий материал':'',SHP_MAT_BASE.indexOf(m)<0?colors.r:colors.c);});
+    if(res.pack) add('Карты','Набор карточек','×'+res.pack,'<img src="./assets/webp/packs/free_body.webp" alt="">');
+    if(pt) add('Питомец',pt.n,'×1',art(function(){return shpPetMini(pt);},ico('paw','🐾')),SHP_PETR[pt.r].n,pt.r==='e'?colors.l:colors[pt.r]);
+    if(bp){var bd=bp.k==='bdc'?SHP_BDEC.filter(function(q){return q.id===bp.id;})[0]:null,br=bd?bd.r:bp.lg?'l':'r';add('Чертёж',bp.n,'×1',art(function(){return bp.k==='bdc'?shpBaseMini('dec',bp.id,(bd&&bd.only)||'grand'):bp.k==='bld'?ico('map','📜'):shpMini(bp.k,bp.id);},ico('map','📜')),SHP_LOOTR[br].n,colors[br]);}
+    (lt||[]).forEach(function(x){add(x.dup?'Трофей · повторка':'Трофей',x.n,'×1',art(function(){return shpMini('dec',x.id);},ico('star','★')),SHP_LOOTR[x.r].n,colors[x.r]);});
+    if(fru&&fru.f){var f=fru.f,inf=typeof window.__wkFruitInfo==='function'?window.__wkFruitInfo(f.id):null;add('Дьявольский плод',f.name,'×1',inf&&inf.u?'<img src="'+esc(inf.u)+'" alt="">':ico('fruit','🍎'),SHP_FRN[f.r],SHP_FRC[f.r]);}
+    if(nt&&nt.n) add('Записка',nt.n.n||nt.n.name||nt.txt,'×1',ico('book','📜'));
+    (fcl||[]).forEach(function(txt){var match=/^Записка «([^»]+)»/.exec(txt);add('Записка из бутылки',match?match[1]:txt,'×1',ico('book','📜'),'','',match?String(txt).slice(match[0].length).replace(/^:\s*/, ''):'');});
+    return rows;
+  }
+  function shpChestShow1103(rows, route, info) {
+    var old=document.getElementById('wkVoyChest1103');if(old) return;
+    var d=document.createElement('dialog');d.id='wkVoyChest1103';d.setAttribute('aria-labelledby','wkVoyChestTitle1103');
+    var base='./assets/webp/ships/voyage1103/';
+    d.innerHTML='<div class="vc-inner"><div class="vc-head"><h2 id="wkVoyChestTitle1103">Добыча из плавания</h2><button type="button" class="vc-skip">Пропустить »</button></div><p class="vc-route">'+esc(route)+'</p><div class="vc-stage" aria-hidden="true"><div class="vc-halo"></div><div class="vc-chest"><img class="vc-closed" src="'+base+'chest_closed.webp" alt=""><img class="vc-open" src="'+base+'chest_open.webp" alt=""><i class="vc-seam"></i></div></div><p class="vc-status" role="status" aria-live="polite">Сундук поднимают из трюма…</p><div class="vc-grid" aria-label="Полученная добыча"></div><p class="vc-info">'+esc(info)+'</p><div class="vc-foot"><button type="button" class="vc-close" disabled>Готово</button></div></div>';
+    var grid=d.querySelector('.vc-grid'), stage=d.querySelector('.vc-stage'), status=d.querySelector('.vc-status'), skip=d.querySelector('.vc-skip'), done=d.querySelector('.vc-close'), timers=[], ended=false, prev=document.activeElement;
+    rows.forEach(function(r){var el=document.createElement('article');el.className='vc-card';el.hidden=true;el.style.setProperty('--rc',r.color);el.innerHTML='<span class="vc-kind">'+esc(r.kind)+'</span><div class="vc-icon">'+r.icon+'</div><b class="vc-name">'+esc(r.name)+'</b><b class="vc-qty">'+esc(r.qty)+'</b>'+(r.rarity?'<small class="vc-rarity">'+esc(r.rarity)+'</small>':'')+(r.detail?'<details class="vc-detail"><summary>Читать</summary><p>'+esc(r.detail)+'</p></details>':'');grid.appendChild(el);});
+    for(var i=0;i<24;i++){var p=document.createElement('i'),a=i*2.39996,rad=65+(i%7)*15;p.className='vc-particle';p.style.cssText='--x:'+Math.round(Math.cos(a)*rad)+'px;--y:'+Math.round(Math.sin(a)*rad-42)+'px;--s:'+(2+i%4)+'px;--d:'+((i%6)*.045)+'s';stage.appendChild(p);}
+    function clear(){timers.forEach(clearTimeout);timers=[];}
+    function later(fn,ms){timers.push(setTimeout(fn,ms));}
+    function finish(instant){if(ended)return;ended=true;clear();if(instant)d.classList.add('is-skipped');d.classList.add('is-open','is-done');Array.prototype.forEach.call(grid.children,function(el){el.hidden=false;});status.textContent=rows.length?'Вся добыча показана. Награды уже начислены.':'В трюме нет новых наград.';skip.disabled=true;done.disabled=false;}
+    function close(){clear();if(d.open&&typeof d.close==='function')d.close();d.remove();if(prev&&prev.isConnected&&typeof prev.focus==='function')prev.focus({preventScroll:true});}
+    skip.addEventListener('click',function(){finish(true);done.focus();});done.addEventListener('click',close);d.addEventListener('cancel',function(e){e.preventDefault();if(!ended){finish(true);done.focus();}else close();});d.addEventListener('close',function(){clear();d.remove();});
+    document.body.appendChild(d);try{d.showModal();}catch(e){d.setAttribute('open','');d.style.position='fixed';d.style.inset='0';}
+    skip.focus({preventScroll:true});
+    if((window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)||document.documentElement.classList.contains('wk-mobile-no-motion')){finish(true);done.focus();return;}
+    later(function(){d.classList.add('is-open');status.textContent='Сундук открыт!';},1200);
+    var step=Math.min(250,Math.max(65,Math.floor(2500/Math.max(1,rows.length))));
+    rows.forEach(function(r,j){later(function(){grid.children[j].hidden=false;},1550+j*step);});
+    later(function(){finish(false);},Math.max(2350,1750+rows.length*step));
+  }
   function shpVoyClick(a, b, st, sh, v, sv, ba, pane, repaint) {
     var t = +b.getAttribute('data-t'), vs = sh.voy = shpVoys(sh), b0 = st.belli || 0;
     if (a === 'shipvsw') { SHP_VSEL[b.getAttribute('data-gl') ? 'g' : 'n'] = t; shpRepaint(); return true; }
@@ -51191,19 +51276,22 @@ document.addEventListener('change',function(e) {
       if (bp) setTimeout(function () { txToast('В трюме нашёлся редкий чертёж: ' + shpBpKN(bp.k) + ' «' + esc(bp.n) + '». Его уже можно поставить в «Оформлении».'); }, 900);
       if (pt) setTimeout(function () { txToast('В трюме нашёлся питомец: ' + esc(pt.n) + '! ' + SHP_PETSP[pt.sp].t(shpPetV(pt)).replace(/^./, function (ch) { return ch.toUpperCase(); }) + '. Он в «Экипаже».'); }, 700);
       if (lt.length) setTimeout(function () { txToast('Трофеи из трюма: ' + lt.map(function (x) { return esc(x.n) + (x.dup ? ' (повторка)' : ' — новая находка!'); }).join(', ') + '. Декор ставится в «Оформлении», повторки продаются в «Магазине».'); }, bp ? 2100 : 900);
-      shpAchCheck(st); return true;
+      shpAchCheck(st);
+      try { shpChestShow1103(shpChestRewards1103(res, bp, pt, lt, fru, nt, fcl, (st.belli || 0) - b0), res.r.n, 'Корпус потерял ' + res.dmg + ' прочности.' + (res.ins ? ' Страховка: ' + (res.ins.pay ? '+' + fmtB(res.ins.pay) + ', ' : '') + 'сохранено ' + res.ins.saved + ' прочности.' : '') + (en ? ' В рейсах доступна новая встреча.' : '')); } catch (e) { console.warn('voyage chest v1103', e); }
+      return true;
     }
     return false;
   }
   function shpCrewClick(a, b, st, sh, v, sv, ba, pane, repaint) {
     var rid = b.getAttribute('data-r') || '', role = SHP_ROLES.concat(shpCapRole(shpSel(sh, v).t, sh) || []).filter(function (q) { return q.id === rid; })[0], b0 = st.belli || 0;
+    if (['shipcrewpick','shipcrewfire','shipcrewhire','shipcrewpet'].indexOf(a)>=0 && shpCrewBusy1102(sh,shpSel(sh,v).t)) { txToast(SHP_CREW_LOCK1102); return true; }
     if (a === 'shipcrewpick') { SHP_PICK = SHP_PICK === rid ? '' : rid; shpRepaint(); return true; }
     if (a === 'shipcrewpet') {
       var pk = b.getAttribute('data-k') || '', pp = shpPetGet(pk); if (!pp || !(sh.pets && sh.pets[pk])) return true;
       var pt = shpSel(sh, v).t; if (pt == null) { txToast('Сначала построй корабль'); return true; }
       shpPetMig(sh); var pm = shpPetMap(sh), cur = shpPetOf(sh, pt), pn = shpTT(pt).n, pc = shpC(sh, pt).name;
       if (cur === pk) { shpCSet(sh, pt, { pet: '' }); sv(st); repaint(); txToast(esc(pp.n) + ' сошёл на берег'); return true; }
-      var fr = pm[pk]; if (fr != null) shpCSet(sh, fr, { pet: '' });
+      var fr = pm[pk]; if (shpCrewBusy1102(sh,fr)) { txToast(SHP_CREW_LOCK1102); return true; } if (fr != null) shpCSet(sh, fr, { pet: '' });
       shpCSet(sh, pt, { pet: pk }); sv(st); repaint();
       txToast(esc(shpPetNm(sh, pk) || pp.n) + ' теперь на корабле «' + esc(pc || pn) + '»: ' + SHP_PETSP[pp.sp].t(shpPetV(pp)) + (cur ? '. ' + esc(shpPetGet(cur).n) + ' сошёл на берег' : '') + (fr != null ? '. Переехал с другого корабля' : '')); return true;
     }
@@ -51223,6 +51311,7 @@ document.addEventListener('change',function(e) {
       var key = b.getAttribute('data-k'), C = allCards(), k = cardByKey(C, key);
       if (!k || !((st.owned || {})[key] > 0) || (k.kind || 'character') !== 'character') { txToast('Этой карточки нет в колоде'); return true; }
       var emp = shpCrewWhere(sh, C, k.c.id), moved = false;
+      if (shpCrewSourceBusy1102(sh,C,k.c.id)) { txToast(SHP_CREW_LOCK1102); return true; }
       if (emp && !(emp.ship != null && String(emp.ship) === String(cst) && emp.rid === rid)) {
         if (emp.key !== key) { txToast('Этот персонаж уже работает с другой карточкой: сначала уволь его'); return true; }
         moved = true;
@@ -52636,7 +52725,7 @@ document.addEventListener('change',function(e) {
         cand.sort(function (a, b2) { return ord[shpCrewT(a)] - ord[shpCrewT(b2)] || cName(a).localeCompare(cName(b2), 'ru'); });
         cand = cand.filter(function (c) { var q = c.c.id + '|' + shpCrewT(c); if (seen[q]) return false; seen[q] = 1; return true; });
         pick = '<div class="wk-shp-pick"><div class="wk-shp-pick-h"><input type="search" class="wk-shp-pick-q" placeholder="Найти в колоде…" aria-label="Поиск по колоде" autocomplete="off"><button type="button" class="wk-tx-btn" data-tx="shipbpk" data-i="' + id + '" data-r="">Закрыть</button></div>' +
-          (cand.length ? '<div class="wk-shp-pick-l">' + cand.map(function (c) { var t = shpCrewT(c), mv = !!used[c.c.id] && used[c.c.id] !== own, fee = mv ? 0 : shpCrewFee(t), can = bel >= fee;
+          (cand.length ? '<div class="wk-shp-pick-l">' + cand.map(function (c) { var t = shpCrewT(c), mv = !!used[c.c.id] && used[c.c.id] !== own, fee = mv ? 0 : shpCrewFee(t), can = bel >= fee && !shpCrewSourceBusy1102(sh,C,c.c.id);
             return '<div class="wk-shp-pick-i" data-q="' + esc(cName(c).toLowerCase()) + '">' + shpPortrait(c, 40) + '<span class="wk-shp-pick-n"><b>' + esc(cName(c)) + '</b><small><i style="background:' + SHP_CTC[t] + '"></i>' + SHP_CT[t].n + ' · ' + r.fx(SHP_CT[t].b) + (mv ? ' · сейчас: ' + esc(shpCrewPlace(sh, shpCrewWhere(sh, C, c.c.id))) : '') + '</small></span><button type="button" class="wk-tx-btn' + (can ? ' pri' : '') + '" data-tx="shipbhire" data-i="' + id + '" data-r="' + r.id + '" data-k="' + esc(c.key) + '"' + (can ? '' : ' disabled') + '>' + (mv ? 'Перевести сюда' : fee ? 'Назначить · ' + fmtB(fee) : 'Назначить') + '</button></div>'; }).join('') + '</div>' : '<p class="wk-sh-hint">В колоде нет подходящих персонажей.</p>') + '</div>';
       }
       return '<article class="wk-shp-cr' + (SHP_BPK === pid ? ' picking' : '') + '">' + shpBaseStaffHead899(id, r, r.fx(k ? SHP_CT[m.t].b : 0)) + '<div class="wk-shp-cr-b">' + body + '</div>' + pick + '</article>';
@@ -52874,6 +52963,7 @@ document.addEventListener('change',function(e) {
       if (!hrole || !hb || shpBaseLv(sh, id) < hrole.lv) return true;
       if (!kc || !((st.owned || {})[hk] > 0) || (kc.kind || 'character') !== 'character') { txToast('Этой карточки нет в колоде'); return true; }
       var hw = shpCrewWhere(sh, HC, kc.c.id), hmv = false;
+      if (shpCrewSourceBusy1102(sh,HC,kc.c.id)) { txToast(SHP_CREW_LOCK1102); return true; }
       if (hw && !(hw.base === id && hw.rid === hr)) {
         if (hw.key !== hk) { txToast('Этот персонаж уже работает с другой карточкой: сначала уволь его'); return true; }
         hmv = true;
@@ -57442,7 +57532,7 @@ html.wk-deckmain #favoritesSection#favoritesSection#favoritesSection#favoritesSe
     var n = 0;
     (function go() {
       var el = $('#favoritesSection .cabin-subnav [data-wk-cabin-tab="deck"]');
-      if (el) { if (ios() && window.__wkCabOpen) window.__wkCabOpen('deck'); else el.click(); window.scrollTo(0, 0); setTimeout(paint, 60); setTimeout(paint, 400); return; }
+      if (el) { if (ios() && window.__wkCabOpen) window.__wkCabOpen('deck'); else el.click(); window.scrollTo(0, 0); if(typeof syncUrl==='function')syncUrl(); setTimeout(paint, 60); setTimeout(paint, 400); return; }
       if (++n < 25) setTimeout(go, 80);
     })();
   }
@@ -58413,10 +58503,11 @@ function key(b){return b&&(b.dataset.cabinTab||b.dataset.wkCabinTab)||''}
 function activeKey(){var a=document.querySelector('#favoritesSection .cabin-subnav .active[data-cabin-tab],#favoritesSection .cabin-subnav .active[data-wk-cabin-tab]');return key(a)}
 var t=0;function push(){clearTimeout(t);t=setTimeout(function(){try{if(typeof syncUrl==='function')syncUrl()}catch(e){}},80)}
 function bind(){var nav=document.querySelector('#favoritesSection .cabin-subnav');if(!nav||nav.__wkUrl)return;nav.__wkUrl=1;new MutationObserver(push).observe(nav,{subtree:true,attributes:true,attributeFilter:['class','aria-selected']});}
-function restore(){var q=new URLSearchParams(location.search);if(q.get('tab')!=='favorites')return;var want=q.get('cab')||'favorites';
+function restore(){var q=new URLSearchParams(location.search);if(q.get('tab')!=='favorites')return;var want=window.__wkCabRoute1101||q.get('cab')||'favorites';
+if(want==='shipyard'||want==='deck'){if(!window.__wkShipMode||!window.wkOpenShipTab||!document.querySelector('#favoritesSection .cabin-subnav [data-wk-cabin-tab="deck"]'))return;var ship=want==='shipyard';if(activeKey()!=='deck'||!!window.__wkShipOn()!==ship||(document.documentElement.classList.contains('ios-app')&&!document.querySelector('#favoritesSection.ios-cabin-in'))){if(ship)window.wkOpenShipTab();else window.wkOpenDeckTab();}window.__wkCabRoute1101=null;push();return;}
 if(want==='overview'){var ot=document.querySelector('#favoritesSection .cabin-subnav .wk-ov-tab');if(ot&&!ot.classList.contains('active'))ot.click();return}
 var b=document.querySelector('#favoritesSection .cabin-subnav [data-cabin-tab="'+want+'"],#favoritesSection .cabin-subnav [data-wk-cabin-tab="'+want+'"]');if(b&&activeKey()!==want)b.click();}
-var n=0,did=0,touched=0;['pointerdown','keydown'].forEach(function(ev){document.addEventListener(ev,function(){touched=1},true)});var iv=setInterval(function(){bind();var nav=document.querySelector('#favoritesSection .cabin-subnav [data-cabin-tab],#favoritesSection .cabin-subnav [data-wk-cabin-tab]');if(nav&&n>=2&&!touched){did=1;restore()}if(++n>26)clearInterval(iv)},300);
+var n=0,did=0,touched=0;['pointerdown','keydown'].forEach(function(ev){document.addEventListener(ev,function(){touched=1;window.__wkCabRoute1101=null},true)});var iv=setInterval(function(){bind();var nav=document.querySelector('#favoritesSection .cabin-subnav [data-cabin-tab],#favoritesSection .cabin-subnav [data-wk-cabin-tab]');if(nav&&n>=2&&!touched){did=1;restore()}if(++n>26)clearInterval(iv)},300);
 window.addEventListener('popstate',function(){setTimeout(restore,60)});
 document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('[data-wk-ov]')){try{localStorage.setItem('onePieceWikiCabinSubtabV3','favorites');localStorage.setItem('onePieceWikiCabinExtraTabV1','')}catch(x){}setTimeout(push,120)}if(e.target.closest&&e.target.closest('header button,#mobileBottomNav button,#favoritesSection .cabin-subnav'))push()},true);
 }catch(e){}})();</script>
